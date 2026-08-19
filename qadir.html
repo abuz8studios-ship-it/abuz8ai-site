@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="en" id="html-root">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<title>Qadir Core — Sovereign AI Workstation</title>
+<meta name="description" content="The ABUZ8 desktop workstation. Local models, souls, tools — one interface, your metal, your data." />
+<link rel="canonical" href="https://abuz8ai.com/qadir" />
+<meta name="theme-color" content="#0a0d15" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&display=swap" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+<style>
+  :root{
+    --bg:#0a0d15; --panel:#12161f; --panel2:#181c26; --hi:#c8a55c; --hi2:#e8c983;
+    --text:#e8e6e0; --sub:#a8a495; --dim:#5f5c50; --line:rgba(255,255,255,.06);
+    --user-bg:rgba(200,165,92,.08); --ai-bg:rgba(30,34,44,.55);
+    --ok:#4dff9a; --warn:#ffc857; --err:#ff6a6a;
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  html,body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-serif;-webkit-font-smoothing:antialiased;overflow:hidden;height:100vh;width:100vw}
+  a{color:inherit;text-decoration:none}
+  button{background:transparent;border:0;color:inherit;font:inherit;cursor:pointer}
+  input,textarea,select{font:inherit;color:inherit;background:transparent;border:0;outline:0}
+  ::selection{background:var(--hi);color:var(--bg)}
+  ::-webkit-scrollbar{width:8px;height:8px}
+  ::-webkit-scrollbar-thumb{background:rgba(200,165,92,.18);border-radius:4px}
+  ::-webkit-scrollbar-thumb:hover{background:rgba(200,165,92,.35)}
+
+  .mono{font-family:'JetBrains Mono',monospace;font-size:.7rem;letter-spacing:.16em;text-transform:uppercase;color:var(--sub)}
+  .kbd{font-family:'JetBrains Mono',monospace;font-size:.66rem;padding:2px 6px;border:1px solid var(--line);border-radius:5px;color:var(--sub);background:rgba(255,255,255,.03)}
+  .icon{width:18px;height:18px;flex-shrink:0;stroke:currentColor;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+  .icon-lg{width:22px;height:22px}
+  .icon-sm{width:14px;height:14px}
+
+  /* ── LAYOUT ── */
+  .app{display:grid;grid-template-columns:280px 1fr;height:100vh;position:relative}
+  @media (max-width:900px){.app{grid-template-columns:64px 1fr}.sidebar .full{display:none}.sidebar{width:64px}}
+
+  /* ── SIDEBAR ── */
+  .sidebar{background:var(--panel);border-right:1px solid var(--line);display:flex;flex-direction:column;overflow:hidden}
+  .side-top{padding:14px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:10px}
+  .brand-mark{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,#c8a55c,#8a6a1e);display:flex;align-items:center;justify-content:center;font-family:'Fraunces',serif;font-weight:600;color:#0a0d15;font-size:1.05rem;flex-shrink:0}
+  .brand-txt{flex:1;min-width:0}
+  .brand-txt .n{font-family:'Fraunces',serif;font-size:1rem;color:var(--text);line-height:1}
+  .brand-txt .s{font-family:'JetBrains Mono',monospace;font-size:.6rem;letter-spacing:.2em;color:var(--dim);text-transform:uppercase;margin-top:3px}
+  .side-btn{display:flex;align-items:center;gap:12px;padding:10px 14px;border-radius:10px;color:var(--sub);transition:.2s;width:100%}
+  .side-btn:hover{background:rgba(255,255,255,.04);color:var(--text)}
+  .side-btn.active{background:rgba(200,165,92,.10);color:var(--hi)}
+  .side-btn .icon{color:currentColor}
+
+  .side-section{padding:10px 14px 4px}
+  .side-section .lbl{font-family:'JetBrains Mono',monospace;font-size:.6rem;letter-spacing:.22em;color:var(--dim);text-transform:uppercase;margin-bottom:6px}
+  .side-newchat{margin:12px;padding:11px 14px;background:var(--hi);color:var(--bg);border-radius:10px;display:flex;align-items:center;gap:10px;font-weight:600;transition:.2s;justify-content:center}
+  .side-newchat:hover{background:var(--hi2)}
+  .side-list{flex:1;overflow-y:auto;padding:0 6px 8px}
+  .chat-item{display:flex;align-items:flex-start;gap:10px;padding:9px 12px;border-radius:9px;color:var(--sub);cursor:pointer;transition:.2s;position:relative}
+  .chat-item:hover{background:rgba(255,255,255,.04);color:var(--text)}
+  .chat-item.active{background:rgba(200,165,92,.10);color:var(--text)}
+  .chat-item .title{flex:1;font-size:.86rem;line-height:1.35;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .chat-item .del{opacity:0;transition:.2s;padding:2px}
+  .chat-item:hover .del{opacity:.6}
+  .chat-item .del:hover{opacity:1;color:var(--err)}
+
+  .side-bottom{border-top:1px solid var(--line);padding:10px}
+  .side-status{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:9px;font-size:.78rem;color:var(--sub);background:rgba(255,255,255,.02)}
+  .side-status .d{width:8px;height:8px;border-radius:50%;background:var(--dim);flex-shrink:0;transition:.3s}
+  .side-status.ok .d{background:var(--ok);box-shadow:0 0 10px var(--ok)}
+  .side-status.err .d{background:var(--err);box-shadow:0 0 10px var(--err)}
+
+  /* ── MAIN ── */
+  .main{display:flex;flex-direction:column;overflow:hidden;background:var(--bg)}
+
+  .topbar{display:flex;align-items:center;justify-content:space-between;padding:12px 22px;border-bottom:1px solid var(--line);background:rgba(10,13,21,.7);backdrop-filter:blur(12px);gap:16px;flex-wrap:wrap}
+  .topbar-left{display:flex;align-items:center;gap:12px;flex:1;min-width:0}
+  .topbar-title{font-family:'Fraunces',serif;font-size:1.15rem;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .topbar-right{display:flex;align-items:center;gap:10px}
+  .pill{display:inline-flex;align-items:center;gap:8px;padding:7px 13px;border:1px solid var(--line);border-radius:999px;font-family:'JetBrains Mono',monospace;font-size:.7rem;letter-spacing:.12em;color:var(--sub);background:rgba(255,255,255,.02);cursor:pointer;transition:.2s;text-transform:uppercase}
+  .pill:hover{border-color:rgba(200,165,92,.4);color:var(--text)}
+  .pill.active{border-color:var(--hi);color:var(--hi);background:rgba(200,165,92,.08)}
+  .pill .d{width:6px;height:6px;border-radius:50%;background:var(--ok)}
+
+  /* ── MESSAGE AREA ── */
+  .msgs{flex:1;overflow-y:auto;padding:30px 22px 20px;scroll-behavior:smooth}
+  .msgs-inner{max-width:840px;margin:0 auto;display:flex;flex-direction:column;gap:22px}
+  .msg{display:flex;gap:14px;animation:slideIn .3s ease}
+  @keyframes slideIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+  .msg .av{width:34px;height:34px;border-radius:9px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:'Fraunces',serif;font-weight:500;font-size:.9rem}
+  .msg.u .av{background:rgba(200,165,92,.15);color:var(--hi);border:1px solid rgba(200,165,92,.35)}
+  .msg.a .av{background:linear-gradient(135deg,#c8a55c,#8a6a1e);color:var(--bg)}
+  .msg .body{flex:1;min-width:0}
+  .msg .who{font-family:'JetBrains Mono',monospace;font-size:.65rem;letter-spacing:.2em;color:var(--dim);text-transform:uppercase;margin-bottom:6px}
+  .msg .who .name{color:var(--sub)}
+  .msg .content{padding:16px 20px;border-radius:14px;line-height:1.65;font-size:.98rem;overflow-x:auto}
+  .msg.u .content{background:var(--user-bg);border:1px solid rgba(200,165,92,.15)}
+  .msg.a .content{background:var(--ai-bg);border:1px solid var(--line)}
+  .msg .content h1,.msg .content h2,.msg .content h3{font-family:'Fraunces',serif;font-weight:500;color:var(--text);margin:14px 0 8px;line-height:1.3}
+  .msg .content h1{font-size:1.4rem} .msg .content h2{font-size:1.2rem} .msg .content h3{font-size:1.05rem}
+  .msg .content p{margin:8px 0}
+  .msg .content ul,.msg .content ol{margin:8px 0 8px 22px}
+  .msg .content li{margin:4px 0}
+  .msg .content code{font-family:'JetBrains Mono',monospace;font-size:.86rem;background:rgba(255,255,255,.06);padding:2px 6px;border-radius:4px;color:var(--hi2)}
+  .msg .content pre{background:rgba(0,0,0,.4);border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin:10px 0;overflow-x:auto}
+  .msg .content pre code{background:transparent;padding:0;color:var(--text);font-size:.82rem;line-height:1.55}
+  .msg .content a{color:var(--hi);text-decoration:underline;text-underline-offset:2px}
+  .msg .content blockquote{border-left:3px solid var(--hi);padding:6px 14px;margin:10px 0;color:var(--sub);background:rgba(200,165,92,.04);border-radius:0 6px 6px 0}
+  .msg .content table{border-collapse:collapse;margin:10px 0;width:100%}
+  .msg .content th,.msg .content td{border:1px solid var(--line);padding:8px 12px;text-align:left;font-size:.9rem}
+  .msg .content th{background:rgba(200,165,92,.08);color:var(--hi);font-family:'JetBrains Mono',monospace;font-size:.72rem;letter-spacing:.1em;text-transform:uppercase}
+  .msg.err .content{border-color:rgba(255,106,106,.35);background:rgba(255,106,106,.04)}
+  .cursor{display:inline-block;width:8px;height:1em;background:var(--hi);vertical-align:text-bottom;animation:blink 1s steps(2) infinite}
+  @keyframes blink{50%{opacity:0}}
+
+  /* ── EMPTY STATE ── */
+  .empty{max-width:780px;margin:auto;padding:60px 22px;text-align:center}
+  .empty .logo{width:80px;height:80px;border-radius:20px;background:linear-gradient(135deg,#c8a55c,#8a6a1e);margin:0 auto 24px;display:flex;align-items:center;justify-content:center;font-family:'Fraunces',serif;font-weight:500;color:var(--bg);font-size:2.4rem;box-shadow:0 20px 60px rgba(200,165,92,.25)}
+  .empty h1{font-family:'Fraunces',serif;font-size:2.4rem;color:var(--text);font-weight:400;line-height:1.05;margin-bottom:10px}
+  .empty h1 em{color:var(--hi);font-style:italic}
+  .empty p{color:var(--sub);font-size:1.02rem;line-height:1.55;max-width:560px;margin:0 auto 32px}
+  .empty .starters{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;max-width:640px;margin:0 auto}
+  @media (max-width:640px){.empty .starters{grid-template-columns:1fr}}
+  .starter{padding:14px 16px;border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.02);text-align:left;transition:.2s;cursor:pointer}
+  .starter:hover{border-color:rgba(200,165,92,.4);background:rgba(200,165,92,.04);transform:translateY(-1px)}
+  .starter .k{font-family:'JetBrains Mono',monospace;font-size:.62rem;letter-spacing:.22em;color:var(--hi);text-transform:uppercase}
+  .starter .t{color:var(--text);font-size:.95rem;margin-top:4px;line-height:1.35}
+
+  /* ── COMPOSER ── */
+  .composer-wrap{padding:16px 22px 20px;border-top:1px solid var(--line);background:rgba(10,13,21,.7);backdrop-filter:blur(12px)}
+  .composer{max-width:840px;margin:0 auto;background:var(--panel2);border:1px solid var(--line);border-radius:16px;padding:12px 12px 10px;transition:.2s;position:relative}
+  .composer:focus-within{border-color:rgba(200,165,92,.45);box-shadow:0 0 0 4px rgba(200,165,92,.08)}
+  .composer textarea{width:100%;background:transparent;color:var(--text);resize:none;padding:8px 10px;font-size:1rem;line-height:1.55;min-height:26px;max-height:220px}
+  .composer textarea::placeholder{color:var(--dim)}
+  .composer-tools{display:flex;align-items:center;gap:6px;margin-top:8px}
+  .tool-btn{display:flex;align-items:center;gap:6px;padding:7px 11px;border-radius:9px;color:var(--sub);font-size:.78rem;transition:.2s}
+  .tool-btn:hover{background:rgba(255,255,255,.05);color:var(--text)}
+  .tool-btn.active{color:var(--hi);background:rgba(200,165,92,.1)}
+  .composer-tools .grow{flex:1}
+  .send{padding:9px 16px;background:var(--hi);color:var(--bg);border-radius:10px;font-weight:600;font-size:.86rem;display:flex;align-items:center;gap:8px;transition:.2s}
+  .send:hover{background:var(--hi2)}
+  .send:disabled{opacity:.4;cursor:not-allowed}
+  .composer-hint{max-width:840px;margin:8px auto 0;text-align:center;color:var(--dim);font-size:.72rem}
+
+  /* ── SETTINGS PANEL ── */
+  .drawer{position:fixed;top:0;right:0;bottom:0;width:420px;max-width:100vw;background:var(--panel);border-left:1px solid var(--line);z-index:50;transform:translateX(100%);transition:transform .3s cubic-bezier(.2,.7,.2,1);overflow-y:auto;padding:22px 24px 30px;display:flex;flex-direction:column;gap:22px}
+  .drawer.open{transform:none}
+  .drawer h2{font-family:'Fraunces',serif;font-size:1.4rem;color:var(--text);font-weight:500}
+  .drawer .close{position:absolute;top:16px;right:20px;color:var(--sub);padding:6px;border-radius:8px}
+  .drawer .close:hover{background:rgba(255,255,255,.05);color:var(--text)}
+  .field{display:flex;flex-direction:column;gap:6px}
+  .field label{font-family:'JetBrains Mono',monospace;font-size:.65rem;letter-spacing:.22em;color:var(--dim);text-transform:uppercase}
+  .field input,.field select{padding:11px 14px;background:var(--panel2);border:1px solid var(--line);border-radius:10px;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:.86rem;transition:.2s}
+  .field input:focus,.field select:focus{border-color:rgba(200,165,92,.4)}
+  .field .help{color:var(--dim);font-size:.75rem;line-height:1.5}
+  .drawer-actions{display:flex;gap:10px;margin-top:6px}
+  .drawer-actions button{padding:11px 18px;border-radius:10px;font-family:'JetBrains Mono',monospace;font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;transition:.2s;flex:1}
+  .drawer-actions .save{background:var(--hi);color:var(--bg);font-weight:600}
+  .drawer-actions .save:hover{background:var(--hi2)}
+  .drawer-actions .test{border:1px solid var(--line);color:var(--sub)}
+  .drawer-actions .test:hover{border-color:var(--hi);color:var(--hi)}
+
+  .backdrop{position:fixed;inset:0;background:rgba(0,0,0,.4);opacity:0;pointer-events:none;transition:.3s;z-index:40}
+  .backdrop.on{opacity:1;pointer-events:auto}
+
+  /* ── DROPDOWN (model / soul picker) ── */
+  .menu{position:absolute;top:calc(100% + 6px);left:0;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:6px;min-width:220px;z-index:20;box-shadow:0 20px 40px rgba(0,0,0,.4);opacity:0;transform:translateY(-6px);pointer-events:none;transition:.2s}
+  .menu.on{opacity:1;transform:none;pointer-events:auto}
+  .menu-item{padding:9px 12px;border-radius:8px;font-size:.85rem;color:var(--sub);display:flex;align-items:center;gap:10px;transition:.15s;cursor:pointer}
+  .menu-item:hover{background:rgba(200,165,92,.08);color:var(--text)}
+  .menu-item.active{color:var(--hi);background:rgba(200,165,92,.10)}
+  .rel{position:relative}
+</style>
+</head>
+<body>
+
+<div class="app">
+  <!-- ─── SIDEBAR ─── -->
+  <aside class="sidebar">
+    <div class="side-top">
+      <div class="brand-mark">Q</div>
+      <div class="brand-txt full">
+        <div class="n">Qadir Core</div>
+        <div class="s">Mach 3 · v1.0</div>
+      </div>
+    </div>
+
+    <button class="side-newchat" id="new-chat">
+      <svg class="icon" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+      <span class="full">New chat</span>
+    </button>
+
+    <div class="side-section full"><div class="lbl">History</div></div>
+    <div class="side-list" id="chat-list"></div>
+
+    <div class="side-bottom">
+      <div class="side-status" id="conn-status">
+        <div class="d"></div>
+        <div class="full">
+          <div style="color:var(--text);font-family:'JetBrains Mono',monospace;font-size:.7rem" id="conn-name">Connecting…</div>
+          <div style="font-size:.68rem" id="conn-url">127.0.0.1:8900</div>
+        </div>
+      </div>
+      <button class="side-btn" id="open-settings" style="margin-top:8px">
+        <svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h0a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51h0a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v0a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        <span class="full">Settings</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- ─── MAIN ─── -->
+  <main class="main">
+    <div class="topbar">
+      <div class="topbar-left">
+        <div class="topbar-title" id="chat-title">New chat</div>
+      </div>
+      <div class="topbar-right">
+        <div class="rel">
+          <button class="pill" id="model-pill">
+            <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M12 2 4 7v6c0 5.55 3.84 10.74 8 12 4.16-1.26 8-6.45 8-12V7l-8-5z"/></svg>
+            <span id="model-name">auto</span>
+            <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+          </button>
+          <div class="menu" id="model-menu"></div>
+        </div>
+        <div class="rel">
+          <button class="pill" id="soul-pill">
+            <svg class="icon icon-sm" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18"/></svg>
+            <span id="soul-name">qadir</span>
+            <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+          </button>
+          <div class="menu" id="soul-menu"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MESSAGES -->
+    <div class="msgs" id="msgs">
+      <div class="empty" id="empty">
+        <div class="logo">Q</div>
+        <h1>Qadir <em>Core</em> workstation.</h1>
+        <p>Your local AI runtime. Chats with the model on <span style="color:var(--hi);font-family:'JetBrains Mono',monospace"><span id="empty-url">127.0.0.1:8900</span></span>. Your data never leaves your machine.</p>
+
+        <div class="starters">
+          <div class="starter" data-p="Write my morning brief: pull yesterday's git activity, today's calendar, top 3 tasks, and the one thing I should do first.">
+            <div class="k">01 · Morning brief</div>
+            <div class="t">Yesterday's activity + today's calendar + top 3 tasks + first move.</div>
+          </div>
+          <div class="starter" data-p="Audit my current AI stack — list everything I'm paying for monthly, what data leaves my network, and rank what to cancel first.">
+            <div class="k">02 · Stack audit</div>
+            <div class="t">Every SaaS + what it leaks + kill-list.</div>
+          </div>
+          <div class="starter" data-p="I have a stalled project. Ask me the 5 questions you need to diagnose the bottleneck.">
+            <div class="k">03 · Project rescue</div>
+            <div class="t">Diagnose the bottleneck in 5 questions.</div>
+          </div>
+          <div class="starter" data-p="Take a screenshot of my primary display and describe what's on it.">
+            <div class="k">04 · Screen read</div>
+            <div class="t">Capture and describe the current screen.</div>
+          </div>
+        </div>
+      </div>
+      <div class="msgs-inner" id="msgs-inner" style="display:none"></div>
+    </div>
+
+    <!-- COMPOSER -->
+    <div class="composer-wrap">
+      <div class="composer">
+        <textarea id="input" rows="1" placeholder="Ask Qadir anything · Shift+Enter for newline"></textarea>
+        <div class="composer-tools">
+          <button class="tool-btn" title="Attach file (roadmap)"><svg class="icon" viewBox="0 0 24 24"><path d="M21.44 11.05L12.25 20.24a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48"/></svg></button>
+          <button class="tool-btn" id="tool-screenshot" title="Screenshot (via desktop control)"><svg class="icon" viewBox="0 0 24 24"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg></button>
+          <button class="tool-btn" id="tool-code" title="Code block"><svg class="icon" viewBox="0 0 24 24"><path d="M16 18l6-6-6-6M8 6l-6 6 6 6"/></svg></button>
+          <div class="grow"></div>
+          <div class="tool-btn mono" id="token-count" style="color:var(--dim)">0 tokens</div>
+          <button class="send" id="send"><span>Send</span>
+            <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+          </button>
+        </div>
+      </div>
+      <div class="composer-hint mono">Local · sovereign · no cloud · <span class="kbd">Cmd/Ctrl+Enter</span> to send · <span class="kbd">Cmd/Ctrl+K</span> new chat</div>
+    </div>
+  </main>
+</div>
+
+<!-- ── SETTINGS DRAWER ── -->
+<div class="backdrop" id="backdrop"></div>
+<aside class="drawer" id="drawer">
+  <button class="close" id="close-drawer"><svg class="icon icon-lg" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+  <div>
+    <div class="mono" style="margin-bottom:6px">System</div>
+    <h2>Qadir connection</h2>
+  </div>
+
+  <div class="field">
+    <label>Qadir base URL</label>
+    <input id="cfg-url" value="http://127.0.0.1:8900" spellcheck="false" />
+    <div class="help">The FastAPI backend. Default local: <code>http://127.0.0.1:8900</code>. Cloudflare tunnel: paste your <code>https://…trycloudflare.com</code> URL.</div>
+  </div>
+
+  <div class="field">
+    <label>API key (optional)</label>
+    <input id="cfg-key" type="password" placeholder="sk-…" spellcheck="false" />
+    <div class="help">Only needed if your Qadir instance requires bearer auth.</div>
+  </div>
+
+  <div class="field">
+    <label>Stream responses</label>
+    <select id="cfg-stream"><option value="1">Yes (streaming SSE)</option><option value="0">No (single response)</option></select>
+  </div>
+
+  <div class="field">
+    <label>System prompt (persistent)</label>
+    <input id="cfg-system" placeholder="e.g. You are Qadir, the sovereign operator…" />
+    <div class="help">Sent as the first message in every conversation.</div>
+  </div>
+
+  <div class="drawer-actions">
+    <button class="test" id="cfg-test">Test connection</button>
+    <button class="save" id="cfg-save">Save</button>
+  </div>
+
+  <div id="cfg-status" style="margin-top:10px;font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--sub);min-height:1.5em"></div>
+
+  <div style="margin-top:auto;padding-top:20px;border-top:1px solid var(--line);color:var(--dim);font-size:.78rem;line-height:1.55">
+    ABUZ8 Qadir Core · <a href="/rescue" style="color:var(--hi)">Ship-ready service</a> · <a href="/" style="color:var(--hi)">Back to abuz8ai.com</a>
+  </div>
+</aside>
+
+<script>
+/* ─── STATE ─── */
+const STATE = {
+  cfg: loadCfg(),
+  chats: loadChats(),
+  currentChatId: null,
+  models: [],
+  souls: ['qadir','zait','ornith','auto'],
+  activeModel: 'auto',
+  activeSoul: 'qadir',
+  streaming: false,
+  abort: null,
+};
+
+function loadCfg(){
+  try { return Object.assign({url:'http://127.0.0.1:8900',key:'',stream:'1',system:''}, JSON.parse(localStorage.getItem('qadir.cfg')||'{}')); }
+  catch(_){ return {url:'http://127.0.0.1:8900',key:'',stream:'1',system:''}; }
+}
+function saveCfg(){ localStorage.setItem('qadir.cfg', JSON.stringify(STATE.cfg)); }
+function loadChats(){
+  try { return JSON.parse(localStorage.getItem('qadir.chats')||'[]'); }
+  catch(_){ return []; }
+}
+function saveChats(){ localStorage.setItem('qadir.chats', JSON.stringify(STATE.chats)); }
+
+/* ─── ELEMENTS ─── */
+const $ = id => document.getElementById(id);
+const el = {
+  msgs: $('msgs'), inner: $('msgs-inner'), empty: $('empty'),
+  input: $('input'), send: $('send'),
+  chatList: $('chat-list'), newChat: $('new-chat'),
+  chatTitle: $('chat-title'),
+  modelPill: $('model-pill'), modelName: $('model-name'), modelMenu: $('model-menu'),
+  soulPill: $('soul-pill'), soulName: $('soul-name'), soulMenu: $('soul-menu'),
+  emptyUrl: $('empty-url'), connStatus: $('conn-status'), connName: $('conn-name'), connUrl: $('conn-url'),
+  drawer: $('drawer'), backdrop: $('backdrop'),
+  openSettings: $('open-settings'), closeDrawer: $('close-drawer'),
+  cfgUrl: $('cfg-url'), cfgKey: $('cfg-key'), cfgStream: $('cfg-stream'), cfgSystem: $('cfg-system'),
+  cfgTest: $('cfg-test'), cfgSave: $('cfg-save'), cfgStatus: $('cfg-status'),
+  tokenCount: $('token-count'), toolScreenshot: $('tool-screenshot'),
+};
+
+/* ─── AUTO-RESIZE + KEYBOARD ─── */
+el.input.addEventListener('input', ()=>{
+  el.input.style.height = 'auto';
+  el.input.style.height = Math.min(el.input.scrollHeight, 220) + 'px';
+  el.tokenCount.textContent = Math.ceil(el.input.value.length / 4) + ' tokens';
+});
+el.input.addEventListener('keydown', e=>{
+  if ((e.key==='Enter' && !e.shiftKey && !e.metaKey && !e.ctrlKey) || ((e.metaKey||e.ctrlKey) && e.key==='Enter')){
+    e.preventDefault(); send();
+  }
+});
+addEventListener('keydown', e=>{
+  if ((e.metaKey||e.ctrlKey) && e.key==='k'){ e.preventDefault(); newChat(); }
+});
+
+/* ─── SETTINGS DRAWER ─── */
+function openDrawer(){
+  el.cfgUrl.value = STATE.cfg.url;
+  el.cfgKey.value = STATE.cfg.key || '';
+  el.cfgStream.value = STATE.cfg.stream;
+  el.cfgSystem.value = STATE.cfg.system || '';
+  el.drawer.classList.add('open'); el.backdrop.classList.add('on');
+}
+function closeDrawer(){ el.drawer.classList.remove('open'); el.backdrop.classList.remove('on'); }
+el.openSettings.onclick = openDrawer;
+el.closeDrawer.onclick = closeDrawer;
+el.backdrop.onclick = closeDrawer;
+el.cfgSave.onclick = ()=>{
+  STATE.cfg.url = el.cfgUrl.value.trim().replace(/\/$/,'');
+  STATE.cfg.key = el.cfgKey.value.trim();
+  STATE.cfg.stream = el.cfgStream.value;
+  STATE.cfg.system = el.cfgSystem.value.trim();
+  saveCfg(); closeDrawer();
+  el.emptyUrl.textContent = STATE.cfg.url.replace(/^https?:\/\//,'');
+  el.connUrl.textContent = el.emptyUrl.textContent;
+  connect();
+};
+el.cfgTest.onclick = async ()=>{
+  el.cfgStatus.textContent = 'Testing…'; el.cfgStatus.style.color = 'var(--sub)';
+  const u = el.cfgUrl.value.trim().replace(/\/$/,'');
+  try{
+    const r = await fetch(u+'/', {headers: el.cfgKey.value ? {Authorization:'Bearer '+el.cfgKey.value} : {}});
+    const j = await r.json();
+    el.cfgStatus.innerHTML = '<span style="color:var(--ok)">● OK</span>  '+ (j.codename||j.status||'reachable') + (j.version ? ' · v'+j.version : '');
+  } catch(e){
+    el.cfgStatus.innerHTML = '<span style="color:var(--err)">● Fail</span>  '+String(e.message||e);
+  }
+};
+
+/* ─── CONNECTION + MODELS ─── */
+async function connect(){
+  el.emptyUrl.textContent = STATE.cfg.url.replace(/^https?:\/\//,'');
+  el.connUrl.textContent = el.emptyUrl.textContent;
+  el.connStatus.classList.remove('ok','err');
+  el.connName.textContent = 'Connecting…';
+  try{
+    const [ping, models] = await Promise.all([
+      fetch(STATE.cfg.url+'/', headers()).then(r=>r.json()).catch(()=>null),
+      fetch(STATE.cfg.url+'/v1/models', headers()).then(r=>r.json()).catch(()=>null),
+    ]);
+    if (!ping){ throw new Error('unreachable'); }
+    el.connStatus.classList.add('ok');
+    el.connName.textContent = (ping.codename||'Qadir') + ' · ' + (ping.version||'?');
+    STATE.models = (models && models.data) ? models.data.map(m=>m.id) : [];
+    renderModels();
+  } catch(e){
+    el.connStatus.classList.add('err');
+    el.connName.textContent = 'Offline — check settings';
+  }
+}
+function headers(){
+  const h = {'Content-Type':'application/json'};
+  if (STATE.cfg.key) h.Authorization = 'Bearer ' + STATE.cfg.key;
+  return {headers:h};
+}
+
+function renderModels(){
+  el.modelMenu.innerHTML = '';
+  const list = ['auto', ...STATE.models];
+  list.forEach(id=>{
+    const it = document.createElement('div');
+    it.className = 'menu-item' + (id===STATE.activeModel?' active':'');
+    it.textContent = id;
+    it.onclick = ()=>{ STATE.activeModel = id; el.modelName.textContent = id; el.modelMenu.classList.remove('on'); renderModels(); };
+    el.modelMenu.appendChild(it);
+  });
+}
+function renderSouls(){
+  el.soulMenu.innerHTML = '';
+  STATE.souls.forEach(s=>{
+    const it = document.createElement('div');
+    it.className = 'menu-item' + (s===STATE.activeSoul?' active':'');
+    it.textContent = s;
+    it.onclick = ()=>{ STATE.activeSoul = s; el.soulName.textContent = s; el.soulMenu.classList.remove('on'); renderSouls(); };
+    el.soulMenu.appendChild(it);
+  });
+}
+el.modelPill.onclick = e=>{ e.stopPropagation(); el.modelMenu.classList.toggle('on'); el.soulMenu.classList.remove('on'); };
+el.soulPill.onclick  = e=>{ e.stopPropagation(); el.soulMenu.classList.toggle('on'); el.modelMenu.classList.remove('on'); };
+addEventListener('click', ()=>{ el.modelMenu.classList.remove('on'); el.soulMenu.classList.remove('on'); });
+
+/* ─── CHATS ─── */
+function renderChatList(){
+  el.chatList.innerHTML = '';
+  STATE.chats.slice().reverse().forEach(c=>{
+    const item = document.createElement('div');
+    item.className = 'chat-item' + (c.id===STATE.currentChatId?' active':'');
+    item.innerHTML = '<svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg><div class="title"></div><button class="del"><svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2M6 6l1 14a2 2 0 002 2h6a2 2 0 002-2l1-14"/></svg></button>';
+    item.querySelector('.title').textContent = c.title || 'Untitled';
+    item.querySelector('.title').onclick = ()=>openChat(c.id);
+    item.onclick = e=>{ if(!e.target.closest('.del')) openChat(c.id); };
+    item.querySelector('.del').onclick = e=>{ e.stopPropagation(); STATE.chats = STATE.chats.filter(x=>x.id!==c.id); saveChats(); if(STATE.currentChatId===c.id){ STATE.currentChatId=null; showEmpty(); } renderChatList(); };
+    el.chatList.appendChild(item);
+  });
+}
+
+function newChat(){
+  STATE.currentChatId = null;
+  showEmpty();
+  el.chatTitle.textContent = 'New chat';
+  renderChatList();
+  el.input.focus();
+}
+function openChat(id){
+  const c = STATE.chats.find(x=>x.id===id);
+  if (!c) return;
+  STATE.currentChatId = id;
+  el.chatTitle.textContent = c.title || 'Untitled';
+  renderMessages(c.messages || []);
+  renderChatList();
+}
+function showEmpty(){
+  el.inner.style.display = 'none';
+  el.empty.style.display = 'block';
+  el.inner.innerHTML = '';
+}
+function ensureChat(firstUserMsg){
+  if (STATE.currentChatId) return STATE.chats.find(c=>c.id===STATE.currentChatId);
+  const c = { id:'c_'+Math.random().toString(36).slice(2,10), title: (firstUserMsg||'New chat').slice(0,52), messages: [] };
+  STATE.chats.push(c); STATE.currentChatId = c.id;
+  el.chatTitle.textContent = c.title;
+  saveChats(); renderChatList();
+  return c;
+}
+
+/* ─── MESSAGES ─── */
+function renderMessages(msgs){
+  el.empty.style.display = 'none';
+  el.inner.style.display = 'flex';
+  el.inner.innerHTML = '';
+  msgs.forEach(m => el.inner.appendChild(msgNode(m)));
+  el.msgs.scrollTop = el.msgs.scrollHeight;
+}
+function msgNode(m){
+  const w = document.createElement('div');
+  w.className = 'msg ' + (m.role==='user'?'u':'a') + (m.error?' err':'');
+  const initial = m.role==='user' ? 'A' : 'Q';
+  const name = m.role==='user' ? 'you' : (m.model||STATE.activeSoul||'qadir');
+  w.innerHTML = '<div class="av">'+initial+'</div><div class="body"><div class="who"><span class="name">'+name+'</span></div><div class="content"></div></div>';
+  const c = w.querySelector('.content');
+  if (m.role==='assistant') c.innerHTML = marked.parse(m.content||'');
+  else c.textContent = m.content||'';
+  return w;
+}
+function scrollBottom(){ el.msgs.scrollTop = el.msgs.scrollHeight; }
+
+/* ─── SEND ─── */
+async function send(){
+  const text = el.input.value.trim();
+  if (!text || STATE.streaming) return;
+  const chat = ensureChat(text);
+  chat.messages.push({role:'user', content:text, ts:Date.now()});
+  saveChats();
+  renderMessages(chat.messages);
+  el.input.value=''; el.input.style.height='auto'; el.tokenCount.textContent = '0 tokens';
+
+  // Streaming response
+  STATE.streaming = true;
+  el.send.disabled = true;
+
+  const aiIdx = chat.messages.length;
+  chat.messages.push({role:'assistant', content:'', model:STATE.activeModel, ts:Date.now()});
+  renderMessages(chat.messages);
+
+  const aiNode = el.inner.lastElementChild.querySelector('.content');
+  aiNode.innerHTML = '<span class="cursor"></span>';
+
+  const payload = {
+    model: STATE.activeModel === 'auto' ? (STATE.models[0]||'auto') : STATE.activeModel,
+    messages: STATE.cfg.system ? [{role:'system',content:STATE.cfg.system}, ...chat.messages.filter(m=>m.role!=='assistant'||m.content).map(m=>({role:m.role,content:m.content}))] : chat.messages.filter(m=>m.role!=='assistant'||m.content).map(m=>({role:m.role,content:m.content})),
+    stream: STATE.cfg.stream==='1'
+  };
+
+  try{
+    if (STATE.cfg.stream==='1'){
+      const r = await fetch(STATE.cfg.url+'/v1/chat/completions', {
+        method:'POST',
+        headers: Object.assign({'Content-Type':'application/json'}, STATE.cfg.key ? {Authorization:'Bearer '+STATE.cfg.key} : {}),
+        body: JSON.stringify(payload)
+      });
+      if (!r.ok) throw new Error('HTTP '+r.status);
+      const reader = r.body.getReader();
+      const dec = new TextDecoder();
+      let buf = '', acc = '';
+      while(true){
+        const {value, done} = await reader.read();
+        if (done) break;
+        buf += dec.decode(value, {stream:true});
+        let idx;
+        while ((idx = buf.indexOf('\n')) >= 0){
+          const line = buf.slice(0, idx).trim();
+          buf = buf.slice(idx+1);
+          if (!line || !line.startsWith('data:')) continue;
+          const data = line.slice(5).trim();
+          if (data === '[DONE]') continue;
+          try{
+            const j = JSON.parse(data);
+            const delta = j.choices?.[0]?.delta?.content || j.choices?.[0]?.message?.content || '';
+            if (delta){
+              acc += delta;
+              chat.messages[aiIdx].content = acc;
+              aiNode.innerHTML = marked.parse(acc) + '<span class="cursor"></span>';
+              scrollBottom();
+            }
+          } catch(_){}
+        }
+      }
+      aiNode.innerHTML = marked.parse(chat.messages[aiIdx].content||'…');
+    } else {
+      // Non-streaming
+      const r = await fetch(STATE.cfg.url+'/v1/chat/completions', {
+        method:'POST',
+        headers: Object.assign({'Content-Type':'application/json'}, STATE.cfg.key ? {Authorization:'Bearer '+STATE.cfg.key} : {}),
+        body: JSON.stringify(payload)
+      });
+      if (!r.ok) throw new Error('HTTP '+r.status);
+      const j = await r.json();
+      const txt = j.choices?.[0]?.message?.content || '(no content)';
+      chat.messages[aiIdx].content = txt;
+      aiNode.innerHTML = marked.parse(txt);
+    }
+    if (!chat.title || chat.title === 'New chat') chat.title = text.slice(0,52);
+    saveChats(); renderChatList();
+  } catch(e){
+    chat.messages[aiIdx].content = '**Connection error.** ' + (e.message||e) + '\n\nCheck settings → your Qadir URL. Default is `http://127.0.0.1:8900`. If your browser blocks HTTP-from-HTTPS, load this page from `http://` or set up a Cloudflare tunnel.';
+    chat.messages[aiIdx].error = true;
+    aiNode.innerHTML = marked.parse(chat.messages[aiIdx].content);
+    el.inner.lastElementChild.classList.add('err');
+    saveChats();
+  } finally {
+    STATE.streaming = false; el.send.disabled = false;
+    scrollBottom();
+  }
+}
+el.send.onclick = send;
+
+/* ─── STARTERS ─── */
+document.querySelectorAll('.starter').forEach(s=>{
+  s.onclick = ()=>{ el.input.value = s.dataset.p; el.input.dispatchEvent(new Event('input')); el.input.focus(); };
+});
+
+/* ─── NEW CHAT ─── */
+el.newChat.onclick = newChat;
+
+/* ─── DESKTOP TOOLS ─── */
+el.toolScreenshot.onclick = async ()=>{
+  el.input.value = 'Take a screenshot via /api/desktop/screenshot and describe what you see.';
+  el.input.dispatchEvent(new Event('input')); el.input.focus();
+};
+
+/* ─── BOOT ─── */
+renderModels(); renderSouls(); renderChatList(); connect();
+el.emptyUrl.textContent = STATE.cfg.url.replace(/^https?:\/\//,'');
+el.connUrl.textContent = el.emptyUrl.textContent;
+</script>
+
+</body>
+</html>

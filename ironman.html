@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="en" id="html-root">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<title>SUIT MK-8 — Flight Sim Over Manhattan | ABUZ8</title>
+<meta name="description" content="Fly first-person over a procedural New York skyline. Repulsor beams, thruster trails, nano-bot boot sequence. Playable in your browser. Built with Three.js on ABUZ8's rig." />
+<link rel="canonical" href="https://abuz8ai.com/ironman" />
+<meta property="og:type" content="website" />
+<meta property="og:title" content="SUIT MK-8 — Fly Over Manhattan" />
+<meta property="og:description" content="Iron-Man-style first-person flight sim in the browser. WASD + mouse + space." />
+<meta property="og:url" content="https://abuz8ai.com/ironman" />
+<meta name="theme-color" content="#050505" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  html,body{background:#000;color:#e8e6e0;overflow:hidden;height:100vh;font-family:'JetBrains Mono',monospace}
+  canvas{display:block}
+  a{color:inherit;text-decoration:none}
+  .mono{font-family:'JetBrains Mono',monospace;font-size:.68rem;letter-spacing:.22em;text-transform:uppercase}
+  .glow{font-family:'Orbitron',sans-serif;color:#ffc857;text-shadow:0 0 12px rgba(255,200,87,.7)}
+
+  #webgl{position:fixed;inset:0;z-index:1}
+
+  /* NAV */
+  nav.top{position:fixed;top:0;left:0;right:0;z-index:30;display:flex;justify-content:space-between;align-items:center;padding:16px 28px;color:#f4f2ec;mix-blend-mode:screen}
+  nav.top .brand{font-family:'Orbitron',sans-serif;font-size:1.05rem;letter-spacing:.05em;color:#ffc857}
+  nav.top ul{display:flex;gap:24px;list-style:none;font-size:.7rem;letter-spacing:.18em;text-transform:uppercase}
+  nav.top ul a{opacity:.75}
+  @media (max-width:820px){nav.top ul{display:none}nav.top{padding:12px 18px}}
+
+  /* BOOT SEQUENCE (nano-bot materialize) */
+  #boot{position:fixed;inset:0;z-index:80;background:#000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px;font-family:'Orbitron',sans-serif;transition:opacity .8s ease}
+  #boot.gone{opacity:0;pointer-events:none}
+  #boot .logo{font-size:3rem;letter-spacing:.35em;color:#ffc857;text-shadow:0 0 20px rgba(255,200,87,.7);position:relative}
+  #boot .logo::before{content:'';position:absolute;left:-30px;right:-30px;top:50%;height:1px;background:linear-gradient(90deg,transparent,#ffc857,transparent);transform:translateY(-50%);opacity:.5}
+  #boot .sub{font-family:'JetBrains Mono',monospace;font-size:.68rem;letter-spacing:.4em;color:#9c8340;text-transform:uppercase}
+  #boot .lines{width:340px;max-width:80vw;height:100px;overflow:hidden;font-family:'JetBrains Mono',monospace;font-size:.7rem;color:#c8a55c;line-height:1.6;text-align:left;padding:0 14px}
+  #boot .lines div{opacity:.85}
+  #boot .bar{width:340px;max-width:80vw;height:2px;background:rgba(200,165,92,.15);position:relative;overflow:hidden}
+  #boot .bar span{position:absolute;left:0;top:0;height:100%;background:#ffc857;box-shadow:0 0 12px #ffc857;width:0;transition:width .12s linear}
+  #boot .press{margin-top:12px;padding:12px 26px;border:1px solid #ffc857;color:#ffc857;font-family:'Orbitron',sans-serif;font-size:.78rem;letter-spacing:.28em;text-transform:uppercase;cursor:pointer;background:transparent;transition:.3s;opacity:0;pointer-events:none}
+  #boot .press.ready{opacity:1;pointer-events:auto;animation:pulse 1.6s ease-in-out infinite}
+  #boot .press:hover{background:#ffc857;color:#000}
+  @keyframes pulse{0%,100%{box-shadow:0 0 0 rgba(255,200,87,.4)}50%{box-shadow:0 0 26px rgba(255,200,87,.7)}}
+
+  /* HUD */
+  #hud{position:fixed;inset:0;z-index:20;pointer-events:none;color:#ffc857;font-family:'Orbitron',sans-serif;opacity:0;transition:opacity 1.2s ease .3s}
+  #hud.on{opacity:1}
+  .hud-corner{position:absolute;font-size:.65rem;letter-spacing:.18em;text-transform:uppercase;line-height:1.5;text-shadow:0 0 8px rgba(255,200,87,.6)}
+  .hud-corner .v{font-family:'JetBrains Mono',monospace;font-size:1rem;letter-spacing:.05em;color:#fff;text-shadow:0 0 10px rgba(255,255,255,.5);display:block;margin-top:2px}
+  .tl{top:60px;left:28px}
+  .tr{top:60px;right:28px;text-align:right}
+  .bl{bottom:28px;left:28px}
+  .br{bottom:28px;right:28px;text-align:right}
+
+  /* Reticle */
+  #reticle{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:20;width:120px;height:120px;pointer-events:none;opacity:0;transition:opacity .8s ease}
+  #reticle.on{opacity:.85}
+  #reticle svg{width:100%;height:100%;filter:drop-shadow(0 0 8px rgba(255,200,87,.7))}
+
+  /* Thrust bar */
+  #thrust{position:fixed;left:50%;bottom:120px;transform:translateX(-50%);z-index:20;width:220px;height:4px;background:rgba(200,165,92,.2);opacity:0;transition:opacity .8s ease}
+  #thrust.on{opacity:1}
+  #thrust span{position:absolute;left:0;top:0;height:100%;background:linear-gradient(90deg,#ffc857,#ff6a00);box-shadow:0 0 14px #ffc857;width:60%;transition:width .12s}
+  #thrust .lbl{position:absolute;bottom:8px;left:0;right:0;text-align:center;font-family:'Orbitron',sans-serif;font-size:.6rem;letter-spacing:.3em;color:#ffc857;text-shadow:0 0 6px rgba(255,200,87,.6);text-transform:uppercase}
+
+  /* horizon lines */
+  #horizon{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);width:520px;height:6px;pointer-events:none;z-index:19;opacity:0;transition:opacity .8s}
+  #horizon.on{opacity:.6}
+  #horizon .l,#horizon .r{position:absolute;top:0;width:220px;height:100%;background:linear-gradient(90deg,transparent,#ffc857,transparent);opacity:.6;box-shadow:0 0 8px #ffc857}
+  #horizon .l{left:0}
+  #horizon .r{right:0}
+
+  /* CONTROLS PANEL */
+  #controls{position:fixed;top:60px;right:28px;z-index:20;padding:14px 18px;border:1px solid rgba(255,200,87,.35);border-radius:12px;background:rgba(20,15,8,.7);backdrop-filter:blur(10px);font-family:'JetBrains Mono',monospace;font-size:.62rem;letter-spacing:.14em;color:#c8a55c;text-transform:uppercase;line-height:1.9;opacity:0;transition:opacity .8s;pointer-events:none;text-align:left}
+  #controls.on{opacity:.9}
+  #controls b{color:#ffc857;font-weight:700;display:inline-block;min-width:52px}
+
+  /* CENTER CONSOLE */
+  #center-info{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);z-index:22;color:#ffc857;text-align:center;font-family:'Orbitron',sans-serif;font-size:2rem;letter-spacing:.2em;text-shadow:0 0 20px rgba(255,200,87,.8);opacity:0;transition:opacity .6s;pointer-events:none;text-transform:uppercase}
+  #center-info.show{opacity:1}
+
+  /* COCKPIT SUIT — arms + arc reactor + damage flash */
+  #cockpit{position:fixed;inset:0;z-index:14;pointer-events:none;opacity:0;transition:opacity 1s ease .5s}
+  #cockpit.on{opacity:1}
+  #cockpit .arm{position:absolute;bottom:0;width:280px;height:340px;pointer-events:none}
+  #cockpit .arm.l{left:-40px;transform:rotate(-8deg)}
+  #cockpit .arm.r{right:-40px;transform:rotate(8deg) scaleX(-1)}
+  #cockpit .arm svg{width:100%;height:100%;filter:drop-shadow(0 -6px 24px rgba(0,0,0,.55))}
+  @media (max-width:820px){#cockpit .arm{width:180px;height:220px}#cockpit .arm.l{left:-30px}#cockpit .arm.r{right:-30px}}
+
+  /* Arc-reactor chest piece — glowing beneath the thrust bar */
+  #reactor{position:fixed;left:50%;bottom:150px;transform:translateX(-50%);width:70px;height:70px;z-index:14;pointer-events:none;opacity:0;transition:opacity 1s ease .6s}
+  #reactor.on{opacity:.92}
+  #reactor .core{position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle at 50% 50%,#dff6ff 0%,#67c8ff 32%,#2b7bd9 62%,#0a2540 88%,transparent 100%);box-shadow:0 0 40px rgba(103,200,255,.55),inset 0 0 20px rgba(255,255,255,.45)}
+  #reactor .triangle{position:absolute;inset:18px;border-radius:50%;background:conic-gradient(from 0deg,rgba(255,255,255,.6) 0deg 40deg,transparent 40deg 120deg,rgba(255,255,255,.6) 120deg 160deg,transparent 160deg 240deg,rgba(255,255,255,.6) 240deg 280deg,transparent 280deg 360deg);mix-blend-mode:overlay;animation:spin-slow 20s linear infinite}
+  @keyframes spin-slow{to{transform:rotate(360deg)}}
+  #reactor .dot{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:12px;height:12px;border-radius:50%;background:#fff;box-shadow:0 0 20px #fff,0 0 40px rgba(103,200,255,.9)}
+
+  /* Damage flash — fires on repulsor click */
+  #flash{position:fixed;inset:0;z-index:16;pointer-events:none;background:radial-gradient(circle at center,rgba(150,220,255,.35) 0%,transparent 70%);opacity:0;transition:opacity .12s ease-out}
+  #flash.on{opacity:1;transition:opacity .05s ease-in}
+
+  /* HELMET BEZEL — Marvel-game-style mask overlay */
+  #helmet{position:fixed;inset:0;z-index:15;pointer-events:none;opacity:0;transition:opacity 1s ease .3s}
+  #helmet.on{opacity:1}
+  #helmet svg{position:absolute;inset:0;width:100%;height:100%}
+  #helmet .side{position:absolute;top:0;bottom:0;width:12vw;pointer-events:none}
+  #helmet .side.l{left:0;background:linear-gradient(90deg,rgba(120,10,20,.95) 0%,rgba(180,25,35,.55) 45%,rgba(180,25,35,0) 100%)}
+  #helmet .side.r{right:0;background:linear-gradient(270deg,rgba(120,10,20,.95) 0%,rgba(180,25,35,.55) 45%,rgba(180,25,35,0) 100%)}
+  #helmet .brow{position:absolute;top:0;left:0;right:0;height:110px;background:linear-gradient(180deg,rgba(140,110,45,.88) 0%,rgba(200,165,92,.55) 40%,rgba(200,165,92,0) 100%);border-bottom:1px solid rgba(255,200,87,.4);box-shadow:0 6px 26px rgba(255,200,87,.35) inset}
+  #helmet .chin{position:absolute;bottom:0;left:0;right:0;height:80px;background:linear-gradient(0deg,rgba(140,110,45,.9),rgba(200,165,92,0));border-top:1px solid rgba(255,200,87,.35)}
+  #helmet .rivet{position:absolute;width:12px;height:12px;border-radius:50%;background:radial-gradient(circle at 30% 30%,#ffe8a0,#8a6a1e);box-shadow:0 0 8px rgba(255,200,87,.6)}
+  #helmet .r1{top:20px;left:20px} #helmet .r2{top:20px;right:20px} #helmet .r3{bottom:20px;left:20px} #helmet .r4{bottom:20px;right:20px}
+  #helmet .r5{top:50%;left:8px;transform:translateY(-50%)} #helmet .r6{top:50%;right:8px;transform:translateY(-50%)}
+  #helmet .scan{position:absolute;left:0;right:0;top:0;height:2px;background:linear-gradient(90deg,transparent,rgba(255,200,87,.4),transparent);animation:scan 4s linear infinite;opacity:.5}
+  @keyframes scan{0%{top:0}100%{top:100%}}
+
+  /* footer strip */
+  #footer{position:fixed;bottom:14px;left:50%;transform:translateX(-50%);z-index:20;font-family:'JetBrains Mono',monospace;font-size:.6rem;letter-spacing:.24em;color:rgba(255,200,87,.55);text-transform:uppercase;opacity:0;transition:opacity .8s}
+  #footer.on{opacity:1}
+  #footer a{color:#ffc857;text-decoration:underline;text-underline-offset:3px}
+</style>
+</head>
+<body>
+
+<canvas id="webgl"></canvas>
+
+<!-- COCKPIT SUIT — visible arms + arc reactor -->
+<div id="cockpit">
+  <div class="arm l">
+    <svg viewBox="0 0 200 260" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="redPlate" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#5a0a10"/><stop offset=".4" stop-color="#b3121e"/>
+          <stop offset=".7" stop-color="#e21c2b"/><stop offset="1" stop-color="#8a0b14"/>
+        </linearGradient>
+        <linearGradient id="goldPlate" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#8a6a1e"/><stop offset=".5" stop-color="#e8c983"/>
+          <stop offset="1" stop-color="#9c8340"/>
+        </linearGradient>
+        <linearGradient id="redEdge" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#ff6a6a" stop-opacity=".6"/><stop offset="1" stop-color="#ff6a6a" stop-opacity="0"/>
+        </linearGradient>
+      </defs>
+      <!-- forearm plate -->
+      <path d="M40,260 L20,180 Q15,160 25,140 L35,90 Q50,50 90,50 L120,60 Q145,80 150,120 L155,190 L170,260 Z" fill="url(#redPlate)" stroke="#3a0509" stroke-width="1.5"/>
+      <!-- gold seam -->
+      <path d="M25,140 L155,190" stroke="url(#goldPlate)" stroke-width="4" fill="none" opacity=".85"/>
+      <!-- rivets -->
+      <circle cx="45" cy="220" r="3" fill="#ffe8a0"/><circle cx="65" cy="240" r="3" fill="#ffe8a0"/>
+      <circle cx="120" cy="230" r="3" fill="#ffe8a0"/><circle cx="145" cy="240" r="3" fill="#ffe8a0"/>
+      <!-- palm repulsor -->
+      <circle cx="90" cy="80" r="24" fill="url(#goldPlate)" stroke="#4a3a10" stroke-width="1.4"/>
+      <circle cx="90" cy="80" r="14" fill="radial-gradient(circle,#dff6ff,#67c8ff)" style="fill:#67c8ff"/>
+      <circle cx="90" cy="80" r="9" fill="#dff6ff" opacity=".85"/>
+      <circle cx="90" cy="80" r="4" fill="#fff"/>
+      <!-- highlight rim -->
+      <path d="M40,260 L20,180 Q15,160 25,140" stroke="url(#redEdge)" stroke-width="2" fill="none"/>
+    </svg>
+  </div>
+  <div class="arm r">
+    <svg viewBox="0 0 200 260" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="redPlate2" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#5a0a10"/><stop offset=".4" stop-color="#b3121e"/>
+          <stop offset=".7" stop-color="#e21c2b"/><stop offset="1" stop-color="#8a0b14"/>
+        </linearGradient>
+        <linearGradient id="goldPlate2" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#8a6a1e"/><stop offset=".5" stop-color="#e8c983"/>
+          <stop offset="1" stop-color="#9c8340"/>
+        </linearGradient>
+      </defs>
+      <path d="M40,260 L20,180 Q15,160 25,140 L35,90 Q50,50 90,50 L120,60 Q145,80 150,120 L155,190 L170,260 Z" fill="url(#redPlate2)" stroke="#3a0509" stroke-width="1.5"/>
+      <path d="M25,140 L155,190" stroke="url(#goldPlate2)" stroke-width="4" fill="none" opacity=".85"/>
+      <circle cx="45" cy="220" r="3" fill="#ffe8a0"/><circle cx="65" cy="240" r="3" fill="#ffe8a0"/>
+      <circle cx="120" cy="230" r="3" fill="#ffe8a0"/><circle cx="145" cy="240" r="3" fill="#ffe8a0"/>
+      <circle cx="90" cy="80" r="24" fill="url(#goldPlate2)" stroke="#4a3a10" stroke-width="1.4"/>
+      <circle cx="90" cy="80" r="14" style="fill:#67c8ff"/>
+      <circle cx="90" cy="80" r="9" fill="#dff6ff" opacity=".85"/>
+      <circle cx="90" cy="80" r="4" fill="#fff"/>
+    </svg>
+  </div>
+</div>
+
+<!-- Arc reactor chest piece -->
+<div id="reactor">
+  <div class="core"></div>
+  <div class="triangle"></div>
+  <div class="dot"></div>
+</div>
+
+<!-- Damage/repulsor fire flash -->
+<div id="flash"></div>
+
+<!-- HELMET BEZEL — the mask -->
+<div id="helmet">
+  <div class="side l"></div>
+  <div class="side r"></div>
+  <div class="brow"></div>
+  <div class="chin"></div>
+  <div class="rivet r1"></div><div class="rivet r2"></div><div class="rivet r3"></div><div class="rivet r4"></div>
+  <div class="rivet r5"></div><div class="rivet r6"></div>
+  <div class="scan"></div>
+</div>
+
+<nav class="top">
+  <a class="brand" href="/">ABUZ8 · SUIT MK-8</a>
+  <ul>
+    <li><a href="/experience">Experience</a></li>
+    <li><a href="/configurator">Configurator</a></li>
+    <li><a href="/shed">The Shed</a></li>
+    <li><a href="/pricing">Pricing</a></li>
+  </ul>
+</nav>
+
+<!-- BOOT SEQUENCE -->
+<div id="boot">
+  <div class="logo">MK — VIII</div>
+  <div class="sub">Nano-bot initialization sequence</div>
+  <div class="lines" id="bootLines"></div>
+  <div class="bar"><span id="bootBar"></span></div>
+  <button class="press" id="engage">◈  ENGAGE  ◈</button>
+  <div class="sub" style="margin-top:16px;font-size:.6rem;opacity:.6">Click ENGAGE — pointer will lock. Press ESC to release.</div>
+</div>
+
+<!-- HUD -->
+<div id="hud">
+  <div class="hud-corner tl">
+    Suit Integrity<span class="v" id="integrity">100%</span>
+    Repulsor Charge<span class="v" id="repulsor">FULL</span>
+  </div>
+  <div class="hud-corner tr">
+    Airspeed<span class="v" id="speed">000 m/s</span>
+    Altitude<span class="v" id="alt">000 m</span>
+  </div>
+  <div class="hud-corner bl">
+    F.R.I.D.A.Y<span class="v" style="color:#4dff9a">ONLINE</span>
+    NYC Grid<span class="v" id="grid">MANHATTAN · DAY</span>
+  </div>
+  <div class="hud-corner br">
+    Heading<span class="v" id="heading">000°</span>
+    Thrusters<span class="v" id="thrusterState">STANDBY</span>
+  </div>
+</div>
+
+<div id="reticle">
+  <svg viewBox="0 0 120 120">
+    <circle cx="60" cy="60" r="52" fill="none" stroke="#ffc857" stroke-width="1" stroke-dasharray="4 6" opacity="0.6"/>
+    <circle cx="60" cy="60" r="26" fill="none" stroke="#ffc857" stroke-width="1.2"/>
+    <line x1="60" y1="8" x2="60" y2="30" stroke="#ffc857" stroke-width="1.4"/>
+    <line x1="60" y1="90" x2="60" y2="112" stroke="#ffc857" stroke-width="1.4"/>
+    <line x1="8" y1="60" x2="30" y2="60" stroke="#ffc857" stroke-width="1.4"/>
+    <line x1="90" y1="60" x2="112" y2="60" stroke="#ffc857" stroke-width="1.4"/>
+    <circle cx="60" cy="60" r="2.4" fill="#ffc857"/>
+  </svg>
+</div>
+
+<div id="horizon"><div class="l"></div><div class="r"></div></div>
+
+<div id="thrust">
+  <span id="thrustBar"></span>
+  <div class="lbl">ARC · REACTOR · THRUST</div>
+</div>
+
+<div id="controls">
+  <div><b>W A S D</b>  Move</div>
+  <div><b>MOUSE</b>    Look</div>
+  <div><b>SPACE</b>    Boost up</div>
+  <div><b>SHIFT</b>    Boost forward</div>
+  <div><b>C</b>        Descend</div>
+  <div><b>CLICK</b>    Fire repulsor</div>
+  <div><b>N</b>        Toggle Night ⇄ Day</div>
+  <div><b>ESC</b>      Release mouse</div>
+</div>
+
+<div id="center-info"></div>
+
+<div id="footer">
+  Procedurally generated Manhattan · <a href="/experience">See more from ABUZ8</a>
+</div>
+
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://unpkg.com/three@0.161.0/build/three.module.js",
+    "three/addons/": "https://unpkg.com/three@0.161.0/examples/jsm/"
+  }
+}
+</script>
+
+<script type="module">
+import * as THREE from 'three';
+import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+import { RenderPass }     from 'three/addons/postprocessing/RenderPass.js';
+import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+import { PointerLockControls } from 'three/addons/controls/PointerLockControls.js';
+
+// ─────────── BOOT SEQUENCE ───────────
+const boot = document.getElementById('boot');
+const bar  = document.getElementById('bootBar');
+const lines= document.getElementById('bootLines');
+const engage = document.getElementById('engage');
+const BOOT_LOG = [
+  '> handshake · arc reactor · OK',
+  '> compiling flight surface · OK',
+  '> nano-plating deploying · 63% · 81% · 100%',
+  '> F.R.I.D.A.Y online',
+  '> loading Manhattan grid · 2,048 structures',
+  '> repulsors armed · thrust vector nominal',
+  '> HUD interlock · ready',
+];
+let bp = 0, li = 0;
+const bootTick = setInterval(()=>{
+  bp += 3 + Math.random()*2;
+  if (bp > 100) bp = 100;
+  bar.style.width = bp + '%';
+  if (li < BOOT_LOG.length && bp > (li+1)*(100/(BOOT_LOG.length+1))){
+    const d = document.createElement('div');
+    d.textContent = BOOT_LOG[li++];
+    lines.appendChild(d);
+  }
+  if (bp >= 100){
+    clearInterval(bootTick);
+    engage.classList.add('ready');
+  }
+}, 110);
+
+// ─────────── THREE.JS SCENE ───────────
+const canvas = document.getElementById('webgl');
+const renderer = new THREE.WebGLRenderer({ canvas, antialias:true, powerPreference:'high-performance' });
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.setSize(innerWidth, innerHeight);
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.1;
+
+const scene = new THREE.Scene();
+let NIGHT = false;
+function setSkyMood(night){
+  NIGHT = night;
+  scene.background = new THREE.Color(night ? 0x05070d : 0x86b4d8);
+  scene.fog = new THREE.FogExp2(night ? 0x0a1220 : 0xbcd3e4, night ? 0.0035 : 0.0018);
+  ambient.intensity = night ? 0.28 : 0.75;
+  sun.intensity = night ? 0.45 : 2.2;
+  sun.color.setHex(night ? 0xffaa66 : 0xfff5dc);
+  hemi.intensity = night ? 0.3 : 0.9;
+  hemi.color.setHex(night ? 0xffcc88 : 0xbfe1ff);
+  hemi.groundColor.setHex(night ? 0x080810 : 0x2a2e36);
+  stars.visible = night;
+  moon.visible = night; moonHalo.visible = night;
+  if (sunSphere) sunSphere.visible = !night;
+  if (sunHalo) sunHalo.visible = !night;
+  renderer.toneMappingExposure = night ? 1.1 : 1.35;
+}
+
+const camera = new THREE.PerspectiveCamera(75, innerWidth/innerHeight, 0.5, 3000);
+camera.position.set(0, 220, 400);
+
+// LIGHTS
+const ambient = new THREE.AmbientLight(0x445577, 0.3);
+scene.add(ambient);
+const sun = new THREE.DirectionalLight(0xfff5dc, 2.2); sun.position.set(-1200,950,-2100); scene.add(sun);
+const hemi = new THREE.HemisphereLight(0xbfe1ff, 0x2a2e36, 0.9); scene.add(hemi);
+
+// GROUND
+const groundGeo = new THREE.PlaneGeometry(6000, 6000, 1, 1);
+const groundMat = new THREE.MeshStandardMaterial({ color:0x0b0e13, roughness:0.95, metalness:0.05 });
+const ground = new THREE.Mesh(groundGeo, groundMat);
+ground.rotation.x = -Math.PI/2;
+ground.position.y = 0;
+scene.add(ground);
+
+// STREET GRID
+const streetGeo = new THREE.PlaneGeometry(6000, 6000, 40, 40);
+const pos = streetGeo.attributes.position;
+for (let i=0;i<pos.count;i++){
+  // slight noise for lively terrain
+  const y = 0.05 * (Math.sin(pos.getX(i)*0.02) + Math.cos(pos.getZ(i)*0.02));
+  pos.setZ(i, y); // note geometry rotated below
+}
+const streetMat = new THREE.MeshBasicMaterial({ color:0xffc857, wireframe:true, transparent:true, opacity:0.06 });
+const street = new THREE.Mesh(streetGeo, streetMat);
+street.rotation.x = -Math.PI/2;
+street.position.y = 0.5;
+scene.add(street);
+
+// SKYSCRAPERS (procedural Manhattan)
+const CITY_SIZE = 20;      // blocks per side
+const BLOCK = 140;          // meters per block
+const BUILDINGS = [];
+const buildingMat = new THREE.MeshStandardMaterial({ color:0x9aa4b3, roughness:0.55, metalness:0.5, emissive:0x000000 });
+// window texture — procedural canvas
+function makeWindowsTexture(){
+  const c = document.createElement('canvas'); c.width=128; c.height=256;
+  const g = c.getContext('2d');
+  g.fillStyle = '#0a0f18'; g.fillRect(0,0,c.width,c.height);
+  for(let y=6; y<c.height-4; y+=10){
+    for(let x=6; x<c.width-4; x+=10){
+      const on = Math.random() > 0.65;
+      g.fillStyle = on
+        ? (Math.random()>0.85 ? '#ffcc66' : '#ffc857')
+        : '#161c26';
+      g.fillRect(x,y,6,6);
+    }
+  }
+  const t = new THREE.CanvasTexture(c);
+  t.wrapS = t.wrapT = THREE.RepeatWrapping;
+  t.magFilter = THREE.NearestFilter;
+  return t;
+}
+const winTex = makeWindowsTexture();
+const winMat = new THREE.MeshBasicMaterial({ map: winTex, transparent:true, opacity:0.9 });
+// use a shared box geom + instanced
+const buildingBox = new THREE.BoxGeometry(1,1,1);
+const cityGroup = new THREE.Group(); scene.add(cityGroup);
+
+for(let bx=-CITY_SIZE/2; bx<CITY_SIZE/2; bx++){
+  for(let bz=-CITY_SIZE/2; bz<CITY_SIZE/2; bz++){
+    // leave center clear (Central Park) for open flight zone at (0,0) and skip a strip for the "avenue"
+    if (Math.abs(bx)<2 && Math.abs(bz)<3 && Math.random()<0.5) continue;
+    // 1-2 buildings per block
+    const perBlock = 1 + (Math.random()<0.45?1:0);
+    for(let k=0;k<perBlock;k++){
+      const jitterX = (Math.random()-0.5) * BLOCK*0.4;
+      const jitterZ = (Math.random()-0.5) * BLOCK*0.4;
+      const x = bx*BLOCK + jitterX;
+      const z = bz*BLOCK + jitterZ;
+      const w = 40 + Math.random()*45;
+      const d = 40 + Math.random()*45;
+      // taller near the middle
+      const distToC = Math.sqrt(x*x+z*z);
+      const heightBase = Math.max(60, 380 - distToC*0.16) + Math.random()*160;
+      const h = heightBase * (0.6 + Math.random()*0.7);
+      const shell = new THREE.Mesh(buildingBox, buildingMat.clone());
+      shell.scale.set(w, h, d);
+      shell.position.set(x, h/2, z);
+      // window face (slightly inset for glow)
+      const glow = new THREE.Mesh(buildingBox, winMat.clone());
+      glow.scale.set(w*0.98, h*0.98, d*0.98);
+      glow.position.copy(shell.position);
+      // vary map repeat per building for scale
+      glow.material = winMat.clone();
+      glow.material.map = winTex.clone();
+      glow.material.map.needsUpdate = true;
+      glow.material.map.repeat.set(Math.max(1, Math.round(w/6)), Math.max(1, Math.round(h/8)));
+      glow.material.map.wrapS = glow.material.map.wrapT = THREE.RepeatWrapping;
+      cityGroup.add(shell); cityGroup.add(glow);
+      BUILDINGS.push({ mesh: shell, box: new THREE.Box3().setFromObject(shell) });
+    }
+  }
+}
+
+// stars
+const sg = new THREE.BufferGeometry();
+const sc = 900; const sp = new Float32Array(sc*3);
+for (let i=0;i<sc;i++){
+  sp[i*3]=(Math.random()-.5)*3000;
+  sp[i*3+1]= 200 + Math.random()*900;
+  sp[i*3+2]=(Math.random()-.5)*3000;
+}
+sg.setAttribute('position', new THREE.BufferAttribute(sp,3));
+const stars = new THREE.Points(sg, new THREE.PointsMaterial({ color:0xffffff, size:1.6, transparent:true, opacity:0.65 }));
+scene.add(stars);
+
+// distant moon (night only)
+const moon = new THREE.Mesh(
+  new THREE.CircleGeometry(140, 48),
+  new THREE.MeshBasicMaterial({ color:0xfff2d0, transparent:true, opacity:0.9 })
+);
+moon.position.set(-1400, 900, -1900); scene.add(moon);
+const moonHalo = new THREE.Mesh(
+  new THREE.CircleGeometry(340, 48),
+  new THREE.MeshBasicMaterial({ color:0xffddaa, transparent:true, opacity:0.15 })
+);
+moonHalo.position.copy(moon.position); moonHalo.position.z += 1; scene.add(moonHalo);
+
+// SUN (day)
+const sunSphere = new THREE.Mesh(
+  new THREE.CircleGeometry(180, 48),
+  new THREE.MeshBasicMaterial({ color:0xfff8ea, transparent:true, opacity:0.95 })
+);
+sunSphere.position.set(-1200, 950, -2100); scene.add(sunSphere);
+const sunHalo = new THREE.Mesh(
+  new THREE.CircleGeometry(520, 48),
+  new THREE.MeshBasicMaterial({ color:0xfff2b0, transparent:true, opacity:0.22 })
+);
+sunHalo.position.copy(sunSphere.position); sunHalo.position.z += 1; scene.add(sunHalo);
+
+// player thruster trails (behind camera)
+const TRAIL_MAX = 300;
+const trailG = new THREE.BufferGeometry();
+const trailP = new Float32Array(TRAIL_MAX*3);
+trailG.setAttribute('position', new THREE.BufferAttribute(trailP, 3));
+const trailAttr = trailG.attributes.position;
+const trail = new THREE.Points(trailG, new THREE.PointsMaterial({ color:0xffc857, size:2.4, transparent:true, opacity:0.85, blending:THREE.AdditiveBlending, depthWrite:false }));
+scene.add(trail);
+let trailIdx = 0;
+
+// repulsor bursts
+const shots = [];
+function fireRepulsor(){
+  // 40-particle burst forward from player
+  const forward = new THREE.Vector3(); camera.getWorldDirection(forward);
+  const g = new THREE.Group();
+  const geo = new THREE.BufferGeometry();
+  const N = 60;
+  const p = new Float32Array(N*3);
+  const dirs = [];
+  for (let i=0;i<N;i++){
+    p[i*3]=camera.position.x + forward.x*4;
+    p[i*3+1]=camera.position.y + forward.y*4;
+    p[i*3+2]=camera.position.z + forward.z*4;
+    const spread = 0.05;
+    dirs.push(forward.clone().add(new THREE.Vector3((Math.random()-.5)*spread,(Math.random()-.5)*spread,(Math.random()-.5)*spread)).normalize().multiplyScalar(6 + Math.random()*4));
+  }
+  geo.setAttribute('position', new THREE.BufferAttribute(p,3));
+  const mat = new THREE.PointsMaterial({ color:0x66ddff, size:3.5, transparent:true, opacity:1.0, blending:THREE.AdditiveBlending, depthWrite:false });
+  const pts = new THREE.Points(geo, mat);
+  scene.add(pts);
+  shots.push({pts, dirs, life:0});
+}
+function updateShots(dt){
+  for (let s=shots.length-1;s>=0;s--){
+    const sh = shots[s];
+    sh.life += dt;
+    const attr = sh.pts.geometry.attributes.position;
+    for (let i=0;i<sh.dirs.length;i++){
+      attr.array[i*3]   += sh.dirs[i].x;
+      attr.array[i*3+1] += sh.dirs[i].y;
+      attr.array[i*3+2] += sh.dirs[i].z;
+    }
+    attr.needsUpdate = true;
+    sh.pts.material.opacity = Math.max(0, 1 - sh.life*1.2);
+    if (sh.life > 1.1){ scene.remove(sh.pts); sh.pts.geometry.dispose(); sh.pts.material.dispose(); shots.splice(s,1); }
+  }
+}
+
+// POST
+const composer = new EffectComposer(renderer);
+composer.setSize(innerWidth, innerHeight);
+composer.addPass(new RenderPass(scene, camera));
+const bloom = new UnrealBloomPass(new THREE.Vector2(innerWidth,innerHeight), 0.85, 0.55, 0.15);
+composer.addPass(bloom);
+
+setSkyMood(false);
+
+// ─────────── CONTROLS ───────────
+const controls = new PointerLockControls(camera, document.body);
+scene.add(controls.getObject());
+const player = controls.getObject();
+player.position.set(0, 260, 400);
+
+const state = { fwd:0, back:0, left:0, right:0, up:0, down:0, boost:0 };
+const vel = new THREE.Vector3();
+const dir = new THREE.Vector3();
+
+function keyDown(e){
+  switch(e.code){
+    case 'KeyW': state.fwd=1; break;
+    case 'KeyS': state.back=1; break;
+    case 'KeyA': state.left=1; break;
+    case 'KeyD': state.right=1; break;
+    case 'Space': state.up=1; break;
+    case 'KeyC': state.down=1; break;
+    case 'ShiftLeft': case 'ShiftRight': state.boost=1; break;
+    case 'KeyN': setSkyMood(!NIGHT); document.getElementById('grid').textContent = 'MANHATTAN · ' + (NIGHT?'NIGHT':'DAY'); break;
+  }
+}
+function keyUp(e){
+  switch(e.code){
+    case 'KeyW': state.fwd=0; break;
+    case 'KeyS': state.back=0; break;
+    case 'KeyA': state.left=0; break;
+    case 'KeyD': state.right=0; break;
+    case 'Space': state.up=0; break;
+    case 'KeyC': state.down=0; break;
+    case 'ShiftLeft': case 'ShiftRight': state.boost=0; break;
+  }
+}
+addEventListener('keydown', keyDown);
+addEventListener('keyup', keyUp);
+
+document.addEventListener('mousedown', e=>{
+  if (!controls.isLocked) return;
+  fireRepulsor();
+  // damage/repulsor flash
+  const f = document.getElementById('flash');
+  f.classList.add('on'); setTimeout(()=>f.classList.remove('on'), 120);
+});
+
+// engage
+engage.addEventListener('click', ()=>{
+  controls.lock();
+});
+controls.addEventListener('lock', ()=>{
+  boot.classList.add('gone');
+  document.getElementById('hud').classList.add('on');
+  document.getElementById('reticle').classList.add('on');
+  document.getElementById('horizon').classList.add('on');
+  document.getElementById('thrust').classList.add('on');
+  document.getElementById('controls').classList.add('on');
+  document.getElementById('footer').classList.add('on');
+  document.getElementById('helmet').classList.add('on');
+  document.getElementById('cockpit').classList.add('on');
+  document.getElementById('reactor').classList.add('on');
+  showCenter('SUIT ONLINE', 1400);
+});
+controls.addEventListener('unlock', ()=>{
+  // fallback message
+  const ci = document.getElementById('center-info');
+  ci.textContent = 'Paused · click to re-engage';
+  ci.classList.add('show');
+});
+
+document.addEventListener('click', ()=>{ if (!controls.isLocked) controls.lock(); });
+
+function showCenter(text, ms){
+  const ci = document.getElementById('center-info');
+  ci.textContent = text; ci.classList.add('show');
+  setTimeout(()=>ci.classList.remove('show'), ms);
+}
+
+// ─────────── LOOP ───────────
+const clock = new THREE.Clock();
+function tick(){
+  const dt = Math.min(0.05, clock.getDelta());
+  const t  = clock.elapsedTime;
+
+  if (controls.isLocked){
+    // movement
+    const speedBase = 60;
+    const boostMul  = state.boost ? 3.2 : 1;
+    // damping
+    vel.multiplyScalar(1 - 3.0*dt);
+
+    // forward vector from camera
+    const fwd = new THREE.Vector3(); camera.getWorldDirection(fwd);
+    const right = new THREE.Vector3().crossVectors(fwd, camera.up).normalize();
+
+    if (state.fwd)   vel.addScaledVector(fwd,   speedBase*boostMul*dt);
+    if (state.back)  vel.addScaledVector(fwd,  -speedBase*boostMul*dt);
+    if (state.left)  vel.addScaledVector(right,-speedBase*boostMul*dt);
+    if (state.right) vel.addScaledVector(right, speedBase*boostMul*dt);
+    if (state.up)    vel.y += speedBase*1.6*dt;
+    if (state.down)  vel.y -= speedBase*1.4*dt;
+
+    // apply
+    player.position.addScaledVector(vel, dt);
+
+    // floor clamp
+    if (player.position.y < 6) player.position.y = 6;
+    if (player.position.y > 1200) player.position.y = 1200;
+    // world clamp
+    const R = 2500;
+    player.position.x = Math.max(-R, Math.min(R, player.position.x));
+    player.position.z = Math.max(-R, Math.min(R, player.position.z));
+
+    // thrust trail
+    const back = new THREE.Vector3().copy(fwd).multiplyScalar(-1);
+    trailAttr.array[trailIdx*3]   = player.position.x + back.x*3 + (Math.random()-.5)*1.2;
+    trailAttr.array[trailIdx*3+1] = player.position.y - 1 + (Math.random()-.5)*1.2;
+    trailAttr.array[trailIdx*3+2] = player.position.z + back.z*3 + (Math.random()-.5)*1.2;
+    trailIdx = (trailIdx+1) % TRAIL_MAX;
+    trailAttr.needsUpdate = true;
+
+    // HUD updates
+    const spd = vel.length();
+    document.getElementById('speed').textContent = String(Math.round(spd*3.6)).padStart(3,'0') + ' m/s';
+    document.getElementById('alt').textContent   = String(Math.round(player.position.y)).padStart(3,'0') + ' m';
+    // heading (camera yaw)
+    const yaw = ((Math.atan2(fwd.x, fwd.z) * 180 / Math.PI) + 360) % 360;
+    document.getElementById('heading').textContent = String(Math.round(yaw)).padStart(3,'0') + '°';
+    // thrust bar
+    const thrust = state.boost ? 100 : (state.fwd||state.up ? 65 : 30);
+    document.getElementById('thrustBar').style.width = thrust + '%';
+    document.getElementById('thrusterState').textContent = state.boost ? 'BOOST' : (state.fwd||state.up?'ACTIVE':'IDLE');
+  }
+
+  // shots
+  updateShots(dt);
+
+  // moon subtle drift
+  moon.position.x += Math.sin(t*0.02)*0.05;
+
+  composer.render();
+  requestAnimationFrame(tick);
+}
+requestAnimationFrame(tick);
+
+addEventListener('resize', ()=>{
+  renderer.setSize(innerWidth, innerHeight);
+  composer.setSize(innerWidth, innerHeight);
+  camera.aspect = innerWidth/innerHeight; camera.updateProjectionMatrix();
+});
+</script>
+
+</body>
+</html>

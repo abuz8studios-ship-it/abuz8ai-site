@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Budget Planner — ABUZ8</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--lapis:#0a1628;--lapis2:#0f1f3d;--lapis3:#162544;--gold:#c9a84c;--turq:#0e9f6e;--turq2:#22b5a0;--cream:#f5f0e8;--red:#e05252;--green:#3db87a;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--lapis);color:var(--cream);font-family:'Inter',sans-serif;min-height:100vh;}
+header{background:var(--lapis2);border-bottom:1px solid rgba(201,168,76,.15);padding:16px 32px;display:flex;align-items:center;gap:12px;}
+header h1{font-family:'Playfair Display',serif;font-size:1.4rem;color:var(--gold);}
+header span{background:var(--turq);color:#fff;font-size:11px;font-weight:600;padding:2px 8px;border-radius:20px;}
+.hero{text-align:center;padding:44px 20px 28px;}
+.hero h2{font-family:'Playfair Display',serif;font-size:2rem;color:var(--cream);margin-bottom:10px;}
+.hero p{color:rgba(245,240,232,.7);font-size:.95rem;max-width:480px;margin:0 auto;}
+.main{max-width:960px;margin:0 auto;padding:0 20px 80px;}
+.card{background:var(--lapis2);border:1px solid rgba(201,168,76,.12);border-radius:12px;padding:24px;}
+.card+.card{margin-top:16px;}
+label{display:block;font-size:12px;font-weight:700;color:var(--gold);margin-bottom:6px;letter-spacing:.05em;text-transform:uppercase;}
+input,select{width:100%;background:var(--lapis3);border:1px solid rgba(201,168,76,.2);border-radius:8px;padding:10px 14px;color:var(--cream);font-family:'Inter',sans-serif;font-size:14px;outline:none;transition:border .2s;}
+input:focus,select:focus{border-color:var(--gold);}
+input[type="range"]{padding:4px 0;background:none;border:none;cursor:pointer;}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:11px 22px;border-radius:8px;border:none;cursor:pointer;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;transition:all .2s;}
+.btn-gold{background:var(--gold);color:var(--lapis);}
+.btn-gold:hover{background:#e0bc5a;}
+.btn-outline{background:transparent;border:1px solid rgba(201,168,76,.3);color:var(--cream);}
+.btn-outline:hover{border-color:var(--gold);color:var(--gold);}
+.btn-sm{padding:6px 14px;font-size:12px;}
+.btn-danger{background:rgba(224,82,82,.15);border:1px solid rgba(224,82,82,.3);color:var(--red);}
+.btn-danger:hover{background:rgba(224,82,82,.25);}
+/* Income section */
+.income-row{display:flex;gap:10px;align-items:center;margin-bottom:8px;flex-wrap:wrap;}
+.income-row input{flex:1;min-width:120px;}
+.income-row select{max-width:130px;}
+/* Expense rows */
+.expense-row{display:flex;gap:8px;align-items:center;padding:10px;background:var(--lapis3);border-radius:8px;margin-bottom:6px;border:1px solid rgba(201,168,76,.08);}
+.expense-row input{flex:1;}
+.expense-row input.amount{max-width:110px;}
+.expense-row select{max-width:120px;}
+.cat-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+/* Summary dashboard */
+.summary-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px;}
+.sum-card{background:var(--lapis3);border:1px solid rgba(201,168,76,.1);border-radius:10px;padding:14px;text-align:center;}
+.sum-val{font-size:1.4rem;font-weight:700;}
+.sum-val.green{color:var(--green);}
+.sum-val.red{color:var(--red);}
+.sum-val.gold{color:var(--gold);}
+.sum-val.turq{color:var(--turq2);}
+.sum-lbl{font-size:11px;color:rgba(245,240,232,.45);text-transform:uppercase;letter-spacing:.05em;margin-top:3px;}
+/* Donut chart */
+.chart-section{display:flex;gap:24px;align-items:flex-start;flex-wrap:wrap;margin-bottom:20px;}
+canvas#donutChart{flex-shrink:0;}
+.legend{flex:1;min-width:180px;}
+.legend-item{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.legend-dot{width:12px;height:12px;border-radius:50%;flex-shrink:0;}
+.legend-label{flex:1;font-size:13px;color:var(--cream);}
+.legend-pct{font-size:12px;color:rgba(245,240,232,.5);}
+/* Advice */
+.advice-box{background:var(--lapis3);border-left:3px solid var(--turq2);border-radius:0 8px 8px 0;padding:14px;margin-bottom:10px;}
+.advice-box .adv-title{font-size:11px;font-weight:700;color:var(--turq2);letter-spacing:.07em;text-transform:uppercase;margin-bottom:5px;}
+.advice-box .adv-text{font-size:13px;line-height:1.7;color:rgba(245,240,232,.8);}
+.advice-box.warn{border-color:var(--red);}
+.advice-box.warn .adv-title{color:var(--red);}
+.advice-box.tip{border-color:var(--gold);}
+.advice-box.tip .adv-title{color:var(--gold);}
+/* Savings goal */
+.goal-bar{background:rgba(255,255,255,.06);border-radius:6px;height:8px;overflow:hidden;margin-top:6px;}
+.goal-fill{height:100%;border-radius:6px;background:linear-gradient(90deg,var(--turq),var(--gold));transition:width .5s;}
+/* Tabs */
+.tabs{display:flex;gap:0;border-bottom:1px solid rgba(201,168,76,.12);margin-bottom:20px;}
+.tab{padding:10px 18px;cursor:pointer;font-size:13px;font-weight:600;color:rgba(245,240,232,.45);border-bottom:2px solid transparent;transition:all .2s;}
+.tab.active{color:var(--gold);border-bottom-color:var(--gold);}
+.pane{display:none;}
+.pane.active{display:block;}
+/* Waitlist */
+.waitlist{background:linear-gradient(135deg,var(--lapis2),var(--lapis3));border:1px solid rgba(201,168,76,.2);border-radius:12px;padding:28px;text-align:center;margin-top:16px;}
+.waitlist h3{font-family:'Playfair Display',serif;font-size:1.3rem;color:var(--gold);margin-bottom:8px;}
+.waitlist p{color:rgba(245,240,232,.7);margin-bottom:16px;font-size:14px;}
+.wl-form{display:flex;gap:10px;max-width:380px;margin:0 auto;flex-wrap:wrap;}
+.wl-form input{flex:1;min-width:180px;}
+.wl-success{color:var(--turq2);font-weight:600;display:none;}
+</style>
+<link rel="canonical" href="https://abuz8ai.com/tools/ai-budget-planner">
+<meta name="description" content="AI Budget Planner — Simple personal budgets. Free, no signup, runs entirely in your browser. One of 169 free AI and developer tools by ABUZ8.">
+</head>
+<body>
+<header>
+  <h1>⚡ ABUZ8</h1>
+  <span>AI BUDGET PLANNER</span>
+</header>
+<div class="hero">
+  <h2>Take Control of Your Money</h2>
+  <p>Enter your income and expenses — get a complete budget analysis, spending breakdown, and AI savings advice.</p>
+</div>
+<div class="main">
+  <div class="card">
+    <!-- Income -->
+    <div style="margin-bottom:20px;">
+      <label>💰 Monthly Income (after tax)</label>
+      <div class="income-row">
+        <input type="number" id="income" placeholder="e.g. 4500" min="0" step="50" value="">
+        <select id="currency">
+          <option value="$">$ USD</option>
+          <option value="£">£ GBP</option>
+          <option value="€">€ EUR</option>
+          <option value="C$">C$ CAD</option>
+          <option value="A$">A$ AUD</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Expenses -->
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px;">
+      <label style="margin:0;">📊 Monthly Expenses</label>
+      <button class="btn btn-outline btn-sm" onclick="addExpense()">+ Add Expense</button>
+    </div>
+    <div id="expenseList"></div>
+
+    <!-- Savings goal -->
+    <div style="margin-top:20px;">
+      <label>🎯 Savings Goal / Month</label>
+      <input type="number" id="savingsGoal" placeholder="e.g. 500" min="0" step="50">
+    </div>
+
+    <div style="margin-top:18px;display:flex;gap:12px;flex-wrap:wrap;">
+      <button class="btn btn-gold" onclick="analyzeBudget()">📊 Analyze My Budget</button>
+      <button class="btn btn-outline" onclick="loadExample()">Load Example</button>
+      <button class="btn btn-outline" onclick="clearAll()">Clear All</button>
+    </div>
+  </div>
+
+  <div class="card" id="analysisArea" style="display:none;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:10px;">
+      <h3 style="font-family:'Playfair Display',serif;font-size:1.3rem;color:var(--gold);">Budget Analysis</h3>
+      <button class="btn btn-gold btn-sm" onclick="exportBudget()">⬇ Export Report</button>
+    </div>
+
+    <div class="summary-grid" id="summaryGrid"></div>
+
+    <div class="tabs">
+      <div class="tab active" onclick="setTab('breakdown',this)">📊 Breakdown</div>
+      <div class="tab" onclick="setTab('advice',this)">💡 AI Advice</div>
+      <div class="tab" onclick="setTab('goals',this)">🎯 Savings Goals</div>
+    </div>
+
+    <div class="pane active" id="pane-breakdown">
+      <div class="chart-section">
+        <canvas id="donutChart" width="180" height="180"></canvas>
+        <div class="legend" id="chartLegend"></div>
+      </div>
+      <div id="expenseTable"></div>
+    </div>
+    <div class="pane" id="pane-advice" ></div>
+    <div class="pane" id="pane-goals"></div>
+  </div>
+
+  <div class="waitlist">
+    <h3>🚀 Automatic Bank Sync + AI Forecasting</h3>
+    <p>Join for real-time transaction syncing, spending alerts, and an AI that predicts your financial future.</p>
+    <div class="wl-form">
+      <input type="email" id="wlEmail" placeholder="your@email.com">
+      <button class="btn btn-gold" onclick="joinWaitlist()">Join Waitlist</button>
+    </div>
+    <div class="wl-success" id="wlSuccess">✓ You're on the list!</div>
+  </div>
+</div>
+
+<script src="_abuz8-live-brain.js" defer></script>
+<script>
+const CATEGORIES = [
+  {id:'housing',label:'🏠 Housing',color:'#4a90d9'},
+  {id:'food',label:'🍔 Food & Dining',color:'#c9a84c'},
+  {id:'transport',label:'🚗 Transport',color:'#22b5a0'},
+  {id:'utilities',label:'⚡ Utilities',color:'#6b4fa8'},
+  {id:'health',label:'💊 Health',color:'#e05252'},
+  {id:'entertainment',label:'🎬 Entertainment',color:'#f06292'},
+  {id:'shopping',label:'🛍 Shopping',color:'#ff9800'},
+  {id:'subscriptions',label:'📺 Subscriptions',color:'#26a69a'},
+  {id:'savings',label:'💰 Savings',color:'#3db87a'},
+  {id:'education',label:'📚 Education',color:'#9c27b0'},
+  {id:'insurance',label:'🛡 Insurance',color:'#607d8b'},
+  {id:'other',label:'📦 Other',color:'#78909c'},
+];
+
+let expenses = [];
+
+const DEFAULT_EXPENSES = [
+  {name:'Rent / Mortgage',amount:1200,cat:'housing'},
+  {name:'Groceries',amount:350,cat:'food'},
+  {name:'Car payment / Insurance',amount:280,cat:'transport'},
+  {name:'Electricity & Gas',amount:90,cat:'utilities'},
+  {name:'Internet & Phone',amount:70,cat:'subscriptions'},
+  {name:'Netflix / Spotify / Apps',amount:35,cat:'subscriptions'},
+  {name:'Gym membership',amount:40,cat:'health'},
+  {name:'Dining out',amount:150,cat:'food'},
+  {name:'Clothing',amount:80,cat:'shopping'},
+];
+
+function getCat(id) { return CATEGORIES.find(c=>c.id===id) || CATEGORIES[CATEGORIES.length-1]; }
+
+function addExpense(name='',amount='',cat='other') {
+  const id = 'exp'+Date.now()+Math.random();
+  expenses.push({id,name,amount,cat});
+  renderExpenses();
+}
+
+function removeExpense(id) {
+  expenses = expenses.filter(e=>e.id!==id);
+  renderExpenses();
+}
+
+function getExpenseValues() {
+  return expenses.map(e => {
+    const row = document.getElementById('row_'+e.id);
+    if(!row) return null;
+    return {
+      id: e.id,
+      name: row.querySelector('.exp-name').value,
+      amount: parseFloat(row.querySelector('.exp-amount').value)||0,
+      cat: row.querySelector('.exp-cat').value,
+    };
+  }).filter(Boolean);
+}
+
+function renderExpenses() {
+  const list = document.getElementById('expenseList');
+  list.innerHTML = expenses.map(e=>`
+    <div class="expense-row" id="row_${e.id}">
+      <div class="cat-dot" style="background:${getCat(e.cat).color}"></div>
+      <input class="exp-name" type="text" placeholder="Expense name" value="${e.name}">
+      <input class="exp-amount amount" type="number" placeholder="$0" value="${e.amount||''}" min="0" step="5">
+      <select class="exp-cat">
+        ${CATEGORIES.map(c=>`<option value="${c.id}" ${e.cat===c.id?'selected':''}>${c.label}</option>`).join('')}
+      </select>
+      <button class="btn btn-danger btn-sm" onclick="removeExpense('${e.id}')">×</button>
+    </div>`).join('');
+
+  // Update cat dots on select change
+  list.querySelectorAll('.exp-cat').forEach((sel,i) => {
+    sel.addEventListener('change', ()=>{
+      const dot = sel.closest('.expense-row').querySelector('.cat-dot');
+      dot.style.background = getCat(sel.value).color;
+      expenses[i].cat = sel.value;
+    });
+  });
+}
+
+function loadExample() {
+  document.getElementById('income').value = '4500';
+  document.getElementById('savingsGoal').value = '500';
+  expenses = DEFAULT_EXPENSES.map(e=>({...e,id:'exp'+Date.now()+Math.random()}));
+  renderExpenses();
+}
+
+function clearAll() {
+  expenses=[];
+  document.getElementById('income').value='';
+  document.getElementById('savingsGoal').value='';
+  renderExpenses();
+  document.getElementById('analysisArea').style.display='none';
+}
+
+function analyzeBudget() {
+  const income = parseFloat(document.getElementById('income').value)||0;
+  const goal = parseFloat(document.getElementById('savingsGoal').value)||0;
+  const sym = document.getElementById('currency').value;
+  const items = getExpenseValues();
+  if(!income) { alert('Please enter your monthly income.'); return; }
+  if(!items.length) { alert('Please add at least one expense.'); return; }
+
+  const totalExp = items.reduce((s,e)=>s+e.amount, 0);
+  const leftover = income - totalExp;
+  const savingsPct = income > 0 ? Math.round(leftover/income*100) : 0;
+  const expPct = income > 0 ? Math.round(totalExp/income*100) : 0;
+
+  // Summary
+  document.getElementById('summaryGrid').innerHTML = `
+    <div class="sum-card"><div class="sum-val gold">${sym}${income.toLocaleString()}</div><div class="sum-lbl">Monthly Income</div></div>
+    <div class="sum-card"><div class="sum-val red">${sym}${totalExp.toLocaleString()}</div><div class="sum-lbl">Total Expenses</div></div>
+    <div class="sum-card"><div class="sum-val ${leftover>=0?'green':'red'}">${sym}${Math.abs(leftover).toLocaleString()}</div><div class="sum-lbl">${leftover>=0?'Remaining':'Overspend'}</div></div>
+    <div class="sum-card"><div class="sum-val ${savingsPct>=20?'green':savingsPct>=10?'turq':'red'}">${savingsPct}%</div><div class="sum-lbl">Savings Rate</div></div>
+  `;
+
+  // Group by category
+  const byCat = {};
+  items.forEach(e => {
+    if(!byCat[e.cat]) byCat[e.cat]={total:0,items:[]};
+    byCat[e.cat].total+=e.amount;
+    byCat[e.cat].items.push(e);
+  });
+  const catEntries = Object.entries(byCat).sort((a,b)=>b[1].total-a[1].total);
+
+  // Donut chart
+  drawDonut(catEntries, totalExp);
+
+  // Legend
+  document.getElementById('chartLegend').innerHTML = catEntries.map(([catId,data])=>{
+    const cat = getCat(catId);
+    const pct = totalExp>0?Math.round(data.total/totalExp*100):0;
+    return `<div class="legend-item">
+      <div class="legend-dot" style="background:${cat.color}"></div>
+      <div class="legend-label">${cat.label.split(' ').slice(1).join(' ')}</div>
+      <div class="legend-pct">${sym}${data.total} (${pct}%)</div>
+    </div>`;
+  }).join('');
+
+  // Expense table
+  document.getElementById('expenseTable').innerHTML = `
+    <table style="width:100%;border-collapse:collapse;font-size:13px;">
+      <thead><tr>
+        <th style="text-align:left;padding:8px;border-bottom:1px solid rgba(201,168,76,.15);color:var(--gold);font-size:11px;letter-spacing:.06em;">CATEGORY</th>
+        <th style="text-align:right;padding:8px;border-bottom:1px solid rgba(201,168,76,.15);color:var(--gold);font-size:11px;letter-spacing:.06em;">AMOUNT</th>
+        <th style="text-align:right;padding:8px;border-bottom:1px solid rgba(201,168,76,.15);color:var(--gold);font-size:11px;letter-spacing:.06em;">% OF INCOME</th>
+      </tr></thead>
+      <tbody>${catEntries.map(([catId,data])=>{
+        const cat=getCat(catId);
+        const pct=income>0?Math.round(data.total/income*100):0;
+        return `<tr>
+          <td style="padding:8px;border-bottom:1px solid rgba(255,255,255,.04);">${cat.label}</td>
+          <td style="padding:8px;text-align:right;border-bottom:1px solid rgba(255,255,255,.04);">${sym}${data.total}</td>
+          <td style="padding:8px;text-align:right;border-bottom:1px solid rgba(255,255,255,.04);color:${pct>30?'var(--red)':pct>20?'var(--gold)':'var(--turq2)'};">${pct}%</td>
+        </tr>`;}).join('')}
+      </tbody>
+    </table>`;
+
+  // AI Advice
+  const advice = generateAdvice(income, totalExp, leftover, byCat, goal, sym);
+  document.getElementById('pane-advice').innerHTML = advice;
+
+  // Savings goals
+  const goalsMet = goal > 0 && leftover >= goal;
+  const goalsHTML = generateGoals(income, leftover, goal, sym, goalsMet);
+  document.getElementById('pane-goals').innerHTML = goalsHTML;
+
+  document.getElementById('analysisArea').style.display='block';
+  document.getElementById('analysisArea').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function drawDonut(catEntries, total) {
+  const canvas = document.getElementById('donutChart');
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0,0,180,180);
+  let start = -Math.PI/2;
+  catEntries.forEach(([catId,data]) => {
+    const cat = getCat(catId);
+    const angle = total>0 ? (data.total/total)*Math.PI*2 : 0;
+    ctx.beginPath();
+    ctx.moveTo(90,90);
+    ctx.arc(90,90,80,start,start+angle);
+    ctx.fillStyle = cat.color;
+    ctx.fill();
+    start+=angle;
+  });
+  // Donut hole
+  ctx.beginPath();
+  ctx.arc(90,90,50,0,Math.PI*2);
+  ctx.fillStyle = '#0f1f3d';
+  ctx.fill();
+  // Center text
+  ctx.fillStyle='#c9a84c';
+  ctx.font='bold 16px Inter';
+  ctx.textAlign='center';
+  ctx.fillText(`$${total}`,90,88);
+  ctx.fillStyle='rgba(245,240,232,.45)';
+  ctx.font='11px Inter';
+  ctx.fillText('total/mo',90,104);
+}
+
+function generateAdvice(income, totalExp, leftover, byCat, goal, sym) {
+  const boxes = [];
+  const savRate = income>0?leftover/income*100:0;
+
+  if(leftover < 0) {
+    boxes.push({type:'warn', title:'⚠️ Overspending Alert', text:`You\'re spending ${sym}${Math.abs(leftover).toFixed(0)} more than you earn. This is unsustainable. Identify your top 2-3 expense categories and find immediate cuts.`});
+  } else if(savRate < 10) {
+    boxes.push({type:'warn', title:'⚠️ Low Savings Rate', text:`Your savings rate is only ${savRate.toFixed(0)}%. Financial experts recommend saving at least 20% of income (the 50/30/20 rule). You have ${sym}${leftover.toFixed(0)}/month available to grow.`});
+  } else if(savRate >= 20) {
+    boxes.push({type:'', title:'✅ Healthy Savings Rate', text:`Your ${savRate.toFixed(0)}% savings rate puts you ahead of most people. Keep up this discipline and consider investing the surplus in index funds or a high-yield savings account.`});
+  }
+
+  // Rule-based advice per category
+  const housing = byCat.housing?.total||0;
+  if(housing/income > 0.35) boxes.push({type:'warn',title:'🏠 Housing Over 35%',text:`Housing takes ${Math.round(housing/income*100)}% of your income. The recommended cap is 30%. Consider roommates, a cheaper area, or refinancing to reclaim ${sym}${Math.round(housing-(income*.3))} per month.`});
+
+  const food = (byCat.food?.total||0);
+  if(food/income > 0.2) boxes.push({type:'tip',title:'🍔 Food Spending High',text:`Food is ${Math.round(food/income*100)}% of income. Meal prepping on weekends can cut dining costs by 40-60%. Aim to keep food under 15% of take-home pay.`});
+
+  const subs = byCat.subscriptions?.total||0;
+  if(subs > 80) boxes.push({type:'tip',title:'📺 Subscription Audit',text:`You\'re spending ${sym}${subs}/month on subscriptions. Do a quick audit: cancel anything unused for 30+ days. Most people save ${sym}40-80/month from this alone.`});
+
+  boxes.push({type:'tip',title:'💡 50/30/20 Check', text:`Your split: Needs ${Math.round(totalExp/income*100)}% · Savings ${Math.round(savRate)}%. Ideal is: 50% needs, 30% wants, 20% savings. ${savRate<20?`You need to redirect ${sym}${Math.round(income*.2-leftover).toFixed(0)} more to savings.`:'You\'re on track!'}`});
+
+  boxes.push({type:'tip',title:'📈 Next Step',text:`Build a ${sym}${(income*3).toLocaleString()} emergency fund (3 months of expenses) first. Then route surplus to: HYSA for short-term, index ETFs for long-term. Automate transfers on payday.`});
+
+  return boxes.map(b=>`<div class="advice-box ${b.type}"><div class="adv-title">${b.title}</div><div class="adv-text">${b.text}</div></div>`).join('');
+}
+
+function generateGoals(income, leftover, goal, sym, met) {
+  const timeToGoals = [
+    {name:'Emergency Fund (3 months)',amount:income*3},
+    {name:'New Laptop / Tech',amount:1500},
+    {name:'Vacation Fund',amount:2000},
+    {name:'New Car Down Payment',amount:5000},
+    {name:'Home Down Payment (5%)',amount:income*12},
+  ];
+
+  const monthlyContrib = Math.max(leftover, 0);
+  return `
+    <div style="margin-bottom:16px;">
+      <div style="font-size:13px;color:rgba(245,240,232,.7);margin-bottom:8px;">
+        With <strong style="color:var(--gold)">${sym}${monthlyContrib.toFixed(0)}/month</strong> available, here\'s how long to reach common goals:
+      </div>
+      ${goal > 0 ? `
+        <div style="background:var(--lapis3);border-radius:8px;padding:14px;margin-bottom:12px;">
+          <div style="font-size:13px;font-weight:600;margin-bottom:6px;">Your Goal: ${sym}${goal}/month savings</div>
+          <div style="font-size:12px;color:rgba(245,240,232,.5);margin-bottom:6px;">${met?'✅ Goal achievable with current budget':'⚠️ Shortfall: '+sym+(goal-leftover).toFixed(0)+'/month'}</div>
+          <div class="goal-bar"><div class="goal-fill" style="width:${Math.min(100,monthlyContrib>0?Math.round(Math.min(monthlyContrib,goal)/goal*100):0)}%"></div></div>
+        </div>` : ''}
+      ${timeToGoals.map(g=>{
+        const months = monthlyContrib>0?Math.ceil(g.amount/monthlyContrib):999;
+        const pct = monthlyContrib>0?Math.min(100,Math.round((monthlyContrib/g.amount)*100)):0;
+        return `
+          <div style="background:var(--lapis3);border-radius:8px;padding:12px;margin-bottom:8px;">
+            <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
+              <div style="font-size:13px;font-weight:600;">${g.name}</div>
+              <div style="font-size:12px;color:var(--gold);">${sym}${g.amount.toLocaleString()}</div>
+            </div>
+            <div style="font-size:12px;color:rgba(245,240,232,.5);margin-bottom:6px;">${months<999?months+' months':monthlyContrib<=0?'Increase income/cut expenses':'Goal too large'} ${months<=12?'🎯':months<=24?'📅':'📊'}</div>
+            <div class="goal-bar"><div class="goal-fill" style="width:${pct}%"></div></div>
+          </div>`;
+      }).join('')}`;
+}
+
+function setTab(id, el) {
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.pane').forEach(p=>p.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('pane-'+id).classList.add('active');
+}
+
+function exportBudget() {
+  const income = parseFloat(document.getElementById('income').value)||0;
+  const sym = document.getElementById('currency').value;
+  const items = getExpenseValues();
+  const total = items.reduce((s,e)=>s+e.amount,0);
+  const lines = [`BUDGET REPORT — Generated by ABUZ8 AI Budget Planner\n${'='.repeat(50)}\n`,`Monthly Income: ${sym}${income}`,`Total Expenses: ${sym}${total}`,`Remaining: ${sym}${income-total}`,`Savings Rate: ${income>0?Math.round((income-total)/income*100):0}%\n`,'EXPENSE BREAKDOWN\n'+'-'.repeat(30),...items.map(e=>`  ${e.name}: ${sym}${e.amount} (${getCat(e.cat).label})`)];
+  const blob = new Blob([lines.join('\n')],{type:'text/plain'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='budget-report.txt';a.click();
+}
+
+function joinWaitlist() {
+  const email = document.getElementById('wlEmail').value.trim();
+  if(!email||!email.includes('@')) { alert('Please enter a valid email.'); return; }
+  fetch('/api/waitlist',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,product:'ai-budget-planner',ts:Date.now()})}).catch(()=>{});
+  document.getElementById('wlEmail').value='';
+  document.querySelector('.wl-form').style.display='none';
+  document.getElementById('wlSuccess').style.display='block';
+}
+
+// Init with empty list
+renderExpenses();
+</script>
+
+<script src="/assets/js/dfy-banner.js" async></script>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+<script src="/tools/_tools-shared.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>
+

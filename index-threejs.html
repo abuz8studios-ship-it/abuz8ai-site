@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ABUZ8 AI — Sovereign AI, Powered by Nanotech</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100vh;
+            overflow: hidden;
+            background: #05080a;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            color: #f5f0e8;
+        }
+
+        /* Three.js WebGL Container */
+        #webgl-container {
+            width: 100%;
+            height: 100%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1;
+        }
+
+        /* Content Overlay */
+        #content-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 10;
+            pointer-events: none;
+            overflow: auto;
+        }
+
+        /* Nav */
+        nav {
+            position: relative;
+            z-index: 20;
+            pointer-events: all;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 24px 32px;
+            background: rgba(5, 8, 10, 0.7);
+            backdrop-filter: blur(8px);
+            border-bottom: 1px solid rgba(201, 168, 76, 0.15);
+        }
+
+        .logo {
+            font-size: 20px;
+            font-weight: 700;
+            color: #c9a84c;
+            letter-spacing: 2px;
+        }
+
+        nav a {
+            color: #f5f0e8;
+            text-decoration: none;
+            font-size: 13px;
+            margin: 0 16px;
+            transition: color 0.3s;
+            pointer-events: all;
+        }
+
+        nav a:hover {
+            color: #c9a84c;
+        }
+
+        .nav-cta {
+            background: linear-gradient(135deg, #c9a84c, #1a8a7a);
+            padding: 8px 16px;
+            border-radius: 4px;
+            color: #05080a !important;
+            font-weight: 600;
+            transition: transform 0.3s;
+        }
+
+        .nav-cta:hover {
+            transform: translateY(-2px);
+        }
+
+        /* Hero Content */
+        .hero {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: calc(100vh - 80px);
+            text-align: center;
+            pointer-events: auto;
+            position: relative;
+            z-index: 15;
+        }
+
+        .hero-eyebrow {
+            font-size: 12px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: #1a8a7a;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        h1 {
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            line-height: 1.2;
+            margin-bottom: 20px;
+            max-width: 900px;
+            font-weight: 700;
+        }
+
+        h1 .gold {
+            color: #c9a84c;
+        }
+
+        h1 .green {
+            color: #1a8a7a;
+        }
+
+        .hero-desc {
+            font-size: 16px;
+            color: #b0a89a;
+            max-width: 680px;
+            line-height: 1.7;
+            margin: 24px auto 32px;
+        }
+
+        .hero-btns {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 32px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border-radius: 4px;
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            text-decoration: none;
+            cursor: pointer;
+            border: 1px solid transparent;
+            transition: all 0.3s;
+            pointer-events: all;
+        }
+
+        .btn-gold {
+            background: linear-gradient(135deg, #c9a84c, #a48536);
+            color: #05080a;
+            box-shadow: 0 8px 24px rgba(201, 168, 76, 0.3);
+        }
+
+        .btn-gold:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 36px rgba(201, 168, 76, 0.5);
+        }
+
+        .btn-green {
+            background: linear-gradient(135deg, #1a8a7a, #0f5a4f);
+            color: #f5f0e8;
+            border-color: #1a8a7a;
+        }
+
+        .btn-green:hover {
+            background: linear-gradient(135deg, #1a9a8a, #0f6a5f);
+            transform: translateY(-3px);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: #c9a84c;
+            border-color: #c9a84c;
+        }
+
+        .btn-outline:hover {
+            background: rgba(201, 168, 76, 0.1);
+            transform: translateY(-3px);
+        }
+
+        /* HUD Elements */
+        .hud-panel {
+            position: absolute;
+            border: 1px solid rgba(26, 138, 122, 0.3);
+            background: rgba(5, 8, 10, 0.6);
+            backdrop-filter: blur(8px);
+            padding: 12px;
+            border-radius: 2px;
+            font-size: 11px;
+            color: #1a8a7a;
+            font-family: 'Courier New', monospace;
+            pointer-events: none;
+            animation: flicker 3s infinite;
+        }
+
+        .hud-panel.top-left {
+            top: 120px;
+            left: 32px;
+        }
+
+        .hud-panel.top-right {
+            top: 180px;
+            right: 32px;
+        }
+
+        .hud-panel.bottom-left {
+            bottom: 120px;
+            left: 32px;
+        }
+
+        @keyframes flicker {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
+
+        /* Particles / Glow */
+        .glow-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(60px);
+            opacity: 0.3;
+            z-index: 0;
+            pointer-events: none;
+            animation: float 20s infinite ease-in-out;
+        }
+
+        .glow-1 {
+            width: 400px;
+            height: 400px;
+            background: #1a8a7a;
+            top: 20%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .glow-2 {
+            width: 300px;
+            height: 300px;
+            background: #c9a84c;
+            top: 50%;
+            right: 15%;
+            animation-delay: 5s;
+        }
+
+        .glow-3 {
+            width: 350px;
+            height: 350px;
+            background: #1a8a7a;
+            bottom: 10%;
+            left: 30%;
+            animation-delay: 10s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0); }
+            33% { transform: translate(30px, -30px); }
+            66% { transform: translate(-20px, 40px); }
+        }
+    </style>
+</head>
+<body>
+    <!-- WebGL Container (Three.js renders here) -->
+    <div id="webgl-container"></div>
+
+    <!-- Glow effects -->
+    <div class="glow-orb glow-1"></div>
+    <div class="glow-orb glow-2"></div>
+    <div class="glow-orb glow-3"></div>
+
+    <!-- Content Overlay -->
+    <div id="content-overlay">
+        <nav>
+            <div class="logo">ABUZ8</div>
+            <div style="display: flex; gap: 8px; align-items: center;">
+                <a href="#tools">Tools</a>
+                <a href="#store">Store</a>
+                <a href="#agents">Agents</a>
+                <a href="#models">Models</a>
+                <a href="#news">News</a>
+                <a href="#roadmap">Roadmap</a>
+                <a href="#store" class="nav-cta">Get Started</a>
+            </div>
+        </nav>
+
+        <section class="hero">
+            <div class="hero-eyebrow">Sovereign AI for Everyone</div>
+            <h1>AI you <span class="gold">own</span>.<br>Models you run <span class="green">on your own hardware</span>.</h1>
+            <p class="hero-desc">ABUZ8 builds local-first AI: free tools, practical guides, and real products — tested on real hardware. No cloud lock-in. No fluff. No fake promises.</p>
+            <div class="hero-btns">
+                <a href="#store" class="btn btn-gold">Browse the Store</a>
+                <a href="#tools" class="btn btn-green">171 Free Tools</a>
+                <a href="#mission" class="btn btn-outline">The Mission</a>
+            </div>
+        </section>
+
+        <!-- HUD Info Panels -->
+        <div class="hud-panel top-left">
+            <div>STATUS: NANOTECH ACTIVE</div>
+            <div style="margin-top: 6px;">CORES: 128 | RAM: INFINITE</div>
+            <div style="margin-top: 6px; color: #c9a84c;">OPTIMIZATION: 99.7%</div>
+        </div>
+
+        <div class="hud-panel top-right">
+            <div>LOCAL BRAIN STATUS</div>
+            <div style="margin-top: 6px;">MODELS: 13 ACTIVE</div>
+            <div style="margin-top: 6px; color: #c9a84c;">INFERENCE: LIVE</div>
+        </div>
+
+        <div class="hud-panel bottom-left">
+            <div>SOVEREIGN AI CORE</div>
+            <div style="margin-top: 6px;">HARDWARE: DUAL RTX 5090</div>
+            <div style="margin-top: 6px; color: #c9a84c;">LOCATION: OHIO, USA</div>
+        </div>
+    </div>
+
+    <!-- Three.js Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+    <script>
+        // Scene Setup
+        const container = document.getElementById('webgl-container');
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setClearColor(0x05080a, 1);
+        renderer.shadowMap.enabled = true;
+        container.appendChild(renderer.domElement);
+
+        camera.position.z = 5;
+
+        // Lighting
+        const ambientLight = new THREE.AmbientLight(0x1a8a7a, 0.4);
+        scene.add(ambientLight);
+
+        const pointLight1 = new THREE.PointLight(0xc9a84c, 1, 100);
+        pointLight1.position.set(5, 5, 5);
+        scene.add(pointLight1);
+
+        const pointLight2 = new THREE.PointLight(0x1a8a7a, 0.8, 100);
+        pointLight2.position.set(-5, -5, 5);
+        scene.add(pointLight2);
+
+        // Particle System
+        const particleCount = 1000;
+        const particleGeometry = new THREE.BufferGeometry();
+        const positions = new Float32Array(particleCount * 3);
+        const velocities = new Float32Array(particleCount * 3);
+
+        for (let i = 0; i < particleCount * 3; i += 3) {
+            positions[i] = (Math.random() - 0.5) * 20;
+            positions[i + 1] = (Math.random() - 0.5) * 20;
+            positions[i + 2] = (Math.random() - 0.5) * 20;
+
+            velocities[i] = (Math.random() - 0.5) * 0.02;
+            velocities[i + 1] = (Math.random() - 0.5) * 0.02;
+            velocities[i + 2] = (Math.random() - 0.5) * 0.02;
+        }
+
+        particleGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+
+        const particleMaterial = new THREE.PointsMaterial({
+            color: 0x1a8a7a,
+            size: 0.05,
+            transparent: true,
+            opacity: 0.6,
+            sizeAttenuation: true
+        });
+
+        const particles = new THREE.Points(particleGeometry, particleMaterial);
+        scene.add(particles);
+
+        // Rotating Cube (central element)
+        const cubeGeometry = new THREE.BoxGeometry(2, 2, 2);
+        const cubeMaterial = new THREE.MeshPhongMaterial({
+            color: 0xc9a84c,
+            emissive: 0x1a8a7a,
+            wireframe: false,
+            shininess: 100,
+        });
+        const cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
+        scene.add(cube);
+
+        // Wireframe overlay
+        const wireframeGeometry = new THREE.BoxGeometry(2, 2, 2);
+        const wireframeMaterial = new THREE.LineBasicMaterial({ color: 0x1a8a7a, linewidth: 2 });
+        const wireframe = new THREE.LineSegments(wireframeGeometry, wireframeMaterial);
+        cube.add(wireframe);
+
+        // Torus (ring around cube)
+        const torusGeometry = new THREE.TorusGeometry(3, 0.1, 16, 100);
+        const torusMaterial = new THREE.MeshPhongMaterial({
+            color: 0x1a8a7a,
+            emissive: 0xc9a84c,
+        });
+        const torus = new THREE.Mesh(torusGeometry, torusMaterial);
+        torus.rotation.x = Math.PI / 4;
+        scene.add(torus);
+
+        // Animation Loop
+        function animate() {
+            requestAnimationFrame(animate);
+
+            // Rotate cube
+            cube.rotation.x += 0.003;
+            cube.rotation.y += 0.005;
+            cube.rotation.z += 0.002;
+
+            // Rotate torus
+            torus.rotation.x += 0.002;
+            torus.rotation.z += 0.003;
+
+            // Update particles
+            const posAttr = particleGeometry.attributes.position;
+            for (let i = 0; i < particleCount * 3; i += 3) {
+                posAttr.array[i] += velocities[i];
+                posAttr.array[i + 1] += velocities[i + 1];
+                posAttr.array[i + 2] += velocities[i + 2];
+
+                // Bounce particles
+                if (Math.abs(posAttr.array[i]) > 10) velocities[i] *= -1;
+                if (Math.abs(posAttr.array[i + 1]) > 10) velocities[i + 1] *= -1;
+                if (Math.abs(posAttr.array[i + 2]) > 10) velocities[i + 2] *= -1;
+            }
+            posAttr.needsUpdate = true;
+
+            // Pulse emission
+            particleMaterial.opacity = 0.6 + 0.2 * Math.sin(Date.now() * 0.001);
+
+            renderer.render(scene, camera);
+        }
+
+        animate();
+
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+    </script>
+</body>
+</html>

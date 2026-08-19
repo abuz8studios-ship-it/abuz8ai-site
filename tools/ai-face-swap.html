@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Face Swap — Photo & Video Face Replacement | ABUZ8</title>
+<meta name="description" content="AI face swap powered by ComfyUI + IP-adapter. Swap faces in photos and videos with consistent identity. Ethics-first — only your own faces, with consent. Join the early-access list.">
+<meta name="keywords" content="ai face swap, face replacement ai, photo face swap, video face swap, ip-adapter face, comfyui face swap">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://abuz8ai.com/tools/ai-face-swap-pro">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://abuz8ai.com/tools/ai-face-swap">
+<meta property="og:title" content="AI Face Swap — Photo & Video">
+<meta property="og:description" content="ComfyUI + IP-adapter face swap. Ethics-first. Join the early-access list.">
+<meta property="og:image" content="https://abuz8ai.com/og/ai-face-swap.png">
+<meta property="og:site_name" content="ABUZ8">
+<meta name="twitter:card" content="summary_large_image">
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebApplication","name":"AI Face Swap","url":"https://abuz8ai.com/tools/ai-face-swap.html","description":"AI-powered face swap for photos and videos using ComfyUI and IP-adapter, with ethics-first consent verification.","applicationCategory":"MultimediaApplication","operatingSystem":"Web","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"publisher":{"@type":"Organization","name":"ABUZ8 AI","url":"https://abuz8ai.com"}}
+</script>
+
+<style>
+  :root{--lapis:#0a1628;--lapis2:#0f2040;--lapis3:#163060;--gold:#c9a84c;--gold2:#e8d48b;--turq:#0e9f6e;--turq2:#2fbf8f;--turq3:#2fbf8f;--ivory:#faf8f2;--text:#e8e4d8;--dim:#8a9aaa;--dim2:#6a7a8a;--card:#0d1a30;--border:#1a2e50;--border2:rgba(201,168,76,0.18);--red:#e05555;--r:12px;--r-sm:8px;}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--lapis);color:var(--text);font-family:'Inter',system-ui,sans-serif;min-height:100vh;line-height:1.55;}
+  header{background:linear-gradient(135deg,var(--lapis2),var(--lapis3));border-bottom:1px solid var(--border2);padding:24px 40px;display:flex;align-items:center;gap:20px;}
+  .logo{width:44px;height:44px;background:linear-gradient(135deg,var(--gold),var(--turq));border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:18px;color:var(--lapis);}
+  header h1{font-family:'Playfair Display',serif;font-size:26px;color:var(--gold);font-weight:700;}
+  header p{font-size:13px;color:var(--dim);margin-top:2px;}
+  header a.home-link{color:var(--dim);text-decoration:none;font-size:13px;}
+  header a.home-link:hover{color:var(--gold);}
+  .badge{margin-left:auto;background:rgba(201,168,76,0.12);border:1px solid var(--border2);padding:6px 14px;border-radius:20px;font-size:12px;color:var(--gold);}
+  .hero{max-width:1200px;margin:0 auto;padding:40px 24px 24px;}
+  .hero h2{font-family:'Playfair Display',serif;font-size:40px;line-height:1.15;color:var(--ivory);margin-bottom:14px;font-weight:700;}
+  .hero h2 .accent{color:var(--gold);}
+  .hero p.lede{color:var(--dim);font-size:16px;max-width:720px;}
+  .hero .meta-strip{display:flex;gap:16px;flex-wrap:wrap;margin-top:18px;font-size:12px;color:var(--dim2);}
+  .hero .meta-strip .dot{color:var(--turq2);}
+  .container{max-width:1200px;margin:0 auto;padding:24px;}
+  .ethics-banner{background:linear-gradient(135deg,rgba(224,85,85,0.08),rgba(232,164,76,0.04));border:1px solid var(--border2);border-left:4px solid var(--red);border-radius:var(--r);padding:20px 24px;margin-bottom:24px;}
+  .ethics-banner h3{color:var(--red);font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;margin-bottom:8px;}
+  .ethics-banner p{color:var(--text);font-size:14px;line-height:1.6;}
+  .ethics-banner b{color:var(--gold);}
+  .two-col{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+  @media(max-width:740px){.two-col{grid-template-columns:1fr;}}
+  .upload-cell{background:var(--card);border:2px dashed var(--border2);border-radius:var(--r);padding:36px 20px;text-align:center;cursor:pointer;transition:all .2s;}
+  .upload-cell:hover, .upload-cell.drag{border-color:var(--gold);background:rgba(201,168,76,0.04);}
+  .upload-cell.has-file{border-style:solid;border-color:var(--turq2);background:rgba(26,138,122,0.04);}
+  .upload-cell h4{color:var(--gold);font-size:11px;letter-spacing:1.2px;text-transform:uppercase;margin-bottom:10px;}
+  .upload-cell .icon{font-size:40px;margin-bottom:10px;opacity:.7;}
+  .upload-cell p{color:var(--dim);font-size:13px;margin-bottom:14px;}
+  .upload-cell input{display:none;}
+  .upload-cell .btn{background:var(--lapis2);border:1px solid var(--border2);color:var(--text);padding:8px 20px;border-radius:var(--r-sm);font-size:13px;cursor:pointer;}
+  .upload-cell img{max-width:100%;max-height:200px;border-radius:8px;display:block;margin:10px auto;}
+  .options-card{background:var(--card);border:1px solid var(--border2);border-radius:var(--r);padding:22px;margin-top:18px;}
+  .options-card label{display:block;font-size:12px;font-weight:600;color:var(--text);text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px;margin-top:14px;}
+  .options-card label.first{margin-top:0;}
+  .pill-row{display:flex;flex-wrap:wrap;gap:6px;}
+  .pill{background:var(--lapis2);border:1px solid var(--border);color:var(--dim);border-radius:16px;padding:5px 12px;font-size:11px;font-weight:500;cursor:pointer;}
+  .pill.active{background:rgba(201,168,76,0.12);border-color:var(--gold);color:var(--gold);}
+  .consent-row{display:flex;gap:10px;align-items:flex-start;background:var(--lapis2);padding:14px 16px;border-radius:var(--r-sm);margin-top:18px;border:1px solid var(--border);}
+  .consent-row input{margin-top:3px;flex-shrink:0;}
+  .consent-row label{font-size:13px;color:var(--text);line-height:1.5;text-transform:none;letter-spacing:0;font-weight:400;margin:0!important;}
+  .consent-row b{color:var(--gold);}
+  .gen-btn{width:100%;margin-top:18px;background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--lapis);font-size:15px;font-weight:800;border:none;border-radius:var(--r-sm);padding:14px;cursor:pointer;}
+  .gen-btn:disabled{opacity:.5;cursor:not-allowed;}
+  .queued{background:linear-gradient(135deg,rgba(26,138,122,0.08),rgba(52,212,176,0.04));border:1px solid var(--border2);border-left:4px solid var(--turq2);border-radius:var(--r);padding:20px;margin-top:18px;display:none;}
+  .queued.show{display:block;}
+  .queued h3{color:var(--turq3);font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;margin-bottom:8px;}
+  .queued p{font-size:14px;color:var(--text);line-height:1.6;}
+  .waitlist{background:linear-gradient(135deg,var(--lapis2),var(--lapis3));border:1px solid var(--gold);border-radius:var(--r);padding:32px;margin-top:32px;position:relative;overflow:hidden;}
+  .waitlist::before{content:'';position:absolute;top:-50%;right:-20%;width:400px;height:400px;background:radial-gradient(circle,rgba(201,168,76,0.08),transparent 70%);pointer-events:none;}
+  .wl-tag{display:inline-block;background:rgba(201,168,76,0.15);color:var(--gold);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;padding:5px 12px;border-radius:20px;margin-bottom:14px;border:1px solid var(--border2);}
+  .waitlist h3{font-family:'Playfair Display',serif;font-size:28px;color:var(--ivory);margin-bottom:10px;}
+  .waitlist h3 span{color:var(--gold);}
+  .waitlist p{color:var(--dim);font-size:14px;line-height:1.6;margin-bottom:18px;max-width:580px;}
+  .wl-form{display:flex;gap:10px;flex-wrap:wrap;position:relative;z-index:1;}
+  .wl-form input{flex:1;min-width:240px;background:var(--lapis);border:1px solid var(--border2);color:var(--ivory);padding:13px 16px;font-size:14px;border-radius:var(--r-sm);outline:none;}
+  .wl-form input:focus{border-color:var(--gold);}
+  .wl-form button{background:var(--gold);color:var(--lapis);border:none;padding:13px 24px;font-size:14px;font-weight:700;border-radius:var(--r-sm);cursor:pointer;}
+  .wl-msg{margin-top:14px;font-size:13px;color:var(--turq3);display:none;}
+  .wl-perks{display:flex;gap:18px;flex-wrap:wrap;margin-top:18px;font-size:12px;color:var(--dim);}
+  .wl-perks span::before{content:'✓ ';color:var(--turq3);font-weight:700;}
+  footer{border-top:1px solid var(--border2);padding:28px 40px;margin-top:60px;color:var(--dim2);font-size:12px;text-align:center;}
+  footer a{color:var(--dim);text-decoration:none;margin:0 10px;}
+  footer a:hover{color:var(--gold);}
+</style>
+<script src="_abuz8-live-brain.js" defer></script>
+
+<script src="_abuz8-config.js" defer></script>
+</head>
+<body>
+<script>
+// Cloud fallback: if ComfyUI is unreachable, redirect generate calls to Workers AI
+(function(){
+  var comfyUrl = (window.ABUZ8_COMFY_BASE) || 'https://comfy.abuz8ai.com';
+  var checked = false, comfyLive = false;
+  window._checkComfy = async function(){
+    if(checked) return comfyLive;
+    try{
+      var r = await fetch(comfyUrl+'/system_stats',{signal:AbortSignal.timeout(3000)});
+      comfyLive = r.ok; checked = true;
+    }catch(_){ comfyLive = false; checked = true; }
+    return comfyLive;
+  };
+  window._cloudGenerate = async function(prompt){
+    try{
+      var r = await fetch('/api/ai-image',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt:prompt})});
+      if(!r.ok) return null;
+      var blob = await r.blob();
+      return URL.createObjectURL(blob);
+    }catch(_){ return null; }
+  };
+})();
+</script>
+
+<header>
+  <div class="logo">A8</div>
+  <div><h1>AI Face Swap</h1><p>ComfyUI + IP-adapter · Photo & video · Ethics-first</p></div>
+  <a href="/tools.html" class="home-link">← All Tools</a>
+  <span class="badge">Early Access</span>
+</header>
+
+<section class="hero">
+  <h2>Face swap that <span class="accent">stays consistent.</span></h2>
+  <p class="lede">Powered by our trained ComfyUI pipeline + IP-adapter. Same identity preserved across photos, videos, and angles. Built ethics-first: consent verification required, no public-figure swaps, no minors. Early access opening soon.</p>
+  <div class="meta-strip">
+    <span><span class="dot">●</span> Photo + video swap</span>
+    <span><span class="dot">●</span> IP-adapter identity preservation</span>
+    <span><span class="dot">●</span> Consent-gated by design</span>
+    <span><span class="dot">●</span> No public figures, no minors</span>
+  </div>
+</section>
+
+<div class="container">
+
+  <div class="ethics-banner">
+    <h3>⚠ Ethics & Consent</h3>
+    <p>This tool is built for <b>legitimate creative use</b>: actor doubles for production, e-commerce model variation, marketing UGC with consent, personal creative projects. We <b>do not</b> support: swapping public figures, creating non-consensual content, swapping minors, or any abusive use. Every render request requires explicit consent confirmation. Misuse results in account termination + legal referral.</p>
+  </div>
+
+  <div class="options-card">
+    <label class="first">Use Case</label>
+    <div class="pill-row" id="usePills">
+      <button class="pill active" data-v="creative">Creative project</button>
+      <button class="pill" data-v="actor">Actor double / production</button>
+      <button class="pill" data-v="ecom">E-commerce model variation</button>
+      <button class="pill" data-v="ugc">UGC / marketing (with consent)</button>
+      <button class="pill" data-v="personal">Personal use</button>
+    </div>
+
+    <label>Identity Strength</label>
+    <div class="pill-row" id="strengthPills">
+      <button class="pill" data-v="subtle">Subtle</button>
+      <button class="pill active" data-v="balanced">Balanced</button>
+      <button class="pill" data-v="strong">Strong (max ID transfer)</button>
+    </div>
+
+    <label>Output Quality</label>
+    <div class="pill-row" id="qualityPills">
+      <button class="pill" data-v="fast">Fast (low-fi preview)</button>
+      <button class="pill active" data-v="standard">Standard (1024px)</button>
+      <button class="pill" data-v="hq">HQ (2K, slower queue)</button>
+    </div>
+
+    <div class="consent-row">
+      <input type="checkbox" id="consent">
+      <label for="consent">I confirm I have <b>explicit consent</b> from the person whose face is being applied, and the target content does not feature minors, public figures, or any non-consensual context. I accept ABUZ8's <a href="/disclaimer.html" style="color:var(--gold)">Terms of Use</a>.</label>
+    </div>
+
+    <p style="margin:18px 0 0;font:400 13px/1.7 Inter,system-ui,sans-serif;color:var(--dim2)">
+      Tick the consent box to unlock the live studio below. These settings are applied
+      to the render as face-restore strength and detector quality — they are not decorative.
+    </p>
+  </div>
+
+  <!-- ABUZ8 LIVE STUDIO — real local render, no queue, no fake spinner -->
+  <section id="live-studio" style="margin:34px 0 0">
+    <h2 style="font:600 26px/1.25 'Playfair Display',Georgia,serif;color:var(--text,#e8e4d8);margin:0 0 10px">
+      Live studio &mdash; runs on your machine
+    </h2>
+    <p style="font:400 15px/1.65 Inter,system-ui,sans-serif;color:var(--dim,#8a9aaa);
+              max-width:70ch;margin:0 0 22px">
+      This renders on <strong style="color:var(--text,#e8e4d8)">your own GPU</strong>, not our servers.
+      If ComfyUI is running locally on port 8188 with the ReActor node installed, the studio below is
+      live and your photos never leave your computer. If it is not, you will see Early Access instead
+      &mdash; we never show a spinner that is not doing anything, and there is no hidden queue.
+    </p>
+    <div id="abuz8-studio"></div>
+  </section>
+
+
+  <div class="waitlist">
+    <span class="wl-tag">Priority Access</span>
+    <h3>Skip the queue with the <span>QADIR OS Creator Pass</span>.</h3>
+    <p>Photo + video face swap, consistent character preservation across long videos, batch processing, and full ComfyUI access. Priority queue means renders run first — typically 3-10 minutes vs days. 70% off life for waiting list.</p>
+    <form class="wl-form" id="wlForm" onsubmit="joinWaitlist(event)">
+      <input type="email" id="wlEmail" placeholder="creator@yourstudio.com" required>
+      <button type="submit">Join Priority List →</button>
+    </form>
+    <div class="wl-msg" id="wlMsg">✓ You're on the priority list.</div>
+    <div class="wl-perks"><span>Skip the queue</span><span>Video swap (up to 4K)</span><span>Batch processing</span></div>
+  </div>
+
+</div>
+
+<footer>
+  <div><a href="/">Home</a>·<a href="/tools.html">Tools</a>·<a href="/products.html">Products</a>·<a href="/about.html">About</a>·<a href="/disclaimer.html">Disclaimer</a></div>
+  <div style="margin-top:10px">© 2026 ABUZ8 LLC · QADIR OS · Ethics-first AI media engine.</div>
+</footer>
+
+<script>
+let useCase='creative', strength='balanced', quality='standard';
+['use','strength','quality'].forEach((g,i)=>{
+  const target=[useCase,strength,quality];
+  document.querySelectorAll(`#${g}Pills .pill`).forEach(p=>p.addEventListener('click',()=>{document.querySelectorAll(`#${g}Pills .pill`).forEach(x=>x.classList.remove('active'));p.classList.add('active');if(g==='use')useCase=p.dataset.v;else if(g==='strength')strength=p.dataset.v;else quality=p.dataset.v;}));
+});
+
+function joinWaitlist(e){
+  e.preventDefault();
+  const email=document.getElementById('wlEmail').value.trim();
+  if (!email) return;
+  fetch('/api/waitlist',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,product_id:'ai-face-swap',source:'tool-page'})}).catch(function(){});
+  document.getElementById('wlForm').style.display='none';
+  document.getElementById('wlMsg').style.display='block';
+}
+</script>
+
+<!-- ABUZ8 LIVE STUDIO — ReActor face swap, local only -->
+<script src="_comfy-client.js"></script>
+<script src="_comfy-studio.js"></script>
+<script>
+(function () {
+  function boot() {
+    var studio = new ComfyStudio({
+      mount: '#abuz8-studio', slug: 'faceswap',
+      // Two genuinely independent inputs. A face swap cannot be derived from one
+      // image, so this tool is the reason ComfyStudio 1.1.0 grew a second slot.
+      needsImage: true,  imageLabel: 'Target photo (the scene)',
+      needsImage2: true, image2Label: 'Source face (the identity to apply)',
+      promptLabel: null,
+      hideSampler: true,
+      goLabel: 'Swap face',
+      note: 'Deterministic inswapper_128 pass with optional face restore — no prompt, ' +
+            'no seed, no sampler, no checkpoint. Both photos are uploaded to ComfyUI on ' +
+            '127.0.0.1 and never leave your machine.',
+      sizes: [1024], maxBatch: 1, defaultSteps: 20,
+      // Hard gate: if ReActor is not installed, say so plainly instead of failing
+      // at /prompt time with a raw ComfyUI validation error.
+      requires: { node: 'ReActorFaceSwap', field: 'swap_model', label: 'face swap (ReActor / inswapper)' },
+      buildWorkflow: function (c) {
+        var strengthMap = { subtle: 0.5, balanced: 0.75, strong: 1.0 };
+        var restoreMap  = { fast: 'none', standard: 'GFPGANv1.3.pth', hq: 'codeformer-v0.1.0.pth' };
+        var detectMap   = { fast: 'retinaface_mobile0.25', standard: 'retinaface_resnet50', hq: 'retinaface_resnet50' };
+        var vis = strengthMap[window.ABUZ8_SWAP_STRENGTH] || 0.75;
+        var restore = restoreMap[window.ABUZ8_SWAP_QUALITY] || 'GFPGANv1.3.pth';
+        var detect = detectMap[window.ABUZ8_SWAP_QUALITY] || 'retinaface_resnet50';
+        return {
+          '1': { class_type: 'LoadImage', inputs: { image: c.image } },   // target scene
+          '2': { class_type: 'LoadImage', inputs: { image: c.image2 } },  // source face
+          '3': { class_type: 'ReActorFaceSwap', inputs: {
+                   enabled: true,
+                   input_image: ['1', 0],
+                   source_image: ['2', 0],
+                   swap_model: c.requiredModel,
+                   facedetection: detect,
+                   face_restore_model: restore,
+                   face_restore_visibility: vis,
+                   codeformer_weight: 0.5,
+                   detect_gender_input: 'no',
+                   detect_gender_source: 'no',
+                   input_faces_index: '0',
+                   source_faces_index: '0',
+                   console_log_level: 1
+                 } },
+          '4': { class_type: 'SaveImage', inputs: {
+                   filename_prefix: 'abuz8_faceswap', images: ['3', 0] } }
+        };
+      }
+    });
+    studio.mount();
+
+    // Consent gate. The studio is fully built but will not run until the box is
+    // ticked — this is a real interlock on the generate path, not a banner.
+    var box = document.getElementById('consent');
+    var origGenerate = studio.generate.bind(studio);
+    studio.generate = function () {
+      if (!box || !box.checked) {
+        studio._err('Confirm consent above before rendering. This tool will not run without it.');
+        return;
+      }
+      origGenerate();
+    };
+    var goBtn = document.getElementById('cs-faceswap-go');
+    function syncGate() {
+      if (!goBtn) return;
+      var ok = box && box.checked;
+      goBtn.style.opacity = ok ? '' : '0.45';
+      goBtn.title = ok ? '' : 'Confirm consent above to enable rendering';
+    }
+    if (box) box.addEventListener('change', syncGate);
+    syncGate();
+
+    // Surface the pill choices to buildWorkflow. These map to real ReActor
+    // arguments, so the controls are not decoration.
+    window.ABUZ8_SWAP_STRENGTH = 'balanced';
+    window.ABUZ8_SWAP_QUALITY = 'standard';
+    var sp = document.getElementById('strengthPills');
+    var qp = document.getElementById('qualityPills');
+    if (sp) sp.addEventListener('click', function (e) {
+      var b = e.target.closest('.pill'); if (b) window.ABUZ8_SWAP_STRENGTH = b.dataset.v;
+    });
+    if (qp) qp.addEventListener('click', function (e) {
+      var b = e.target.closest('.pill'); if (b) window.ABUZ8_SWAP_QUALITY = b.dataset.v;
+    });
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
+  else boot();
+})();
+</script>
+<!-- /ABUZ8 LIVE STUDIO -->
+
+
+<script src="/assets/js/dfy-banner.js" async></script>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+<script src="/tools/_tools-shared.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>
+

@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HTTP Status Code Reference — Complete List with Explanations | ABUZ8</title>
+  <meta name="description" content="Complete HTTP status code reference. Search, filter, and understand every HTTP response code from 1xx to 5xx with plain-English explanations, common causes, and quick fixes." />
+  <meta name="keywords" content="http status codes, http response codes, 200 ok, 404 not found, 500 internal server error, 301 redirect, 403 forbidden, http error codes, status code list, rest api status codes, web development" />
+  <meta property="og:title" content="HTTP Status Code Reference — Complete List with Explanations | ABUZ8" />
+  <meta property="og:description" content="Search and filter every HTTP status code with plain-English explanations, common causes, and quick fixes for developers." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://abuz8ai.com/tools/http-status-codes" />
+  <link rel="canonical" href="https://abuz8ai.com/tools/http-status-codes" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "HTTP Status Code Reference",
+    "description": "Complete HTTP status code reference with search, filtering, plain-English explanations, common causes, and quick fixes for every response code from 1xx to 5xx.",
+    "url": "https://abuz8ai.com/tools/http-status-codes.html",
+    "applicationCategory": "DeveloperApplication",
+    "operatingSystem": "Any",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+    "author": { "@type": "Organization", "name": "ABUZ8 LLC", "url": "https://abuz8ai.com" }
+  }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --lapis: #0a1628;
+      --card: #0d1a30;
+      --card-alt: #0f1e35;
+      --gold: #c9a84c;
+      --gold-dim: #a07830;
+      --gold-light: #e8d48b;
+      --teal: #0e9f6e;
+      --teal-bright: #2fbf8f;
+      --cream: #e8dcc8;
+      --text: #cdd6f4;
+      --text-dim: #8896b0;
+      --border: #1e2d45;
+      --red: #e05c5c;
+      --green: #4caf88;
+      --blue: #5b8def;
+      --orange: #e0944c;
+      --purple: #a78bfa;
+      --font-heading: 'Playfair Display', Georgia, serif;
+      --font-body: 'Inter', system-ui, sans-serif;
+      --font-mono: 'JetBrains Mono', 'Courier New', monospace;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--lapis);
+      color: var(--text);
+      font-family: var(--font-body);
+      font-size: 15px;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    /* ── NAV ── */
+    .nav { display: flex; align-items: center; justify-content: space-between; padding: 16px 32px; border-bottom: 1px solid var(--border); }
+    .nav-brand { font-family: var(--font-heading); font-size: 20px; color: var(--gold); text-decoration: none; font-weight: 700; }
+    .nav-links { display: flex; gap: 20px; }
+    .nav-links a { color: var(--text-dim); text-decoration: none; font-size: 14px; transition: color 0.2s; }
+    .nav-links a:hover { color: var(--gold); }
+
+    /* ── HERO ── */
+    .hero { text-align: center; padding: 48px 24px 32px; max-width: 800px; margin: 0 auto; }
+    .hero h1 { font-family: var(--font-heading); font-size: clamp(28px, 4vw, 42px); color: var(--cream); margin-bottom: 12px; }
+    .hero h1 span { color: var(--gold); }
+    .hero p { color: var(--text-dim); font-size: 16px; max-width: 600px; margin: 0 auto 24px; }
+
+    /* ── SEARCH ── */
+    .search-bar { max-width: 680px; margin: 0 auto 12px; position: relative; }
+    .search-bar input {
+      width: 100%; padding: 14px 18px 14px 46px; background: var(--card);
+      border: 1px solid var(--border); border-radius: 10px; color: var(--text);
+      font-family: var(--font-mono); font-size: 15px; outline: none; transition: border-color 0.2s;
+    }
+    .search-bar input:focus { border-color: var(--gold); }
+    .search-bar input::placeholder { color: var(--text-dim); }
+    .search-bar .icon {
+      position: absolute; left: 16px; top: 50%; transform: translateY(-50%);
+      color: var(--text-dim); font-size: 18px; pointer-events: none;
+    }
+    .search-meta { text-align: center; color: var(--text-dim); font-size: 13px; margin-bottom: 20px; }
+
+    /* ── FILTERS ── */
+    .filters { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; max-width: 680px; margin: 0 auto 32px; }
+    .filter-btn {
+      padding: 7px 16px; border-radius: 20px; border: 1px solid var(--border);
+      background: transparent; color: var(--text-dim); font-size: 13px; font-family: var(--font-body);
+      cursor: pointer; transition: all 0.2s; font-weight: 500;
+    }
+    .filter-btn:hover { border-color: var(--gold-dim); color: var(--text); }
+    .filter-btn.active { background: var(--gold); color: var(--lapis); border-color: var(--gold); font-weight: 600; }
+    .filter-btn[data-cat="1xx"] { --accent: var(--blue); }
+    .filter-btn[data-cat="2xx"] { --accent: var(--green); }
+    .filter-btn[data-cat="3xx"] { --accent: var(--orange); }
+    .filter-btn[data-cat="4xx"] { --accent: var(--red); }
+    .filter-btn[data-cat="5xx"] { --accent: var(--purple); }
+    .filter-btn[data-cat].active { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+    /* ── CARDS ── */
+    .container { max-width: 820px; margin: 0 auto; padding: 0 20px 60px; }
+    .category-label {
+      font-family: var(--font-heading); font-size: 20px; color: var(--cream);
+      margin: 32px 0 16px; padding-bottom: 8px; border-bottom: 1px solid var(--border);
+    }
+    .code-card {
+      background: var(--card); border: 1px solid var(--border); border-radius: 10px;
+      margin-bottom: 10px; overflow: hidden; transition: border-color 0.2s;
+    }
+    .code-card:hover { border-color: var(--gold-dim); }
+    .code-header {
+      display: flex; align-items: center; gap: 14px; padding: 14px 18px;
+      cursor: pointer; user-select: none;
+    }
+    .code-badge {
+      font-family: var(--font-mono); font-size: 15px; font-weight: 600;
+      padding: 3px 10px; border-radius: 6px; min-width: 48px; text-align: center;
+    }
+    .cat-1xx .code-badge { background: rgba(91,141,239,0.15); color: var(--blue); }
+    .cat-2xx .code-badge { background: rgba(76,175,136,0.15); color: var(--green); }
+    .cat-3xx .code-badge { background: rgba(224,148,76,0.15); color: var(--orange); }
+    .cat-4xx .code-badge { background: rgba(224,92,92,0.15); color: var(--red); }
+    .cat-5xx .code-badge { background: rgba(167,139,250,0.15); color: var(--purple); }
+    .code-name { font-size: 15px; font-weight: 500; color: var(--cream); flex: 1; }
+    .code-chevron { color: var(--text-dim); transition: transform 0.2s; font-size: 14px; }
+    .code-card.open .code-chevron { transform: rotate(180deg); }
+    .code-body { display: none; padding: 0 18px 16px; }
+    .code-card.open .code-body { display: block; }
+    .code-desc { color: var(--text); font-size: 14px; margin-bottom: 10px; line-height: 1.7; }
+    .code-section-label { font-size: 12px; font-weight: 600; color: var(--gold); text-transform: uppercase; letter-spacing: 0.5px; margin: 10px 0 4px; }
+    .code-list { list-style: none; padding: 0; }
+    .code-list li { font-size: 13px; color: var(--text-dim); padding: 3px 0 3px 16px; position: relative; }
+    .code-list li::before { content: '›'; position: absolute; left: 2px; color: var(--teal); font-weight: 700; }
+    .code-example {
+      background: var(--card-alt); border: 1px solid var(--border); border-radius: 6px;
+      padding: 10px 14px; font-family: var(--font-mono); font-size: 13px;
+      color: var(--teal-bright); margin-top: 8px; overflow-x: auto; white-space: pre;
+    }
+
+    /* ── WAITLIST CTA ── */
+    .cta-section { text-align: center; padding: 48px 24px; max-width: 600px; margin: 0 auto; }
+    .cta-section h2 { font-family: var(--font-heading); font-size: 24px; color: var(--cream); margin-bottom: 10px; }
+    .cta-section p { color: var(--text-dim); font-size: 14px; margin-bottom: 20px; }
+    .cta-form { display: flex; gap: 10px; max-width: 440px; margin: 0 auto; }
+    .cta-form input {
+      flex: 1; padding: 12px 16px; background: var(--card); border: 1px solid var(--border);
+      border-radius: 8px; color: var(--text); font-size: 14px; outline: none;
+    }
+    .cta-form input:focus { border-color: var(--gold); }
+    .cta-form button {
+      padding: 12px 24px; background: var(--gold); color: var(--lapis); border: none;
+      border-radius: 8px; font-weight: 600; font-size: 14px; cursor: pointer; transition: background 0.2s;
+      white-space: nowrap;
+    }
+    .cta-form button:hover { background: var(--gold-light); }
+    .cta-msg { font-size: 13px; margin-top: 10px; min-height: 20px; }
+    .cta-msg.ok { color: var(--green); }
+    .cta-msg.err { color: var(--red); }
+
+    /* ── FOOTER ── */
+    .footer { text-align: center; padding: 32px 24px; color: var(--text-dim); font-size: 13px; border-top: 1px solid var(--border); }
+    .footer a { color: var(--teal); text-decoration: none; }
+
+    /* ── NO RESULTS ── */
+    .no-results { text-align: center; padding: 40px 20px; color: var(--text-dim); }
+    .no-results span { font-size: 40px; display: block; margin-bottom: 12px; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 600px) {
+      .nav { padding: 12px 16px; }
+      .hero { padding: 32px 16px 20px; }
+      .cta-form { flex-direction: column; }
+      .code-header { padding: 12px 14px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav class="nav">
+    <a href="/" class="nav-brand">ABUZ8</a>
+    <div class="nav-links">
+      <a href="/tools/">Tools</a>
+      <a href="/store.html">Store</a>
+      <a href="/qadir.html">QADIR OS</a>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <h1><span>HTTP Status Code</span> Reference</h1>
+    <p>Every HTTP response code from 1xx to 5xx — searchable, with plain-English explanations, common causes, and quick fixes.</p>
+  </section>
+
+  <!-- SEARCH -->
+  <div class="search-bar">
+    <span class="icon">⌕</span>
+    <input type="text" id="search" placeholder="Search by code, name, or keyword…  (e.g. 404, redirect, timeout)" autocomplete="off" />
+  </div>
+  <div class="search-meta" id="searchMeta">Showing all 63 status codes</div>
+
+  <!-- FILTERS -->
+  <div class="filters" id="filters">
+    <button class="filter-btn active" data-cat="all">All</button>
+    <button class="filter-btn" data-cat="1xx">1xx Info</button>
+    <button class="filter-btn" data-cat="2xx">2xx Success</button>
+    <button class="filter-btn" data-cat="3xx">3xx Redirect</button>
+    <button class="filter-btn" data-cat="4xx">4xx Client</button>
+    <button class="filter-btn" data-cat="5xx">5xx Server</button>
+  </div>
+
+  <!-- MAIN CONTENT -->
+  <div class="container" id="cards"></div>
+
+  <!-- NO RESULTS -->
+  <div class="no-results" id="noResults" style="display:none;">
+    <span>🔍</span>
+    <p>No status codes match your search.</p>
+  </div>
+
+  <!-- CTA -->
+  <section class="cta-section">
+    <h2>Build with <span style="color:var(--gold)">QADIR OS</span></h2>
+    <p>The sovereign AI operating system — 192+ tools, local brains, zero lock-in. Join the early access list.</p>
+    <form class="cta-form" id="waitlistForm">
+      <input type="email" id="waitlistEmail" placeholder="you@company.com" required />
+      <button type="submit">Join Waitlist</button>
+    </form>
+    <div class="cta-msg" id="waitlistMsg"></div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    &copy; 2026 <a href="/">ABUZ8 LLC</a> · <a href="/tools/">More Dev Tools</a> · <a href="/disclaimer.html">Disclaimer</a>
+  </footer>
+
+<script>
+/* ── STATUS CODE DATABASE ── */
+const CODES = [
+  // ── 1xx Informational ──
+  { code: 100, name: 'Continue', cat: '1xx', desc: 'The server has received the request headers and the client should proceed to send the request body. Used with Expect: 100-continue header to avoid sending a large body if the server would reject it.', causes: ['Client sent Expect: 100-continue header', 'Server acknowledges headers before body transfer'], fixes: ['Client should send the request body after receiving this', 'If not expected, check proxy/load balancer behavior'], example: 'Expect: 100-continue' },
+  { code: 101, name: 'Switching Protocols', cat: '1xx', desc: 'The server is switching to the protocol requested by the client via the Upgrade header. Most commonly used when upgrading from HTTP to WebSocket.', causes: ['Client requested protocol upgrade (e.g. WebSocket)', 'Server agrees to switch protocols'], fixes: ['Ensure both client and server support the target protocol', 'Check the Upgrade and Connection headers'], example: 'HTTP/1.1 101 Switching Protocols\nUpgrade: websocket\nConnection: Upgrade' },
+  { code: 102, name: 'Processing', cat: '1xx', desc: 'The server has received the request and is still processing it. Prevents the client from timing out. Used in WebDAV.', causes: ['Long-running WebDAV operation', 'Server needs more time than the timeout allows'], fixes: ['Wait for the final response', 'Increase client timeout if this appears frequently'] },
+  { code: 103, name: 'Early Hints', cat: '1xx', desc: 'Used to return some response headers before the final response. Lets the browser preload resources (CSS, JS) while the server is still preparing the main response.', causes: ['Server sends Link headers early for preloading', 'CDN or reverse proxy sends hints ahead of origin response'], fixes: ['Use to preload critical CSS/JS for faster page loads', 'Supported in modern browsers — safe to use'], example: 'HTTP/1.1 103 Early Hints\nLink: </style.css>; rel=preload; as=style' },
+
+  // ── 2xx Success ──
+  { code: 200, name: 'OK', cat: '2xx', desc: 'The request succeeded. The meaning depends on the HTTP method: GET returns the resource, POST returns the result of the action, PUT/PATCH confirms the update.', causes: ['Request was valid and successfully processed'], fixes: ['This is the expected success response — no fix needed'] },
+  { code: 201, name: 'Created', cat: '2xx', desc: 'The request succeeded and a new resource was created. Typically returned by POST or PUT requests. The Location header usually contains the URL of the new resource.', causes: ['POST or PUT request successfully created a resource'], fixes: ['Check the Location header for the new resource URL'], example: 'HTTP/1.1 201 Created\nLocation: /api/users/42' },
+  { code: 202, name: 'Accepted', cat: '2xx', desc: 'The request has been accepted for processing, but the processing has not been completed. The request might or might not eventually be acted upon. Used for async operations.', causes: ['Async job was queued (email send, video processing, etc.)', 'Webhook delivery accepted for later processing'], fixes: ['Poll a status endpoint or use a webhook callback to check completion'] },
+  { code: 203, name: 'Non-Authoritative Information', cat: '2xx', desc: 'The response was successfully received but has been modified by a transforming proxy. The response body may differ from what the origin server sent.', causes: ['A proxy or CDN modified the response', 'Content transformation by a middleware layer'], fixes: ['Verify the response against the origin if accuracy is critical'] },
+  { code: 204, name: 'No Content', cat: '2xx', desc: 'The request succeeded, but there is no content to return. Commonly used for DELETE operations or PUT/PATCH when the client doesn\'t need the updated resource back.', causes: ['DELETE succeeded — resource removed', 'PUT/PATCH succeeded — no body needed in response', 'Form submission where no redirect is needed'], fixes: ['This is intentional — check your API docs if you expected a body'] },
+  { code: 205, name: 'Reset Content', cat: '2xx', desc: 'Like 204 (No Content) but additionally instructs the client to reset the document view (e.g., clear a form after submission).', causes: ['Server wants the client to reset its form/view'], fixes: ['Client should clear the form or reset its UI state'] },
+  { code: 206, name: 'Partial Content', cat: '2xx', desc: 'The server is delivering only part of the resource due to a Range header sent by the client. Used for resumable downloads and video streaming.', causes: ['Client sent Range header for partial download', 'Video player requesting byte ranges for streaming'], fixes: ['If unexpected, check if a Range header is being sent by the client'], example: 'Content-Range: bytes 0-1023/8192' },
+  { code: 207, name: 'Multi-Status', cat: '2xx', desc: 'Conveys information about multiple resources where multiple status codes might be appropriate. The response body is an XML document with individual status codes. WebDAV.', causes: ['WebDAV batch operation with mixed results'], fixes: ['Parse the XML body for per-resource status codes'] },
+  { code: 208, name: 'Already Reported', cat: '2xx', desc: 'Used inside a DAV: propstat response element to avoid enumerating the internal members of multiple bindings to the same collection repeatedly.', causes: ['WebDAV binding members already listed in a prior response'], fixes: ['Used internally by WebDAV — no action typically needed'] },
+
+  // ── 3xx Redirection ──
+  { code: 300, name: 'Multiple Choices', cat: '3xx', desc: 'The request has more than one possible response. The user or client should choose one of them. Rarely used in practice.', causes: ['Resource available in multiple formats (HTML, JSON, XML)', 'Content negotiation with multiple options'], fixes: ['Send an Accept header to specify preferred format', 'Server should provide a list of options in the response body'] },
+  { code: 301, name: 'Moved Permanently', cat: '3xx', desc: 'The URL of the requested resource has been changed permanently. The new URL is given in the Location header. Search engines will update their index to the new URL.', causes: ['URL restructuring or site migration', 'Domain change', 'HTTP to HTTPS migration'], fixes: ['Update bookmarks and links to the new URL', 'For SEO: ensure the redirect chain is minimal (no chains of 301s)'], example: 'HTTP/1.1 301 Moved Permanently\nLocation: https://new-domain.com/page' },
+  { code: 302, name: 'Found', cat: '3xx', desc: 'The resource is temporarily at a different URI. Unlike 301, search engines will NOT update their link. Historically, browsers changed POST to GET on redirect — use 307 if method preservation matters.', causes: ['Temporary redirect during maintenance', 'A/B testing routing', 'Login redirect (redirect to login page, then back)'], fixes: ['Use 301 if the move is permanent', 'Use 307 if you need to preserve the HTTP method'] },
+  { code: 303, name: 'See Other', cat: '3xx', desc: 'The server redirects the client to a different resource using GET, regardless of the original request method. Commonly used after POST to redirect to a confirmation page (POST-Redirect-GET pattern).', causes: ['POST form submission → redirect to result page', 'PRG (Post-Redirect-Get) pattern to prevent double submission'], fixes: ['Follow the redirect with a GET request', 'This is the correct code for PRG pattern'] },
+  { code: 304, name: 'Not Modified', cat: '3xx', desc: 'The resource has not been modified since the version specified by the If-Modified-Since or If-None-Match headers. The client can continue to use the cached version. No body is returned.', causes: ['Browser cache is still valid', 'ETag or Last-Modified matched the current version'], fixes: ['This is efficient caching — no fix needed', 'If you need fresh content, send Cache-Control: no-cache'] },
+  { code: 307, name: 'Temporary Redirect', cat: '3xx', desc: 'Like 302, but guarantees that the HTTP method and body will NOT be changed when following the redirect. If the original request was POST, the redirect will also be POST.', causes: ['HTTPS upgrade redirect that preserves POST data', 'Temporary routing change'], fixes: ['Use this instead of 302 when method preservation is important', 'Use 308 if the redirect is permanent and method must be preserved'] },
+  { code: 308, name: 'Permanent Redirect', cat: '3xx', desc: 'Like 301, but guarantees that the HTTP method and body will NOT be changed. The permanent version of 307.', causes: ['Permanent URL change where POST/PUT methods must be preserved', 'API endpoint migration'], fixes: ['Update clients to use the new URL directly', 'Safe to use for API versioning redirects'] },
+
+  // ── 4xx Client Error ──
+  { code: 400, name: 'Bad Request', cat: '4xx', desc: 'The server cannot process the request due to something perceived to be a client error — malformed syntax, invalid request framing, or deceptive routing.', causes: ['Malformed JSON or XML body', 'Missing required query parameters', 'Invalid Content-Type header', 'Request body too large for URL-encoded data'], fixes: ['Validate the request body format (JSON lint it)', 'Check Content-Type matches the body encoding', 'Review API documentation for required fields'], example: '{"error": "Invalid JSON: unexpected token at position 42"}' },
+  { code: 401, name: 'Unauthorized', cat: '4xx', desc: 'Authentication is required and has either failed or not been provided. Despite the name, this is about authentication (who you are), not authorization (what you can do).', causes: ['Missing Authorization header', 'Expired or invalid API key / JWT token', 'Wrong username or password'], fixes: ['Include a valid Authorization header', 'Refresh your access token', 'Check for typos in API keys — common with copy-paste'] },
+  { code: 403, name: 'Forbidden', cat: '4xx', desc: 'The client is authenticated but does not have permission to access the resource. Unlike 401, re-authenticating will not help — the identity is known, the access is denied.', causes: ['Insufficient role or permissions', 'IP address blocked by firewall/WAF', 'Directory listing disabled on web server', 'CORS policy blocking the request'], fixes: ['Check user role and permissions', 'Verify CORS headers if from a browser', 'Check server firewall rules and IP whitelist'] },
+  { code: 404, name: 'Not Found', cat: '4xx', desc: 'The server cannot find the requested resource. This can mean the URL is wrong, the resource was deleted, or the server is hiding the existence of a resource from an unauthorized client.', causes: ['Typo in URL', 'Resource was deleted', 'Missing file on the server', 'Route not registered in the application', 'Case-sensitive URL on Linux servers'], fixes: ['Double-check the URL spelling and case', 'Verify the resource exists on the server', 'Check server routing configuration', 'Look for trailing slashes — /api/users vs /api/users/'] },
+  { code: 405, name: 'Method Not Allowed', cat: '4xx', desc: 'The HTTP method (GET, POST, PUT, DELETE, etc.) is not supported for the requested resource. The response must include an Allow header listing valid methods.', causes: ['Sending POST to a GET-only endpoint', 'Sending DELETE to a resource that doesn\'t support deletion', 'Misconfigured route handler'], fixes: ['Check the Allow header in the response for valid methods', 'Verify the API documentation for the correct method'], example: 'Allow: GET, HEAD, OPTIONS' },
+  { code: 406, name: 'Not Acceptable', cat: '4xx', desc: 'The server cannot produce a response matching the Accept headers sent by the client. The server can\'t return the content in a format the client will accept.', causes: ['Accept: application/xml but server only returns JSON', 'Accept-Language mismatch'], fixes: ['Broaden your Accept header', 'Check what content types the API supports'] },
+  { code: 407, name: 'Proxy Authentication Required', cat: '4xx', desc: 'Like 401 but for a proxy. The client must first authenticate with the proxy before the request can be forwarded.', causes: ['Corporate proxy requires authentication', 'VPN or proxy misconfiguration'], fixes: ['Configure proxy credentials in your HTTP client', 'Check with your network admin for proxy auth details'] },
+  { code: 408, name: 'Request Timeout', cat: '4xx', desc: 'The server timed out waiting for the request. The client did not produce a request within the time the server was prepared to wait.', causes: ['Slow network connection', 'Client took too long to send the full request', 'Large file upload on a slow connection'], fixes: ['Retry the request', 'Check your network connection', 'For large uploads, consider chunked transfer encoding'] },
+  { code: 409, name: 'Conflict', cat: '4xx', desc: 'The request conflicts with the current state of the resource. Often used when trying to create a resource that already exists, or when there\'s an edit conflict.', causes: ['Duplicate resource creation (e.g., username taken)', 'Optimistic locking conflict (stale ETag)', 'Trying to delete a resource with active dependencies'], fixes: ['Fetch the latest version and retry', 'Use If-Match/ETag for optimistic concurrency', 'Resolve the conflict in business logic'] },
+  { code: 410, name: 'Gone', cat: '4xx', desc: 'The resource has been permanently deleted and will not be available again. Unlike 404, this is definitive — the resource once existed but is now intentionally removed.', causes: ['Resource was permanently deleted', 'API version was sunset', 'Content removed by moderation'], fixes: ['Remove references and links to this resource', 'Search engines will de-index the URL upon seeing 410'] },
+  { code: 411, name: 'Length Required', cat: '4xx', desc: 'The server requires a Content-Length header, which was not sent with the request.', causes: ['POST/PUT request without Content-Length header', 'Chunked encoding not accepted by server'], fixes: ['Include Content-Length header with the request body size'] },
+  { code: 412, name: 'Precondition Failed', cat: '4xx', desc: 'One or more conditions given in the request headers (If-Match, If-Unmodified-Since, etc.) evaluated to false. Used for conditional requests.', causes: ['If-Match ETag doesn\'t match current resource version', 'Resource was modified since If-Unmodified-Since date'], fixes: ['Fetch the latest version and its ETag, then retry', 'This is how optimistic concurrency control works — it\'s working correctly'] },
+  { code: 413, name: 'Payload Too Large', cat: '4xx', desc: 'The request body is larger than the server is willing to accept. The server may close the connection or return a Retry-After header.', causes: ['File upload exceeds server limit (e.g., nginx client_max_body_size)', 'JSON payload too large', 'API rate limit on body size'], fixes: ['Reduce the payload size', 'Increase server upload limit (nginx: client_max_body_size, Node: bodyParser limit)', 'Use multipart upload for large files'] },
+  { code: 414, name: 'URI Too Long', cat: '4xx', desc: 'The URL is longer than the server is willing to interpret. Most servers cap URLs at 2048–8192 characters.', causes: ['Excessively long query strings', 'Encoding large data in URL parameters', 'Redirect loops appending query params each iteration'], fixes: ['Move data from query params to request body (use POST)', 'Check for redirect loops', 'Shorten query parameters'] },
+  { code: 415, name: 'Unsupported Media Type', cat: '4xx', desc: 'The media format of the request body is not supported by the server. The server refuses to accept the request because the Content-Type is wrong.', causes: ['Sending JSON with Content-Type: text/plain', 'Missing Content-Type header', 'Server expects multipart/form-data but received application/json'], fixes: ['Set Content-Type: application/json for JSON bodies', 'Check the API docs for accepted content types'] },
+  { code: 416, name: 'Range Not Satisfiable', cat: '4xx', desc: 'The client requested a byte range that the server cannot provide. For example, requesting bytes past the end of the file.', causes: ['Range header requests bytes beyond file size', 'Resume download after file was modified or deleted'], fixes: ['Check the Content-Length of the resource before requesting ranges', 'Don\'t assume file size — verify with HEAD first'] },
+  { code: 418, name: "I'm a Teapot", cat: '4xx', desc: 'Defined in RFC 2324 (Hyper Text Coffee Pot Control Protocol) as an April Fools\' joke. The server refuses to brew coffee because it is, permanently, a teapot. Sometimes used as a fun easter egg.', causes: ['Server is a teapot and cannot brew coffee', 'Used as a fun error page or API easter egg'], fixes: ['Find a coffee pot instead', 'Enjoy the humor — this code has its own RFC'] },
+  { code: 422, name: 'Unprocessable Entity', cat: '4xx', desc: 'The server understands the content type and syntax of the request, but the request is semantically invalid. The body is well-formed but logically wrong. Common in form validation.', causes: ['Validation error (e.g., email format invalid)', 'Business rule violation (e.g., start date after end date)', 'Missing required fields that pass syntax check'], fixes: ['Read the response body for specific validation errors', 'Fix the data according to business rules', 'This is different from 400: the syntax is correct, the semantics are wrong'] },
+  { code: 425, name: 'Too Early', cat: '4xx', desc: 'The server is unwilling to risk processing a request that might be replayed. Related to TLS 1.3 0-RTT early data.', causes: ['Request sent in TLS 1.3 early data (0-RTT)', 'Server cannot guarantee the request isn\'t a replay'], fixes: ['Retry without early data', 'This is a security measure — the server is being cautious'] },
+  { code: 426, name: 'Upgrade Required', cat: '4xx', desc: 'The server refuses to perform the request using the current protocol but might be willing to do so after the client upgrades to a different protocol (e.g., TLS).', causes: ['Server requires HTTPS but received HTTP', 'Server requires a newer protocol version'], fixes: ['Switch to HTTPS', 'Check the Upgrade header in the response for the required protocol'] },
+  { code: 428, name: 'Precondition Required', cat: '4xx', desc: 'The server requires the request to be conditional (include If-Match, If-None-Match, etc.). This prevents the "lost update" problem where a client GETs a resource, modifies it, and PUTs it back while another client has also modified it.', causes: ['Server enforces optimistic concurrency', 'Missing If-Match / ETag header on PUT/PATCH'], fixes: ['GET the resource to obtain its ETag, then include If-Match in your PUT/PATCH'] },
+  { code: 429, name: 'Too Many Requests', cat: '4xx', desc: 'The user has sent too many requests in a given amount of time (rate limiting). The response should include a Retry-After header indicating when the client can try again.', causes: ['API rate limit exceeded', 'Too many login attempts', 'Aggressive scraping detected'], fixes: ['Check Retry-After header and wait', 'Implement exponential backoff', 'Cache responses to reduce request frequency', 'Request a higher rate limit from the API provider'] },
+  { code: 431, name: 'Request Header Fields Too Large', cat: '4xx', desc: 'The server refuses to process the request because one or more header fields, or the total header size, is too large.', causes: ['Extremely large cookies', 'Too many or oversized custom headers', 'JWT token in header is very large'], fixes: ['Reduce cookie size', 'Move large tokens to request body', 'Clear old/unused cookies'] },
+  { code: 451, name: 'Unavailable For Legal Reasons', cat: '4xx', desc: 'The resource is unavailable due to legal demands. Named after the novel Fahrenheit 451. Used when content is censored, blocked by court order, or restricted by local law.', causes: ['Government censorship', 'Court order requiring content removal', 'GDPR right to be forgotten', 'Content restricted by geographic legal requirements'], fixes: ['Use a VPN if the restriction is geographic (check legality)', 'Contact the service provider for more information'] },
+
+  // ── 5xx Server Error ──
+  { code: 500, name: 'Internal Server Error', cat: '5xx', desc: 'A generic server-side error. The server encountered an unexpected condition that prevented it from fulfilling the request. This is the catch-all for server bugs.', causes: ['Unhandled exception in application code', 'Database connection failure', 'Null pointer / undefined variable', 'Misconfigured server or broken deployment'], fixes: ['Check server logs for the stack trace', 'Look for recent deployments that may have introduced the bug', 'Verify database connectivity', 'Add error handling around the failing code path'] },
+  { code: 501, name: 'Not Implemented', cat: '5xx', desc: 'The server does not support the functionality required to fulfill the request. The server either does not recognize the request method, or it lacks the ability to fulfill it.', causes: ['HTTP method not implemented by the server (e.g., PATCH on an old server)', 'Feature stub that hasn\'t been built yet'], fixes: ['Use a different HTTP method that the server supports', 'Check if a server upgrade is available'] },
+  { code: 502, name: 'Bad Gateway', cat: '5xx', desc: 'The server, acting as a gateway or proxy, received an invalid response from the upstream server it was trying to reach.', causes: ['Upstream server is down or crashed', 'Proxy/load balancer cannot reach the backend', 'Backend returned malformed response', 'DNS resolution failure to upstream'], fixes: ['Check if the upstream/backend server is running', 'Verify proxy/load balancer configuration', 'Check network connectivity between proxy and backend', 'Look at upstream server logs'] },
+  { code: 503, name: 'Service Unavailable', cat: '5xx', desc: 'The server is not ready to handle the request. Common during server maintenance, overload, or when the server is booting up. May include a Retry-After header.', causes: ['Server is overloaded', 'Scheduled maintenance', 'Application still starting up / deploying', 'Database connection pool exhausted'], fixes: ['Wait and retry (check Retry-After header)', 'Scale up server resources', 'Implement circuit breakers for downstream calls', 'Check if a deployment is in progress'] },
+  { code: 504, name: 'Gateway Timeout', cat: '5xx', desc: 'The server, acting as a gateway or proxy, did not get a response in time from the upstream server. The upstream server is reachable but too slow.', causes: ['Upstream server is too slow to respond', 'Network latency between proxy and backend', 'Long-running database query', 'Upstream server is deadlocked or stuck'], fixes: ['Increase proxy timeout settings (nginx: proxy_read_timeout)', 'Optimize the slow upstream endpoint', 'Add caching to reduce load on the backend', 'Check for database query performance issues'] },
+  { code: 505, name: 'HTTP Version Not Supported', cat: '5xx', desc: 'The server does not support the HTTP version used in the request. For example, the server only supports HTTP/1.1 but the request used HTTP/2.', causes: ['Client using HTTP/2 with a server that only supports HTTP/1.1', 'Very old HTTP/0.9 request to a modern server'], fixes: ['Configure the client to use a supported HTTP version', 'Update the server to support newer HTTP versions'] },
+  { code: 507, name: 'Insufficient Storage', cat: '5xx', desc: 'The server cannot store the representation needed to complete the request. The server is out of disk space or quota. WebDAV.', causes: ['Server disk is full', 'Upload quota exceeded', 'Database storage limit reached'], fixes: ['Free up disk space on the server', 'Increase storage quota', 'Implement storage cleanup / archival policies'] },
+  { code: 508, name: 'Loop Detected', cat: '5xx', desc: 'The server detected an infinite loop while processing the request. WebDAV.', causes: ['Circular reference in WebDAV bindings', 'Infinite redirect loop between servers'], fixes: ['Check for circular references in the resource structure', 'Verify proxy and redirect configurations'] },
+  { code: 511, name: 'Network Authentication Required', cat: '5xx', desc: 'The client needs to authenticate to gain network access. Typically generated by captive portals (hotel/airport WiFi) intercepting the request.', causes: ['Captive portal (hotel, airport, coffee shop WiFi)', 'Network requires browser-based login before internet access'], fixes: ['Open a browser and complete the WiFi login page', 'Try navigating to http://neverssl.com to trigger the portal'] },
+];
+
+/* ── CATEGORIES ── */
+const CAT_LABELS = {
+  '1xx': '1xx — Informational',
+  '2xx': '2xx — Success',
+  '3xx': '3xx — Redirection',
+  '4xx': '4xx — Client Error',
+  '5xx': '5xx — Server Error',
+};
+
+/* ── STATE ── */
+let activeCat = 'all';
+let searchTerm = '';
+
+/* ── RENDER ── */
+function render() {
+  const container = document.getElementById('cards');
+  const noResults = document.getElementById('noResults');
+  const meta = document.getElementById('searchMeta');
+  const lowerSearch = searchTerm.toLowerCase();
+
+  const filtered = CODES.filter(c => {
+    const catOk = activeCat === 'all' || c.cat === activeCat;
+    if (!catOk) return false;
+    if (!lowerSearch) return true;
+    return (
+      String(c.code).includes(lowerSearch) ||
+      c.name.toLowerCase().includes(lowerSearch) ||
+      c.desc.toLowerCase().includes(lowerSearch) ||
+      (c.causes || []).some(x => x.toLowerCase().includes(lowerSearch)) ||
+      (c.fixes || []).some(x => x.toLowerCase().includes(lowerSearch))
+    );
+  });
+
+  if (filtered.length === 0) {
+    container.innerHTML = '';
+    noResults.style.display = 'block';
+    meta.textContent = 'No matches';
+    return;
+  }
+  noResults.style.display = 'none';
+  meta.textContent = lowerSearch || activeCat !== 'all'
+    ? `Showing ${filtered.length} of ${CODES.length} status codes`
+    : `Showing all ${CODES.length} status codes`;
+
+  // group by category
+  const groups = {};
+  filtered.forEach(c => {
+    if (!groups[c.cat]) groups[c.cat] = [];
+    groups[c.cat].push(c);
+  });
+
+  let html = '';
+  for (const cat of ['1xx','2xx','3xx','4xx','5xx']) {
+    if (!groups[cat]) continue;
+    html += `<div class="category-label">${CAT_LABELS[cat]}</div>`;
+    for (const c of groups[cat]) {
+      html += `<div class="code-card cat-${c.cat}" data-code="${c.code}">`;
+      html += `<div class="code-header" onclick="toggleCard(this)">`;
+      html += `<span class="code-badge">${c.code}</span>`;
+      html += `<span class="code-name">${c.name}</span>`;
+      html += `<span class="code-chevron">▼</span>`;
+      html += `</div>`;
+      html += `<div class="code-body">`;
+      html += `<div class="code-desc">${c.desc}</div>`;
+      if (c.causes && c.causes.length) {
+        html += `<div class="code-section-label">Common Causes</div><ul class="code-list">`;
+        c.causes.forEach(x => html += `<li>${x}</li>`);
+        html += `</ul>`;
+      }
+      if (c.fixes && c.fixes.length) {
+        html += `<div class="code-section-label">Quick Fixes</div><ul class="code-list">`;
+        c.fixes.forEach(x => html += `<li>${x}</li>`);
+        html += `</ul>`;
+      }
+      if (c.example) {
+        html += `<div class="code-section-label">Example</div><div class="code-example">${escHtml(c.example)}</div>`;
+      }
+      html += `</div></div>`;
+    }
+  }
+  container.innerHTML = html;
+
+  // auto-expand if only a few results
+  if (filtered.length <= 3) {
+    container.querySelectorAll('.code-card').forEach(el => el.classList.add('open'));
+  }
+}
+
+function escHtml(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function toggleCard(header) {
+  header.parentElement.classList.toggle('open');
+}
+
+/* ── SEARCH ── */
+document.getElementById('search').addEventListener('input', function() {
+  searchTerm = this.value.trim();
+  render();
+});
+
+/* ── FILTERS ── */
+document.getElementById('filters').addEventListener('click', function(e) {
+  const btn = e.target.closest('.filter-btn');
+  if (!btn) return;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  activeCat = btn.dataset.cat;
+  render();
+});
+
+/* ── WAITLIST ── */
+document.getElementById('waitlistForm').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  const msg = document.getElementById('waitlistMsg');
+  const email = document.getElementById('waitlistEmail').value.trim();
+  if (!email) return;
+  msg.textContent = 'Joining…';
+  msg.className = 'cta-msg';
+  try {
+    const r = await fetch('https://abuz8ai.com/api/waitlist', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, product: 'qadir-os-http-status-codes', source: 'tools/http-status-codes' })
+    });
+    if (r.ok) { msg.textContent = "You're on the list."; msg.className = 'cta-msg ok'; }
+    else { msg.textContent = 'Something went wrong — try again.'; msg.className = 'cta-msg err'; }
+  } catch { msg.textContent = 'Network error — try again.'; msg.className = 'cta-msg err'; }
+});
+
+/* ── INIT ── */
+render();
+</script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>

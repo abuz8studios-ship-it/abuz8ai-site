@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AI GTM Strategy Builder — ABUZ8</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--lapis:#0a1628;--lapis2:#0f1f3d;--lapis3:#162544;--gold:#c9a84c;--turq:#0e9f6e;--turq2:#22b5a0;--cream:#f5f0e8;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--lapis);color:var(--cream);font-family:'Inter',sans-serif;min-height:100vh;}
+header{background:var(--lapis2);border-bottom:1px solid var(--gold);padding:18px 32px;display:flex;align-items:center;gap:16px;}
+.logo{font-family:'Playfair Display',serif;color:var(--gold);font-size:1.4rem;}
+.badge{background:var(--gold);color:var(--lapis);font-size:.65rem;font-weight:700;padding:2px 8px;border-radius:10px;}
+h1{font-family:'Playfair Display',serif;font-size:1.8rem;color:var(--gold);margin-bottom:6px;}
+.sub{color:#8899aa;font-size:.9rem;}
+main{max-width:1100px;margin:0 auto;padding:32px 24px;}
+.layout{display:grid;grid-template-columns:300px 1fr;gap:24px;margin-top:24px;}
+.panel{background:var(--lapis2);border:1px solid #1e3a5f;border-radius:12px;padding:24px;}
+.panel h2{font-family:'Playfair Display',serif;color:var(--gold);font-size:1.1rem;margin-bottom:16px;}
+label{display:block;font-size:.8rem;color:#8899aa;margin-bottom:4px;margin-top:14px;}
+label:first-of-type{margin-top:0;}
+input,select,textarea{width:100%;background:var(--lapis3);border:1px solid #1e3a5f;border-radius:6px;color:var(--cream);padding:8px 12px;font-size:.85rem;font-family:'Inter',sans-serif;}
+textarea{resize:vertical;min-height:60px;}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--gold);}
+.btn{background:var(--gold);color:var(--lapis);border:none;border-radius:8px;padding:12px 24px;font-weight:700;cursor:pointer;width:100%;margin-top:16px;}
+.btn:hover{opacity:.85;}
+.btn-sm{background:transparent;border:1px solid var(--turq2);color:var(--turq2);border-radius:6px;padding:6px 14px;font-size:.78rem;cursor:pointer;margin-right:6px;}
+#output{display:none;}
+.gtm-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px;}
+.gtm-tab{background:var(--lapis3);border:1px solid #1e3a5f;border-radius:6px;padding:7px 14px;font-size:.8rem;cursor:pointer;}
+.gtm-tab.active{border-color:var(--gold);color:var(--gold);}
+.gtm-section{display:none;}
+.gtm-section.active{display:block;}
+.card{background:var(--lapis3);border:1px solid #1e3a5f;border-radius:10px;padding:18px;margin-bottom:12px;}
+.card-title{font-weight:600;color:var(--gold);font-size:.9rem;margin-bottom:8px;display:flex;align-items:center;gap:8px;}
+.card-body{font-size:.85rem;color:#aabbcc;line-height:1.65;}
+.metrics-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px;}
+.metric{background:var(--lapis3);border:1px solid #1e3a5f;border-radius:8px;padding:14px;text-align:center;}
+.metric-val{font-family:'Playfair Display',serif;color:var(--gold);font-size:1.3rem;}
+.metric-lbl{font-size:.7rem;color:#8899aa;margin-top:4px;}
+.channel-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.ch{background:var(--lapis3);border:1px solid #1e3a5f;border-radius:8px;padding:14px;}
+.ch-name{font-weight:600;font-size:.85rem;margin-bottom:4px;display:flex;align-items:center;gap:6px;}
+.ch-body{font-size:.78rem;color:#8899aa;line-height:1.5;}
+.priority{display:inline-block;padding:2px 7px;border-radius:4px;font-size:.7rem;font-weight:700;}
+.p-high{background:rgba(34,181,160,.15);color:var(--turq2);}
+.p-med{background:rgba(201,168,76,.15);color:var(--gold);}
+.p-low{background:rgba(136,153,170,.15);color:#8899aa;}
+.timeline-row{display:flex;gap:0;margin-bottom:16px;}
+.quarter{flex:1;padding:12px;border:1px solid #1e3a5f;font-size:.8rem;}
+.quarter:first-child{border-radius:8px 0 0 8px;}
+.quarter:last-child{border-radius:0 8px 8px 0;}
+.q-label{font-size:.72rem;color:#8899aa;margin-bottom:6px;}
+.q-item{background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.2);border-radius:4px;padding:4px 8px;font-size:.75rem;margin-bottom:4px;}
+.icp-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.icp{background:var(--lapis3);border:1px solid #1e3a5f;border-radius:8px;padding:16px;}
+.icp-title{font-weight:600;color:var(--turq2);font-size:.88rem;margin-bottom:8px;}
+.icp-row{font-size:.8rem;color:#aabbcc;padding:3px 0;border-bottom:1px solid #1e3a5f;}
+.icp-row:last-child{border:none;}
+.waitlist{background:linear-gradient(135deg,var(--lapis2),var(--lapis3));border:1px solid var(--gold);border-radius:12px;padding:24px;text-align:center;margin-top:20px;}
+.waitlist h3{font-family:'Playfair Display',serif;color:var(--gold);margin-bottom:8px;}
+.wl-form{display:flex;gap:8px;max-width:360px;margin:10px auto 0;}
+.wl-form input{border-radius:6px;padding:9px 12px;}
+.wl-form button{background:var(--gold);color:var(--lapis);border:none;border-radius:6px;padding:9px 18px;font-weight:700;cursor:pointer;white-space:nowrap;}
+</style>
+<link rel="canonical" href="https://abuz8ai.com/tools/ai-gtm-strategy">
+<meta name="description" content="AI GTM Strategy — ICP, channels, messaging, timeline. Free, no signup, runs entirely in your browser. One of 169 free AI and developer tools by ABUZ8.">
+</head>
+<body>
+<header>
+  <div class="logo">ABUZ8</div>
+  <div style="flex:1">
+    <div style="font-size:.85rem;font-weight:600;">AI GTM Strategy Builder</div>
+    <div style="font-size:.72rem;color:#8899aa;">Go-to-market plans built in minutes</div>
+  </div>
+  <span class="badge">TIER H</span>
+</header>
+<main>
+  <h1>AI GTM Strategy Builder</h1>
+  <p class="sub">Generate a full go-to-market strategy: ICP, channels, messaging, timeline, and success metrics.</p>
+
+  <div class="layout">
+    <div class="panel">
+      <h2>🎯 Your Product</h2>
+      <label>Product Name</label>
+      <input id="product" value="Nexus AI" placeholder="Product name">
+      <label>What it Does (one line)</label>
+      <input id="desc" value="AI-powered CRM for enterprise sales teams" placeholder="What you do">
+      <label>Target Customer</label>
+      <select id="target">
+        <option>Enterprise (1000+ employees)</option>
+        <option selected>Mid-Market (100–1000)</option>
+        <option>SMB (10–100)</option>
+        <option>Consumers / Prosumers</option>
+        <option>Developers</option>
+      </select>
+      <label>Primary Industry</label>
+      <select id="industry">
+        <option>B2B SaaS</option><option selected>Sales Tech</option><option>Fintech</option>
+        <option>HR Tech</option><option>Marketing Tech</option><option>Healthcare</option><option>Other</option>
+      </select>
+      <label>Current Stage</label>
+      <select id="stage">
+        <option>Pre-Launch</option><option selected>Early Traction (1–50 customers)</option>
+        <option>Growth (50–500 customers)</option><option>Scale (500+ customers)</option>
+      </select>
+      <label>Primary GTM Motion</label>
+      <select id="motion">
+        <option>Product-Led Growth (PLG)</option>
+        <option selected>Sales-Led Growth (SLG)</option>
+        <option>Community-Led</option>
+        <option>Partner-Led</option>
+        <option>Hybrid PLG + SLG</option>
+      </select>
+      <label>ACV / Price Point ($)</label>
+      <input id="acv" value="25000" placeholder="25000">
+      <label>Top Competitor</label>
+      <input id="competitor" value="Salesforce" placeholder="Main competitor">
+      <label>Key Differentiator</label>
+      <textarea id="diff" placeholder="Why you win">AI-native setup in 24hrs vs 6-month Salesforce implementation. 70% less manual data entry.</textarea>
+      <button class="btn" onclick="buildGTM()">⚡ Build GTM Strategy</button>
+    </div>
+
+    <div>
+      <div id="inputPrompt" class="panel" style="text-align:center;padding:48px 24px;">
+        <div style="font-size:3rem;margin-bottom:16px;">🚀</div>
+        <div style="font-family:'Playfair Display',serif;color:var(--gold);font-size:1.2rem;margin-bottom:8px;">GTM Strategy Engine</div>
+        <div style="font-size:.85rem;color:#8899aa;max-width:340px;margin:0 auto;">Fill in product details to generate a complete go-to-market strategy including ICP, channel mix, messaging, and 12-month execution timeline.</div>
+      </div>
+
+      <div id="output">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+          <div style="font-family:'Playfair Display',serif;color:var(--gold);" id="stratTitle">GTM Strategy</div>
+          <div><button class="btn-sm" onclick="exportGTM()">⬇ Export</button></div>
+        </div>
+        <div class="gtm-tabs">
+          <div class="gtm-tab active" onclick="switchTab('ICP')">ICP</div>
+          <div class="gtm-tab" onclick="switchTab('Channels')">Channels</div>
+          <div class="gtm-tab" onclick="switchTab('Messaging')">Messaging</div>
+          <div class="gtm-tab" onclick="switchTab('Timeline')">Timeline</div>
+          <div class="gtm-tab" onclick="switchTab('Metrics')">Metrics</div>
+        </div>
+        <div id="gtmContent"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="waitlist">
+    <h3>🚀 Pro: Export GTM Plan as a Board-Ready Deck</h3>
+    <p>Generate a full PowerPoint GTM deck with channel budgets, headcount plan, and quarterly milestones.</p>
+    <div class="wl-form">
+      <input type="email" id="wlEmail" placeholder="cmo@company.com">
+      <button onclick="joinWL()">Get Pro Access</button>
+    </div>
+  </div>
+</main>
+<script src="_abuz8-live-brain.js" defer></script>
+<script>
+let curTab='ICP', gtmData={};
+
+function buildGTM(){
+  const product=document.getElementById('product').value||'Your Product';
+  const desc=document.getElementById('desc').value;
+  const target=document.getElementById('target').value;
+  const industry=document.getElementById('industry').value;
+  const stage=document.getElementById('stage').value;
+  const motion=document.getElementById('motion').value;
+  const acv=document.getElementById('acv').value;
+  const competitor=document.getElementById('competitor').value;
+  const diff=document.getElementById('diff').value;
+
+  const btn=document.querySelector('.btn');
+  if(btn){btn.disabled=true;btn.dataset.label=btn.dataset.label||btn.textContent;btn.textContent='⏳ Building…';}
+
+  document.getElementById('inputPrompt').style.display='none';
+  document.getElementById('output').style.display='block';
+  document.getElementById('stratTitle').textContent=`${product} GTM Strategy`;
+  document.getElementById('gtmContent').innerHTML=`
+    <div class="card" style="text-align:center;padding:40px 24px">
+      <div style="font-size:2.4rem;margin-bottom:12px">🚀</div>
+      <div style="color:var(--gold);font-family:'Playfair Display',serif;font-size:1.1rem;margin-bottom:8px">Building ${product}'s GTM strategy…</div>
+      <div style="font-size:.85rem;color:#8899aa;max-width:340px;margin:0 auto">Live AI on an RTX 5090. The first call cold-loads the model, so this can take 20–90s.</div>
+    </div>`;
+
+  // Real AI GTM strategy via the ABUZ8 brain (Cloudflare Workers AI). No templates, no fabricated metrics.
+  fetch('/api/waitlist',{
+    method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({tool:'gtm-strategy',data:{product,description:desc,targetCustomer:target,industry,stage,gtmMotion:motion,acv,competitor,differentiator:diff}})
+  })
+  .then(r=>r.json())
+  .then(res=>{
+    if(btn){btn.disabled=false;btn.textContent=btn.dataset.label;}
+    if(!res.success||!res.result) throw new Error(res.error||'Generation failed');
+    const out=`<div class="card" style="line-height:1.7">${ABUZ8.formatResult(res.result)}</div>`;
+    // Every tab shows the full real strategy — no fake template content behind any tab.
+    gtmData={ICP:out,Channels:out,Messaging:out,Timeline:out,Metrics:out};
+    document.getElementById('gtmContent').innerHTML=out;
+  })
+  .catch(err=>{
+    if(btn){btn.disabled=false;btn.textContent=btn.dataset.label;}
+    gtmData={};
+    document.getElementById('gtmContent').innerHTML=`
+      <div class="card" style="text-align:center;padding:40px 24px">
+        <div style="font-size:2.4rem;margin-bottom:12px">⚠️</div>
+        <div style="color:#f87171;font-family:'Playfair Display',serif;font-size:1.1rem;margin-bottom:8px">Generation failed</div>
+        <div style="font-size:.85rem;color:#8899aa;max-width:360px;margin:0 auto 14px">${err.message}. The live AI may be cold-starting — please try again in a moment.</div>
+        <button class="btn" style="max-width:220px;margin:0 auto" onclick="buildGTM()">↺ Try Again</button>
+      </div>`;
+    alert('Generation failed: '+err.message+'. Please try again in a moment.');
+  });
+}
+
+function switchTab(tab){
+  curTab=tab;
+  document.querySelectorAll('.gtm-tab').forEach(t=>t.classList.toggle('active',t.textContent===tab));
+  if(gtmData[tab]) document.getElementById('gtmContent').innerHTML=gtmData[tab];
+}
+
+function exportGTM(){
+  const product=document.getElementById('product').value||'GTM';
+  alert('Export feature coming in Pro. Copy the tab content manually for now.');
+}
+
+function joinWL(){
+  const e=document.getElementById('wlEmail').value.trim();
+  if(!e||!e.includes('@')){alert('Valid email required');return;}
+  fetch('/api/waitlist',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:e,tool:'ai-gtm-strategy',ts:Date.now()})}).catch(()=>{});
+  localStorage.setItem('wl_gtm',e);
+  document.querySelector('.waitlist').innerHTML='<h3 style="color:var(--gold);font-family:Playfair Display,serif">✅ On the list!</h3><p style="color:#8899aa;margin-top:8px;">Pro access within 24h.</p>';
+}
+</script>
+
+<script src="/assets/js/dfy-banner.js" async></script>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+<script src="/tools/_tools-shared.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>
+

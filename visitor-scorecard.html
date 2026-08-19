@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>ABUZ8 Visitor Scorecard</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#07111f;--panel:#0d1a30;--line:#1a2e50;--text:#e8e4d8;--muted:#8a9aaa;--gold:#c9a84c;--green:#22c55e;--red:#ef4444;--amber:#f59e0b;--cyan:#2fbf8f}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,sans-serif}main{max-width:1240px;margin:0 auto;padding:28px 20px 56px}header{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;margin-bottom:22px}.brand{font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);font-weight:800}.title{font-size:32px;line-height:1.1;font-weight:800;margin:8px 0}.sub{color:var(--muted);max-width:760px;line-height:1.6}.controls{display:flex;gap:10px;align-items:center}.controls select,.controls button{background:var(--panel);border:1px solid var(--line);color:var(--text);border-radius:8px;padding:10px 12px;font-weight:700}.controls button{background:var(--gold);color:#07111f;cursor:pointer}.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:22px 0}.kpi,.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:18px}.kpi .label,.card h2{font-size:11px;letter-spacing:1.7px;text-transform:uppercase;color:var(--muted);margin:0 0 10px}.kpi .value{font-family:"JetBrains Mono",monospace;font-size:30px;font-weight:800;color:var(--cyan)}.kpi .note{font-size:12px;color:var(--muted);margin-top:4px}.layout{display:grid;grid-template-columns:1.35fr 1fr;gap:16px}.card{margin-bottom:16px}.card h2{color:var(--gold)}table{width:100%;border-collapse:collapse;font-size:13px}th{text-align:left;color:var(--muted);font-size:10px;letter-spacing:1.4px;text-transform:uppercase;border-bottom:1px solid var(--line);padding:8px 6px}td{border-bottom:1px solid rgba(26,46,80,.55);padding:10px 6px;vertical-align:top}.mono{font-family:"JetBrains Mono",monospace;color:var(--muted);font-size:12px}.score{font-family:"JetBrains Mono",monospace;color:var(--cyan);font-weight:800}.pill{display:inline-flex;border-radius:999px;padding:4px 8px;font-size:10px;text-transform:uppercase;letter-spacing:1px;font-weight:800}.critical{background:rgba(239,68,68,.13);color:#fca5a5}.high{background:rgba(245,158,11,.13);color:#fcd34d}.medium{background:rgba(52,212,176,.11);color:var(--cyan)}.revenue{background:rgba(34,197,94,.13);color:#86efac}.empty,.error{color:var(--muted);padding:18px}.error{color:#fca5a5}.bar{height:7px;background:rgba(26,46,80,.7);border-radius:99px;overflow:hidden}.fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--cyan))}.action{color:var(--text);line-height:1.45}.path{max-width:280px;word-break:break-word}.refresh{font-size:12px;color:var(--muted);margin-top:6px}@media(max-width:900px){header{display:block}.controls{margin-top:16px}.grid,.layout{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <div>
+      <div class="brand">ABUZ8 revenue ops</div>
+      <div class="title">Visitor Scorecard</div>
+      <p class="sub">First-party scoring for what visitors actually touch: pages, CTAs, downloads, checkout intent, GPU tool demand, offline friction, and the next fixes.</p>
+    </div>
+    <div>
+      <div class="controls">
+        <select id="days">
+          <option value="1">1 day</option>
+          <option value="7" selected>7 days</option>
+          <option value="30">30 days</option>
+          <option value="90">90 days</option>
+        </select>
+        <button id="refresh">Refresh</button>
+      </div>
+      <div class="refresh" id="updated">Not loaded yet</div>
+    </div>
+  </header>
+  <div id="app"><div class="empty">Loading scorecard...</div></div>
+</main>
+<script>
+const app=document.getElementById("app"),days=document.getElementById("days"),updated=document.getElementById("updated");
+document.getElementById("refresh").onclick=load;days.onchange=load;load();
+function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function n(v){return Number(v||0).toLocaleString()}
+async function load(){
+  app.innerHTML='<div class="empty">Loading scorecard...</div>';
+  try{
+    const res=await fetch("/api/behavior?days="+encodeURIComponent(days.value),{cache:"no-store"});
+    const data=await res.json();
+    if(!res.ok||!data.ok)throw new Error(data.error||("HTTP "+res.status));
+    render(data);updated.textContent="Updated "+new Date().toLocaleString();
+  }catch(e){app.innerHTML='<div class="error">Scorecard unavailable: '+esc(e.message)+'</div>'}
+}
+function render(d){
+  const maxPage=Math.max(1,...(d.pages||[]).map(r=>Number(r.score||0)));
+  app.innerHTML=`
+    <section class="grid">
+      <div class="kpi"><div class="label">Visitors</div><div class="value">${n(d.totals.visitors)}</div><div class="note">anonymous sessions</div></div>
+      <div class="kpi"><div class="label">Events</div><div class="value">${n(d.totals.events)}</div><div class="note">views + clicks + forms</div></div>
+      <div class="kpi"><div class="label">Intent score</div><div class="value">${n(d.totals.intent_score)}</div><div class="note">weighted demand</div></div>
+      <div class="kpi"><div class="label">Fixes found</div><div class="value">${n((d.fixes||[]).length)}</div><div class="note">priority actions</div></div>
+    </section>
+    <section class="layout">
+      <div>
+        <div class="card"><h2>Highest-intent pages</h2>${table(["Page","Views","Clicks","Score","Demand"],(d.pages||[]),r=>`
+          <tr><td class="path">${esc(r.path)}</td><td class="mono">${n(r.views)}</td><td class="mono">${n(r.clicks)}</td><td class="score">${n(r.score)}</td><td><div class="bar"><div class="fill" style="width:${Math.max(2,Number(r.score||0)/maxPage*100)}%"></div></div></td></tr>`)}
+        </div>
+        <div class="card"><h2>What to fix next</h2>${fixes(d.fixes||[])}</div>
+      </div>
+      <div>
+        <div class="card"><h2>GPU tool demand</h2>${table(["Tool / page","Events","Score"],(d.gpu_tools||[]),r=>`
+          <tr><td class="path">${esc(r.tool)}</td><td class="mono">${n(r.n)}</td><td class="score">${n(r.score)}</td></tr>`)}
+        </div>
+        <div class="card"><h2>Top clicks</h2>${table(["Click","Type","Count"],(d.clicks||[]),r=>`
+          <tr><td class="path">${esc(r.target_text)}<div class="mono">${esc(r.target_href||r.path)}</div></td><td class="mono">${esc(r.event_type)}</td><td class="score">${n(r.n)}</td></tr>`)}
+        </div>
+        <div class="card"><h2>Event mix</h2>${table(["Event","Count","Score"],(d.events||[]),r=>`
+          <tr><td>${esc(r.event_type)}</td><td class="mono">${n(r.n)}</td><td class="score">${n(r.score)}</td></tr>`)}
+        </div>
+      </div>
+    </section>`;
+}
+function table(headers,rows,fn){if(!rows.length)return'<div class="empty">No data yet. Share the site and refresh after traffic lands.</div>';return'<table><thead><tr>'+headers.map(h=>'<th>'+esc(h)+'</th>').join("")+'</tr></thead><tbody>'+rows.map(fn).join("")+'</tbody></table>'}
+function fixes(rows){if(!rows.length)return'<div class="empty">No scored fixes yet. We need traffic first.</div>';return'<table><thead><tr><th>Priority</th><th>Page</th><th>Reason</th><th>Action</th></tr></thead><tbody>'+rows.map(r=>`<tr><td><span class="pill ${esc(r.priority)}">${esc(r.priority)}</span></td><td class="path">${esc(r.path)}</td><td class="mono">${esc(r.reason)}</td><td class="action">${esc(r.action)}</td></tr>`).join("")+'</tbody></table>'}
+</script>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>
+

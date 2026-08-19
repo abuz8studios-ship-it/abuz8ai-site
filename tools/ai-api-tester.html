@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI API Tester — ABUZ8</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--lapis:#0a1628;--lapis2:#0f1f3d;--lapis3:#162544;--gold:#c9a84c;--turq:#0e9f6e;--turq2:#22b5a0;--cream:#f5f0e8;--green:#22c55e;--red:#ef4444;--yellow:#f59e0b;--blue:#3b82f6;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--lapis);color:var(--cream);font-family:'Inter',sans-serif;min-height:100vh;}
+.hero{background:linear-gradient(135deg,var(--lapis2) 0%,var(--lapis3) 100%);padding:48px 24px 36px;text-align:center;border-bottom:1px solid rgba(201,168,76,.15);}
+.hero h1{font-family:'Playfair Display',serif;font-size:clamp(2rem,5vw,3rem);color:var(--gold);margin-bottom:8px;}
+.hero p{color:rgba(245,240,232,.7);font-size:1.05rem;max-width:560px;margin:0 auto;}
+.main{max-width:1100px;margin:0 auto;padding:32px 20px;}
+.panel{background:var(--lapis2);border:1px solid rgba(201,168,76,.12);border-radius:12px;overflow:hidden;}
+.req-bar{display:grid;grid-template-columns:130px 1fr auto;gap:0;align-items:stretch;}
+select.method{background:var(--lapis3);border:none;border-right:1px solid rgba(201,168,76,.15);color:var(--gold);font-family:'JetBrains Mono',monospace;font-size:.95rem;font-weight:500;padding:14px 16px;cursor:pointer;outline:none;appearance:none;-webkit-appearance:none;}
+select.method:focus{background:var(--lapis);}
+input.url-input{background:var(--lapis3);border:none;color:var(--cream);font-family:'JetBrains Mono',monospace;font-size:.92rem;padding:14px 16px;outline:none;width:100%;}
+input.url-input::placeholder{color:rgba(245,240,232,.35);}
+input.url-input:focus{background:var(--lapis);}
+.send-btn{background:var(--gold);color:var(--lapis);border:none;padding:14px 28px;font-family:'Inter',sans-serif;font-weight:600;font-size:.95rem;cursor:pointer;transition:opacity .2s;white-space:nowrap;}
+.send-btn:hover{opacity:.88;}
+.send-btn:disabled{opacity:.5;cursor:not-allowed;}
+.tabs-row{display:flex;border-bottom:1px solid rgba(201,168,76,.12);padding:0 16px;}
+.tab{padding:12px 18px;font-size:.87rem;color:rgba(245,240,232,.5);cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;font-weight:500;}
+.tab.active{color:var(--gold);border-bottom-color:var(--gold);}
+.tab-body{display:none;padding:16px;}
+.tab-body.active{display:block;}
+.kv-row{display:grid;grid-template-columns:1fr 1fr auto;gap:8px;margin-bottom:8px;align-items:center;}
+.kv-input{background:var(--lapis3);border:1px solid rgba(201,168,76,.12);border-radius:6px;color:var(--cream);font-family:'JetBrains Mono',monospace;font-size:.82rem;padding:8px 10px;width:100%;outline:none;}
+.kv-input:focus{border-color:rgba(201,168,76,.4);}
+.kv-remove{background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.3);border-radius:6px;color:#ef4444;padding:6px 10px;cursor:pointer;font-size:.8rem;font-weight:600;}
+.add-row-btn{background:none;border:1px dashed rgba(201,168,76,.25);border-radius:6px;color:rgba(245,240,232,.4);padding:7px 14px;font-size:.82rem;cursor:pointer;margin-top:4px;}
+.add-row-btn:hover{border-color:rgba(201,168,76,.5);color:var(--gold);}
+.body-editor{background:var(--lapis3);border:1px solid rgba(201,168,76,.12);border-radius:8px;color:var(--cream);font-family:'JetBrains Mono',monospace;font-size:.82rem;padding:12px;width:100%;min-height:140px;resize:vertical;outline:none;line-height:1.6;}
+.body-editor:focus{border-color:rgba(201,168,76,.35);}
+.body-format{display:flex;gap:8px;margin-bottom:10px;}
+.fmt-btn{background:none;border:1px solid rgba(201,168,76,.2);border-radius:5px;color:rgba(245,240,232,.5);padding:4px 12px;font-size:.78rem;cursor:pointer;}
+.fmt-btn.active,.fmt-btn:hover{background:rgba(201,168,76,.1);color:var(--gold);border-color:rgba(201,168,76,.4);}
+.response-panel{margin-top:24px;}
+.resp-header{display:flex;align-items:center;gap:12px;padding:14px 16px;background:var(--lapis3);border-radius:12px 12px 0 0;border-bottom:1px solid rgba(201,168,76,.1);}
+.status-badge{padding:4px 12px;border-radius:20px;font-family:'JetBrains Mono',monospace;font-size:.85rem;font-weight:600;}
+.s-2xx{background:rgba(34,197,94,.15);color:#22c55e;border:1px solid rgba(34,197,94,.3);}
+.s-4xx{background:rgba(239,68,68,.15);color:#ef4444;border:1px solid rgba(239,68,68,.3);}
+.s-5xx{background:rgba(239,68,68,.2);color:#f87171;border:1px solid rgba(239,68,68,.4);}
+.s-other{background:rgba(245,158,11,.15);color:#f59e0b;border:1px solid rgba(245,158,11,.3);}
+.resp-meta{color:rgba(245,240,232,.45);font-size:.82rem;margin-left:auto;}
+.resp-tabs-row{display:flex;border-bottom:1px solid rgba(201,168,76,.1);padding:0 16px;background:var(--lapis2);}
+.resp-tab{padding:10px 16px;font-size:.83rem;color:rgba(245,240,232,.4);cursor:pointer;border-bottom:2px solid transparent;}
+.resp-tab.active{color:var(--gold);border-bottom-color:var(--gold);}
+.resp-body-wrap{background:var(--lapis2);border-radius:0 0 12px 12px;position:relative;}
+.resp-body{background:var(--lapis3);margin:16px;border-radius:8px;padding:16px;font-family:'JetBrains Mono',monospace;font-size:.8rem;color:var(--cream);max-height:420px;overflow-y:auto;white-space:pre-wrap;word-break:break-all;line-height:1.7;}
+.copy-btn{position:absolute;top:24px;right:24px;background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.25);border-radius:6px;color:var(--gold);padding:5px 12px;font-size:.78rem;cursor:pointer;}
+.copy-btn:hover{background:rgba(201,168,76,.2);}
+.json-key{color:#60a5fa;}
+.json-str{color:#86efac;}
+.json-num{color:#fbbf24;}
+.json-bool{color:#f472b6;}
+.json-null{color:#94a3b8;}
+.loading-anim{text-align:center;padding:48px;color:rgba(245,240,232,.4);}
+.spinner{display:inline-block;width:32px;height:32px;border:3px solid rgba(201,168,76,.15);border-top-color:var(--gold);border-radius:50%;animation:spin .7s linear infinite;margin-bottom:12px;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.empty-state{text-align:center;padding:48px;color:rgba(245,240,232,.25);}
+.empty-icon{font-size:2.5rem;margin-bottom:12px;}
+.history-list{display:flex;flex-direction:column;gap:6px;}
+.hist-item{background:var(--lapis3);border:1px solid rgba(201,168,76,.08);border-radius:8px;padding:10px 14px;cursor:pointer;display:flex;align-items:center;gap:10px;transition:border-color .2s;}
+.hist-item:hover{border-color:rgba(201,168,76,.3);}
+.hist-method{font-family:'JetBrains Mono',monospace;font-size:.78rem;font-weight:600;padding:2px 8px;border-radius:4px;min-width:52px;text-align:center;}
+.m-GET{background:rgba(34,197,94,.15);color:#22c55e;}
+.m-POST{background:rgba(59,130,246,.15);color:#60a5fa;}
+.m-PUT{background:rgba(245,158,11,.15);color:#fbbf24;}
+.m-DELETE{background:rgba(239,68,68,.15);color:#ef4444;}
+.m-PATCH{background:rgba(168,85,247,.15);color:#c084fc;}
+.hist-url{font-family:'JetBrains Mono',monospace;font-size:.8rem;color:rgba(245,240,232,.6);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.hist-status{font-family:'JetBrains Mono',monospace;font-size:.78rem;}
+.presets{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px;}
+.preset-btn{background:var(--lapis3);border:1px solid rgba(201,168,76,.15);border-radius:20px;color:rgba(245,240,232,.6);padding:6px 14px;font-size:.8rem;cursor:pointer;transition:all .2s;}
+.preset-btn:hover{border-color:var(--gold);color:var(--gold);}
+.auth-row{display:flex;flex-direction:column;gap:10px;}
+.auth-select{background:var(--lapis3);border:1px solid rgba(201,168,76,.12);border-radius:6px;color:var(--cream);padding:9px 12px;font-size:.88rem;outline:none;margin-bottom:10px;}
+.section-label{font-size:.78rem;color:rgba(245,240,232,.4);font-weight:600;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;}
+.info-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin:16px;}
+.info-card{background:var(--lapis3);border-radius:8px;padding:14px;}
+.info-card .ic-label{font-size:.75rem;color:rgba(245,240,232,.4);margin-bottom:4px;}
+.info-card .ic-val{font-family:'JetBrains Mono',monospace;font-size:.88rem;color:var(--cream);}
+.waitlist{background:linear-gradient(135deg,var(--lapis3),var(--lapis2));border:1px solid rgba(201,168,76,.2);border-radius:12px;padding:32px;text-align:center;margin-top:40px;}
+.waitlist h3{font-family:'Playfair Display',serif;color:var(--gold);font-size:1.5rem;margin-bottom:8px;}
+.waitlist p{color:rgba(245,240,232,.6);font-size:.92rem;margin-bottom:20px;}
+.wl-form{display:flex;gap:10px;max-width:440px;margin:0 auto;}
+.wl-input{flex:1;background:var(--lapis);border:1px solid rgba(201,168,76,.25);border-radius:8px;color:var(--cream);padding:11px 16px;font-size:.92rem;outline:none;}
+.wl-input:focus{border-color:var(--gold);}
+.wl-btn{background:var(--gold);color:var(--lapis);border:none;border-radius:8px;padding:11px 22px;font-weight:600;cursor:pointer;}
+.wl-btn:hover{opacity:.88;}
+</style>
+<link rel="canonical" href="https://abuz8ai.com/tools/ai-api-tester">
+<meta name="description" content="AI API Tester — Fire requests, inspect responses. Free, no signup, runs entirely in your browser. One of 169 free AI and developer tools by ABUZ8.">
+</head>
+<body>
+<div class="hero">
+  <h1>⚡ AI API Tester</h1>
+  <p>Test any REST API endpoint. Inspect headers, body, status codes, and timing — right in your browser.</p>
+</div>
+<div class="main">
+  <div style="margin-bottom:16px;">
+    <div class="section-label">Quick Presets</div>
+    <div class="presets">
+      <button class="preset-btn" onclick="loadPreset('jsonplaceholder')">📋 JSONPlaceholder GET</button>
+      <button class="preset-btn" onclick="loadPreset('post')">📤 JSONPlaceholder POST</button>
+      <button class="preset-btn" onclick="loadPreset('httpbin_get')">🔍 HTTPBin GET</button>
+      <button class="preset-btn" onclick="loadPreset('httpbin_post')">📨 HTTPBin POST JSON</button>
+      <button class="preset-btn" onclick="loadPreset('httpbin_headers')">🗂 HTTPBin Headers</button>
+      <button class="preset-btn" onclick="loadPreset('github')">🐙 GitHub API</button>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="req-bar">
+      <select class="method" id="method">
+        <option>GET</option>
+        <option>POST</option>
+        <option>PUT</option>
+        <option>PATCH</option>
+        <option>DELETE</option>
+        <option>HEAD</option>
+        <option>OPTIONS</option>
+      </select>
+      <input class="url-input" id="urlInput" type="text" placeholder="https://api.example.com/endpoint" value="https://jsonplaceholder.typicode.com/posts/1">
+      <button class="send-btn" id="sendBtn" onclick="sendRequest()">▶ Send</button>
+    </div>
+    <div class="tabs-row">
+      <div class="tab active" onclick="switchTab(this,'params')">Params</div>
+      <div class="tab" onclick="switchTab(this,'headers')">Headers</div>
+      <div class="tab" onclick="switchTab(this,'body')">Body</div>
+      <div class="tab" onclick="switchTab(this,'auth')">Auth</div>
+      <div class="tab" onclick="switchTab(this,'history')">History</div>
+    </div>
+    <!-- PARAMS -->
+    <div class="tab-body active" id="tab-params">
+      <div class="section-label">Query Parameters</div>
+      <div id="paramRows"></div>
+      <button class="add-row-btn" onclick="addRow('paramRows','params')">+ Add Parameter</button>
+    </div>
+    <!-- HEADERS -->
+    <div class="tab-body" id="tab-headers">
+      <div class="section-label">Request Headers</div>
+      <div id="headerRows"></div>
+      <button class="add-row-btn" onclick="addRow('headerRows','headers')">+ Add Header</button>
+    </div>
+    <!-- BODY -->
+    <div class="tab-body" id="tab-body">
+      <div class="body-format">
+        <span class="section-label" style="margin:0;line-height:2;">Content-Type:</span>
+        <button class="fmt-btn active" id="fmt-json" onclick="setBodyFmt('json')">JSON</button>
+        <button class="fmt-btn" id="fmt-form" onclick="setBodyFmt('form')">Form URL-Encoded</button>
+        <button class="fmt-btn" id="fmt-text" onclick="setBodyFmt('text')">Plain Text</button>
+        <button class="fmt-btn" id="fmt-none" onclick="setBodyFmt('none')">None</button>
+      </div>
+      <textarea class="body-editor" id="bodyEditor" placeholder='{"key": "value"}'></textarea>
+      <div style="margin-top:8px;display:flex;gap:8px;">
+        <button class="add-row-btn" onclick="formatJSON()">🎨 Format JSON</button>
+        <button class="add-row-btn" onclick="clearBody()">🗑 Clear</button>
+      </div>
+    </div>
+    <!-- AUTH -->
+    <div class="tab-body" id="tab-auth">
+      <div class="section-label">Authentication Type</div>
+      <select class="auth-select" id="authType" onchange="updateAuthFields()">
+        <option value="none">None</option>
+        <option value="bearer">Bearer Token</option>
+        <option value="basic">Basic Auth</option>
+        <option value="apikey">API Key</option>
+      </select>
+      <div id="authFields"></div>
+    </div>
+    <!-- HISTORY -->
+    <div class="tab-body" id="tab-history">
+      <div class="section-label">Request History (session)</div>
+      <div class="history-list" id="historyList"><div class="empty-state"><div class="empty-icon">📭</div><div>No requests yet</div></div></div>
+    </div>
+  </div>
+
+  <!-- RESPONSE -->
+  <div class="response-panel" id="responsePanel" style="display:none;">
+    <div class="resp-header" id="respHeader">
+      <span style="font-size:.88rem;color:rgba(245,240,232,.5);font-weight:500;">Response</span>
+      <div id="statusBadge"></div>
+      <span id="respMeta" class="resp-meta"></span>
+    </div>
+    <div class="resp-tabs-row">
+      <div class="resp-tab active" onclick="switchRespTab(this,'resp-body')">Body</div>
+      <div class="resp-tab" onclick="switchRespTab(this,'resp-headers')">Headers</div>
+      <div class="resp-tab" onclick="switchRespTab(this,'resp-info')">Info</div>
+    </div>
+    <div class="resp-body-wrap">
+      <div class="resp-tab-body active" id="resp-body">
+        <button class="copy-btn" onclick="copyResponse()">Copy</button>
+        <pre class="resp-body" id="respBody"></pre>
+      </div>
+      <div class="resp-tab-body" id="resp-headers" style="display:none;">
+        <pre class="resp-body" id="respHeaders" style="margin:16px;"></pre>
+      </div>
+      <div class="resp-tab-body" id="resp-info" style="display:none;">
+        <div class="info-grid" id="respInfo"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LOADING -->
+  <div id="loadingState" style="display:none;">
+    <div class="loading-anim">
+      <div class="spinner"></div>
+      <div>Sending request…</div>
+    </div>
+  </div>
+
+  <!-- WAITLIST -->
+  <div class="waitlist">
+    <h3>API Tester Pro</h3>
+    <p>Collections, environments, OAuth 2.0 flows, automated tests, team sharing — coming soon.</p>
+    <div class="wl-form">
+      <input class="wl-input" id="wlEmail" type="email" placeholder="your@email.com">
+      <button class="wl-btn" onclick="joinWaitlist()">Get Early Access</button>
+    </div>
+    <div id="wlMsg" style="margin-top:12px;font-size:.85rem;color:var(--turq2);"></div>
+  </div>
+</div>
+
+<script src="_abuz8-live-brain.js" defer></script>
+<script>
+// State
+let history = [];
+let bodyFmt = 'json';
+let params = [{k:'',v:''}];
+let headers = [{k:'Content-Type',v:'application/json'},{k:'',v:''}];
+let lastResponse = '';
+
+// Init
+renderRows('paramRows','params');
+renderRows('headerRows','headers');
+
+// Presets
+const PRESETS = {
+  jsonplaceholder:{method:'GET',url:'https://jsonplaceholder.typicode.com/posts/1',body:'',params:[],headers:[{k:'Accept',v:'application/json'}]},
+  post:{method:'POST',url:'https://jsonplaceholder.typicode.com/posts',body:'{\n  "title": "AI API Tester",\n  "body": "Built by ABUZ8",\n  "userId": 1\n}',params:[],headers:[{k:'Content-Type',v:'application/json'}]},
+  httpbin_get:{method:'GET',url:'https://httpbin.org/get',body:'',params:[{k:'foo',v:'bar'},{k:'source',v:'abuz8'}],headers:[]},
+  httpbin_post:{method:'POST',url:'https://httpbin.org/post',body:'{\n  "message": "Hello from ABUZ8",\n  "version": "1.0"\n}',params:[],headers:[{k:'Content-Type',v:'application/json'}]},
+  httpbin_headers:{method:'GET',url:'https://httpbin.org/headers',body:'',params:[],headers:[{k:'X-Custom-Header',v:'abuz8-api-tester'},{k:'Authorization',v:'Bearer demo-token'}]},
+  github:{method:'GET',url:'https://api.github.com/repos/octocat/Hello-World',body:'',params:[],headers:[{k:'Accept',v:'application/vnd.github.v3+json'}]},
+};
+
+function loadPreset(name){
+  const p = PRESETS[name]; if(!p) return;
+  document.getElementById('method').value = p.method;
+  document.getElementById('urlInput').value = p.url;
+  document.getElementById('bodyEditor').value = p.body;
+  params = [...p.params, {k:'',v:''}];
+  headers = [...p.headers, {k:'',v:''}];
+  renderRows('paramRows','params');
+  renderRows('headerRows','headers');
+  if(p.body) { document.querySelectorAll('.tab')[2].click(); }
+}
+
+function addRow(containerId, list){
+  if(list==='params') params.push({k:'',v:''});
+  else headers.push({k:'',v:''});
+  renderRows(containerId, list);
+}
+function removeRow(list, idx){
+  if(list==='params') params.splice(idx,1);
+  else headers.splice(idx,1);
+  renderRows(list==='params'?'paramRows':'headerRows', list);
+}
+function renderRows(containerId, list){
+  const arr = list==='params'?params:headers;
+  const html = arr.map((row,i)=>`
+    <div class="kv-row">
+      <input class="kv-input" placeholder="Key" value="${esc(row.k)}" oninput="updateRow('${list}',${i},'k',this.value)">
+      <input class="kv-input" placeholder="Value" value="${esc(row.v)}" oninput="updateRow('${list}',${i},'v',this.value)">
+      <button class="kv-remove" onclick="removeRow('${list}',${i})">✕</button>
+    </div>`).join('');
+  document.getElementById(containerId).innerHTML = html;
+}
+function updateRow(list,i,field,val){
+  if(list==='params') params[i][field]=val; else headers[i][field]=val;
+}
+function esc(s){ return (s||'').replace(/"/g,'&quot;'); }
+
+function setBodyFmt(fmt){
+  bodyFmt=fmt;
+  document.querySelectorAll('.fmt-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('fmt-'+fmt).classList.add('active');
+}
+function formatJSON(){
+  try{
+    const val = document.getElementById('bodyEditor').value.trim();
+    document.getElementById('bodyEditor').value = JSON.stringify(JSON.parse(val),null,2);
+  }catch(e){alert('Invalid JSON');}
+}
+function clearBody(){ document.getElementById('bodyEditor').value=''; }
+
+function updateAuthFields(){
+  const type = document.getElementById('authType').value;
+  const cont = document.getElementById('authFields');
+  if(type==='none'){ cont.innerHTML=''; return; }
+  if(type==='bearer'){
+    cont.innerHTML=`<div class="section-label">Token</div><input class="kv-input" id="authToken" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." style="width:100%;margin-bottom:10px;">`;
+  } else if(type==='basic'){
+    cont.innerHTML=`<div class="kv-row"><input class="kv-input" id="authUser" placeholder="Username"><input class="kv-input" id="authPass" placeholder="Password" type="password"><div></div></div>`;
+  } else if(type==='apikey'){
+    cont.innerHTML=`<div class="kv-row"><input class="kv-input" id="authKeyName" placeholder="Header name (e.g. X-API-Key)"><input class="kv-input" id="authKeyVal" placeholder="your-api-key"><div></div></div>`;
+  }
+}
+
+function switchTab(el, tabId){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tab-body').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('tab-'+tabId).classList.add('active');
+}
+function switchRespTab(el, tabId){
+  document.querySelectorAll('.resp-tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.resp-tab-body').forEach(t=>t.style.display='none');
+  el.classList.add('active');
+  document.getElementById(tabId).style.display='block';
+}
+
+async function sendRequest(){
+  const method = document.getElementById('method').value;
+  let url = document.getElementById('urlInput').value.trim();
+  if(!url){ alert('Enter a URL'); return; }
+
+  // Build query string
+  const qp = params.filter(p=>p.k && p.v);
+  if(qp.length){
+    const sep = url.includes('?')?'&':'?';
+    url += sep + qp.map(p=>encodeURIComponent(p.k)+'='+encodeURIComponent(p.v)).join('&');
+  }
+
+  // Build headers
+  const reqHeaders = {};
+  headers.filter(h=>h.k&&h.v).forEach(h=>reqHeaders[h.k]=h.v);
+
+  // Auth
+  const authType = document.getElementById('authType').value;
+  if(authType==='bearer'){
+    const tok=(document.getElementById('authToken')||{}).value||'';
+    if(tok) reqHeaders['Authorization']='Bearer '+tok;
+  } else if(authType==='basic'){
+    const u=(document.getElementById('authUser')||{}).value||'';
+    const p2=(document.getElementById('authPass')||{}).value||'';
+    if(u) reqHeaders['Authorization']='Basic '+btoa(u+':'+p2);
+  } else if(authType==='apikey'){
+    const kn=(document.getElementById('authKeyName')||{}).value||'';
+    const kv=(document.getElementById('authKeyVal')||{}).value||'';
+    if(kn&&kv) reqHeaders[kn]=kv;
+  }
+
+  // Body
+  let body = undefined;
+  if(!['GET','HEAD','OPTIONS'].includes(method)){
+    const raw = document.getElementById('bodyEditor').value.trim();
+    if(raw && bodyFmt!=='none'){
+      body = raw;
+      if(bodyFmt==='json' && !reqHeaders['Content-Type']) reqHeaders['Content-Type']='application/json';
+      if(bodyFmt==='form' && !reqHeaders['Content-Type']) reqHeaders['Content-Type']='application/x-www-form-urlencoded';
+    }
+  }
+
+  document.getElementById('sendBtn').disabled=true;
+  document.getElementById('responsePanel').style.display='none';
+  document.getElementById('loadingState').style.display='block';
+
+  const startTime = performance.now();
+  let respStatus=0, respStatusText='', respHeaders={}, respBody='', respSize=0;
+
+  try{
+    const res = await fetch(url, {method, headers:reqHeaders, body: body||undefined, mode:'cors'});
+    const elapsed = Math.round(performance.now()-startTime);
+    respStatus = res.status;
+    respStatusText = res.statusText;
+    res.headers.forEach((v,k)=>{ respHeaders[k]=v; });
+    const text = await res.text();
+    respBody = text;
+    respSize = new Blob([text]).size;
+
+    // Parse JSON for display
+    let displayBody = text;
+    try{ displayBody = JSON.stringify(JSON.parse(text),null,2); }catch(e){}
+
+    lastResponse = displayBody;
+    showResponse(respStatus, respStatusText, displayBody, respHeaders, elapsed, respSize, url, method);
+    addHistory({method, url: document.getElementById('urlInput').value, status: respStatus, time: elapsed});
+
+  } catch(err){
+    const elapsed = Math.round(performance.now()-startTime);
+    const errMsg = `// Error: ${err.message}\n// This may be a CORS restriction — try a CORS-enabled endpoint or use a proxy.\n// URL: ${url}`;
+    lastResponse = errMsg;
+    showResponse(0, 'Network Error', errMsg, {}, elapsed, 0, url, method);
+    addHistory({method, url: document.getElementById('urlInput').value, status: 'ERR', time: elapsed});
+  }
+
+  document.getElementById('sendBtn').disabled=false;
+  document.getElementById('loadingState').style.display='none';
+}
+
+function showResponse(status, statusText, body, hdrs, elapsed, size, url, method){
+  document.getElementById('responsePanel').style.display='block';
+  const badge = document.getElementById('statusBadge');
+  let cls = status>=500?'s-5xx':status>=400?'s-4xx':status>=200&&status<300?'s-2xx':'s-other';
+  badge.innerHTML = `<span class="status-badge ${cls}">${status||'ERR'} ${statusText}</span>`;
+  document.getElementById('respMeta').textContent = `${elapsed}ms · ${formatBytes(size)}`;
+
+  // Syntax highlight JSON
+  document.getElementById('respBody').innerHTML = highlightJSON(body);
+
+  // Headers
+  const hdrsStr = Object.entries(hdrs).map(([k,v])=>`${k}: ${v}`).join('\n') || '(no headers)';
+  document.getElementById('respHeaders').textContent = hdrsStr;
+
+  // Info
+  document.getElementById('respInfo').innerHTML = `
+    <div class="info-card"><div class="ic-label">Status</div><div class="ic-val">${status} ${statusText}</div></div>
+    <div class="info-card"><div class="ic-label">Time</div><div class="ic-val">${elapsed} ms</div></div>
+    <div class="info-card"><div class="ic-label">Size</div><div class="ic-val">${formatBytes(size)}</div></div>
+    <div class="info-card"><div class="ic-label">Method</div><div class="ic-val">${method}</div></div>
+    <div class="info-card"><div class="ic-label">URL</div><div class="ic-val" style="word-break:break-all;font-size:.75rem;">${url}</div></div>
+    <div class="info-card"><div class="ic-label">Content-Type</div><div class="ic-val">${hdrs['content-type']||'—'}</div></div>
+  `;
+}
+
+function highlightJSON(str){
+  // Basic JSON syntax highlight
+  return str
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g,(match)=>{
+      let cls='json-num';
+      if(/^"/.test(match)){
+        if(/:$/.test(match)) cls='json-key';
+        else cls='json-str';
+      } else if(/true|false/.test(match)) cls='json-bool';
+      else if(/null/.test(match)) cls='json-null';
+      return `<span class="${cls}">${match}</span>`;
+    });
+}
+
+function formatBytes(n){
+  if(!n) return '0 B';
+  if(n<1024) return n+' B';
+  if(n<1048576) return (n/1024).toFixed(1)+' KB';
+  return (n/1048576).toFixed(1)+' MB';
+}
+
+function addHistory(item){
+  history.unshift(item);
+  if(history.length>20) history.pop();
+  const list = document.getElementById('historyList');
+  list.innerHTML = history.map((h,i)=>`
+    <div class="hist-item" onclick="loadHistory(${i})">
+      <span class="hist-method m-${h.method}">${h.method}</span>
+      <span class="hist-url">${h.url}</span>
+      <span class="hist-status" style="color:${h.status>=400||h.status==='ERR'?'#ef4444':'#22c55e'}">${h.status}</span>
+      <span class="resp-meta" style="font-size:.75rem;">${h.time}ms</span>
+    </div>`).join('');
+}
+function loadHistory(i){
+  const h = history[i];
+  document.getElementById('method').value = h.method;
+  document.getElementById('urlInput').value = h.url;
+  // Switch to history tab clicked item indication
+}
+
+function copyResponse(){
+  navigator.clipboard.writeText(lastResponse).then(()=>{
+    const btn = document.querySelector('.copy-btn');
+    btn.textContent='Copied!'; setTimeout(()=>btn.textContent='Copy',2000);
+  });
+}
+
+async function joinWaitlist(){
+  const email = document.getElementById('wlEmail').value.trim();
+  if(!email||!email.includes('@')){document.getElementById('wlMsg').textContent='Enter a valid email.';return;}
+  try{
+    await fetch('/api/waitlist',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,product:'ai-api-tester',source:'abuz8'})});
+  }catch(e){localStorage.setItem('wl_api_tester',email);}
+  document.getElementById('wlMsg').textContent='✓ You\'re on the list! We\'ll notify you.';
+  document.getElementById('wlEmail').value='';
+}
+</script>
+
+<script src="/assets/js/dfy-banner.js" async></script>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+<script src="/tools/_tools-shared.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>
+

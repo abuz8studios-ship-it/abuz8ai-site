@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ABUZ8 AI — Sovereign AI Tools & Operating System | Local-First, Free</title>
+<meta name="description" content="Free AI tools. Trending projects. Practical guides. Plus Qadir OS: local AI agents on YOUR hardware. No surveillance. No subscriptions.">
+<link rel="canonical" href="https://abuz8ai.com/">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://abuz8ai.com/">
+<meta property="og:title" content="ABUZ8 AI — The AI Company That Doesn't Spy on You">
+<meta property="og:description" content="Free AI tools + Qadir OS. No cloud. No subscriptions. Built for builders.">
+<meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"Organization","name":"ABUZ8 AI","url":"https://abuz8ai.com","founder":{"@type":"Person","name":"Ahmad"},"contactPoint":{"@type":"ContactPoint","email":"ahmad@abuz8ai.com"}}
+</script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:wght@700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#F8FAFC;--primary:#2E75B6;--text:#2C3E50;--gold:#C9A84C;--turq:#1A8A7A;--glass:rgba(255,255,255,.72);--depth1:#E8F0FE;--depth2:#D4E4F7;--glow:rgba(46,117,182,.15)}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden;line-height:1.6}
+
+/* === NAVIGATION === */
+.nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:1rem 2rem;display:flex;align-items:center;justify-content:space-between;backdrop-filter:blur(20px);background:rgba(248,250,252,.85);border-bottom:1px solid rgba(46,117,182,.08);transition:all .3s}
+.nav.scrolled{padding:.6rem 2rem;box-shadow:0 4px 30px rgba(0,0,0,.06)}
+.nav-logo{font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:800;color:var(--primary);text-decoration:none;letter-spacing:-.02em}
+.nav-links{display:flex;gap:2rem;align-items:center}
+.nav-links a{color:var(--text);text-decoration:none;font-size:.9rem;font-weight:500;opacity:.8;transition:all .3s}
+.nav-links a:hover{opacity:1;color:var(--primary)}
+.nav-cta{background:var(--primary);color:#fff!important;padding:.5rem 1.2rem;border-radius:8px;opacity:1!important;font-weight:600}
+.nav-cta:hover{transform:translateY(-1px);box-shadow:0 4px 15px rgba(46,117,182,.3)}
+
+/* === HERO === */
+.hero{position:relative;min-height:100vh;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.hero-canvas{position:absolute;inset:0;z-index:1;pointer-events:none}
+.hero-mesh{position:absolute;inset:0;z-index:0;opacity:.6}
+.hero-content{position:relative;z-index:10;text-align:center;max-width:900px;padding:2rem}
+.hero-eyebrow{font-family:'JetBrains Mono',monospace;font-size:.8rem;letter-spacing:.15em;text-transform:uppercase;color:var(--primary);opacity:0;transform:translateY(20px);margin-bottom:1.5rem}
+.hero-headline{font-family:'Playfair Display',serif;font-size:clamp(2.8rem,6vw,5rem);font-weight:900;line-height:1.08;color:var(--text);margin-bottom:1.5rem}
+.hero-headline .word{display:inline-block;opacity:0;transform:translateY(40px) rotateX(-15deg);transition:all .8s cubic-bezier(.16,1,.3,1)}
+.hero-headline .word.visible{opacity:1;transform:translateY(0) rotateX(0)}
+.hero-headline .highlight{background:linear-gradient(135deg,var(--primary),var(--turq));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-sub{font-size:1.2rem;max-width:600px;margin:0 auto 2.5rem;opacity:0;transform:translateY(20px);color:#4A5568;line-height:1.7}
+.hero-actions{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;opacity:0;transform:translateY(20px)}
+.btn-primary{background:linear-gradient(135deg,var(--primary),#1A5C99);color:#fff;padding:.9rem 2rem;border-radius:12px;font-weight:700;font-size:1rem;text-decoration:none;border:none;cursor:pointer;transition:all .4s cubic-bezier(.16,1,.3,1);box-shadow:0 4px 20px rgba(46,117,182,.25)}
+.btn-primary:hover{transform:translateY(-3px) scale(1.02);box-shadow:0 8px 40px rgba(46,117,182,.35)}
+.btn-secondary{background:var(--glass);color:var(--text);padding:.9rem 2rem;border-radius:12px;font-weight:600;font-size:1rem;text-decoration:none;border:1px solid rgba(46,117,182,.15);cursor:pointer;transition:all .4s;backdrop-filter:blur(10px)}
+.btn-secondary:hover{background:rgba(46,117,182,.06);border-color:var(--primary);transform:translateY(-2px)}
+
+/* === PARALLAX DEPTH LAYERS === */
+.parallax-layer{position:absolute;will-change:transform;pointer-events:none}
+.pl-orb1{width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(46,117,182,.08),transparent 70%);top:-10%;right:-10%;filter:blur(40px)}
+.pl-orb2{width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(26,138,122,.06),transparent 70%);bottom:10%;left:-5%;filter:blur(50px)}
+.pl-orb3{width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,rgba(201,168,76,.05),transparent 70%);top:40%;right:20%;filter:blur(35px)}
+
+/* === SECTIONS COMMON === */
+section{position:relative;padding:8rem 2rem}
+.section-inner{max-width:1200px;margin:0 auto}
+.section-label{font-family:'JetBrains Mono',monospace;font-size:.75rem;letter-spacing:.2em;text-transform:uppercase;color:var(--primary);margin-bottom:.75rem}
+.section-title{font-family:'Playfair Display',serif;font-size:clamp(2rem,4vw,3.2rem);font-weight:800;margin-bottom:1rem;line-height:1.15}
+.section-desc{font-size:1.05rem;color:#4A5568;max-width:600px;margin-bottom:3rem;line-height:1.7}
+
+/* === TOOL CARDS === */
+.tools-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.5rem}
+.tool-card{position:relative;background:var(--glass);border:1px solid rgba(46,117,182,.08);border-radius:20px;padding:2rem;backdrop-filter:blur(16px);transition:all .5s cubic-bezier(.16,1,.3,1);overflow:hidden}
+.tool-card::before{content:'';position:absolute;inset:0;border-radius:20px;background:linear-gradient(135deg,rgba(46,117,182,.04),rgba(26,138,122,.02));opacity:0;transition:opacity .5s}
+.tool-card:hover{transform:translateY(-8px) scale(1.01);box-shadow:0 20px 60px rgba(46,117,182,.12);border-color:rgba(46,117,182,.15)}
+.tool-card:hover::before{opacity:1}
+.tool-card-icon{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.5rem;margin-bottom:1.2rem;background:linear-gradient(135deg,var(--depth1),var(--depth2))}
+.tool-card h3{font-size:1.1rem;font-weight:700;margin-bottom:.5rem}
+.tool-card p{font-size:.9rem;color:#5A6B7B;line-height:1.6}
+.tool-card-tag{display:inline-block;margin-top:.8rem;font-size:.7rem;font-family:'JetBrains Mono',monospace;background:rgba(46,117,182,.06);color:var(--primary);padding:.25rem .6rem;border-radius:6px}
+
+/* === VERSUS TABLE === */
+.versus{background:linear-gradient(180deg,rgba(46,117,182,.02),var(--bg))}
+.versus-table{width:100%;border-collapse:separate;border-spacing:0;border-radius:16px;overflow:hidden;box-shadow:0 4px 30px rgba(0,0,0,.04)}
+.versus-table th,.versus-table td{padding:1.1rem 1.5rem;text-align:left;border-bottom:1px solid rgba(46,117,182,.06)}
+.versus-table thead{background:linear-gradient(135deg,var(--primary),#1A5C99)}
+.versus-table th{color:#fff;font-weight:600;font-size:.85rem;letter-spacing:.03em}
+.versus-table tbody tr{background:#fff;transition:all .3s}
+.versus-table tbody tr:hover{background:rgba(46,117,182,.03)}
+.versus-table td:first-child{font-weight:600}
+.check{color:var(--turq);font-weight:700}
+.cross{color:#ccc}
+
+/* === GUIDES === */
+.guides-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1.5rem}
+.guide-card{background:#fff;border-radius:16px;padding:2rem;border:1px solid rgba(46,117,182,.06);transition:all .4s}
+.guide-card:hover{box-shadow:0 12px 40px rgba(46,117,182,.08);transform:translateY(-4px)}
+.guide-card h3{font-size:1.05rem;font-weight:700;margin-bottom:.5rem}
+.guide-card p{font-size:.9rem;color:#5A6B7B;line-height:1.5}
+
+/* === PRODUCT SECTION === */
+.product{background:linear-gradient(180deg,var(--bg),rgba(46,117,182,.03))}
+.product-grid{display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center}
+.product-mockup{position:relative;background:linear-gradient(135deg,#1a2332,#0f1923);border-radius:16px;padding:2rem;font-family:'JetBrains Mono',monospace;font-size:.8rem;color:#A8D4FF;line-height:1.8;box-shadow:0 30px 80px rgba(0,0,0,.15);overflow:hidden}
+.product-mockup::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--primary),var(--turq),var(--gold))}
+.mockup-line{opacity:0;transform:translateX(-10px);transition:all .6s}
+.mockup-line.visible{opacity:1;transform:translateX(0)}
+.product-info h2{font-family:'Playfair Display',serif;font-size:2.2rem;font-weight:800;margin-bottom:1rem}
+.product-info p{font-size:1.05rem;color:#4A5568;line-height:1.7;margin-bottom:1.5rem}
+.product-features{list-style:none;margin-bottom:2rem}
+.product-features li{padding:.5rem 0;font-size:.95rem;display:flex;align-items:center;gap:.75rem}
+.product-features li::before{content:'';width:8px;height:8px;border-radius:50%;background:var(--turq)}
+
+/* === NEWSLETTER === */
+.newsletter{text-align:center;padding:6rem 2rem;background:linear-gradient(135deg,rgba(46,117,182,.03),rgba(26,138,122,.02))}
+.newsletter-form{display:flex;gap:.75rem;max-width:480px;margin:0 auto;flex-wrap:wrap;justify-content:center}
+.newsletter-form input{flex:1;min-width:250px;padding:.9rem 1.2rem;border-radius:12px;border:1px solid rgba(46,117,182,.15);font-size:1rem;background:#fff;transition:all .3s}
+.newsletter-form input:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px rgba(46,117,182,.1)}
+.newsletter-form button{padding:.9rem 1.8rem;border-radius:12px;background:var(--primary);color:#fff;font-weight:700;border:none;cursor:pointer;transition:all .3s}
+.newsletter-form button:hover{background:#1A5C99;transform:translateY(-2px)}
+
+/* === TRENDING REPOS === */
+.repos-scroll{display:flex;gap:1.2rem;overflow-x:auto;padding:1rem 0;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch}
+.repos-scroll::-webkit-scrollbar{height:6px}
+.repos-scroll::-webkit-scrollbar-track{background:rgba(46,117,182,.04);border-radius:3px}
+.repos-scroll::-webkit-scrollbar-thumb{background:rgba(46,117,182,.2);border-radius:3px}
+.repo-card{min-width:300px;scroll-snap-align:start;background:#fff;border:1px solid rgba(46,117,182,.06);border-radius:14px;padding:1.5rem;transition:all .3s}
+.repo-card:hover{box-shadow:0 8px 25px rgba(46,117,182,.08);transform:translateY(-3px)}
+.repo-card h4{font-size:.95rem;font-weight:700;margin-bottom:.4rem;color:var(--primary)}
+.repo-card p{font-size:.8rem;color:#5A6B7B;line-height:1.5;margin-bottom:.6rem}
+.repo-meta{font-size:.75rem;font-family:'JetBrains Mono',monospace;color:#8899AA}
+
+/* === FOOTER === */
+.footer{padding:4rem 2rem;border-top:1px solid rgba(46,117,182,.06)}
+.footer-inner{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:3rem}
+.footer-brand p{font-size:.85rem;color:#5A6B7B;margin-top:.5rem;line-height:1.6}
+.footer-col h4{font-size:.8rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-bottom:1rem;color:var(--primary)}
+.footer-col a{display:block;font-size:.85rem;color:#5A6B7B;text-decoration:none;padding:.3rem 0;transition:color .2s}
+.footer-col a:hover{color:var(--primary)}
+.footer-bottom{max-width:1200px;margin:2rem auto 0;padding-top:2rem;border-top:1px solid rgba(46,117,182,.06);font-size:.8rem;color:#8899AA;text-align:center}
+
+/* === SCROLL REVEAL === */
+.reveal{opacity:0;transform:translateY(40px);transition:all .9s cubic-bezier(.16,1,.3,1)}
+.reveal.visible{opacity:1;transform:translateY(0)}
+.reveal-delay-1{transition-delay:.1s}
+.reveal-delay-2{transition-delay:.2s}
+.reveal-delay-3{transition-delay:.3s}
+.reveal-delay-4{transition-delay:.4s}
+
+/* === CURSOR GLOW === */
+.cursor-glow{position:fixed;width:400px;height:400px;border-radius:50%;pointer-events:none;background:radial-gradient(circle,rgba(46,117,182,.04),transparent 70%);transform:translate(-50%,-50%);z-index:0;transition:opacity .3s}
+
+/* === RESPONSIVE === */
+@media(max-width:768px){
+  .nav-links{display:none}
+  .product-grid{grid-template-columns:1fr;gap:2rem}
+  .footer-inner{grid-template-columns:1fr 1fr;gap:2rem}
+  .hero-headline{font-size:2.4rem}
+  section{padding:5rem 1.5rem}
+}
+</style>
+</head>
+<body>
+
+<!-- CURSOR GLOW -->
+<div class="cursor-glow" id="cursorGlow"></div>
+
+<!-- NAVIGATION -->
+<nav class="nav" id="nav">
+  <a href="/" class="nav-logo">ABUZ8</a>
+  <div class="nav-links">
+    <a href="#tools">Tools</a>
+    <a href="#guides">Learn</a>
+    <a href="#qadir">Qadir OS</a>
+    <a href="#trending">Trending</a>
+    <a href="/store" class="nav-cta">Get Qadir OS</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="hero">
+  <canvas class="hero-canvas" id="heroCanvas"></canvas>
+  <div class="hero-mesh" id="heroMesh"></div>
+  
+  <!-- Parallax orbs -->
+  <div class="parallax-layer pl-orb1" data-speed="0.02"></div>
+  <div class="parallax-layer pl-orb2" data-speed="0.035"></div>
+  <div class="parallax-layer pl-orb3" data-speed="0.025"></div>
+  
+  <div class="hero-content">
+    <p class="hero-eyebrow" id="heroEyebrow">Local-First AI Infrastructure</p>
+    <h1 class="hero-headline" id="heroHeadline">
+      <span class="word">They</span> <span class="word">Train</span> <span class="word">on</span> <span class="word">Your</span> <span class="word highlight">Data.</span><br>
+      <span class="word">We</span> <span class="word">Give</span> <span class="word">You</span> <span class="word">the</span> <span class="word highlight">Whole</span> <span class="word highlight">Lab.</span>
+    </h1>
+    <p class="hero-sub" id="heroSub">Free tools to learn, build, and ship AI — plus a sovereign operating system that runs entirely on your hardware. Zero data leaves your machine.</p>
+    <div class="hero-actions" id="heroActions">
+      <a href="#tools" class="btn-primary">Explore Free Tools</a>
+      <a href="#qadir" class="btn-secondary">See Qadir OS</a>
+    </div>
+  </div>
+</section>
+
+<!-- FREE TOOLS -->
+<section id="tools">
+  <div class="section-inner">
+    <p class="section-label reveal">Free AI Tools</p>
+    <h2 class="section-title reveal">Everything You Need. Zero Cost.</h2>
+    <p class="section-desc reveal">Curated tools that actually work — tested by our team, organized by workflow. No accounts required for most.</p>
+    <div class="tools-grid">
+      <div class="tool-card reveal reveal-delay-1">
+        <div class="tool-card-icon">&#x1f9e0;</div>
+        <h3>Model Arena</h3>
+        <p>Compare outputs from GPT-4, Claude, Gemini, Llama side-by-side. Same prompt, different brains.</p>
+        <span class="tool-card-tag">Compare</span>
+      </div>
+      <div class="tool-card reveal reveal-delay-2">
+        <div class="tool-card-icon">&#x1f3a8;</div>
+        <h3>Image Generation</h3>
+        <p>Generate images with FLUX, SDXL, and custom models. Run locally or use free tiers.</p>
+        <span class="tool-card-tag">Create</span>
+      </div>
+      <div class="tool-card reveal reveal-delay-3">
+        <div class="tool-card-icon">&#x1f4dd;</div>
+        <h3>Prompt Engineering Lab</h3>
+        <p>Templates, chain-of-thought builders, and system prompt generators for every major model.</p>
+        <span class="tool-card-tag">Optimize</span>
+      </div>
+      <div class="tool-card reveal reveal-delay-4">
+        <div class="tool-card-icon">&#x1f50a;</div>
+        <h3>Voice &amp; Audio AI</h3>
+        <p>Text-to-speech, transcription, voice cloning tools. Local Whisper setup guides included.</p>
+        <span class="tool-card-tag">Audio</span>
+      </div>
+      <div class="tool-card reveal reveal-delay-1">
+        <div class="tool-card-icon">&#x1f4ca;</div>
+        <h3>Data &amp; RAG Pipeline</h3>
+        <p>Build retrieval-augmented generation from your docs. Embed, chunk, query — step by step.</p>
+        <span class="tool-card-tag">Build</span>
+      </div>
+      <div class="tool-card reveal reveal-delay-2">
+        <div class="tool-card-icon">&#x1f916;</div>
+        <h3>Agent Builder</h3>
+        <p>Design multi-step AI agents. Tool-use patterns, memory systems, and orchestration frameworks.</p>
+        <span class="tool-card-tag">Automate</span>
+      </div>
+      <div class="tool-card reveal reveal-delay-3">
+        <div class="tool-card-icon">&#x1f3ac;</div>
+        <h3>Video &amp; Animation</h3>
+        <p>AI video generation, lip-sync, image-to-video. ComfyUI workflows and model guides.</p>
+        <span class="tool-card-tag">Video</span>
+      </div>
+      <div class="tool-card reveal reveal-delay-4">
+        <div class="tool-card-icon">&#x1f4bb;</div>
+        <h3>Code Assistants</h3>
+        <p>Local coding copilots, terminal AI, and IDE integrations. No Copilot subscription needed.</p>
+        <span class="tool-card-tag">Code</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- VERSUS -->
+<section class="versus" id="versus">
+  <div class="section-inner">
+    <p class="section-label reveal">Why Local-First?</p>
+    <h2 class="section-title reveal">Cloud AI vs. Sovereign AI</h2>
+    <p class="section-desc reveal">See what you give up when someone else owns the compute.</p>
+    <table class="versus-table reveal">
+      <thead><tr><th>Feature</th><th>Cloud AI (ChatGPT, etc.)</th><th>ABUZ8 / Qadir OS</th></tr></thead>
+      <tbody>
+        <tr><td>Your data</td><td class="cross">Sent to their servers</td><td class="check">Never leaves your GPU</td></tr>
+        <tr><td>Monthly cost</td><td class="cross">$20-$200/mo per tool</td><td class="check">$0/mo after setup</td></tr>
+        <tr><td>Model choice</td><td class="cross">Whatever they offer</td><td class="check">Any model, any size</td></tr>
+        <tr><td>Uptime</td><td class="cross">Their outage = your downtime</td><td class="check">Runs offline forever</td></tr>
+        <tr><td>Customization</td><td class="cross">System prompts only</td><td class="check">Fine-tune, merge, retrain</td></tr>
+        <tr><td>Data training</td><td class="cross">May use your inputs</td><td class="check">Your data stays yours</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- GUIDES -->
+<section id="guides">
+  <div class="section-inner">
+    <p class="section-label reveal">Learn AI</p>
+    <h2 class="section-title reveal">Practical Guides. No Fluff.</h2>
+    <p class="section-desc reveal">From first install to production deployment. Written for builders, not tourists.</p>
+    <div class="guides-grid">
+      <div class="guide-card reveal reveal-delay-1">
+        <h3>Run Your First Local LLM</h3>
+        <p>Ollama + open-weight models in 10 minutes. Windows, Mac, Linux — full walkthrough with hardware reqs.</p>
+      </div>
+      <div class="guide-card reveal reveal-delay-2">
+        <h3>Build a RAG System From Scratch</h3>
+        <p>Embed your documents, build a vector store, query with any LLM. Python. No frameworks needed.</p>
+      </div>
+      <div class="guide-card reveal reveal-delay-3">
+        <h3>AI Agent Architecture Patterns</h3>
+        <p>ReAct, function calling, multi-agent orchestration. Real code, real patterns, production-tested.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRODUCT: QADIR OS -->
+<section class="product" id="qadir">
+  <div class="section-inner">
+    <div class="product-grid">
+      <div class="product-info reveal">
+        <p class="section-label">Premium Product</p>
+        <h2>Qadir OS</h2>
+        <p>A sovereign AI operating system. Multiple AI agents running on YOUR hardware — orchestrated, scheduled, and fully autonomous. No cloud. No subscription.</p>
+        <ul class="product-features">
+          <li>Multi-agent orchestration with memory and tools</li>
+          <li>Runs on consumer GPUs (RTX 3060+)</li>
+          <li>Telegram, browser, voice, and API interfaces</li>
+          <li>Local LLMs + optional cloud routing</li>
+          <li>$0/month — you own the compute</li>
+        </ul>
+        <a href="/store" class="btn-primary">Join the Waitlist</a>
+      </div>
+      <div class="product-mockup reveal reveal-delay-2" id="mockup">
+        <div class="mockup-line">$ qadir boot --agents=hermes,zait,soloman</div>
+        <div class="mockup-line">[ok] Loading Hermes v0.14 ... brain=grok-4.3</div>
+        <div class="mockup-line">[ok] Loading Zait ... brain=nemotron-omni</div>
+        <div class="mockup-line">[ok] Loading Soloman ... brain=local/llama3</div>
+        <div class="mockup-line">[ok] All agents online. Listening.</div>
+        <div class="mockup-line">&nbsp;</div>
+        <div class="mockup-line">hermes&gt; Scanning inbox... 3 leads found.</div>
+        <div class="mockup-line">zait&gt; Image batch complete. 12 renders queued.</div>
+        <div class="mockup-line">soloman&gt; Research digest ready. Sending to Telegram.</div>
+        <div class="mockup-line">&nbsp;</div>
+        <div class="mockup-line" style="color:#C9A84C">[ LOCAL | 0 bytes to cloud | $0.00 spent today ]</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TRENDING REPOS -->
+<section id="trending">
+  <div class="section-inner">
+    <p class="section-label reveal">Trending Now</p>
+    <h2 class="section-title reveal">Hot AI Repos This Week</h2>
+    <p class="section-desc reveal">Live from GitHub. Updated daily.</p>
+    <div class="repos-scroll" id="reposScroll">
+      <div class="repo-card"><h4>Loading...</h4><p>Fetching trending repos from GitHub</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- NEWSLETTER -->
+<section class="newsletter" id="newsletter">
+  <div class="section-inner">
+    <p class="section-label reveal">Stay Sharp</p>
+    <h2 class="section-title reveal" style="text-align:center">Weekly AI Intel — Free</h2>
+    <p class="section-desc reveal" style="text-align:center;margin-left:auto;margin-right:auto">One email per week. Trending repos, new tools, breakthrough papers, and build tutorials. No spam. Unsubscribe anytime.</p>
+    <form class="newsletter-form reveal" onsubmit="return handleNewsletter(event)">
+      <input type="email" placeholder="your@email.com" required>
+      <button type="submit">Subscribe</button>
+    </form>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <a href="/" class="nav-logo">ABUZ8</a>
+      <p>Sovereign AI infrastructure for builders. Free tools + premium OS. Local-first, always.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Free Tools</h4>
+      <a href="#tools">Model Arena</a>
+      <a href="#tools">Image Gen</a>
+      <a href="#tools">Prompt Lab</a>
+      <a href="#tools">Agent Builder</a>
+    </div>
+    <div class="footer-col">
+      <h4>Learn</h4>
+      <a href="#guides">Local LLM Guide</a>
+      <a href="#guides">RAG Tutorial</a>
+      <a href="#guides">Agent Patterns</a>
+    </div>
+    <div class="footer-col">
+      <h4>Company</h4>
+      <a href="/about">About</a>
+      <a href="mailto:ahmad@abuz8ai.com">Contact</a>
+      <a href="/store">Store</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    &copy; 2026 ABUZ8 LLC. All rights reserved. Built with sovereignty in mind.
+  </div>
+</footer>
+
+<script>
+// === CANVAS PARTICLE SYSTEM — Golden Dust / Firefly Effect ===
+(function(){
+  const canvas = document.getElementById('heroCanvas');
+  const ctx = canvas.getContext('2d');
+  let w, h, particles = [], mouse = {x:0, y:0};
+  
+  function resize(){
+    w = canvas.width = canvas.offsetWidth;
+    h = canvas.height = canvas.offsetHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+  
+  document.addEventListener('mousemove', e => {
+    mouse.x = e.clientX;
+    mouse.y = e.clientY;
+  });
+
+  class Particle {
+    constructor(){this.reset()}
+    reset(){
+      this.x = Math.random() * w;
+      this.y = Math.random() * h;
+      this.size = Math.random() * 2.5 + 0.5;
+      this.speedX = (Math.random() - 0.5) * 0.3;
+      this.speedY = (Math.random() - 0.5) * 0.3 - 0.1;
+      this.opacity = Math.random() * 0.5 + 0.1;
+      this.fadeDir = Math.random() > 0.5 ? 1 : -1;
+      this.life = Math.random() * 200 + 100;
+      this.age = 0;
+      const colors = ['46,117,182','201,168,76','26,138,122'];
+      this.color = colors[Math.floor(Math.random()*colors.length)];
+    }
+    update(){
+      this.x += this.speedX;
+      this.y += this.speedY;
+      this.age++;
+      this.opacity += this.fadeDir * 0.003;
+      if(this.opacity > 0.6) this.fadeDir = -1;
+      if(this.opacity < 0.05) this.fadeDir = 1;
+      const dx = mouse.x - this.x;
+      const dy = mouse.y - this.y;
+      const dist = Math.sqrt(dx*dx + dy*dy);
+      if(dist < 200){
+        this.x += dx * 0.0008;
+        this.y += dy * 0.0008;
+        this.opacity = Math.min(this.opacity + 0.01, 0.7);
+      }
+      if(this.age > this.life || this.x < -50 || this.x > w+50 || this.y < -50 || this.y > h+50){
+        this.reset();
+      }
+    }
+    draw(){
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.size, 0, Math.PI*2);
+      ctx.fillStyle = 'rgba('+this.color+','+this.opacity+')';
+      ctx.fill();
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.size * 3, 0, Math.PI*2);
+      ctx.fillStyle = 'rgba('+this.color+','+(this.opacity * 0.15)+')';
+      ctx.fill();
+    }
+  }
+
+  const count = Math.min(120, Math.floor(w * h / 8000));
+  for(let i = 0; i < count; i++) particles.push(new Particle());
+
+  function drawLines(){
+    for(let i = 0; i < particles.length; i++){
+      for(let j = i+1; j < particles.length; j++){
+        const dx = particles[i].x - particles[j].x;
+        const dy = particles[i].y - particles[j].y;
+        const dist = Math.sqrt(dx*dx+dy*dy);
+        if(dist < 120){
+          ctx.beginPath();
+          ctx.moveTo(particles[i].x, particles[i].y);
+          ctx.lineTo(particles[j].x, particles[j].y);
+          ctx.strokeStyle = 'rgba(46,117,182,'+ ((1 - dist/120) * 0.06) +')';
+          ctx.lineWidth = 0.5;
+          ctx.stroke();
+        }
+      }
+    }
+  }
+
+  function animate(){
+    ctx.clearRect(0,0,w,h);
+    particles.forEach(p => {p.update(); p.draw()});
+    drawLines();
+    requestAnimationFrame(animate);
+  }
+  animate();
+})();
+
+// === ANIMATED GRADIENT MESH BACKGROUND ===
+(function(){
+  const mesh = document.getElementById('heroMesh');
+  let t = 0;
+  function updateMesh(){
+    t += 0.003;
+    const g1x = 50 + Math.sin(t) * 20;
+    const g1y = 30 + Math.cos(t*0.7) * 15;
+    const g2x = 30 + Math.cos(t*1.2) * 25;
+    const g2y = 70 + Math.sin(t*0.5) * 20;
+    const g3x = 70 + Math.sin(t*0.8) * 15;
+    const g3y = 50 + Math.cos(t*1.1) * 25;
+    mesh.style.background = 'radial-gradient(ellipse 50% 40% at '+g1x+'% '+g1y+'%, rgba(46,117,182,.07), transparent), radial-gradient(ellipse 40% 50% at '+g2x+'% '+g2y+'%, rgba(26,138,122,.05), transparent), radial-gradient(ellipse 45% 35% at '+g3x+'% '+g3y+'%, rgba(201,168,76,.04), transparent)';
+    requestAnimationFrame(updateMesh);
+  }
+  updateMesh();
+})();
+
+// === WORD-BY-WORD REVEAL ===
+(function(){
+  const words = document.querySelectorAll('.hero-headline .word');
+  const eyebrow = document.getElementById('heroEyebrow');
+  const sub = document.getElementById('heroSub');
+  const actions = document.getElementById('heroActions');
+  
+  setTimeout(function(){
+    eyebrow.style.transition = 'all .8s cubic-bezier(.16,1,.3,1)';
+    eyebrow.style.opacity = '1';
+    eyebrow.style.transform = 'translateY(0)';
+  }, 300);
+  
+  words.forEach(function(word, i){
+    setTimeout(function(){ word.classList.add('visible'); }, 600 + i * 100);
+  });
+  
+  setTimeout(function(){
+    sub.style.transition = 'all 1s cubic-bezier(.16,1,.3,1)';
+    sub.style.opacity = '1';
+    sub.style.transform = 'translateY(0)';
+  }, 600 + words.length * 100 + 200);
+  
+  setTimeout(function(){
+    actions.style.transition = 'all 1s cubic-bezier(.16,1,.3,1)';
+    actions.style.opacity = '1';
+    actions.style.transform = 'translateY(0)';
+  }, 600 + words.length * 100 + 500);
+})();
+
+// === PARALLAX ON MOUSE ===
+(function(){
+  const layers = document.querySelectorAll('.parallax-layer');
+  document.addEventListener('mousemove', function(e){
+    const x = (e.clientX / window.innerWidth - 0.5) * 2;
+    const y = (e.clientY / window.innerHeight - 0.5) * 2;
+    layers.forEach(function(layer){
+      const speed = parseFloat(layer.dataset.speed);
+      const moveX = x * speed * 100;
+      const moveY = y * speed * 100;
+      layer.style.transform = 'translate('+moveX+'px, '+moveY+'px)';
+    });
+  });
+})();
+
+// === CURSOR GLOW FOLLOWER ===
+(function(){
+  const glow = document.getElementById('cursorGlow');
+  document.addEventListener('mousemove', function(e){
+    glow.style.left = e.clientX + 'px';
+    glow.style.top = e.clientY + 'px';
+  });
+})();
+
+// === NAV SCROLL STATE ===
+window.addEventListener('scroll', function(){
+  document.getElementById('nav').classList.toggle('scrolled', window.scrollY > 50);
+});
+
+// === SCROLL REVEAL (IntersectionObserver) ===
+(function(){
+  const observer = new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){
+      if(entry.isIntersecting){
+        entry.target.classList.add('visible');
+      }
+    });
+  }, {threshold: 0.1, rootMargin: '0px 0px -50px 0px'});
+  
+  document.querySelectorAll('.reveal').forEach(function(el){ observer.observe(el); });
+})();
+
+// === MOCKUP TYPEWRITER EFFECT ===
+(function(){
+  const mockup = document.getElementById('mockup');
+  if(!mockup) return;
+  const observer = new IntersectionObserver(function(entries){
+    if(entries[0].isIntersecting){
+      const lines = mockup.querySelectorAll('.mockup-line');
+      lines.forEach(function(line, i){
+        setTimeout(function(){ line.classList.add('visible'); }, i * 200);
+      });
+      observer.disconnect();
+    }
+  }, {threshold: 0.3});
+  observer.observe(mockup);
+})();
+
+// === GITHUB TRENDING REPOS ===
+(function(){
+  const container = document.getElementById('reposScroll');
+  var date = new Date();
+  date.setDate(date.getDate() - 7);
+  var since = date.toISOString().split('T')[0];
+  fetch('https://api.github.com/search/repositories?q=ai+OR+llm+OR+machine-learning+created:>'+since+'&sort=stars&order=desc&per_page=8')
+    .then(function(res){ return res.json(); })
+    .then(function(data){
+      if(data.items && data.items.length){
+        container.innerHTML = data.items.map(function(r){
+          return '<a href="'+r.html_url+'" target="_blank" rel="noopener" class="repo-card" style="text-decoration:none;color:inherit"><h4>'+r.full_name.split('/')[1]+'</h4><p>'+((r.description||'').slice(0,90))+((r.description||'').length>90?'...':'')+'</p><span class="repo-meta">'+r.stargazers_count.toLocaleString()+' stars &middot; '+(r.language||'Multi')+'</span></a>';
+        }).join('');
+      }
+    })
+    .catch(function(){
+      container.innerHTML = '<div class="repo-card"><h4>GitHub API limit reached</h4><p>Try again in a few minutes</p></div>';
+    });
+})();
+
+// === NEWSLETTER HANDLER ===
+function handleNewsletter(e){
+  e.preventDefault();
+  e.target.innerHTML = '<p style="color:var(--turq);font-weight:600;padding:1rem">You are in. First issue drops Monday.</p>';
+  return false;
+}
+</script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Style Transfer — ABUZ8</title>
+    <link rel="canonical" href="https://abuz8ai.com/tools/ai-style-transfer-pro">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --lapis:#0a1628;--lapis2:#0d1e38;--lapis3:#122240;
+  --gold:#c9a84c;--gold2:#e0bc6a;--gold3:#a8832a;
+  --turq:#0e9f6e;--turq2:#22a090;--turq3:#0f6a5c;
+  --cream:#f5f0e8;--cream2:#ede7d9;
+  --text:#f0ece4;--muted:#8a9ab5;
+  --r:12px;--r2:8px;--r3:20px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--lapis);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh;}
+
+/* NAV */
+nav{background:rgba(10,22,40,.95);border-bottom:1px solid rgba(201,168,76,.2);padding:14px 32px;display:flex;align-items:center;gap:16px;position:sticky;top:0;z-index:100;backdrop-filter:blur(12px);}
+.nav-logo{font-family:'Playfair Display',serif;color:var(--gold);font-size:1.25rem;font-weight:700;text-decoration:none;}
+.nav-badge{background:rgba(201,168,76,.15);border:1px solid rgba(201,168,76,.3);color:var(--gold2);font-size:.7rem;padding:2px 8px;border-radius:20px;font-weight:600;letter-spacing:.05em;}
+.nav-back{margin-left:auto;color:var(--muted);font-size:.85rem;text-decoration:none;display:flex;align-items:center;gap:6px;transition:.2s;}
+.nav-back:hover{color:var(--gold);}
+
+/* HERO */
+.hero{background:linear-gradient(135deg,var(--lapis2) 0%,var(--lapis3) 100%);border-bottom:1px solid rgba(201,168,76,.15);padding:48px 32px 36px;text-align:center;}
+.hero-tag{background:linear-gradient(90deg,var(--turq3),var(--turq));color:#fff;font-size:.7rem;font-weight:700;letter-spacing:.1em;padding:4px 14px;border-radius:20px;display:inline-block;margin-bottom:16px;text-transform:uppercase;}
+.hero h1{font-family:'Playfair Display',serif;font-size:clamp(1.8rem,4vw,2.8rem);color:var(--cream);margin-bottom:12px;line-height:1.2;}
+.hero h1 span{color:var(--gold);}
+.hero p{color:var(--muted);font-size:1rem;max-width:560px;margin:0 auto 24px;}
+.hero-stats{display:flex;gap:32px;justify-content:center;flex-wrap:wrap;}
+.hstat{text-align:center;}
+.hstat-n{font-family:'Playfair Display',serif;font-size:1.6rem;color:var(--gold);font-weight:700;}
+.hstat-l{font-size:.7rem;color:var(--muted);letter-spacing:.05em;text-transform:uppercase;}
+
+/* MAIN LAYOUT */
+.main{max-width:1100px;margin:0 auto;padding:36px 24px;}
+
+/* TWO-COLUMN */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:24px;}
+@media(max-width:780px){.two-col{grid-template-columns:1fr;}}
+
+/* CARDS */
+.card{background:var(--lapis2);border:1px solid rgba(201,168,76,.12);border-radius:var(--r);padding:24px;}
+.card-title{font-family:'Playfair Display',serif;font-size:1rem;color:var(--gold);margin-bottom:16px;display:flex;align-items:center;gap:8px;}
+.card-title .icon{font-size:1.1rem;}
+
+/* UPLOAD ZONE */
+.upload-zone{border:2px dashed rgba(201,168,76,.3);border-radius:var(--r2);padding:36px 24px;text-align:center;cursor:pointer;transition:.25s;background:rgba(201,168,76,.03);position:relative;overflow:hidden;}
+.upload-zone:hover{border-color:var(--gold);background:rgba(201,168,76,.06);}
+.upload-zone.has-file{border-color:var(--turq);border-style:solid;background:rgba(26,138,122,.05);}
+.upload-zone input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
+.uz-icon{font-size:2rem;margin-bottom:8px;}
+.uz-text{color:var(--muted);font-size:.85rem;}
+.uz-text strong{color:var(--cream);}
+.uz-preview{width:100%;max-height:220px;object-fit:contain;border-radius:var(--r2);display:none;margin-top:12px;}
+
+/* STYLE GRID */
+.style-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+.style-card{background:var(--lapis3);border:2px solid rgba(201,168,76,.1);border-radius:var(--r2);padding:14px 10px;text-align:center;cursor:pointer;transition:.2s;position:relative;overflow:hidden;}
+.style-card:hover{border-color:rgba(201,168,76,.4);transform:translateY(-2px);}
+.style-card.active{border-color:var(--gold);background:rgba(201,168,76,.08);}
+.style-card.active::after{content:'✓';position:absolute;top:6px;right:8px;color:var(--gold);font-size:.75rem;font-weight:700;}
+.sc-emoji{font-size:1.6rem;margin-bottom:6px;}
+.sc-name{font-size:.7rem;font-weight:600;color:var(--cream);letter-spacing:.02em;}
+.sc-artist{font-size:.62rem;color:var(--muted);}
+
+/* SLIDERS */
+.slider-row{margin-bottom:16px;}
+.slider-label{display:flex;justify-content:space-between;font-size:.78rem;color:var(--muted);margin-bottom:6px;}
+.slider-label span{color:var(--cream);font-weight:600;}
+input[type=range]{width:100%;-webkit-appearance:none;height:4px;border-radius:2px;background:rgba(201,168,76,.2);outline:none;}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--gold);cursor:pointer;transition:.15s;}
+input[type=range]::-webkit-slider-thumb:hover{background:var(--gold2);transform:scale(1.2);}
+
+/* TOGGLES */
+.toggle-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;}
+.toggle-btn{background:var(--lapis3);border:1px solid rgba(201,168,76,.15);color:var(--muted);font-size:.75rem;padding:6px 12px;border-radius:6px;cursor:pointer;transition:.2s;font-family:'Inter',sans-serif;}
+.toggle-btn:hover{border-color:rgba(201,168,76,.4);color:var(--cream);}
+.toggle-btn.active{background:rgba(201,168,76,.12);border-color:var(--gold);color:var(--gold);}
+
+/* SELECT */
+select{width:100%;background:var(--lapis3);border:1px solid rgba(201,168,76,.2);color:var(--text);padding:9px 12px;border-radius:var(--r2);font-size:.85rem;font-family:'Inter',sans-serif;outline:none;margin-bottom:14px;cursor:pointer;}
+select:focus{border-color:var(--gold);}
+
+/* GENERATE BTN */
+.btn-generate{width:100%;background:linear-gradient(135deg,var(--gold3),var(--gold));color:var(--lapis);font-weight:700;font-size:1rem;padding:15px;border:none;border-radius:var(--r2);cursor:pointer;font-family:'Playfair Display',serif;letter-spacing:.04em;transition:.25s;margin-top:8px;}
+.btn-generate:hover{background:linear-gradient(135deg,var(--gold),var(--gold2));transform:translateY(-2px);box-shadow:0 8px 24px rgba(201,168,76,.3);}
+.btn-generate:disabled{opacity:.5;cursor:not-allowed;transform:none;}
+
+/* RESULT PANEL */
+.result-panel{background:var(--lapis2);border:1px solid rgba(201,168,76,.12);border-radius:var(--r);padding:24px;min-height:400px;display:flex;flex-direction:column;}
+.result-empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--muted);text-align:center;gap:12px;}
+.result-empty .big-icon{font-size:3rem;opacity:.4;}
+
+/* PROGRESS */
+.progress-wrap{display:none;flex-direction:column;gap:12px;margin-top:8px;}
+.progress-bar-bg{background:rgba(201,168,76,.1);border-radius:4px;height:6px;overflow:hidden;}
+.progress-bar-fill{height:100%;background:linear-gradient(90deg,var(--turq),var(--gold));border-radius:4px;transition:width .4s ease;width:0%;}
+.progress-label{font-size:.78rem;color:var(--muted);text-align:center;}
+.progress-pct{font-size:.7rem;color:var(--gold);text-align:right;font-weight:600;}
+
+/* OUTPUT IMAGE */
+.output-img-wrap{display:none;position:relative;border-radius:var(--r2);overflow:hidden;}
+.output-img{width:100%;border-radius:var(--r2);display:block;}
+.output-overlay{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(10,22,40,.9));padding:16px 12px 12px;display:flex;gap:8px;justify-content:flex-end;}
+.out-btn{background:rgba(201,168,76,.15);border:1px solid rgba(201,168,76,.4);color:var(--gold);font-size:.75rem;padding:6px 12px;border-radius:6px;cursor:pointer;transition:.2s;font-family:'Inter',sans-serif;}
+.out-btn:hover{background:rgba(201,168,76,.3);}
+.out-btn.primary{background:var(--gold);color:var(--lapis);font-weight:700;}
+
+/* COMPARISON SLIDER */
+.compare-wrap{display:none;position:relative;border-radius:var(--r2);overflow:hidden;user-select:none;}
+.compare-wrap img{width:100%;display:block;border-radius:var(--r2);}
+.compare-after{position:absolute;top:0;left:0;width:50%;overflow:hidden;}
+.compare-after img{width:200%;max-width:none;}
+.compare-handle{position:absolute;top:0;bottom:0;left:50%;width:3px;background:var(--gold);cursor:ew-resize;transform:translateX(-50%);}
+.compare-handle::after{content:'◀ ▶';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:var(--gold);color:var(--lapis);font-size:.65rem;padding:4px 7px;border-radius:12px;white-space:nowrap;font-weight:700;}
+.compare-label{position:absolute;top:8px;font-size:.68rem;font-weight:700;padding:3px 8px;border-radius:10px;pointer-events:none;}
+.compare-label.orig{left:8px;background:rgba(10,22,40,.8);color:var(--muted);}
+.compare-label.styled{right:8px;background:rgba(201,168,76,.85);color:var(--lapis);}
+
+/* META ROW */
+.meta-row{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap;}
+.meta-tag{background:rgba(26,138,122,.15);border:1px solid rgba(26,138,122,.25);color:var(--turq2);font-size:.68rem;padding:3px 9px;border-radius:10px;}
+
+/* VARIATIONS ROW */
+.variations{display:none;margin-top:16px;}
+.var-title{font-size:.75rem;color:var(--muted);margin-bottom:8px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;}
+.var-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+.var-thumb{border-radius:6px;cursor:pointer;border:2px solid transparent;transition:.2s;aspect-ratio:1;background:var(--lapis3);display:flex;align-items:center;justify-content:center;font-size:1.5rem;}
+.var-thumb:hover{border-color:var(--gold);}
+.var-thumb.active{border-color:var(--gold);}
+
+/* WAITLIST */
+.waitlist-section{background:linear-gradient(135deg,rgba(201,168,76,.06),rgba(26,138,122,.04));border:1px solid rgba(201,168,76,.2);border-radius:var(--r);padding:32px;text-align:center;margin-top:32px;}
+.wl-title{font-family:'Playfair Display',serif;font-size:1.4rem;color:var(--cream);margin-bottom:8px;}
+.wl-sub{color:var(--muted);font-size:.88rem;margin-bottom:20px;}
+.wl-form{display:flex;gap:8px;max-width:420px;margin:0 auto;}
+.wl-input{flex:1;background:var(--lapis3);border:1px solid rgba(201,168,76,.25);color:var(--text);padding:11px 14px;border-radius:var(--r2);font-size:.88rem;font-family:'Inter',sans-serif;outline:none;}
+.wl-input:focus{border-color:var(--gold);}
+.wl-btn{background:var(--gold);color:var(--lapis);font-weight:700;padding:11px 20px;border:none;border-radius:var(--r2);cursor:pointer;font-size:.88rem;white-space:nowrap;transition:.2s;}
+.wl-btn:hover{background:var(--gold2);}
+.wl-success{display:none;color:var(--turq2);font-weight:600;font-size:.9rem;margin-top:8px;}
+.wl-perks{display:flex;gap:16px;justify-content:center;margin-top:16px;flex-wrap:wrap;}
+.wl-perk{font-size:.75rem;color:var(--muted);display:flex;align-items:center;gap:5px;}
+.wl-perk::before{content:'✦';color:var(--gold);font-size:.6rem;}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;right:24px;background:var(--lapis3);border:1px solid rgba(201,168,76,.3);color:var(--text);padding:12px 18px;border-radius:var(--r2);font-size:.85rem;opacity:0;transform:translateY(12px);transition:.3s;z-index:999;pointer-events:none;max-width:300px;}
+.toast.show{opacity:1;transform:translateY(0);}
+
+/* DEMO BADGE */
+.demo-badge{display:none;background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.25);color:var(--gold);font-size:.7rem;padding:4px 10px;border-radius:10px;font-weight:600;margin-bottom:10px;display:inline-block;}
+</style>
+<meta name="description" content="AI Style Transfer — Repaint a photo in any visual style. Free, no signup, runs entirely in your browser. One of 169 free AI and developer tools by ABUZ8.">
+</head>
+<body>
+<script>
+// Cloud fallback: if ComfyUI is unreachable, redirect generate calls to Workers AI
+(function(){
+  var comfyUrl = (window.ABUZ8_COMFY_BASE) || 'https://comfy.abuz8ai.com';
+  var checked = false, comfyLive = false;
+  window._checkComfy = async function(){
+    if(checked) return comfyLive;
+    try{
+      var r = await fetch(comfyUrl+'/system_stats',{signal:AbortSignal.timeout(3000)});
+      comfyLive = r.ok; checked = true;
+    }catch(_){ comfyLive = false; checked = true; }
+    return comfyLive;
+  };
+  window._cloudGenerate = async function(prompt){
+    try{
+      var r = await fetch('/api/ai-image',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt:prompt})});
+      if(!r.ok) return null;
+      var blob = await r.blob();
+      return URL.createObjectURL(blob);
+    }catch(_){ return null; }
+  };
+})();
+</script>
+
+<nav>
+  <a class="nav-logo" href="../index.html">ABUZ8</a>
+  <span class="nav-badge">AGENT ARMY #20</span>
+  <a class="nav-back" href="../tools.html">← All Tools</a>
+</nav>
+
+<section class="hero">
+  <div class="hero-tag">🎨 AI Style Transfer</div>
+  <h1>Transform Any Image Into <span>Masterpiece Art</span></h1>
+  <p>Apply the styles of the world's greatest artists and art movements to your photos. From Van Gogh to Picasso — in seconds.</p>
+  <div class="hero-stats">
+    <div class="hstat"><div class="hstat-n">20+</div><div class="hstat-l">Art Styles</div></div>
+    <div class="hstat"><div class="hstat-n">4K</div><div class="hstat-l">Max Output</div></div>
+    <div class="hstat"><div class="hstat-n">~30s</div><div class="hstat-l">Per Image</div></div>
+    <div class="hstat"><div class="hstat-n">∞</div><div class="hstat-l">Variations</div></div>
+  </div>
+</section>
+
+<div class="main">
+  <div class="two-col">
+
+    <!-- LEFT: INPUT PANEL -->
+    <div>
+      <div class="card" style="margin-bottom:20px;">
+        <div class="card-title"><span class="icon">🖼️</span> Content Image</div>
+        <div class="upload-zone" id="uploadZone">
+          <input type="file" accept="image/*" id="fileInput" onchange="handleFile(this)">
+          <div class="uz-icon">📸</div>
+          <div class="uz-text"><strong>Drop your image here</strong><br>or click to browse · JPG, PNG, WebP · Max 10MB</div>
+          <img class="uz-preview" id="preview">
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom:20px;">
+        <div class="card-title"><span class="icon">🎨</span> Choose Art Style</div>
+        <div class="style-grid" id="styleGrid">
+          <!-- rendered by JS -->
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom:20px;">
+        <div class="card-title"><span class="icon">⚙️</span> Fine-Tune</div>
+
+        <div class="slider-row">
+          <div class="slider-label">Style Strength <span id="strengthVal">75%</span></div>
+          <input type="range" id="strength" min="10" max="100" value="75" oninput="document.getElementById('strengthVal').textContent=this.value+'%'">
+        </div>
+
+        <div class="slider-row">
+          <div class="slider-label">Content Preservation <span id="contentVal">40%</span></div>
+          <input type="range" id="content" min="0" max="100" value="40" oninput="document.getElementById('contentVal').textContent=this.value+'%'">
+        </div>
+
+        <div class="slider-row">
+          <div class="slider-label">Color Vibrancy <span id="vibVal">60%</span></div>
+          <input type="range" id="vibrancy" min="0" max="100" value="60" oninput="document.getElementById('vibVal').textContent=this.value+'%'">
+        </div>
+
+        <label style="font-size:.78rem;color:var(--muted);display:block;margin-bottom:6px;margin-top:4px;">Output Resolution</label>
+        <select id="resolution">
+          <option value="512">512×512 — Fast (30s)</option>
+          <option value="768" selected>768×768 — Balanced (45s)</option>
+          <option value="1024">1024×1024 — High Quality (90s)</option>
+          <option value="2048">2K — Ultra (3 min)</option>
+        </select>
+
+        <label style="font-size:.78rem;color:var(--muted);display:block;margin-bottom:6px;">Variations</label>
+        <div class="toggle-row" id="varToggle">
+          <button class="toggle-btn active" onclick="setVar(1,this)">1</button>
+          <button class="toggle-btn" onclick="setVar(3,this)">3</button>
+          <button class="toggle-btn" onclick="setVar(6,this)">6</button>
+        </div>
+
+        <label style="font-size:.78rem;color:var(--muted);display:block;margin-bottom:6px;margin-top:4px;">Enhancement</label>
+        <div class="toggle-row" id="enhToggle">
+          <button class="toggle-btn active" data-val="none" onclick="toggleEnh(this)">None</button>
+          <button class="toggle-btn" data-val="sharpen" onclick="toggleEnh(this)">Sharpen</button>
+          <button class="toggle-btn" data-val="denoise" onclick="toggleEnh(this)">Denoise</button>
+          <button class="toggle-btn" data-val="upscale" onclick="toggleEnh(this)">Upscale 2×</button>
+        </div>
+
+        <button class="btn-generate" id="genBtn" onclick="generate()">✦ Transfer Style</button>
+      </div>
+    </div>
+
+    <!-- RIGHT: OUTPUT PANEL -->
+    <div>
+      <div class="result-panel" id="resultPanel">
+        <div class="card-title"><span class="icon">🖼️</span> Styled Output</div>
+
+        <div class="result-empty" id="emptyState">
+          <div class="big-icon">🎨</div>
+          <div>
+            <div style="color:var(--cream);font-weight:600;margin-bottom:4px;">Your masterpiece awaits</div>
+            <div style="font-size:.82rem;">Upload an image and choose a style to begin</div>
+          </div>
+        </div>
+
+        <div class="progress-wrap" id="progressWrap">
+          <div style="text-align:center;margin-bottom:4px;">
+            <span id="demoB" class="demo-badge" style="display:none;">✦ Demo Mode</span>
+          </div>
+          <div class="progress-bar-bg"><div class="progress-bar-fill" id="progFill"></div></div>
+          <div class="progress-label" id="progLabel">Initializing style engine...</div>
+          <div class="progress-pct" id="progPct">0%</div>
+        </div>
+
+        <div class="output-img-wrap" id="outputWrap">
+          <img class="output-img" id="outputImg" src="" alt="Styled result">
+          <div class="output-overlay">
+            <button class="out-btn" onclick="toggleCompare()">⇔ Compare</button>
+            <button class="out-btn" onclick="generateVariation()">🔄 Variation</button>
+            <button class="out-btn primary" onclick="downloadResult()">⬇ Download</button>
+          </div>
+        </div>
+
+        <div class="compare-wrap" id="compareWrap">
+          <img id="origImg" src="" alt="Original">
+          <div class="compare-after" id="compareAfter">
+            <img id="styledImg" src="" alt="Styled">
+          </div>
+          <div class="compare-handle" id="compareHandle"></div>
+          <span class="compare-label orig">Original</span>
+          <span class="compare-label styled">Styled</span>
+          <div class="output-overlay">
+            <button class="out-btn" onclick="toggleCompare()">✕ Close Compare</button>
+            <button class="out-btn primary" onclick="downloadResult()">⬇ Download</button>
+          </div>
+        </div>
+
+        <div class="meta-row" id="metaRow" style="display:none;">
+          <span class="meta-tag" id="metaStyle">Van Gogh</span>
+          <span class="meta-tag" id="metaRes">768×768</span>
+          <span class="meta-tag" id="metaTime">42s</span>
+        </div>
+
+        <div class="variations" id="varSection">
+          <div class="var-title">Variations</div>
+          <div class="var-grid" id="varGrid"></div>
+        </div>
+      </div>
+
+      <!-- STYLE HISTORY -->
+      <div class="card" style="margin-top:20px;">
+        <div class="card-title"><span class="icon">🕑</span> Recent Styles</div>
+        <div id="historyList" style="color:var(--muted);font-size:.82rem;">No recent styles yet. Generate your first!</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- WAITLIST -->
+  <div class="waitlist-section">
+    <div class="wl-title">🎨 Unlock Pro Style Transfer</div>
+    <div class="wl-sub">Get access to 100+ styles, batch processing, 4K output, and commercial licensing.</div>
+    <div class="wl-form">
+      <input class="wl-input" type="email" id="wlEmail" placeholder="your@email.com">
+      <button class="wl-btn" onclick="joinWaitlist()">Get Pro Access</button>
+    </div>
+    <div class="wl-success" id="wlSuccess">✦ You're on the list! We'll reach out with early access.</div>
+    <div class="wl-perks">
+      <span class="wl-perk">100+ art styles</span>
+      <span class="wl-perk">Batch processing</span>
+      <span class="wl-perk">4K resolution</span>
+      <span class="wl-perk">Commercial license</span>
+      <span class="wl-perk">API access</span>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="/tools/_abuz8-live-brain.js" onerror="console.log('Brain offline — demo mode')"></script>
+<script>
+// ── DATA ────────────────────────────────────────────────────────────────
+const STYLES = [
+  { id:'vangogh',   name:'Van Gogh',       artist:'Post-Impressionist', emoji:'🌻', prompt:'in the style of Van Gogh, swirling brushstrokes, vivid yellows and blues, impasto texture, starry night aesthetic' },
+  { id:'monet',     name:'Monet',          artist:'Impressionist',      emoji:'🌸', prompt:'in the style of Claude Monet, soft impressionist brushwork, pastel colors, light and atmosphere, water lilies aesthetic' },
+  { id:'picasso',   name:'Picasso',        artist:'Cubist',             emoji:'🔷', prompt:'in the style of Pablo Picasso cubism, geometric fragmented forms, multiple perspectives, bold outlines, limited color palette' },
+  { id:'dali',      name:'Dalí',           artist:'Surrealist',         emoji:'🕰️', prompt:'in the style of Salvador Dali, surrealist dreamlike, hyper-realistic details, melting forms, bizarre juxtapositions' },
+  { id:'rembrandt', name:'Rembrandt',      artist:'Baroque',            emoji:'🕯️', prompt:'in the style of Rembrandt, chiaroscuro lighting, dramatic shadows, rich warm tones, old master oil painting texture' },
+  { id:'klimt',     name:'Klimt',          artist:'Art Nouveau',        emoji:'✨', prompt:'in the style of Gustav Klimt, gold leaf ornamental, intricate patterns, mosaic-like, Art Nouveau decorative borders' },
+  { id:'watercolor',name:'Watercolor',     artist:'Classic Medium',     emoji:'💧', prompt:'watercolor painting style, soft washes of color, fluid edges, paper texture visible, transparent layers, wet-on-wet technique' },
+  { id:'oil',       name:'Oil Paint',      artist:'Classic Medium',     emoji:'🖌️', prompt:'traditional oil painting, thick textured brushstrokes, rich saturated colors, canvas texture, museum quality fine art' },
+  { id:'pencil',    name:'Pencil Sketch',  artist:'Drawing',            emoji:'✏️', prompt:'detailed pencil sketch, cross-hatching, graphite shading, fine lines, technical drawing aesthetic, monochrome' },
+  { id:'ink',       name:'Ink & Wash',     artist:'Drawing',            emoji:'🖊️', prompt:'ink wash painting, bold ink lines, grey washes, gestural brushwork, Asian calligraphy influenced, negative space' },
+  { id:'woodblock', name:'Woodblock',      artist:'Japanese',           emoji:'🗻', prompt:'Japanese woodblock print ukiyo-e style, flat color areas, bold outlines, decorative patterns, Mount Fuji aesthetic' },
+  { id:'neon',      name:'Neon Noir',      artist:'Cyberpunk',          emoji:'🌆', prompt:'cyberpunk neon noir, vivid neon lights, dark backgrounds, rain-slicked surfaces, futuristic city atmosphere, blade runner aesthetic' },
+  { id:'mosaic',    name:'Mosaic',         artist:'Classical',          emoji:'🏛️', prompt:'ancient mosaic tiles, tessellated squares of color, Byzantine aesthetic, Roman villa style, stone and glass tiles' },
+  { id:'comic',     name:'Comic Book',     artist:'Pop Art',            emoji:'💥', prompt:'comic book art style, bold outlines, halftone dots, flat bright colors, action lines, Marvel/DC aesthetic' },
+  { id:'popArt',    name:'Pop Art',        artist:'Andy Warhol',        emoji:'🎡', prompt:'Andy Warhol pop art style, high contrast, repeated motif, bold flat colors, screen print aesthetic, celebrity portrait style' },
+  { id:'stained',   name:'Stained Glass',  artist:'Gothic',             emoji:'🌈', prompt:'stained glass window art, black lead lines separating vivid color sections, cathedral gothic aesthetic, light through colored glass' },
+  { id:'lowpoly',   name:'Low Poly',       artist:'Digital',            emoji:'🔺', prompt:'low polygon 3D art, geometric faceted triangles, modern digital aesthetic, clean angular shapes, flat shading' },
+  { id:'baroque',   name:'Baroque',        artist:'17th Century',       emoji:'👑', prompt:'Baroque painting style, dramatic lighting, rich colors, ornate details, religious or mythological scenes, Rubens aesthetic' },
+];
+
+// Demo palette generator — creates styled placeholder canvas from original + hue shift
+const DEMO_PALETTES = {
+  vangogh:   { hue:200, sat:1.4, bright:1.1 },
+  monet:     { hue:180, sat:.9,  bright:1.2 },
+  picasso:   { hue:240, sat:1.6, bright:.9  },
+  dali:      { hue:30,  sat:1.3, bright:1.0 },
+  rembrandt: { hue:35,  sat:.7,  bright:.7  },
+  klimt:     { hue:45,  sat:1.5, bright:1.1 },
+  watercolor:{ hue:200, sat:.6,  bright:1.3 },
+  oil:       { hue:20,  sat:1.2, bright:.95 },
+  pencil:    { hue:0,   sat:0,   bright:1.0 },
+  ink:       { hue:0,   sat:.1,  bright:.6  },
+  woodblock: { hue:15,  sat:1.3, bright:.95 },
+  neon:      { hue:270, sat:2.0, bright:.8  },
+  mosaic:    { hue:210, sat:1.1, bright:.9  },
+  comic:     { hue:0,   sat:1.8, bright:1.1 },
+  popArt:    { hue:330, sat:2.0, bright:1.1 },
+  stained:   { hue:130, sat:1.6, bright:1.0 },
+  lowpoly:   { hue:190, sat:1.3, bright:1.0 },
+  baroque:   { hue:40,  sat:1.1, bright:.75 },
+};
+
+// ── STATE ────────────────────────────────────────────────────────────────
+let selectedStyle = null;
+let uploadedFile  = null;
+let uploadedDataURL = null;
+let numVariations = 1;
+let selectedEnhancement = 'none';
+let generating = false;
+let progressTimer = null;
+let resultDataURL = null;
+let compareActive = false;
+let history = [];
+
+// ── INIT ────────────────────────────────────────────────────────────────
+(function init(){
+  renderStyles();
+  initCompareSlider();
+})();
+
+function renderStyles(){
+  const g = document.getElementById('styleGrid');
+  g.innerHTML = STYLES.map((s,i) => `
+    <div class="style-card" id="sc_${s.id}" onclick="selectStyle('${s.id}')">
+      <div class="sc-emoji">${s.emoji}</div>
+      <div class="sc-name">${s.name}</div>
+      <div class="sc-artist">${s.artist}</div>
+    </div>
+  `).join('');
+  // Default select first
+  selectStyle('vangogh');
+}
+
+function selectStyle(id){
+  document.querySelectorAll('.style-card').forEach(c => c.classList.remove('active'));
+  const el = document.getElementById('sc_'+id);
+  if(el) el.classList.add('active');
+  selectedStyle = STYLES.find(s => s.id === id);
+}
+
+// ── FILE HANDLING ────────────────────────────────────────────────────────
+function handleFile(input){
+  const f = input.files[0];
+  if(!f) return;
+  if(f.size > 10*1024*1024){ toast('Image too large — max 10MB'); return; }
+  uploadedFile = f;
+  const reader = new FileReader();
+  reader.onload = e => {
+    uploadedDataURL = e.target.result;
+    const prev = document.getElementById('preview');
+    prev.src = uploadedDataURL;
+    prev.style.display = 'block';
+    const uz = document.getElementById('uploadZone');
+    uz.classList.add('has-file');
+    uz.querySelector('.uz-icon').textContent = '✅';
+    uz.querySelector('.uz-text').innerHTML = `<strong>${f.name}</strong><br>${(f.size/1024/1024).toFixed(2)} MB`;
+    toast('Image ready — choose a style and transfer!');
+  };
+  reader.readAsDataURL(f);
+}
+
+// ── CONTROLS ────────────────────────────────────────────────────────────
+function setVar(n, btn){
+  numVariations = n;
+  document.querySelectorAll('#varToggle .toggle-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function toggleEnh(btn){
+  document.querySelectorAll('#enhToggle .toggle-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  selectedEnhancement = btn.dataset.val;
+}
+
+// ── GENERATE ────────────────────────────────────────────────────────────
+async function generate(){
+  if(generating) return;
+  if(!uploadedDataURL){ toast('Please upload an image first'); return; }
+  if(!selectedStyle){ toast('Please select an art style'); return; }
+
+  generating = true;
+  const btn = document.getElementById('genBtn');
+  btn.disabled = true;
+  btn.textContent = '⟳ Transferring Style...';
+
+  showProgress();
+
+  const strength    = parseInt(document.getElementById('strength').value)/100;
+  const content     = parseInt(document.getElementById('content').value)/100;
+  const vibrancy    = parseInt(document.getElementById('vibrancy').value)/100;
+  const resolution  = document.getElementById('resolution').value;
+  const t0          = Date.now();
+
+  const payload = {
+    image: uploadedDataURL,
+    prompt: selectedStyle.prompt + `, vibrant colors, high quality, detailed`,
+    negative_prompt: 'ugly, blurry, low quality, artifacts',
+    style: selectedStyle.id,
+    style_strength: strength,
+    content_weight: content,
+    color_vibrancy: vibrancy,
+    width: parseInt(resolution),
+    height: parseInt(resolution),
+    num_images: numVariations,
+    enhancement: selectedEnhancement
+  };
+
+  try {
+    if(typeof window.ABUZ8 !== 'undefined' && window.ABUZ8.callComfy){
+      const res = await window.ABUZ8.callComfy('comfyui_img2img', payload);
+      clearProgressTimer();
+      const elapsed = ((Date.now()-t0)/1000).toFixed(0);
+      if(res && (res.image || res.images)){
+        const imgs = res.images || [res.image];
+        showResult(imgs[0], elapsed, false);
+        if(imgs.length > 1) showVariations(imgs);
+      } else {
+        throw new Error('No image in response');
+      }
+    } else {
+      throw new Error('ComfyUI offline');
+    }
+  } catch(err){
+    console.log('ComfyUI unavailable, demo mode:', err.message);
+    // Demo: generate styled canvas from uploaded image
+    const elapsed = await simulateDemoProcessing();
+    const demoURL = await generateDemoStyle(uploadedDataURL, selectedStyle.id);
+    clearProgressTimer();
+    showResult(demoURL, elapsed, true);
+    if(numVariations > 1) showDemoVariations(numVariations);
+  }
+
+  generating = false;
+  btn.disabled = false;
+  btn.textContent = '✦ Transfer Style';
+  addToHistory(selectedStyle, resolution);
+}
+
+function generateVariation(){
+  if(!uploadedDataURL || !selectedStyle) return;
+  generate();
+}
+
+// ── DEMO STYLE ENGINE ────────────────────────────────────────────────────
+function generateDemoStyle(dataURL, styleId){
+  return new Promise(resolve => {
+    const img = new Image();
+    img.onload = () => {
+      const c  = document.createElement('canvas');
+      const sz = Math.min(img.width, img.height, 768);
+      c.width = c.height = sz;
+      const ctx = c.getContext('2d');
+      ctx.drawImage(img, 0, 0, sz, sz);
+
+      const p = DEMO_PALETTES[styleId] || { hue:0, sat:1, bright:1 };
+
+      // Apply CSS filter-like transform via pixel manipulation
+      const id = ctx.getImageData(0, 0, sz, sz);
+      const d  = id.data;
+
+      for(let i=0; i<d.length; i+=4){
+        let r=d[i], g=d[i+1], b=d[i+2];
+        // Convert to HSL-ish, shift hue, adjust sat/bright
+        let [h,s,l] = rgbToHsl(r,g,b);
+        h = (h + p.hue/360) % 1;
+        s = Math.min(1, s * p.sat);
+        l = Math.min(1, l * p.bright);
+        [r,g,b] = hslToRgb(h,s,l);
+        d[i]=r; d[i+1]=g; d[i+2]=b;
+      }
+      ctx.putImageData(id, 0, 0);
+
+      // Apply style-specific overlay effects
+      if(styleId === 'pencil' || styleId === 'ink'){
+        ctx.filter = 'grayscale(100%)';
+        ctx.drawImage(c, 0, 0);
+        ctx.filter = 'none';
+      }
+      if(styleId === 'neon'){
+        ctx.globalCompositeOperation = 'screen';
+        const g2 = ctx.createRadialGradient(sz/2,sz/2,0,sz/2,sz/2,sz/2);
+        g2.addColorStop(0,'rgba(150,0,255,.25)');
+        g2.addColorStop(1,'rgba(0,100,255,.1)');
+        ctx.fillStyle = g2;
+        ctx.fillRect(0,0,sz,sz);
+        ctx.globalCompositeOperation = 'source-over';
+      }
+      if(styleId === 'klimt' || styleId === 'mosaic'){
+        // Add golden overlay pattern
+        ctx.globalAlpha = 0.15;
+        ctx.fillStyle = '#c9a84c';
+        for(let x=0; x<sz; x+=20) for(let y=0; y<sz; y+=20){
+          if((x/20+y/20)%2===0) ctx.fillRect(x,y,10,10);
+        }
+        ctx.globalAlpha = 1;
+      }
+
+      // Add "painted" text watermark
+      ctx.font = `bold ${sz*0.028}px 'Playfair Display', serif`;
+      ctx.fillStyle = 'rgba(201,168,76,0.55)';
+      ctx.textAlign = 'right';
+      ctx.fillText(`✦ ${STYLES.find(s=>s.id===styleId)?.name||styleId} · ABUZ8 Demo`, sz-10, sz-12);
+
+      resolve(c.toDataURL('image/jpeg', 0.92));
+    };
+    img.src = dataURL;
+  });
+}
+
+function rgbToHsl(r,g,b){
+  r/=255; g/=255; b/=255;
+  const max=Math.max(r,g,b), min=Math.min(r,g,b);
+  let h,s,l=(max+min)/2;
+  if(max===min){ h=s=0; }
+  else{
+    const d=max-min;
+    s=l>.5?d/(2-max-min):d/(max+min);
+    switch(max){
+      case r: h=((g-b)/d+(g<b?6:0))/6; break;
+      case g: h=((b-r)/d+2)/6; break;
+      case b: h=((r-g)/d+4)/6; break;
+    }
+  }
+  return[h,s,l];
+}
+
+function hslToRgb(h,s,l){
+  let r,g,b;
+  if(!s){ r=g=b=l; }
+  else{
+    const hue2rgb=(p,q,t)=>{ if(t<0)t+=1; if(t>1)t-=1; if(t<1/6)return p+(q-p)*6*t; if(t<1/2)return q; if(t<2/3)return p+(q-p)*(2/3-t)*6; return p; };
+    const q=l<.5?l*(1+s):l+s-l*s, p=2*l-q;
+    r=hue2rgb(p,q,h+1/3); g=hue2rgb(p,q,h); b=hue2rgb(p,q,h-1/3);
+  }
+  return[Math.round(r*255),Math.round(g*255),Math.round(b*255)];
+}
+
+// ── PROGRESS SIMULATION ──────────────────────────────────────────────────
+const STEPS = [
+  [0,  10, 'Analyzing content image...'],
+  [10, 25, 'Loading style model...'],
+  [25, 45, 'Extracting style features...'],
+  [45, 65, 'Applying artistic transformation...'],
+  [65, 80, 'Blending style with content...'],
+  [80, 90, 'Refining color palette...'],
+  [90, 97, 'Finalizing details...'],
+];
+let pct = 0;
+
+function showProgress(){
+  document.getElementById('emptyState').style.display  = 'none';
+  document.getElementById('outputWrap').style.display  = 'none';
+  document.getElementById('compareWrap').style.display = 'none';
+  document.getElementById('metaRow').style.display     = 'none';
+  document.getElementById('varSection').style.display  = 'none';
+  const pw = document.getElementById('progressWrap');
+  pw.style.display = 'flex';
+  pct = 0;
+  updateProgressUI(0, STEPS[0][2]);
+
+  progressTimer = setInterval(()=>{
+    if(pct >= 97){ clearInterval(progressTimer); return; }
+    pct = Math.min(97, pct + (Math.random() * 2.5 + 0.5));
+    const step = STEPS.find(s => pct >= s[0] && pct < s[1]) || STEPS[STEPS.length-1];
+    updateProgressUI(pct, step[2]);
+  }, 350);
+}
+
+function clearProgressTimer(){
+  if(progressTimer){ clearInterval(progressTimer); progressTimer = null; }
+  updateProgressUI(100, 'Style transfer complete!');
+}
+
+function updateProgressUI(p, label){
+  document.getElementById('progFill').style.width  = Math.min(100,p)+'%';
+  document.getElementById('progPct').textContent   = Math.round(Math.min(100,p))+'%';
+  document.getElementById('progLabel').textContent = label;
+}
+
+async function simulateDemoProcessing(){
+  const t0 = Date.now();
+  await new Promise(r => setTimeout(r, 2800 + Math.random()*800));
+  return ((Date.now()-t0)/1000).toFixed(1);
+}
+
+// ── SHOW RESULT ──────────────────────────────────────────────────────────
+function showResult(imgURL, elapsed, isDemo){
+  resultDataURL = imgURL;
+  document.getElementById('progressWrap').style.display = 'none';
+  const ow = document.getElementById('outputWrap');
+  ow.style.display = 'block';
+  document.getElementById('outputImg').src = imgURL;
+  document.getElementById('origImg').src   = uploadedDataURL;
+  document.getElementById('styledImg').src = imgURL;
+
+  // Meta
+  const mr = document.getElementById('metaRow');
+  mr.style.display = 'flex';
+  document.getElementById('metaStyle').textContent = selectedStyle.name;
+  document.getElementById('metaRes').textContent   = document.getElementById('resolution').value + '²';
+  document.getElementById('metaTime').textContent  = elapsed + 's';
+  if(isDemo){
+    document.getElementById('demoB').style.display = 'inline-block';
+    toast('✦ Demo result — sign up for real AI style transfer!', 4000);
+  } else {
+    document.getElementById('demoB').style.display = 'none';
+    toast('✦ Style transfer complete!');
+  }
+}
+
+function showVariations(imgs){
+  const sec = document.getElementById('varSection');
+  const grid = document.getElementById('varGrid');
+  sec.style.display = 'block';
+  grid.innerHTML = imgs.map((url,i) => `
+    <div class="var-thumb ${i===0?'active':''}" onclick="selectVariation('${url}',this)">
+      <img src="${url}" style="width:100%;height:100%;object-fit:cover;border-radius:4px;">
+    </div>
+  `).join('');
+}
+
+function showDemoVariations(n){
+  if(n <= 1) return;
+  const sec  = document.getElementById('varSection');
+  const grid = document.getElementById('varGrid');
+  sec.style.display = 'block';
+  const fakeStyles = STYLES.filter(s => s.id !== selectedStyle.id).slice(0, n-1);
+  grid.innerHTML = `<div class="var-thumb active" style="font-size:.6rem;color:var(--gold);">Main<br>Result</div>`;
+  fakeStyles.forEach(s => {
+    grid.innerHTML += `<div class="var-thumb" onclick="toast('${s.name} variation — upgrade to Pro!')">${s.emoji}<br><span style="font-size:.55rem;color:var(--muted);">${s.name}</span></div>`;
+  });
+}
+
+function selectVariation(url, el){
+  document.querySelectorAll('.var-thumb').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  resultDataURL = url;
+  document.getElementById('outputImg').src   = url;
+  document.getElementById('styledImg').src   = url;
+}
+
+// ── COMPARE SLIDER ────────────────────────────────────────────────────────
+function initCompareSlider(){
+  const handle = document.getElementById('compareHandle');
+  const after   = document.getElementById('compareAfter');
+  let dragging  = false;
+
+  handle.addEventListener('mousedown', () => dragging = true);
+  document.addEventListener('mouseup', () => dragging = false);
+  document.getElementById('compareWrap').addEventListener('mousemove', e => {
+    if(!dragging) return;
+    const rect = e.currentTarget.getBoundingClientRect();
+    const pct  = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+    handle.style.left         = (pct*100)+'%';
+    after.style.width         = (pct*100)+'%';
+    after.querySelector('img').style.width = (100/pct)+'%';
+  });
+  // Touch support
+  handle.addEventListener('touchstart', e => { e.preventDefault(); dragging = true; });
+  document.addEventListener('touchend', () => dragging = false);
+  document.getElementById('compareWrap').addEventListener('touchmove', e => {
+    if(!dragging) return;
+    const t = e.touches[0];
+    const rect = e.currentTarget.getBoundingClientRect();
+    const pct  = Math.max(0.05, Math.min(0.95, (t.clientX - rect.left) / rect.width));
+    handle.style.left         = (pct*100)+'%';
+    after.style.width         = (pct*100)+'%';
+    after.querySelector('img').style.width = (100/pct)+'%';
+  });
+}
+
+function toggleCompare(){
+  compareActive = !compareActive;
+  const ow = document.getElementById('outputWrap');
+  const cw = document.getElementById('compareWrap');
+  if(compareActive && uploadedDataURL && resultDataURL){
+    ow.style.display = 'none';
+    cw.style.display = 'block';
+  } else {
+    cw.style.display = 'none';
+    ow.style.display = 'block';
+    compareActive = false;
+  }
+}
+
+// ── DOWNLOAD ─────────────────────────────────────────────────────────────
+function downloadResult(){
+  if(!resultDataURL){ toast('No result to download'); return; }
+  const a = document.createElement('a');
+  a.href = resultDataURL;
+  a.download = `abuz8-${selectedStyle?.id||'styled'}-${Date.now()}.jpg`;
+  a.click();
+  toast('Downloading your styled image!');
+}
+
+// ── HISTORY ──────────────────────────────────────────────────────────────
+function addToHistory(style, res){
+  history.unshift({ style, res, ts: new Date().toLocaleTimeString() });
+  if(history.length > 5) history.pop();
+  const el = document.getElementById('historyList');
+  el.innerHTML = history.map(h => `
+    <div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid rgba(201,168,76,.08);">
+      <span>${h.style.emoji}</span>
+      <div style="flex:1;">
+        <div style="font-size:.8rem;color:var(--cream);">${h.style.name}</div>
+        <div style="font-size:.68rem;color:var(--muted);">${h.res}² · ${h.ts}</div>
+      </div>
+      <button onclick="reapplyStyle('${h.style.id}')" style="background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.2);color:var(--gold);font-size:.68rem;padding:3px 8px;border-radius:6px;cursor:pointer;">Again</button>
+    </div>
+  `).join('');
+}
+
+function reapplyStyle(id){
+  selectStyle(id);
+  document.getElementById('sc_'+id)?.scrollIntoView({behavior:'smooth',block:'nearest'});
+  toast(`Style set to ${STYLES.find(s=>s.id===id)?.name} — click Transfer Style`);
+}
+
+// ── WAITLIST ─────────────────────────────────────────────────────────────
+async function joinWaitlist(){
+  const email = document.getElementById('wlEmail').value.trim();
+  if(!email || !email.includes('@')){ toast('Enter a valid email'); return; }
+  try {
+    if(typeof window.ABUZ8 !== 'undefined' && window.ABUZ8.callBrain){
+      await window.ABUZ8.callBrain('waitlist_add', { email, product:'ai-style-transfer', ts: Date.now() });
+    }
+  } catch(e){ console.log('Brain offline'); }
+  document.getElementById('wlSuccess').style.display = 'block';
+  document.getElementById('wlEmail').value = '';fetch('/api/waitlist',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:e,product:'ai-style-transfer',ts:Date.now()})}).catch(function(){});
+  toast('✦ Welcome aboard! Check your email soon.');
+}
+
+// ── TOAST ─────────────────────────────────────────────────────────────────
+function toast(msg, dur=2800){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), dur);
+}
+</script>
+
+<script src="/assets/js/dfy-banner.js" async></script>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+<script src="/tools/_tools-shared.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>
+

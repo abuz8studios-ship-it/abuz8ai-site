@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<!-- 2026-07-17 — Weekly content: http-status-codes-explained -->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HTTP Status Codes Explained: What Each One Actually Tells You | ABUZ8</title>
+<meta name="description" content="HTTP status codes explained for debugging: 401 vs 403, 301 vs 308, 502 vs 504, the SEO codes (404 vs 410), and the ones that lie to you.">
+<meta name="keywords" content="http status codes, http status codes explained, 401 vs 403, 502 vs 504, http error codes, status code list">
+<link rel="canonical" href="https://abuz8ai.com/blog/http-status-codes-explained">
+<meta property="og:title" content="HTTP Status Codes Explained: What Each One Actually Tells You">
+<meta property="og:type" content="article">
+<link rel="stylesheet" href="/blog/_blog-base.css">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@300;400;600;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
+<style>
+:root{
+  --lapis:#0a1628; --lapis-mid:#EEF3F8; --lapis-light:#E3EBF3;
+  --card:#0d1a30; --border:#D6E0EC;
+  --text:#e8e4d8; --cream:#1F2D3D; --dim:#5A6B7D;
+  --gold:#5fa8e8; --gold-light:#255F95; --gold-dim:#7DA3C8;
+  --turq:#5fa8e8; --turq-light:#5fa8e8; --turq-bright:#255F95;
+  --primary:#5fa8e8;
+}
+body{background:var(--lapis);}
+code{background:#EEF3F8;color:#255F95;}
+.callout.cta{background:linear-gradient(135deg,#EAF2FA,#0a1628);}
+</style>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","headline":"HTTP Status Codes Explained: What Each One Actually Tells You","datePublished":"2026-07-17","author":{"@type":"Organization","name":"ABUZ8 AI"}}
+</script>
+</head>
+<body>
+<div class="container">
+  <a href="/blog/" class="back">&larr; ABUZ8 BLOG</a>
+  <h1>HTTP Status Codes Explained: What Each One Actually Tells You</h1>
+  <div class="meta-row"><span>DEVELOPERS</span><span class="dot"></span><span>JULY 17, 2026</span><span class="dot"></span><span>6 MIN READ</span></div>
+
+  <p>Somewhere in production right now, an API is returning <code>200 OK</code> with <code>{"error": "payment failed"}</code> in the body, and a monitoring dashboard is showing green. That's the case for actually knowing your <strong>HTTP status codes</strong>: they're the contract between every client and server on the internet, and half of debugging is knowing what the number is trying to tell you — especially when it's lying.</p>
+
+  <p>Here's the working developer's version: the mental model, the codes you'll actually meet, the pairs everyone confuses, and what each one means when you're staring at it in a log at 2 a.m.</p>
+
+  <h2>The five families in one breath</h2>
+  <p><strong>1xx</strong> — hold on, more coming (you'll almost never touch these). <strong>2xx</strong> — it worked. <strong>3xx</strong> — what you want is elsewhere. <strong>4xx</strong> — you messed up. <strong>5xx</strong> — we messed up. That last distinction is the load-bearing one: 4xx means don't retry the same request, 5xx means retrying might work. Whole retry libraries are built on that single bit of information — which is why returning the wrong class is worse than returning no code at all.</p>
+
+  <h2>2xx: success, with nuance</h2>
+  <p><code>200 OK</code> — worked, here's the body. <code>201 Created</code> — worked, made a new resource; REST APIs should return this from a successful <code>POST</code>, ideally with a <code>Location</code> header. <code>204 No Content</code> — worked, nothing to say; the right answer for a successful <code>DELETE</code>. If your API returns 200 for everything including failures, you've opted out of HTTP semantics and every standard tool — retries, caches, monitors — now works against you.</p>
+
+  <h2>3xx: redirects, where SEO lives and dies</h2>
+  <p><code>301</code> is a permanent move and passes link equity — the SEO workhorse. <code>302</code> is temporary: search engines keep the old URL indexed. Shipping a 302 where you meant a 301 is one of the oldest self-inflicted SEO wounds and it still happens constantly. <code>308</code> is 301's stricter sibling: permanent, but the method and body must not change — a <code>POST</code> stays a <code>POST</code>, where many clients quietly turn a 301'd POST into a GET. <code>304 Not Modified</code> is the caching handshake: nothing to download, use what you have.</p>
+  <p>Two redirect sins to audit for: chains (A→B→C→D wastes crawl budget and latency; go straight to D) and redirecting everything deleted to the homepage — that's a "soft 404" and search engines treat it as such.</p>
+
+  <h2>4xx: the client-side lineup</h2>
+  <p><code>400 Bad Request</code> — malformed input; the server couldn't even parse it. <code>401 Unauthorized</code> vs <code>403 Forbidden</code> — the eternal mixup, untangled: <strong>401 means "I don't know who you are"</strong> (missing or invalid credentials — try again with auth), <strong>403 means "I know exactly who you are, and no"</strong> (authenticated but not allowed). The names are backwards — 401 is really about authentication, not authorization — thank the 1990s for that.</p>
+  <p><code>404 Not Found</code> vs <code>410 Gone</code> — 404 says "not here, no idea why," 410 says "existed, deliberately removed, stop asking." Search engines drop 410s from the index faster. <code>405</code> — right URL, wrong verb (you <code>GET</code> an endpoint that only takes <code>POST</code>). <code>409 Conflict</code> — the state disagrees with your request (duplicate signup, stale edit). <code>422</code> — parsed fine, semantically wrong; the validation-error workhorse. <code>429 Too Many Requests</code> — rate limited; read the <code>Retry-After</code> header and back off exponentially, because hammering a 429 is how you graduate to an IP ban.</p>
+
+  <h2>5xx: the server-side triage guide</h2>
+  <p><code>500</code> — unhandled exception; the server's own code blew up. <code>502 Bad Gateway</code> vs <code>504 Gateway Timeout</code> — both come from a proxy in front of your app, and the difference routes your debugging: <strong>502 means the upstream sent garbage or nothing</strong> (app crashed, wrong port, connection refused — check whether your process is alive), <strong>504 means the upstream is alive but too slow</strong> (query taking 45 seconds against a 30-second proxy timeout — check the slow path, not the process). <code>503 Service Unavailable</code> — overloaded or in maintenance; the only 5xx you sometimes return on purpose, with a <code>Retry-After</code>.</p>
+
+  <p>When you hit a code you can't place, our <a href="/tools/http-status-codes.html" class="in">HTTP status code reference</a> has the complete list with plain-English explanations — and for the error messages that come <em>with</em> the codes, the <a href="/tools/ai-error-explainer.html" class="in">AI error explainer</a> translates stack traces into causes.</p>
+
+  <h2>Debugging: see the real code, not the browser's story</h2>
+  <p>Browsers follow redirects silently and dress up error pages, so debug at the wire: <code>curl -i</code> shows the status line and headers of each hop (the <a href="/tools/ai-curl-builder.html" class="in">cURL builder</a> writes the command for you), and the <a href="/tools/ai-api-tester.html" class="in">API tester</a> does it with a UI. The pattern that solves most mysteries: compare the status your code receives with the status the same request gets from a clean client. When they differ, the bug is in your request — headers, auth, or method — not the server.</p>
+
+  <p>Past a certain scale you stop reading logs line by line and start automating the triage: an agent that watches responses, classifies by status family, retries what's retryable, and files the 5xx spike with context attached. That's the layer <strong>QADIR OS</strong> is built for — local-first agents with HTTP tooling that run on your machine, so your API keys and traffic patterns stay yours.</p>
+
+  <div class="callout cta">
+    <p><strong>Keep the full list one tab away.</strong> Bookmark the <a href="/tools/http-status-codes.html" class="in">HTTP status code reference</a>, and test endpoints live with the <a href="/tools/ai-api-tester.html" class="in">free API tester</a>. Want agents that do the triage for you? <a href="/" class="in">Join early access</a> — no card required.</p>
+  </div>
+  <div class="foot">Built by <a href="/">ABUZ8 LLC</a> — we're building QADIR OS, the sovereign agentic operating system.</div>
+</div>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+<script src="/blog/_blog-shared.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>

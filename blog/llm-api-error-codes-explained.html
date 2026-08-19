@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<!-- Published 2026-08-15. ABUZ8 LLC. -->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LLM API Error Codes Explained — 401, 403, 429, 5xx and What to Do | ABUZ8</title>
+<meta name="description" content="LLM API error codes explained: what 401, 403, 429, 400, 408 and 5xx actually mean across providers, which are retryable, and why misclassifying them corrupts a router.">
+<meta name="keywords" content="llm api error codes, 403 error llm api, 429 rate limit llm, openrouter 403, retryable api errors ai">
+<link rel="canonical" href="https://abuz8ai.com/blog/llm-api-error-codes-explained">
+<meta property="og:title" content="LLM API Error Codes Explained — 401, 403, 429, 5xx and What to Do">
+<meta property="og:type" content="article">
+<link rel="stylesheet" href="/blog/_blog-base.css">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@300;400;600;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
+<script type="application/ld+json">
+{"@context": "https://schema.org", "@type": "BlogPosting", "headline": "LLM API Error Codes Explained — 401, 403, 429, 5xx and What to Do", "datePublished": "2026-08-15", "author": {"@type": "Organization", "name": "ABUZ8 AI"}}
+</script>
+</head>
+<body>
+<div class="container">
+  <a href="/blog/" class="back">&larr; ABUZ8 BLOG</a>
+  <h1>LLM API Error Codes Explained — 401, 403, 429, 5xx and What to Do</h1>
+  <div class="meta-row"><span>ENGINEERING</span><span class="dot"></span><span>AUGUST 15, 2026</span><span class="dot"></span><span>5 MIN READ</span></div>
+
+  <p>Getting <strong>LLM API error codes</strong> right is not pedantry — it is the difference between a system that heals itself and one that quietly degrades for weeks. The codes are ordinary HTTP, but the operational meaning is provider-specific and the retry semantics differ sharply between classes. Treat them all as "the call failed" and you will retry things that will never succeed while giving up on things that would have worked on the second attempt.</p>
+
+  <h2>401 Unauthorized — your key is wrong or absent</h2>
+  <p>The credential did not authenticate. Common causes: the environment variable never loaded, the key was rotated, you are sending a key for one provider to another provider's endpoint, or the header format is wrong (bearer prefix missing, or the provider wants a custom header instead of <code>Authorization</code>). A 401 is <strong>never retryable</strong>. Retrying it burns quota, adds latency, and — the part people miss — teaches any adaptive routing layer that the lane is low quality, when in fact the lane was never tried.</p>
+
+  <h2>403 Forbidden — authenticated but not permitted</h2>
+  <p>The key is valid and the request is refused anyway. This is the most misdiagnosed code in the category because it looks like an auth failure and is usually an entitlement failure: the model is not enabled on your account, your organisation lacks access to that tier, the region is unsupported, billing is not configured, or a content policy blocked the request before inference. Aggregator gateways are particularly prone to it, since a 403 there may reflect an upstream provider's refusal rather than the gateway's own.</p>
+  <p>We have a live example in our own telemetry, which is why this article exists: across 1,469 logged routing calls in the 89.9 days to 9 August 2026, <strong>345 were HTTP 403 responses from a single provider lane</strong>. Not intermittent, not load-related — a standing entitlement problem that a naive retry loop happily hammered for weeks. Also not retryable.</p>
+
+  <h2>429 Too Many Requests — slow down, then try again</h2>
+  <p>The one code in this list that is genuinely, unambiguously retryable. You have exceeded a requests-per-minute, tokens-per-minute, or concurrent-request limit. Respect the <code>Retry-After</code> header when the provider sends one; when it does not, use exponential backoff with jitter — doubling delays with a random component so a fleet of workers does not synchronise into a thundering herd on the same second.</p>
+  <p>Worth distinguishing: a 429 from a per-minute rate limit clears in seconds, while a 429 tied to a daily or monthly quota will not clear no matter how patiently you back off. Read the error body, not just the status line. The bodies differ between providers and are the only reliable way to tell the two apart.</p>
+
+  <div class="callout">
+    <p><strong>The classification rule:</strong> retry 429, 408, and 5xx with backoff. Never retry 401, 403, or 400. Route around 404. If your code has one <code>except</code> block covering all of them, you have no retry policy — you have a loop.</p>
+  </div>
+
+  <h2>400 Bad Request — the payload is malformed</h2>
+  <p>Usually your fault and usually fixable: context length exceeded, an unsupported parameter for that specific model, a malformed tool-call schema, an invalid role sequence in the message array, or an image format the endpoint does not accept. Context-length 400s are the most common in agent workloads because context grows silently as a loop accumulates history. Check the error body — providers name the offending field far more often than teams bother to read.</p>
+
+  <h2>408 and 504 — timeouts on two different clocks</h2>
+  <p>A 408 or a client-side timeout usually means your deadline was shorter than the model's thinking time, which is easy to trip with long-context requests or reasoning models. A 504 means an upstream gateway gave up. Both are retryable, but blind retries on long generations are expensive: you pay for the tokens produced before the timeout on many providers. Prefer streaming for long outputs — it turns a timeout into a partial result you can salvage instead of a total loss.</p>
+
+  <h2>500, 502, 503 — the provider is having a moment</h2>
+  <p>Server-side and transient by definition. Retry with backoff, cap the attempts, and then fail over to a different lane rather than sitting in the retry loop. This is the class where multi-provider routing earns its cost most visibly: a 503 on one provider is a routing decision, not an outage, when there is somewhere else to send the work. The failover patterns are covered in <a href="/blog/multi-provider-llm-routing.html" class="in">multi-provider LLM routing</a>.</p>
+
+  <h2>Why misclassification corrupts an adaptive router</h2>
+  <p>Here is the failure mode that makes this article worth writing. If your router learns which lanes are good from observed outcomes — as ours does, using per-lane Beta posteriors updated on every call — then every error you feed it is a vote. An authentication or entitlement error is not evidence about model quality. It is evidence about configuration. Write it into the quality posterior and the router concludes that a perfectly good model is bad, permanently downgrades it, and shifts traffic elsewhere for reasons no dashboard will ever surface.</p>
+  <p>The correct handling has two parts. First, classify at the transport layer before the outcome reaches the learner. Second, put auth-class failures behind a circuit breaker: after a small number of 401s or 403s, trip the lane out of rotation, raise an alert naming the credential, and stop calling it entirely rather than retrying into a wall. Those two changes convert a corrupting signal into an actionable one — and they are exactly the fix we have scoped against our own 345-403 defect. The learning mechanism they protect is explained in <a href="/blog/thompson-sampling-llm-routing.html" class="in">how Thompson sampling picks the lane</a>.</p>
+
+  <h2>Frequently asked questions</h2>
+  <p><strong>Why do I get a 403 when my API key definitely works elsewhere?</strong> Because 403 is about permission rather than identity. The key authenticated fine; the account is not entitled to that specific model, tier, or region, or billing is not fully configured. Check model access on the provider dashboard before touching the key itself.</p>
+  <p><strong>How many times should I retry a 429?</strong> Three to five attempts with exponential backoff and jitter is a reasonable ceiling, honouring <code>Retry-After</code> when present. Beyond that you are queueing, not retrying — at which point failing over to another lane or shedding the request is the better behaviour.</p>
+  <p><strong>Should failed calls count toward my quality metrics?</strong> Only the ones that say something about quality. Transport, auth and entitlement failures belong in an availability metric; a model returning a wrong or unparseable answer belongs in a quality metric. Mixing them makes both numbers uninterpretable, as covered in <a href="/blog/ai-agent-reliability-metrics.html" class="in">agent reliability metrics</a>.</p>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Why do I get a 403 when my API key works elsewhere?","acceptedAnswer":{"@type":"Answer","text":"403 is about permission, not identity. The key authenticated but the account lacks entitlement to that model, tier or region, or billing is not configured. Check model access before rotating the key."}},{"@type":"Question","name":"How many times should I retry a 429?","acceptedAnswer":{"@type":"Answer","text":"Three to five attempts with exponential backoff and jitter, honouring Retry-After when present. Beyond that, fail over to another lane or shed the request."}},{"@type":"Question","name":"Should failed calls count toward AI quality metrics?","acceptedAnswer":{"@type":"Answer","text":"Only quality-bearing failures. Transport, auth and entitlement errors belong in availability metrics; wrong or unparseable answers belong in quality metrics. Mixing them makes both uninterpretable."}}]}
+  </script>
+
+  <div class="callout cta">
+    <p><strong>Fix your error paths first:</strong> label every failure by class and stop retrying the unretryable — it is the cheapest reliability win available. QADIR OS does this at the runtime layer so the router never learns from a config error. <a href="/" class="in">Join the early-access list</a>.</p>
+  </div>
+
+  <div class="foot">Built by <a href="/">ABUZ8 LLC</a> — we're building QADIR OS, the sovereign agentic operating system. This article is general information, not legal advice.</div>
+</div>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+<script src="/blog/_blog-shared.js" defer></script>
+<script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>

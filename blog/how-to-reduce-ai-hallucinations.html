@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How to Reduce AI Hallucinations: 7 Techniques That Work | ABUZ8</title>
+<meta name="description" content="How to reduce AI hallucinations — practical techniques from retrieval and grounding to structured outputs and verification, so your LLM app stops making things up in production.">
+<meta name="keywords" content="how to reduce ai hallucinations, stop llm hallucinating, prevent ai hallucination, grounding llm, reduce llm errors">
+<link rel="canonical" href="https://abuz8ai.com/blog/how-to-reduce-ai-hallucinations">
+<meta property="og:title" content="How to Reduce AI Hallucinations: 7 Techniques That Work">
+<meta property="og:type" content="article">
+<link rel="stylesheet" href="/blog/_blog-base.css">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@300;400;600;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
+<style>
+:root{
+  --lapis:#F8FAFC; --lapis-mid:#EEF3F8; --lapis-light:#E3EBF3;
+  --card:#FFFFFF; --border:#D7E0EA;
+  --cream:#1F3A5F; --ivory:#16324F; --text:#2C3E50; --dim:#5A6B7C;
+  --gold:#1F5B94; --gold-light:#12866E; --gold-dim:#7DA3C8;
+  --turq:#0E7C63; --turq-light:#1F5B94; --turq-bright:#12866E;
+  --primary:#2E75B6;
+}
+code{background:#EEF3F8;color:#1F5B94;font-family:'JetBrains Mono',monospace;font-size:0.85em;padding:0.1em 0.35em;border-radius:4px;}
+.callout.cta{background:#EEF3F8;border:1px solid #2E75B6;border-radius:12px;padding:22px 24px;margin:36px 0 10px;}
+.callout.cta p{margin:0;color:#2C3E50;}
+.foot{color:#5A6B7C;font-size:13px;margin-top:40px;border-top:1px solid #D7E0EA;padding-top:18px;}
+.foot a{color:#1F5B94;}
+</style>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","headline":"How to Reduce AI Hallucinations: 7 Techniques That Work","datePublished":"2026-07-24","author":{"@type":"Organization","name":"ABUZ8 AI"}}
+</script>
+</head>
+<body>
+<div class="container">
+  <a href="/blog/" class="back">&larr; ABUZ8 BLOG</a>
+  <h1>How to Reduce AI Hallucinations: 7 Techniques That Work</h1>
+  <div class="meta-row"><span>DEVELOPERS</span><span class="dot"></span><span>JULY 24, 2026</span><span class="dot"></span><span>6 MIN READ</span></div>
+
+  <p>An AI hallucination is when a model states something false with complete confidence — a made-up citation, a wrong number, an API that doesn't exist. You can't eliminate it entirely, because a language model generates plausible text rather than looking up facts. But you can <strong>reduce AI hallucinations</strong> dramatically with a handful of engineering techniques. Here are seven that actually move the needle in production, roughly in order of impact.</p>
+
+  <h2>1. Ground the model in real data (retrieval)</h2>
+  <p>The single biggest win is to stop asking the model to recall facts from memory and instead hand it the facts in the prompt. Retrieval pulls relevant documents from a trusted source and includes them, so the model summarizes real text rather than inventing it. This is what retrieval-augmented generation is for — the full pattern is in <a href="/blog/rag-explained-for-ai-agents" class="in">RAG explained for AI agents</a>. If your app answers questions about your own data, retrieval isn't optional; it's the foundation everything else sits on.</p>
+
+  <h2>2. Tell it to say "I don't know"</h2>
+  <p>Models hallucinate partly because they're implicitly rewarded for always answering. Give explicit permission to decline: instruct the model to say it doesn't know when the provided context doesn't contain the answer, and to never guess beyond it. A model that's allowed to abstain makes far fewer confident errors than one that feels obligated to fill every silence.</p>
+
+  <h2>3. Force citations back to the source</h2>
+  <p>Require the model to quote or reference the specific passage it used for each claim. Two things happen: the answer becomes verifiable, and the act of grounding each statement in retrieved text suppresses invention, because there's nothing to cite for a fact that isn't in the context. If it can't point to a source, that's your signal the claim is suspect.</p>
+
+  <h2>4. Use structured outputs for anything machine-read</h2>
+  <p>When another system consumes the output, free-form text invites both hallucination and parsing failures. Constrain the model to a fixed schema — specific fields, specific types — so it can only fill in defined slots rather than narrate. This closes off a whole category of "creative" errors. The full approach is in <a href="/blog/structured-outputs-json-mode-guide" class="in">the structured outputs guide</a>, and it pairs naturally with validation on your side.</p>
+
+  <h2>5. Keep the context tight and relevant</h2>
+  <p>More context is not always better. Stuffing a huge, loosely-relevant blob into the prompt buries the signal and increases the odds the model latches onto the wrong passage — and you pay for every token of it. Retrieve <em>fewer, better</em> chunks. Plan the budget with the <a href="/tools/ai-context-window-planner.html" class="in">context window planner</a> so you're feeding the model precisely what it needs, and price the retrieval calls with the <a href="/tools/ai-rag-cost-calculator.html" class="in">RAG cost calculator</a> so tighter context saves you money as well as errors.</p>
+
+  <h2>6. Lower the temperature for factual work</h2>
+  <p>Temperature controls randomness. High temperature is great for brainstorming and terrible for facts, because it makes the model more willing to pick unlikely — and untrue — continuations. For anything where correctness matters, turn it down. You want the boring, most-probable answer, not a creative one.</p>
+
+  <h2>7. Add a verification pass</h2>
+  <p>For high-stakes outputs, don't trust the first answer — check it. A second step that re-reads the generated claims against the source, or an agent that validates its own tool results before acting, catches errors the first pass missed. This is a core reason the <a href="/blog/agentic-loop-explained" class="in">agentic loop</a> includes a verify stage: generation and verification are different jobs, and doing them separately catches what a single pass won't.</p>
+
+  <h2>Putting it together</h2>
+  <p>You don't need all seven on day one. Start with retrieval and permission-to-abstain — together they handle most of the problem for a data-grounded app. Add citations and structured outputs when the output feeds another system. Layer in verification only where a wrong answer is expensive. The teams whose AI "just makes things up" almost always skipped step one: they're asking the model to remember instead of handing it the facts.</p>
+
+  <div class="callout cta">
+    <p><strong>Hallucination is an engineering problem, not a fact of life.</strong> The context and RAG cost tools above are free, no signup. QADIR OS is built to ground answers in your own data and verify tool results in the loop, so agents act on facts, not guesses. <a href="/" class="in">Join QADIR OS early access</a>.</p>
+  </div>
+  <div class="foot">Built by <a href="/">ABUZ8 LLC</a> — we're building QADIR OS, the sovereign agentic operating system.</div>
+</div>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+<script src="/blog/_blog-shared.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>

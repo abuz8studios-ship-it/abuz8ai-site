@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ABUZ8 Store — Instant-Download AI Toolkits, Playbooks & Prompt Packs</title>
+<meta name="description" content="Shop ABUZ8 AI toolkits, automation playbooks, and production kits. Instant download after secure Stripe checkout. Built local-first on real GPUs. Every product tested before it's sold.">
+<link rel="canonical" href="https://abuz8ai.com/store">
+<meta name="robots" content="index,follow">
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="ABUZ8 Store — AI Toolkits, Playbooks & Production Kits">
+<meta property="og:description" content="28 instant-download AI products. Secure Stripe checkout, files to your inbox. Every product tested before it's sold.">
+<meta property="og:url" content="https://abuz8ai.com/store">
+<meta property="og:site_name" content="ABUZ8 AI">
+<!-- Twitter -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="ABUZ8 Store — AI Toolkits, Playbooks & Production Kits">
+<meta name="twitter:description" content="28 instant-download AI products. Secure Stripe checkout. Every product tested before it's sold.">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/abuz8-theme.css">
+<style>
+/* ============================================================
+   STORE — page-specific styles ONLY.
+   Ported to the unified theme 2026-07-29. This page had shipped its
+   own :root palette (#F8FAFC / #2E75B6 / #2C3E50) — the LIGHT scheme
+   retired on 2026-07-17 — so clicking "Store" from any other page
+   dropped the visitor onto a different-looking website mid-funnel.
+   Every colour below now comes from abuz8-theme.css. No new hex.
+   ============================================================ */
+
+.hero{padding:70px 0 40px;border-bottom:1px solid var(--border)}
+.eyebrow{display:inline-flex;border:1px solid var(--border-gold);color:var(--gold);
+  border-radius:999px;padding:6px 12px;font-size:12px;font-weight:700;
+  letter-spacing:.08em;text-transform:uppercase;margin-bottom:18px}
+h1{font-family:var(--font-display);font-size:clamp(2.2rem,5.4vw,4.2rem);line-height:1.05;
+  margin:0 0 18px;max-width:980px;color:var(--white)}
+.lead{font-size:clamp(1.02rem,2vw,1.2rem);color:var(--dim);max-width:760px;margin:0 0 24px}
+.actions{display:flex;gap:12px;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:44px;
+  padding:12px 20px;border-radius:var(--r-sm);font-weight:700;font-size:14px;
+  border:1px solid var(--border-gold);background:var(--glass-soft);color:var(--text);
+  transition:border-color .3s,color .3s,transform .3s}
+.btn:hover{border-color:var(--gold);color:var(--gold-light);transform:translateY(-2px)}
+.btn.primary{background:linear-gradient(135deg,var(--gold-dim),var(--gold));
+  border-color:var(--gold);color:var(--lapis)}
+.btn.primary:hover{color:var(--lapis);filter:brightness(1.08)}
+
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:30px}
+.stat{border:1px solid var(--border);background:var(--glass-soft);
+  border-radius:var(--r-sm);padding:16px}
+.stat strong{display:block;color:var(--gold);font-size:26px;line-height:1;
+  font-family:var(--font-display)}
+.stat span{display:block;color:var(--dim);font-size:12px;margin-top:6px}
+
+.section{padding:48px 0;border-bottom:1px solid var(--border)}
+h2{font-family:var(--font-display);font-size:clamp(1.5rem,3vw,2.3rem);line-height:1.12;
+  margin:0 0 6px;color:var(--white)}
+.sub{color:var(--dim);max-width:760px;margin:0 0 24px}
+
+.tier-label{display:flex;align-items:baseline;gap:12px;margin:34px 0 14px}
+.tier-label:first-of-type{margin-top:6px}
+.tier-label h3{font-size:14px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--gold);margin:0}
+.tier-label span{font-size:13px;color:var(--dim)}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(258px,1fr));gap:16px}
+.pack{background:var(--glass-soft);border:1px solid var(--border);border-radius:var(--r-md);
+  padding:20px;display:flex;flex-direction:column;min-height:100%;
+  transition:transform .3s,border-color .3s,box-shadow .3s}
+.pack:hover{transform:translateY(-4px);border-color:var(--border-gold);box-shadow:var(--shadow)}
+.pack.feature{border-color:var(--border-gold);background:var(--glass)}
+.pack h4{font-size:18px;margin:0 0 8px;line-height:1.3;color:var(--white)}
+.pack p{color:var(--dim);margin:0 0 14px;font-size:14px}
+.pack img.cover{width:100%;border-radius:var(--r-sm);border:1px solid var(--border);
+  margin-bottom:12px;aspect-ratio:600/776;object-fit:cover}
+
+.tag{display:inline-flex;width:max-content;border-radius:999px;padding:4px 10px;
+  font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:12px}
+.tag.ready{color:var(--green-bright);background:var(--green-glow);
+  border:1px solid rgba(47,191,143,.30)}
+.tag.best{color:var(--gold-light);background:rgba(201,168,76,.10);border:1px solid var(--border-gold)}
+
+.price{font-family:var(--font-display);font-size:28px;font-weight:700;color:var(--gold);
+  margin:auto 0 14px}
+.price span{font-family:var(--font-body);font-size:12px;font-weight:500;color:var(--dim)}
+
+.buy{display:inline-flex;align-items:center;justify-content:center;min-height:44px;
+  padding:11px 16px;border-radius:var(--r-sm);font-weight:700;font-size:14px;
+  background:linear-gradient(135deg,var(--gold-dim),var(--gold));
+  border:1px solid var(--gold);color:var(--lapis);transition:filter .3s,transform .3s}
+.buy:hover{filter:brightness(1.1);transform:translateY(-1px);color:var(--lapis)}
+.details{display:inline-block;margin-left:12px;font-size:13px;color:var(--gold)}
+.details:hover{color:var(--gold-light)}
+
+.toolgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
+.toolcard{border:1px solid var(--border);background:var(--glass-soft);
+  border-radius:var(--r-sm);padding:16px}
+.toolcard h4{margin:0 0 4px;font-size:15px;color:var(--white)}
+.toolcard span{font-size:13px;color:var(--dim)}
+
+.cta{background:var(--glass);border:1px solid var(--border-gold);border-radius:var(--r-lg);
+  padding:34px;text-align:center}
+.cta h2{margin-bottom:8px}
+.wlform{display:flex;gap:10px;max-width:480px;margin:18px auto 0;flex-wrap:wrap;justify-content:center}
+.wlform input{flex:1;min-width:220px;min-height:46px;padding:0 14px;border-radius:var(--r-sm);
+  border:1px solid var(--border);background:var(--lapis-2);color:var(--text);font-size:15px}
+.wlform input::placeholder{color:var(--muted)}
+.wlform input:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px var(--green-glow)}
+.wlmsg{margin-top:12px;font-size:14px;color:var(--green-bright);min-height:18px}
+
+.footer{padding:34px 0;color:var(--dim);font-size:13px}
+
+@media(max-width:850px){
+  .stats{grid-template-columns:1fr 1fr}
+  .actions .btn{width:100%}
+}
+</style>
+<!-- JSON-LD: storefront product catalog for SEO / rich results -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  "name": "ABUZ8 Store",
+  "url": "https://abuz8ai.com/store.html",
+  "description": "Instant-download AI toolkits, automation playbooks, and production kits from ABUZ8 AI.",
+  "mainEntity": {
+    "@type": "ItemList",
+    "name": "ABUZ8 Digital Products",
+    "numberOfItems": 36,
+    "itemListElement": [
+      {"@type":"Product","position":1,"name":"AI Automation Blueprint","url":"https://buy.stripe.com/eVqbITdLndqs1Ir9Qmebu1B","offers":{"@type":"Offer","price":"97.00","priceCurrency":"USD","availability":"https://schema.org/InStock"}},
+      {"@type":"Product","position":2,"name":"SDR Agent Playbook","url":"https://buy.stripe.com/dRm5kv36JbikgDl0fMebu1C","offers":{"@type":"Offer","price":"97.00","priceCurrency":"USD","availability":"https://schema.org/InStock"}},
+      {"@type":"Product","position":3,"name":"Sovereign AI Stack","url":"https://buy.stripe.com/aFa00b8r35Y086PbYuebu1D","offers":{"@type":"Offer","price":"97.00","priceCurrency":"USD","availability":"https://schema.org/InStock"}},
+      {"@type":"Product","position":4,"name":"AI Revenue Empire Bundle","url":"https://buy.stripe.com/00w3cnazbdqsbj18Miebu1E","offers":{"@type":"Offer","price":"97.00","priceCurrency":"USD","availability":"https://schema.org/InStock"}},
+      {"@type":"Product","position":5,"name":"ABUZ8 Mastery Pro","url":"https://buy.stripe.com/eVq9AL22Faeg2Mv2nUebu1F","offers":{"@type":"Offer","price":"97.00","priceCurrency":"USD","availability":"https://schema.org/InStock"}},
+      {"@type":"Product","position":6,"name":"ABUZ8 Mastery VIP","url":"https://buy.stripe.com/eVqfZ9fTv0DG72L6Eaebu1G","offers":{"@type":"Offer","price":"97.00","priceCurrency":"USD","availability":"https://schema.org/InStock"}},
+      {"@type":"Product","position":7,"name":"Global Funnels","url":"https://buy.stripe.com/14A8wHazbdqs1IrbYuebu1H","offers":{"@type":"Offer","price":"47.00","priceCurrency":"USD","availability":"https://schema.org/InStock"}},
+      {"@type":"Product","position":8,"name":"Episodic Art Production","url":"https://buy.stripe.com/dRm4grfTv5Y0dr98Miebu1J","offers":{"@type":"Offer","price":"47.00","priceCurrency":"USD","availability":"https://schema.org/InStock"}},
+      {"@type":"Product","position":9,"name":"Workforce Battalion Guide","url":"https://buy.stripe.com/aFa9ALdLn9ac72L6Eaebu1K","offers":{"@type":"Offer","price":"47.00","priceCurrency":"USD","availability":"https://schema.org/InStock"}},
+      {"@type":"Product","position":10,"name":"Workforce Empire Guide","url":"https://buy.stripe.com/5kQbITcHj2LO72L5A6ebu1L","offers":{"@type":"Offer","price":"47.00","priceCurrency":"USD","availability":"https://schema.org/InStock"}},
+      {"@type":"Product","position":11,"name":"Faceless Content Machine Pro","url":"https://buy.stripe.com/3cI6ozfTv7242MvfaGebu1M","offers":{"@type":"Offer","price":"47.00","priceCurrency":"USD","availability":"https://schema.org/InStock"}},
+      {"@type":"Product","position":12,"name":"Trading Math","url":"https://buy.stripe.com/3cI7sDcHjgCE86Pd2yebu1N","offers":{"@type":"Offer","price":"47.00","priceCurrency":"USD","availability":"https://schema.org/InStock"}},
+      {"@type":"Product","position":13,"name":"AI Commercial Video Production","url":"https://buy.stripe.com/eVq7sD36J4TW5YH2nUebu0W","offers":{"@type":"Offer","price":"47.00","priceCurrency":"USD","availability":"https://schema.org/InStock"}},
+      {"@type":"Product","position":14,"name":"Sovereign Coding Assistant","url":"https://buy.stripe.com/3cI8wH4aN9ac3Qz9Qmebu0X","offers":{"@type":"Offer","price":"47.00","priceCurrency":"USD","availability":"https://schema.org/InStock"}},
+      {"@type":"Product","position":15,"name":"Market Anomaly Scanner","url":"https://buy.stripe.com/dRm14f4aNgCE5YHe6Cebu11","offers":{"@type":"Offer","price":"37.00","priceCurrency":"USD","availability":"https://schema.org/InStock"}},
+      {"@type":"Product","position":16,"name":"360-Degree Vehicle Viewer","url":"https://buy.stripe.com/8x2fZ94aNaegfzhe6Cebu12","offers":{"@type":"Offer","price":"37.00","priceCurrency":"USD","availability":"https://schema.org/InStock"}},
+      {"@type":"Product","position":17,"name":"Twin Agent Blueprint","url":"https://buy.stripe.com/7sY8wH7mZ9ac86PfaGebu1O","offers":{"@type":"Offer","price":"27.00","priceCurrency":"USD","availability":"https://schema.org/InStock"}},
+      {"@type":"Product","position":18,"name":"ComfyUI 77 Workflows","url":"https://buy.stripe.com/aFaeV58r3cmo5YH9Qmebu1P","offers":{"@type":"Offer","price":"27.00","priceCurrency":"USD","availability":"https://schema.org/InStock"}},
+      {"@type":"Product","position":19,"name":"QADIR Voice Clone Toolkit","url":"https://buy.stripe.com/cNi6oz6iV0DGevd6Eaebu1Q","offers":{"@type":"Offer","price":"27.00","priceCurrency":"USD","availability":"https://schema.org/InStock"}},
+      {"@type":"Product","position":20,"name":"Outreach Playbook","url":"https://buy.stripe.com/9B6dR15eRfyA5YH0fMebu1R","offers":{"@type":"Offer","price":"27.00","priceCurrency":"USD","availability":"https://schema.org/InStock"}},
+      {"@type":"Product","position":21,"name":"Workforce Scout Guide","url":"https://buy.stripe.com/cNi5kv9v7bik5YH5A6ebu1S","offers":{"@type":"Offer","price":"27.00","priceCurrency":"USD","availability":"https://schema.org/InStock"}},
+      {"@type":"Product","position":22,"name":"Bee Series Production","url":"https://buy.stripe.com/4gMdR16iVeuw72L8Miebu1V","offers":{"@type":"Offer","price":"27.00","priceCurrency":"USD","availability":"https://schema.org/InStock"}},
+      {"@type":"Product","position":23,"name":"Crisis Catalyst","url":"https://buy.stripe.com/3cI5kvePr5Y0bj11jQebu1W","offers":{"@type":"Offer","price":"27.00","priceCurrency":"USD","availability":"https://schema.org/InStock"}},
+      {"@type":"Product","position":24,"name":"Content Factory Setup Kit","url":"https://buy.stripe.com/00weV56iVcmo3Qzd2yebu0Y","offers":{"@type":"Offer","price":"27.00","priceCurrency":"USD","availability":"https://schema.org/InStock"}},
+      {"@type":"Product","position":25,"name":"Revenue Playbook","url":"https://buy.stripe.com/dRmbIT8r3bik9aTe6Cebu22","offers":{"@type":"Offer","price":"27.00","priceCurrency":"USD","availability":"https://schema.org/InStock"}},
+      {"@type":"Product","position":26,"name":"Revenue Playbook · 7 Streams","url":"https://buy.stripe.com/eVq00b9v7fyA1Ird2yebu23","offers":{"@type":"Offer","price":"27.00","priceCurrency":"USD","availability":"https://schema.org/InStock"}},
+      {"@type":"Product","position":27,"name":"The Oasis Is Real (Saga Finale)","url":"https://buy.stripe.com/7sY5kvePr4TW0En6Eaebu0Z","offers":{"@type":"Offer","price":"19.00","priceCurrency":"USD","availability":"https://schema.org/InStock"}},
+      {"@type":"Product","position":28,"name":"ABUZ8 Mastery Starter","url":"https://buy.stripe.com/5kQaEPazbbik72L3rYebu10","offers":{"@type":"Offer","price":"19.00","priceCurrency":"USD","availability":"https://schema.org/InStock"}}
+    ]
+  }
+}
+</script>
+<script src="/assets/js/site-i18n.js" defer></script>
+</head>
+<body>
+<div class="geo-bg"></div>
+<div class="glow-orb glow-orb-1"></div>
+<div class="glow-orb glow-orb-2"></div>
+<div class="glow-orb glow-orb-3"></div>
+
+<nav class="abuz8-nav">
+<div class="nav-inner">
+  <a href="/" style="text-decoration:none;">
+    <div class="logo">ABUZ8</div>
+    <div class="logo-sub">Sovereign AI</div>
+  </a>
+  <div class="nav-links">
+    <a href="/tools.html">Tools</a>
+    <a href="/store.html" class="active">Store</a>
+    <a href="/agents.html">Agents</a>
+    <a href="/models.html">Models</a>
+    <a href="/news.html">News</a>
+    <a href="/roadmap.html">Roadmap</a>
+    <a href="/store.html" class="nav-cta">Get Started</a>
+  </div>
+</div>
+</nav>
+
+<main>
+  <section class="hero">
+    <div class="wrap">
+      <span class="eyebrow">Instant download · Secure Stripe checkout</span>
+      <h1>AI toolkits and playbooks you can buy and own today.</h1>
+      <p class="lead">No subscription wall, no waiting list. Pick a pack, check out securely with Stripe, and the files land in your inbox. Everything here is built local-first on real GPUs — the same stack that runs ABUZ8.</p>
+      <div class="actions">
+        <a class="btn primary" href="#shop">Browse the store</a>
+        <a class="btn" href="/tools.html">Try the free tools first</a>
+      </div>
+      <div class="stats">
+        <div class="stat"><strong>36</strong><span>Products ready to buy now</span></div>
+        <div class="stat"><strong>$19+</strong><span>Starting price, one-time</span></div>
+        <div class="stat"><strong>Instant</strong><span>Delivered to your inbox</span></div>
+        <div class="stat"><strong>Tested</strong><span>Before it's ever sold</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ THE SHOP — 28 live Stripe products (June-10 fulfillment-wired catalog, reconciled to 28 publish) ============ -->
+  <section class="section" id="shop">
+    <div class="wrap">
+      <h2>Shop — instant download</h2>
+      <p class="sub">Secure Stripe checkout. Files delivered to your inbox automatically. Tested before it's sold — and we'll always be honest with you. Payments processed by ABUZ8 LLC.</p>
+
+      <div class="tier-label"><h3>Flagship</h3><span>$97 · complete systems &amp; bundles</span></div>
+      <div class="grid">
+        <div class="pack feature">
+          <span class="tag best">Best value · bundle</span>
+          <img class="cover" src="/assets/img/covers/revenue_empire_bundle.jpg" alt="AI Revenue Empire Bundle cover" loading="lazy"><h4>AI Revenue Empire Bundle</h4>
+          <p>The flagship bundle — the core toolkits and playbooks packaged to stand up an AI-driven income stack end to end.</p>
+          <div class="price">$97 <span>one-time</span></div>
+          <a class="buy" href="https://buy.stripe.com/00w3cnazbdqsbj18Miebu1E" target="_blank" rel="noopener">Buy now →</a>
+          <a class="details" href="/products/ai-revenue-empire-bundle.html">Details →</a>
+        </div>
+        <div class="pack">
+          <span class="tag ready">Playbook</span>
+          <img class="cover" src="/assets/img/covers/ai_automation_blueprint.jpg" alt="AI Automation Blueprint cover" loading="lazy"><h4>AI Automation Blueprint</h4>
+          <p>The complete framework for mapping any manual workflow to an autonomous agent — decision points, build patterns, and the operator's playbook.</p>
+          <div class="price">$97 <span>one-time</span></div>
+          <a class="buy" href="https://buy.stripe.com/eVqbITdLndqs1Ir9Qmebu1B" target="_blank" rel="noopener">Buy now →</a>
+          <a class="details" href="/products/ai-automation-blueprint.html">Details →</a>
+        </div>
+        <div class="pack">
+          <span class="tag ready">Playbook</span>
+          <img class="cover" src="/assets/img/covers/sdr_agent_playbook.jpg" alt="SDR Agent Playbook cover" loading="lazy"><h4>SDR Agent Playbook</h4>
+          <p>Stand up an AI sales-development rep: prospecting, outreach sequences, and lead qualification handled by an agent.</p>
+          <div class="price">$97 <span>one-time</span></div>
+          <a class="buy" href="https://buy.stripe.com/dRm5kv36JbikgDl0fMebu1C" target="_blank" rel="noopener">Buy now →</a>
+          <a class="details" href="/products/sdr-agent-playbook.html">Details →</a>
+        </div>
+        <div class="pack">
+          <span class="tag ready">Stack</span>
+          <img class="cover" src="/assets/img/covers/sovereign_ai_stack.jpg" alt="Sovereign AI Stack cover" loading="lazy"><h4>Sovereign AI Stack</h4>
+          <p>The full local-first AI stack ABUZ8 runs on — own your models, your data, and your compute end to end.</p>
+          <div class="price">$97 <span>one-time</span></div>
+          <a class="buy" href="https://buy.stripe.com/aFa00b8r35Y086PbYuebu1D" target="_blank" rel="noopener">Buy now →</a>
+          <a class="details" href="/products/sovereign-ai-stack.html">Details →</a>
+        </div>
+        <div class="pack">
+          <span class="tag ready">Course</span>
+          <img class="cover" src="/assets/img/covers/mastery_pro.jpg" alt="ABUZ8 Mastery Pro cover" loading="lazy"><h4>ABUZ8 Mastery Pro</h4>
+          <p>The professional operator's track — the systems, routines, and stack to run AI as a business.</p>
+          <div class="price">$97 <span>one-time</span></div>
+          <a class="buy" href="https://buy.stripe.com/eVq9AL22Faeg2Mv2nUebu1F" target="_blank" rel="noopener">Buy now →</a>
+          <a class="details" href="/products/abuz8-mastery-pro.html">Details →</a>
+        </div>
+        <div class="pack">
+          <span class="tag ready">Course</span>
+          <img class="cover" src="/assets/img/covers/mastery_vip.jpg" alt="ABUZ8 Mastery VIP cover" loading="lazy"><h4>ABUZ8 Mastery VIP</h4>
+          <p>Everything in Mastery Pro plus the advanced VIP track — the deepest build-and-scale playbooks.</p>
+          <div class="price">$97 <span>one-time</span></div>
+          <a class="buy" href="https://buy.stripe.com/eVqfZ9fTv0DG72L6Eaebu1G" target="_blank" rel="noopener">Buy now →</a>
+          <a class="details" href="/products/abuz8-mastery-vip.html">Details →</a>
+        </div>
+      </div>
+
+      <div class="tier-label"><h3>Professional</h3><span>$37–$47 · production toolkits</span></div>
+      <div class="grid">
+        <div class="pack">
+          <span class="tag ready">Toolkit</span>
+          <img class="cover" src="/assets/img/covers/faceless_content_pro.jpg" alt="Faceless Content Machine Pro cover" loading="lazy"><h4>Faceless Content Machine Pro</h4>
+          <p>Run a faceless content channel end to end: scripts, voice, b-roll, and a repeatable daily publishing system.</p>
+          <div class="price">$47 <span>one-time</span></div>
+          <a class="buy" href="https://buy.stripe.com/3cI6ozfTv7242MvfaGebu1M" target="_blank" rel="noopener">Buy now →</a>
+          <a class="details" href="/products/faceless-content-machine-pro.html">Details →</a>
+        </div>
+        <div class="pack">
+          <span class="tag ready">Toolkit</span>
+          <img class="cover" src="/assets/img/covers/video_generator.jpg" alt="AI Commercial Video Production cover" loading="lazy"><h4>AI Commercial Video Production</h4>
+          <p>Produce broadcast-style commercial and product video with AI — the full generation and editing pipeline.</p>
+          <div class="price">$47 <span>one-time</span></div>
+          <a class="buy" href="https://buy.stripe.com/eVq7sD36J4TW5YH2nUebu0W" target="_blank" rel="noopener">Buy now →</a>
+          <a class="details" href="/products/ai-commercial-video-production.html">Details →</a>
+        </div>
+        <div class="pack">
+          <span class="tag ready">Toolkit</span>
+          <h4>Sovereign Coding Assistant</h4>
+          <p>A local-first coding assistant you own — code review, generation, and docs without sending your code to the cloud.</p>
+          <div class="price">$47 <span>one-time</span></div>
+          <a class="buy" href="https://buy.stripe.com/3cI8wH4aN9ac3Qz9Qmebu0X" target="_blank" rel="noopener">Buy now →</a>
+          <a class="details" href="/products/sovereign-coding-assistant.html">Details →</a>
+        </div>
+        <div class="pack">
+          <span class="tag ready">Playbook</span>
+          <img class="cover" src="/assets/img/covers/global_funnels.jpg" alt="Global Funnels cover" loading="lazy"><h4>Global Funnels</h4>
+          <p>Done-for-you funnel blueprints engineered to convert across markets and languages.</p>
+          <div class="price">$47 <span>one-time</span></div>
+          <a class="buy" href="https://buy.stripe.com/14A8wHazbdqs1IrbYuebu1H" target="_blank" rel="noopener">Buy now →</a>
+          <a class="details" href="/products/global-funnels.html">Details →</a>
+        </div>
+        <div class="pack">
+          <span class="tag ready">Production</span>
+          <img class="cover" src="/assets/img/covers/episodic_art_production.jpg" alt="Episodic Art Production cover" loading="lazy"><h4>Episodic Art Production</h4>
+          <p>Produce an episodic AI-animated series — the pipeline, prompts, and consistency system behind a recurring show.</p>
+          <div class="price">$47 <span>one-time</span></div>
+          <a class="buy" href="https://buy.stripe.com/dRm4grfTv5Y0dr98Miebu1J" target="_blank" rel="noopener">Buy now →</a>
+          <a class="details" href="/products/episodic-art-production.html">Details →</a>
+        </div>
+        <div class="pack">
+          <span class="tag ready">Guide</span>
+          <img class="cover" src="/assets/img/covers/workforce_battalion_guide.jpg" alt="Workforce Battalion Guide cover" loading="lazy"><h4>Workforce Battalion Guide</h4>
+          <p>Deploy a coordinated team of AI agents — roles, orchestration, and delegation at scale.</p>
+          <div class="price">$47 <span>one-time</span></div>
+          <a class="buy" href="https://buy.stripe.com/aFa9ALdLn9ac72L6Eaebu1K" target="_blank" rel="noopener">Buy now →</a>
+          <a class="details" href="/products/workforce-battalion-guide.html">Details →</a>
+        </div>
+        <div class="pack">
+          <span class="tag ready">Guide</span>
+          <img class="cover" src="/assets/img/covers/workforce_empire_guide.jpg" alt="Workforce Empire Guide cover" loading="lazy"><h4>Workforce Empire Guide</h4>
+          <p>Scale your AI workforce into a full operation — management patterns and multi-agent orchestration.</p>
+          <div class="price">$47 <span>one-time</span></div>
+          <a class="buy" href="https://buy.stripe.com/5kQbITcHj2LO72L5A6ebu1L" target="_blank" rel="noopener">Buy now →</a>
+          <a class="details" href="/products/workforce-empire-guide.html">Details →</a>
+        </div>
+        <div class="pack">
+          <span class="tag ready">Research</span>
+          <img class="cover" src="/assets/img/covers/trading_math.jpg" alt="Trading Math cover" loading="lazy"><h4>Trading Math</h4>
+          <p>The quantitative research and math behind systematic trading strategies. Educational and research-only.</p>
+          <div class="price">$47 <span>one-time</span></div>
+          <a class="buy" href="https://buy.stripe.com/3cI7sDcHjgCE86Pd2yebu1N" target="_blank" rel="noopener">Buy now →</a>
+          <a class="details" href="/products/trading-math.html">Details →</a>
+        </div>
+        <div class="pack">
+          <span class="tag ready">Research</span>
+          <h4>Market Anomaly Scanner</h4>
+          <p>Scan markets for statistical anomalies and setups — research tooling for the systematic trader. Educational, research-only.</p>
+          <div class="price">$37 <span>one-time</span></div>
+          <a class="buy" href="https://buy.stripe.com/dRm14f4aNgCE5YHe6Cebu11" target="_blank" rel="noopener">Buy now →</a>
+          <a class="details" href="/products/market-anomaly-scanner.html">Details →</a>
+        </div>
+        <div class="pack">
+          <span class="tag ready">Toolkit</span>
+          <h4>360° Vehicle Viewer</h4>
+          <p>Spin up interactive 360-degree product viewers — built for auto and e-commerce listings.</p>
+          <div class="price">$37 <span>one-time</span></div>
+          <a class="buy" href="https://buy.stripe.com/8x2fZ94aNaegfzhe6Cebu12" target="_blank" rel="noopener">Buy now →</a>
+          <a class="details" href="/products/360-vehicle-viewer.html">Details →</a>
+        </div>
+      </div>
+
+      <div class="tier-label"><h3>Standard</h3><span>$27 · focused toolkits &amp; playbooks</span></div>
+      <div class="grid">
+        <div class="pack">
+          <span class="tag ready">Toolkit</span>
+          <img class="cover" src="/assets/img/covers/comfyui_77_workflows.jpg" alt="ComfyUI 77 Workflows cover" loading="lazy"><h4>ComfyUI 77 Workflows</h4>
+          <p>Seventy-seven production-ready ComfyUI workflows for local image and video generation.</p>
+          <div class="price">$27 <span>one-time</span></div>
+          <a class="buy" href="https://buy.stripe.com/aFaeV58r3cmo5YH9Qmebu1P" target="_blank" rel="noopener">Buy now →</a>
+          <a class="details" href="/products/comfyui-77-workflows.html">Details →</a>
+        </div>
+        <div class="pack">
+          <span class="tag ready">Toolkit</span>
+          <img class="cover" src="/assets/img/covers/voice_clone_toolkit.jpg" alt="QADIR Voice Clone Toolkit cover" loading="lazy"><h4>QADIR Voice Clone Toolkit</h4>
+          <p>Clone a voice and drive TTS, lip-sync, and multilingual narration from a single local pipeline.</p>
+          <div class="price">$27 <span>one-time</span></div>
+          <a class="buy" href="https://buy.stripe.com/cNi6oz6iV0DGevd6Eaebu1Q" target="_blank" rel="noopener">Buy now →</a>
+          <a class="details" href="/products/qadir-voice-clone-toolkit.html">Details →</a>
+        </div>
+        <div class="pack">
+          <span class="tag ready">Blueprint</span>
+          <img class="cover" src="/assets/img/covers/twin_agent_blueprint.jpg" alt="Twin Agent Blueprint cover" loading="lazy"><h4>Twin Agent Blueprint</h4>
+          <p>Build a digital-twin agent that mirrors your decisions and runs your routines.</p>
+          <div class="price">$27 <span>one-time</span></div>
+          <a class="buy" href="https://buy.stripe.com/7sY8wH7mZ9ac86PfaGebu1O" target="_blank" rel="noopener">Buy now →</a>
+          <a class="details" href="/products/twin-agent-blueprint.html">Details →</a>
+        </div>
+        <div class="pack">
+          <span class="tag ready">Playbook</span>
+          <img class="cover" src="/assets/img/covers/outreach_playbook.jpg" alt="Outreach Playbook cover" loading="lazy"><h4>Outreach Playbook</h4>
+          <p>Cold outreach that books meetings — sequences, templates, and the system to run them.</p>
+          <div class="price">$27 <span>one-time</span></div>
+          <a class="buy" href="https://buy.stripe.com/9B6dR15eRfyA5YH0fMebu1R" target="_blank" rel="noopener">Buy now →</a>
+          <a class="details" href="/products/outreach-playbook.html">Details →</a>
+        </div>
+        <div class="pack">
+          <span class="tag ready">Guide</span>
+          <img class="cover" src="/assets/img/covers/workforce_scout_guide.jpg" alt="Workforce Scout Guide cover" loading="lazy"><h4>Workforce Scout Guide</h4>
+          <p>Find, vet, and onboard the right AI agents and tools for any job.</p>
+          <div class="price">$27 <span>one-time</span></div>
+          <a class="buy" href="https://buy.stripe.com/cNi5kv9v7bik5YH5A6ebu1S" target="_blank" rel="noopener">Buy now →</a>
+          <a class="details" href="/products/workforce-scout-guide.html">Details →</a>
+        </div>
+        <div class="pack">
+          <span class="tag ready">Toolkit</span>
+          <img class="cover" src="/assets/img/covers/consulting_kit.jpg" alt="Content Factory Setup Kit cover" loading="lazy"><h4>Content Factory Setup Kit</h4>
+          <p>Stand up a content factory: templates, calendar, and the generation workflow to publish daily.</p>
+          <div class="price">$27 <span>one-time</span></div>
+          <a class="buy" href="https://buy.stripe.com/00weV56iVcmo3Qzd2yebu0Y" target="_blank" rel="noopener">Buy now →</a>
+          <a class="details" href="/products/content-factory-setup-kit.html">Details →</a>
+        </div>
+        <div class="pack">
+          <span class="tag ready">Playbook</span>
+          <img class="cover" src="/assets/img/covers/revenue_playbook.jpg" alt="Revenue Playbook cover" loading="lazy"><h4>Revenue Playbook</h4>
+          <p>The operator's plan for turning AI capability into income — offers, channels, and the sequence to run them.</p>
+          <div class="price">$27 <span>one-time</span></div>
+          <a class="buy" href="https://buy.stripe.com/dRmbIT8r3bik9aTe6Cebu22" target="_blank" rel="noopener">Buy now →</a>
+          <a class="details" href="/products/revenue-playbook.html">Details →</a>
+        </div>
+        <div class="pack">
+          <span class="tag ready">Playbook</span>
+          <img class="cover" src="/assets/img/covers/revenue_playbook_7_streams.jpg" alt="Revenue Playbook · 7 Streams cover" loading="lazy"><h4>Revenue Playbook · 7 Streams</h4>
+          <p>Seven concrete AI-powered revenue streams you can launch — with the playbook for each.</p>
+          <div class="price">$27 <span>one-time</span></div>
+          <a class="buy" href="https://buy.stripe.com/eVq00b9v7fyA1Ird2yebu23" target="_blank" rel="noopener">Buy now →</a>
+          <a class="details" href="/products/revenue-playbook-7-streams.html">Details →</a>
+        </div>
+        <div class="pack">
+          <span class="tag ready">Production</span>
+          <img class="cover" src="/assets/img/covers/bee_series_production.jpg" alt="Bee Series Production cover" loading="lazy"><h4>Bee Series Production</h4>
+          <p>The production kit behind a themed AI-animated series — workflow and assets.</p>
+          <div class="price">$27 <span>one-time</span></div>
+          <a class="buy" href="https://buy.stripe.com/4gMdR16iVeuw72L8Miebu1V" target="_blank" rel="noopener">Buy now →</a>
+          <a class="details" href="/products/bee-series-production.html">Details →</a>
+        </div>
+        <div class="pack">
+          <span class="tag ready">Playbook</span>
+          <img class="cover" src="/assets/img/covers/crisis_catalyst.jpg" alt="Crisis Catalyst cover" loading="lazy"><h4>Crisis Catalyst</h4>
+          <p>An operator's playbook for turning a business crisis into momentum and decisive action.</p>
+          <div class="price">$27 <span>one-time</span></div>
+          <a class="buy" href="https://buy.stripe.com/3cI5kvePr5Y0bj11jQebu1W" target="_blank" rel="noopener">Buy now →</a>
+          <a class="details" href="/products/crisis-catalyst.html">Details →</a>
+        </div>
+      </div>
+
+      <div class="tier-label"><h3>Essentials</h3><span>$19 · starting points &amp; produced content</span></div>
+      <div class="grid">
+        <div class="pack">
+          <span class="tag ready">Starter</span>
+          <h4>ABUZ8 Mastery Starter</h4>
+          <p>The on-ramp to the ABUZ8 operating system — start here and build up.</p>
+          <div class="price">$19 <span>one-time</span></div>
+          <a class="buy" href="https://buy.stripe.com/5kQaEPazbbik72L3rYebu10" target="_blank" rel="noopener">Buy now →</a>
+          <a class="details" href="/products/abuz8-mastery-starter.html">Details →</a>
+        </div>
+        <div class="pack">
+          <span class="tag ready">Film</span>
+          <h4>The Oasis Is Real — Saga Finale</h4>
+          <p>The finale of the AI-animated saga — a produced short film you can own and share.</p>
+          <div class="price">$19 <span>one-time</span></div>
+          <a class="buy" href="https://buy.stripe.com/7sY5kvePr4TW0En6Eaebu0Z" target="_blank" rel="noopener">Buy now →</a>
+          <a class="details" href="/products/the-oasis-is-real-saga-finale.html">Details →</a>
+        </div>
+      </div>
+
+
+    </div>
+  </section>
+
+  <!-- ============ FREE TOOLS FUNNEL ============ -->
+  <section class="section">
+    <div class="wrap">
+      <h2>Not ready to buy? Start free.</h2>
+      <p class="sub">Dozens of AI tools run free in your browser — image and video studio, writing, business strategy, and developer utilities. Use them, then come back for the toolkit that automates the whole job.</p>
+      <div class="toolgrid">
+        <a class="toolcard" href="/tools.html"><h4>Image &amp; Video Studio →</h4><span>Headshots, upscaling, cartoons, faceless video</span></a>
+        <a class="toolcard" href="/tools.html"><h4>Writing &amp; Marketing →</h4><span>Blogs, ad copy, bios, cold DMs, SEO meta</span></a>
+        <a class="toolcard" href="/tools.html"><h4>Business &amp; Strategy →</h4><span>Decks, GTM, pricing, board memos</span></a>
+        <a class="toolcard" href="/tools.html"><h4>Developer Tools →</h4><span>API tester, code review, SQL, env files</span></a>
+        <a class="toolcard" href="/tools.html"><h4>Free Utilities →</h4><span>JSON, regex, gradients, color, hashes</span></a>
+        <a class="toolcard" href="/tools.html"><h4>Life &amp; Learning →</h4><span>Recipes, workouts, flashcards, names</span></a>
+      </div>
+      <div style="margin-top:22px"><a class="btn primary" href="/tools.html">Open all free tools →</a></div>
+    </div>
+  </section>
+
+  <!-- ============ FLAGSHIP / WAITLIST ============ -->
+  <section class="section">
+    <div class="wrap">
+      <div class="cta">
+        <span class="eyebrow">Coming next · QADIR Shift</span>
+        <h2>Want the full operator system?</h2>
+        <p class="sub" style="margin-left:auto;margin-right:auto">QADIR Shift turns a normal machine into a local-first AI workforce wired to files, browser, terminal, memory, and media. Join the early-access list — you'll get first pricing and the launch build.</p>
+        <form class="wlform" onsubmit="return joinWaitlist(event)">
+          <input type="email" id="wl-email" placeholder="you@company.com" required aria-label="Email address">
+          <button class="btn primary" type="submit">Join early access</button>
+        </form>
+        <div class="wlmsg" id="wl-msg" role="status"></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    ABUZ8 LLC · Build with AI you actually own · <a href="mailto:ahmad@abuz8ai.com">ahmad@abuz8ai.com</a><br>
+    All checkout links are live Stripe payment links. Every product is tested before it's sold. If a product is broken, misdescribed, or your download can't be accessed, email us and we'll make it right — see the <a href="/refund.html">refund policy</a>.
+  </div>
+</footer>
+
+<script>
+// Waitlist capture — posts to the site's ONE data-collecting endpoint
+// (/api/waitlist -> Cloudflare D1). Honest fallback: if the request
+// fails we say so and give a real path, never a fake confirmation.
+// NOTE (2026-07-29): the checkout() helper that posted to /api/stripe-checkout
+// was removed with the "Agent Generated" tier. Those 8 SKUs were listed at
+// $9–$47 but their deliverables were 380-byte ZIPs containing only a LICENSE
+// and a README — no product. They are off the store until a real artifact
+// exists. Every remaining card links straight to a Stripe-hosted checkout.
+
+function joinWaitlist(e){
+  e.preventDefault();
+  var email = document.getElementById('wl-email').value.trim();
+  var msg = document.getElementById('wl-msg');
+  if(!email || email.indexOf('@')<1){ msg.style.color='var(--amber)'; msg.textContent='Please enter a valid email.'; return false; }
+  msg.style.color='var(--muted)'; msg.textContent='Adding you…';
+  var payload = JSON.stringify({email:email, product:'qadir-shift', referrer:'store', ts:Date.now()});
+  fetch('/api/waitlist', {method:'POST',headers:{'Content-Type':'application/json'},body:payload})
+    .then(function(r){ if(r.ok){ done(); } else { fail(); } })
+    .catch(function(){ fail(); });
+  function done(){ msg.style.color='var(--green)'; msg.textContent="You're on the list. We'll email you at "+email+" with early pricing."; document.getElementById('wl-email').value=''; }
+  function fail(){ msg.style.color='var(--amber)'; msg.textContent="Couldn't reach the list right now — email ahmad@abuz8ai.com and we'll add you by hand."; }
+  return false;
+}
+</script>
+<script src="/assets/js/abuz8-ui.js" defer></script>
+<script src="/assets/js/abuz8-onboard.js" defer></script>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+</body>
+</html>

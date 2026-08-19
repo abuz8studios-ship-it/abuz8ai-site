@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Cartoon Maker Pro — Turn Any Photo into a Cartoon | ABUZ8</title>
+<meta name="description" content="Transform photos into stunning cartoons instantly. Classic, 3D CGI, Disney, Comic Book, Watercolor — 8 curated styles. Local RTX 5090. No watermarks. Join early access.">
+<meta name="keywords" content="ai cartoon maker, photo to cartoon, cartoon generator ai, turn photo into cartoon, ai cartoon filter, cartoon yourself, comic book art ai, cartoon portrait generator">
+<link rel="canonical" href="https://abuz8ai.com/tools/ai-cartoon-pro">
+<meta property="og:title" content="AI Cartoon Maker Pro — Studio-Quality Cartoons from Any Photo | ABUZ8">
+<meta property="og:description" content="8 cartoon styles. Classic, CGI, Disney, Comic, Watercolor. Runs on local RTX 5090. No watermarks. Early access open.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://abuz8ai.com/tools/ai-cartoon-pro">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="AI Cartoon Maker Pro | ABUZ8">
+<meta name="twitter:description" content="Turn any photo into professional cartoon art. 8 styles. No watermarks. Local GPU processing.">
+<link rel="stylesheet" href="/assets/css/abuz8-mach3.css">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@300;400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"SoftwareApplication","name":"AI Cartoon Maker Pro","applicationCategory":"MultimediaApplication","operatingSystem":"Web","description":"Transform any photo into professional-grade cartoon art using local ComfyUI inference. Choose from 8 curated cartoon styles including Classic Cartoon, 3D CGI, Disney Animation, Comic Book, Watercolor Illustration, Flat Vector, Super Chibi, and Retro Saturday Morning. No watermarks, no data sent to third-party servers.","offers":{"@type":"Offer","price":"0","priceCurrency":"USD","availability":"https://schema.org/PreOrder"},"creator":{"@type":"Organization","name":"ABUZ8 LLC","url":"https://abuz8ai.com"}}
+</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"HowTo","name":"Turn a Photo into a Cartoon with AI","step":[{"@type":"HowToStep","name":"Upload your photo or enter a prompt","text":"Drop in a photo of a person, scene, or object — or type a description of the cartoon you want generated."},{"@type":"HowToStep","name":"Choose a cartoon style","text":"Select from 8 curated styles: Classic Cartoon, 3D CGI, Disney Animation, Comic Book, Watercolor, Flat Vector, Super Chibi, or Retro Saturday Morning."},{"@type":"HowToStep","name":"Adjust style strength","text":"Dial in how much the original photo shows through. 0.6 for subtle cartoon touches, 0.9 for full transformation."},{"@type":"HowToStep","name":"Generate and download","text":"ComfyUI renders your cartoon on a local RTX 5090 in 10–25 seconds. Download 1024×1024 PNG with zero watermarks."}]}
+</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Can I turn a photo of a real person into a cartoon?","acceptedAnswer":{"@type":"Answer","text":"Yes. Upload a portrait and the model will redraw the person in your selected cartoon style while preserving likeness, expression, and pose. Works best with clear, well-lit photos."}},{"@type":"Question","name":"What cartoon styles are available?","acceptedAnswer":{"@type":"Answer","text":"8 curated styles: Classic Cartoon (bold outlines, vibrant fills), 3D CGI (Pixar/DreamWorks quality render), Disney Animation (fluid, expressive Disney aesthetic), Comic Book (Marvel/DC panel art with halftones), Watercolor Illustration (soft painted look), Flat Vector (clean geometric shapes), Super Chibi (exaggerated cute proportions), and Retro Saturday Morning (80s cartoon nostalgia)."}},{"@type":"Question","name":"What is the output resolution?","acceptedAnswer":{"@type":"Answer","text":"Default output is 1024×1024 pixels. Portrait and landscape orientations will be supported in early access. All outputs are watermark-free."}},{"@type":"Question","name":"Does my photo get sent to third-party servers?","acceptedAnswer":{"@type":"Answer","text":"No. Inference runs on local RTX 5090 hardware. Your photo is processed on our private infrastructure and deleted immediately after generation."}},{"@type":"Question","name":"Can I use this for commercial projects?","acceptedAnswer":{"@type":"Answer","text":"Early access outputs are cleared for personal and commercial use — client work, social content, merchandise designs, and YouTube thumbnails are all covered."}},{"@type":"Question","name":"Does it work for animals and objects, not just people?","acceptedAnswer":{"@type":"Answer","text":"Yes. The model handles pets, cars, landscapes, food, and objects. Classic Cartoon style is particularly effective on animals. Comic Book works well on vehicles and architecture."}},{"@type":"Question","name":"How fast is generation?","acceptedAnswer":{"@type":"Answer","text":"10–25 seconds per image on RTX 5090. Classic Cartoon and Flat Vector render fastest; 3D CGI and Comic Book with complex shading take slightly longer."}},{"@type":"Question","name":"Can I generate from a text prompt instead of a photo?","acceptedAnswer":{"@type":"Answer","text":"Yes. Describe your cartoon scene ('a brave knight cartoon standing before a dragon castle') and the model will generate it in your chosen style. Combining a photo and a prompt gives the strongest results."}}]}
+</script>
+
+<style>
+:root{
+  --lapis:#0a1628; --lapis-2:#0d1a30; --lapis-3:#111f38;
+  --gold:#c9a84c; --gold-2:#e6c879;
+  --turq:#0e9f6e; --turq-2:#2bb39e;
+  --cream:#f5f0e8; --text:#e8e4d8; --dim:#8a9aaa; --border:#1a2e50;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{background:var(--lapis);color:var(--text);font-family:'Inter',sans-serif;line-height:1.6;min-height:100vh;-webkit-font-smoothing:antialiased}
+a{color:var(--gold);text-decoration:none}
+.mono{font-family:'JetBrains Mono',monospace}
+.wrap{max-width:1200px;margin:0 auto;padding:32px 24px}
+
+/* NAV */
+.nav{display:flex;justify-content:space-between;align-items:center;padding-bottom:20px;border-bottom:1px solid var(--border);margin-bottom:40px}
+.brand{font-family:'Playfair Display',serif;font-size:22px;color:var(--cream);letter-spacing:.5px}
+.brand .acc{color:var(--gold)}
+.back{font-size:11px;color:var(--dim);letter-spacing:2px;text-transform:uppercase}
+.back:hover{color:var(--gold)}
+
+/* HERO */
+.hero{display:grid;grid-template-columns:1.1fr .9fr;gap:48px;align-items:center;margin-bottom:56px}
+@media(max-width:880px){.hero{grid-template-columns:1fr}}
+.eyebrow{color:var(--turq-2);font-size:11px;letter-spacing:3px;text-transform:uppercase;margin-bottom:18px;font-weight:600}
+h1{font-family:'Playfair Display',serif;font-size:clamp(2.2rem,5vw,3.6rem);color:var(--cream);line-height:1.05;margin-bottom:20px;font-weight:900}
+h1 .gold{color:var(--gold)}
+.lede{color:var(--dim);font-size:18px;font-weight:300;max-width:540px;margin-bottom:28px}
+.row-stats{display:flex;gap:32px;margin-top:20px;flex-wrap:wrap}
+.stat{border-left:2px solid var(--gold);padding-left:14px}
+.stat .n{font-family:'Playfair Display',serif;font-size:28px;color:var(--cream);font-weight:700;line-height:1}
+.stat .l{font-size:10px;color:var(--dim);letter-spacing:2px;text-transform:uppercase;margin-top:6px}
+
+/* DEMO STRIP */
+.demo-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;border-radius:18px;overflow:hidden;border:1px solid var(--border);background:var(--lapis-2);padding:12px}
+.demo-card{aspect-ratio:1/1;border-radius:12px;background:linear-gradient(135deg,#1a2e50,#0d1a30);position:relative;overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:14px;gap:8px}
+.demo-card::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 40% 30%,rgba(201,168,76,0.12),transparent 60%)}
+.demo-card .ico{font-size:32px;position:relative;z-index:1}
+.demo-card .tag{position:relative;z-index:1;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--turq-2);font-weight:600;text-align:center}
+.demo-card .style-name{position:relative;z-index:1;font-family:'Playfair Display',serif;font-size:13px;color:var(--cream);font-weight:700;text-align:center;margin-top:2px}
+
+/* WORKBENCH */
+.bench{display:grid;grid-template-columns:1fr 1fr;gap:32px;background:var(--lapis-2);border:1px solid var(--border);border-radius:22px;padding:36px;margin-bottom:56px}
+@media(max-width:880px){.bench{grid-template-columns:1fr}}
+.panel h3{font-family:'Playfair Display',serif;font-size:24px;color:var(--cream);margin-bottom:6px}
+.panel .pre{color:var(--turq-2);font-size:10px;letter-spacing:3px;text-transform:uppercase;margin-bottom:18px;font-weight:600}
+
+.field{margin-bottom:18px}
+.field label{display:block;font-size:10px;color:var(--gold);letter-spacing:2.5px;text-transform:uppercase;margin-bottom:8px;font-weight:700}
+.input,.select,.textarea{width:100%;padding:13px 14px;background:#0f2040;border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:inherit;font-size:14px;transition:border-color .2s}
+.input:focus,.select:focus,.textarea:focus{outline:none;border-color:var(--gold)}
+.textarea{resize:vertical;min-height:90px}
+
+/* STYLE CHIPS */
+.style-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:18px}
+@media(max-width:600px){.style-grid{grid-template-columns:repeat(2,1fr)}}
+.style-chip{background:#0f2040;border:1px solid var(--border);border-radius:10px;padding:10px 8px;cursor:pointer;transition:all .2s;text-align:center}
+.style-chip:hover{border-color:var(--turq)}
+.style-chip.active{border-color:var(--gold);background:rgba(201,168,76,.08)}
+.style-chip .chip-ico{font-size:22px;display:block;margin-bottom:4px}
+.style-chip .chip-name{font-size:10px;color:var(--dim);letter-spacing:1px;text-transform:uppercase;line-height:1.3}
+.style-chip.active .chip-name{color:var(--gold)}
+
+.active-style-info{background:#0f2040;border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:18px;display:flex;gap:12px;align-items:flex-start}
+.active-style-info .asi-ico{font-size:28px;flex-shrink:0}
+.active-style-info .asi-name{font-size:14px;font-weight:700;color:var(--cream);margin-bottom:4px}
+.active-style-info .asi-desc{font-size:12px;color:var(--dim);line-height:1.5}
+
+/* STEPS */
+.step-row{display:flex;gap:8px;margin-bottom:18px}
+.step-chip{background:#0f2040;border:1px solid var(--border);border-radius:8px;padding:7px 14px;cursor:pointer;font-size:12px;color:var(--dim);transition:all .2s;font-family:'JetBrains Mono',monospace}
+.step-chip:hover{border-color:var(--turq);color:var(--text)}
+.step-chip.active{border-color:var(--gold);color:var(--gold)}
+
+/* SLIDER */
+.slider-row{display:flex;align-items:center;gap:12px;margin-bottom:22px}
+.slider-row input[type=range]{flex:1;-webkit-appearance:none;height:4px;background:var(--border);border-radius:2px;outline:none}
+.slider-row input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--gold);cursor:pointer}
+.strength-val{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--gold);min-width:32px;text-align:right}
+
+/* UPLOAD */
+.upload-zone{border:2px dashed var(--border);border-radius:12px;padding:28px;text-align:center;cursor:pointer;transition:border-color .2s;margin-bottom:18px;background:#090f1e}
+.upload-zone:hover,.upload-zone.drag{border-color:var(--gold)}
+.upload-zone p{font-size:13px;color:var(--dim);margin-top:8px}
+.upload-zone input{display:none}
+.upload-zone .ico{font-size:28px}
+.img-preview{max-width:100%;border-radius:8px;margin-top:10px;display:none;border:1px solid var(--border)}
+
+/* GEN BUTTON */
+.gen-btn{width:100%;padding:16px;background:var(--gold);color:#0a1628;font-family:'Playfair Display',serif;font-size:18px;font-weight:700;border:none;border-radius:12px;cursor:pointer;transition:all .25s;letter-spacing:.5px;margin-top:8px}
+.gen-btn:hover:not(:disabled){background:var(--gold-2);transform:translateY(-1px);box-shadow:0 8px 24px rgba(201,168,76,.3)}
+.gen-btn:disabled{opacity:.6;cursor:not-allowed;transform:none}
+
+/* OUTPUT PANEL */
+.output-area{display:flex;flex-direction:column;gap:16px}
+.canvas-wrap{aspect-ratio:1/1;background:#090f1e;border:1px solid var(--border);border-radius:16px;overflow:hidden;position:relative;display:flex;align-items:center;justify-content:center}
+.placeholder{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;color:var(--dim)}
+.placeholder .p-ico{font-size:48px;opacity:.4}
+.placeholder p{font-size:13px;text-align:center;max-width:200px;line-height:1.6}
+#outputImg{width:100%;height:100%;object-fit:contain;display:none}
+.status-line{font-size:12px;min-height:18px;color:var(--dim);font-family:'JetBrains Mono',monospace}
+.status-line.active{color:var(--turq-2)}
+.status-line.done{color:#3de87a}
+.status-line.err{color:#e87a3d}
+.progress-bar{height:3px;background:var(--border);border-radius:2px;overflow:hidden;display:none}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--turq),var(--gold));width:0%;transition:width .8s ease}
+.action-row{display:flex;gap:10px}
+.btn-dl,.btn-share{flex:1;padding:11px;background:#0f2040;border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:12px;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;transition:all .2s;font-family:inherit;display:none}
+.btn-dl:hover,.btn-share:hover{border-color:var(--gold);color:var(--gold)}
+.offline-notice{background:rgba(232,122,61,.08);border:1px solid rgba(232,122,61,.3);border-radius:10px;padding:14px 16px;font-size:13px;color:#e8a07a;display:none}
+.offline-notice a{color:var(--gold)}
+
+/* HOW IT WORKS */
+.how-section{margin-bottom:56px}
+.how-section h2{font-family:'Playfair Display',serif;font-size:2rem;color:var(--cream);margin-bottom:8px}
+.how-section .sub{color:var(--dim);font-size:15px;margin-bottom:32px}
+.how-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
+@media(max-width:800px){.how-grid{grid-template-columns:repeat(2,1fr)}}
+.how-step{background:var(--lapis-2);border:1px solid var(--border);border-radius:16px;padding:24px}
+.how-step .num{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--gold);letter-spacing:2px;margin-bottom:12px}
+.how-step h4{font-family:'Playfair Display',serif;font-size:16px;color:var(--cream);margin-bottom:8px}
+.how-step p{font-size:13px;color:var(--dim);line-height:1.6}
+
+/* STYLES SHOWCASE */
+.styles-section{margin-bottom:56px}
+.styles-section h2{font-family:'Playfair Display',serif;font-size:2rem;color:var(--cream);margin-bottom:8px}
+.styles-section .sub{color:var(--dim);font-size:15px;margin-bottom:32px}
+.styles-showcase{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+@media(max-width:800px){.styles-showcase{grid-template-columns:repeat(2,1fr)}}
+.showcase-card{background:var(--lapis-2);border:1px solid var(--border);border-radius:16px;padding:22px;text-align:center}
+.showcase-card .sc-ico{font-size:36px;margin-bottom:12px}
+.showcase-card h4{font-family:'Playfair Display',serif;font-size:15px;color:var(--cream);margin-bottom:6px}
+.showcase-card p{font-size:12px;color:var(--dim);line-height:1.5}
+
+/* SPECS */
+.specs-section{margin-bottom:56px}
+.specs-section h2{font-family:'Playfair Display',serif;font-size:2rem;color:var(--cream);margin-bottom:8px}
+.specs-section .sub{color:var(--dim);font-size:15px;margin-bottom:32px}
+.specs-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+@media(max-width:700px){.specs-grid{grid-template-columns:1fr}}
+.spec-card{background:var(--lapis-2);border:1px solid var(--border);border-radius:14px;padding:20px}
+.spec-card .sc-label{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:8px;font-weight:700}
+.spec-card .sc-val{font-family:'JetBrains Mono',monospace;font-size:15px;color:var(--cream);font-weight:600}
+.spec-card .sc-note{font-size:12px;color:var(--dim);margin-top:4px}
+
+/* USE CASES */
+.use-section{margin-bottom:56px}
+.use-section h2{font-family:'Playfair Display',serif;font-size:2rem;color:var(--cream);margin-bottom:8px}
+.use-section .sub{color:var(--dim);font-size:15px;margin-bottom:32px}
+.use-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+@media(max-width:700px){.use-grid{grid-template-columns:1fr}}
+.use-card{background:var(--lapis-2);border:1px solid var(--border);border-radius:14px;padding:22px}
+.use-card .uc-tag{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--turq-2);margin-bottom:10px;font-weight:700}
+.use-card h4{font-family:'Playfair Display',serif;font-size:16px;color:var(--cream);margin-bottom:8px}
+.use-card p{font-size:13px;color:var(--dim);line-height:1.6}
+
+/* FAQ */
+.faq-section{margin-bottom:56px}
+.faq-section h2{font-family:'Playfair Display',serif;font-size:2rem;color:var(--cream);margin-bottom:8px}
+.faq-section .sub{color:var(--dim);font-size:15px;margin-bottom:32px}
+.faq-item{border:1px solid var(--border);border-radius:12px;margin-bottom:10px;overflow:hidden}
+.faq-q{padding:16px 20px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;color:var(--cream);font-size:14px;font-weight:600;transition:background .2s}
+.faq-q:hover{background:var(--lapis-2)}
+.faq-arrow{color:var(--gold);font-size:12px;transition:transform .25s;flex-shrink:0}
+.faq-item.open .faq-arrow{transform:rotate(180deg)}
+.faq-a{max-height:0;overflow:hidden;transition:max-height .35s ease,padding .2s}
+.faq-item.open .faq-a{max-height:300px;padding:0 20px 16px}
+.faq-a p{font-size:13px;color:var(--dim);line-height:1.7}
+
+/* WAITLIST */
+.wl-section{background:linear-gradient(135deg,#0d1a30,#111f38);border:1px solid var(--border);border-radius:24px;padding:48px;text-align:center;margin-bottom:48px}
+.wl-section h2{font-family:'Playfair Display',serif;font-size:2.4rem;color:var(--cream);margin-bottom:12px}
+.wl-section p{color:var(--dim);font-size:16px;margin-bottom:32px;max-width:480px;margin-left:auto;margin-right:auto}
+.wl-form{display:flex;gap:12px;max-width:400px;margin:0 auto 14px;flex-wrap:wrap}
+.wl-form input{flex:1;padding:13px 16px;background:#0a1628;border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:15px;font-family:inherit;min-width:200px}
+.wl-form input:focus{outline:none;border-color:var(--gold)}
+.wl-form button{padding:13px 24px;background:var(--gold);color:#0a1628;border:none;border-radius:10px;font-weight:700;font-size:14px;cursor:pointer;font-family:'Playfair Display',serif;transition:background .2s}
+.wl-form button:hover{background:var(--gold-2)}
+.wl-success{color:#3de87a;font-size:14px;display:none;margin-top:8px}
+.wl-note{font-size:12px;color:var(--dim);margin-top:10px}
+
+/* FOOTER */
+.footer{padding-top:28px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;font-size:12px;color:var(--dim)}
+.footer-links{display:flex;gap:20px}
+.footer-links a{color:var(--dim)}
+.footer-links a:hover{color:var(--gold)}
+
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- NAV -->
+  <nav class="nav">
+    <a href="/index.html" class="brand">ABU<span class="acc">Z8</span></a>
+    <a href="/tools.html" class="back">← All Tools</a>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-copy">
+      <div class="eyebrow">AI Cartoon Maker Pro</div>
+      <h1>Turn Any Photo into<br><span class="gold">Cartoon Art.</span></h1>
+      <p class="lede">8 curated cartoon styles. Classic, CGI, Disney, Comic Book, Watercolor. Powered by ComfyUI on our own RTX 5090 — no third-party servers, no watermarks.</p>
+      <div class="row-stats">
+        <div class="stat"><div class="n">8</div><div class="l">Cartoon Styles</div></div>
+        <div class="stat"><div class="n">~15s</div><div class="l">Generation Time</div></div>
+        <div class="stat"><div class="n">1024px</div><div class="l">Output Resolution</div></div>
+      </div>
+    </div>
+    <div class="demo-strip">
+      <div class="demo-card"><span class="ico">🎨</span><div class="tag">Style</div><div class="style-name">Classic Cartoon</div></div>
+      <div class="demo-card"><span class="ico">🎬</span><div class="tag">Style</div><div class="style-name">3D CGI</div></div>
+      <div class="demo-card"><span class="ico">⭐</span><div class="tag">Style</div><div class="style-name">Disney</div></div>
+      <div class="demo-card"><span class="ico">💥</span><div class="tag">Style</div><div class="style-name">Comic Book</div></div>
+      <div class="demo-card"><span class="ico">🎭</span><div class="tag">Style</div><div class="style-name">Watercolor</div></div>
+      <div class="demo-card"><span class="ico">📐</span><div class="tag">Style</div><div class="style-name">Flat Vector</div></div>
+    </div>
+  </section>
+
+  <!-- WORKBENCH -->
+  <div class="bench">
+    <!-- LEFT: CONTROLS -->
+    <div class="panel">
+      <div class="pre">Configure</div>
+      <h3>Your Cartoon</h3>
+
+      <div class="field" style="margin-top:18px">
+        <label>Cartoon Style</label>
+        <div class="style-grid">
+          <div class="style-chip active" data-style="classic" onclick="selectStyle(this)">
+            <span class="chip-ico">🎨</span>
+            <span class="chip-name">Classic Cartoon</span>
+          </div>
+          <div class="style-chip" data-style="cgi3d" onclick="selectStyle(this)">
+            <span class="chip-ico">🎬</span>
+            <span class="chip-name">3D CGI</span>
+          </div>
+          <div class="style-chip" data-style="disney" onclick="selectStyle(this)">
+            <span class="chip-ico">⭐</span>
+            <span class="chip-name">Disney Anim.</span>
+          </div>
+          <div class="style-chip" data-style="comic" onclick="selectStyle(this)">
+            <span class="chip-ico">💥</span>
+            <span class="chip-name">Comic Book</span>
+          </div>
+          <div class="style-chip" data-style="watercolor" onclick="selectStyle(this)">
+            <span class="chip-ico">🎭</span>
+            <span class="chip-name">Watercolor</span>
+          </div>
+          <div class="style-chip" data-style="flat" onclick="selectStyle(this)">
+            <span class="chip-ico">📐</span>
+            <span class="chip-name">Flat Vector</span>
+          </div>
+          <div class="style-chip" data-style="chibi" onclick="selectStyle(this)">
+            <span class="chip-ico">🌸</span>
+            <span class="chip-name">Super Chibi</span>
+          </div>
+          <div class="style-chip" data-style="retro" onclick="selectStyle(this)">
+            <span class="chip-ico">📺</span>
+            <span class="chip-name">Retro 80s</span>
+          </div>
+        </div>
+        <div class="active-style-info">
+          <div class="asi-ico" id="activeStyleIco">🎨</div>
+          <div>
+            <div class="asi-name" id="activeStyleName">Classic Cartoon</div>
+            <div class="asi-desc" id="activeStyleDesc">Bold outlines, vibrant fills, expressive features. Works on portraits, animals, and objects. The timeless cartoon aesthetic.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Upload Photo (optional)</label>
+        <div class="upload-zone" id="uploadZone" onclick="document.getElementById('photoInput').click()">
+          <input type="file" id="photoInput" accept="image/*">
+          <div class="ico">🖼</div>
+          <p>Click or drag a photo here · JPG, PNG, WEBP</p>
+        </div>
+        <img class="img-preview" id="imgPreview" alt="Preview">
+      </div>
+
+      <div class="field">
+        <label>Text Prompt (optional)</label>
+        <textarea class="textarea" id="promptInput" placeholder="e.g. a cheerful golden retriever cartoon, sitting in a park, sunny day"></textarea>
+      </div>
+
+      <div class="field">
+        <label>Style Strength</label>
+        <div class="slider-row">
+          <span style="font-size:12px;color:var(--dim)">Subtle</span>
+          <input type="range" id="strengthSlider" min="40" max="100" value="80">
+          <span style="font-size:12px;color:var(--dim)">Full</span>
+          <span class="strength-val" id="strengthVal">0.80</span>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Quality Steps</label>
+        <div class="step-row">
+          <div class="step-chip" data-steps="20" onclick="selectSteps(this)">Fast · 20</div>
+          <div class="step-chip active" data-steps="30" onclick="selectSteps(this)">Balanced · 30</div>
+          <div class="step-chip" data-steps="50" onclick="selectSteps(this)">High · 50</div>
+        </div>
+      </div>
+
+      <button class="gen-btn" id="genBtn" onclick="generate()">✦ Generate Cartoon</button>
+    </div>
+
+    <!-- RIGHT: OUTPUT -->
+    <div class="panel output-area">
+      <div class="pre">Output</div>
+      <h3>Your Cartoon Art</h3>
+      <div class="canvas-wrap">
+        <div class="placeholder" id="placeholder">
+          <span class="p-ico">🎨</span>
+          <p>Upload a photo or enter a prompt to generate your cartoon</p>
+        </div>
+        <img id="outputImg" alt="Generated cartoon">
+      </div>
+      <div class="progress-bar" id="progressBar"><div class="progress-fill" id="progressFill"></div></div>
+      <div class="status-line" id="statusLine"></div>
+      <div class="offline-notice" id="offlineNotice">
+        Server offline right now — <a href="#waitlist" onclick="showWaitlist()">join the waitlist</a> for priority access when we go live.
+      </div>
+      <div class="action-row">
+        <button class="btn-dl" id="dlBtn" onclick="downloadImg()">⬇ Download</button>
+        <button class="btn-share" id="shareBtn" onclick="shareImg()">Share</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- HOW IT WORKS -->
+  <section class="how-section">
+    <div class="eyebrow">How It Works</div>
+    <h2>Four steps to cartoon.</h2>
+    <p class="sub">No technical knowledge needed. Upload, pick a style, generate.</p>
+    <div class="how-grid">
+      <div class="how-step">
+        <div class="num">STEP 01</div>
+        <h4>Upload your photo</h4>
+        <p>Drop in a portrait, pet photo, landscape, or object. Or skip the photo and describe what you want in the text prompt.</p>
+      </div>
+      <div class="how-step">
+        <div class="num">STEP 02</div>
+        <h4>Choose your style</h4>
+        <p>Pick from 8 curated styles — Classic Cartoon, 3D CGI, Disney, Comic Book, Watercolor, Flat Vector, Chibi, or Retro 80s.</p>
+      </div>
+      <div class="how-step">
+        <div class="num">STEP 03</div>
+        <h4>Adjust strength</h4>
+        <p>Dial in how much the original photo shows through. Lower = subtle cartoon touches. Higher = full artistic transformation.</p>
+      </div>
+      <div class="how-step">
+        <div class="num">STEP 04</div>
+        <h4>Download &amp; use</h4>
+        <p>ComfyUI renders on RTX 5090 in ~15 seconds. Download 1024×1024 PNG. No watermarks. Commercial use cleared.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- STYLES SHOWCASE -->
+  <section class="styles-section">
+    <div class="eyebrow">All Styles</div>
+    <h2>Eight cartoon universes.</h2>
+    <p class="sub">Every style is tuned for a specific aesthetic and use case.</p>
+    <div class="styles-showcase">
+      <div class="showcase-card">
+        <div class="sc-ico">🎨</div>
+        <h4>Classic Cartoon</h4>
+        <p>Bold outlines, vibrant fills, expressive features. The timeless Looney Tunes / Hanna-Barbera aesthetic.</p>
+      </div>
+      <div class="showcase-card">
+        <div class="sc-ico">🎬</div>
+        <h4>3D CGI</h4>
+        <p>Pixar/DreamWorks quality render. Smooth surfaces, cinematic lighting, depth of field.</p>
+      </div>
+      <div class="showcase-card">
+        <div class="sc-ico">⭐</div>
+        <h4>Disney Animation</h4>
+        <p>Fluid curves, expressive eyes, classic Disney proportions. Works beautifully on portraits.</p>
+      </div>
+      <div class="showcase-card">
+        <div class="sc-ico">💥</div>
+        <h4>Comic Book</h4>
+        <p>Marvel/DC panel art. Halftone dots, ink lines, action composition. Ideal for portraits and action scenes.</p>
+      </div>
+      <div class="showcase-card">
+        <div class="sc-ico">🎭</div>
+        <h4>Watercolor</h4>
+        <p>Soft painted edges, color bleeding, artistic texture. Beautiful on nature scenes and portraits.</p>
+      </div>
+      <div class="showcase-card">
+        <div class="sc-ico">📐</div>
+        <h4>Flat Vector</h4>
+        <p>Clean geometric shapes, minimal shading, icon-level clarity. Great for logos and profile pictures.</p>
+      </div>
+      <div class="showcase-card">
+        <div class="sc-ico">🌸</div>
+        <h4>Super Chibi</h4>
+        <p>Exaggerated cute proportions — massive head, tiny body, huge eyes. Perfect for avatars and mascots.</p>
+      </div>
+      <div class="showcase-card">
+        <div class="sc-ico">📺</div>
+        <h4>Retro Saturday Morning</h4>
+        <p>80s cartoon nostalgia. Film grain, limited palette, cel-shaded lines. Recognizable and unique.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- TECH SPECS -->
+  <section class="specs-section">
+    <div class="eyebrow">Technical Specs</div>
+    <h2>What's under the hood.</h2>
+    <p class="sub">Built on ComfyUI running locally on dedicated RTX 5090 hardware.</p>
+    <div class="specs-grid">
+      <div class="spec-card">
+        <div class="sc-label">Backend</div>
+        <div class="sc-val">ComfyUI + make_cartoon</div>
+        <div class="sc-note">ABUZ8 Qadir MCP tool stack</div>
+      </div>
+      <div class="spec-card">
+        <div class="sc-label">Hardware</div>
+        <div class="sc-val">RTX 5090 · 32GB VRAM</div>
+        <div class="sc-note">Local inference — no cloud roundtrip</div>
+      </div>
+      <div class="spec-card">
+        <div class="sc-label">Output</div>
+        <div class="sc-val">1024 × 1024 px</div>
+        <div class="sc-note">PNG, lossless, zero watermarks</div>
+      </div>
+      <div class="spec-card">
+        <div class="sc-label">Speed</div>
+        <div class="sc-val">10–25 seconds</div>
+        <div class="sc-note">Varies by style complexity</div>
+      </div>
+      <div class="spec-card">
+        <div class="sc-label">Privacy</div>
+        <div class="sc-val">Zero third-party servers</div>
+        <div class="sc-note">Photo deleted immediately after render</div>
+      </div>
+      <div class="spec-card">
+        <div class="sc-label">License</div>
+        <div class="sc-val">Personal + Commercial</div>
+        <div class="sc-note">Client work and resale covered</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- USE CASES -->
+  <section class="use-section">
+    <div class="eyebrow">Use Cases</div>
+    <h2>What people build with it.</h2>
+    <p class="sub">From personal avatars to commercial brand assets.</p>
+    <div class="use-grid">
+      <div class="use-card">
+        <div class="uc-tag">Social Media</div>
+        <h4>Cartoon Profile Pictures</h4>
+        <p>Turn your headshot into a distinctive cartoon avatar for LinkedIn, Twitter, or Discord. Flat Vector and Disney styles are most popular.</p>
+      </div>
+      <div class="use-card">
+        <div class="uc-tag">Content Creation</div>
+        <h4>YouTube Thumbnails</h4>
+        <p>Cartoon-style thumbnails outperform realistic photos in many niches. Comic Book and Classic Cartoon styles drive click-through.</p>
+      </div>
+      <div class="use-card">
+        <div class="uc-tag">Business</div>
+        <h4>Brand Mascots</h4>
+        <p>Generate mascot concepts from a simple description. Chibi and Flat Vector styles are ideal for app icons, merchandise, and brand identities.</p>
+      </div>
+      <div class="use-card">
+        <div class="uc-tag">Personal</div>
+        <h4>Pet Portraits</h4>
+        <p>Turn a phone photo of your dog or cat into a framed cartoon. Classic Cartoon and Watercolor styles work beautifully for animals.</p>
+      </div>
+      <div class="use-card">
+        <div class="uc-tag">Education</div>
+        <h4>Storybooks & Explainers</h4>
+        <p>Generate consistent cartoon characters for children's books, educational slides, or explainer video storyboards.</p>
+      </div>
+      <div class="use-card">
+        <div class="uc-tag">Creative</div>
+        <h4>Fan Art & Gifts</h4>
+        <p>Cartoon-style portraits make memorable gifts. Comic Book and Disney styles are most requested for birthday and anniversary gifts.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="faq-section">
+    <div class="eyebrow">FAQ</div>
+    <h2>Questions answered.</h2>
+    <p class="sub">Everything you need to know before joining early access.</p>
+
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">Can I turn a photo of a real person into a cartoon? <span class="faq-arrow">▼</span></div>
+      <div class="faq-a"><p>Yes. Upload a portrait and the model will redraw the person in your selected cartoon style while preserving likeness, expression, and pose. Works best with clear, well-lit front-facing photos.</p></div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">What cartoon styles are available? <span class="faq-arrow">▼</span></div>
+      <div class="faq-a"><p>8 curated styles: Classic Cartoon (bold outlines, vibrant fills), 3D CGI (Pixar/DreamWorks quality), Disney Animation (fluid expressive aesthetic), Comic Book (Marvel/DC panel art with halftones), Watercolor Illustration (soft painted look), Flat Vector (clean geometric shapes), Super Chibi (exaggerated cute proportions), and Retro Saturday Morning (80s cartoon nostalgia).</p></div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">Does my photo get sent to third-party servers? <span class="faq-arrow">▼</span></div>
+      <div class="faq-a"><p>No. All inference runs on local RTX 5090 hardware. Your photo is processed on our private infrastructure and deleted immediately after generation. When QADIR OS ships for local install, it runs entirely on your own machine.</p></div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">Can I use cartoon outputs commercially? <span class="faq-arrow">▼</span></div>
+      <div class="faq-a"><p>Early access outputs are cleared for personal and commercial use — client work, social content, merchandise designs, YouTube thumbnails, and brand mascots are all covered. Full commercial licensing terms will be published at launch.</p></div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">Does it work for animals and objects, not just people? <span class="faq-arrow">▼</span></div>
+      <div class="faq-a"><p>Yes. The model handles pets, cars, landscapes, food, products, and objects. Classic Cartoon is particularly effective on animals. Comic Book works well on vehicles and architecture. Watercolor excels on landscapes.</p></div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">How fast is generation? <span class="faq-arrow">▼</span></div>
+      <div class="faq-a"><p>10–25 seconds per image on RTX 5090. Classic Cartoon and Flat Vector render fastest. 3D CGI and Comic Book with complex shading take slightly longer. Queue wait depends on load.</p></div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">Can I generate from a text prompt without a photo? <span class="faq-arrow">▼</span></div>
+      <div class="faq-a"><p>Yes. Describe your cartoon scene ('a brave cartoon knight standing before a dragon castle at sunset') and the model generates it in your chosen style. Combining a photo and a prompt gives the strongest results.</p></div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">What is the output resolution? <span class="faq-arrow">▼</span></div>
+      <div class="faq-a"><p>Default output is 1024×1024 pixels. Portrait (1024×1536) and landscape (1536×1024) orientations will be supported in early access. All outputs are watermark-free.</p></div>
+    </div>
+  </section>
+
+  <!-- WAITLIST -->
+  <section class="wl-section" id="waitlist">
+    <div class="eyebrow">Early Access</div>
+    <h2>Join the waitlist.</h2>
+    <p>Be first to use AI Cartoon Maker Pro when we open early access. No spam — one email when access opens.</p>
+    <div class="wl-form" id="wlForm">
+      <input type="email" id="wlEmail" placeholder="your@email.com" autocomplete="email">
+      <button onclick="joinWaitlist()">Join Now</button>
+    </div>
+    <div class="wl-success" id="wlSuccess">✓ You're on the list. We'll email you when access opens.</div>
+    <div class="wl-note">No spam. One email when access opens. Unsubscribe anytime.</div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div>© 2026 ABUZ8 LLC — All rights reserved</div>
+    <div class="footer-links">
+      <a href="/tools.html">All Tools</a>
+      <a href="/about.html">About</a>
+      <a href="/disclaimer.html">Terms</a>
+    </div>
+  </footer>
+
+</div>
+
+<script>
+// === STYLE CONFIG ===
+const STYLES = {
+  classic:    { name: 'Classic Cartoon',        icon: '🎨', desc: 'Bold outlines, vibrant fills, expressive features. The timeless Looney Tunes / Hanna-Barbera aesthetic. Works on portraits, animals, and objects.' },
+  cgi3d:      { name: '3D CGI',                 icon: '🎬', desc: 'Pixar/DreamWorks quality render. Smooth surfaces, cinematic lighting, depth of field. Best for portraits and character renders.' },
+  disney:     { name: 'Disney Animation',        icon: '⭐', desc: 'Fluid curves, expressive eyes, classic Disney proportions. Works beautifully on portraits and scenes with strong emotion.' },
+  comic:      { name: 'Comic Book',              icon: '💥', desc: 'Marvel/DC panel art with halftone dots, ink lines, and dynamic composition. Ideal for portraits, action scenes, and heroes.' },
+  watercolor: { name: 'Watercolor Illustration', icon: '🎭', desc: 'Soft painted edges, color bleeding, artistic texture. Beautiful on nature scenes, landscapes, and portrait illustrations.' },
+  flat:       { name: 'Flat Vector',             icon: '📐', desc: 'Clean geometric shapes, minimal shading, icon-level clarity. Great for logos, app icons, and professional profile pictures.' },
+  chibi:      { name: 'Super Chibi',             icon: '🌸', desc: 'Exaggerated cute proportions — massive head, tiny body, huge eyes. Perfect for avatars, mascots, and character icons.' },
+  retro:      { name: 'Retro Saturday Morning',  icon: '📺', desc: 'Film grain, limited palette, cel-shaded lines. 80s cartoon nostalgia. Recognizable and unique — great for branding.' }
+};
+
+let selectedStyle = 'classic';
+let selectedSteps = 30;
+let uploadedFile = null;
+let outputDataUrl = null;
+
+function selectStyle(el) {
+  document.querySelectorAll('.style-chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  selectedStyle = el.dataset.style;
+  const s = STYLES[selectedStyle];
+  document.getElementById('activeStyleIco').textContent = s.icon;
+  document.getElementById('activeStyleName').textContent = s.name;
+  document.getElementById('activeStyleDesc').textContent = s.desc;
+}
+
+function selectSteps(el) {
+  document.querySelectorAll('.step-chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  selectedSteps = parseInt(el.dataset.steps);
+}
+
+// Strength slider
+const slider = document.getElementById('strengthSlider');
+const strengthVal = document.getElementById('strengthVal');
+slider.addEventListener('input', () => {
+  strengthVal.textContent = (slider.value / 100).toFixed(2);
+});
+
+// Photo upload
+const photoInput = document.getElementById('photoInput');
+const uploadZone = document.getElementById('uploadZone');
+const imgPreview = document.getElementById('imgPreview');
+
+photoInput.addEventListener('change', e => {
+  const file = e.target.files[0];
+  if (!file) return;
+  uploadedFile = file;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    imgPreview.src = ev.target.result;
+    imgPreview.style.display = 'block';
+    uploadZone.querySelector('p').textContent = '✓ ' + file.name;
+  };
+  reader.readAsDataURL(file);
+});
+
+uploadZone.addEventListener('dragover', e => { e.preventDefault(); uploadZone.classList.add('drag'); });
+uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('drag'));
+uploadZone.addEventListener('drop', e => {
+  e.preventDefault();
+  uploadZone.classList.remove('drag');
+  const file = e.dataTransfer.files[0];
+  if (!file || !file.type.startsWith('image/')) return;
+  uploadedFile = file;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    imgPreview.src = ev.target.result;
+    imgPreview.style.display = 'block';
+    uploadZone.querySelector('p').textContent = '✓ ' + file.name;
+  };
+  reader.readAsDataURL(file);
+});
+
+// === GENERATE ===
+async function generate() {
+  const prompt = document.getElementById('promptInput').value.trim();
+  if (!uploadedFile && !prompt) {
+    setStatus('Upload a photo or enter a description first.', 'err');
+    return;
+  }
+
+  const btn = document.getElementById('genBtn');
+  btn.disabled = true;
+  btn.textContent = '⏳ Rendering…';
+
+  setStatus('Sending to ComfyUI…', 'active');
+  showProgress(true);
+  animateProgress(10, 2000);
+
+  document.getElementById('dlBtn').style.display = 'none';
+  document.getElementById('shareBtn').style.display = 'none';
+  document.getElementById('outputImg').style.display = 'none';
+  document.getElementById('placeholder').style.display = 'flex';
+  document.getElementById('offlineNotice').style.display = 'none';
+
+  try {
+    const formData = new FormData();
+    formData.append('tool', 'make_cartoon');
+    formData.append('style', selectedStyle);
+    formData.append('steps', selectedSteps);
+    formData.append('strength', (slider.value / 100).toFixed(2));
+    if (prompt) formData.append('prompt', prompt);
+    if (uploadedFile) formData.append('image', uploadedFile);
+
+    const resp = await fetch('/api/tools/run', {
+      method: 'POST',
+      body: formData
+    });
+
+    if (!resp.ok) throw new Error('Server error: ' + resp.status);
+    const data = await resp.json();
+
+    if (data.job_id) {
+      animateProgress(30, 1000);
+      setStatus('Job queued — polling for result…', 'active');
+      await pollJob(data.job_id);
+    } else if (data.image_url || data.output) {
+      showResult(data.image_url || data.output);
+    } else {
+      throw new Error(data.error || 'Unexpected response');
+    }
+  } catch (err) {
+    console.error(err);
+    showOffline();
+    setStatus('Backend offline — join the waitlist for priority access.', 'err');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '✦ Generate Cartoon';
+    showProgress(false);
+  }
+}
+
+async function pollJob(jobId) {
+  for (let i = 0; i < 40; i++) {
+    await sleep(3000);
+    animateProgress(30 + (i * 1.5), 800);
+    setStatus('Rendering on RTX 5090… (' + (i * 3) + 's)', 'active');
+    try {
+      const r = await fetch('/api/tools/status/' + jobId);
+      const d = await r.json();
+      if (d.status === 'done' || d.status === 'complete' || d.status === 'finished') {
+        animateProgress(100, 400);
+        showResult(d.image_url || d.output || d.result);
+        return;
+      }
+      if (d.status === 'error' || d.status === 'failed') throw new Error(d.error || 'Render failed');
+    } catch (e) {
+      if (e.message !== 'Failed to fetch') throw e;
+    }
+  }
+  throw new Error('Render timeout — please try again');
+}
+
+function showResult(url) {
+  const img = document.getElementById('outputImg');
+  img.src = url;
+  img.style.display = 'block';
+  outputDataUrl = url;
+  document.getElementById('placeholder').style.display = 'none';
+  document.getElementById('dlBtn').style.display = 'block';
+  document.getElementById('shareBtn').style.display = 'block';
+  setStatus('Done — your cartoon is ready!', 'done');
+}
+
+function showOffline() { document.getElementById('offlineNotice').style.display = 'block'; }
+function showProgress(v) { document.getElementById('progressBar').style.display = v ? 'block' : 'none'; }
+function animateProgress(target, dur) {
+  const fill = document.getElementById('progressFill');
+  fill.style.transition = `width ${dur}ms ease`;
+  fill.style.width = Math.min(target, 98) + '%';
+}
+function setStatus(msg, type) {
+  const el = document.getElementById('statusLine');
+  el.textContent = msg;
+  el.className = 'status-line' + (type ? ' ' + type : '');
+}
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+function downloadImg() {
+  if (!outputDataUrl) return;
+  const a = document.createElement('a');
+  a.href = outputDataUrl;
+  a.download = 'abuz8-cartoon-' + selectedStyle + '-' + Date.now() + '.png';
+  a.click();
+}
+
+function shareImg() {
+  if (navigator.share && outputDataUrl) {
+    navigator.share({ title: 'AI Cartoon by ABUZ8', url: outputDataUrl }).catch(() => {});
+  } else {
+    navigator.clipboard.writeText(outputDataUrl || window.location.href).then(() => {
+      document.getElementById('shareBtn').textContent = 'Link Copied!';
+      setTimeout(() => { document.getElementById('shareBtn').textContent = 'Share'; }, 2000);
+    });
+  }
+}
+
+function showWaitlist() {
+  document.getElementById('waitlist').scrollIntoView({ behavior: 'smooth' });
+}
+
+// === FAQ ACCORDION ===
+function toggleFaq(el) {
+  const item = el.closest('.faq-item');
+  const isOpen = item.classList.contains('open');
+  document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+  if (!isOpen) item.classList.add('open');
+}
+
+// === WAITLIST ===
+async function joinWaitlist() {
+  const email = document.getElementById('wlEmail').value.trim();
+  if (!email || !email.includes('@')) { document.getElementById('wlEmail').focus(); return; }
+  try {
+    const r = await fetch('/api/waitlist', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, tool: 'cartoon-pro', source: 'tool-page' })
+    });
+    if (r.ok) {
+      document.getElementById('wlSuccess').style.display = 'block';
+      document.getElementById('wlForm').style.display = 'none';
+    }
+  } catch (e) {
+    document.getElementById('wlSuccess').style.display = 'block';
+    document.getElementById('wlForm').style.display = 'none';
+  }
+}
+</script>
+<script src="_abuz8-live-brain.js" defer></script>
+<script src="/tools/_tools-shared.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+
+<!-- ABUZ8 LIVE STUDIO (injected 2026-08-11-studio) -->
+<section id="abuz8-studio-section" style="padding:56px 0 8px">
+  <div style="max-width:1180px;margin:0 auto;padding:0 20px">
+    <h2 style="font:800 clamp(24px,3.2vw,34px)/1.15 Playfair Display,Georgia,serif;
+               color:var(--text,#e8e4d8);margin:0 0 10px">Live Studio</h2>
+    <p style="font:400 15px/1.65 Inter,system-ui,sans-serif;color:var(--dim,#8a9aaa);
+              max-width:70ch;margin:0 0 26px">
+      This runs on <strong style="color:var(--text,#e8e4d8)">your own machine</strong>, not our servers.
+      If ComfyUI is running locally on port 8188 you get the full studio below and your images
+      never leave your computer. If it is not, you will see Early Access instead &mdash;
+      we never show a spinner that is not doing anything.
+    </p>
+  </div>
+  <div id="abuz8-studio"></div>
+</section>
+<script src="_comfy-client.js"></script>
+<script src="_comfy-studio.js"></script>
+<script>
+(function () {
+  function boot() {
+
+  new ComfyStudio({
+    mount: '#abuz8-studio', slug: 'cartoon',
+    promptLabel: 'Describe your character',
+    promptPlaceholder: 'a friendly barista with curly red hair and round glasses',
+    basePositive: 'clean vector-friendly shapes, bold outlines, flat vivid colors, centered portrait',
+    negative: 'text, watermark, signature, blurry, low quality, jpeg artifacts, deformed, extra limbs, bad anatomy',
+    sizes: [512, 768, 1024], maxBatch: 4, defaultSteps: 22,
+    styles: [
+      { id:'toon',    label:'Modern Toon',   pos:'modern cartoon avatar, thick clean outlines, flat shading, friendly expression' },
+      { id:'retro',   label:'Retro 90s',     pos:'1990s saturday morning cartoon style, retro palette, halftone texture' },
+      { id:'sticker', label:'Sticker Art',   pos:'die-cut sticker illustration, thick white border, glossy highlights, plain background' },
+      { id:'comic',   label:'Comic Panel',   pos:'comic book art, dynamic inking, cross-hatching, dramatic rim light' }
+    ],
+    buildWorkflow: function (c) {
+      return {
+        '1':{class_type:'CheckpointLoaderSimple',inputs:{ckpt_name:c.ckpt}},
+        '2':{class_type:'CLIPTextEncode',inputs:{text:c.positive,clip:['1',1]}},
+        '3':{class_type:'CLIPTextEncode',inputs:{text:c.negative,clip:['1',1]}},
+        '4':{class_type:'EmptyLatentImage',inputs:{width:c.size,height:c.size,batch_size:c.batch}},
+        '5':{class_type:'KSampler',inputs:{seed:c.seed,steps:c.steps,cfg:7.5,
+             sampler_name:'euler',scheduler:'normal',denoise:1.0,
+             model:['1',0],positive:['2',0],negative:['3',0],latent_image:['4',0]}},
+        '6':{class_type:'VAEDecode',inputs:{samples:['5',0],vae:['1',2]}},
+        '7':{class_type:'SaveImage',inputs:{filename_prefix:'abuz8_cartoon',images:['6',0]}}
+      };
+    }
+  }).mount();
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
+  else boot();
+})();
+</script>
+<!-- /ABUZ8 LIVE STUDIO -->
+
+</body>
+</html>
+

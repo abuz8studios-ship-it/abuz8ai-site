@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Invoice Generator — Free Professional Invoices | ABUZ8 AI</title>
+<meta name="description" content="Create professional invoices in 60 seconds. Add line items, taxes, discounts, and download as PDF. Free forever, no account required.">
+<meta name="keywords" content="invoice generator, free invoice maker, PDF invoice, freelance invoice, invoice template, online invoice creator">
+<meta property="og:title" content="AI Invoice Generator — Free Professional Invoices | ABUZ8 AI">
+<meta property="og:description" content="Create clean, professional invoices in under a minute. Download as PDF instantly. Free.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://abuz8ai.com/tools/ai-invoice-generator">
+<link rel="canonical" href="https://abuz8ai.com/tools/ai-invoice-generator">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "AI Invoice Generator",
+  "url": "https://abuz8ai.com/tools/ai-invoice-generator.html",
+  "description": "Free professional invoice generator. Create and download PDF invoices instantly.",
+  "applicationCategory": "BusinessApplication",
+  "operatingSystem": "Any",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+  "provider": { "@type": "Organization", "name": "ABUZ8 AI", "url": "https://abuz8ai.com" }
+}
+</script>
+<style>
+:root {
+  --lapis: #0a1628;
+  --lapis-mid: #0f2040;
+  --lapis-light: #163060;
+  --gold: #c9a84c;
+  --gold-light: #e8d48b;
+  --turq: #0e9f6e;
+  --turq-bright: #2fbf8f;
+  --cream: #f5f0e8;
+  --text: #e8e4d8;
+  --dim: #8a9aaa;
+  --card: #0d1a30;
+  --border: #1a2e50;
+  --red: #e05555;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--lapis);color:var(--text);font-family:'Inter',system-ui,sans-serif;line-height:1.6;min-height:100vh;}
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@400;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+nav{background:rgba(10,22,40,0.95);border-bottom:1px solid var(--border);padding:1rem 2rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;backdrop-filter:blur(8px);}
+.nav-logo{font-family:'Playfair Display',serif;font-size:1.25rem;color:var(--gold);font-weight:700;text-decoration:none;}
+.nav-back{color:var(--dim);font-size:0.875rem;text-decoration:none;transition:color 0.2s;}
+.nav-back:hover{color:var(--gold);}
+
+.hero{text-align:center;padding:3.5rem 2rem 2rem;max-width:750px;margin:0 auto;}
+.hero-badge{display:inline-block;background:rgba(201,168,76,0.12);color:var(--gold);border:1px solid rgba(201,168,76,0.3);padding:0.35rem 1rem;border-radius:999px;font-size:0.8rem;font-weight:600;letter-spacing:0.05em;text-transform:uppercase;margin-bottom:1.25rem;}
+h1{font-family:'Playfair Display',serif;font-size:clamp(1.9rem,4vw,3rem);color:var(--cream);line-height:1.2;margin-bottom:0.75rem;}
+h1 span{color:var(--gold);}
+.hero p{color:var(--dim);font-size:1.05rem;max-width:500px;margin:0 auto;}
+
+.main-layout{max-width:1200px;margin:0 auto;padding:2rem 1.5rem 4rem;display:grid;grid-template-columns:1fr 420px;gap:2rem;align-items:start;}
+@media(max-width:960px){.main-layout{grid-template-columns:1fr;}}
+
+/* Editor Panel */
+.editor-panel{display:flex;flex-direction:column;gap:1.25rem;}
+.section-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.5rem;}
+.section-title{font-size:0.75rem;font-weight:700;color:var(--dim);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:1rem;display:flex;align-items:center;gap:0.5rem;}
+.section-title::before{content:'';display:block;width:3px;height:14px;background:var(--gold);border-radius:2px;}
+
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;}
+.form-group{display:flex;flex-direction:column;gap:0.4rem;}
+.form-group.full{grid-column:span 2;}
+label{font-size:0.78rem;font-weight:600;color:var(--dim);}
+input,textarea,select{background:var(--lapis-mid);border:1px solid var(--border);color:var(--text);padding:0.6rem 0.9rem;border-radius:7px;font-family:inherit;font-size:0.9rem;width:100%;transition:border-color 0.2s;}
+input:focus,textarea:focus,select:focus{outline:none;border-color:var(--gold);}
+textarea{resize:vertical;min-height:70px;}
+select option{background:var(--lapis-mid);}
+
+/* Line items */
+.items-table{width:100%;border-collapse:collapse;}
+.items-table th{font-size:0.72rem;font-weight:700;color:var(--dim);text-align:left;padding:0.4rem 0.5rem;border-bottom:1px solid var(--border);letter-spacing:0.04em;text-transform:uppercase;}
+.items-table td{padding:0.4rem 0.3rem;vertical-align:middle;}
+.items-table input{padding:0.5rem 0.6rem;font-size:0.85rem;}
+.items-table .qty-input{width:65px;}
+.items-table .rate-input{width:90px;}
+.items-table .amount-cell{font-family:'JetBrains Mono',monospace;font-size:0.85rem;color:var(--gold);text-align:right;padding-right:0.5rem;white-space:nowrap;}
+.btn-remove-row{background:transparent;border:none;color:var(--dim);cursor:pointer;font-size:1rem;transition:color 0.2s;padding:0.25rem;}
+.btn-remove-row:hover{color:var(--red);}
+.btn-add-row{background:transparent;border:1px dashed var(--border);color:var(--dim);padding:0.5rem 1rem;border-radius:7px;font-family:inherit;font-size:0.85rem;cursor:pointer;transition:all 0.2s;margin-top:0.75rem;width:100%;}
+.btn-add-row:hover{border-color:var(--turq);color:var(--turq-bright);}
+
+/* Totals */
+.totals-section{display:flex;flex-direction:column;gap:0.4rem;align-items:flex-end;}
+.totals-row{display:flex;gap:1.5rem;align-items:center;font-size:0.9rem;}
+.totals-label{color:var(--dim);min-width:100px;text-align:right;}
+.totals-value{font-family:'JetBrains Mono',monospace;color:var(--text);min-width:90px;text-align:right;}
+.totals-row.grand{border-top:1px solid var(--border);padding-top:0.5rem;margin-top:0.25rem;}
+.totals-row.grand .totals-label{color:var(--cream);font-weight:700;}
+.totals-row.grand .totals-value{color:var(--gold);font-weight:700;font-size:1.05rem;}
+
+.tax-discount-row{display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;margin-top:0.75rem;}
+
+/* Preview Panel */
+.preview-panel{position:sticky;top:80px;}
+.preview-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;}
+.preview-header h3{font-family:'Playfair Display',serif;color:var(--cream);font-size:1.1rem;}
+.btn-download{background:var(--gold);color:var(--lapis);border:none;padding:0.65rem 1.5rem;border-radius:8px;font-family:inherit;font-size:0.9rem;font-weight:700;cursor:pointer;transition:background 0.2s;}
+.btn-download:hover{background:var(--gold-light);}
+
+/* Invoice Preview */
+#invoicePreview{background:#fff;border-radius:12px;padding:2rem;color:#111;font-family:'Inter',sans-serif;font-size:13px;line-height:1.5;min-height:400px;overflow:hidden;}
+.inv-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:2rem;}
+.inv-from h2{font-size:20px;font-weight:800;color:#0a1628;margin-bottom:2px;}
+.inv-from p{color:#555;font-size:12px;white-space:pre-line;}
+.inv-badge{background:#0a1628;color:#c9a84c;padding:0.4rem 1rem;border-radius:6px;font-weight:800;font-size:14px;letter-spacing:0.05em;}
+.inv-meta{display:grid;grid-template-columns:1fr 1fr;gap:1rem;background:#f8f7f4;border-radius:8px;padding:1rem;margin-bottom:1.5rem;}
+.inv-meta-block small{display:block;color:#888;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;margin-bottom:2px;}
+.inv-meta-block p{color:#111;font-weight:600;font-size:12px;}
+.inv-to{margin-bottom:1.5rem;}
+.inv-to small{display:block;color:#888;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;margin-bottom:4px;}
+.inv-to p{color:#111;white-space:pre-line;font-size:12px;}
+.inv-table{width:100%;border-collapse:collapse;margin-bottom:1.5rem;}
+.inv-table th{background:#0a1628;color:#c9a84c;text-align:left;padding:8px 10px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;}
+.inv-table th:last-child{text-align:right;}
+.inv-table td{padding:8px 10px;border-bottom:1px solid #eee;font-size:12px;vertical-align:top;}
+.inv-table td:last-child{text-align:right;font-weight:600;}
+.inv-table tr:last-child td{border-bottom:none;}
+.inv-totals{display:flex;flex-direction:column;align-items:flex-end;gap:4px;margin-bottom:1.5rem;}
+.inv-total-row{display:flex;gap:2rem;font-size:12px;}
+.inv-total-row span:first-child{color:#888;min-width:80px;text-align:right;}
+.inv-total-row span:last-child{min-width:80px;text-align:right;font-weight:600;}
+.inv-total-row.inv-grand{border-top:2px solid #0a1628;padding-top:6px;margin-top:2px;}
+.inv-total-row.inv-grand span{font-weight:800;font-size:14px;color:#0a1628;}
+.inv-total-row.inv-grand span:first-child{color:#0a1628;}
+.inv-notes{background:#f8f7f4;border-radius:8px;padding:1rem;font-size:11px;color:#666;}
+.inv-notes strong{display:block;color:#111;margin-bottom:4px;font-size:12px;}
+.inv-footer{text-align:center;margin-top:1.5rem;color:#aaa;font-size:10px;}
+
+/* Waitlist */
+.waitlist-section{max-width:700px;margin:3rem auto;background:linear-gradient(135deg,rgba(201,168,76,0.08) 0%,rgba(26,138,122,0.08) 100%);border:1px solid rgba(201,168,76,0.25);border-radius:16px;padding:2.5rem;text-align:center;}
+.waitlist-section h2{font-family:'Playfair Display',serif;color:var(--cream);margin-bottom:0.75rem;font-size:1.75rem;}
+.waitlist-section p{color:var(--dim);margin-bottom:1.75rem;}
+.waitlist-form{display:flex;gap:0.75rem;max-width:420px;margin:0 auto;}
+.waitlist-form input{flex:1;}
+.btn-waitlist{background:var(--gold);color:var(--lapis);border:none;padding:0.75rem 1.5rem;border-radius:8px;font-family:inherit;font-size:0.9rem;font-weight:700;cursor:pointer;white-space:nowrap;transition:background 0.2s;}
+.btn-waitlist:hover{background:var(--gold-light);}
+.waitlist-note{font-size:0.8rem;color:var(--dim);margin-top:0.75rem;opacity:0.7;}
+.waitlist-success{display:none;color:var(--turq-bright);font-weight:600;}
+
+footer{border-top:1px solid var(--border);padding:2rem;text-align:center;color:var(--dim);font-size:0.875rem;}
+footer a{color:var(--gold);text-decoration:none;}
+</style>
+<script src="_abuz8-live-brain.js" defer></script>
+
+<script src="_abuz8-config.js" defer></script>
+</head>
+<body>
+
+<nav>
+  <a href="https://abuz8ai.com" class="nav-logo">ABUZ8 AI</a>
+  <a href="https://abuz8ai.com/tools.html" class="nav-back">← All Tools</a>
+</nav>
+
+<div class="hero">
+  <div class="hero-badge">Free Tool</div>
+  <h1>Professional <span>Invoices</span> in 60 Seconds</h1>
+  <p>Fill in your details, add line items, and download a clean PDF. No account. No watermarks. No subscription.</p>
+</div>
+
+<div class="main-layout">
+  <!-- Editor -->
+  <div class="editor-panel">
+
+    <!-- From / Business -->
+    <div class="section-card">
+      <div class="section-title">Your Business</div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Business Name</label>
+          <input type="text" id="bizName" placeholder="Acme Studio" oninput="updatePreview()">
+        </div>
+        <div class="form-group">
+          <label>Your Name</label>
+          <input type="text" id="bizContact" placeholder="Jane Smith" oninput="updatePreview()">
+        </div>
+        <div class="form-group full">
+          <label>Address / Email / Phone</label>
+          <textarea id="bizAddress" rows="3" placeholder="123 Main St, City, State&#10;jane@acme.com  ·  (555) 000-0000" oninput="updatePreview()"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bill To -->
+    <div class="section-card">
+      <div class="section-title">Bill To</div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Client / Company Name</label>
+          <input type="text" id="clientName" placeholder="Client Corp Inc." oninput="updatePreview()">
+        </div>
+        <div class="form-group">
+          <label>Contact Name</label>
+          <input type="text" id="clientContact" placeholder="John Doe" oninput="updatePreview()">
+        </div>
+        <div class="form-group full">
+          <label>Client Address / Email</label>
+          <textarea id="clientAddress" rows="2" placeholder="456 Client Ave, City, State&#10;john@clientcorp.com" oninput="updatePreview()"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- Invoice Details -->
+    <div class="section-card">
+      <div class="section-title">Invoice Details</div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Invoice #</label>
+          <input type="text" id="invoiceNum" value="INV-001" oninput="updatePreview()">
+        </div>
+        <div class="form-group">
+          <label>Currency</label>
+          <select id="currency" onchange="updatePreview()">
+            <option value="$">USD ($)</option>
+            <option value="€">EUR (€)</option>
+            <option value="£">GBP (£)</option>
+            <option value="CA$">CAD (CA$)</option>
+            <option value="A$">AUD (A$)</option>
+            <option value="¥">JPY (¥)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Invoice Date</label>
+          <input type="date" id="invoiceDate" oninput="updatePreview()">
+        </div>
+        <div class="form-group">
+          <label>Due Date</label>
+          <input type="date" id="dueDate" oninput="updatePreview()">
+        </div>
+      </div>
+    </div>
+
+    <!-- Line Items -->
+    <div class="section-card">
+      <div class="section-title">Line Items</div>
+      <table class="items-table">
+        <thead>
+          <tr>
+            <th style="width:45%">Description</th>
+            <th style="width:12%">Qty</th>
+            <th style="width:18%">Rate</th>
+            <th style="width:18%;text-align:right">Amount</th>
+            <th style="width:7%"></th>
+          </tr>
+        </thead>
+        <tbody id="itemsBody"></tbody>
+      </table>
+      <button class="btn-add-row" onclick="addRow()">+ Add Line Item</button>
+
+      <!-- Tax & Discount -->
+      <div class="tax-discount-row">
+        <div class="form-group">
+          <label>Discount (%)</label>
+          <input type="number" id="discount" value="0" min="0" max="100" step="0.1" oninput="updatePreview()">
+        </div>
+        <div class="form-group">
+          <label>Tax Rate (%)</label>
+          <input type="number" id="taxRate" value="0" min="0" max="100" step="0.1" oninput="updatePreview()">
+        </div>
+      </div>
+
+      <!-- Totals -->
+      <div class="totals-section" id="totalsDisplay" style="margin-top:1rem;"></div>
+    </div>
+
+    <!-- Notes -->
+    <div class="section-card">
+      <div class="section-title">Notes & Payment Terms</div>
+      <div class="form-group">
+        <textarea id="notes" rows="3" placeholder="Payment due within 30 days. Bank transfer: BSB 000-000, Acc 123456789. Thank you for your business!" oninput="updatePreview()"></textarea>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Preview Panel -->
+  <div class="preview-panel">
+    <div class="preview-header">
+      <h3>Live Preview</h3>
+      <button class="btn-download" onclick="downloadPDF()">⬇ Download PDF</button>
+    </div>
+    <div id="invoicePreview">
+      <!-- Filled by JS -->
+    </div>
+  </div>
+</div>
+
+<div class="waitlist-section" style="margin:0 auto 3rem;max-width:700px;padding:0 1.5rem;">
+  <div style="background:linear-gradient(135deg,rgba(201,168,76,0.08) 0%,rgba(26,138,122,0.08) 100%);border:1px solid rgba(201,168,76,0.25);border-radius:16px;padding:2.5rem;text-align:center;">
+    <h2 style="font-family:'Playfair Display',serif;color:var(--cream);margin-bottom:0.75rem;font-size:1.75rem;">Recurring Invoices, Auto-Send & Client Portal</h2>
+    <p style="color:var(--dim);margin-bottom:1.75rem;">Schedule recurring invoices, track payment status, auto-send reminders, and give clients a portal to view their history. Join the list.</p>
+    <div class="waitlist-form">
+      <input type="email" id="waitlistEmail" placeholder="your@email.com">
+      <button class="btn-waitlist" onclick="joinWaitlist()">Join Early Access</button>
+    </div>
+    <div class="waitlist-success" id="waitlistSuccess">✓ You're on the list. First to know when it's ready.</div>
+    <p class="waitlist-note">No spam. Just early access.</p>
+  </div>
+</div>
+
+<footer>
+  <p>© 2026 ABUZ8 AI — <a href="https://abuz8ai.com">abuz8ai.com</a> · <a href="https://abuz8ai.com/tools.html">All Tools</a></p>
+</footer>
+
+<script>
+// Set today's date and 30-day due date
+(function(){
+  const today = new Date();
+  const due = new Date(); due.setDate(due.getDate()+30);
+  const fmt = d => d.toISOString().split('T')[0];
+  document.getElementById('invoiceDate').value = fmt(today);
+  document.getElementById('dueDate').value = fmt(due);
+})();
+
+let rows = [];
+let rowId = 0;
+
+function addRow(desc='', qty=1, rate=0) {
+  const id = ++rowId;
+  rows.push({ id, desc, qty, rate });
+  renderRows();
+  updatePreview();
+}
+
+function removeRow(id) {
+  rows = rows.filter(r => r.id !== id);
+  renderRows();
+  updatePreview();
+}
+
+function renderRows() {
+  const tbody = document.getElementById('itemsBody');
+  tbody.innerHTML = '';
+  rows.forEach(row => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td><input type="text" value="${esc(row.desc)}" placeholder="Service or item description" oninput="updateRowField(${row.id},'desc',this.value)"></td>
+      <td><input type="number" class="qty-input" value="${row.qty}" min="0" step="0.5" oninput="updateRowField(${row.id},'qty',parseFloat(this.value)||0)"></td>
+      <td><input type="number" class="rate-input" value="${row.rate}" min="0" step="0.01" oninput="updateRowField(${row.id},'rate',parseFloat(this.value)||0)"></td>
+      <td class="amount-cell">${getCurrency()}${(row.qty * row.rate).toFixed(2)}</td>
+      <td><button class="btn-remove-row" onclick="removeRow(${row.id})" title="Remove">✕</button></td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+function updateRowField(id, field, val) {
+  const row = rows.find(r => r.id === id);
+  if (row) { row[field] = val; updateAmounts(); updatePreview(); }
+}
+
+function updateAmounts() {
+  const cur = getCurrency();
+  document.querySelectorAll('.amount-cell').forEach((cell, i) => {
+    if (rows[i]) cell.textContent = cur + (rows[i].qty * rows[i].rate).toFixed(2);
+  });
+}
+
+function getCurrency() { return document.getElementById('currency')?.value || '$'; }
+
+function calcTotals() {
+  const subtotal = rows.reduce((s, r) => s + r.qty * r.rate, 0);
+  const discPct = parseFloat(document.getElementById('discount').value) || 0;
+  const taxPct = parseFloat(document.getElementById('taxRate').value) || 0;
+  const discAmt = subtotal * discPct / 100;
+  const taxAmt = (subtotal - discAmt) * taxPct / 100;
+  const total = subtotal - discAmt + taxAmt;
+  return { subtotal, discPct, discAmt, taxPct, taxAmt, total };
+}
+
+function esc(str) { return (str||'').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function escHtml(str) { return (str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function updatePreview() {
+  const cur = getCurrency();
+  const { subtotal, discPct, discAmt, taxPct, taxAmt, total } = calcTotals();
+  const bizName = document.getElementById('bizName').value || 'Your Business';
+  const bizContact = document.getElementById('bizContact').value;
+  const bizAddr = document.getElementById('bizAddress').value;
+  const clientName = document.getElementById('clientName').value || 'Client Name';
+  const clientContact = document.getElementById('clientContact').value;
+  const clientAddr = document.getElementById('clientAddress').value;
+  const invNum = document.getElementById('invoiceNum').value || 'INV-001';
+  const invDate = document.getElementById('invoiceDate').value;
+  const dueDate = document.getElementById('dueDate').value;
+  const notes = document.getElementById('notes').value;
+
+  // Totals sidebar
+  let totalsHtml = `<div class="totals-row"><span class="totals-label">Subtotal</span><span class="totals-value">${cur}${subtotal.toFixed(2)}</span></div>`;
+  if (discPct > 0) totalsHtml += `<div class="totals-row"><span class="totals-label">Discount (${discPct}%)</span><span class="totals-value">-${cur}${discAmt.toFixed(2)}</span></div>`;
+  if (taxPct > 0) totalsHtml += `<div class="totals-row"><span class="totals-label">Tax (${taxPct}%)</span><span class="totals-value">${cur}${taxAmt.toFixed(2)}</span></div>`;
+  totalsHtml += `<div class="totals-row grand"><span class="totals-label">Total Due</span><span class="totals-value">${cur}${total.toFixed(2)}</span></div>`;
+  document.getElementById('totalsDisplay').innerHTML = totalsHtml;
+  updateAmounts();
+
+  // Preview
+  const itemRows = rows.map(r => `
+    <tr>
+      <td>${escHtml(r.desc) || '<span style="color:#aaa">—</span>'}</td>
+      <td style="text-align:right">${r.qty}</td>
+      <td style="text-align:right">${cur}${r.rate.toFixed(2)}</td>
+      <td>${cur}${(r.qty*r.rate).toFixed(2)}</td>
+    </tr>
+  `).join('');
+
+  let invTotals = `<div class="inv-total-row"><span>Subtotal</span><span>${cur}${subtotal.toFixed(2)}</span></div>`;
+  if (discPct > 0) invTotals += `<div class="inv-total-row"><span>Discount (${discPct}%)</span><span>-${cur}${discAmt.toFixed(2)}</span></div>`;
+  if (taxPct > 0) invTotals += `<div class="inv-total-row"><span>Tax (${taxPct}%)</span><span>${cur}${taxAmt.toFixed(2)}</span></div>`;
+  invTotals += `<div class="inv-total-row inv-grand"><span>Total Due</span><span>${cur}${total.toFixed(2)}</span></div>`;
+
+  document.getElementById('invoicePreview').innerHTML = `
+    <div class="inv-header">
+      <div class="inv-from">
+        <h2>${escHtml(bizName)}</h2>
+        ${bizContact ? `<p style="color:#555;font-weight:600;">${escHtml(bizContact)}</p>` : ''}
+        ${bizAddr ? `<p>${escHtml(bizAddr).replace(/\n/g,'<br>')}</p>` : ''}
+      </div>
+      <div>
+        <div class="inv-badge">INVOICE</div>
+        <p style="text-align:right;color:#888;font-size:11px;margin-top:6px;">${escHtml(invNum)}</p>
+      </div>
+    </div>
+    <div class="inv-meta">
+      <div class="inv-meta-block">
+        <small>Invoice Date</small>
+        <p>${invDate || '—'}</p>
+      </div>
+      <div class="inv-meta-block">
+        <small>Due Date</small>
+        <p style="color:${dueDate < new Date().toISOString().split('T')[0] ? '#e05555' : '#111'}">${dueDate || '—'}</p>
+      </div>
+    </div>
+    <div class="inv-to">
+      <small>Bill To</small>
+      <p><strong>${escHtml(clientName)}</strong>${clientContact ? ' · ' + escHtml(clientContact) : ''}${clientAddr ? '<br>' + escHtml(clientAddr).replace(/\n/g,'<br>') : ''}</p>
+    </div>
+    <table class="inv-table">
+      <thead>
+        <tr>
+          <th style="width:50%">Description</th>
+          <th style="width:12%;text-align:right">Qty</th>
+          <th style="width:18%;text-align:right">Rate</th>
+          <th style="width:20%;text-align:right">Amount</th>
+        </tr>
+      </thead>
+      <tbody>${itemRows || '<tr><td colspan="4" style="color:#aaa;padding:1rem 0">No items added yet</td></tr>'}</tbody>
+    </table>
+    <div class="inv-totals">${invTotals}</div>
+    ${notes ? `<div class="inv-notes"><strong>Notes & Payment Terms</strong>${escHtml(notes).replace(/\n/g,'<br>')}</div>` : ''}
+    <div class="inv-footer">Generated with ABUZ8 AI Invoice Generator · abuz8ai.com</div>
+  `;
+}
+
+function downloadPDF() {
+  const preview = document.getElementById('invoicePreview');
+  const invNum = document.getElementById('invoiceNum').value || 'invoice';
+  const bizName = document.getElementById('bizName').value || 'invoice';
+
+  const win = window.open('', '_blank');
+  win.document.write(`<!DOCTYPE html><html><head>
+    <meta charset="UTF-8">
+    <title>Invoice ${invNum}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+      *{box-sizing:border-box;margin:0;padding:0;}
+      body{font-family:'Inter',sans-serif;color:#111;background:#fff;padding:40px;}
+      ${document.querySelector('style').textContent.split('#invoicePreview')[0]}
+      .inv-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:2rem;}
+      .inv-from h2{font-size:20px;font-weight:800;color:#0a1628;margin-bottom:2px;}
+      .inv-badge{background:#0a1628;color:#c9a84c;padding:0.4rem 1rem;border-radius:6px;font-weight:800;font-size:14px;letter-spacing:0.05em;}
+      .inv-meta{display:grid;grid-template-columns:1fr 1fr;gap:1rem;background:#f8f7f4;border-radius:8px;padding:1rem;margin-bottom:1.5rem;}
+      .inv-meta-block small{display:block;color:#888;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;margin-bottom:2px;}
+      .inv-meta-block p{color:#111;font-weight:600;font-size:12px;}
+      .inv-to{margin-bottom:1.5rem;}
+      .inv-to small{display:block;color:#888;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;margin-bottom:4px;}
+      .inv-table{width:100%;border-collapse:collapse;margin-bottom:1.5rem;}
+      .inv-table th{background:#0a1628;color:#c9a84c;text-align:left;padding:8px 10px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;}
+      .inv-table th:last-child{text-align:right;}
+      .inv-table td{padding:8px 10px;border-bottom:1px solid #eee;font-size:12px;}
+      .inv-table td:last-child{text-align:right;font-weight:600;}
+      .inv-totals{display:flex;flex-direction:column;align-items:flex-end;gap:4px;margin-bottom:1.5rem;}
+      .inv-total-row{display:flex;gap:2rem;font-size:12px;}
+      .inv-total-row span:first-child{color:#888;min-width:80px;text-align:right;}
+      .inv-total-row span:last-child{min-width:80px;text-align:right;font-weight:600;}
+      .inv-total-row.inv-grand{border-top:2px solid #0a1628;padding-top:6px;margin-top:2px;}
+      .inv-total-row.inv-grand span{font-weight:800;font-size:14px;color:#0a1628;}
+      .inv-notes{background:#f8f7f4;border-radius:8px;padding:1rem;font-size:11px;color:#666;}
+      .inv-notes strong{display:block;color:#111;margin-bottom:4px;font-size:12px;}
+      .inv-footer{text-align:center;margin-top:1.5rem;color:#aaa;font-size:10px;}
+    </style>
+  <script src="_abuz8-live-brain.js" defer><\/script>
+</head><body>${preview.innerHTML}
+<script src="/assets/js/dfy-banner.js" async><\/script>
+<script src="/assets/js/abuz8-intent.js" defer><\/script>
+<script src="/tools/_tools-shared.js" defer><\/script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body></html>`);
+  win.document.close();
+  setTimeout(() => { win.print(); }, 500);
+  gtag('event', 'invoice_download', { invoice_num: invNum });
+}
+
+async function joinWaitlist() {
+  const email = document.getElementById('waitlistEmail').value.trim();
+  if (!email || !email.includes('@')) { alert('Please enter a valid email.'); return; }
+  try { await fetch('https://abuz8ai.com/api/waitlist', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ email, tool: 'ai-invoice-generator', ts: Date.now() }) }); } catch(e){}
+  document.querySelector('.waitlist-form').style.display='none';
+  document.getElementById('waitlistSuccess').style.display='block';
+  gtag('event','waitlist_signup',{tool:'ai-invoice-generator'});
+}
+
+// Init
+addRow('Professional Services', 1, 500);
+addRow('Consulting (5 hrs)', 5, 150);
+updatePreview();
+</script>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+<script src="/tools/_tools-shared.js" defer></script>
+</body>
+</html>
+

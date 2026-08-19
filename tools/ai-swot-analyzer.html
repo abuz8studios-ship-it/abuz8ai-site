@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI SWOT Analyzer | ABUZ8</title>
+<style>
+  :root{--lapis:#0a1628;--lapis2:#0f1f3d;--lapis3:#162444;--gold:#c9a84c;--gold2:#e2c06a;--turq:#0e9f6e;--turq2:#22a090;--cream:#f5f0e8;--text:#e8e4dc;--text2:#b8b4ac;--text3:#888480;--red:#e05555;--green:#3db87a;--orange:#e09040;--radius:12px;--radius-sm:8px;--border:1px solid rgba(201,168,76,0.18)}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--lapis);color:var(--text);font-family:'Inter',system-ui,sans-serif;min-height:100vh}
+  header{background:linear-gradient(135deg,var(--lapis2),var(--lapis3));border-bottom:var(--border);padding:22px 40px;display:flex;align-items:center;gap:18px}
+  .logo{width:40px;height:40px;background:linear-gradient(135deg,var(--gold),var(--turq));border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:16px;color:var(--lapis);flex-shrink:0}
+  header h1{font-family:'Playfair Display',Georgia,serif;font-size:23px;color:var(--gold)}
+  header p{font-size:12px;color:var(--text2);margin-top:2px}
+  .badge{margin-left:auto;background:rgba(201,168,76,0.1);border:var(--border);padding:5px 12px;border-radius:20px;font-size:12px;color:var(--gold);white-space:nowrap}
+  .container{max-width:1100px;margin:0 auto;padding:26px 20px}
+  .two-col{display:grid;grid-template-columns:360px 1fr;gap:20px;align-items:start}
+  .panel{background:var(--lapis2);border:var(--border);border-radius:var(--radius);padding:20px}
+  .panel-title{font-size:11px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--gold);margin-bottom:13px}
+  .field{margin-bottom:12px}
+  label{font-size:12px;color:var(--text2);display:block;margin-bottom:4px;font-weight:500}
+  input,select,textarea{width:100%;background:var(--lapis3);border:1px solid rgba(201,168,76,0.2);border-radius:var(--radius-sm);color:var(--text);padding:9px 12px;font-size:13px;outline:none;transition:border-color 0.2s;font-family:inherit}
+  input:focus,select:focus,textarea:focus{border-color:var(--gold)}
+  textarea{resize:vertical}
+  select option{background:var(--lapis3)}
+  .generate-btn{width:100%;background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--lapis);border:none;border-radius:var(--radius-sm);padding:13px;font-size:15px;font-weight:700;cursor:pointer;transition:all 0.2s;margin-top:6px}
+  .generate-btn:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(201,168,76,0.35)}
+
+  /* SWOT GRID */
+  .swot-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px}
+  .swot-quad{border-radius:var(--radius);padding:20px;border:2px solid transparent}
+  .swot-quad.S{background:rgba(61,184,122,0.07);border-color:rgba(61,184,122,0.25)}
+  .swot-quad.W{background:rgba(224,85,85,0.07);border-color:rgba(224,85,85,0.25)}
+  .swot-quad.O{background:rgba(26,138,122,0.07);border-color:rgba(26,138,122,0.25)}
+  .swot-quad.T{background:rgba(224,144,64,0.08);border-color:rgba(224,144,64,0.3)}
+  .swot-header{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+  .swot-icon{font-size:22px}
+  .swot-title{font-size:16px;font-weight:700}
+  .swot-quad.S .swot-title{color:var(--green)}
+  .swot-quad.W .swot-title{color:var(--red)}
+  .swot-quad.O .swot-title{color:var(--turq2)}
+  .swot-quad.T .swot-title{color:var(--orange)}
+  .swot-item{display:flex;gap:8px;margin-bottom:8px;font-size:13px;color:var(--text2);line-height:1.5;align-items:flex-start}
+  .swot-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;margin-top:6px}
+  .swot-quad.S .swot-dot{background:var(--green)}
+  .swot-quad.W .swot-dot{background:var(--red)}
+  .swot-quad.O .swot-dot{background:var(--turq2)}
+  .swot-quad.T .swot-dot{background:var(--orange)}
+
+  /* STRATEGY TABLE */
+  .strategy-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px}
+  .strategy-card{background:var(--lapis2);border:var(--border);border-radius:var(--radius-sm);padding:16px}
+  .strategy-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px}
+  .SO .strategy-label{color:var(--green)}
+  .WO .strategy-label{color:var(--turq2)}
+  .ST .strategy-label{color:var(--gold2)}
+  .WT .strategy-label{color:var(--red)}
+  .strategy-item{font-size:12px;color:var(--text2);margin-bottom:6px;display:flex;gap:6px;line-height:1.5}
+  .strategy-item::before{content:'→';color:var(--gold);flex-shrink:0}
+
+  /* SCORE */
+  .score-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+  .score-card{background:var(--lapis2);border:var(--border);border-radius:var(--radius-sm);padding:14px;text-align:center}
+  .score-num{font-size:26px;font-weight:700;line-height:1}
+  .score-lbl{font-size:11px;color:var(--text3);margin-top:4px}
+
+  .action-btn{background:var(--lapis3);border:var(--border);color:var(--text2);padding:7px 14px;border-radius:var(--radius-sm);cursor:pointer;font-size:13px;transition:all 0.2s}
+  .action-btn:hover{border-color:var(--gold);color:var(--gold)}
+  .action-btn.copied{background:rgba(61,184,122,0.12);border-color:var(--green);color:var(--green)}
+  .placeholder{text-align:center;padding:60px 20px;color:var(--text3)}
+  .placeholder-icon{font-size:48px;margin-bottom:16px;opacity:.5}
+  .placeholder h3{font-size:17px;color:var(--text2);margin-bottom:8px}
+  @media(max-width:900px){.two-col{grid-template-columns:1fr}.swot-grid{grid-template-columns:1fr}.strategy-grid{grid-template-columns:1fr}.score-row{grid-template-columns:repeat(2,1fr)}}
+</style>
+<script src="_abuz8-live-brain.js" defer></script>
+
+<script src="_abuz8-config.js" defer></script>
+<link rel="canonical" href="https://abuz8ai.com/tools/ai-swot-analyzer">
+<meta name="description" content="AI SWOT Analyzer — Structured SWOT in seconds. Free, no signup, runs entirely in your browser. One of 169 free AI and developer tools by ABUZ8.">
+</head>
+<body>
+<header>
+  <div class="logo">A8</div>
+  <div><h1>AI SWOT Analyzer</h1><p>Generate a strategic SWOT analysis with actionable SO/WO/ST/WT strategies</p></div>
+  <span class="badge">⚡ Client-Side</span>
+</header>
+<div class="container">
+  <div class="two-col">
+    <div>
+      <div class="panel">
+        <div class="panel-title">⚙ Business Context</div>
+        <div class="field"><label>COMPANY / PRODUCT NAME *</label><input type="text" id="bizName" placeholder="e.g. ABUZ8 AI" maxlength="60"></div>
+        <div class="field"><label>INDUSTRY / SECTOR</label>
+          <select id="industry">
+            <option value="ai_saas">AI / SaaS</option>
+            <option value="ecomm">E-commerce / Retail</option>
+            <option value="fintech">FinTech</option>
+            <option value="health">Healthcare</option>
+            <option value="media">Media / Content</option>
+            <option value="manufacturing">Manufacturing</option>
+            <option value="consulting">Consulting / Services</option>
+            <option value="general">General / Other</option>
+          </select>
+        </div>
+        <div class="field"><label>COMPANY STAGE</label>
+          <select id="stage">
+            <option value="startup">Startup / Pre-revenue</option>
+            <option value="early">Early Stage ($0–1M ARR)</option>
+            <option value="growth">Growth ($1M–10M ARR)</option>
+            <option value="scale">Scale ($10M+ ARR)</option>
+            <option value="enterprise">Enterprise / Public</option>
+          </select>
+        </div>
+        <div class="field"><label>WHAT YOU DO (brief)</label>
+          <textarea id="whatYouDo" rows="2" placeholder="e.g. AI automation OS that replaces manual workflows using 192+ native tools"></textarea>
+        </div>
+        <div class="field"><label>YOUR STRENGTHS (optional — adds specificity)</label>
+          <textarea id="strengths" rows="2" placeholder="e.g. Proprietary brain router, local inference, 7-layer memory"></textarea>
+        </div>
+        <div class="field"><label>YOUR WEAKNESSES (optional)</label>
+          <textarea id="weaknesses" rows="2" placeholder="e.g. Small team, limited marketing budget, early stage"></textarea>
+        </div>
+        <div class="field"><label>MARKET OPPORTUNITIES (optional)</label>
+          <textarea id="opps" rows="2" placeholder="e.g. Enterprise AI spend 3x YoY, regulatory push for sovereign AI"></textarea>
+        </div>
+        <div class="field"><label>THREATS / RISKS (optional)</label>
+          <textarea id="threats" rows="2" placeholder="e.g. Big Tech competition, AI commoditization, customer budget cuts"></textarea>
+        </div>
+        <button class="generate-btn" onclick="generateSWOT()">⚡ Generate SWOT Analysis</button>
+      </div>
+    </div>
+    <div id="resultsPane">
+      <div class="panel">
+        <div class="placeholder">
+          <div class="placeholder-icon">🔷</div>
+          <h3>Your SWOT analysis will appear here</h3>
+          <p>Fill in your business context and click Generate.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const SWOT_BANKS = {
+  ai_saas: {
+    S: ['Proprietary algorithm / model creates switching costs','Recurring SaaS revenue with high gross margins (70–90%)','Developer community and API ecosystem','Fast iteration cycle vs. legacy enterprise software','Data network effects — more users = smarter model'],
+    W: ['Long enterprise sales cycles slow growth','High compute costs compress margins at scale','Talent competition from Big Tech for ML engineers','Customer trust barrier — AI explainability concerns','Dependency on third-party model providers (OpenAI, Anthropic)'],
+    O: ['Enterprise AI spend growing 3× YoY through 2027','Regulatory push for sovereign/on-premise AI solutions','SMB market vastly underserved by enterprise AI vendors','Vertical SaaS expansion opportunities in 10+ sectors','Partnership channel with major cloud providers (AWS, Azure)'],
+    T: ['OpenAI / Google releasing competing features for free','AI commoditization compressing ASPs over time','Data privacy regulations (GDPR, CCPA) increasing compliance cost','Customer churn if model quality doesn\'t improve continuously','Economic downturn reducing software budgets'],
+  },
+  ecomm: {
+    S: ['Direct customer relationship bypasses marketplace fees','Owned customer data enables personalization','Brand equity and community loyalty','High repeat purchase rate in loyal segments','Agile inventory management vs. retail incumbents'],
+    W: ['Customer acquisition cost rising across paid channels','Inventory risk on physical goods','Logistics complexity at international scale','Limited brand awareness vs. established players'],
+    O: ['Social commerce growth (TikTok Shop, Instagram) opens new channels','International expansion to underserved markets','Subscription/membership model increases LTV','AI-powered personalization drives conversion uplift','Sustainability trend creates premium positioning opportunity'],
+    T: ['Amazon entering adjacent categories','Rising CAC on Meta/Google eroding unit economics','Supply chain disruption risk','Competitor price wars compressing margins','Return fraud increasing fulfillment costs'],
+  },
+  fintech: {
+    S: ['Regulatory compliance infrastructure is a moat','Real-time data processing capability','Seamless UX vs. legacy bank interfaces','Lower cost structure than traditional banks'],
+    W: ['Regulatory complexity across jurisdictions','Customer trust takes years to build','Capital requirements for lending products','Limited brand recognition vs. incumbents'],
+    O: ['Banking-as-a-Service enables rapid product expansion','Underbanked populations globally represent massive TAM','Embedded finance trend (fintech inside non-finance apps)','Open banking regulations unlock incumbent customer data'],
+    T: ['Bank licensing and regulatory risk','Incumbent banks accelerating digital investment','Fraud and cybersecurity risk','Interest rate sensitivity on lending margins'],
+  },
+  health: {
+    S: ['Clinical validation builds trust and reimbursement path','HIPAA compliance infrastructure differentiates from tech startups','Patient outcome data is proprietary and defensible','Physician champions drive institutional adoption'],
+    W: ['Long sales cycles with hospital procurement','Regulatory approval timelines slow product iteration','High cost of clinical evidence generation','Reimbursement uncertainty for novel tech'],
+    O: ['Value-based care shift incentivizes outcomes technology','Physician burnout creates demand for automation','Telehealth infrastructure built post-COVID','AI diagnostic tools approaching parity with specialists'],
+    T: ['FDA/regulatory pathway uncertainty','Hospital budget constraints post-pandemic','Incumbent EHR vendors (Epic, Cerner) integrating AI','Data breach risk damages trust irreparably'],
+  },
+  general: {
+    S: ['Strong founder domain expertise','Lean cost structure enables competitive pricing','Agile team can iterate faster than incumbents','Customer-centric culture drives NPS','Clear differentiation in target segment'],
+    W: ['Limited brand recognition','Small team stretched across functions','Marketing budget constrained vs. competitors','Geographic concentration risk','Customer concentration risk (top 5 = 60%+ revenue)'],
+    O: ['Market growing 15–25% CAGR','Adjacent market expansion opportunity','Partnership channel largely untapped','Pricing power through product bundling','International expansion via localization'],
+    T: ['Well-funded competitors entering market','Economic slowdown reducing discretionary spend','Talent shortage in key technical roles','Regulatory changes affecting business model','Platform dependency risk (Apple, Google, AWS)'],
+  },
+};
+
+function getBank(industry) {
+  return SWOT_BANKS[industry] || SWOT_BANKS.general;
+}
+
+function parseInput(text) {
+  if (!text.trim()) return [];
+  return text.split(/[,\n]+/).map(s => s.trim()).filter(Boolean);
+}
+
+function mergeItems(bank, custom, max=5) {
+  const all = [...custom.slice(0,3), ...bank.filter(b => !custom.some(c => c.toLowerCase().includes(b.toLowerCase().slice(0,15))))];
+  return all.slice(0, max);
+}
+
+function generateSWOT() {
+  const name      = document.getElementById('bizName').value.trim() || 'Your Business';
+  const industry  = document.getElementById('industry').value;
+  const stage     = document.getElementById('stage').value;
+  const whatYouDo = document.getElementById('whatYouDo').value.trim();
+  const strengths = document.getElementById('strengths').value.trim();
+  const weaknesses= document.getElementById('weaknesses').value.trim();
+  const opps      = document.getElementById('opps').value.trim();
+  const threats   = document.getElementById('threats').value.trim();
+
+  const pane = document.getElementById('resultsPane');
+  const btn = document.querySelector('.generate-btn');
+  if (btn) { btn.disabled = true; btn.dataset.label = btn.dataset.label || btn.textContent; btn.textContent = '⏳ Analyzing…'; }
+
+  pane.innerHTML = `
+    <div class="panel" style="text-align:center;padding:48px 24px">
+      <div style="font-size:40px;margin-bottom:14px">🔷</div>
+      <div style="color:var(--gold);font-family:'Playfair Display',Georgia,serif;font-size:1.1rem;margin-bottom:8px">Generating ${name} SWOT analysis…</div>
+      <div style="font-size:13px;color:var(--text3);max-width:340px;margin:0 auto">Live AI on an RTX 5090. The first call cold-loads the model, so this can take 20–90s.</div>
+    </div>`;
+
+  // Real AI generation via the ABUZ8 brain (Cloudflare Workers AI). No templates, no Math.random.
+  fetch('/api/waitlist', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      tool: 'swot-analyzer',
+      data: { company: name, industry, stage, whatYouDo, strengths, weaknesses, opportunities: opps, threats }
+    })
+  })
+  .then(r => r.json())
+  .then(res => {
+    if (!res.success || !res.result) throw new Error(res.error || 'Generation failed');
+    pane.innerHTML = `
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px">
+        <div style="font-size:11px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--gold)">${name} — SWOT Analysis</div>
+        <div style="display:flex;gap:8px">
+          <button class="action-btn" id="cpBtn" onclick="copySWOT()">Copy Analysis</button>
+          <button class="action-btn" onclick="generateSWOT()">↺ Regenerate</button>
+        </div>
+      </div>
+      <div class="panel" id="swotContent" style="line-height:1.8">${ABUZ8.formatResult(res.result)}</div>`;
+    if (btn) { btn.disabled = false; btn.textContent = btn.dataset.label; }
+  })
+  .catch(err => {
+    if (btn) { btn.disabled = false; btn.textContent = btn.dataset.label; }
+    pane.innerHTML = `
+      <div class="panel" style="text-align:center;padding:48px 24px">
+        <div style="font-size:40px;margin-bottom:14px">⚠️</div>
+        <div style="color:var(--red);font-family:'Playfair Display',Georgia,serif;font-size:1.1rem;margin-bottom:8px">Generation failed</div>
+        <div style="font-size:13px;color:var(--text3);max-width:360px;margin:0 auto 14px">${err.message}. The live AI may be cold-starting — please try again in a moment.</div>
+        <button class="generate-btn" style="max-width:220px;margin:0 auto" onclick="generateSWOT()">↺ Try Again</button>
+      </div>`;
+    alert('Generation failed: ' + err.message + '. Please try again in a moment.');
+  });
+}
+
+function copySWOT() {
+  const el = document.getElementById('swotContent');
+  const text = el ? el.innerText : '';
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.getElementById('cpBtn');
+    btn.textContent = '✓ Copied'; btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Copy Analysis'; btn.classList.remove('copied'); }, 2000);
+  });
+}
+</script>
+
+<script src="/assets/js/dfy-banner.js" async></script>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+<script src="/tools/_tools-shared.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>
+

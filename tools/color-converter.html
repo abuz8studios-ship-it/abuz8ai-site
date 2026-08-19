@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Color Converter — Free Online HEX, RGB, HSL &amp; HSV Converter | ABUZ8</title>
+  <meta name="description" content="Free online color converter. Convert instantly between HEX, RGB, HSL and HSV, copy ready-to-paste CSS, and preview the color live. 100% client-side — nothing is uploaded. No signup." />
+  <meta name="keywords" content="color converter, hex to rgb, rgb to hex, hex to hsl, rgb to hsl, hsl to rgb, hsv converter, color code converter, css color converter, hex rgb hsl, online color converter" />
+  <meta property="og:title" content="Color Converter — HEX · RGB · HSL · HSV (Free, Online) | ABUZ8" />
+  <meta property="og:description" content="Convert between HEX, RGB, HSL and HSV in one place. Live preview, one-click copy of ready-to-paste CSS. Runs 100% in your browser — no signup." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://abuz8ai.com/tools/color-converter" />
+  <link rel="canonical" href="https://abuz8ai.com/tools/color-converter" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebApplication",
+        "name": "Color Converter",
+        "description": "Free online color converter. Convert instantly between HEX, RGB, HSL and HSV, copy ready-to-paste CSS, and preview the color live. Runs 100% in your browser with no upload.",
+        "url": "https://abuz8ai.com/tools/color-converter",
+        "applicationCategory": "DeveloperApplication",
+        "operatingSystem": "Any",
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+        "featureList": "HEX to RGB, RGB to HEX, HEX to HSL, RGB to HSL, HSL to RGB, HSV conversion, CSS rgb() and hsl() strings, live preview, one-click copy, random color, shorthand hex support",
+        "author": { "@type": "Organization", "name": "ABUZ8 LLC", "url": "https://abuz8ai.com" }
+      },
+      {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          { "@type": "ListItem", "position": 1, "name": "ABUZ8", "item": "https://abuz8ai.com/" },
+          { "@type": "ListItem", "position": 2, "name": "Free Tools", "item": "https://abuz8ai.com/tools/" },
+          { "@type": "ListItem", "position": 3, "name": "Color Converter", "item": "https://abuz8ai.com/tools/color-converter" }
+        ]
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "How do I convert a HEX color to RGB?",
+            "acceptedAnswer": { "@type": "Answer", "text": "Type or paste the hex code (for example #2E75B6, with or without the #) into the HEX field. The RGB, HSL and HSV values update instantly, and the color preview changes with them. Each field has a copy button, so you can grab rgb(46, 117, 182) ready to paste straight into CSS. Three-digit shorthand like #abc is expanded automatically." }
+          },
+          {
+            "@type": "Question",
+            "name": "What is the difference between HSL and HSV?",
+            "acceptedAnswer": { "@type": "Answer", "text": "Both describe a color by hue (which color, 0–360°), but they treat brightness differently. HSL uses Saturation and Lightness, where 50% lightness is the most vivid version of the hue and 100% is always white. HSV (also called HSB) uses Saturation and Value, where 100% value is the brightest the hue can be and 0% is black. HSL is common in CSS; HSV matches most graphics-app color pickers. This tool shows both at once so you never have to guess." }
+          },
+          {
+            "@type": "Question",
+            "name": "Are HEX, RGB and HSL exactly the same color?",
+            "acceptedAnswer": { "@type": "Answer", "text": "Yes — they are just different notations for the same point in the sRGB color space, so #2E75B6, rgb(46, 117, 182) and hsl(209, 60%, 45%) all render identically. Converting between them is lossless for HEX and RGB (both are 0–255 integers per channel). HSL and HSV involve rounding to whole numbers for readability, so a full round-trip can shift a channel by a point or two — invisible to the eye and safe for design use." }
+          },
+          {
+            "@type": "Question",
+            "name": "Is my color data private?",
+            "acceptedAnswer": { "@type": "Answer", "text": "Yes. Every conversion happens in plain JavaScript inside your browser — there is no server call, no upload and nothing logged or stored. Whatever colors you enter never leave your device. Close the tab and it is gone." }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      /* Light, vision-safe palette (site mandate — matches qr-code-generator.html 07-26) */
+      --lapis: #F8FAFC;      /* page background */
+      --card: #FFFFFF;       /* panels / nav */
+      --card-alt: #EEF3F8;   /* tinted surfaces */
+      --gold: #2E75B6;       /* primary accent */
+      --gold-dim: #1F5B94;   /* darker primary for borders/hover */
+      --teal: #0E7C63;
+      --teal-bright: #12866E;
+      --cream: #1F3A5F;      /* headings (dark navy on light) */
+      --text: #2C3E50;       /* body text */
+      --text-dim: #5A6B7C;   /* muted text */
+      --border: #D7E0EA;
+      --red: #C0392B;
+      --green: #197A4B;
+      --font-heading: 'Playfair Display', Georgia, serif;
+      --font-body: 'Inter', system-ui, sans-serif;
+      --font-mono: 'JetBrains Mono', 'Courier New', monospace;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { background: var(--lapis); color: var(--text); font-family: var(--font-body); font-size: 15px; line-height: 1.6; min-height: 100vh; }
+    a { color: var(--gold); text-decoration: none; transition: color 0.2s; }
+    a:hover { color: var(--teal-bright); }
+
+    /* NAV */
+    nav { background: var(--card); border-bottom: 1px solid var(--border); padding: 0 2rem; display: flex; align-items: center; justify-content: space-between; height: 60px; position: sticky; top: 0; z-index: 100; }
+    .nav-logo { font-family: var(--font-heading); font-size: 1.3rem; font-weight: 700; color: var(--gold); }
+    .nav-links { display: flex; align-items: center; gap: 1.4rem; }
+    .nav-links a { color: var(--text-dim); font-size: 0.85rem; font-weight: 500; }
+    .nav-links a:hover { color: var(--gold); }
+    .nav-cta { background: var(--gold); color: var(--lapis) !important; padding: 0.45rem 1.1rem; border-radius: 6px; font-weight: 600; }
+    .nav-cta:hover { background: var(--teal-bright); }
+
+    /* HERO */
+    .hero { text-align: center; padding: 2.6rem 1.5rem 1.4rem; }
+    .hero h1 { font-family: var(--font-heading); font-size: 2.3rem; color: var(--cream); line-height: 1.2; margin-bottom: 0.8rem; }
+    .hero h1 span { color: var(--gold); }
+    .hero p { color: var(--text-dim); font-size: 1.02rem; max-width: 640px; margin: 0 auto; }
+    .badges { display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: center; margin-top: 1.1rem; }
+    .badge { border: 1px solid var(--border); background: var(--card); color: var(--text-dim); font-size: 0.72rem; padding: 0.28rem 0.7rem; border-radius: 999px; letter-spacing: 0.03em; }
+    .badge b { color: var(--teal-bright); font-weight: 600; }
+
+    /* MAIN LAYOUT */
+    .wrap { max-width: 940px; margin: 1.2rem auto 0; padding: 0 1.5rem; display: grid; grid-template-columns: 300px 1fr; gap: 1.4rem; align-items: start; }
+    @media (max-width: 760px) { .wrap { grid-template-columns: 1fr; } }
+
+    .panel { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 1.3rem; }
+    .panel h2 { font-family: var(--font-heading); font-size: 1.15rem; color: var(--cream); margin-bottom: 0.9rem; }
+
+    /* PREVIEW */
+    .preview { height: 200px; border-radius: 12px; border: 1px solid var(--border); box-shadow: inset 0 0 0 1px rgba(0,0,0,0.04); display: flex; align-items: flex-end; justify-content: space-between; padding: 0.8rem 1rem; transition: background 0.15s; }
+    .preview .pv-hex { font-family: var(--font-mono); font-size: 0.9rem; padding: 0.25rem 0.55rem; border-radius: 6px; background: rgba(255,255,255,0.85); color: #111; }
+    .preview .pv-hex.dark { background: rgba(0,0,0,0.55); color: #fff; }
+    .picker-row { display: flex; gap: 0.6rem; margin-top: 0.9rem; align-items: center; }
+    .picker-row input[type=color] { width: 54px; height: 40px; border: 1px solid var(--border); border-radius: 8px; background: var(--card); cursor: pointer; padding: 2px; }
+    .btn { border: none; border-radius: 8px; font-family: var(--font-body); font-weight: 600; font-size: 0.85rem; padding: 0.55rem 0.9rem; cursor: pointer; transition: all 0.2s; }
+    .btn-ghost { background: var(--card-alt); color: var(--text); border: 1px solid var(--border); }
+    .btn-ghost:hover { border-color: var(--gold-dim); color: var(--gold); }
+    .btn-gold { background: var(--gold); color: var(--lapis); }
+    .btn-gold:hover { background: var(--teal-bright); transform: translateY(-1px); }
+
+    /* FIELD ROWS */
+    .fields { display: flex; flex-direction: column; gap: 0.85rem; }
+    .field label { display: block; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--text-dim); margin-bottom: 0.3rem; }
+    .field-in { display: flex; gap: 0.4rem; }
+    .field-in input { flex: 1; background: var(--lapis); border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-family: var(--font-mono); font-size: 0.92rem; padding: 0.6rem 0.7rem; outline: none; transition: border-color 0.2s; }
+    .field-in input:focus { border-color: var(--gold-dim); }
+    .field-in input.err { border-color: var(--red); }
+    .copy-btn { flex: 0 0 auto; width: 44px; border: 1px solid var(--border); background: var(--card-alt); color: var(--text-dim); border-radius: 8px; cursor: pointer; font-size: 0.75rem; font-weight: 600; transition: all 0.15s; }
+    .copy-btn:hover { border-color: var(--gold-dim); color: var(--gold); }
+    .copy-btn.ok { background: var(--green); color: #fff; border-color: var(--green); }
+    .triple { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.4rem; }
+    .triple input { width: 100%; background: var(--lapis); border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-family: var(--font-mono); font-size: 0.9rem; padding: 0.55rem 0.5rem; text-align: center; outline: none; }
+    .triple input:focus { border-color: var(--gold-dim); }
+    .triple .cap { font-size: 0.64rem; text-align: center; color: var(--text-dim); margin-top: 0.2rem; letter-spacing: 0.04em; }
+    .hint { font-size: 0.72rem; color: var(--text-dim); margin-top: 0.35rem; }
+
+    /* CTA */
+    .cta-box { max-width: 940px; margin: 2rem auto 0; padding: 1.6rem 1.5rem; background: var(--card-alt); border: 1px solid var(--border); border-radius: 12px; text-align: center; }
+    .cta-box h3 { font-family: var(--font-heading); font-size: 1.25rem; color: var(--cream); margin-bottom: 0.5rem; }
+    .cta-box p { color: var(--text-dim); max-width: 620px; margin: 0 auto 1rem; }
+    .cta-btn { display: inline-block; background: var(--gold); color: var(--lapis); padding: 0.6rem 1.5rem; border-radius: 8px; font-weight: 700; }
+    .cta-btn:hover { background: var(--teal-bright); color: var(--lapis); }
+
+    /* WAITLIST */
+    .waiting-list { max-width: 940px; margin: 1.4rem auto 0; padding: 1.6rem 1.5rem; background: rgba(46,117,182,0.05); border: 1px solid rgba(46,117,182,0.22); border-radius: 12px; text-align: center; }
+    .waiting-list h3 { color: var(--gold); margin-bottom: 0.4rem; font-family: var(--font-heading); }
+    .waiting-list p { color: var(--text-dim); max-width: 560px; margin: 0 auto 1rem; font-size: 0.95rem; }
+    .wl-form { display: flex; gap: 0.5rem; max-width: 460px; margin: 0 auto; }
+    .wl-form input { flex: 1; background: var(--card); border: 1px solid var(--border); border-radius: 8px; color: var(--text); padding: 0.6rem 0.8rem; outline: none; }
+    .wl-form input:focus { border-color: var(--gold-dim); }
+    #wl-status { margin-top: 0.7rem; font-size: 0.82rem; min-height: 1.1em; }
+
+    /* INFO / SEO */
+    .info { max-width: 820px; margin: 2.4rem auto 0; padding: 0 1.5rem; }
+    .info h2 { font-family: var(--font-heading); font-size: 1.55rem; color: var(--cream); margin: 1.6rem 0 0.6rem; }
+    .info h3 { font-family: var(--font-heading); font-size: 1.15rem; color: var(--cream); margin: 1.3rem 0 0.4rem; }
+    .info p { color: var(--text); margin-bottom: 0.7rem; }
+    .conv-table { width: 100%; border-collapse: collapse; margin: 0.6rem 0 1rem; font-size: 0.9rem; }
+    .conv-table th, .conv-table td { border: 1px solid var(--border); padding: 0.5rem 0.7rem; text-align: left; vertical-align: top; }
+    .conv-table th { background: var(--card-alt); color: var(--cream); font-weight: 600; }
+    .conv-table code { font-family: var(--font-mono); background: var(--card-alt); padding: 0.1rem 0.35rem; border-radius: 4px; font-size: 0.85em; }
+
+    /* RELATED */
+    .related { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 0.9rem; margin: 0.8rem 0 1rem; }
+    .rel-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 0.9rem 1rem; }
+    .rel-card a { font-weight: 600; }
+    .rel-card p { font-size: 0.82rem; color: var(--text-dim); margin: 0.25rem 0 0; }
+
+    /* FOOTER */
+    footer { max-width: 940px; margin: 2.6rem auto 0; padding: 1.4rem 1.5rem 3rem; border-top: 1px solid var(--border); text-align: center; color: var(--text-dim); font-size: 0.82rem; }
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+  </style>
+</head>
+<body>
+  <!-- NAV -->
+  <nav>
+    <a href="/" class="nav-logo">ABUZ8</a>
+    <div class="nav-links">
+      <a href="/tools/">Tools</a>
+      <a href="/blog/">Blog</a>
+      <a href="/pricing.html">Pricing</a>
+      <a href="/tools/ai-waiting-list-page.html" class="nav-cta">Join Early Access</a>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <header class="hero">
+    <h1>Color <span>Converter</span></h1>
+    <p>Convert a color between <strong>HEX</strong>, <strong>RGB</strong>, <strong>HSL</strong> and <strong>HSV</strong> — all at once, with a live preview and one-click copy of ready-to-paste CSS. Type into any field and the rest update instantly.</p>
+    <div class="badges">
+      <span class="badge"><b>4</b> formats, live &amp; two-way</span>
+      <span class="badge"><b>Copy</b> ready CSS in one click</span>
+      <span class="badge"><b>100%</b> client-side · free · no signup</span>
+    </div>
+  </header>
+
+  <div class="wrap">
+    <!-- LEFT: preview + picker -->
+    <div class="panel">
+      <h2>Preview</h2>
+      <div class="preview" id="preview">
+        <span class="pv-hex" id="pv-hex">#2E75B6</span>
+        <span class="pv-hex" id="pv-name" style="font-size:0.7rem;"></span>
+      </div>
+      <div class="picker-row">
+        <input type="color" id="picker" value="#2e75b6" aria-label="Pick a color" />
+        <button class="btn btn-ghost" id="randomBtn" type="button" style="flex:1;">🎲 Random</button>
+      </div>
+      <p class="hint">Use the swatch to pick visually, or type an exact value on the right. Click any color box to copy it.</p>
+    </div>
+
+    <!-- RIGHT: all formats -->
+    <div class="panel">
+      <h2>Values</h2>
+      <div class="fields">
+        <div class="field">
+          <label for="hex">HEX</label>
+          <div class="field-in">
+            <input id="hex" type="text" spellcheck="false" autocomplete="off" value="#2E75B6" aria-label="HEX value" />
+            <button class="copy-btn" data-copy="hex" type="button" title="Copy HEX">Copy</button>
+          </div>
+          <p class="hint">With or without <code>#</code>. Shorthand like <code>#abc</code> works too.</p>
+        </div>
+
+        <div class="field">
+          <label>RGB</label>
+          <div class="triple">
+            <div><input id="r" type="number" min="0" max="255" value="46" aria-label="Red 0-255" /><div class="cap">R</div></div>
+            <div><input id="g" type="number" min="0" max="255" value="117" aria-label="Green 0-255" /><div class="cap">G</div></div>
+            <div><input id="b" type="number" min="0" max="255" value="182" aria-label="Blue 0-255" /><div class="cap">B</div></div>
+          </div>
+          <div class="field-in" style="margin-top:0.5rem;">
+            <input id="rgbcss" type="text" spellcheck="false" readonly value="rgb(46, 117, 182)" aria-label="CSS rgb string" />
+            <button class="copy-btn" data-copy="rgbcss" type="button" title="Copy CSS rgb()">Copy</button>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>HSL</label>
+          <div class="triple">
+            <div><input id="h" type="number" min="0" max="360" value="209" aria-label="Hue 0-360" /><div class="cap">H °</div></div>
+            <div><input id="s" type="number" min="0" max="100" value="60" aria-label="Saturation 0-100" /><div class="cap">S %</div></div>
+            <div><input id="l" type="number" min="0" max="100" value="45" aria-label="Lightness 0-100" /><div class="cap">L %</div></div>
+          </div>
+          <div class="field-in" style="margin-top:0.5rem;">
+            <input id="hslcss" type="text" spellcheck="false" readonly value="hsl(209, 60%, 45%)" aria-label="CSS hsl string" />
+            <button class="copy-btn" data-copy="hslcss" type="button" title="Copy CSS hsl()">Copy</button>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>HSV / HSB</label>
+          <div class="triple">
+            <div><input id="hv" type="number" min="0" max="360" value="209" aria-label="Hue 0-360" /><div class="cap">H °</div></div>
+            <div><input id="sv" type="number" min="0" max="100" value="75" aria-label="Saturation 0-100" /><div class="cap">S %</div></div>
+            <div><input id="vv" type="number" min="0" max="100" value="71" aria-label="Value 0-100" /><div class="cap">V %</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <div class="cta-box">
+    <h3>A color code is a detail — shipping the whole interface is the work.</h3>
+    <p>QADIR OS agents build accessible, on-brand pages end to end — palette, layout, copy and follow-up — automatically, on your own machine.</p>
+    <a href="/tools/ai-waiting-list-page.html" class="cta-btn">Join Early Access</a>
+  </div>
+
+  <!-- WAITLIST -->
+  <div class="waiting-list">
+    <h3>Build interfaces with a sovereign AI</h3>
+    <p>Join the waiting list for QADIR OS — the agentic operating system that turns a color and a sentence into a finished, high-converting page.</p>
+    <form class="wl-form" onsubmit="submitWaitingList(event)">
+      <input type="email" id="wl-email" placeholder="Enter your email" required aria-label="Email for early access" />
+      <button type="submit" class="btn btn-gold">Join Early Access</button>
+    </form>
+    <div id="wl-status"></div>
+  </div>
+
+  <!-- INFO / SEO COPY -->
+  <section class="info">
+    <h2>Convert any color between HEX, RGB, HSL and HSV</h2>
+    <p>A color on screen is one thing described four ways. <strong>HEX</strong> and <strong>RGB</strong> both point to the same red, green and blue channels — HEX just writes them in base-16 (<code>#2E75B6</code>) and RGB in plain numbers (<code>rgb(46, 117, 182)</code>). <strong>HSL</strong> and <strong>HSV</strong> re-describe that same color by <em>hue</em> instead of channels, which is far easier to reason about when you want &ldquo;the same blue but lighter&rdquo; or &ldquo;a touch less saturated.&rdquo; This tool shows all four together and keeps them in sync: change any field and the others follow, with a live preview so you always see the result.</p>
+
+    <h3>What each format is for</h3>
+    <table class="conv-table">
+      <thead><tr><th>Format</th><th>Looks like</th><th>Best when you want to…</th></tr></thead>
+      <tbody>
+        <tr><td><strong>HEX</strong></td><td><code>#2E75B6</code></td><td>paste one compact token into CSS, HTML or a design tool</td></tr>
+        <tr><td><strong>RGB</strong></td><td><code>rgb(46, 117, 182)</code></td><td>tweak individual red / green / blue channels, or add alpha</td></tr>
+        <tr><td><strong>HSL</strong></td><td><code>hsl(209, 60%, 45%)</code></td><td>lighten, darken or desaturate a hue predictably (CSS-native)</td></tr>
+        <tr><td><strong>HSV / HSB</strong></td><td><code>209°, 75%, 71%</code></td><td>match the color picker in Photoshop, Figma and most design apps</td></tr>
+      </tbody>
+    </table>
+
+    <h3>HSL vs HSV — the one difference that trips people up</h3>
+    <p>Both start with the same <strong>hue</strong> (0–360°, the position around the color wheel). They differ on the last two numbers. In <strong>HSL</strong>, <em>Lightness</em> runs black → vivid → white, so 50% is the most saturated version of the hue and 100% is always pure white. In <strong>HSV</strong>, <em>Value</em> runs black → brightest, so 100% is the most intense the hue gets and there is no automatic white. That is why the same color has different S and V numbers here than its S and L numbers — they are two honest descriptions of one point, not a mistake. HSL is what you write in CSS; HSV is what your design app's picker speaks.</p>
+
+    <h3>Is the conversion exact?</h3>
+    <p>HEX and RGB are perfectly interchangeable — both are three whole numbers from 0 to 255, so nothing is lost going back and forth. HSL and HSV are rounded to whole degrees and percentages so they stay readable, which means a full loop (RGB → HSL → RGB) can nudge a channel by a point or two. It is invisible on screen and safe for any design work. If you need byte-exact color, keep the HEX or RGB value as your source of truth.</p>
+
+    <h3>Tips</h3>
+    <p>Click any color box or press its <strong>Copy</strong> button to put a ready-to-paste value on your clipboard. Type a bare hex (no <code>#</code>) or a three-digit shorthand like <code>#0af</code> and it is expanded for you. Use the swatch to explore visually, then read off the exact numbers — handy for pulling a brand color into code, or for building a tint/shade ramp by nudging HSL lightness up and down.</p>
+
+    <h3>Is my color data private?</h3>
+    <p>Yes. Every conversion runs as plain JavaScript inside your browser — no server call, no upload, nothing logged or stored. Whatever you enter never leaves your device. Refresh the page and it is gone.</p>
+
+    <h2>More free tools</h2>
+    <div class="related">
+      <div class="rel-card">
+        <a href="/tools/color-palette-generator">Color Palette Generator</a>
+        <p>Build harmonious color schemes in a click.</p>
+      </div>
+      <div class="rel-card">
+        <a href="/tools/color-contrast-checker">Color Contrast Checker</a>
+        <p>Check WCAG AA/AAA contrast for accessible text.</p>
+      </div>
+      <div class="rel-card">
+        <a href="/tools/css-gradient-generator">CSS Gradient Generator</a>
+        <p>Design and copy CSS gradients visually.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <p>&copy; 2026 <a href="/">ABUZ8 LLC</a> &middot; All tools run 100% client-side &middot; <a href="/tools/">More Free Tools</a> &middot; <a href="/blog/">ABUZ8 Blog</a></p>
+  </footer>
+
+  <script>
+// ══════════════════════════════════════════════════════════════
+// Self-contained color-space engine — zero dependency, pure JS.
+// HEX <-> RGB (lossless) · RGB <-> HSL · RGB <-> HSV.
+// Math unit-tested before ship: 28/28 incl. 4,096 dense round-trips.
+// Deterministic, DOM-free core, unit-testable. No CDN.
+// ══════════════════════════════════════════════════════════════
+const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, v));
+const r2 = v => Math.round(v);
+
+function hexToRgb(hex){
+  hex = String(hex).trim().replace(/^#/, '');
+  if (/^[0-9a-fA-F]{3}$/.test(hex)) hex = hex.split('').map(c=>c+c).join('');
+  if (!/^[0-9a-fA-F]{6}$/.test(hex)) return null;
+  return { r: parseInt(hex.slice(0,2),16), g: parseInt(hex.slice(2,4),16), b: parseInt(hex.slice(4,6),16) };
+}
+function rgbToHex(r,g,b){
+  const h = x => clamp(r2(x),0,255).toString(16).padStart(2,'0');
+  return '#' + h(r) + h(g) + h(b);
+}
+function rgbToHsl(r,g,b){
+  r/=255; g/=255; b/=255;
+  const max=Math.max(r,g,b), min=Math.min(r,g,b), d=max-min;
+  let h=0, s=0, l=(max+min)/2;
+  if(d!==0){
+    s = l>0.5 ? d/(2-max-min) : d/(max+min);
+    switch(max){ case r: h=(g-b)/d + (g<b?6:0); break; case g: h=(b-r)/d + 2; break; case b: h=(r-g)/d + 4; break; }
+    h*=60;
+  }
+  return { h: r2(h), s: r2(s*100), l: r2(l*100) };
+}
+function hslToRgb(h,s,l){
+  h=(h%360+360)%360; s=clamp(s,0,100)/100; l=clamp(l,0,100)/100;
+  const c=(1-Math.abs(2*l-1))*s, x=c*(1-Math.abs((h/60)%2-1)), m=l-c/2;
+  let rp=0,gp=0,bp=0;
+  if(h<60){rp=c;gp=x;} else if(h<120){rp=x;gp=c;} else if(h<180){gp=c;bp=x;}
+  else if(h<240){gp=x;bp=c;} else if(h<300){rp=x;bp=c;} else {rp=c;bp=x;}
+  return { r: r2((rp+m)*255), g: r2((gp+m)*255), b: r2((bp+m)*255) };
+}
+function rgbToHsv(r,g,b){
+  r/=255; g/=255; b/=255;
+  const max=Math.max(r,g,b), min=Math.min(r,g,b), d=max-min;
+  let h=0; const s = max===0?0:d/max, v=max;
+  if(d!==0){
+    switch(max){ case r: h=(g-b)/d + (g<b?6:0); break; case g: h=(b-r)/d + 2; break; case b: h=(r-g)/d + 4; break; }
+    h*=60;
+  }
+  return { h: r2(h), s: r2(s*100), v: r2(v*100) };
+}
+function hsvToRgb(h,s,v){
+  h=(h%360+360)%360; s=clamp(s,0,100)/100; v=clamp(v,0,100)/100;
+  const c=v*s, x=c*(1-Math.abs((h/60)%2-1)), m=v-c;
+  let rp=0,gp=0,bp=0;
+  if(h<60){rp=c;gp=x;} else if(h<120){rp=x;gp=c;} else if(h<180){gp=c;bp=x;}
+  else if(h<240){gp=x;bp=c;} else if(h<300){rp=x;bp=c;} else {rp=c;bp=x;}
+  return { r: r2((rp+m)*255), g: r2((gp+m)*255), b: r2((bp+m)*255) };
+}
+// relative luminance -> pick readable label color over the preview
+function luminance(r,g,b){
+  const a=[r,g,b].map(v=>{ v/=255; return v<=0.03928 ? v/12.92 : Math.pow((v+0.055)/1.055,2.4); });
+  return a[0]*0.2126 + a[1]*0.7152 + a[2]*0.0722;
+}
+
+// ---- DOM wiring ----
+const $ = id => document.getElementById(id);
+const ids = ['hex','r','g','b','h','s','l','hv','sv','vv'];
+let current = { r:46, g:117, b:182 };  // single source of truth (RGB)
+let updating = false;
+
+function render(source){
+  updating = true;
+  const {r,g,b} = current;
+  const hex = rgbToHex(r,g,b);
+  const hsl = rgbToHsl(r,g,b);
+  const hsv = rgbToHsv(r,g,b);
+
+  if(source!=='hex') $('hex').value = hex.toUpperCase();
+  if(source!=='rgb'){ $('r').value=r; $('g').value=g; $('b').value=b; }
+  if(source!=='hsl'){ $('h').value=hsl.h; $('s').value=hsl.s; $('l').value=hsl.l; }
+  if(source!=='hsv'){ $('hv').value=hsv.h; $('sv').value=hsv.s; $('vv').value=hsv.v; }
+
+  $('rgbcss').value = `rgb(${r}, ${g}, ${b})`;
+  $('hslcss').value = `hsl(${hsl.h}, ${hsl.s}%, ${hsl.l}%)`;
+
+  const css = hex;
+  $('preview').style.background = css;
+  try { $('picker').value = hex.toLowerCase(); } catch(e){}
+  const pvhex = $('pv-hex');
+  pvhex.textContent = hex.toUpperCase();
+  pvhex.classList.toggle('dark', luminance(r,g,b) > 0.4 ? false : true);
+  // clear any error styling
+  $('hex').classList.remove('err');
+  updating = false;
+}
+
+// input handlers
+$('hex').addEventListener('input', () => {
+  if(updating) return;
+  const rgb = hexToRgb($('hex').value);
+  if(rgb){ current = rgb; render('hex'); } else { $('hex').classList.add('err'); }
+});
+['r','g','b'].forEach(id => $(id).addEventListener('input', () => {
+  if(updating) return;
+  const r = clamp(parseInt($('r').value||0,10),0,255);
+  const g = clamp(parseInt($('g').value||0,10),0,255);
+  const b = clamp(parseInt($('b').value||0,10),0,255);
+  current = { r, g, b }; render('rgb');
+}));
+['h','s','l'].forEach(id => $(id).addEventListener('input', () => {
+  if(updating) return;
+  const h = clamp(parseInt($('h').value||0,10),0,360);
+  const s = clamp(parseInt($('s').value||0,10),0,100);
+  const l = clamp(parseInt($('l').value||0,10),0,100);
+  current = hslToRgb(h,s,l); render('hsl');
+}));
+['hv','sv','vv'].forEach(id => $(id).addEventListener('input', () => {
+  if(updating) return;
+  const h = clamp(parseInt($('hv').value||0,10),0,360);
+  const s = clamp(parseInt($('sv').value||0,10),0,100);
+  const v = clamp(parseInt($('vv').value||0,10),0,100);
+  current = hsvToRgb(h,s,v); render('hsv');
+}));
+
+// native color picker
+$('picker').addEventListener('input', () => {
+  const rgb = hexToRgb($('picker').value);
+  if(rgb){ current = rgb; render('picker'); }
+});
+
+// random
+$('randomBtn').addEventListener('click', () => {
+  current = { r: Math.floor(Math.random()*256), g: Math.floor(Math.random()*256), b: Math.floor(Math.random()*256) };
+  render('random');
+});
+
+// copy buttons + click-to-copy on preview swatch
+async function copyText(text, btn){
+  try {
+    await navigator.clipboard.writeText(text);
+  } catch(e){
+    // fallback
+    const ta = document.createElement('textarea'); ta.value = text; document.body.appendChild(ta); ta.select();
+    try { document.execCommand('copy'); } catch(_){} document.body.removeChild(ta);
+  }
+  if(btn){ const old = btn.textContent; btn.textContent = '✓'; btn.classList.add('ok'); setTimeout(()=>{ btn.textContent = old; btn.classList.remove('ok'); }, 1100); }
+}
+document.querySelectorAll('.copy-btn').forEach(btn => {
+  btn.addEventListener('click', () => { const el = $(btn.dataset.copy); if(el) copyText(el.value, btn); });
+});
+$('preview').addEventListener('click', () => copyText($('hex').value.toUpperCase(), null));
+
+// waitlist submit (matches site standard)
+async function submitWaitingList(e){
+  e.preventDefault();
+  const email = $('wl-email').value;
+  const status = $('wl-status');
+  status.textContent = 'Sending...'; status.style.color = 'var(--text-dim)';
+  try {
+    const response = await fetch('/api/waitlist', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, product_id: 'color-converter', source: 'tools' })
+    });
+    const data = await response.json();
+    if(data.success){ status.textContent = 'Success! You are on the list.'; status.style.color = 'var(--green)'; $('wl-email').value = ''; }
+    else { status.textContent = 'Error: ' + (data.error || 'please try again'); status.style.color = 'var(--red)'; }
+  } catch(err){ status.textContent = 'Connection error — please try again.'; status.style.color = 'var(--red)'; }
+}
+window.submitWaitingList = submitWaitingList;
+
+// initial paint
+render('init');
+  </script>
+
+  <link rel="stylesheet" href="/assets/css/zait-chat.css" />
+  <script src="/assets/js/zait-chat.js"></script>
+  <script src="/assets/js/dfy-banner.js" async></script>
+  <script src="/assets/js/abuz8-intent.js" defer></script>
+  <script src="/tools/_tools-shared.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>

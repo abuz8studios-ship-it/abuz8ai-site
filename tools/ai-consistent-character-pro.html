@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Consistent Character Pro — Same Face, Unlimited Scenes | ABUZ8</title>
+<meta name="description" content="Generate your character once. Use them across unlimited scenes, poses, and styles — same face, every time. ComfyUI consistent character engine on RTX 5090. Join early access.">
+<meta name="keywords" content="ai consistent character, ai character generator, same character ai, ai character reference, consistent ai art, character consistency ai, comfyui character, ai manga character">
+<link rel="canonical" href="https://abuz8ai.com/tools/ai-consistent-character-pro">
+<meta property="og:title" content="AI Consistent Character Pro — Same Face, Unlimited Scenes | ABUZ8">
+<meta property="og:description" content="Create a character reference once. AI keeps the same face, same style, across every image you generate — scenes, poses, emotions, outfits.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://abuz8ai.com/tools/ai-consistent-character-pro">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="AI Consistent Character Pro | ABUZ8">
+<meta name="twitter:description" content="The Xerox machine for AI characters. Same face, unlimited scenes, zero drift.">
+<link rel="stylesheet" href="/assets/css/abuz8-mach3.css">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@300;400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"SoftwareApplication","name":"AI Consistent Character Pro","applicationCategory":"MultimediaApplication","operatingSystem":"Web","description":"Generate a character reference once and reproduce the same face across unlimited scenes, poses, styles, and emotions using ComfyUI consistent character technology on local RTX 5090 GPU.","offers":{"@type":"Offer","price":"0","priceCurrency":"USD","availability":"https://schema.org/PreOrder"},"creator":{"@type":"Organization","name":"ABUZ8 LLC","url":"https://abuz8ai.com"}}
+</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"HowTo","name":"Create a Consistent AI Character","step":[{"@type":"HowToStep","name":"Describe your character","text":"Write a detailed character description — age, gender, hair, eyes, clothing, style, and any other defining features."},{"@type":"HowToStep","name":"Generate the reference","text":"AI creates your character's canonical reference image — the face it will keep across all future generations."},{"@type":"HowToStep","name":"Create scenes","text":"Describe new scenes, poses, or emotions. AI renders your character in each one with the same face preserved."},{"@type":"HowToStep","name":"Export your sequence","text":"Download all images as a consistent character set for your comic, animation, or brand content."}]}
+</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is consistent character AI?","acceptedAnswer":{"@type":"Answer","text":"Consistent character AI generates multiple images of the same character while keeping facial features, proportions, and style identical — solving the classic problem of AI art where faces change from image to image."}},{"@type":"Question","name":"How consistent is the face across scenes?","acceptedAnswer":{"@type":"Answer","text":"Very. Our engine uses reference-guided generation and IP-Adapter conditioning. The same eyes, nose structure, and facial proportions appear across all your scenes — including different angles and expressions."}},{"@type":"Question","name":"What art styles are supported?","acceptedAnswer":{"@type":"Answer","text":"Photorealistic, anime, manga, 3D CGI, oil painting, watercolor, flat vector, comic book, fantasy illustration, and more. Consistency is maintained across style switches too."}},{"@type":"Question","name":"Can I use a real photo as the character reference?","acceptedAnswer":{"@type":"Answer","text":"Yes. Upload a photo of a person (with consent) and the AI will generate consistent scenes featuring that likeness in different styles and settings."}},{"@type":"Question","name":"Is this useful for comics and webtoons?","acceptedAnswer":{"@type":"Answer","text":"Absolutely. This is the exact use case it was built for. Generate your main characters once, then produce an entire comic chapter with the same cast — consistent faces, panel after panel."}},{"@type":"Question","name":"Can I generate multiple characters in the same scene?","acceptedAnswer":{"@type":"Answer","text":"Multi-character scenes are on the roadmap. Currently, each generation focuses on one primary character with optional background figures."}},{"@type":"Question","name":"How many scenes can I generate from one reference?","acceptedAnswer":{"@type":"Answer","text":"Unlimited. The reference image is saved and reused for every new scene you request. One character, infinite content."}},{"@type":"Question","name":"What's the resolution of the output?","acceptedAnswer":{"@type":"Answer","text":"Default output is 1024×1024 px. Photorealistic mode supports up to 1536×1536 px, and outputs can be upscaled to 4x via our AI Image Upscaler."}},{"@type":"Question","name":"Can I use these characters commercially?","acceptedAnswer":{"@type":"Answer","text":"Yes. All images generated through ABUZ8 tools are yours to use for commercial projects, publications, and products."}},{"@type":"Question","name":"What model powers this?","acceptedAnswer":{"@type":"Answer","text":"ComfyUI with IP-Adapter Plus and ControlNet facial conditioning, running on local RTX 5090. No character data is sent to third-party APIs."}}]}
+</script>
+<style>
+:root{
+  --lapis:#0a1628; --lapis-2:#0d1a30; --lapis-3:#111f38;
+  --gold:#c9a84c; --gold-2:#e6c879;
+  --turq:#0e9f6e; --turq-2:#2bb39e;
+  --cream:#f5f0e8; --text:#e8e4d8; --dim:#8a9aaa; --border:#1a2e50;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{background:var(--lapis);color:var(--text);font-family:'Inter',sans-serif;line-height:1.6;min-height:100vh;-webkit-font-smoothing:antialiased}
+a{color:var(--gold);text-decoration:none}
+.mono{font-family:'JetBrains Mono',monospace}
+.wrap{max-width:1200px;margin:0 auto;padding:32px 24px}
+.nav{display:flex;justify-content:space-between;align-items:center;padding-bottom:20px;border-bottom:1px solid var(--border);margin-bottom:40px}
+.brand{font-family:'Playfair Display',serif;font-size:22px;color:var(--cream)}
+.brand .acc{color:var(--gold)}
+.back{font-size:11px;color:var(--dim);letter-spacing:2px;text-transform:uppercase}
+.back:hover{color:var(--gold)}
+.hero{display:grid;grid-template-columns:1.1fr .9fr;gap:48px;align-items:center;margin-bottom:56px}
+@media(max-width:880px){.hero{grid-template-columns:1fr}}
+.eyebrow{color:var(--turq-2);font-size:11px;letter-spacing:3px;text-transform:uppercase;margin-bottom:18px;font-weight:600}
+h1{font-family:'Playfair Display',serif;font-size:clamp(2.2rem,5vw,3.6rem);color:var(--cream);line-height:1.05;margin-bottom:20px;font-weight:900}
+h1 .gold{color:var(--gold)}
+.lede{color:var(--dim);font-size:18px;font-weight:300;max-width:540px;margin-bottom:28px}
+.row-stats{display:flex;gap:32px;margin-top:20px;flex-wrap:wrap}
+.stat{border-left:2px solid var(--gold);padding-left:14px}
+.stat .n{font-family:'Playfair Display',serif;font-size:28px;color:var(--cream);font-weight:700;line-height:1}
+.stat .l{font-size:10px;color:var(--dim);letter-spacing:2px;text-transform:uppercase;margin-top:6px}
+.badge{display:inline-flex;align-items:center;gap:8px;background:rgba(201,168,76,.12);border:1px solid rgba(201,168,76,.3);border-radius:20px;padding:6px 16px;font-size:11px;color:var(--gold);letter-spacing:2px;text-transform:uppercase;margin-bottom:24px}
+.badge .dot{width:6px;height:6px;border-radius:50%;background:var(--gold)}
+.card{background:var(--lapis-2);border:1px solid var(--border);border-radius:16px;padding:32px}
+.btn-gold{display:inline-block;background:var(--gold);color:#0a1628;font-weight:700;font-size:14px;letter-spacing:.5px;padding:14px 32px;border-radius:8px;border:none;cursor:pointer;transition:background .2s}
+.btn-gold:hover{background:var(--gold-2)}
+.btn-ghost{display:inline-block;background:transparent;color:var(--cream);font-size:14px;font-weight:600;padding:14px 28px;border-radius:8px;border:1px solid var(--border);cursor:pointer;transition:border-color .2s}
+.btn-ghost:hover{border-color:var(--gold);color:var(--gold)}
+section{margin-bottom:56px}
+h2{font-family:'Playfair Display',serif;font-size:clamp(1.8rem,3.5vw,2.8rem);color:var(--cream);margin-bottom:16px;font-weight:700}
+h2 .gold{color:var(--gold)}
+.sec-lede{color:var(--dim);font-size:17px;font-weight:300;max-width:600px;margin-bottom:40px}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+@media(max-width:768px){.grid-3{grid-template-columns:1fr}}
+.feat-card{background:var(--lapis-2);border:1px solid var(--border);border-radius:12px;padding:28px}
+.feat-icon{font-size:28px;margin-bottom:16px}
+.feat-card h3{font-family:'Playfair Display',serif;font-size:1.2rem;color:var(--cream);margin-bottom:10px}
+.feat-card p{color:var(--dim);font-size:15px;line-height:1.6}
+.workbench{background:var(--lapis-2);border:1px solid var(--border);border-radius:16px;padding:36px;margin-bottom:24px}
+.wl{font-size:11px;color:var(--dim);letter-spacing:2px;text-transform:uppercase;margin-bottom:12px}
+textarea,input[type=text],input[type=email],select{background:var(--lapis);border:1px solid var(--border);color:var(--text);border-radius:8px;padding:12px 16px;font-family:'Inter',sans-serif;font-size:14px;width:100%;outline:none;transition:border-color .2s;resize:none}
+textarea:focus,input[type=text]:focus,input[type=email]:focus,select:focus{border-color:var(--gold)}
+.param-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}
+@media(max-width:640px){.param-row{grid-template-columns:1fr}}
+.param-label{font-size:11px;color:var(--dim);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px}
+.output-panel{background:var(--lapis-2);border:1px solid var(--border);border-radius:12px;padding:24px;display:none}
+.output-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px}
+.output-img-wrap{position:relative}
+.output-img-wrap img{width:100%;border-radius:8px;display:block}
+.output-img-wrap .dl{position:absolute;bottom:8px;right:8px;background:rgba(10,22,40,.8);color:var(--gold);font-size:12px;padding:4px 10px;border-radius:6px;cursor:pointer;border:1px solid var(--gold)}
+.loading{display:none;text-align:center;padding:40px}
+.spinner{width:40px;height:40px;border:3px solid var(--border);border-top-color:var(--gold);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 16px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.modal{display:none;position:fixed;inset:0;background:rgba(10,22,40,.9);z-index:1000;align-items:center;justify-content:center}
+.modal.active{display:flex}
+.modal-box{background:var(--lapis-2);border:1px solid var(--gold);border-radius:16px;padding:40px;max-width:440px;text-align:center}
+.modal-box h3{font-family:'Playfair Display',serif;font-size:1.6rem;color:var(--cream);margin-bottom:12px}
+.modal-box p{color:var(--dim);margin-bottom:24px}
+.styles-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+@media(max-width:640px){.styles-grid{grid-template-columns:repeat(2,1fr)}}
+.style-btn{background:var(--lapis);border:1px solid var(--border);border-radius:8px;padding:12px 8px;text-align:center;cursor:pointer;transition:all .2s;font-size:12px;color:var(--dim)}
+.style-btn:hover,.style-btn.active{border-color:var(--gold);color:var(--gold);background:rgba(201,168,76,.08)}
+.style-btn .sicon{font-size:20px;margin-bottom:6px}
+.faq-item{border-bottom:1px solid var(--border);padding:20px 0}
+.faq-item h3{color:var(--cream);font-size:16px;margin-bottom:8px}
+.faq-item p{color:var(--dim);font-size:15px}
+.tech-row{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;text-align:center}
+@media(max-width:768px){.tech-row{grid-template-columns:repeat(2,1fr)}}
+.tech-cell{background:var(--lapis-2);border:1px solid var(--border);border-radius:10px;padding:20px}
+.tech-cell .tc-val{font-family:'JetBrains Mono',monospace;font-size:18px;color:var(--gold);font-weight:600;margin-bottom:6px}
+.tech-cell .tc-label{font-size:11px;color:var(--dim);letter-spacing:1px;text-transform:uppercase}
+.use-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+@media(max-width:600px){.use-grid{grid-template-columns:1fr}}
+.use-card{background:var(--lapis-2);border:1px solid var(--border);border-radius:10px;padding:20px}
+.use-card h4{color:var(--cream);font-size:15px;margin-bottom:8px}
+.use-card p{color:var(--dim);font-size:14px}
+.footer{border-top:1px solid var(--border);padding-top:32px;margin-top:56px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px}
+.footer p{color:var(--dim);font-size:13px}
+.footer-links{display:flex;gap:24px}
+.footer-links a{color:var(--dim);font-size:13px}
+.footer-links a:hover{color:var(--gold)}
+.ref-tag{background:rgba(26,138,122,.15);border:1px solid rgba(26,138,122,.3);color:var(--turq-2);font-size:11px;padding:3px 10px;border-radius:12px;margin-left:8px;letter-spacing:1px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- NAV -->
+  <nav class="nav">
+    <a href="/" class="brand">ABU<span class="acc">Z8</span></a>
+    <a href="/tools.html" class="back">← All Tools</a>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div>
+      <div class="badge"><span class="dot"></span>Early Access</div>
+      <p class="eyebrow">Consistent Character Pro</p>
+      <h1>One Character. <span class="gold">Infinite Scenes.</span> Zero Drift.</h1>
+      <p class="lede">The AI xerox machine for characters. Generate your character's reference once — AI keeps the same face, proportions, and style across every scene, pose, emotion, and outfit you throw at it.</p>
+      <div style="display:flex;gap:16px;flex-wrap:wrap">
+        <button class="btn-gold" onclick="document.getElementById('workbench').scrollIntoView({behavior:'smooth'})">Create Your Character →</button>
+        <button class="btn-ghost" onclick="document.getElementById('wl-modal').classList.add('active')">Join Early Access</button>
+      </div>
+      <div class="row-stats">
+        <div class="stat"><div class="n">∞</div><div class="l">Scenes / Character</div></div>
+        <div class="stat"><div class="n">10+</div><div class="l">Art Styles</div></div>
+        <div class="stat"><div class="n">1024px</div><div class="l">Default Output</div></div>
+        <div class="stat"><div class="n">RTX 5090</div><div class="l">Local GPU</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="eyebrow">The Consistency Problem — Solved</div>
+      <div style="display:flex;flex-direction:column;gap:20px">
+        <div style="background:rgba(255,80,80,.08);border:1px solid rgba(255,80,80,.2);border-radius:10px;padding:16px">
+          <div style="color:#ff6b6b;font-size:12px;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px">Before: The Problem</div>
+          <p style="color:var(--dim);font-size:14px">Every AI generation produces a slightly different face. Characters look like cousins, not the same person. Comics are unusable. Brand characters drift over time.</p>
+        </div>
+        <div style="background:rgba(26,138,122,.08);border:1px solid rgba(26,138,122,.2);border-radius:10px;padding:16px">
+          <div style="color:var(--turq-2);font-size:12px;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px">After: QADIR OS Solution</div>
+          <p style="color:var(--dim);font-size:14px">IP-Adapter facial conditioning locks the reference. Same eyes, nose, and facial structure appear in every single output — action shots, close-ups, group scenes, emotion ranges.</p>
+        </div>
+        <div style="background:rgba(201,168,76,.08);border:1px solid rgba(201,168,76,.2);border-radius:10px;padding:16px">
+          <div style="color:var(--gold);font-size:12px;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px">The Result</div>
+          <p style="color:var(--dim);font-size:14px">Comics, brand mascots, marketing campaigns, game assets — a consistent cast that looks like it was drawn by the same artist every time.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WORKBENCH -->
+  <section id="workbench">
+    <h2>Character <span class="gold">Creation Studio</span></h2>
+    <p class="sec-lede">Describe your character, choose a style, and generate scenes. The same face — every time.</p>
+
+    <div class="workbench">
+      <div class="wl">Step 1 — Character Description</div>
+      <textarea id="charDesc" rows="4" placeholder="Describe your character in detail: 'A 28-year-old woman with sharp cheekbones, dark wavy hair to her shoulders, piercing green eyes, light olive skin, usually wearing a leather jacket. Serious but warm expression. Strong jawline.'"></textarea>
+
+      <div style="margin-top:24px">
+        <div class="wl">Step 2 — Reference Photo (optional)</div>
+        <div style="border:2px dashed var(--border);border-radius:10px;padding:24px;text-align:center;cursor:pointer;position:relative;background:var(--lapis)" id="refUpload">
+          <input type="file" id="refInput" accept="image/*" style="position:absolute;inset:0;opacity:0;cursor:pointer">
+          <p style="color:var(--dim);font-size:14px"><strong style="color:var(--cream)">Upload reference photo</strong> (optional)<br>Upload any face to use as the base character</p>
+        </div>
+        <p id="refName" style="color:var(--gold);font-size:13px;margin-top:8px;display:none"></p>
+      </div>
+
+      <div style="margin-top:24px">
+        <div class="wl">Step 3 — Art Style</div>
+        <div class="styles-grid" id="styleGrid">
+          <div class="style-btn active" data-style="photorealistic"><div class="sicon">📸</div>Photo<br>realistic</div>
+          <div class="style-btn" data-style="anime"><div class="sicon">🎌</div>Anime /<br>Manga</div>
+          <div class="style-btn" data-style="3d_cgi"><div class="sicon">🎮</div>3D CGI</div>
+          <div class="style-btn" data-style="comic_book"><div class="sicon">💥</div>Comic<br>Book</div>
+          <div class="style-btn" data-style="oil_painting"><div class="sicon">🎨</div>Oil<br>Painting</div>
+          <div class="style-btn" data-style="watercolor"><div class="sicon">💧</div>Water<br>color</div>
+          <div class="style-btn" data-style="flat_vector"><div class="sicon">📐</div>Flat<br>Vector</div>
+          <div class="style-btn" data-style="fantasy"><div class="sicon">⚔️</div>Fantasy<br>Art</div>
+        </div>
+      </div>
+
+      <div style="margin-top:24px">
+        <div class="wl">Step 4 — Scenes to Generate</div>
+        <p style="color:var(--dim);font-size:13px;margin-bottom:12px">Add one scene per line. Each gets the same consistent face.</p>
+        <textarea id="scenes" rows="5" placeholder="Portrait, neutral expression, white background&#10;Action pose, running through rain, city background&#10;Close-up, smiling, warm lighting&#10;Side profile, looking into the distance&#10;Full body, standing in a forest"></textarea>
+      </div>
+
+      <div style="margin-top:24px;display:flex;gap:16px;flex-wrap:wrap">
+        <button class="btn-gold" onclick="generateCharacter()">Generate Character Scenes →</button>
+        <button class="btn-ghost" onclick="document.getElementById('wl-modal').classList.add('active')">Join Waitlist for Unlimited</button>
+      </div>
+    </div>
+
+    <div class="loading" id="loadingPanel">
+      <div class="spinner"></div>
+      <p style="color:var(--dim)">Generating consistent character scenes…</p>
+      <p class="mono" style="color:var(--gold);font-size:12px;margin-top:8px">comfyui_consistent_character · IP-Adapter · RTX 5090</p>
+    </div>
+
+    <div class="output-panel" id="outputPanel">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+        <h3 style="font-family:'Playfair Display',serif;color:var(--cream)">Your Character</h3>
+        <button class="btn-ghost" onclick="generateCharacter()" style="font-size:13px;padding:8px 20px">Regenerate</button>
+      </div>
+      <div class="output-grid" id="outputGrid"></div>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section>
+    <h2>Built For <span class="gold">Visual Storytellers</span></h2>
+    <p class="sec-lede">The first AI tool that actually solves character consistency — not just promises it.</p>
+    <div class="grid-3">
+      <div class="feat-card">
+        <div class="feat-icon">🔒</div>
+        <h3>IP-Adapter Facial Lock</h3>
+        <p>Our engine uses IP-Adapter Plus conditioning to anchor the character's facial features across every generation — not just visual similarity, true identity locking.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">🎭</div>
+        <h3>Full Emotion Range</h3>
+        <p>Happy, angry, shocked, neutral, determined — generate your character across the full spectrum of human expression without losing facial structure.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">👗</div>
+        <h3>Outfit & Scene Variance</h3>
+        <p>Change clothes, change backgrounds, change lighting — the face stays the same. Perfect for fashion brands, character development, and storytelling.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">🖼️</div>
+        <h3>Multi-Style Consistency</h3>
+        <p>Generate your character in photorealistic AND anime AND 3D CGI — the same person in every art style. Cross-media character presence.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">📚</div>
+        <h3>Comic Strip Ready</h3>
+        <p>Generate panel sequences with the same cast. Page-by-page consistency for webtoons, graphic novels, and storyboards — without an art team.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">🏷️</div>
+        <h3>Brand Mascot Engine</h3>
+        <p>Create a brand mascot, generate it in every marketing context, across all seasons and campaigns — with zero visual drift between uses.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- USE CASES -->
+  <section>
+    <h2>Who Uses <span class="gold">Consistent Character</span></h2>
+    <div class="use-grid">
+      <div class="use-card">
+        <h4>📖 Webtoon & Manga Creators</h4>
+        <p>Build your cast once. Generate chapters at speed without an illustration team. Same faces, panel after panel.</p>
+      </div>
+      <div class="use-card">
+        <h4>🎮 Game Developers</h4>
+        <p>Character concept art across poses, angles, and expressions — consistent enough for production reference.</p>
+      </div>
+      <div class="use-card">
+        <h4>📢 Marketing & Brand</h4>
+        <p>Brand mascots and spokespersons across campaigns — seasonal graphics, ad creatives, social posts. One character, everywhere.</p>
+      </div>
+      <div class="use-card">
+        <h4>📽️ Content Creators</h4>
+        <p>AI avatars for YouTube thumbnails, social media, and video content — consistent branding across all your content.</p>
+      </div>
+      <div class="use-card">
+        <h4>✍️ Authors & Writers</h4>
+        <p>Visualize your novel's characters for promotional materials, covers, and social posts — consistent with how you imagined them.</p>
+      </div>
+      <div class="use-card">
+        <h4>🎬 Film & Animation Pre-Pro</h4>
+        <p>Character concept development across poses and moods. Storyboard reference that stays on-model throughout production.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- TECH SPECS -->
+  <section>
+    <h2>Technical <span class="gold">Specs</span></h2>
+    <div class="tech-row">
+      <div class="tech-cell"><div class="tc-val">IP-Adapter</div><div class="tc-label">Facial Conditioning</div></div>
+      <div class="tech-cell"><div class="tc-val">ControlNet</div><div class="tc-label">Pose Guidance</div></div>
+      <div class="tech-cell"><div class="tc-val">ComfyUI</div><div class="tc-label">Rendering Engine</div></div>
+      <div class="tech-cell"><div class="tc-val">RTX 5090</div><div class="tc-label">Local GPU</div></div>
+    </div>
+    <div class="tech-row" style="margin-top:16px">
+      <div class="tech-cell"><div class="tc-val">1024px</div><div class="tc-label">Default Resolution</div></div>
+      <div class="tech-cell"><div class="tc-val">10+</div><div class="tc-label">Art Styles</div></div>
+      <div class="tech-cell"><div class="tc-val">∞</div><div class="tc-label">Scenes / Character</div></div>
+      <div class="tech-cell"><div class="tc-val">PNG/JPG</div><div class="tc-label">Output Format</div></div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section>
+    <h2>Frequently Asked <span class="gold">Questions</span></h2>
+    <div>
+      <div class="faq-item"><h3>What is consistent character AI?</h3><p>Consistent character AI generates multiple images of the same character while keeping facial features, proportions, and style identical — solving the classic problem where AI faces change from image to image.</p></div>
+      <div class="faq-item"><h3>How consistent is the face across scenes?</h3><p>Very. Our engine uses IP-Adapter Plus and ControlNet facial conditioning. The same eyes, nose structure, and facial proportions appear across all your scenes — including different angles and expressions.</p></div>
+      <div class="faq-item"><h3>What art styles are supported?</h3><p>Photorealistic, anime, manga, 3D CGI, oil painting, watercolor, flat vector, comic book, fantasy illustration, and more. Consistency is maintained across style switches.</p></div>
+      <div class="faq-item"><h3>Can I use a real photo as the character reference?</h3><p>Yes. Upload a photo (with consent) and the AI will generate consistent scenes featuring that likeness in different styles and settings.</p></div>
+      <div class="faq-item"><h3>Is this useful for comics and webtoons?</h3><p>Absolutely. Generate your main characters once, then produce an entire comic chapter with the same cast — consistent faces, panel after panel.</p></div>
+      <div class="faq-item"><h3>How many scenes can I generate from one reference?</h3><p>Unlimited. The reference image is saved and reused for every new scene you request. One character, infinite content.</p></div>
+      <div class="faq-item"><h3>Can I use these characters commercially?</h3><p>Yes. All images generated through ABUZ8 tools are yours to use for commercial projects, publications, and products.</p></div>
+      <div class="faq-item"><h3>What model powers this?</h3><p>ComfyUI with IP-Adapter Plus and ControlNet facial conditioning, running on local RTX 5090. No character data is sent to third-party APIs.</p></div>
+    </div>
+  </section>
+
+  <!-- WAITLIST -->
+  <section style="text-align:center;padding:56px 0">
+    <div class="badge" style="margin:0 auto 24px"><span class="dot"></span>Early Access Open</div>
+    <h2>Reserve Your <span class="gold">Character Engine</span></h2>
+    <p style="color:var(--dim);font-size:18px;max-width:500px;margin:0 auto 32px">Join the waitlist for unlimited consistent character generation — local GPU, your characters, your IP.</p>
+    <form id="hero-wl-form" style="display:flex;gap:12px;max-width:440px;margin:0 auto;flex-wrap:wrap">
+      <input type="email" id="hero-wl-email" placeholder="your@email.com" style="flex:1;min-width:240px">
+      <button type="submit" class="btn-gold">Join Waitlist →</button>
+    </form>
+    <p id="hero-wl-msg" style="color:var(--turq-2);margin-top:12px;font-size:14px;display:none">✓ You're on the list!</p>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <p>© 2026 ABUZ8 LLC · All rights reserved</p>
+    <div class="footer-links">
+      <a href="/">Home</a><a href="/tools.html">Tools</a><a href="/store.html">Store</a><a href="/disclaimer.html">Disclaimer</a>
+    </div>
+  </footer>
+</div>
+
+<!-- WAITLIST MODAL -->
+<div class="modal" id="wl-modal">
+  <div class="modal-box">
+    <h3>Join Early Access</h3>
+    <p>Be first in line for the consistent character engine — unlimited scenes, local GPU, zero drift.</p>
+    <form id="modal-wl-form">
+      <input type="email" id="modal-wl-email" placeholder="your@email.com" style="margin-bottom:12px">
+      <button type="submit" class="btn-gold" style="width:100%">Secure My Spot →</button>
+    </form>
+    <p id="modal-wl-msg" style="color:var(--turq-2);margin-top:12px;font-size:14px;display:none">✓ You're on the list!</p>
+    <button onclick="document.getElementById('wl-modal').classList.remove('active')" style="background:none;border:none;color:var(--dim);cursor:pointer;margin-top:16px;font-size:13px">Close</button>
+  </div>
+</div>
+
+<!-- SERVER OFFLINE MODAL -->
+<div class="modal" id="offline-modal">
+  <div class="modal-box">
+    <h3>🔧 Server Offline</h3>
+    <p>The character engine is not running right now. Join the waitlist and we'll notify you when it's live.</p>
+    <form id="offline-wl-form">
+      <input type="email" id="offline-wl-email" placeholder="your@email.com" style="margin-bottom:12px">
+      <button type="submit" class="btn-gold" style="width:100%">Notify Me When Live →</button>
+    </form>
+    <p id="offline-wl-msg" style="color:var(--turq-2);margin-top:12px;font-size:14px;display:none">✓ We'll let you know!</p>
+    <button onclick="document.getElementById('offline-modal').classList.remove('active')" style="background:none;border:none;color:var(--dim);cursor:pointer;margin-top:16px;font-size:13px">Close</button>
+  </div>
+</div>
+
+<script>
+// Style selection
+let selectedStyle='photorealistic';
+document.querySelectorAll('.style-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.style-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    selectedStyle=btn.dataset.style;
+  });
+});
+
+// Reference upload
+document.getElementById('refInput').addEventListener('change',function(){
+  if(this.files[0]){
+    document.getElementById('refName').textContent='✓ Reference: '+this.files[0].name;
+    document.getElementById('refName').style.display='block';
+  }
+});
+
+async function generateCharacter(){
+  const desc=document.getElementById('charDesc').value.trim();
+  if(!desc){alert('Please describe your character first.');return;}
+  const scenes=document.getElementById('scenes').value.trim().split('\n').filter(s=>s.trim());
+  if(!scenes.length){alert('Please add at least one scene to generate.');return;}
+
+  document.getElementById('loadingPanel').style.display='block';
+  document.getElementById('outputPanel').style.display='none';
+
+  let refImage=null;
+  const refFile=document.getElementById('refInput').files[0];
+  if(refFile){
+    refImage=await fileToBase64(refFile);
+  }
+
+  try{
+    const res=await fetch('/api/tools/run',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        tool:'comfyui_consistent_character',
+        params:{
+          character_description:desc,
+          scenes,
+          style:selectedStyle,
+          reference_image:refImage,
+          width:1024,height:1024
+        }
+      })
+    });
+    if(!res.ok)throw new Error('Server error');
+    const data=await res.json();
+    document.getElementById('loadingPanel').style.display='none';
+    const images=data.images||data.outputs||[];
+    if(images.length){
+      const grid=document.getElementById('outputGrid');
+      grid.innerHTML='';
+      images.forEach((src,i)=>{
+        const wrap=document.createElement('div');
+        wrap.className='output-img-wrap';
+        wrap.innerHTML=`<img src="${src}" alt="Scene ${i+1}"><div class="dl" onclick="dl('${src}',${i+1})">⬇ Save</div>`;
+        grid.appendChild(wrap);
+      });
+      document.getElementById('outputPanel').style.display='block';
+    }
+  }catch(err){
+    document.getElementById('loadingPanel').style.display='none';
+    document.getElementById('offline-modal').classList.add('active');
+  }
+}
+
+function dl(src,n){const a=document.createElement('a');a.href=src;a.download=`abuz8-character-scene-${n}.png`;a.click();}
+function fileToBase64(file){return new Promise(r=>{const rd=new FileReader();rd.onload=e=>r(e.target.result);rd.readAsDataURL(file);});}
+
+async function submitWaitlist(emailId,msgId){
+  const email=document.getElementById(emailId).value;
+  if(!email||!email.includes('@')){alert('Please enter a valid email.');return;}
+  try{await fetch('/api/waitlist',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,tool:'consistent-character-pro',source:'consistent-character-pro'})});}catch(e){}
+  document.getElementById(msgId).style.display='block';
+}
+document.getElementById('hero-wl-form').addEventListener('submit',e=>{e.preventDefault();submitWaitlist('hero-wl-email','hero-wl-msg')});
+document.getElementById('modal-wl-form').addEventListener('submit',e=>{e.preventDefault();submitWaitlist('modal-wl-email','modal-wl-msg')});
+document.getElementById('offline-wl-form').addEventListener('submit',e=>{e.preventDefault();submitWaitlist('offline-wl-email','offline-wl-msg')});
+document.getElementById('wl-modal').addEventListener('click',function(e){if(e.target===this)this.classList.remove('active')});
+document.getElementById('offline-modal').addEventListener('click',function(e){if(e.target===this)this.classList.remove('active')});
+</script>
+<script src="_abuz8-live-brain.js" defer></script>
+<script src="/tools/_tools-shared.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+
+<!-- ABUZ8 LIVE STUDIO (injected 2026-08-16-studio) -->
+<section id="abuz8-studio-section" style="padding:56px 0 8px">
+  <div style="max-width:1180px;margin:0 auto;padding:0 20px">
+    <h2 style="font:800 clamp(24px,3.2vw,34px)/1.15 Playfair Display,Georgia,serif;
+               color:var(--text,#e8e4d8);margin:0 0 10px">Live Studio</h2>
+    <p style="font:400 15px/1.65 Inter,system-ui,sans-serif;color:var(--dim,#8a9aaa);
+              max-width:70ch;margin:0 0 26px">
+      This runs on <strong style="color:var(--text,#e8e4d8)">your own machine</strong>, not our servers.
+      If ComfyUI is running locally on port 8188 you get the full studio below and your images
+      never leave your computer. If it is not, you will see Early Access instead &mdash;
+      we never show a spinner that is not doing anything.
+    </p>
+  </div>
+  <div id="abuz8-studio"></div>
+</section>
+<script src="_comfy-client.js"></script>
+<script src="_comfy-studio.js"></script>
+<script>
+(function () {
+  function boot() {
+
+  new ComfyStudio({
+    mount: '#abuz8-studio', slug: 'character',
+    promptLabel: 'Describe your character',
+    promptPlaceholder: 'silver-haired ranger with emerald cloak and a crescent scar, calm confident expression',
+    basePositive: 'consistent character reference sheet, same character, full body and portrait, neutral studio background, clean lighting, highly detailed, model sheet style',
+    negative: 'multiple different characters, inconsistent face, watermark, signature, text, blurry, low quality, deformed, extra limbs, bad anatomy',
+    sizes: [512, 768, 1024], maxBatch: 4, defaultSteps: 24,
+    styles: [
+      { id:'anime',    label:'Anime',        pos:'anime character design, cel shading, crisp lineart, vibrant colors' },
+      { id:'realistic',label:'Realistic',    pos:'photorealistic character portrait, cinematic lighting, 85mm lens, skin detail' },
+      { id:'fantasy',  label:'Fantasy Art',  pos:'painterly fantasy illustration, dramatic rim light, rich textures, concept art' },
+      { id:'chibi',    label:'Chibi',        pos:'cute chibi character, big expressive eyes, soft pastel palette, sticker style' }
+    ],
+    buildWorkflow: function (c) {
+      return {
+        '1':{class_type:'CheckpointLoaderSimple',inputs:{ckpt_name:c.ckpt}},
+        '2':{class_type:'CLIPTextEncode',inputs:{text:c.positive,clip:['1',1]}},
+        '3':{class_type:'CLIPTextEncode',inputs:{text:c.negative,clip:['1',1]}},
+        '4':{class_type:'EmptyLatentImage',inputs:{width:c.size,height:c.size,batch_size:c.batch}},
+        '5':{class_type:'KSampler',inputs:{seed:c.seed,steps:c.steps,cfg:7.5,
+             sampler_name:'euler',scheduler:'normal',denoise:1.0,
+             model:['1',0],positive:['2',0],negative:['3',0],latent_image:['4',0]}},
+        '6':{class_type:'VAEDecode',inputs:{samples:['5',0],vae:['1',2]}},
+        '7':{class_type:'SaveImage',inputs:{filename_prefix:'abuz8_character',images:['6',0]}}
+      };
+    }
+  }).mount();
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
+  else boot();
+})();
+</script>
+<!-- /ABUZ8 LIVE STUDIO -->
+
+</body>
+</html>
+

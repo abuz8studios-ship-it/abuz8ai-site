@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AI Org Chart Builder — ABUZ8</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--lapis:#0a1628;--lapis2:#0f1f3d;--lapis3:#162544;--gold:#c9a84c;--turq:#0e9f6e;--turq2:#22b5a0;--cream:#f5f0e8;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--lapis);color:var(--cream);font-family:'Inter',sans-serif;min-height:100vh;}
+header{background:var(--lapis2);border-bottom:1px solid var(--gold);padding:18px 32px;display:flex;align-items:center;gap:16px;}
+.logo{font-family:'Playfair Display',serif;color:var(--gold);font-size:1.4rem;}
+.badge{background:var(--gold);color:var(--lapis);font-size:.65rem;font-weight:700;padding:2px 8px;border-radius:10px;}
+h1{font-family:'Playfair Display',serif;font-size:1.8rem;color:var(--gold);margin-bottom:6px;}
+.sub{color:#8899aa;font-size:.9rem;}
+main{max-width:1200px;margin:0 auto;padding:32px 24px;}
+.layout{display:grid;grid-template-columns:280px 1fr;gap:24px;margin-top:24px;}
+.panel{background:var(--lapis2);border:1px solid #1e3a5f;border-radius:12px;padding:24px;}
+.panel h2{font-family:'Playfair Display',serif;color:var(--gold);font-size:1.1rem;margin-bottom:16px;}
+label{display:block;font-size:.8rem;color:#8899aa;margin-bottom:4px;margin-top:14px;}
+label:first-of-type{margin-top:0;}
+input,select{width:100%;background:var(--lapis3);border:1px solid #1e3a5f;border-radius:6px;color:var(--cream);padding:8px 12px;font-size:.85rem;font-family:'Inter',sans-serif;}
+input:focus,select:focus{outline:none;border-color:var(--gold);}
+.btn{background:var(--gold);color:var(--lapis);border:none;border-radius:8px;padding:12px 24px;font-weight:700;cursor:pointer;width:100%;margin-top:16px;}
+.btn:hover{opacity:.85;}
+.btn-sm{background:transparent;border:1px solid var(--turq2);color:var(--turq2);border-radius:6px;padding:6px 14px;font-size:.78rem;cursor:pointer;margin-right:6px;}
+.org-tabs{display:flex;gap:6px;margin-bottom:16px;}
+.otab{background:var(--lapis3);border:1px solid #1e3a5f;border-radius:6px;padding:7px 14px;font-size:.8rem;cursor:pointer;}
+.otab.active{border-color:var(--gold);color:var(--gold);}
+#output{display:none;}
+.org-canvas{background:var(--lapis3);border:1px solid #1e3a5f;border-radius:12px;padding:32px;overflow-x:auto;}
+.org-tree{display:flex;flex-direction:column;align-items:center;gap:0;}
+.org-row{display:flex;justify-content:center;gap:16px;position:relative;padding:12px 0;}
+.org-row::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:2px;height:12px;background:#1e3a5f;}
+.org-row:first-child::before{display:none;}
+.org-node{background:var(--lapis2);border:1px solid #1e3a5f;border-radius:8px;padding:12px 16px;text-align:center;min-width:130px;position:relative;cursor:pointer;transition:border-color .15s;}
+.org-node:hover{border-color:var(--gold);}
+.org-node.ceo{border-color:var(--gold);background:rgba(201,168,76,.08);}
+.org-node.vp{border-color:var(--turq2);background:rgba(34,181,160,.06);}
+.org-node.director{}
+.org-node-title{font-size:.72rem;color:#8899aa;margin-bottom:3px;}
+.org-node-name{font-size:.82rem;font-weight:600;}
+.org-node-dept{font-size:.68rem;margin-top:3px;padding:1px 6px;border-radius:3px;display:inline-block;}
+.connector{display:flex;justify-content:center;gap:16px;position:relative;}
+.connector::before{content:'';position:absolute;top:0;left:15%;right:15%;height:2px;background:#1e3a5f;}
+.branch{width:2px;height:12px;background:#1e3a5f;margin:0 auto;}
+.headcount-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px;}
+.hbox{background:var(--lapis3);border:1px solid #1e3a5f;border-radius:8px;padding:12px;text-align:center;}
+.hval{font-family:'Playfair Display',serif;color:var(--gold);font-size:1.2rem;}
+.hlbl{font-size:.7rem;color:#8899aa;margin-top:3px;}
+.gap-item{background:var(--lapis3);border-left:3px solid var(--gold);border-radius:0 8px 8px 0;padding:12px 14px;margin-bottom:8px;}
+.gap-title{font-weight:600;font-size:.85rem;margin-bottom:4px;}
+.gap-body{font-size:.8rem;color:#8899aa;line-height:1.5;}
+.dept-colors{CEO:'var(--gold)',Engineering:'#7dd3fc',Sales:'#86efac',Marketing:'#f9a8d4',Product:'#c4b5fd',CS:'#fdba74',Finance:'#fde68a',People:'#a5f3fc'}
+.waitlist{background:linear-gradient(135deg,var(--lapis2),var(--lapis3));border:1px solid var(--gold);border-radius:12px;padding:24px;text-align:center;margin-top:20px;}
+.waitlist h3{font-family:'Playfair Display',serif;color:var(--gold);margin-bottom:8px;}
+.wl-form{display:flex;gap:8px;max-width:360px;margin:10px auto 0;}
+.wl-form input{border-radius:6px;padding:9px 12px;}
+.wl-form button{background:var(--gold);color:var(--lapis);border:none;border-radius:6px;padding:9px 18px;font-weight:700;cursor:pointer;white-space:nowrap;}
+</style>
+<link rel="canonical" href="https://abuz8ai.com/tools/ai-org-chart-builder">
+<meta name="description" content="AI Org Chart Builder — Headcount plan and org chart. Free, no signup, runs entirely in your browser. One of 169 free AI and developer tools by ABUZ8.">
+</head>
+<body>
+<header>
+  <div class="logo">ABUZ8</div>
+  <div style="flex:1">
+    <div style="font-size:.85rem;font-weight:600;">AI Org Chart Builder</div>
+    <div style="font-size:.72rem;color:#8899aa;">Design your org structure for any growth stage</div>
+  </div>
+  <span class="badge">TIER H</span>
+</header>
+<main>
+  <h1>AI Org Chart Builder</h1>
+  <p class="sub">Generate a recommended org structure with headcount ratios, gap analysis, and hiring roadmap.</p>
+
+  <div class="layout">
+    <div class="panel">
+      <h2>🏢 Company Details</h2>
+      <label>Company Name</label>
+      <input id="company" value="Nexus AI" placeholder="Company">
+      <label>Current Headcount</label>
+      <input id="headcount" type="number" value="34" placeholder="34">
+      <label>Target Headcount (12mo)</label>
+      <input id="targetHC" type="number" value="60" placeholder="60">
+      <label>Stage / Round</label>
+      <select id="stage">
+        <option>Seed (5–20)</option><option selected>Series A (20–60)</option>
+        <option>Series B (60–200)</option><option>Series C+ (200+)</option>
+      </select>
+      <label>Primary Business Model</label>
+      <select id="model">
+        <option selected>B2B SaaS (Sales-led)</option><option>B2B SaaS (PLG)</option>
+        <option>E-commerce</option><option>Marketplace</option><option>Services</option>
+      </select>
+      <label>CEO Name</label>
+      <input id="ceoName" value="Jane Smith" placeholder="CEO Name">
+      <label>CTO / Tech Lead Name</label>
+      <input id="ctoName" value="Alex Chen" placeholder="CTO Name">
+      <label>VP Sales / Revenue Name</label>
+      <input id="croName" value="Marcus Rivera" placeholder="VP Sales Name">
+      <label>Open Critical Roles (comma-separated)</label>
+      <input id="openRoles" value="VP Marketing, Senior ML Engineer, 2× AEs" placeholder="VP Marketing, Senior Eng...">
+      <button class="btn" onclick="buildOrg()">⚡ Build Org Chart</button>
+    </div>
+
+    <div>
+      <div id="inputPrompt" class="panel" style="text-align:center;padding:48px 24px;">
+        <div style="font-size:3rem;margin-bottom:16px;">🏗️</div>
+        <div style="font-family:'Playfair Display',serif;color:var(--gold);font-size:1.2rem;margin-bottom:8px;">Org Design Engine</div>
+        <div style="font-size:.85rem;color:#8899aa;max-width:320px;margin:0 auto;">Enter company details to generate an org chart, headcount model, span-of-control analysis, and 12-month hiring roadmap.</div>
+      </div>
+      <div id="output">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+          <div style="font-family:'Playfair Display',serif;color:var(--gold);" id="orgTitle">Org Chart</div>
+          <div><button class="btn-sm" onclick="exportOrg()">⬇ Export</button></div>
+        </div>
+        <div class="org-tabs">
+          <div class="otab active" onclick="switchOTab(this,'chart')">Org Chart</div>
+          <div class="otab" onclick="switchOTab(this,'headcount')">Headcount Model</div>
+          <div class="otab" onclick="switchOTab(this,'gaps')">Gap Analysis</div>
+          <div class="otab" onclick="switchOTab(this,'roadmap')">Hiring Roadmap</div>
+        </div>
+        <div id="orgContent"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="waitlist">
+    <h3>🚀 Pro: Drag-and-Drop Org Editor + HRIS Sync</h3>
+    <p>Edit your org chart visually, sync with Rippling/Workday/BambooHR, and export to Powerpoint for board presentations.</p>
+    <div class="wl-form">
+      <input type="email" id="wlEmail" placeholder="ceo@company.com">
+      <button onclick="joinWL()">Get Pro Access</button>
+    </div>
+  </div>
+</main>
+<script src="_abuz8-live-brain.js" defer></script>
+<script>
+let orgTabs={}, curOTab='chart';
+
+const DEPT_COLOR={Engineering:'#7dd3fc',Sales:'#86efac',Marketing:'#f9a8d4',Product:'#c4b5fd','Customer Success':'#fdba74',Finance:'#fde68a',People:'#a5f3fc',Design:'#d8b4fe'};
+
+function node(role,name,dept,cls=''){
+  const col=DEPT_COLOR[dept]||'#8899aa';
+  return `<div class="org-node ${cls}" title="${name} — ${role}">
+    <div class="org-node-title">${role}</div>
+    <div class="org-node-name">${name}</div>
+    <div class="org-node-dept" style="background:${col}22;color:${col}">${dept}</div>
+  </div>`;
+}
+
+function buildOrg(){
+  const company=document.getElementById('company').value||'Company';
+  const hc=parseInt(document.getElementById('headcount').value)||34;
+  const target=parseInt(document.getElementById('targetHC').value)||60;
+  const stage=document.getElementById('stage').value;
+  const model=document.getElementById('model').value;
+  const ceo=document.getElementById('ceoName').value||'CEO';
+  const cto=document.getElementById('ctoName').value||'CTO';
+  const cro=document.getElementById('croName').value||'VP Sales';
+  const openRoles=document.getElementById('openRoles').value;
+
+  // Headcount allocations (% by dept, tuned for stage)
+  const isPLG=model.includes('PLG');
+  const deptAlloc=[
+    {dept:'Engineering',pct:isPLG?38:30,vp:cto,color:'#7dd3fc'},
+    {dept:'Sales',pct:isPLG?10:22,vp:cro,color:'#86efac'},
+    {dept:'Marketing',pct:isPLG?18:12,vp:'TBH (Open)',color:'#f9a8d4'},
+    {dept:'Product',pct:12,vp:'Maria Rosa',color:'#c4b5fd'},
+    {dept:'Customer Success',pct:10,vp:'Omar Patel',color:'#fdba74'},
+    {dept:'Finance',pct:4,vp:'VP Finance',color:'#fde68a'},
+    {dept:'People',pct:4,vp:'Head of People',color:'#a5f3fc'},
+  ];
+
+  const openList=openRoles.split(',').map(r=>r.trim()).filter(Boolean);
+
+  orgTabs = {
+    chart:`<div class="org-canvas">
+      <div class="org-tree">
+        <div class="org-row" style="padding-top:0">
+          ${node('CEO',ceo,'Leadership','ceo')}
+        </div>
+        <div style="display:flex;justify-content:center;gap:80px;padding:8px 0;position:relative;">
+          <div style="position:absolute;top:0;left:20%;right:20%;height:2px;background:#1e3a5f;"></div>
+        </div>
+        <div class="org-row" style="padding-top:0;flex-wrap:wrap;">
+          ${node('CTO',cto,'Engineering','vp')}
+          ${node('VP Sales',cro,'Sales','vp')}
+          ${node('CMO','[Open]','Marketing','vp')}
+          ${node('CPO','Maria Rosa','Product','vp')}
+          ${node('VP CS','Omar Patel','Customer Success','vp')}
+          ${node('CFO','[Part-time]','Finance','vp')}
+        </div>
+        <div style="margin-top:16px;padding:12px;background:var(--lapis2);border:1px solid #1e3a5f;border-radius:8px;font-size:.78rem;color:#8899aa;text-align:center;">
+          +${hc-7} individual contributors across all departments (see Headcount Model tab)
+        </div>
+      </div>
+      <div style="margin-top:20px;display:flex;flex-wrap:wrap;gap:8px;">
+        ${deptAlloc.map(d=>`<div style="display:flex;align-items:center;gap:6px;font-size:.75rem;"><span style="width:10px;height:10px;border-radius:50%;background:${d.color};display:inline-block;"></span>${d.dept}</div>`).join('')}
+      </div>
+    </div>`,
+
+    headcount:`
+      <div class="headcount-grid">
+        <div class="hbox"><div class="hval">${hc}</div><div class="hlbl">Current</div></div>
+        <div class="hbox"><div class="hval">${target}</div><div class="hlbl">12-Month Target</div></div>
+        <div class="hbox"><div class="hval">+${target-hc}</div><div class="hlbl">Net New Hires</div></div>
+        <div class="hbox"><div class="hval">${Math.round((target-hc)/12*4)}</div><div class="hlbl">Hires/Quarter</div></div>
+      </div>
+      <div style="background:var(--lapis3);border:1px solid #1e3a5f;border-radius:10px;overflow:hidden;">
+        <table style="width:100%;border-collapse:collapse;font-size:.82rem;">
+          <thead><tr style="background:var(--lapis2);"><th style="padding:10px 14px;text-align:left;color:#8899aa;font-weight:500;">Department</th><th style="padding:10px;text-align:center;color:#8899aa;font-weight:500;">Current</th><th style="padding:10px;text-align:center;color:#8899aa;font-weight:500;">Target</th><th style="padding:10px;text-align:center;color:#8899aa;font-weight:500;">% of Team</th><th style="padding:10px 14px;text-align:left;color:#8899aa;font-weight:500;">VP/Lead</th></tr></thead>
+          <tbody>
+            ${deptAlloc.map(d=>{
+              const cur=Math.round(hc*d.pct/100);
+              const tgt=Math.round(target*d.pct/100);
+              return `<tr style="border-bottom:1px solid #1e3a5f;">
+                <td style="padding:10px 14px;"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${d.color};margin-right:8px;"></span>${d.dept}</td>
+                <td style="padding:10px;text-align:center;">${cur}</td>
+                <td style="padding:10px;text-align:center;color:var(--turq2);">${tgt}</td>
+                <td style="padding:10px;text-align:center;color:#8899aa;">${d.pct}%</td>
+                <td style="padding:10px 14px;font-size:.78rem;color:${d.vp.includes('Open')||d.vp.includes('TBH')?'#f87171':'#aabbcc'}">${d.vp}</td>
+              </tr>`;
+            }).join('')}
+            <tr style="background:var(--lapis2);font-weight:600;"><td style="padding:10px 14px;">TOTAL</td><td style="padding:10px;text-align:center;">${hc}</td><td style="padding:10px;text-align:center;color:var(--turq2);">${target}</td><td style="padding:10px;text-align:center;">100%</td><td style="padding:10px 14px;"></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div style="margin-top:14px;background:var(--lapis3);border:1px solid #1e3a5f;border-radius:8px;padding:14px;font-size:.82rem;color:#aabbcc;">
+        <strong style="color:var(--gold);">Span of Control: </strong>
+        At ${hc} employees with 6 direct reports to CEO, average manager span = ${Math.round((hc-7)/6)}. Target: 6–10 for optimal effectiveness. ${Math.round((hc-7)/6)>10?'Consider adding a layer of management before hiring slows down.':'Current span is healthy.'}
+      </div>`,
+
+    gaps:`
+      <div style="margin-bottom:12px;font-size:.85rem;color:#8899aa;">Critical org gaps that will limit ${company}'s ability to scale to ${target} people.</div>
+      ${[
+        {title:'🚨 No CMO / VP Marketing',body:`Marketing is staffed without a senior leader. This creates strategy vacuum — demand gen, brand, and content are orphaned. With Series A funds, hire a VP/CMO within 60 days. Cost: $180–220K base + 0.5–1% equity.`,urgent:true},
+        {title:'⚠️ Engineering:Sales Ratio Imbalance',body:`Current eng:sales ratio appears ${Math.round(hc*0.30)}:${Math.round(hc*0.22)}. At ${stage.includes('A')?'Series A':'this stage'}, healthy ratio for ${model.includes('Sales')?'sales-led SaaS is 1.2:1 (eng:sales)':'PLG is 2:1 (eng:sales)'}. ${Math.round(hc*0.30/Math.round(hc*0.22))>1.5?'Currently over-indexed on engineering — consider accelerating sales hires.':'Balance is healthy.'}`,urgent:false},
+        {title:'⚠️ No dedicated Finance / FP&A',body:`Part-time CFO is appropriate at &lt;30 people but creates risk at ${hc}+. Series A investors expect clean books, monthly reporting, and a financial model. Hire fractional CFO now, full-time FP&A analyst within 6 months.`,urgent:false},
+        {title:'ℹ️ People Ops under-resourced',body:`With ${hc} employees and +${target-hc} hires planned, People team needs 1 dedicated recruiter per 15 open roles. Consider: HRBP when you hit 50 people, Head of People by Series B.`,urgent:false},
+        {title:'ℹ️ Open Roles Flagged',body:openList.length?`You flagged ${openList.length} open roles: ${openList.join(', ')}. Prioritize: ${openList[0]} first (most critical for stage goals).`:'No open roles specified. Run org gap analysis quarterly.',urgent:false}
+      ].map(g=>`<div class="gap-item" style="border-left-color:${g.urgent?'#f87171':'var(--gold)'}">
+        <div class="gap-title">${g.title}</div>
+        <div class="gap-body">${g.body}</div>
+      </div>`).join('')}`,
+
+    roadmap:`
+      <div style="margin-bottom:14px;font-size:.85rem;color:#8899aa;">12-month hiring roadmap to reach ${target} headcount. Prioritized by impact to company goals.</div>
+      ${[
+        {q:'Q1 (Now)',roles:[{r:'VP Marketing / CMO',p:'Critical',d:'Unblocks demand gen, brand, and top-of-funnel'},openList[0]?{r:openList[0],p:'Critical',d:'Flagged open role — hire first'}:{r:'Senior AE #1',p:'High',d:'Sales capacity for enterprise motion'}]},
+        {q:'Q2',roles:[{r:'Senior ML Engineer',p:'High',d:'AI roadmap velocity'},openList[1]?{r:openList[1],p:'High',d:'Flagged open role'}:{r:'Content Marketing Manager',p:'High',d:'SEO + demand gen engine'},{r:'Customer Success Manager #2',p:'Medium',d:'Manage growing enterprise book'}]},
+        {q:'Q3',roles:[{r:'Product Designer',p:'High',d:'Improve UX for enterprise tier'},{r:'Sales AE #2 + #3',p:'High',d:'Scale revenue team'},{r:'DevOps / SRE',p:'Medium',d:'Platform reliability as customer base grows'}]},
+        {q:'Q4',roles:[{r:'Head of People / HRBP',p:'High',d:'Cultural foundation as team hits 50+'},{r:'FP&A Analyst',p:'Medium',d:'Series B financial prep'},{r:'SDR #2',p:'Medium',d:'Pipeline capacity'}]}
+      ].map(q=>`<div style="background:var(--lapis3);border:1px solid #1e3a5f;border-radius:10px;padding:16px;margin-bottom:12px;">
+        <div style="font-weight:600;color:var(--gold);margin-bottom:12px;font-family:'Playfair Display',serif;">${q.q}</div>
+        ${q.roles.map(r=>`<div style="display:flex;justify-content:space-between;align-items:flex-start;padding:8px 0;border-bottom:1px solid #1e3a5f;">
+          <div><div style="font-size:.85rem;font-weight:500;">${r.r}</div><div style="font-size:.75rem;color:#8899aa;margin-top:2px;">${r.d}</div></div>
+          <span style="background:${r.p==='Critical'?'rgba(248,113,113,.15)':r.p==='High'?'rgba(201,168,76,.15)':'rgba(136,153,170,.15)'};color:${r.p==='Critical'?'#f87171':r.p==='High'?'var(--gold)':'#8899aa'};border-radius:4px;padding:2px 8px;font-size:.7rem;font-weight:700;white-space:nowrap;">${r.p}</span>
+        </div>`).join('')}
+      </div>`).join('')}`
+  };
+
+  document.getElementById('inputPrompt').style.display='none';
+  document.getElementById('output').style.display='block';
+  document.getElementById('orgTitle').textContent=`${company} — Org Design`;
+  switchOTab(document.querySelector('.otab.active'),'chart');
+}
+
+function switchOTab(el,tab){
+  curOTab=tab;
+  document.querySelectorAll('.otab').forEach(t=>t.classList.remove('active'));
+  if(el) el.classList.add('active');
+  document.getElementById('orgContent').innerHTML=orgTabs[tab]||'';
+}
+
+function exportOrg(){
+  const co=document.getElementById('company').value||'Org';
+  const html=`<html><body style="font-family:sans-serif;background:#0a1628;color:#f5f0e8;padding:32px">${['chart','headcount','gaps','roadmap'].map(t=>`<h2 style="color:#c9a84c">${t.charAt(0).toUpperCase()+t.slice(1)}</h2>${orgTabs[t]||''}<hr>`).join('')}
+<script src="/assets/js/dfy-banner.js" async><\/script>
+<script src="/assets/js/abuz8-intent.js" defer><\/script>
+<script src="/tools/_tools-shared.js" defer><\/script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body></html>`;
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([html],{type:'text/html'}));a.download=co.replace(/\s+/g,'-')+'-org-chart.html';a.click();
+}
+
+function joinWL(){
+  const e=document.getElementById('wlEmail').value.trim();
+  if(!e||!e.includes('@')){alert('Valid email required');return;}
+  fetch('/api/waitlist',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:e,tool:'ai-org-chart-builder',ts:Date.now()})}).catch(()=>{});
+  localStorage.setItem('wl_org_chart',e);
+  document.querySelector('.waitlist').innerHTML='<h3 style="color:var(--gold);font-family:Playfair Display,serif">✅ On the list!</h3><p style="color:#8899aa;margin-top:8px;">Pro access within 24h.</p>';
+}
+</script>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+<script src="/tools/_tools-shared.js" defer></script>
+</body>
+</html>
+

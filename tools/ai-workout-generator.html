@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Workout Generator — ABUZ8</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--lapis:#0a1628;--lapis2:#0f1f3d;--lapis3:#162544;--gold:#c9a84c;--turq:#0e9f6e;--turq2:#22b5a0;--cream:#f5f0e8;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--lapis);color:var(--cream);font-family:'Inter',sans-serif;min-height:100vh;}
+header{background:var(--lapis2);border-bottom:1px solid rgba(201,168,76,.15);padding:16px 32px;display:flex;align-items:center;gap:12px;}
+header h1{font-family:'Playfair Display',serif;font-size:1.4rem;color:var(--gold);}
+header span{background:var(--turq);color:#fff;font-size:11px;font-weight:600;padding:2px 8px;border-radius:20px;}
+.hero{text-align:center;padding:44px 20px 28px;}
+.hero h2{font-family:'Playfair Display',serif;font-size:2rem;color:var(--cream);margin-bottom:10px;}
+.hero p{color:rgba(245,240,232,.7);font-size:.95rem;max-width:480px;margin:0 auto;}
+.main{max-width:860px;margin:0 auto;padding:0 20px 80px;}
+.card{background:var(--lapis2);border:1px solid rgba(201,168,76,.12);border-radius:12px;padding:26px;}
+.card+.card{margin-top:16px;}
+label{display:block;font-size:12px;font-weight:700;color:var(--gold);margin-bottom:6px;letter-spacing:.05em;text-transform:uppercase;}
+select,input{width:100%;background:var(--lapis3);border:1px solid rgba(201,168,76,.2);border-radius:8px;padding:11px 14px;color:var(--cream);font-family:'Inter',sans-serif;font-size:14px;outline:none;transition:border .2s;}
+select:focus,input:focus{border-color:var(--gold);}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px;}
+.tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;}
+.tag{padding:6px 14px;border-radius:20px;border:1px solid rgba(201,168,76,.2);cursor:pointer;font-size:12px;color:rgba(245,240,232,.7);transition:all .2s;user-select:none;}
+.tag.active{background:var(--gold);border-color:var(--gold);color:var(--lapis);font-weight:700;}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:12px 28px;border-radius:8px;border:none;cursor:pointer;font-family:'Inter',sans-serif;font-size:14px;font-weight:600;transition:all .2s;}
+.btn-gold{background:var(--gold);color:var(--lapis);}
+.btn-gold:hover{background:#e0bc5a;}
+.btn-outline{background:transparent;border:1px solid rgba(201,168,76,.3);color:var(--cream);}
+.btn-outline:hover{border-color:var(--gold);color:var(--gold);}
+.actions{margin-top:18px;display:flex;gap:12px;flex-wrap:wrap;}
+/* Workout output */
+#workoutArea{display:none;}
+.wo-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:10px;}
+.wo-header h3{font-family:'Playfair Display',serif;font-size:1.3rem;color:var(--gold);}
+.wo-meta{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:20px;}
+.wo-badge{background:var(--lapis3);border:1px solid rgba(201,168,76,.15);border-radius:20px;padding:5px 14px;font-size:12px;color:rgba(245,240,232,.7);}
+/* Exercise cards */
+.section-title{font-size:11px;font-weight:700;letter-spacing:.1em;color:var(--turq2);text-transform:uppercase;margin:20px 0 10px;}
+.ex-card{background:var(--lapis3);border:1px solid rgba(201,168,76,.1);border-radius:10px;padding:14px 16px;margin-bottom:8px;display:flex;align-items:center;gap:14px;transition:border-color .2s;}
+.ex-card:hover{border-color:rgba(201,168,76,.3);}
+.ex-num{width:28px;height:28px;border-radius:50%;background:rgba(201,168,76,.15);border:1px solid rgba(201,168,76,.3);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--gold);flex-shrink:0;}
+.ex-info{flex:1;}
+.ex-name{font-size:14px;font-weight:600;color:var(--cream);}
+.ex-detail{font-size:12px;color:rgba(245,240,232,.5);margin-top:3px;}
+.ex-muscle{font-size:11px;color:var(--turq2);margin-top:2px;}
+.check-ex{width:26px;height:26px;border-radius:6px;border:2px solid rgba(201,168,76,.25);background:transparent;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;font-size:14px;}
+.check-ex.done{background:var(--turq2);border-color:var(--turq2);}
+/* Timer */
+.timer-bar{background:var(--lapis3);border:1px solid rgba(201,168,76,.15);border-radius:10px;padding:16px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
+.timer-display{font-size:2rem;font-weight:700;color:var(--gold);font-family:monospace;}
+.timer-btns{display:flex;gap:8px;}
+.tbtn{padding:8px 16px;border-radius:8px;border:1px solid rgba(201,168,76,.25);background:transparent;color:var(--cream);cursor:pointer;font-size:13px;font-weight:600;transition:all .2s;}
+.tbtn:hover{border-color:var(--gold);color:var(--gold);}
+.tbtn.running{background:rgba(34,181,160,.15);border-color:var(--turq2);color:var(--turq2);}
+/* Progress */
+.wo-progress{background:rgba(255,255,255,.05);border-radius:6px;height:6px;margin:16px 0;overflow:hidden;}
+.wo-prog-fill{height:100%;background:linear-gradient(90deg,var(--turq),var(--gold));border-radius:6px;transition:width .4s;}
+/* Waitlist */
+.waitlist{background:linear-gradient(135deg,var(--lapis2),var(--lapis3));border:1px solid rgba(201,168,76,.2);border-radius:12px;padding:28px;text-align:center;margin-top:16px;}
+.waitlist h3{font-family:'Playfair Display',serif;font-size:1.3rem;color:var(--gold);margin-bottom:8px;}
+.waitlist p{color:rgba(245,240,232,.7);margin-bottom:16px;font-size:14px;}
+.wl-form{display:flex;gap:10px;max-width:380px;margin:0 auto;flex-wrap:wrap;}
+.wl-form input{flex:1;min-width:180px;}
+.wl-success{color:var(--turq2);font-weight:600;display:none;}
+</style>
+<link rel="canonical" href="https://abuz8ai.com/tools/ai-workout-generator">
+<meta name="description" content="AI Workout Generator — Personalized workout plans. Free, no signup, runs entirely in your browser. One of 169 free AI and developer tools by ABUZ8.">
+</head>
+<body>
+<header>
+  <h1>⚡ ABUZ8</h1>
+  <span>AI WORKOUT GENERATOR</span>
+</header>
+<div class="hero">
+  <h2>Your AI Personal Trainer</h2>
+  <p>Generate a complete custom workout plan based on your goals, equipment, and fitness level — in seconds.</p>
+</div>
+<div class="main">
+  <div class="card" id="inputArea">
+    <div class="grid-3">
+      <div>
+        <label>Goal</label>
+        <select id="goalSel">
+          <option value="strength">💪 Build Strength</option>
+          <option value="muscle" selected>🏋️ Gain Muscle</option>
+          <option value="fat">🔥 Burn Fat</option>
+          <option value="cardio">🏃 Cardio & Endurance</option>
+          <option value="mobility">🧘 Flexibility & Mobility</option>
+          <option value="athletic">⚡ Athletic Performance</option>
+        </select>
+      </div>
+      <div>
+        <label>Fitness Level</label>
+        <select id="levelSel">
+          <option value="beginner">🌱 Beginner</option>
+          <option value="intermediate" selected>⚡ Intermediate</option>
+          <option value="advanced">🔥 Advanced</option>
+        </select>
+      </div>
+      <div>
+        <label>Duration</label>
+        <select id="durationSel">
+          <option value="20">20 min (Quick)</option>
+          <option value="30">30 min</option>
+          <option value="45" selected>45 min</option>
+          <option value="60">60 min</option>
+          <option value="90">90 min</option>
+        </select>
+      </div>
+    </div>
+    <div class="grid-2">
+      <div>
+        <label>Equipment Available</label>
+        <div class="tags" id="equipTags">
+          <span class="tag active" data-v="none">🏠 No Equipment</span>
+          <span class="tag" data-v="dumbbells">🏋 Dumbbells</span>
+          <span class="tag" data-v="barbell">⚖️ Barbell</span>
+          <span class="tag" data-v="cables">🔗 Cable Machine</span>
+          <span class="tag" data-v="bands">🔴 Resistance Bands</span>
+          <span class="tag" data-v="gym">🏟 Full Gym</span>
+          <span class="tag" data-v="kettlebell">🔔 Kettlebell</span>
+          <span class="tag" data-v="pullup">🪝 Pull-up Bar</span>
+        </div>
+      </div>
+      <div>
+        <label>Focus Muscles</label>
+        <div class="tags" id="muscleTags">
+          <span class="tag active" data-v="full">Full Body</span>
+          <span class="tag" data-v="chest">Chest</span>
+          <span class="tag" data-v="back">Back</span>
+          <span class="tag" data-v="legs">Legs</span>
+          <span class="tag" data-v="shoulders">Shoulders</span>
+          <span class="tag" data-v="arms">Arms</span>
+          <span class="tag" data-v="core">Core</span>
+          <span class="tag" data-v="glutes">Glutes</span>
+        </div>
+      </div>
+    </div>
+    <div class="actions">
+      <button class="btn btn-gold" onclick="generateWorkout()">💪 Generate Workout</button>
+    </div>
+  </div>
+
+  <div class="card" id="workoutArea">
+    <div class="wo-header">
+      <div>
+        <h3 id="woTitle">My Workout</h3>
+      </div>
+      <div style="display:flex;gap:8px;">
+        <button class="btn btn-outline" onclick="generateWorkout()" style="padding:8px 16px;font-size:12px;">🔀 New Workout</button>
+        <button class="btn btn-gold" onclick="exportWorkout()" style="padding:8px 16px;font-size:12px;">⬇ Save</button>
+      </div>
+    </div>
+
+    <div class="wo-meta" id="woMeta"></div>
+
+    <div class="timer-bar">
+      <div>
+        <div style="font-size:11px;color:rgba(245,240,232,.5);margin-bottom:4px;">WORKOUT TIMER</div>
+        <div class="timer-display" id="timerDisplay">00:00</div>
+      </div>
+      <div class="timer-btns">
+        <button class="tbtn" id="timerBtn" onclick="toggleTimer()">▶ Start</button>
+        <button class="tbtn" onclick="resetTimer()">↺ Reset</button>
+      </div>
+    </div>
+
+    <div class="wo-progress"><div class="wo-prog-fill" id="woProgFill" style="width:0%"></div></div>
+    <div style="font-size:12px;color:rgba(245,240,232,.5);margin-bottom:16px;">Progress: <span id="exDone">0</span> / <span id="exTotal">0</span> exercises</div>
+
+    <div id="workoutContent"></div>
+  </div>
+
+  <div class="waitlist">
+    <h3>🚀 Full Training Programs</h3>
+    <p>Join for 8-week programs, progress tracking, and video demonstrations for every exercise.</p>
+    <div class="wl-form">
+      <input type="email" id="wlEmail" placeholder="your@email.com">
+      <button class="btn btn-gold" onclick="joinWaitlist()">Join Waitlist</button>
+    </div>
+    <div class="wl-success" id="wlSuccess">✓ You're on the list!</div>
+  </div>
+</div>
+
+<script src="_abuz8-live-brain.js" defer></script>
+<script>
+// Single-select for equipment, single-select for muscle
+document.querySelectorAll('#equipTags .tag').forEach(t => {
+  t.addEventListener('click', () => {
+    document.querySelectorAll('#equipTags .tag').forEach(x=>x.classList.remove('active'));
+    t.classList.add('active');
+  });
+});
+document.querySelectorAll('#muscleTags .tag').forEach(t => {
+  t.addEventListener('click', () => {
+    document.querySelectorAll('#muscleTags .tag').forEach(x=>x.classList.remove('active'));
+    t.classList.add('active');
+  });
+});
+
+// Exercises database
+const EXERCISES = {
+  none: {
+    chest:['Push-Ups','Wide Push-Ups','Diamond Push-Ups','Decline Push-Ups','Archer Push-Ups'],
+    back:['Superman Hold','Reverse Snow Angels','Door-Frame Row','Towel Row'],
+    legs:['Squats','Jump Squats','Lunges','Bulgarian Split Squats','Wall Sit','Glute Bridge'],
+    shoulders:['Pike Push-Ups','Wall Handstand Hold','Lateral Raises (water bottles)'],
+    arms:['Chin-Ups (door)','Tricep Dips (chair)','Push-Up Rows'],
+    core:['Plank','Mountain Climbers','Bicycle Crunches','Leg Raises','V-Ups','Dead Bug'],
+    glutes:['Glute Bridge','Donkey Kicks','Fire Hydrants','Single-Leg Deadlift'],
+    full:['Burpees','Push-Ups','Squats','Mountain Climbers','Plank','Jump Jacks','Lunges','Hollow Body Hold'],
+    cardio:['Jumping Jacks','High Knees','Burpees','Jump Squats','Mountain Climbers','Speed Skaters'],
+  },
+  dumbbells: {
+    chest:['Dumbbell Press','Dumbbell Fly','Incline Press','Dumbbell Pullover'],
+    back:['Dumbbell Row','Romanian Deadlift','Renegade Row','Bent-Over Row'],
+    legs:['Goblet Squat','DB Deadlift','DB Lunges','DB Step-Ups'],
+    shoulders:['Overhead Press','Lateral Raise','Front Raise','Arnold Press'],
+    arms:['Bicep Curl','Hammer Curl','Skull Crusher','Tricep Kickback'],
+    core:['DB Russian Twist','Plank','Leg Raises','DB Side Bend'],
+    full:['DB Thruster','DB Swing','Renegade Row','DB Clean & Press'],
+    glutes:['DB Romanian Deadlift','DB Hip Thrust','DB Sumo Squat'],
+  },
+  barbell: {
+    chest:['Bench Press','Incline Bench Press','Close-Grip Bench'],
+    back:['Barbell Row','Deadlift','T-Bar Row','Good Morning'],
+    legs:['Squat','Front Squat','Romanian Deadlift','Leg Press (Smith)'],
+    shoulders:['Overhead Press','Push Press','Upright Row'],
+    arms:['Barbell Curl','Close-Grip Bench','21s'],
+    core:['Ab Rollout','Hanging Leg Raise','Plank'],
+    full:['Clean & Press','Barbell Complex','Deadlift','Squat'],
+    glutes:['Hip Thrust','Romanian Deadlift','Bulgarian Split Squat'],
+  },
+  gym: {
+    chest:['Bench Press','Cable Fly','Machine Press','Incline DB Press'],
+    back:['Lat Pulldown','Cable Row','Deadlift','Pull-Ups','T-Bar Row'],
+    legs:['Leg Press','Squat','Leg Extension','Leg Curl','Calf Raises'],
+    shoulders:['Overhead Press','Cable Lateral Raise','Machine Fly','Rear Delt Fly'],
+    arms:['Preacher Curl','Cable Pushdown','Hammer Curl','Overhead Tricep Extension'],
+    core:['Cable Crunch','Hanging Leg Raise','Ab Machine','Plank'],
+    full:['Squat','Bench Press','Deadlift','Pull-Ups','Dips'],
+    glutes:['Hip Thrust','Cable Kickback','Leg Press (wide stance)','RDL'],
+  }
+};
+
+const MUSCLES_MAP = {
+  chest:'Pectorals, Front Delts, Triceps',
+  back:'Lats, Rhomboids, Biceps',
+  legs:'Quads, Hamstrings, Calves',
+  shoulders:'Deltoids, Rotator Cuff',
+  arms:'Biceps, Triceps, Forearms',
+  core:'Rectus Abdominis, Obliques, Transverse Abs',
+  glutes:'Glutes, Hip Flexors',
+  full:'Full Body',
+  cardio:'Cardiovascular System'
+};
+
+const WARMUPS = ['5-min light jog / march in place','Dynamic leg swings — 10 each side','Arm circles — 30 sec','Hip rotations — 10 reps','Bodyweight squats x 15','Push-up x 10 (slow)'];
+const COOLDOWNS = ['Child\'s Pose — 60 sec','Downward Dog — 45 sec','Hip flexor stretch — 45 sec each','Chest doorway stretch — 45 sec','Hamstring forward fold — 60 sec','Seated spinal twist — 30 sec each'];
+
+let currentWorkout = null;
+let doneExercises = new Set();
+let timerInterval = null;
+let timerSeconds = 0;
+let timerRunning = false;
+
+function generateWorkout() {
+  const goal = document.getElementById('goalSel').value;
+  const level = document.getElementById('levelSel').value;
+  const duration = parseInt(document.getElementById('durationSel').value);
+  const equip = document.querySelector('#equipTags .tag.active')?.dataset.v || 'none';
+  const muscle = document.querySelector('#muscleTags .tag.active')?.dataset.v || 'full';
+
+  const btn = document.querySelector('.btn-gold');
+  btn.textContent = '💪 Generating...';
+  btn.disabled = true;
+
+  // Title + meta from the user's selections; AI fills the exercise content.
+  const gName = {strength:'Strength',muscle:'Hypertrophy',fat:'Fat Burn',cardio:'Cardio',mobility:'Mobility',athletic:'Athletic'}[goal]||'Workout';
+  const mName = {full:'Full Body',chest:'Chest Day',back:'Back Day',legs:'Leg Day',shoulders:'Shoulder Day',arms:'Arms Day',core:'Core',glutes:'Glute Focus'}[muscle]||'Workout';
+  document.getElementById('woTitle').textContent = `${gName} — ${mName}`;
+  document.getElementById('woMeta').innerHTML = [
+    `⏱ ${duration} min`,
+    `📊 ${level.charAt(0).toUpperCase()+level.slice(1)}`,
+    `🏋 ${equip === 'none' ? 'No Equipment' : equip.charAt(0).toUpperCase()+equip.slice(1)}`,
+  ].map(b=>`<span class="wo-badge">${b}</span>`).join('');
+  // The progress tracker relied on the legacy per-exercise checkboxes; hide it.
+  const prog = document.getElementById('woProgFill'); if(prog){ const bar = prog.closest('.wo-progress'); if(bar) bar.style.display='none'; const lbl = bar && bar.nextElementSibling; if(lbl) lbl.style.display='none'; }
+
+  const out = document.getElementById('workoutContent');
+  out.innerHTML = '<div style="color:rgba(245,240,232,.5);font-size:13px;padding:32px;text-align:center;">💪 Building your workout with AI…</div>';
+  document.getElementById('workoutArea').style.display = 'block';
+  document.getElementById('workoutArea').scrollIntoView({behavior:'smooth',block:'start'});
+
+  // Real AI generation via the ABUZ8 brain (Cloudflare Workers AI). No templates / Math.random.
+  fetch('/api/waitlist', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      tool: 'workout-generator',
+      data: {
+        goal: goal,
+        fitnessLevel: level,
+        durationMinutes: duration,
+        equipment: equip,
+        focusMuscles: muscle,
+        format: 'Return a complete workout as clean HTML with an <h3>Warm-Up</h3>, <h3>Main Workout</h3> (each exercise with sets, reps, rest, and target muscles), and <h3>Cool-Down</h3> sections, using <ul>/<li> or <ol>/<li> lists.'
+      }
+    })
+  })
+  .then(r => r.json())
+  .then(res => {
+    if (!res.success || !res.result) throw new Error(res.error || 'Generation failed');
+    btn.textContent = '💪 Generate Workout'; btn.disabled = false;
+    currentWorkout = res.result;
+    out.innerHTML = ABUZ8md(res.result);
+  })
+  .catch(err => {
+    btn.textContent = '💪 Generate Workout'; btn.disabled = false;
+    out.innerHTML = '<div style="color:#e05555;font-size:13px;padding:32px;text-align:center;">Generation failed. Please try again in a moment.</div>';
+    alert('Generation failed: ' + err.message + '. Please try again in a moment.');
+  });
+}
+
+function buildWorkout(goal, level, duration, equip, muscle) {
+  const counts = {20:4, 30:5, 45:7, 60:9, 90:12};
+  const exCount = counts[duration] || 7;
+
+  const sets = {beginner:'2–3', intermediate:'3', advanced:'4–5'};
+  const reps = {
+    strength:{beginner:'4–6',intermediate:'3–5',advanced:'2–4'},
+    muscle:{beginner:'10–12',intermediate:'8–12',advanced:'6–10'},
+    fat:{beginner:'15–20',intermediate:'12–15',advanced:'15–20'},
+    cardio:{beginner:'30 sec',intermediate:'45 sec',advanced:'60 sec'},
+    mobility:{beginner:'30–45 sec',intermediate:'45–60 sec',advanced:'60 sec'},
+    athletic:{beginner:'8–10',intermediate:'6–8',advanced:'4–6'},
+  };
+
+  const equipKey = (['none','dumbbells','barbell','gym'].includes(equip)) ? equip : 'none';
+  const src = EXERCISES[equipKey][muscle] || EXERCISES[equipKey].full || EXERCISES.none.full;
+
+  // Shuffle with seed
+  const seed = goal.length + level.length;
+  const shuffled = [...src].sort(()=>0.5-Math.random());
+
+  const exercises = shuffled.slice(0, exCount).map((name, i) => ({
+    name, id:'ex'+i,
+    sets: sets[level],
+    reps: reps[goal]?.[level] || '10–12',
+    rest: goal==='strength'?'3 min':goal==='cardio'?'30 sec':'60–90 sec',
+    muscles: MUSCLES_MAP[muscle] || 'Full Body',
+  }));
+
+  return { goal, level, duration, equip, muscle, exercises,
+    warmup: WARMUPS.slice(0,3),
+    cooldown: COOLDOWNS.slice(0,3),
+    title: buildTitle(goal, muscle) };
+}
+
+function buildTitle(goal, muscle) {
+  const g = {strength:'Strength',muscle:'Hypertrophy',fat:'Fat Burn',cardio:'Cardio',mobility:'Mobility',athletic:'Athletic'}[goal];
+  const m = {full:'Full Body',chest:'Chest Day',back:'Back Day',legs:'Leg Day',shoulders:'Shoulder Day',arms:'Arms Day',core:'Core',glutes:'Glute Focus',cardio:'Cardio'}[muscle];
+  return `${g} — ${m}`;
+}
+
+function renderWorkout(wo) {
+  document.getElementById('woTitle').textContent = wo.title;
+  document.getElementById('woMeta').innerHTML = [
+    `⏱ ${wo.duration} min`,
+    `📊 ${wo.level.charAt(0).toUpperCase()+wo.level.slice(1)}`,
+    `🎯 ${wo.exercises.length} exercises`,
+    `🏋 ${wo.equip === 'none' ? 'No Equipment' : wo.equip.charAt(0).toUpperCase()+wo.equip.slice(1)}`,
+  ].map(b=>`<span class="wo-badge">${b}</span>`).join('');
+
+  document.getElementById('exTotal').textContent = wo.exercises.length;
+  document.getElementById('exDone').textContent = 0;
+  document.getElementById('woProgFill').style.width = '0%';
+
+  document.getElementById('workoutContent').innerHTML = `
+    <div class="section-title">🔥 Warm-Up (5 min)</div>
+    ${wo.warmup.map((w,i)=>`
+      <div class="ex-card">
+        <div class="ex-num">${i+1}</div>
+        <div class="ex-info">
+          <div class="ex-name">${w}</div>
+        </div>
+      </div>`).join('')}
+
+    <div class="section-title">💪 Main Workout</div>
+    ${wo.exercises.map((ex,i)=>`
+      <div class="ex-card">
+        <div class="ex-num">${i+1}</div>
+        <div class="ex-info">
+          <div class="ex-name">${ex.name}</div>
+          <div class="ex-detail">${ex.sets} sets × ${ex.reps} · Rest: ${ex.rest}</div>
+          <div class="ex-muscle">${ex.muscles}</div>
+        </div>
+        <button class="check-ex" id="${ex.id}" onclick="checkExercise('${ex.id}')" title="Mark complete">✓</button>
+      </div>`).join('')}
+
+    <div class="section-title">🧘 Cool-Down (5 min)</div>
+    ${wo.cooldown.map((c,i)=>`
+      <div class="ex-card">
+        <div class="ex-num">${i+1}</div>
+        <div class="ex-info"><div class="ex-name">${c}</div></div>
+      </div>`).join('')}
+  `;
+
+  document.getElementById('workoutArea').style.display = 'block';
+  document.getElementById('workoutArea').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function checkExercise(id) {
+  const btn = document.getElementById(id);
+  if(doneExercises.has(id)) { doneExercises.delete(id); btn.classList.remove('done'); }
+  else { doneExercises.add(id); btn.classList.add('done'); }
+  const total = currentWorkout.exercises.length;
+  const done = doneExercises.size;
+  document.getElementById('exDone').textContent = done;
+  document.getElementById('woProgFill').style.width = (done/total*100)+'%';
+}
+
+// Timer
+function toggleTimer() {
+  timerRunning = !timerRunning;
+  const btn = document.getElementById('timerBtn');
+  if(timerRunning) {
+    btn.textContent = '⏸ Pause';
+    btn.classList.add('running');
+    timerInterval = setInterval(()=>{ timerSeconds++; updateTimerDisplay(); },1000);
+  } else {
+    btn.textContent = '▶ Resume';
+    btn.classList.remove('running');
+    clearInterval(timerInterval);
+  }
+}
+function resetTimer() {
+  clearInterval(timerInterval); timerRunning=false; timerSeconds=0;
+  document.getElementById('timerBtn').textContent='▶ Start';
+  document.getElementById('timerBtn').classList.remove('running');
+  updateTimerDisplay();
+}
+function updateTimerDisplay() {
+  const m = Math.floor(timerSeconds/60); const s = timerSeconds%60;
+  document.getElementById('timerDisplay').textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+}
+
+function exportWorkout() {
+  const title = document.getElementById('woTitle').textContent || 'Workout';
+  const body = document.getElementById('workoutContent').innerText.trim();
+  if(!body) { alert('Generate a workout first.'); return; }
+  const out = `${title}\n${'='.repeat(40)}\n\n${body}`;
+  const blob = new Blob([out],{type:'text/plain'});
+  const a = document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='workout.txt'; a.click();
+}
+
+function joinWaitlist() {
+  const email = document.getElementById('wlEmail').value.trim();
+  if(!email||!email.includes('@')) { alert('Please enter a valid email.'); return; }
+  fetch('/api/waitlist',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,product:'ai-workout-generator',ts:Date.now()})}).catch(()=>{});
+  document.getElementById('wlEmail').value='';
+  document.querySelector('.wl-form').style.display='none';
+  document.getElementById('wlSuccess').style.display='block';
+}
+</script>
+
+<script src="/assets/js/dfy-banner.js" async></script>
+<script src="/tools/_abuz8-md.js"></script>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+<script src="/tools/_tools-shared.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>
+

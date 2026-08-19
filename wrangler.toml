@@ -1,0 +1,46 @@
+# ABUZ8 — Cloudflare Pages project config
+# Pages Functions live in /functions. This file declares runtime bindings
+# (D1, KV, secrets are set separately via dashboard or `wrangler pages secret`).
+name = "abuz8ai"
+pages_build_output_dir = "."
+compatibility_date = "2024-09-23"
+
+# Waitlist / Early-Access capture database.
+# Used by functions/api/waitlist.js via env.WAITLIST_DB
+[[d1_databases]]
+binding = "WAITLIST_DB"
+database_name = "abuz8_waitlist"
+database_id = "88f3baad-12e9-419f-af4a-9037ae7e7653"
+
+# Workers AI — powers all LLM-based tools (free tier: 10K neurons/day)
+[ai]
+binding = "AI"
+
+# AGENT_KV — per-IP daily quota for /api/agent (free-tier rate limit).
+# Created 2026-05-29 by AbuJarvis (wrangler kv namespace create AGENT_KV).
+# Used by functions/api/agent.js via env.AGENT_KV.
+[[kv_namespaces]]
+binding = "AGENT_KV"
+id = "5578cdeaadb84b319a0dc1f10d3c606a"
+
+# Runtime env vars for /api/agent.
+# BRAIN_URL points at the cloudflared-tunneled Q3 brain (Bayesian router, 28 lanes,
+# /v1/chat/completions OpenAI-compatible). Verified LIVE 2026-05-29 04:50 EDT.
+# FREE_DAILY_QUOTA = per-IP free-tier message cap per day (UTC reset).
+# ENABLE_KV_RATE = "1" to enforce the quota; "0" disables (dev).
+[vars]
+BRAIN_URL = "https://api.abuz8ai.com"
+FREE_DAILY_QUOTA = "5"
+ENABLE_KV_RATE = "1"
+
+# HACKATHON_LOG — stores revenue log entries for the hackathon demo
+[[kv_namespaces]]
+binding = "HACKATHON_LOG"
+id = "5578cdeaadb84b319a0dc1f10d3c606a"
+
+# DOWNLOADS — R2 bucket holding the 10 paid-product fulfillment ZIPs.
+# Served ONLY through /api/download (HMAC-signed 48h links); the public
+# /downloads/ copies were removed 2026-07-17 (free/paid integrity).
+[[r2_buckets]]
+binding = "DOWNLOADS"
+bucket_name = "abuz8-downloads"

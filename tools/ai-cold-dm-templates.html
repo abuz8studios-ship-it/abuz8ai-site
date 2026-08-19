@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Cold DM Templates | ABUZ8</title>
+<style>
+  :root {
+    --lapis: #0a1628; --lapis2: #0f1f3d; --lapis3: #162444;
+    --gold: #c9a84c; --gold2: #e2c06a; --gold3: #f0d080;
+    --turq: #0e9f6e; --turq2: #22a090; --turq3: #2ab8a5;
+    --cream: #f5f0e8; --cream2: #ede8de; --cream3: #e0d8cc;
+    --text: #e8e4dc; --text2: #b8b4ac; --text3: #888480;
+    --red: #e05555; --green: #3db87a;
+    --radius: 12px; --radius-sm: 8px;
+    --shadow: 0 4px 24px rgba(0,0,0,0.4);
+    --border: 1px solid rgba(201,168,76,0.18);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--lapis); color: var(--text); font-family: 'Inter', system-ui, sans-serif; min-height: 100vh; }
+
+  /* HEADER */
+  header { background: linear-gradient(135deg, var(--lapis2) 0%, var(--lapis3) 100%); border-bottom: var(--border); padding: 28px 40px; display: flex; align-items: center; gap: 20px; }
+  .logo { width: 44px; height: 44px; background: linear-gradient(135deg, var(--gold), var(--turq)); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 18px; color: var(--lapis); flex-shrink: 0; }
+  header h1 { font-family: 'Playfair Display', Georgia, serif; font-size: 26px; color: var(--gold); }
+  header p { font-size: 13px; color: var(--text2); margin-top: 2px; }
+  .badge { margin-left: auto; background: rgba(201,168,76,0.12); border: var(--border); padding: 6px 14px; border-radius: 20px; font-size: 12px; color: var(--gold); white-space: nowrap; }
+
+  /* LAYOUT */
+  .container { max-width: 1200px; margin: 0 auto; padding: 32px 24px; }
+  .two-col { display: grid; grid-template-columns: 380px 1fr; gap: 24px; align-items: start; }
+
+  /* PANEL */
+  .panel { background: var(--lapis2); border: var(--border); border-radius: var(--radius); padding: 24px; }
+  .panel-title { font-size: 11px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; color: var(--gold); margin-bottom: 18px; }
+
+  /* FORM */
+  .field { margin-bottom: 16px; }
+  label { font-size: 12px; color: var(--text2); display: block; margin-bottom: 6px; font-weight: 500; }
+  select, input, textarea {
+    width: 100%; background: var(--lapis3); border: 1px solid rgba(201,168,76,0.2); border-radius: var(--radius-sm);
+    color: var(--text); padding: 10px 14px; font-size: 14px; outline: none; transition: border-color 0.2s;
+    font-family: inherit;
+  }
+  select:focus, input:focus, textarea:focus { border-color: var(--gold); }
+  textarea { resize: vertical; min-height: 80px; }
+  select option { background: var(--lapis3); }
+
+  .platform-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 16px; }
+  .platform-btn {
+    background: var(--lapis3); border: 1px solid rgba(201,168,76,0.2); border-radius: var(--radius-sm);
+    padding: 10px 8px; cursor: pointer; text-align: center; transition: all 0.2s; font-size: 12px; color: var(--text2);
+  }
+  .platform-btn:hover { border-color: var(--gold); color: var(--gold); }
+  .platform-btn.active { background: rgba(201,168,76,0.12); border-color: var(--gold); color: var(--gold); font-weight: 600; }
+  .platform-btn .icon { font-size: 20px; display: block; margin-bottom: 4px; }
+
+  .tone-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 16px; }
+  .tone-btn {
+    background: var(--lapis3); border: 1px solid rgba(201,168,76,0.15); border-radius: var(--radius-sm);
+    padding: 8px 10px; cursor: pointer; font-size: 12px; color: var(--text2); transition: all 0.2s; text-align: left;
+  }
+  .tone-btn:hover { border-color: var(--turq); color: var(--turq2); }
+  .tone-btn.active { background: rgba(26,138,122,0.15); border-color: var(--turq2); color: var(--turq2); font-weight: 600; }
+  .tone-name { font-weight: 600; display: block; }
+  .tone-desc { font-size: 11px; color: var(--text3); margin-top: 2px; }
+
+  .generate-btn {
+    width: 100%; background: linear-gradient(135deg, var(--gold), var(--gold2)); color: var(--lapis); 
+    border: none; border-radius: var(--radius-sm); padding: 14px; font-size: 15px; font-weight: 700;
+    cursor: pointer; transition: all 0.2s; letter-spacing: 0.5px;
+  }
+  .generate-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(201,168,76,0.35); }
+  .generate-btn:active { transform: translateY(0); }
+
+  /* RESULTS */
+  .results-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; flex-wrap: gap; }
+  .results-title { font-size: 11px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; color: var(--gold); }
+  .results-count { font-size: 12px; color: var(--text3); }
+
+  .template-card {
+    background: var(--lapis3); border: 1px solid rgba(201,168,76,0.12); border-radius: var(--radius);
+    padding: 20px; margin-bottom: 14px; transition: border-color 0.2s; position: relative;
+  }
+  .template-card:hover { border-color: rgba(201,168,76,0.3); }
+  .template-card.starred { border-color: rgba(201,168,76,0.5); }
+
+  .card-header { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+  .variant-badge { background: rgba(201,168,76,0.12); border: 1px solid rgba(201,168,76,0.3); padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; color: var(--gold); }
+  .hook-type { font-size: 11px; color: var(--turq2); font-weight: 600; letter-spacing: 0.5px; }
+  .star-btn { margin-left: auto; background: none; border: none; cursor: pointer; font-size: 18px; line-height: 1; opacity: 0.5; transition: opacity 0.2s; }
+  .star-btn:hover, .star-btn.starred { opacity: 1; }
+
+  .template-text {
+    font-size: 14px; line-height: 1.65; color: var(--text); background: rgba(0,0,0,0.2);
+    border-radius: var(--radius-sm); padding: 14px 16px; margin-bottom: 12px;
+    white-space: pre-wrap; word-break: break-word;
+  }
+  .highlight { color: var(--gold2); font-weight: 600; }
+
+  .card-footer { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .meta-tag { background: rgba(26,138,122,0.1); border: 1px solid rgba(26,138,122,0.2); padding: 3px 10px; border-radius: 10px; font-size: 11px; color: var(--turq2); }
+  .char-count { font-size: 11px; color: var(--text3); margin-left: auto; }
+  .copy-btn {
+    background: rgba(201,168,76,0.1); border: 1px solid rgba(201,168,76,0.25); color: var(--gold);
+    padding: 5px 14px; border-radius: 8px; cursor: pointer; font-size: 12px; font-weight: 600;
+    transition: all 0.2s;
+  }
+  .copy-btn:hover { background: rgba(201,168,76,0.2); }
+  .copy-btn.copied { background: rgba(61,184,122,0.15); border-color: var(--green); color: var(--green); }
+
+  /* STATS BAR */
+  .stats-bar { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 24px; }
+  .stat { background: var(--lapis2); border: var(--border); border-radius: var(--radius-sm); padding: 14px 16px; text-align: center; }
+  .stat-val { font-size: 22px; font-weight: 700; color: var(--gold); }
+  .stat-lbl { font-size: 11px; color: var(--text3); margin-top: 2px; }
+
+  /* ACTIONS BAR */
+  .actions-bar { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+  .action-btn {
+    background: var(--lapis2); border: var(--border); color: var(--text2); padding: 8px 16px;
+    border-radius: var(--radius-sm); cursor: pointer; font-size: 13px; transition: all 0.2s;
+  }
+  .action-btn:hover { border-color: var(--gold); color: var(--gold); }
+
+  /* TIPS */
+  .tips-panel { margin-top: 20px; }
+  .tip { display: flex; gap: 10px; margin-bottom: 10px; font-size: 13px; color: var(--text2); line-height: 1.5; }
+  .tip-icon { color: var(--gold); flex-shrink: 0; margin-top: 2px; }
+
+  /* PLACEHOLDER */
+  .placeholder { text-align: center; padding: 60px 20px; color: var(--text3); }
+  .placeholder-icon { font-size: 48px; margin-bottom: 16px; opacity: 0.5; }
+  .placeholder h3 { font-size: 18px; color: var(--text2); margin-bottom: 8px; }
+  .placeholder p { font-size: 14px; }
+
+  /* PLATFORM CHAR LIMITS */
+  .limit-note { font-size: 11px; color: var(--text3); margin-top: 6px; display: flex; align-items: center; gap: 6px; }
+  .limit-pill { background: rgba(26,138,122,0.1); border: 1px solid rgba(26,138,122,0.2); padding: 2px 8px; border-radius: 8px; font-size: 10px; color: var(--turq2); }
+
+  @media (max-width: 900px) { .two-col { grid-template-columns: 1fr; } .stats-bar { grid-template-columns: repeat(2, 1fr); } }
+</style>
+<script src="_abuz8-live-brain.js" defer></script>
+
+<script src="_abuz8-config.js" defer></script>
+<link rel="canonical" href="https://abuz8ai.com/tools/ai-cold-dm-templates">
+<meta name="description" content="AI Cold DM Templates — Outreach that doesn&#x27;t feel like spam. Free, no signup, runs entirely in your browser. One of 169 free AI and developer tools by ABUZ8.">
+</head>
+<body>
+
+<header>
+  <div class="logo">A8</div>
+  <div>
+    <h1>AI Cold DM Templates</h1>
+    <p>Generate high-converting outreach messages for any platform, industry & goal</p>
+  </div>
+  <span class="badge">✦ 100% Client-Side</span>
+</header>
+
+<div class="container">
+
+  <!-- STATS -->
+  <div class="stats-bar">
+    <div class="stat"><div class="stat-val">6</div><div class="stat-lbl">Platforms</div></div>
+    <div class="stat"><div class="stat-val">5</div><div class="stat-lbl">Tones</div></div>
+    <div class="stat"><div class="stat-val">8</div><div class="stat-lbl">Industries</div></div>
+    <div class="stat"><div class="stat-val">5</div><div class="stat-lbl">Templates / Run</div></div>
+  </div>
+
+  <div class="two-col">
+
+    <!-- LEFT: CONFIG -->
+    <div>
+      <div class="panel">
+        <div class="panel-title">⚙ Configure Your Outreach</div>
+
+        <!-- PLATFORM -->
+        <div class="field">
+          <label>PLATFORM</label>
+          <div class="platform-grid" id="platformGrid">
+            <div class="platform-btn active" data-p="linkedin" onclick="setPlatform(this)"><span class="icon">💼</span>LinkedIn</div>
+            <div class="platform-btn" data-p="twitter" onclick="setPlatform(this)"><span class="icon">𝕏</span>Twitter / X</div>
+            <div class="platform-btn" data-p="instagram" onclick="setPlatform(this)"><span class="icon">📸</span>Instagram</div>
+            <div class="platform-btn" data-p="email" onclick="setPlatform(this)"><span class="icon">📧</span>Email</div>
+            <div class="platform-btn" data-p="discord" onclick="setPlatform(this)"><span class="icon">💬</span>Discord</div>
+            <div class="platform-btn" data-p="slack" onclick="setPlatform(this)"><span class="icon">⚡</span>Slack</div>
+          </div>
+          <div class="limit-note" id="limitNote"><span class="limit-pill" id="limitPill">300 chars ideal</span><span id="limitDesc">LinkedIn DMs: keep under 300 chars for best reply rates</span></div>
+        </div>
+
+        <!-- TONE -->
+        <div class="field">
+          <label>TONE</label>
+          <div class="tone-grid" id="toneGrid">
+            <div class="tone-btn active" data-t="professional" onclick="setTone(this)"><span class="tone-name">Professional</span><span class="tone-desc">Polished & credible</span></div>
+            <div class="tone-btn" data-t="casual" onclick="setTone(this)"><span class="tone-name">Casual</span><span class="tone-desc">Friendly & relaxed</span></div>
+            <div class="tone-btn" data-t="direct" onclick="setTone(this)"><span class="tone-name">Direct</span><span class="tone-desc">Bold & no-fluff</span></div>
+            <div class="tone-btn" data-t="curious" onclick="setTone(this)"><span class="tone-name">Curious</span><span class="tone-desc">Question-led hook</span></div>
+            <div class="tone-btn" data-t="value" onclick="setTone(this)"><span class="tone-name">Value-Lead</span><span class="tone-desc">Give before asking</span></div>
+          </div>
+        </div>
+
+        <!-- INDUSTRY -->
+        <div class="field">
+          <label>PROSPECT INDUSTRY</label>
+          <select id="industry">
+            <option value="saas">SaaS / Tech</option>
+            <option value="ecomm">E-commerce / DTC</option>
+            <option value="agency">Marketing / Agency</option>
+            <option value="finance">Finance / FinTech</option>
+            <option value="healthcare">Healthcare / MedTech</option>
+            <option value="realestate">Real Estate</option>
+            <option value="creator">Content Creator / Influencer</option>
+            <option value="general">General / Other</option>
+          </select>
+        </div>
+
+        <!-- GOAL -->
+        <div class="field">
+          <label>OUTREACH GOAL</label>
+          <select id="goal">
+            <option value="call">Book a discovery call</option>
+            <option value="demo">Get them to a demo</option>
+            <option value="collab">Propose a collaboration</option>
+            <option value="partner">Explore partnership</option>
+            <option value="feedback">Request feedback / advice</option>
+            <option value="intro">Warm intro / networking</option>
+          </select>
+        </div>
+
+        <!-- YOUR OFFER -->
+        <div class="field">
+          <label>YOUR OFFER / PRODUCT <span style="color:var(--text3)">(optional — makes templates more specific)</span></label>
+          <input type="text" id="offer" placeholder="e.g. AI automation for SaaS onboarding" maxlength="80">
+        </div>
+
+        <!-- PROSPECT NAME / COMPANY -->
+        <div class="field">
+          <label>PROSPECT NAME / COMPANY <span style="color:var(--text3)">(optional)</span></label>
+          <input type="text" id="prospectName" placeholder="e.g. Sarah @ Stripe" maxlength="50">
+        </div>
+
+        <button class="generate-btn" onclick="generateTemplates()">⚡ Generate 5 Templates</button>
+      </div>
+
+      <!-- TIPS -->
+      <div class="panel tips-panel" style="margin-top:16px">
+        <div class="panel-title">💡 Cold DM Best Practices</div>
+        <div class="tip"><span class="tip-icon">→</span><span><strong>First line is everything.</strong> 80% of recipients read only the opener. Make it about them, not you.</span></div>
+        <div class="tip"><span class="tip-icon">→</span><span><strong>One ask per message.</strong> Ask for one specific, low-friction action — a call, a reply, a click.</span></div>
+        <div class="tip"><span class="tip-icon">→</span><span><strong>Personalize the opener.</strong> Reference a post, achievement, or mutual connection for 3× reply rate.</span></div>
+        <div class="tip"><span class="tip-icon">→</span><span><strong>Short wins.</strong> Under 150 words for DMs. Under 100 for Twitter/X.</span></div>
+        <div class="tip"><span class="tip-icon">→</span><span><strong>Follow up once.</strong> 50% of replies come from a single follow-up sent 3–5 days later.</span></div>
+      </div>
+    </div>
+
+    <!-- RIGHT: RESULTS -->
+    <div id="resultsPane">
+      <div class="placeholder">
+        <div class="placeholder-icon">💬</div>
+        <h3>Your templates will appear here</h3>
+        <p>Configure your outreach on the left and hit Generate.</p>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// ── State ──────────────────────────────────────────────────────────────────
+let platform = 'linkedin';
+let tone = 'professional';
+let starredSet = new Set();
+
+// ── Platform limits / meta ─────────────────────────────────────────────────
+const PLATFORM_META = {
+  linkedin: { ideal: 300, limit: 1900, note: 'Keep under 300 chars for best reply rates', icon: '💼' },
+  twitter:  { ideal: 100, limit: 280, note: 'DMs cut off at 10k chars; aim for under 100', icon: '𝕏' },
+  instagram:{ ideal: 150, limit: 1000, note: 'Reel/post reply hooks increase open rates', icon: '📸' },
+  email:    { ideal: 200, limit: 9999, note: 'Subject line is as important as the body', icon: '📧' },
+  discord:  { ideal: 200, limit: 2000, note: 'Mention mutual server context when possible', icon: '💬' },
+  slack:    { ideal: 200, limit: 4000, note: 'Shared workspace context = instant credibility', icon: '⚡' }
+};
+
+// ── Template Bank ──────────────────────────────────────────────────────────
+// Keys: platform × tone × goal (some combinations share templates; fallback to generic)
+
+const TEMPLATES = {
+
+  // ── LINKEDIN ───────────────────────────────────────────────────────────
+  linkedin: {
+    professional: {
+      call:    [
+        `Hi {name}, I came across your work at {company} — really impressive what you're building in {industry}.\n\nI help {industry} companies {offer_action}. Thought there might be a fit.\n\nWould a 15-min call this week make sense?`,
+        `{name}, I noticed we share a connection in {industry}. I've been working with teams like yours to {offer_action} — often cutting {pain_point} by 30%+.\n\nOpen to a quick call to see if it's relevant to what you're working on?`,
+        `Hi {name} — your post on {industry_topic} caught my attention. It aligns closely with work I'm doing around {offer}.\n\nI'd love to share a specific insight I think your team would find valuable. 15 mins this week?`,
+        `{name}, I've been following {company}'s growth in {industry} — strong trajectory.\n\nI specialize in helping companies at your stage {offer_action}. Happy to share a case study with a similar company if useful.\n\nWorth a quick call?`,
+        `Hi {name}, quick note — I help {industry} leaders {offer_action}, usually within 30 days.\n\nI think there's a specific angle that could work well for {company}. Can I share a 2-min summary and see if it resonates?`
+      ],
+      partner: [
+        `{name}, your team's work in {industry} is exactly the space I've been building in.\n\nI'm exploring a partnership where we {offer_action} together — complementary strengths, shared upside.\n\nWould love to explore if this makes sense. 20 mins?`,
+        `Hi {name} — I've been thinking about how {company} and what I'm building could create real value together in {industry}.\n\nNo pitch — just a genuine conversation about whether there's alignment. Open to it?`
+      ]
+    },
+    casual: {
+      call: [
+        `Hey {name}! Loved your recent take on {industry_topic} — that perspective on {pain_point} is spot on.\n\nI'm working on something that tackles exactly that. Would you be down for a quick chat?`,
+        `{name}! Random DM incoming — saw your profile and thought "I need to talk to this person." 😄\n\nI'm building {offer} for {industry} teams. Think you'd find it interesting.\n\nUp for a 15-min coffee chat this week?`,
+        `Hey {name} — been following your content for a while. You clearly get the {industry} space.\n\nI help teams {offer_action} without the usual headaches. Just wanted to reach out — would love your take.\n\nAny chance you have 15 mins?`,
+        `{name}! We've been orbiting the same {industry} space for a while now. I figured it was time to actually say hi. 👋\n\nI help companies like {company} {offer_action}. Would love to compare notes sometime.`,
+        `Hey {name} — quick one: I'm building a tool for {industry} and you're exactly who I want feedback from.\n\nNo strings, just a genuine 15-min convo. Interested?`
+      ]
+    },
+    direct: {
+      call: [
+        `{name} — I help {industry} companies {offer_action}. Average client sees results in under 30 days.\n\nI think {company} is a fit. 15-minute call this week — yes or no?`,
+        `Hi {name}. Direct ask: I have something that helps {industry} teams {offer_action}. It's working well.\n\nWorth 15 minutes to see if it applies to what you're building at {company}?`,
+        `{name}, I'm not going to bury the lede:\n\nI help {industry} companies {offer_action}. I think I can do the same for {company}.\n\nOne call. 15 minutes. Interested?`,
+        `Hi {name} — no fluff version: I have a solution that fixes {pain_point} for {industry} teams.\n\nDo you have this problem at {company}? If yes, let's talk. If no, totally fine.`,
+        `{name} — quick question: is {pain_point} something your team is actively trying to solve?\n\nIf yes, I have a specific approach worth 15 minutes of your time. If no, thanks anyway.`
+      ]
+    },
+    curious: {
+      call: [
+        `{name}, curious — what's the biggest bottleneck for {industry_topic} teams at {company} right now?\n\nAsking because I've been building a solution to exactly that. Your answer would help me a lot, and I might have something useful for you in return.`,
+        `Hi {name} — random question from a stranger 😄: how does your team currently handle {pain_point}?\n\nI ask because most {industry} teams I talk to are dealing with the same issue in very different ways.`,
+        `{name} — I've been researching how top {industry} companies approach {industry_topic}. Mind if I ask: what's working at {company} right now, and what's still frustrating?\n\nBuilding something in this space and you seem like someone with real insight.`,
+        `Hi {name} — I noticed {company} has been growing fast. Curious: at your current scale, is {pain_point} still a manual process?\n\nI help teams at this stage automate it. Might be perfect timing.`,
+        `{name} — honest question: if you could fix one thing about how your team handles {industry_topic}, what would it be?\n\nNo agenda, genuinely curious — and might have something relevant to share back.`
+      ]
+    },
+    value: {
+      call: [
+        `Hi {name} — I put together a quick breakdown of how top {industry} companies are solving {pain_point} in 2024. Happy to share it with you, no strings.\n\nIf you find it useful, I'd love to hear your take on what we're building. Worth a 15-min swap?`,
+        `{name}, I wrote a case study on how a {industry} company similar to yours reduced {pain_point} by 40% in 60 days. Sending it over — genuinely think it's relevant to what you're working on.\n\nIf it resonates, happy to dig in further on a quick call.`,
+        `Hi {name} — I keep seeing {industry} teams struggle with {pain_point}. I made a short checklist that actually helps.\n\nWant me to send it over? No pitch attached — just useful content. If you like it, maybe we chat sometime.`,
+        `{name} — I noticed {company} recently {company_signal}. I have a specific playbook for how to capitalize on that without the usual {pain_point} bottleneck.\n\nHappy to share it free. Interested?`,
+        `Hi {name} — before I pitch anything: I want to give you something useful.\n\nI've mapped out 3 ways {industry} companies at {company}'s stage unlock faster {offer_outcome}. Can I send it over?`
+      ]
+    }
+  },
+
+  // ── TWITTER/X ──────────────────────────────────────────────────────────
+  twitter: {
+    casual: {
+      call: [
+        `{name} — your thread on {industry_topic} was 🔥. Built something that tackles exactly that.\n\nWorth a DM?`,
+        `Hey {name}! Been following your {industry} takes for a while. Think what I'm building is relevant. 15 mins?`,
+        `{name} — not a bot, I promise 😂. I help {industry} teams {offer_action}. Curious if it's relevant to you.`,
+        `{name} your reply on {industry_topic} caught my eye. I'm solving that exact problem. Want to see how?`,
+        `Hi {name} — saw your post about {pain_point}. I've got a specific fix. DM if interested!`
+      ]
+    },
+    direct: {
+      call: [
+        `{name} — quick question: do you help {industry} companies with {offer_action}? Because that's what I do. Collab?`,
+        `{name}: I fix {pain_point} for {industry} teams. 100-word pitch? Or skip to a 15-min call?`,
+        `{name} — I help {industry} founders {offer_action}. Want a 5-min breakdown? No fluff.`,
+        `Hi {name}. {offer} for {industry}. Think it's a fit for you. Worth a quick DM?`,
+        `{name} — I'll be direct: I help {industry} teams {offer_action} and I think you'd find it useful. Interested?`
+      ]
+    }
+  },
+
+  // ── INSTAGRAM ─────────────────────────────────────────────────────────
+  instagram: {
+    casual: {
+      collab: [
+        `Hey {name}! Your content in the {industry} space is genuinely great — love the authenticity.\n\nI'm working on {offer} and think there could be a really natural collab here. Open to chatting?`,
+        `{name}! Came across your page and honestly you're exactly the kind of creator I want to partner with.\n\nBuilding something for {industry} — want to hear the details?`,
+        `Hey {name} — love your work. I help {industry} brands {offer_action} and think there's a great fit.\n\nWould you be open to a quick DM convo?`,
+        `{name}! Your engagement rate is incredible for {industry}. I've been building {offer} and I think your audience would genuinely love it.\n\nUp for a free trial + collab deal?`,
+        `Hey {name} — not a generic bot message 😅. I actually follow you because your {industry} content is real.\n\nI have something I think fits your brand. Want the 2-min version?`
+      ]
+    }
+  },
+
+  // ── EMAIL ──────────────────────────────────────────────────────────────
+  email: {
+    professional: {
+      call: [
+        `Subject: Quick idea for {company}\n\nHi {name},\n\nI'll keep this short — I help {industry} companies {offer_action}, typically within 30 days.\n\nI came across {company} and think there's a specific angle worth exploring together.\n\nWould you be open to a 15-minute call this week or next?\n\nBest,\n[Your Name]`,
+        `Subject: {industry} teams + {pain_point} — quick thought\n\nHi {name},\n\nI specialize in helping {industry} leaders solve {pain_point}. One of our recent clients saw [specific result] in 6 weeks.\n\nThought it might be relevant given {company}'s current trajectory.\n\nHappy to share the case study — or jump on a quick call if it sounds interesting.\n\n[Your Name]`,
+        `Subject: Re: {company}'s growth in {industry}\n\nHi {name},\n\nNoticed {company} has been scaling in {industry} — strong signal.\n\nI work with companies at exactly this stage to {offer_action} without the usual friction.\n\nWorth 15 minutes to see if there's a fit?\n\n[Your Name]`,
+        `Subject: One question for you, {name}\n\nHi {name},\n\nQuick question: is {pain_point} something your team is actively dealing with?\n\nIf yes — I think I can help. I've built a solution specifically for {industry} companies.\n\nHappy to share details. A 15-min call would tell us quickly if it's a fit.\n\n[Your Name]`,
+        `Subject: Thought you'd find this useful\n\nHi {name},\n\nI put together a quick breakdown on how {industry} companies are solving {pain_point} in 2024. Happy to send it over.\n\nNo pitch attached — just thought it might be useful given what I know about {company}.\n\nWant me to send it? And if you're curious about what I do, happy to share that too.\n\n[Your Name]`
+      ]
+    },
+    direct: {
+      call: [
+        `Subject: 15 minutes — {company} + {offer}?\n\nHi {name},\n\nI help {industry} companies {offer_action}. I think I can do the same for {company}.\n\nOne call. 15 minutes. Interested?\n\n[Your Name]`,
+        `Subject: Straight to the point\n\nHi {name},\n\n{offer} for {industry} teams. It solves {pain_point}. It works.\n\nWant to see a 2-min demo? Yes/no is fine.\n\n[Your Name]`
+      ]
+    }
+  },
+
+  // ── DISCORD ───────────────────────────────────────────────────────────
+  discord: {
+    casual: {
+      intro: [
+        `Hey {name}! Saw your posts in the {industry} server — you clearly know your stuff.\n\nI'm building {offer} and would love to get your take. Worth a quick DM?`,
+        `{name}! We've been in a few of the same {industry} chats. I'm working on {offer} and think there might be a cool angle here.\n\nMind if I share a quick idea?`,
+        `Hey {name} — big fan of your takes in this server. Quick question: is {pain_point} something your team deals with?\n\nBuilding something that might be relevant.`,
+        `{name}! Love the energy you bring to {industry} discussions here. I'm building {offer} and honestly you seem like someone who'd actually understand the vision.\n\nGot 10 mins?`,
+        `Hey {name} — not trying to pitch you, just genuinely curious: what's the most annoying thing about {industry_topic} right now?\n\nBuilding in this space and your opinion would actually help.`
+      ]
+    }
+  },
+
+  // ── SLACK ─────────────────────────────────────────────────────────────
+  slack: {
+    professional: {
+      intro: [
+        `Hi {name} — we're both in this workspace, so figured a direct note is fine. 🙂\n\nI help {industry} teams {offer_action} and think there might be relevant overlap with what you're working on.\n\nWould a 15-min sync be useful?`,
+        `Hey {name} — quick DM. I saw your message in #{channel} and it resonated.\n\nI'm working on {offer} for {industry} teams. Thought you'd be a great person to get input from — and maybe explore if there's something useful for your work too.\n\nOpen to a quick chat?`,
+        `{name} — context: we're connected through this workspace and I wanted to reach out directly.\n\nI help companies like {company} {offer_action}. Happy to share a 2-min summary. Worth a quick call?`,
+        `Hi {name}! I noticed your work on {industry_topic} — impressive.\n\nI'm building {offer} and I think there's a specific use case that maps directly to what you're doing. Mind if I share details?`,
+        `{name} — quick one from a fellow workspace member: I work with {industry} teams to {offer_action}.\n\nWould love to find out more about what you're working on and see if there's a fit. 15 mins?`
+      ]
+    }
+  }
+};
+
+// ── Industry-specific context ──────────────────────────────────────────────
+const INDUSTRY_CONTEXT = {
+  saas:        { pain: 'churn and activation rates', topic: 'PLG & SaaS growth', outcome: 'ARR growth', action: 'improve onboarding and reduce churn', signal: 'just raised a round' },
+  ecomm:       { pain: 'CAC and ROAS efficiency', topic: 'DTC growth & retention', outcome: 'revenue per customer', action: 'scale profitably with better unit economics', signal: 'expanded their product line' },
+  agency:      { pain: 'client reporting & delivery delays', topic: 'agency ops and scale', outcome: 'margins', action: 'systemize delivery and grow without burning out', signal: 'started hiring' },
+  finance:     { pain: 'compliance overhead and manual processes', topic: 'FinTech automation', outcome: 'operational efficiency', action: 'automate compliance and accelerate deal flow', signal: 'launched a new product' },
+  healthcare:  { pain: 'patient intake and admin bottlenecks', topic: 'health tech & workflows', outcome: 'patient outcomes', action: 'reduce administrative burden and improve care delivery', signal: 'expanded their practice' },
+  realestate:  { pain: 'lead follow-up and deal tracking', topic: 'PropTech & real estate ops', outcome: 'closed deals', action: 'automate lead nurture and close more deals', signal: 'entered a new market' },
+  creator:     { pain: 'monetization and audience engagement', topic: 'creator economy', outcome: 'revenue per follower', action: 'monetize your audience more effectively', signal: 'hit a major milestone' },
+  general:     { pain: 'operational inefficiency', topic: 'business growth', outcome: 'efficiency', action: 'save time and drive better results', signal: 'been growing' }
+};
+
+// ── Goal context ───────────────────────────────────────────────────────────
+const GOAL_CONTEXT = {
+  call:    'book a discovery call',
+  demo:    'get them to a live demo',
+  collab:  'propose a collaboration',
+  partner: 'explore a partnership',
+  feedback:'request feedback or advice',
+  intro:   'warm intro / networking'
+};
+
+// ── UI helpers ─────────────────────────────────────────────────────────────
+function setPlatform(el) {
+  document.querySelectorAll('.platform-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  platform = el.dataset.p;
+  const m = PLATFORM_META[platform];
+  document.getElementById('limitPill').textContent = m.ideal + ' chars ideal';
+  document.getElementById('limitDesc').textContent = m.note;
+}
+
+function setTone(el) {
+  document.querySelectorAll('.tone-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  tone = el.dataset.t;
+}
+
+// ── Template resolver ──────────────────────────────────────────────────────
+function getTemplates(platform, tone, goal) {
+  const p = TEMPLATES[platform];
+  if (!p) return getFallback(platform, tone, goal);
+
+  // Try exact match
+  if (p[tone] && p[tone][goal]) return p[tone][goal];
+
+  // Try tone fallback
+  for (const t of ['professional', 'casual', 'direct', 'curious', 'value']) {
+    if (p[t] && p[t][goal]) return p[t][goal];
+    if (p[t]) {
+      const keys = Object.keys(p[t]);
+      if (keys.length) return p[t][keys[0]];
+    }
+  }
+
+  return getFallback(platform, tone, goal);
+}
+
+function getFallback(platform, tone, goal) {
+  // Generic fallbacks for unsupported platform/tone/goal combos
+  return [
+    `Hi {name},\n\nI came across your work and noticed you're doing impressive things in {industry}.\n\nI help {industry} teams {offer_action}. Thought there might be a relevant connection.\n\nWould you be open to a brief conversation?`,
+    `{name}, your background in {industry} caught my attention. I specialize in helping teams like yours {offer_action}.\n\nWould love to share a specific idea I think could work for {company}. Worth 15 minutes?`,
+    `Hi {name} — quick note: I've been building {offer} specifically for {industry} teams.\n\nI think there's something here worth exploring. Can I share a quick overview?`,
+    `{name} — I help {industry} companies {offer_action}. I think {company} could be a strong fit based on what I know about the space.\n\nIs this something worth a quick conversation about?`,
+    `Hi {name}, I'd love to connect around {industry_topic}. I work with companies at {company}'s stage to {offer_action}.\n\nWould you be open to a brief exchange?`
+  ];
+}
+
+// ── Fill variables ─────────────────────────────────────────────────────────
+function fillTemplate(tpl, ctx) {
+  return tpl
+    .replace(/{name}/g, ctx.name || 'there')
+    .replace(/{company}/g, ctx.company || 'your company')
+    .replace(/{industry}/g, ctx.industryLabel)
+    .replace(/{industry_topic}/g, ctx.industryCtx.topic)
+    .replace(/{pain_point}/g, ctx.industryCtx.pain)
+    .replace(/{offer_action}/g, ctx.offerAction)
+    .replace(/{offer_outcome}/g, ctx.industryCtx.outcome)
+    .replace(/{offer}/g, ctx.offer || 'our solution')
+    .replace(/{company_signal}/g, ctx.industryCtx.signal)
+    .replace(/{channel}/g, 'general');
+}
+
+// ── Hook type labels ───────────────────────────────────────────────────────
+const HOOK_TYPES = ['Compliment opener', 'Problem hook', 'Social proof', 'Question hook', 'Value-first lead'];
+
+// ── Main generate ──────────────────────────────────────────────────────────
+function generateTemplates() {
+  const industryKey = document.getElementById('industry').value;
+  const goal = document.getElementById('goal').value;
+  const offer = document.getElementById('offer').value.trim();
+  const prospectRaw = document.getElementById('prospectName').value.trim();
+
+  const industryCtx = INDUSTRY_CONTEXT[industryKey];
+  const industryLabels = {
+    saas:'SaaS/Tech', ecomm:'E-commerce', agency:'Marketing/Agency',
+    finance:'Finance/FinTech', healthcare:'Healthcare', realestate:'Real Estate',
+    creator:'Creator/Influencer', general:'Business'
+  };
+
+  let name = '', company = '';
+  if (prospectRaw.includes('@')) {
+    const parts = prospectRaw.split('@');
+    name = parts[0].trim();
+    company = parts[1].trim();
+  } else {
+    name = prospectRaw;
+  }
+
+  const ctx = {
+    name: name || 'there',
+    company: company || 'your company',
+    industryLabel: industryLabels[industryKey],
+    industryCtx,
+    offer: offer || industryCtx.action.split(' ').slice(0,4).join(' '),
+    offerAction: offer ? `${offer.toLowerCase()} to help you ${industryCtx.action}` : industryCtx.action,
+  };
+
+  const goalLabel = GOAL_CONTEXT[goal];
+  const meta = PLATFORM_META[platform];
+
+  // Render header + loading state
+  const pane = document.getElementById('resultsPane');
+  pane.innerHTML = `
+    <div style="background:var(--lapis2);border:var(--border);border-radius:var(--radius);padding:20px;margin-bottom:16px">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
+        <div class="results-title">⚡ Generated Templates</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="action-btn" onclick="copyAllFavorites()">⭐ Copy Favorites</button>
+          <button class="action-btn" onclick="generateTemplates()">↺ Regenerate</button>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
+        <span class="meta-tag">${meta.icon} ${platform.charAt(0).toUpperCase()+platform.slice(1)}</span>
+        <span class="meta-tag">🎯 ${goalLabel}</span>
+        <span class="meta-tag">🏭 ${ctx.industryLabel}</span>
+        <span class="meta-tag">💬 ${tone.charAt(0).toUpperCase()+tone.slice(1)} tone</span>
+        <span style="font-size:11px;color:var(--text3);margin-left:auto;align-self:center">Ideal: ${meta.ideal} chars</span>
+      </div>
+    </div>
+    <div class="placeholder" id="dmLoading"><div class="placeholder-icon">⚡</div><h3>Generating your templates…</h3><p>The AI is writing 5 tailored cold DMs.</p></div>
+  `;
+
+  // Real AI generation via the ABUZ8 brain (Cloudflare Workers AI). No templates.
+  fetch('/api/waitlist', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      tool: 'cold-dm-templates',
+      data: {
+        platform, tone, goal: goalLabel, industry: ctx.industryLabel,
+        offer: offer || '', prospect: prospectRaw || '',
+        prospectName: ctx.name, prospectCompany: ctx.company,
+        idealLength: meta.ideal, count: 5
+      }
+    })
+  })
+  .then(r => r.json())
+  .then(res => {
+    if (!res.success || !res.result) throw new Error(res.error || 'Generation failed');
+    const loading = document.getElementById('dmLoading');
+    if (loading) loading.remove();
+    const card = document.createElement('div');
+    card.className = 'template-card';
+    card.id = 'card-0';
+    card.innerHTML = `
+      <div class="card-header">
+        <span class="variant-badge">AI Output</span>
+        <span class="hook-type">${meta.icon} ${platform.charAt(0).toUpperCase()+platform.slice(1)} · ${goalLabel}</span>
+        <button class="star-btn" id="star-0" onclick="toggleStar(0)" title="Star this">☆</button>
+      </div>
+      <div class="template-text" id="text-0">${escapeHtml(res.result)}</div>
+      <div class="card-footer">
+        <button class="copy-btn" id="copy-0" onclick="copyTemplate(0)">Copy</button>
+      </div>
+    `;
+    pane.appendChild(card);
+  })
+  .catch(err => {
+    const loading = document.getElementById('dmLoading');
+    if (loading) { loading.querySelector('h3').textContent = 'Generation failed'; loading.querySelector('p').textContent = err.message + '. Please try again in a moment.'; }
+    else alert('Generation failed: ' + err.message + '. Please try again in a moment.');
+  });
+}
+
+// ── Copy / Star ────────────────────────────────────────────────────────────
+function copyTemplate(idx) {
+  const text = document.getElementById(`text-${idx}`).textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.getElementById(`copy-${idx}`);
+    btn.textContent = '✓ Copied';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+  });
+}
+
+function toggleStar(idx) {
+  const btn = document.getElementById(`star-${idx}`);
+  const card = document.getElementById(`card-${idx}`);
+  if (starredSet.has(idx)) {
+    starredSet.delete(idx);
+    btn.textContent = '☆';
+    btn.classList.remove('starred');
+    card.classList.remove('starred');
+  } else {
+    starredSet.add(idx);
+    btn.textContent = '★';
+    btn.classList.add('starred');
+    card.classList.add('starred');
+  }
+}
+
+function copyAllFavorites() {
+  if (starredSet.size === 0) { alert('Star at least one template first!'); return; }
+  const texts = [];
+  starredSet.forEach(idx => {
+    const el = document.getElementById(`text-${idx}`);
+    if (el) texts.push(`=== Template ${idx+1} ===\n${el.textContent}`);
+  });
+  navigator.clipboard.writeText(texts.join('\n\n')).then(() => alert(`Copied ${texts.length} template(s)!`));
+}
+
+function escapeHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+</script>
+
+<script src="/assets/js/dfy-banner.js" async></script>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+<script src="/tools/_tools-shared.js" defer></script>
+
+  <section style="background:var(--lapis-2);border:1px solid var(--gold);border-radius:16px;padding:24px 32px;margin-top:24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;">
+    <div>
+      <h3 style="font-family:'Playfair Display',serif;font-size:22px;color:var(--cream);margin-bottom:4px;">Ready for the next level?</h3>
+      <p style="color:var(--dim);font-size:14px;">28 premium toolkits, real deliverables. From $17 to $97.</p>
+    </div>
+    <a href="/store.html" style="background:var(--gold);color:var(--lapis);font-weight:700;padding:12px 28px;border-radius:999px;font-size:14px;letter-spacing:.5px;">Browse the Store →</a>
+  </section>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>
+

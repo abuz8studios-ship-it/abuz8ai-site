@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ABUZ8 AI — Weekly Build Update</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #f5f0e8; font-family: Arial, sans-serif; }
+  .wrapper { max-width: 620px; margin: 0 auto; background: #0a1628; }
+  .header { padding: 36px 48px 28px; border-bottom: 1px solid #1a2e50; }
+  .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .logo { color: #c9a84c; font-family: Georgia, serif; font-size: 20px; font-weight: bold; letter-spacing: 3px; text-transform: uppercase; }
+  .issue-num { color: #8a9aaa; font-size: 12px; letter-spacing: 1px; }
+  .header-sub { color: #8a9aaa; font-size: 12px; letter-spacing: 1px; }
+  .body { padding: 40px 48px; }
+  h2 { color: #f5f0e8; font-family: Georgia, serif; font-size: 26px; line-height: 1.3; margin-bottom: 20px; }
+  p { color: #e8e4d8; font-size: 15px; line-height: 1.8; margin-bottom: 18px; }
+  .section { margin: 32px 0; }
+  .section-header { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
+  .section-icon { width: 28px; height: 28px; background: #163060; border: 1px solid #c9a84c; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 14px; color: #c9a84c; flex-shrink: 0; text-align: center; line-height: 28px; }
+  .section-title { color: #c9a84c; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; font-family: Arial, sans-serif; }
+  .update-item { background: #0f2040; border: 1px solid #1a2e50; border-radius: 8px; padding: 18px 20px; margin-bottom: 10px; }
+  .update-item .status { font-size: 11px; font-weight: bold; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 6px; }
+  .status-live { color: #2ab89a; }
+  .status-building { color: #c9a84c; }
+  .status-blocked { color: #e87040; }
+  .update-item .title { color: #f5f0e8; font-size: 15px; font-weight: bold; margin-bottom: 4px; }
+  .update-item .detail { color: #8a9aaa; font-size: 13px; line-height: 1.6; }
+  .metric-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin: 20px 0; }
+  .metric-card { background: #163060; border: 1px solid #1a2e50; border-radius: 8px; padding: 16px; text-align: center; }
+  .metric-value { color: #c9a84c; font-family: Georgia, serif; font-size: 28px; font-weight: bold; line-height: 1; }
+  .metric-label { color: #8a9aaa; font-size: 11px; letter-spacing: 1px; text-transform: uppercase; margin-top: 6px; }
+  .divider { border: 0; border-top: 1px solid #1a2e50; margin: 28px 0; }
+  .cta-wrap { text-align: center; margin: 32px 0; }
+  .btn { display: inline-block; padding: 16px 40px; background: #c9a84c; color: #0a1628; font-weight: bold; font-size: 13px; letter-spacing: 1.5px; text-transform: uppercase; text-decoration: none; border-radius: 8px; }
+  .footer { padding: 28px 48px; border-top: 1px solid #1a2e50; text-align: center; }
+  .footer p { color: #8a9aaa; font-size: 12px; line-height: 1.7; margin-bottom: 6px; }
+  .footer a { color: #2ab89a; text-decoration: none; }
+  @media (max-width: 480px) { .metric-row { grid-template-columns: 1fr 1fr; } .body, .header, .footer { padding: 28px 20px; } }
+</style>
+</head>
+<body>
+<div class="wrapper">
+  <div class="header">
+    <div class="header-top">
+      <div class="logo">ABUZ8 AI</div>
+      <div class="issue-num">Weekly Update — {{WEEK_OF}}</div>
+    </div>
+    <div class="header-sub">What shipped, what's building, what's next.</div>
+  </div>
+
+  <div class="body">
+    <h2>{{EMAIL_HEADLINE}}</h2>
+    <p>{{OPENING_PARAGRAPH}} — direct from the build. No PR polish. No hype. Just what actually happened this week.</p>
+
+    <div class="metric-row">
+      <div class="metric-card">
+        <div class="metric-value">{{TOOLS_COUNT}}</div>
+        <div class="metric-label">Live AI Tools</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-value">{{WAITLIST_COUNT}}</div>
+        <div class="metric-label">Waitlist Members</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-value">{{SESSIONS_RUN}}</div>
+        <div class="metric-label">Agent Sessions</div>
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <div class="section">
+      <div class="section-header">
+        <div class="section-icon">✅</div>
+        <div class="section-title">Shipped This Week</div>
+      </div>
+
+      <!-- FILL IN EACH WEEK — copy/paste these update-item blocks -->
+      <div class="update-item">
+        <div class="status status-live">LIVE</div>
+        <div class="title">{{SHIPPED_ITEM_1_TITLE}}</div>
+        <div class="detail">{{SHIPPED_ITEM_1_DETAIL}}</div>
+      </div>
+      <div class="update-item">
+        <div class="status status-live">LIVE</div>
+        <div class="title">{{SHIPPED_ITEM_2_TITLE}}</div>
+        <div class="detail">{{SHIPPED_ITEM_2_DETAIL}}</div>
+      </div>
+      <div class="update-item">
+        <div class="status status-live">LIVE</div>
+        <div class="title">{{SHIPPED_ITEM_3_TITLE}}</div>
+        <div class="detail">{{SHIPPED_ITEM_3_DETAIL}}</div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header">
+        <div class="section-icon" style="border-color:#c9a84c;">🔨</div>
+        <div class="section-title">Currently Building</div>
+      </div>
+
+      <div class="update-item">
+        <div class="status status-building">IN PROGRESS</div>
+        <div class="title">{{BUILDING_ITEM_1_TITLE}}</div>
+        <div class="detail">{{BUILDING_ITEM_1_DETAIL}}</div>
+      </div>
+      <div class="update-item">
+        <div class="status status-building">IN PROGRESS</div>
+        <div class="title">{{BUILDING_ITEM_2_TITLE}}</div>
+        <div class="detail">{{BUILDING_ITEM_2_DETAIL}}</div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header">
+        <div class="section-icon" style="border-color:#e8d48b;">⚡</div>
+        <div class="section-title">Next Week</div>
+      </div>
+      <p style="color:#e8e4d8; font-size:15px;">{{NEXT_WEEK_PREVIEW}}</p>
+    </div>
+
+    <hr class="divider">
+
+    <p>{{CLOSING_NOTE}}</p>
+
+    <div class="cta-wrap">
+      <a href="https://abuz8ai.com/tools/" class="btn">Try the Tools Free →</a>
+    </div>
+
+    <p style="color:#8a9aaa; font-size:14px;">— Ahmad<br>Founder, ABUZ8 AI<br><a href="mailto:ahmad@abuz8ai.com" style="color:#2ab89a;">ahmad@abuz8ai.com</a></p>
+  </div>
+
+  <div class="footer">
+    <p>ABUZ8 LLC · <a href="https://abuz8ai.com">abuz8ai.com</a></p>
+    <p>You're on the ABUZ8 AI early access list.</p>
+    <p><a href="https://abuz8ai.com/unsubscribe">Unsubscribe</a> · <a href="https://abuz8ai.com/privacy">Privacy</a></p>
+  </div>
+</div>
+</body>
+</html>

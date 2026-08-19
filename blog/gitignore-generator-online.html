@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gitignore Generator: What to Ignore, What to Commit, What to Rotate | ABUZ8</title>
+<meta name="description" content="Free gitignore generator online — build the right .gitignore for your stack in seconds. What belongs in it, why lockfiles don't, and why .gitignore can't save a secret you already committed.">
+<meta name="keywords" content="gitignore generator, generate gitignore, gitignore template, gitignore node, gitignore python, git rm cached, gitignore best practices">
+<link rel="canonical" href="https://abuz8ai.com/blog/gitignore-generator-online">
+<meta property="og:title" content="Gitignore Generator: What to Ignore, What to Commit, What to Rotate">
+<meta property="og:type" content="article">
+<link rel="stylesheet" href="/blog/_blog-base.css">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@300;400;600;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","headline":"Gitignore Generator: What to Ignore, What to Commit, What to Rotate","datePublished":"2026-07-21","author":{"@type":"Organization","name":"ABUZ8 AI"}}
+</script>
+</head>
+<body>
+<div class="container">
+  <a href="/blog/" class="back">&larr; ABUZ8 BLOG</a>
+  <h1>Gitignore Generator: What to Ignore, What to Commit, What to Rotate</h1>
+  <div class="meta-row"><span>DEV TOOLS</span><span class="dot"></span><span>JULY 21, 2026</span><span class="dot"></span><span>5 MIN READ</span></div>
+
+  <p>Every repository eventually learns the same lesson: you need a <strong>gitignore generator</strong> — or at least a real .gitignore — <em>before</em> the first commit, because git's default is to take everything. The 400MB <code>node_modules</code> push, the committed <code>.env</code> with live keys, the teammate's <code>.DS_Store</code> sprinkled through every folder — all of them are one missing file's fault. Our free <a href="/tools/ai-gitignore-generator.html" class="in">gitignore generator</a> builds a stack-aware ignore file in seconds. Here's the mental model: what to ignore, the famous thing you shouldn't, and the hard truth about secrets that already slipped through.</p>
+
+  <h2>The rule: commit sources, ignore derivatives</h2>
+  <p>Everything in a repo is either a source of truth or something derived from one, and only sources belong in version control. Derivatives — build output (<code>dist/</code>, <code>build/</code>, <code>*.pyc</code>), installed dependencies (<code>node_modules/</code>, <code>venv/</code>, <code>vendor/</code>), caches, coverage reports, logs — are reproducible from the sources by anyone who clones. Committing them bloats history permanently (git never forgets a byte it's ever tracked), generates merge conflicts in files no human reads, and turns diffs into noise. Layer on the machine-local junk — editor folders like <code>.idea/</code> and <code>.vscode/</code>, OS droppings like <code>.DS_Store</code> and <code>Thumbs.db</code> — and you have the standard template the <a href="/tools/ai-gitignore-generator.html" class="in">generator</a> assembles for your language and tooling in one click.</p>
+
+  <h2>The exception everyone gets wrong: lockfiles</h2>
+  <p>The most common .gitignore mistake is ignoring <code>package-lock.json</code>, <code>yarn.lock</code>, <code>poetry.lock</code>, or <code>Cargo.lock</code> because they "look generated." They are generated — and they're also the only record of the <em>exact</em> dependency versions your build was tested against. Ignore the lockfile and every clone resolves dependencies fresh, which is how "works on my machine" becomes a lifestyle: CI installs a slightly newer transitive dependency than the one you tested, and Thursday's deploy breaks on code nobody changed. Lockfiles are sources of truth about your environment. Commit them. (The narrow exception is publishing a library, where consumers do their own resolution — and even then, opinions differ; applications commit lockfiles, full stop.)</p>
+
+  <h2>Secrets: .gitignore is a seatbelt, not a time machine</h2>
+  <p>Ignoring <code>.env</code>, key files, and credential stores is mandatory — and it's prevention only. The moment a secret lands in a commit, it lives in history: reachable by anyone with clone access, forever, no matter how quickly you delete the file in the next commit. Deleting hides it from the working tree; history remembers. The correct response to a committed secret is not a cleanup commit — it's <strong>rotate the credential immediately</strong>, then optionally scrub history with tools built for it. Assume any pushed secret is compromised; on public repos, automated scanners find fresh keys in minutes. The pattern that prevents all of this: commit a <code>.env.example</code> with placeholder values as documentation, ignore the real <code>.env</code>, and generate it locally with the <a href="/tools/ai-env-generator.html" class="in">.env generator</a>. Same discipline as a <a href="/blog/free-password-generator-online.html" class="in">strong password</a>: the system works only when the secret never touches the shared surface.</p>
+
+  <h2>Repo-level, global, and the already-tracked trap</h2>
+  <p>Three mechanics worth knowing. First, patterns: a trailing slash matches directories (<code>build/</code>), a leading slash anchors to repo root (<code>/coverage</code>), <code>**</code> matches across directories, and <code>!</code> re-includes an exception — enough grammar for 99% of real files. Second, personal preferences belong in your <em>global</em> gitignore (<code>core.excludesFile</code>), not the repo's: your editor's swap files are your business, and the project file shouldn't accumulate every contributor's tooling. Third, the trap that generates a thousand forum posts: .gitignore only affects <em>untracked</em> files. If something was committed before the rule existed, git keeps tracking it; run <code>git rm --cached &lt;path&gt;</code> to untrack it (history still remembers — see above), commit, and the ignore rule takes over from there.</p>
+
+  <h2>Generate it before the first commit</h2>
+  <p>The .gitignore is the rare file with maximum value at minute zero. The <a href="/tools/ai-gitignore-generator.html" class="in">generator</a> runs entirely in your browser — pick your stack, copy, commit it first. Pair it with the <a href="/tools/ai-dockerfile-generator.html" class="in">Dockerfile generator</a> (whose <code>.dockerignore</code> is the same idea for build contexts) and the <a href="/tools.html" class="in">rest of the ABUZ8 tool library</a> — free, no signup, nothing uploaded. Boring files, done correctly, before they become incidents: that's the entire philosophy, and it's the same one behind <a href="/blog/what-is-qadir-os.html" class="in">QADIR OS</a> — your machine, your data, your rules.</p>
+
+  <h2>Quick answers</h2>
+  <p><strong>How do I ignore a file that's already committed?</strong> Add the rule, then <code>git rm --cached &lt;path&gt;</code> to stop tracking it without deleting your local copy, then commit. The file remains in old history — if it's a secret, rotate it regardless.</p>
+  <p><strong>Should node_modules ever be committed?</strong> No. It's reproducible from the lockfile, enormous, and platform-specific. Commit <code>package.json</code> and the lockfile; let installs rebuild the rest.</p>
+  <p><strong>Do .gitignore rules apply to all branches?</strong> The file is versioned like any other, so each branch uses its own copy — in practice they converge quickly. Global excludes apply everywhere on your machine, uncommitted.</p>
+
+  <h2>The bottom line</h2>
+  <p>Commit sources, ignore derivatives, never ignore lockfiles, and treat any committed secret as burned. Generate the file before your first commit and the whole category of "oops" disappears — thirty seconds of setup against hours of history surgery.</p>
+
+  <div class="callout cta">
+    <p><strong>First commit, done right.</strong> Try the free <a href="/tools/ai-gitignore-generator.html" class="in">gitignore generator</a>, then <a href="/" class="in">join early access</a> for QADIR OS — the sovereign agentic operating system from ABUZ8. No card required.</p>
+  </div>
+
+  <div class="foot">Built by <a href="/">ABUZ8 LLC</a> — we're building QADIR OS, the sovereign agentic operating system.</div>
+</div>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+<script src="/blog/_blog-shared.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>

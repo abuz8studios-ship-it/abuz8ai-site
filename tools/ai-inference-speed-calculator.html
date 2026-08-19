@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LLM Inference Speed Calculator — How Many Tokens/Sec Will My GPU Do? | ABUZ8</title>
+  <meta name="description" content="Free local LLM speed calculator. Pick a model (Llama, Qwen, Mistral, Mixtral, Gemma, DeepSeek), a quantization, and a context length — see the tokens-per-second your GPU can actually generate, from an RTX 4090 to the dual RTX 5090 ABUZ8 box and H100. 100% client-side." />
+  <meta name="keywords" content="LLM inference speed calculator, tokens per second calculator, local LLM tok/s, GPU LLM speed, llama.cpp tokens per second, RTX 5090 LLM speed, memory bandwidth LLM, decode throughput, how fast LLM GPU, vLLM tokens per second" />
+  <meta property="og:title" content="LLM Inference Speed Calculator — Tokens/Sec on Your GPU | ABUZ8" />
+  <meta property="og:description" content="Pick a model, a quant, and a context length. See the tokens-per-second your GPU can generate, and which card keeps up. Client-side, free, no signup." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://abuz8ai.com/tools/ai-inference-speed-calculator" />
+  <link rel="canonical" href="https://abuz8ai.com/tools/ai-inference-speed-calculator" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "LLM Inference Speed Calculator",
+    "description": "Free client-side calculator that estimates the token-generation speed (tokens per second) of a local LLM at a given quantization and context length across common GPUs, using the memory-bandwidth roofline.",
+    "url": "https://abuz8ai.com/tools/ai-inference-speed-calculator.html",
+    "applicationCategory": "DeveloperApplication",
+    "operatingSystem": "Any",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+    "author": { "@type": "Organization", "name": "ABUZ8 LLC", "url": "https://abuz8ai.com" }
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "What determines how fast an LLM generates tokens?",
+        "acceptedAnswer": { "@type": "Answer", "text": "For single-stream generation, decode speed is limited by GPU memory bandwidth, not compute. To produce each new token the GPU must read the model's weights (and the KV cache) from memory once. So tokens per second is roughly the GPU's memory bandwidth divided by the bytes read per token. A faster card with more bandwidth, or a smaller/lower-quant model, generates more tokens per second." }
+      },
+      {
+        "@type": "Question",
+        "name": "Why is generation memory-bandwidth bound and not compute bound?",
+        "acceptedAnswer": { "@type": "Answer", "text": "During decode the model processes one token at a time, so each weight is used for only a single multiply before the next weight must be fetched. The arithmetic is trivial compared to the cost of streaming billions of weights out of VRAM, so the memory bus is the bottleneck. Prompt processing (prefill) is the opposite — it runs many tokens in parallel and is compute bound, which is why the first token can take longer than the rest." }
+      },
+      {
+        "@type": "Question",
+        "name": "Why does a long context slow generation down?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Every token you keep in context sits in the KV cache, and the model must read that whole cache for each new token it generates. As context grows, the bytes read per token grow with it, so tokens per second falls. On long contexts the KV cache can rival the weights, which is why a model that types fast at 4k slows noticeably at 128k." }
+      },
+      {
+        "@type": "Question",
+        "name": "Is my data sent to a server?",
+        "acceptedAnswer": { "@type": "Answer", "text": "No. This calculator runs entirely in your browser. Nothing you select or type is uploaded, logged, or stored anywhere." }
+      }
+    ]
+  }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0a1628;
+      --card: #0d1a30;
+      --card-alt: #111f38;
+      --primary: #5fa8e8;
+      --primary-dim: #2e75b6;
+      --teal: #0e9f6e;
+      --text: #e8e4d8;
+      --text-dim: #5b6b7c;
+      --border: #d8e0e8;
+      --good: #0e9f6e;
+      --good-bg: #e7f3f0;
+      --warn: #c9a84c;
+      --warn-bg: #fbf1e3;
+      --font-heading: 'Playfair Display', Georgia, serif;
+      --font-body: 'Inter', system-ui, sans-serif;
+      --font-mono: 'JetBrains Mono', 'Courier New', monospace;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      font-size: 15px;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+    a { color: var(--primary); text-decoration: none; transition: color 0.2s; }
+    a:hover { color: var(--primary-dim); }
+
+    nav {
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      padding: 0 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 60px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .nav-logo {
+      font-family: var(--font-heading);
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--primary);
+      letter-spacing: 0.02em;
+    }
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links a { color: var(--text-dim); font-size: 0.9rem; font-weight: 500; }
+    .nav-links a:hover { color: var(--primary); }
+
+    main { max-width: 980px; margin: 0 auto; padding: 3rem 1.5rem 5rem; }
+    .page-header { text-align: center; margin-bottom: 2.2rem; }
+    .page-header h1 {
+      font-family: var(--font-heading);
+      font-size: 2.4rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 0.5rem;
+      line-height: 1.18;
+    }
+    .page-header p { color: var(--text-dim); font-size: 1rem; max-width: 640px; margin: 0 auto; }
+    .privacy-note {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      margin-top: 0.9rem; padding: 0.35rem 0.9rem;
+      background: var(--good-bg); border: 1px solid #bfe0d8;
+      border-radius: 20px; font-size: 0.78rem; color: var(--good);
+    }
+
+    label { display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-dim);
+            text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.5rem; }
+    select, input[type="number"] {
+      width: 100%;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      padding: 0.7rem 0.9rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    select:focus, input:focus { border-color: var(--primary); }
+    input[type="range"] { width: 100%; accent-color: var(--primary); margin-top: 0.5rem; }
+    .hint { font-size: 0.72rem; color: var(--text-dim); margin-top: 0.35rem; font-weight: 400; text-transform: none; letter-spacing: 0; }
+    .ctx-val { font-family: var(--font-mono); color: var(--primary); font-weight: 600; }
+
+    .panel {
+      background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+      padding: 1.4rem 1.5rem; margin-bottom: 1.4rem;
+      box-shadow: 0 1px 3px rgba(44,62,80,0.04);
+    }
+    .panel h2 {
+      font-family: var(--font-heading); font-size: 1.25rem; color: var(--primary);
+      margin-bottom: 1.1rem;
+    }
+    .controls { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+    .controls .full { grid-column: 1 / -1; }
+    .custom-row { display: none; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-top: 1rem; }
+    .custom-row.visible { display: grid; }
+
+    /* THREE RESULT CARDS */
+    .results { display: grid; grid-template-columns: 1.3fr 1fr 1fr; gap: 1rem; margin: 0.4rem 0 0; }
+    .rcard { border: 1px solid var(--border); border-radius: 12px; padding: 1.3rem 1.4rem; background: var(--card-alt); }
+    .rcard.primary { border-top: 3px solid var(--primary); }
+    .rcard.bw { border-top: 3px solid var(--teal); }
+    .rcard.bytes { border-top: 3px solid #8a6db1; }
+    .rcard .rlabel { font-size: 0.74rem; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text-dim); font-weight: 600; }
+    .rcard .rbig { font-family: var(--font-heading); font-size: 2.1rem; font-weight: 700; line-height: 1.1; margin: 0.3rem 0 0.1rem; }
+    .rcard.primary .rbig { color: var(--primary); }
+    .rcard.bw .rbig { color: var(--teal); }
+    .rcard.bytes .rbig { color: #8a6db1; }
+    .rcard .rsub { font-size: 0.8rem; color: var(--text-dim); }
+
+    /* VERDICT */
+    .verdict {
+      margin: 1.4rem 0 0; padding: 1.1rem 1.3rem; border-radius: 10px;
+      font-size: 0.95rem; line-height: 1.6;
+      background: var(--good-bg); border: 1px solid #bfe0d8; color: var(--text);
+    }
+    .verdict.tight { background: var(--warn-bg); border-color: #f0d9b5; }
+    .verdict strong { color: var(--primary); }
+    .verdict.tight strong { color: var(--warn); }
+    .verdict .big { font-family: var(--font-heading); font-weight: 700; }
+
+    /* TABLE */
+    .table-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: 12px; margin-top: 1.3rem; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.86rem; min-width: 560px; background: var(--card); }
+    thead th {
+      background: var(--card-alt); color: var(--text-dim);
+      font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.06em;
+      text-align: right; padding: 0.8rem 1rem; border-bottom: 1px solid var(--border); font-weight: 600;
+    }
+    thead th:first-child { text-align: left; }
+    tbody td { padding: 0.7rem 1rem; border-bottom: 1px solid var(--border); text-align: right; font-family: var(--font-mono); }
+    tbody td:first-child { text-align: left; font-family: var(--font-body); }
+    tbody tr:last-child td { border-bottom: none; }
+    tbody tr.fast { background: var(--good-bg); }
+    tbody tr.fast td:first-child { box-shadow: inset 3px 0 0 var(--teal); }
+    .gpu-name { font-weight: 600; color: var(--text); }
+    .abuz8-tag { font-size: 0.62rem; color: var(--primary); font-weight: 700; letter-spacing: 0.05em; margin-left: 0.4rem; }
+    .spd-fast { color: var(--teal); font-weight: 700; }
+    .spd-slow { color: var(--warn); font-weight: 600; }
+    .price-note { font-size: 0.78rem; color: var(--text-dim); margin-top: 0.9rem; line-height: 1.7; }
+    .price-note strong { color: var(--text); }
+
+    /* CTA */
+    .cta-section {
+      background: linear-gradient(135deg, #eef5fb 0%, #e7f3f0 100%);
+      border: 1px solid #cfe0ef; border-radius: 12px;
+      padding: 2.2rem 2rem; text-align: center; margin-top: 3rem;
+    }
+    .cta-section h2 { font-family: var(--font-heading); font-size: 1.5rem; color: var(--primary); margin-bottom: 0.5rem; }
+    .cta-section p { color: var(--text-dim); font-size: 0.95rem; margin-bottom: 1.2rem; max-width: 580px; margin-left: auto; margin-right: auto; }
+    .cta-form { display: flex; gap: 0.6rem; justify-content: center; flex-wrap: wrap; }
+    .cta-form input[type="email"] {
+      flex: 1; max-width: 300px; min-width: 200px;
+      background: var(--card); border: 1px solid var(--border); border-radius: 6px;
+      color: var(--text); font-family: var(--font-body); font-size: 0.9rem; padding: 0.6rem 1rem; outline: none;
+    }
+    .cta-form input[type="email"]:focus { border-color: var(--primary); }
+    button {
+      padding: 0.6rem 1.4rem; border-radius: 6px; border: none; cursor: pointer;
+      font-family: var(--font-body); font-size: 0.88rem; font-weight: 600; transition: background 0.2s;
+    }
+    .btn-primary { background: var(--primary); color: #0d1a30; }
+    .btn-primary:hover { background: var(--primary-dim); }
+    .cta-success { display: none; color: var(--teal); font-size: 0.9rem; margin-top: 0.8rem; font-weight: 600; }
+    .cta-success.visible { display: block; }
+
+    .content { margin-top: 3rem; }
+    .content h2 { font-family: var(--font-heading); font-size: 1.5rem; color: var(--primary); margin: 0 0 1rem; padding-top: 1rem; }
+    .faq-item { border-top: 1px solid var(--border); padding: 1.1rem 0; }
+    .faq-item h3 { font-size: 1rem; color: var(--text); margin-bottom: 0.4rem; font-weight: 600; }
+    .faq-item p { color: var(--text-dim); font-size: 0.9rem; }
+    .xlink { margin-top: 1.1rem; font-size: 0.9rem; }
+
+    footer {
+      background: var(--card); border-top: 1px solid var(--border);
+      text-align: center; padding: 1.5rem; font-size: 0.82rem; color: var(--text-dim);
+    }
+    footer a { color: var(--text-dim); }
+    footer a:hover { color: var(--primary); }
+
+    @media (max-width: 760px) {
+      .controls { grid-template-columns: 1fr 1fr; }
+      .custom-row.visible { grid-template-columns: 1fr 1fr; }
+      .results { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 600px) {
+      .page-header h1 { font-size: 1.8rem; }
+      nav { padding: 0 1rem; }
+      .nav-links { gap: 1rem; }
+      main { padding: 2rem 1rem 4rem; }
+      .controls { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="nav-logo">ABUZ8</a>
+  <ul class="nav-links">
+    <li><a href="/tools.html">Tools</a></li>
+    <li><a href="/store.html">Store</a></li>
+  </ul>
+</nav>
+
+<main>
+  <div class="page-header">
+    <h1>LLM Inference Speed Calculator</h1>
+    <p>Pick a model, a quantization, and a context length. See how many tokens per second each GPU can actually generate &mdash; from a single RTX&nbsp;4090 to the dual RTX&nbsp;5090 ABUZ8 box and an H100 &mdash; using the memory-bandwidth roofline that governs single-stream decode.</p>
+    <span class="privacy-note">&#128274; 100% in-browser &mdash; nothing you select is uploaded</span>
+  </div>
+
+  <div class="panel">
+    <h2>1. The model you want to run</h2>
+    <div class="controls">
+      <div class="full">
+        <label for="model">Model</label>
+        <select id="model" onchange="onModelChange()"></select>
+        <div class="hint">Real parameter counts and attention shapes (layers, KV dim, and active params for MoE) for accurate decode math.</div>
+      </div>
+    </div>
+    <div class="custom-row" id="customRow">
+      <div>
+        <label for="cParams">Parameters (B)</label>
+        <input type="number" id="cParams" min="0" step="0.1" value="13" oninput="recalc()" />
+        <div class="hint">Billions of weights (total).</div>
+      </div>
+      <div>
+        <label for="cActive">Active params (B)</label>
+        <input type="number" id="cActive" min="0" step="0.1" value="13" oninput="recalc()" />
+        <div class="hint">= total for dense models; smaller for MoE.</div>
+      </div>
+      <div>
+        <label for="cLayers">Layers</label>
+        <input type="number" id="cLayers" min="1" step="1" value="40" oninput="recalc()" />
+        <div class="hint">Transformer blocks.</div>
+      </div>
+      <div>
+        <label for="cKv">KV dim / layer</label>
+        <input type="number" id="cKv" min="1" step="1" value="1024" oninput="recalc()" />
+        <div class="hint">kv_heads &times; head_dim (often 1024).</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2>2. Quantization, context &amp; efficiency</h2>
+    <div class="controls">
+      <div>
+        <label for="quant">Quantization</label>
+        <select id="quant" onchange="recalc()"></select>
+        <div class="hint">Bits per weight. Q4_K_M is the popular default.</div>
+      </div>
+      <div>
+        <label for="kvq">KV cache precision</label>
+        <select id="kvq" onchange="recalc()">
+          <option value="2">FP16 (default)</option>
+          <option value="1">Q8 (half the KV)</option>
+        </select>
+        <div class="hint">The cache is re-read for every generated token.</div>
+      </div>
+      <div>
+        <label for="ctx">Context used: <span class="ctx-val" id="ctxVal">8K</span></label>
+        <input type="range" id="ctx" min="0" max="8" step="1" value="3" oninput="recalc()" />
+        <div class="hint">Tokens already in the window while generating.</div>
+      </div>
+      <div class="full">
+        <label for="mbu">Memory-bandwidth utilization (MBU): <span class="ctx-val" id="mbuVal">70%</span></label>
+        <input type="range" id="mbu" min="40" max="90" step="5" value="70" oninput="recalc()" />
+        <div class="hint">How much of the GPU's rated bandwidth the runtime actually reaches on single-stream decode. Real-world llama.cpp / vLLM land around 55&ndash;85%. Lower it for a conservative estimate.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="verdict" id="verdict"></div>
+
+  <div class="results">
+    <div class="rcard primary">
+      <div class="rlabel">Decode speed (primary GPU)</div>
+      <div class="rbig" id="primaryTps">0 tok/s</div>
+      <div class="rsub" id="primarySub">on the selected GPU</div>
+    </div>
+    <div class="rcard bw">
+      <div class="rlabel">Reads per token</div>
+      <div class="rbig" id="bytesTok">0 GB</div>
+      <div class="rsub" id="bytesSub">weights + KV cache</div>
+    </div>
+    <div class="rcard bytes">
+      <div class="rlabel">Words per second</div>
+      <div class="rbig" id="wps">0</div>
+      <div class="rsub">&asymp; tok/s &times; 0.75</div>
+    </div>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>GPU</th>
+          <th>Bandwidth</th>
+          <th>Decode tok/s</th>
+          <th>Feel</th>
+          <th>vs reading</th>
+        </tr>
+      </thead>
+      <tbody id="gpuTable"></tbody>
+    </table>
+  </div>
+
+  <p class="price-note">
+    Theoretical roofline, not a guarantee. Single-stream <strong>decode</strong> is memory-bandwidth bound: each new token reads the
+    active weights (<strong>params &times; bytes-per-weight</strong>, set by the quant) plus the <strong>KV cache</strong>
+    (2 &times; layers &times; kv-dim &times; context &times; KV-precision) once. So <strong>tok/s &asymp; MBU &times; GPU bandwidth &divide; bytes-per-token</strong>.
+    Real throughput varies with the backend (llama.cpp / vLLM / ExLlama), flash-attention, batching, and CPU offload &mdash; batched serving
+    can far exceed these single-stream numbers. MoE models read only their <strong>active</strong> params per token. The dual-GPU
+    ABUZ8 row assumes tensor-parallel scaling (~1.7&times; one card) and is approximate. Prefill (prompt processing) is compute-bound and
+    is not modeled here &mdash; it sets time-to-first-token, not the steady typing speed shown above. A human reads ~5&ndash;8 tok/s.
+  </p>
+
+  <div class="cta-section">
+    <h2>Own the floor. Rent only the ceiling.</h2>
+    <p>Speed is step two; the VRAM has to fit first. QADIR&nbsp;OS is the sovereign layer on top of your own hardware: it loads the largest model your GPU can serve at the speed you just sized, and routes only the calls it can't clear to a cloud API &mdash; Opus-grade output, Haiku-grade bill, your data on your machine.</p>
+    <div class="cta-form">
+      <input type="email" id="ctaEmail" placeholder="you@company.com" />
+      <button class="btn-primary" onclick="submitWaitlist()">Join early access</button>
+    </div>
+    <div id="ctaSuccess" class="cta-success">&#10003; You're on the list. We'll be in touch.</div>
+    <div class="xlink"><a href="/tools/ai-vram-calculator.html">&#8594; First check it fits: Local LLM VRAM Calculator</a></div>
+  </div>
+
+  <div class="content">
+    <h2>How fast a local LLM actually generates</h2>
+    <div class="faq-item">
+      <h3>What sets the tokens-per-second I'll see?</h3>
+      <p>For a single request, generation speed is set by <strong>memory bandwidth</strong>, not raw compute. To produce each token the GPU streams the model's weights (and the KV cache) out of VRAM once, so tokens per second is roughly your card's bandwidth divided by the bytes read per token. Halve the model size with a lower quant, or move to a card with more bandwidth, and the number goes up almost proportionally.</p>
+    </div>
+    <div class="faq-item">
+      <h3>Why is the first token slower than the rest?</h3>
+      <p>Generating tokens (decode) is memory-bound and one-at-a-time. Processing your prompt (prefill) runs all those tokens in parallel and is <strong>compute-bound</strong> &mdash; it's the part that sets time-to-first-token. A long prompt can make you wait for the first token even on a fast card, then the steady typing speed shown above takes over.</p>
+    </div>
+    <div class="faq-item">
+      <h3>Why does long context slow it down?</h3>
+      <p>Each new token must read the whole KV cache, and that cache grows linearly with context. At 128k it can rival the weights themselves, so the bytes-per-token climb and tokens-per-second fall. Storing the cache in 8-bit (the KV-precision option above) halves that part. This is the same KV-cache growth that drives the <a href="/tools/ai-vram-calculator.html">VRAM calculator</a>.</p>
+    </div>
+    <div class="faq-item">
+      <h3>Will batching beat these numbers?</h3>
+      <p>Yes. These are <strong>single-stream</strong> figures &mdash; one conversation at a time, which is what you feel locally. A server batching many requests amortizes each weight read across all of them and reaches far higher aggregate tokens per second. If you're sizing a one-user desktop, single-stream is the honest number; if you're serving traffic, treat these as a per-request floor.</p>
+    </div>
+    <div class="faq-item">
+      <h3>Is my data sent anywhere?</h3>
+      <p>No. This calculator runs entirely in your browser. Nothing you select or type is uploaded, logged, or stored.</p>
+    </div>
+  </div>
+</main>
+
+<footer>
+  ABUZ8 LLC &middot; Free AI Tools &middot; <a href="/tools/ai-vram-calculator.html">VRAM Calculator</a> &middot; <a href="mailto:ahmad@abuz8ai.com">ahmad@abuz8ai.com</a>
+</footer>
+
+<script>
+// ── MODELS — real specs (params B, layers, kv_dim = n_kv_heads × head_dim, active B for MoE) ──
+const MODELS = [
+  { name:'Llama 3.1 8B',        params:8.03,  layers:32, kv:1024 },
+  { name:'Llama 3.3 70B',       params:70.6,  layers:80, kv:1024 },
+  { name:'Qwen2.5 7B',          params:7.61,  layers:28, kv:512  },
+  { name:'Qwen2.5 14B',         params:14.7,  layers:48, kv:1024 },
+  { name:'Qwen2.5 32B',         params:32.5,  layers:64, kv:1024 },
+  { name:'Qwen2.5 72B',         params:72.7,  layers:80, kv:1024 },
+  { name:'Mistral 7B v0.3',     params:7.25,  layers:32, kv:1024 },
+  { name:'Mixtral 8x7B (MoE)',  params:46.7,  layers:32, kv:1024, active:12.9 },
+  { name:'Gemma 2 9B',          params:9.24,  layers:42, kv:2048 },
+  { name:'Gemma 2 27B',         params:27.2,  layers:46, kv:2048 },
+  { name:'DeepSeek-R1-Distill 32B', params:32.5, layers:64, kv:1024 },
+  { name:'Phi-4 14B',           params:14.7,  layers:40, kv:1280 },
+  { name:'— Custom —',          custom:true }
+];
+
+// ── QUANTS — typical GGUF bits-per-weight ─────────────────────────────────────
+const QUANTS = [
+  { name:'FP16 (full)', bpw:16.0 },
+  { name:'Q8_0',        bpw:8.5  },
+  { name:'Q6_K',        bpw:6.56 },
+  { name:'Q5_K_M',      bpw:5.67 },
+  { name:'Q4_K_M',      bpw:4.83 },
+  { name:'Q3_K_M',      bpw:3.91 },
+  { name:'Q2_K',        bpw:3.35 }
+];
+
+// ── CONTEXT slider stops ──────────────────────────────────────────────────────
+const CTX = [2048, 4096, 8192, 16384, 32768, 65536, 131072, 200000, 256000];
+function ctxLabel(t){ return t >= 1000 ? Math.round(t/1024) + 'K' : t; }
+
+// ── GPUS — VRAM (GB) + memory bandwidth (GB/s) + TP factor for multi-GPU ───────
+const GPUS = [
+  { name:'RTX 4060 Ti 16GB',          vram:16, bw:288,  reserve:1 },
+  { name:'RTX 3090 (24GB)',           vram:24, bw:936,  reserve:1 },
+  { name:'RTX 4090 (24GB)',           vram:24, bw:1008, reserve:1 },
+  { name:'RTX 5090 (32GB)',           vram:32, bw:1792, reserve:1 },
+  { name:'RTX 6000 Ada (48GB)',       vram:48, bw:960,  reserve:1 },
+  { name:'Dual RTX 5090 (64GB)',      vram:64, bw:1792, reserve:2, tp:1.7, abuz8:true },
+  { name:'A100 80GB (SXM)',           vram:80, bw:2039, reserve:2 },
+  { name:'H100 80GB (SXM)',           vram:80, bw:3350, reserve:2 },
+  { name:'Mac Studio M3 Ultra (96GB)', vram:96, bw:819, unified:true },
+  { name:'Mac M4 Max (128GB)',        vram:128, bw:546, unified:true }
+];
+const OVERHEAD = 0.8;     // GB CUDA/runtime baseline (for the fit check)
+const HUMAN_READ = 7;     // tokens/sec a person reads
+
+function usable(g){
+  if (g.unified) return g.vram * 0.75;
+  return Math.max(0, g.vram - (g.reserve || 1));
+}
+function effBw(g, mbu){ return g.bw * (g.tp || 1) * mbu; } // GB/s actually reached
+
+// ── FORMAT ────────────────────────────────────────────────────────────────────
+function tps(v){ if(!isFinite(v)||v<=0) return '—'; return (v >= 10 ? Math.round(v) : v.toFixed(1)) + ' tok/s'; }
+function gb(v){ if(!isFinite(v)) return '—'; return (v >= 100 ? Math.round(v) : v.toFixed(2)) + ' GB'; }
+function feelOf(v){
+  if (v >= 40) return 'instant';
+  if (v >= 20) return 'fast';
+  if (v >= 10) return 'readable';
+  if (v >= 5)  return 'deliberate';
+  return 'slow';
+}
+
+// ── READ INPUTS ───────────────────────────────────────────────────────────────
+function model(){
+  const m = MODELS[+document.getElementById('model').value] || MODELS[0];
+  if (m.custom) {
+    const p = Math.max(0, parseFloat(document.getElementById('cParams').value) || 0);
+    return {
+      name: 'Custom model', params: p,
+      active: Math.min(p || 1e9, Math.max(0, parseFloat(document.getElementById('cActive').value) || p)),
+      layers: Math.max(1, parseInt(document.getElementById('cLayers').value, 10) || 1),
+      kv:     Math.max(1, parseInt(document.getElementById('cKv').value, 10) || 1)
+    };
+  }
+  return m;
+}
+function activeParams(m){ return (m.active && m.active > 0) ? m.active : m.params; }
+function quant(){ return QUANTS[+document.getElementById('quant').value] || QUANTS[4]; }
+function ctxTokens(){ return CTX[+document.getElementById('ctx').value] ?? 8192; }
+function kvBytes(){ return +document.getElementById('kvq').value || 2; }
+function mbu(){ return (+document.getElementById('mbu').value || 70) / 100; }
+
+// ── CORE MATH ─────────────────────────────────────────────────────────────────
+// bytes streamed from VRAM to produce ONE token = active weights + full KV cache
+function bytesPerToken(m, q, ctx, kvb){
+  const wB  = activeParams(m) * 1e9 * (q.bpw / 8);        // active weights, bytes
+  const kvB = 2 * m.layers * m.kv * ctx * kvb;            // K+V across all layers, bytes
+  return wB + kvB;
+}
+function vramTotalGB(m, q, ctx, kvb){
+  const w  = m.params * (q.bpw / 8);                      // ALL weights resident (GB)
+  const kv = (2 * m.layers * m.kv * ctx * kvb) / 1e9;     // KV cache resident (GB)
+  return w + kv + OVERHEAD;
+}
+// tok/s = effective bandwidth (bytes/s) / bytes-per-token
+function tokPerSec(g, bpt, mbuv){ return (effBw(g, mbuv) * 1e9) / bpt; }
+
+// ── MAIN RECALC ───────────────────────────────────────────────────────────────
+function recalc() {
+  const m = model(), q = quant(), ctx = ctxTokens(), kvb = kvBytes(), mbuv = mbu();
+  document.getElementById('ctxVal').textContent = ctxLabel(ctx);
+  document.getElementById('mbuVal').textContent = Math.round(mbuv * 100) + '%';
+
+  const bpt = bytesPerToken(m, q, ctx, kvb);
+  const totVram = vramTotalGB(m, q, ctx, kvb);
+
+  // per-GPU: does it fit, and if so how fast
+  const ranked = GPUS.map(g => {
+    const fits = totVram <= usable(g);
+    const speed = fits ? tokPerSec(g, bpt, mbuv) : 0;
+    return { g, fits, speed };
+  });
+  // primary = fastest GPU it actually fits on
+  const fitting = ranked.filter(r => r.fits).sort((a,b) => b.speed - a.speed);
+  const primary = fitting[0] || null;
+  const box = ranked.find(r => r.g.abuz8);
+
+  // headline cards
+  document.getElementById('bytesTok').textContent = gb(bpt / 1e9);
+  document.getElementById('bytesSub').textContent = (activeParams(m) !== m.params ? activeParams(m) + 'B active · ' : '') + m.name + ' · ' + q.name;
+  if (primary) {
+    document.getElementById('primaryTps').textContent = tps(primary.speed);
+    document.getElementById('primarySub').textContent = 'on ' + primary.g.name + ' @ ' + Math.round(mbuv*100) + '% MBU';
+    document.getElementById('wps').textContent = Math.round(primary.speed * 0.75);
+  } else {
+    document.getElementById('primaryTps').textContent = '—';
+    document.getElementById('primarySub').textContent = "doesn't fit a listed GPU";
+    document.getElementById('wps').textContent = '—';
+  }
+
+  // verdict
+  const v = document.getElementById('verdict');
+  if (m.params <= 0) {
+    v.className = 'verdict';
+    v.innerHTML = 'Enter a parameter count to size the model.';
+  } else if (!primary) {
+    v.className = 'verdict tight';
+    v.innerHTML = `<span class="big">Won't fit a single listed GPU.</span> <strong>${m.name}</strong> at <strong>${q.name}</strong> / ${ctxLabel(ctx)} needs <strong>${gb(totVram)}</strong> of VRAM. Drop the quant or context, or see the <a href="/tools/ai-vram-calculator.html">VRAM calculator</a> to size memory first.`;
+  } else {
+    const boxLine = (box && box.fits)
+      ? ` The <strong>dual RTX&nbsp;5090 ABUZ8 box</strong> does about <strong>${tps(box.speed)}</strong>.`
+      : '';
+    v.className = 'verdict';
+    v.innerHTML = `<span class="big">${m.name} at ${q.name} generates ~${tps(primary.speed)}.</span> That's the steady decode speed on the fastest card it fits &mdash; a <strong>${primary.g.name}</strong> &mdash; reading <strong>${gb(bpt/1e9)}</strong> per token at ${ctxLabel(ctx)} context.${boxLine} Feels <strong>${feelOf(primary.speed)}</strong> (~${(primary.speed/HUMAN_READ).toFixed(1)}&times; reading pace).`;
+  }
+
+  // table
+  const body = document.getElementById('gpuTable');
+  body.innerHTML = ranked.map(r => {
+    const mult = r.fits ? (r.speed / HUMAN_READ) : 0;
+    return `<tr class="${r.fits && r.speed >= 20 ? 'fast' : ''}">
+      <td><span class="gpu-name">${r.g.name}</span>${r.g.abuz8 ? '<span class="abuz8-tag">ABUZ8 BOX</span>' : ''}</td>
+      <td>${r.g.bw} GB/s</td>
+      <td class="${r.fits ? 'spd-fast' : 'spd-slow'}">${r.fits ? tps(r.speed) : '✗ no fit'}</td>
+      <td>${r.fits ? feelOf(r.speed) : '—'}</td>
+      <td>${r.fits ? mult.toFixed(1) + '×' : '—'}</td>
+    </tr>`;
+  }).join('');
+}
+
+function onModelChange(){
+  const m = MODELS[+document.getElementById('model').value] || MODELS[0];
+  document.getElementById('customRow').classList.toggle('visible', !!m.custom);
+  recalc();
+}
+
+// ── WAITLIST ──────────────────────────────────────────────────────────────────
+async function submitWaitlist() {
+  const email = document.getElementById('ctaEmail').value.trim();
+  if (!email || !email.includes('@')) { alert('Please enter a valid email address.'); return; }
+  const payload = { email, product: 'qadir-os-speed-calculator', ts: new Date().toISOString() };
+  try {
+    await fetch('/api/waitlist', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+  } catch (e) { /* graceful fallback */ }
+  document.getElementById('ctaEmail').style.display = 'none';
+  document.querySelector('.cta-form button').style.display = 'none';
+  document.getElementById('ctaSuccess').classList.add('visible');
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+(function init() {
+  const ms = document.getElementById('model');
+  ms.innerHTML = MODELS.map((m, i) => `<option value="${i}">${m.name}${m.params ? ' — ' + m.params + 'B' : ''}</option>`).join('');
+  ms.value = 0;
+  const qs = document.getElementById('quant');
+  qs.innerHTML = QUANTS.map((q, i) => `<option value="${i}">${q.name} (~${(q.bpw/8).toFixed(2)} B/wt)</option>`).join('');
+  qs.value = 4; // Q4_K_M
+  onModelChange();
+})();
+</script>
+<script src="/tools/_tools-shared.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>

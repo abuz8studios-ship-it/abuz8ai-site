@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<link rel="stylesheet" href="/assets/css/abuz8-mach3.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CSV to JSON Converter — Free &amp; Private (Both Directions) | ABUZ8</title>
+<meta name="description" content="Free online CSV to JSON converter that also does JSON to CSV. RFC 4180 compliant: handles quoted fields, embedded commas and newlines, custom delimiters, type inference. 100% in your browser — your data never leaves your device.">
+<meta name="keywords" content="csv to json, json to csv, csv json converter, convert csv to json online, csv parser, rfc 4180, data converter, free csv tool">
+<link rel="canonical" href="https://abuz8ai.com/tools/csv-to-json">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="CSV &#8644; JSON Converter — Free &amp; Private | ABUZ8">
+<meta property="og:description" content="Convert CSV to JSON and JSON to CSV instantly. RFC 4180 compliant, custom delimiters, type inference. Runs entirely in your browser.">
+<meta property="og:url" content="https://abuz8ai.com/tools/csv-to-json">
+<meta property="og:site_name" content="ABUZ8 AI">
+<!-- Twitter -->
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="CSV &#8644; JSON Converter — Free &amp; Private | ABUZ8">
+<meta name="twitter:description" content="Convert CSV to JSON and back, entirely in your browser. RFC 4180 compliant with custom delimiters and type inference.">
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@300;400;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "CSV to JSON Converter",
+  "applicationCategory": "DeveloperApplication",
+  "operatingSystem": "Any (Web Browser)",
+  "description": "Free, private, browser-based CSV to JSON and JSON to CSV converter. RFC 4180 compliant with custom delimiters and type inference. No upload — data never leaves your device.",
+  "url": "https://abuz8ai.com/tools/csv-to-json",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+  "featureList": [
+    "CSV to JSON conversion",
+    "JSON to CSV conversion",
+    "RFC 4180 compliant parsing",
+    "Custom delimiters (comma, semicolon, tab, pipe)",
+    "Automatic type inference",
+    "Runs 100% client-side"
+  ],
+  "publisher": { "@type": "Organization", "name": "ABUZ8 LLC", "url": "https://abuz8ai.com" }
+}
+</script>
+
+<style>
+:root {
+  --lapis: #0a1628;
+  --lapis-mid: #0f2040;
+  --gold: #c9a84c;
+  --gold-light: #e8d48b;
+  --turq: #0e9f6e;
+  --turq-light: #2fbf8f;
+  --text: #e8e4d8;
+  --dim: #8a9aaa;
+  --border: #1a2e50;
+  --card: #0d1a30;
+  --cream: #f5f0e8;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  background: var(--lapis);
+  color: var(--text);
+  font-family: 'Inter', sans-serif;
+  line-height: 1.6;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+.container { max-width: 1100px; margin: 0 auto; padding: 40px 20px; flex: 1; width: 100%; }
+h1 { font-family: 'Playfair Display', serif; font-size: 2.5rem; color: var(--cream); margin-bottom: 10px; }
+.sub { color: var(--dim); margin-bottom: 30px; font-weight: 300; }
+
+.tool-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 30px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+}
+
+/* Mode tabs */
+.tabs { display: flex; gap: 8px; margin-bottom: 22px; flex-wrap: wrap; }
+.tab {
+  padding: 10px 22px; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 14px;
+  background: transparent; border: 1px solid var(--border); color: var(--dim); transition: all .2s;
+}
+.tab.active { background: var(--gold); color: var(--lapis); border-color: var(--gold); }
+.tab:not(.active):hover { border-color: var(--gold); color: var(--gold); }
+
+/* Options row */
+.options { display: flex; flex-wrap: wrap; gap: 18px 26px; align-items: center; margin-bottom: 20px; padding: 16px 18px; background: var(--lapis-mid); border: 1px solid var(--border); border-radius: 10px; }
+.opt { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--dim); }
+.opt label { color: var(--text); }
+.opt select {
+  background: var(--lapis); border: 1px solid var(--border); color: var(--text);
+  border-radius: 6px; padding: 7px 10px; font-family: 'Inter', sans-serif; font-size: 13px;
+}
+.opt select:focus { border-color: var(--gold); outline: none; }
+.opt input[type=checkbox] { width: 16px; height: 16px; accent-color: var(--turq); cursor: pointer; }
+
+/* IO grid */
+.io { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+@media (max-width: 760px){ .io { grid-template-columns: 1fr; } }
+.io-col h4 { font-size: 12px; text-transform: uppercase; letter-spacing: .08em; color: var(--dim); margin-bottom: 8px; font-weight: 600; }
+textarea {
+  width: 100%; height: 320px;
+  background: var(--lapis-mid); border: 1px solid var(--border); border-radius: 8px;
+  color: var(--text); font-family: 'JetBrains Mono', monospace; padding: 15px;
+  resize: vertical; font-size: 13px; line-height: 1.5;
+}
+textarea:focus { border-color: var(--gold); outline: none; }
+textarea[readonly] { background: #0b1830; color: var(--turq-light); }
+
+.actions { display: flex; gap: 10px; margin: 20px 0 4px; flex-wrap: wrap; }
+.btn { padding: 12px 24px; border-radius: 8px; font-weight: 600; cursor: pointer; border: none; transition: all .2s; font-size: 14px; }
+.btn-gold { background: var(--gold); color: var(--lapis); }
+.btn-gold:hover { background: var(--gold-light); transform: translateY(-1px); }
+.btn-ghost { background: transparent; border: 1px solid var(--border); color: var(--dim); }
+.btn-ghost:hover { border-color: var(--gold); color: var(--gold); }
+
+.statusbar { display: flex; justify-content: space-between; align-items: center; margin-top: 14px; gap: 12px; flex-wrap: wrap; }
+#stats { font-size: 12px; color: var(--dim); font-family: 'JetBrains Mono', monospace; }
+#error-msg { color: #ef4444; font-size: 13px; min-height: 18px; }
+
+.privacy { margin-top: 18px; font-size: 12px; color: var(--turq-light); display: flex; align-items: center; gap: 8px; }
+.privacy::before { content: "\1F512"; }
+
+.waiting-list { margin-top: 40px; padding: 30px; background: rgba(201,168,76,0.05); border: 1px solid rgba(201,168,76,0.2); border-radius: 12px; text-align: center; }
+.waiting-list h3 { color: var(--gold); margin-bottom: 10px; }
+.waiting-list p { font-size: 14px; color: var(--dim); margin-bottom: 20px; }
+.wl-form { display: flex; gap: 10px; max-width: 500px; margin: 0 auto; }
+.wl-form input { flex: 1; background: var(--lapis); border: 1px solid var(--border); border-radius: 8px; color: var(--text); padding: 10px 15px; }
+.wl-form input:focus { border-color: var(--turq); outline: none; }
+
+.related { margin-top: 34px; font-size: 13px; color: var(--dim); }
+.related a { color: var(--turq-light); text-decoration: none; }
+.related a:hover { color: var(--gold); }
+
+footer { padding: 40px; text-align: center; border-top: 1px solid var(--border); font-size: 12px; color: var(--dim); }
+</style>
+
+<script src="_abuz8-live-brain.js" defer></script>
+<script src="_abuz8-config.js" defer></script>
+</head>
+<body>
+
+<div class="container">
+  <header>
+    <h1>CSV &#8644; JSON Converter</h1>
+    <p class="sub">Part of ABUZ8 — free, client-side, secure. Convert in both directions without uploading a thing.</p>
+  </header>
+
+  <div class="tool-card">
+    <div class="tabs">
+      <button class="tab active" id="tab-c2j" onclick="setMode('c2j')">CSV &#8594; JSON</button>
+      <button class="tab" id="tab-j2c" onclick="setMode('j2c')">JSON &#8594; CSV</button>
+    </div>
+
+    <div class="options">
+      <div class="opt">
+        <label for="delimiter">Delimiter</label>
+        <select id="delimiter">
+          <option value="auto">Auto-detect</option>
+          <option value="comma" selected>Comma ( , )</option>
+          <option value="semicolon">Semicolon ( ; )</option>
+          <option value="tab">Tab</option>
+          <option value="pipe">Pipe ( | )</option>
+        </select>
+      </div>
+      <div class="opt">
+        <input type="checkbox" id="opt-header" checked>
+        <label for="opt-header">First row is header</label>
+      </div>
+      <div class="opt" id="opt-infer-wrap">
+        <input type="checkbox" id="opt-infer" checked>
+        <label for="opt-infer">Infer types (number / bool / null)</label>
+      </div>
+      <div class="opt" id="opt-pretty-wrap">
+        <input type="checkbox" id="opt-pretty" checked>
+        <label for="opt-pretty">Pretty-print JSON</label>
+      </div>
+    </div>
+
+    <div class="io">
+      <div class="io-col">
+        <h4 id="in-label">CSV input</h4>
+        <textarea id="input" placeholder="Paste CSV here, or click Load sample..."></textarea>
+      </div>
+      <div class="io-col">
+        <h4 id="out-label">JSON output</h4>
+        <textarea id="output" readonly placeholder="Result appears here..."></textarea>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button class="btn btn-gold" onclick="convert()">Convert</button>
+      <button class="btn btn-ghost" onclick="swapSides()">&#8645; Use output as input</button>
+      <button class="btn btn-ghost" onclick="copyOut()">Copy result</button>
+      <button class="btn btn-ghost" onclick="downloadOut()">Download</button>
+      <button class="btn btn-ghost" onclick="loadSample()">Load sample</button>
+      <button class="btn btn-ghost" onclick="clearAll()">Clear</button>
+    </div>
+
+    <div class="statusbar">
+      <div id="error-msg"></div>
+      <div id="stats"></div>
+    </div>
+    <div class="privacy">100% in your browser — your CSV/JSON never leaves your device. No server, no upload.</div>
+  </div>
+
+  <div class="waiting-list">
+    <h3>Need this on autopilot?</h3>
+    <p>Join the waiting list for QADIR OS — our sovereign agentic operating system that converts, cleans, and pipes your data across formats and APIs automatically (bulk files, Excel/XLSX, schema validation, scheduled jobs).</p>
+    <form class="wl-form" onsubmit="submitWaitingList(event)">
+      <input type="email" id="wl-email" placeholder="Enter your email" required>
+      <button type="submit" class="btn btn-gold">Join Early Access</button>
+    </form>
+    <div id="wl-status" style="margin-top: 15px; font-size: 13px;"></div>
+  </div>
+
+  <div class="related">
+    Related tools:
+    <a href="/tools/json-formatter.html">JSON Formatter</a> &middot;
+    <a href="/tools/base64-encoder.html">Base64 Encoder</a> &middot;
+    <a href="/tools/url-encoder.html">URL Encoder</a> &middot;
+    <a href="/tools/timestamp-converter.html">Timestamp Converter</a>
+  </div>
+</div>
+
+<footer>
+  &copy; 2026 ABUZ8 LLC. Built with sovereign AI.
+</footer>
+
+<script>
+/* CORE_START — pure, framework-free conversion logic (unit-tested) */
+function delimiterChar(value, sampleText) {
+  if (value === 'comma') return ',';
+  if (value === 'semicolon') return ';';
+  if (value === 'tab') return '\t';
+  if (value === 'pipe') return '|';
+  if (value === 'auto') {
+    // Sniff the first non-empty line; pick the candidate with the highest count.
+    var firstLine = (sampleText || '').split(/\r\n|\r|\n/).find(function (l) { return l.trim() !== ''; }) || '';
+    var candidates = [',', ';', '\t', '|'];
+    var best = ',', bestCount = -1;
+    candidates.forEach(function (d) {
+      var n = firstLine.split(d).length - 1;
+      if (n > bestCount) { bestCount = n; best = d; }
+    });
+    return best;
+  }
+  return ',';
+}
+
+// RFC 4180 state-machine CSV parser. Handles quoted fields, embedded
+// delimiters, embedded newlines, and escaped quotes ("").
+function parseCSV(text, delimiter) {
+  var rows = [], row = [], field = '', inQuotes = false, i = 0, len = text.length;
+  while (i < len) {
+    var c = text[i];
+    if (inQuotes) {
+      if (c === '"') {
+        if (text[i + 1] === '"') { field += '"'; i += 2; continue; }
+        inQuotes = false; i++; continue;
+      }
+      field += c; i++; continue;
+    }
+    if (c === '"') { inQuotes = true; i++; continue; }
+    if (c === delimiter) { row.push(field); field = ''; i++; continue; }
+    if (c === '\r') { row.push(field); field = ''; rows.push(row); row = []; i += (text[i + 1] === '\n') ? 2 : 1; continue; }
+    if (c === '\n') { row.push(field); field = ''; rows.push(row); row = []; i++; continue; }
+    field += c; i++;
+  }
+  row.push(field); rows.push(row);
+  // Drop a trailing empty row produced by a final newline.
+  if (rows.length && rows[rows.length - 1].length === 1 && rows[rows.length - 1][0] === '') rows.pop();
+  return rows;
+}
+
+// Conservative type inference: only convert clean numeric/boolean/empty
+// values. Leading-zero strings ("007", phone numbers) stay strings.
+function inferType(s) {
+  if (s === '') return null;
+  if (s === 'true') return true;
+  if (s === 'false') return false;
+  if (/^-?(0|[1-9]\d*)(\.\d+)?([eE][+-]?\d+)?$/.test(s)) {
+    var n = Number(s);
+    if (Number.isFinite(n)) return n;
+  }
+  return s;
+}
+
+function csvToJson(text, opts) {
+  opts = opts || {};
+  var delimiter = opts.delimiter || ',';
+  var header = opts.header !== false;
+  var infer = opts.infer !== false;
+  text = String(text).replace(/^﻿/, ''); // strip UTF-8 BOM (e.g. Excel exports)
+  if (!text.trim()) throw new Error('Input is empty.');
+  var rows = parseCSV(text, delimiter);
+  if (!rows.length) throw new Error('No rows could be parsed.');
+  var conv = function (v) { return infer ? inferType(v === undefined ? '' : v) : (v === undefined ? '' : v); };
+  if (header) {
+    var keys = rows[0];
+    var out = [];
+    for (var r = 1; r < rows.length; r++) {
+      var obj = {};
+      for (var k = 0; k < keys.length; k++) obj[keys[k]] = conv(rows[r][k]);
+      out.push(obj);
+    }
+    return out;
+  }
+  return rows.map(function (rrow) { return rrow.map(conv); });
+}
+
+function jsonToCsv(text, opts) {
+  opts = opts || {};
+  var delimiter = opts.delimiter || ',';
+  var header = opts.header !== false;
+  var data;
+  try { data = JSON.parse(text); }
+  catch (e) { throw new Error('Invalid JSON: ' + e.message); }
+  if (!Array.isArray(data)) {
+    if (data && typeof data === 'object') data = [data];
+    else throw new Error('JSON must be an array of objects (or a single object).');
+  }
+  if (data.length === 0) return '';
+  var esc = function (val) {
+    var s;
+    if (val === null || val === undefined) s = '';
+    else if (typeof val === 'object') s = JSON.stringify(val);
+    else s = String(val);
+    if (s.indexOf(delimiter) !== -1 || s.indexOf('"') !== -1 || s.indexOf('\n') !== -1 || s.indexOf('\r') !== -1) {
+      s = '"' + s.replace(/"/g, '""') + '"';
+    }
+    return s;
+  };
+  if (Array.isArray(data[0])) {
+    return data.map(function (rrow) { return rrow.map(esc).join(delimiter); }).join('\r\n');
+  }
+  var keys = [], seen = {};
+  data.forEach(function (obj) {
+    if (obj && typeof obj === 'object' && !Array.isArray(obj)) {
+      Object.keys(obj).forEach(function (k) { if (!seen[k]) { seen[k] = 1; keys.push(k); } });
+    }
+  });
+  var lines = [];
+  if (header) lines.push(keys.map(esc).join(delimiter));
+  data.forEach(function (obj) {
+    lines.push(keys.map(function (k) { return esc(obj ? obj[k] : ''); }).join(delimiter));
+  });
+  return lines.join('\r\n');
+}
+/* CORE_END */
+
+/* ---- UI wiring (browser only) ---- */
+var MODE = 'c2j';
+
+function setMode(mode) {
+  MODE = mode;
+  document.getElementById('tab-c2j').classList.toggle('active', mode === 'c2j');
+  document.getElementById('tab-j2c').classList.toggle('active', mode === 'j2c');
+  var c2j = mode === 'c2j';
+  document.getElementById('in-label').textContent = c2j ? 'CSV input' : 'JSON input';
+  document.getElementById('out-label').textContent = c2j ? 'JSON output' : 'CSV output';
+  document.getElementById('input').placeholder = c2j ? 'Paste CSV here, or click Load sample...' : 'Paste a JSON array of objects here...';
+  // Infer + pretty only apply to CSV->JSON; header applies to both.
+  document.getElementById('opt-infer-wrap').style.opacity = c2j ? '1' : '0.4';
+  document.getElementById('opt-pretty-wrap').style.opacity = c2j ? '1' : '0.4';
+  document.getElementById('opt-infer').disabled = !c2j;
+  document.getElementById('opt-pretty').disabled = !c2j;
+  document.getElementById('error-msg').textContent = '';
+}
+
+function currentDelimiter() {
+  return delimiterChar(document.getElementById('delimiter').value, document.getElementById('input').value);
+}
+
+function convert() {
+  var err = document.getElementById('error-msg');
+  var stats = document.getElementById('stats');
+  var input = document.getElementById('input').value;
+  var out = document.getElementById('output');
+  err.textContent = ''; stats.textContent = '';
+  try {
+    var delimiter = currentDelimiter();
+    var header = document.getElementById('opt-header').checked;
+    if (MODE === 'c2j') {
+      var infer = document.getElementById('opt-infer').checked;
+      var pretty = document.getElementById('opt-pretty').checked;
+      var arr = csvToJson(input, { delimiter: delimiter, header: header, infer: infer });
+      out.value = JSON.stringify(arr, null, pretty ? 2 : 0);
+      stats.textContent = arr.length + ' record' + (arr.length === 1 ? '' : 's') + ' · ' + out.value.length + ' chars';
+    } else {
+      var csv = jsonToCsv(input, { delimiter: delimiter, header: header });
+      out.value = csv;
+      var lineCount = csv === '' ? 0 : csv.split('\n').length;
+      stats.textContent = lineCount + ' line' + (lineCount === 1 ? '' : 's') + ' · ' + csv.length + ' chars';
+    }
+  } catch (e) {
+    out.value = '';
+    err.textContent = e.message;
+  }
+}
+
+function swapSides() {
+  var out = document.getElementById('output').value;
+  if (!out) { return; }
+  document.getElementById('input').value = out;
+  document.getElementById('output').value = '';
+  setMode(MODE === 'c2j' ? 'j2c' : 'c2j');
+  convert();
+}
+
+function copyOut() {
+  var out = document.getElementById('output');
+  if (!out.value) return;
+  out.removeAttribute('readonly'); out.select();
+  try { document.execCommand('copy'); } catch (e) {}
+  out.setAttribute('readonly', '');
+  var stats = document.getElementById('stats');
+  var prev = stats.textContent; stats.textContent = 'Copied to clipboard';
+  setTimeout(function () { stats.textContent = prev; }, 1500);
+}
+
+function downloadOut() {
+  var out = document.getElementById('output').value;
+  if (!out) return;
+  var isJson = MODE === 'c2j';
+  var blob = new Blob([out], { type: isJson ? 'application/json' : 'text/csv' });
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = isJson ? 'converted.json' : 'converted.csv';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(a.href);
+}
+
+function loadSample() {
+  if (MODE === 'c2j') {
+    document.getElementById('input').value =
+      'id,name,role,active,salary\n' +
+      '1,"Doe, Jane",Engineer,true,95000\n' +
+      '2,John Smith,"Product, Sr.",false,88000\n' +
+      '3,"Aisha ""AJ"" Khan",Designer,true,72000';
+  } else {
+    document.getElementById('input').value = JSON.stringify([
+      { id: 1, name: 'Doe, Jane', role: 'Engineer', active: true, salary: 95000 },
+      { id: 2, name: 'John Smith', role: 'Product, Sr.', active: false, salary: 88000 }
+    ], null, 2);
+  }
+  convert();
+}
+
+function clearAll() {
+  document.getElementById('input').value = '';
+  document.getElementById('output').value = '';
+  document.getElementById('error-msg').textContent = '';
+  document.getElementById('stats').textContent = '';
+}
+
+async function submitWaitingList(e) {
+  e.preventDefault();
+  var email = document.getElementById('wl-email').value;
+  var status = document.getElementById('wl-status');
+  status.textContent = 'Sending...';
+  status.style.color = 'var(--dim)';
+  try {
+    var response = await fetch('/api/waitlist', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: email, product_id: 'csv-to-json', source: 'tools' })
+    });
+    var data = await response.json();
+    if (data.success) {
+      status.textContent = 'Success! You are on the list.';
+      status.style.color = 'var(--turq)';
+      document.getElementById('wl-email').value = '';
+    } else {
+      status.textContent = 'Error: ' + (data.error || 'Please try again.');
+      status.style.color = '#ef4444';
+    }
+  } catch (err) {
+    status.textContent = 'Connection error. Please try again.';
+    status.style.color = '#ef4444';
+  }
+}
+
+// Export core for Node-based unit tests (no effect in the browser).
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = { csvToJson: csvToJson, jsonToCsv: jsonToCsv, parseCSV: parseCSV, inferType: inferType, delimiterChar: delimiterChar };
+}
+</script>
+
+<link rel="stylesheet" href="/assets/css/zait-chat.css">
+<script src="/assets/js/zait-chat.js"></script>
+<script src="/assets/js/dfy-banner.js" async></script>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+<script src="/tools/_tools-shared.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>

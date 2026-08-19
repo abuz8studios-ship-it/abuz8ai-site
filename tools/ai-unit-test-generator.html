@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Unit Test Generator — ABUZ8</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--lapis:#0a1628;--lapis2:#0f1f3d;--lapis3:#162544;--gold:#c9a84c;--turq:#0e9f6e;--turq2:#22b5a0;--cream:#f5f0e8;--green:#22c55e;--red:#ef4444;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--lapis);color:var(--cream);font-family:'Inter',sans-serif;min-height:100vh;}
+.hero{background:linear-gradient(135deg,var(--lapis2) 0%,var(--lapis3) 100%);padding:48px 24px 36px;text-align:center;border-bottom:1px solid rgba(201,168,76,.15);}
+.hero h1{font-family:'Playfair Display',serif;font-size:clamp(2rem,5vw,3rem);color:var(--gold);margin-bottom:8px;}
+.hero p{color:rgba(245,240,232,.7);font-size:1.05rem;max-width:580px;margin:0 auto;}
+.main{max-width:1100px;margin:0 auto;padding:32px 20px;}
+.controls{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:20px;align-items:center;}
+.ctl-group{display:flex;align-items:center;gap:8px;}
+.ctl-label{font-size:.8rem;color:rgba(245,240,232,.4);font-weight:600;text-transform:uppercase;letter-spacing:.06em;}
+.ctl-select{background:var(--lapis2);border:1px solid rgba(201,168,76,.15);border-radius:6px;color:var(--cream);padding:8px 12px;font-size:.88rem;outline:none;}
+.test-type-pills{display:flex;gap:6px;flex-wrap:wrap;}
+.ttp{background:var(--lapis2);border:1px solid rgba(201,168,76,.12);border-radius:20px;padding:5px 13px;font-size:.78rem;cursor:pointer;color:rgba(245,240,232,.5);}
+.ttp.active{background:rgba(201,168,76,.1);border-color:var(--gold);color:var(--gold);}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:24px;}
+@media(max-width:700px){.two-col{grid-template-columns:1fr;}}
+.panel{background:var(--lapis2);border:1px solid rgba(201,168,76,.12);border-radius:12px;overflow:hidden;}
+.panel-header{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid rgba(201,168,76,.1);}
+.panel-title{font-size:.85rem;font-weight:600;color:rgba(245,240,232,.5);}
+.panel-actions{display:flex;gap:8px;}
+.pa-btn{background:none;border:1px solid rgba(201,168,76,.15);border-radius:5px;color:rgba(245,240,232,.4);padding:4px 11px;font-size:.77rem;cursor:pointer;}
+.pa-btn:hover{border-color:var(--gold);color:var(--gold);}
+.code-area{background:var(--lapis3);border:none;color:var(--cream);font-family:'JetBrains Mono',monospace;font-size:.78rem;padding:16px;width:100%;min-height:340px;resize:none;outline:none;line-height:1.7;}
+.code-area:focus{background:var(--lapis2);}
+.gen-row{display:flex;justify-content:center;margin:20px 0;}
+.gen-btn{background:var(--gold);color:var(--lapis);border:none;border-radius:8px;padding:13px 36px;font-weight:700;font-size:1rem;cursor:pointer;transition:opacity .2s;letter-spacing:.02em;}
+.gen-btn:hover{opacity:.88;}
+.gen-btn:disabled{opacity:.5;cursor:not-allowed;}
+.output-panel{background:var(--lapis2);border:1px solid rgba(201,168,76,.12);border-radius:12px;overflow:hidden;margin-top:24px;}
+.out-header{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid rgba(201,168,76,.1);flex-wrap:wrap;gap:10px;}
+.out-title{font-family:'Playfair Display',serif;color:var(--gold);font-size:1.2rem;}
+.out-stats{display:flex;gap:12px;}
+.stat-pill{background:var(--lapis3);border-radius:20px;padding:4px 12px;font-size:.78rem;color:rgba(245,240,232,.5);}
+.stat-pill span{color:var(--cream);font-weight:600;}
+.out-code{background:var(--lapis3);margin:16px;border-radius:8px;padding:20px;font-family:'JetBrains Mono',monospace;font-size:.78rem;line-height:1.8;white-space:pre-wrap;overflow-x:auto;max-height:600px;overflow-y:auto;}
+.coverage-bar{margin:0 16px 16px;background:var(--lapis3);border-radius:8px;padding:16px;}
+.cov-label{font-size:.8rem;color:rgba(245,240,232,.4);margin-bottom:10px;font-weight:600;}
+.cov-row{display:flex;align-items:center;gap:12px;margin-bottom:8px;}
+.cov-name{font-size:.78rem;width:140px;color:rgba(245,240,232,.6);}
+.cov-track{flex:1;background:rgba(255,255,255,.06);border-radius:4px;height:8px;overflow:hidden;}
+.cov-fill{height:100%;border-radius:4px;background:var(--turq2);transition:width .8s ease;}
+.cov-pct{font-size:.75rem;font-family:'JetBrains Mono',monospace;color:var(--turq2);width:36px;text-align:right;}
+.empty-out{text-align:center;padding:60px;color:rgba(245,240,232,.2);}
+.spinner{display:inline-block;width:32px;height:32px;border:3px solid rgba(201,168,76,.15);border-top-color:var(--gold);border-radius:50%;animation:spin .7s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.waitlist{background:linear-gradient(135deg,var(--lapis3),var(--lapis2));border:1px solid rgba(201,168,76,.2);border-radius:12px;padding:32px;text-align:center;margin-top:40px;}
+.waitlist h3{font-family:'Playfair Display',serif;color:var(--gold);font-size:1.5rem;margin-bottom:8px;}
+.wl-form{display:flex;gap:10px;max-width:440px;margin:0 auto;}
+.wl-input{flex:1;background:var(--lapis);border:1px solid rgba(201,168,76,.25);border-radius:8px;color:var(--cream);padding:11px 16px;font-size:.92rem;outline:none;}
+.wl-btn{background:var(--gold);color:var(--lapis);border:none;border-radius:8px;padding:11px 22px;font-weight:600;cursor:pointer;}
+</style>
+<link rel="canonical" href="https://abuz8ai.com/tools/ai-unit-test-generator">
+<meta name="description" content="AI Unit Test Generator — Jest / pytest / Go test scaffolds. Free, no signup, runs entirely in your browser. One of 169 free AI and developer tools by ABUZ8.">
+</head>
+<body>
+<div class="hero">
+  <h1>🧪 AI Unit Test Generator</h1>
+  <p>Paste a function. Get a complete test suite with happy paths, edge cases, error handling, and mock strategies.</p>
+</div>
+<div class="main">
+  <div class="controls">
+    <div class="ctl-group">
+      <span class="ctl-label">Language</span>
+      <select class="ctl-select" id="langSel">
+        <option value="javascript">JavaScript</option>
+        <option value="typescript">TypeScript</option>
+        <option value="python">Python</option>
+        <option value="go">Go</option>
+        <option value="java">Java</option>
+      </select>
+    </div>
+    <div class="ctl-group">
+      <span class="ctl-label">Framework</span>
+      <select class="ctl-select" id="fwSel" onchange="updateFramework()">
+        <option value="jest">Jest</option>
+        <option value="vitest">Vitest</option>
+        <option value="mocha">Mocha + Chai</option>
+        <option value="pytest">pytest</option>
+        <option value="go_test">Go testing</option>
+        <option value="junit">JUnit 5</option>
+      </select>
+    </div>
+    <div class="ctl-group">
+      <span class="ctl-label">Include</span>
+      <div class="test-type-pills">
+        <div class="ttp active" id="tt-happy" onclick="toggleTT(this,'happy')">Happy Path</div>
+        <div class="ttp active" id="tt-edge" onclick="toggleTT(this,'edge')">Edge Cases</div>
+        <div class="ttp active" id="tt-error" onclick="toggleTT(this,'error')">Error Cases</div>
+        <div class="ttp active" id="tt-mock" onclick="toggleTT(this,'mock')">Mocks</div>
+        <div class="ttp" id="tt-perf" onclick="toggleTT(this,'perf')">Performance</div>
+        <div class="ttp" id="tt-snapshot" onclick="toggleTT(this,'snapshot')">Snapshot</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="two-col">
+    <div class="panel">
+      <div class="panel-header">
+        <span class="panel-title">Source Code</span>
+        <div class="panel-actions">
+          <button class="pa-btn" onclick="loadExample('validate')">Example: validateEmail</button>
+          <button class="pa-btn" onclick="loadExample('fetch')">Example: fetchUser</button>
+        </div>
+      </div>
+      <textarea class="code-area" id="sourceCode" placeholder="// Paste your function here&#10;// Example:&#10;function add(a, b) {&#10;  return a + b;&#10;}"></textarea>
+    </div>
+    <div class="panel">
+      <div class="panel-header">
+        <span class="panel-title">Context (optional)</span>
+        <div class="panel-actions">
+          <button class="pa-btn" onclick="clearCtx()">Clear</button>
+        </div>
+      </div>
+      <textarea class="code-area" id="contextCode" placeholder="// Optional: paste type definitions, interfaces, or related code&#10;// that provides context about your function&#10;&#10;// Example:&#10;// interface User {&#10;//   id: number;&#10;//   email: string;&#10;//   role: 'admin' | 'user';&#10;// }"></textarea>
+    </div>
+  </div>
+
+  <div class="gen-row">
+    <button class="gen-btn" id="genBtn" onclick="generateTests()">🧪 Generate Tests</button>
+  </div>
+
+  <div id="emptyOut" class="empty-out">
+    <div style="font-size:2.5rem;margin-bottom:12px;">🧪</div>
+    <div>Test suite will appear here</div>
+    <div style="font-size:.82rem;margin-top:6px;">Supports Jest, Vitest, pytest, Go testing, JUnit 5</div>
+  </div>
+
+  <div id="loadingOut" style="display:none;text-align:center;padding:48px;">
+    <div class="spinner"></div>
+    <div style="margin-top:12px;color:rgba(245,240,232,.4);">Generating test suite…</div>
+  </div>
+
+  <div class="output-panel" id="outputPanel" style="display:none;">
+    <div class="out-header">
+      <span class="out-title">Generated Test Suite</span>
+      <div class="out-stats">
+        <div class="stat-pill"><span id="testCount">0</span> tests</div>
+        <div class="stat-pill">Est. <span id="coveragePct">0</span>% coverage</div>
+      </div>
+      <div style="display:flex;gap:8px;">
+        <button class="pa-btn" onclick="copyTests()">📋 Copy</button>
+        <button class="pa-btn" onclick="downloadTests()">⬇ Download</button>
+      </div>
+    </div>
+    <div class="coverage-bar" id="coverageBar"></div>
+    <pre class="out-code" id="outCode"></pre>
+  </div>
+
+  <div class="waitlist">
+    <h3>Test Generator Pro</h3>
+    <p>Mutation testing, CI/CD integration, auto-update tests when code changes, and full coverage reports.</p>
+    <div class="wl-form">
+      <input class="wl-input" id="wlEmail" type="email" placeholder="your@email.com">
+      <button class="wl-btn" onclick="joinWaitlist()">Join Waitlist</button>
+    </div>
+    <div id="wlMsg" style="margin-top:12px;font-size:.85rem;color:var(--turq2);"></div>
+  </div>
+</div>
+<script src="_abuz8-live-brain.js" defer></script>
+<script>
+const ttSet = new Set(['happy','edge','error','mock']);
+function toggleTT(el,k){ if(ttSet.has(k)){ttSet.delete(k);el.classList.remove('active');}else{ttSet.add(k);el.classList.add('active');} }
+function clearCtx(){ document.getElementById('contextCode').value=''; }
+
+const EXAMPLES = {
+  validate:`function validateEmail(email) {
+  if (!email || typeof email !== 'string') {
+    throw new Error('Email is required');
+  }
+  const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return regex.test(email.trim().toLowerCase());
+}`,
+  fetch:`async function fetchUser(id, db) {
+  if (!id || typeof id !== 'number') {
+    throw new Error('Invalid user ID');
+  }
+  const user = await db.findById(id);
+  if (!user) {
+    throw new Error('User not found');
+  }
+  return { id: user.id, name: user.name, email: user.email };
+}`
+};
+
+function loadExample(key){ document.getElementById('sourceCode').value = EXAMPLES[key]; }
+
+function updateFramework(){
+  const fw = document.getElementById('fwSel').value;
+  const lang = document.getElementById('langSel');
+  if(fw==='pytest') lang.value='python';
+  else if(fw==='go_test') lang.value='go';
+  else if(fw==='junit') lang.value='java';
+  else { lang.value = fw==='jest'||fw==='vitest'||fw==='mocha'?'javascript':lang.value; }
+}
+
+const JEST_TEMPLATE_VALIDATE = `import { validateEmail } from './validateEmail';
+
+describe('validateEmail', () => {
+  // ✅ Happy Path
+  describe('valid emails', () => {
+    it('returns true for a standard email address', () => {
+      expect(validateEmail('user@example.com')).toBe(true);
+    });
+
+    it('returns true for email with subdomain', () => {
+      expect(validateEmail('user@mail.example.co.uk')).toBe(true);
+    });
+
+    it('returns true for email with plus alias', () => {
+      expect(validateEmail('user+label@example.com')).toBe(true);
+    });
+
+    it('trims whitespace before validating', () => {
+      expect(validateEmail('  user@example.com  ')).toBe(true);
+    });
+
+    it('is case-insensitive (lowercases before testing)', () => {
+      expect(validateEmail('User@EXAMPLE.COM')).toBe(true);
+    });
+  });
+
+  // ❌ Invalid Emails
+  describe('invalid email formats', () => {
+    it('returns false for email missing @', () => {
+      expect(validateEmail('userexample.com')).toBe(false);
+    });
+
+    it('returns false for email missing domain', () => {
+      expect(validateEmail('user@')).toBe(false);
+    });
+
+    it('returns false for email missing TLD', () => {
+      expect(validateEmail('user@example')).toBe(false);
+    });
+
+    it('returns false for email with spaces', () => {
+      expect(validateEmail('user @example.com')).toBe(false);
+    });
+  });
+
+  // 🔥 Edge Cases
+  describe('edge cases', () => {
+    it('returns false for empty string', () => {
+      expect(validateEmail('')).toBe(false);
+    });
+
+    it('handles very long email addresses', () => {
+      const longEmail = 'a'.repeat(64) + '@' + 'b'.repeat(255) + '.com';
+      expect(typeof validateEmail(longEmail)).toBe('boolean');
+    });
+
+    it('returns false for email that is only whitespace', () => {
+      expect(validateEmail('   ')).toBe(false);
+    });
+  });
+
+  // 💥 Error Cases
+  describe('error handling', () => {
+    it('throws Error when email is null', () => {
+      expect(() => validateEmail(null)).toThrow('Email is required');
+    });
+
+    it('throws Error when email is undefined', () => {
+      expect(() => validateEmail(undefined)).toThrow('Email is required');
+    });
+
+    it('throws Error when email is a number', () => {
+      expect(() => validateEmail(123)).toThrow('Email is required');
+    });
+
+    it('throws Error when email is an object', () => {
+      expect(() => validateEmail({})).toThrow('Email is required');
+    });
+  });
+});`;
+
+const JEST_TEMPLATE_FETCH = `import { fetchUser } from './fetchUser';
+
+// 🎭 Mock the database dependency
+const mockDb = {
+  findById: jest.fn(),
+};
+
+describe('fetchUser', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  // ✅ Happy Path
+  describe('successful fetch', () => {
+    it('returns user object with id, name, and email', async () => {
+      const mockUser = { id: 1, name: 'Alice', email: 'alice@example.com', password: 'hashed' };
+      mockDb.findById.mockResolvedValue(mockUser);
+
+      const result = await fetchUser(1, mockDb);
+
+      expect(result).toEqual({ id: 1, name: 'Alice', email: 'alice@example.com' });
+    });
+
+    it('does NOT expose password or sensitive fields', async () => {
+      mockDb.findById.mockResolvedValue({ id: 1, name: 'Alice', email: 'a@a.com', password: 'secret' });
+      const result = await fetchUser(1, mockDb);
+      expect(result).not.toHaveProperty('password');
+    });
+
+    it('calls db.findById with the correct id', async () => {
+      mockDb.findById.mockResolvedValue({ id: 42, name: 'Bob', email: 'bob@example.com' });
+      await fetchUser(42, mockDb);
+      expect(mockDb.findById).toHaveBeenCalledWith(42);
+      expect(mockDb.findById).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  // 🔥 Edge Cases
+  describe('edge cases', () => {
+    it('handles user with missing optional fields', async () => {
+      mockDb.findById.mockResolvedValue({ id: 1, name: null, email: 'a@a.com' });
+      const result = await fetchUser(1, mockDb);
+      expect(result.name).toBeNull();
+    });
+  });
+
+  // 💥 Error Cases
+  describe('error handling', () => {
+    it('throws "Invalid user ID" for non-numeric id', async () => {
+      await expect(fetchUser('abc', mockDb)).rejects.toThrow('Invalid user ID');
+    });
+
+    it('throws "Invalid user ID" for id = 0', async () => {
+      await expect(fetchUser(0, mockDb)).rejects.toThrow('Invalid user ID');
+    });
+
+    it('throws "User not found" when db returns null', async () => {
+      mockDb.findById.mockResolvedValue(null);
+      await expect(fetchUser(999, mockDb)).rejects.toThrow('User not found');
+    });
+
+    it('propagates database errors', async () => {
+      mockDb.findById.mockRejectedValue(new Error('DB connection failed'));
+      await expect(fetchUser(1, mockDb)).rejects.toThrow('DB connection failed');
+    });
+  });
+});`;
+
+const PYTEST_TEMPLATE = `import pytest
+from your_module import validate_email, fetchUser
+
+
+class TestValidateEmail:
+    """Tests for validate_email function"""
+
+    # ✅ Happy Path
+    def test_valid_standard_email(self):
+        assert validate_email("user@example.com") is True
+
+    def test_valid_email_with_subdomain(self):
+        assert validate_email("user@mail.example.co.uk") is True
+
+    def test_trims_whitespace(self):
+        assert validate_email("  user@example.com  ") is True
+
+    def test_case_insensitive(self):
+        assert validate_email("USER@EXAMPLE.COM") is True
+
+    # ❌ Invalid Formats
+    def test_missing_at_symbol(self):
+        assert validate_email("userexample.com") is False
+
+    def test_missing_domain(self):
+        assert validate_email("user@") is False
+
+    def test_email_with_spaces(self):
+        assert validate_email("user @example.com") is False
+
+    # 💥 Edge Cases
+    def test_empty_string(self):
+        assert validate_email("") is False
+
+    def test_none_raises_error(self):
+        with pytest.raises(ValueError, match="Email is required"):
+            validate_email(None)
+
+    def test_non_string_raises_error(self):
+        with pytest.raises(ValueError):
+            validate_email(123)
+
+    # 🏃 Parametrize for efficiency
+    @pytest.mark.parametrize("email,expected", [
+        ("a@b.co", True),
+        ("test@test.test", True),
+        ("@nodomain.com", False),
+        ("nodomain@", False),
+        ("no-at-sign", False),
+    ])
+    def test_parametrized_cases(self, email, expected):
+        assert validate_email(email) == expected`;
+
+const GO_TEMPLATE = `package main
+
+import (
+	"errors"
+	"testing"
+)
+
+func TestValidateEmail(t *testing.T) {
+	tests := []struct {
+		name    string
+		email   string
+		want    bool
+		wantErr error
+	}{
+		// ✅ Happy Path
+		{name: "valid standard email", email: "user@example.com", want: true},
+		{name: "valid subdomain email", email: "user@mail.example.co.uk", want: true},
+		{name: "trims whitespace", email: "  user@example.com  ", want: true},
+
+		// ❌ Invalid formats
+		{name: "missing at sign", email: "userexample.com", want: false},
+		{name: "missing domain", email: "user@", want: false},
+		{name: "email with spaces", email: "user @example.com", want: false},
+
+		// 🔥 Edge cases
+		{name: "empty string", email: "", wantErr: errors.New("email is required")},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := ValidateEmail(tt.email)
+			if tt.wantErr != nil {
+				if err == nil {
+					t.Errorf("expected error %v, got nil", tt.wantErr)
+				}
+				return
+			}
+			if err != nil {
+				t.Fatalf("unexpected error: %v", err)
+			}
+			if got != tt.want {
+				t.Errorf("ValidateEmail(%q) = %v, want %v", tt.email, got, tt.want)
+			}
+		})
+	}
+}`;
+
+const GENERIC_TEMPLATE = `// Generated test suite
+// Replace 'yourFunction' and adjust imports for your project
+
+describe('yourFunction', () => {
+  // Happy Path
+  it('returns expected output for valid input', () => {
+    // arrange
+    const input = /* your input */;
+    // act
+    const result = yourFunction(input);
+    // assert
+    expect(result).toBe(/* expected */);
+  });
+
+  // Edge Cases
+  it('handles empty input', () => {
+    expect(() => yourFunction('')).not.toThrow();
+  });
+
+  it('handles null/undefined', () => {
+    expect(() => yourFunction(null)).toThrow();
+    expect(() => yourFunction(undefined)).toThrow();
+  });
+
+  it('handles boundary values', () => {
+    expect(yourFunction(0)).toBeDefined();
+    expect(yourFunction(Number.MAX_SAFE_INTEGER)).toBeDefined();
+  });
+
+  // Error Cases
+  it('throws on invalid input type', () => {
+    expect(() => yourFunction(123)).toThrow('Invalid');
+  });
+});`;
+
+function generateTests(){
+  const src = document.getElementById('sourceCode').value.trim();
+  if(!src){alert('Paste source code first');return;}
+  const fw = document.getElementById('fwSel').value;
+  const lang = document.getElementById('langSel').value;
+  const context = document.getElementById('contextCode').value.trim();
+  const include = Array.from(ttSet).join(', ');
+
+  document.getElementById('emptyOut').style.display='none';
+  document.getElementById('outputPanel').style.display='none';
+  document.getElementById('loadingOut').style.display='block';
+  document.getElementById('genBtn').disabled=true;
+
+  // Real AI test generation via the ABUZ8 brain (Cloudflare Workers AI). No templates / fabricated coverage.
+  fetch('/api/waitlist', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      tool: 'unit-test-generator',
+      data: { code: src, language: lang, framework: fw, context, include }
+    })
+  })
+  .then(r => r.json())
+  .then(res => {
+    if (!res.success || !res.result) throw new Error(res.error || 'Generation failed');
+    document.getElementById('loadingOut').style.display='none';
+    document.getElementById('genBtn').disabled=false;
+
+    // Extract a fenced code block if the brain wrapped the tests; otherwise use the raw text.
+    const fence = res.result.match(/```(?:\w+)?\s*([\s\S]*?)```/);
+    generatedTests = fence ? fence[1].trim() : res.result.trim();
+
+    // Honest output: show the real tests; no fabricated coverage numbers.
+    document.getElementById('outCode').textContent = generatedTests;
+    document.getElementById('coverageBar').innerHTML = '';
+    const stats = document.querySelector('.out-stats');
+    if (stats) stats.style.display = 'none';
+
+    document.getElementById('outputPanel').style.display='block';
+  })
+  .catch(err => {
+    document.getElementById('loadingOut').style.display='none';
+    document.getElementById('genBtn').disabled=false;
+    document.getElementById('emptyOut').style.display='block';
+    alert('Generation failed: ' + err.message + '. Please try again in a moment.');
+  });
+}
+
+let generatedTests='';
+function copyTests(){
+  navigator.clipboard.writeText(generatedTests).then(()=>{
+    event.target.textContent='✓ Copied!';
+    setTimeout(()=>event.target.textContent='📋 Copy',2000);
+  });
+}
+function downloadTests(){
+  const fw=document.getElementById('fwSel').value;
+  const ext={'jest':'test.js','vitest':'test.js','mocha':'test.js','pytest':'test.py','go_test':'_test.go','junit':'Test.java'}[fw]||'test.js';
+  const blob=new Blob([generatedTests],{type:'text/plain'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='generated.'+ext; a.click();
+}
+
+async function joinWaitlist(){
+  const email=document.getElementById('wlEmail').value.trim();
+  if(!email||!email.includes('@')){document.getElementById('wlMsg').textContent='Enter a valid email.';return;}
+  try{await fetch('/api/waitlist',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,product:'ai-unit-test-generator',source:'abuz8'})});}
+  catch(e){localStorage.setItem('wl_test_gen',email);}
+  document.getElementById('wlMsg').textContent='✓ On the list!';
+  document.getElementById('wlEmail').value='';
+}
+</script>
+
+<script src="/assets/js/dfy-banner.js" async></script>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+<script src="/tools/_tools-shared.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>
+

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Temperature and Top-P Explained: The Two Knobs That Control AI Output | ABUZ8</title>
+<meta name="description" content="Temperature and top-p explained in plain English — what these LLM settings actually do, how they change AI output, and what values to use for factual vs creative tasks.">
+<meta name="keywords" content="temperature and top-p explained, llm temperature setting, what is top-p, temperature vs top-p, llm sampling parameters">
+<link rel="canonical" href="https://abuz8ai.com/blog/temperature-top-p-explained">
+<meta property="og:title" content="Temperature and Top-P Explained: The Two Knobs That Control AI Output">
+<meta property="og:type" content="article">
+<link rel="stylesheet" href="/blog/_blog-base.css">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@300;400;600;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
+<style>
+/* LIGHT vision-safe override of _blog-base.css — every base variable redefined, internally
+   consistent (bg LIGHT, headings/text DARK, all pairings >= 4.5:1). */
+:root{
+  --lapis:#F8FAFC; --lapis-mid:#EEF3F8; --lapis-light:#E3EBF3;
+  --card:#FFFFFF; --border:#D7E0EA;
+  --cream:#1F3A5F; --ivory:#16324F; --text:#2C3E50; --dim:#5A6B7C;
+  --gold:#1F5B94; --gold-light:#12866E; --gold-dim:#7DA3C8;
+  --turq:#0E7C63; --turq-light:#1F5B94; --turq-bright:#12866E;
+  --primary:#2E75B6;
+}
+code{background:#EEF3F8;color:#1F5B94;font-family:'JetBrains Mono',monospace;font-size:0.85em;padding:0.1em 0.35em;border-radius:4px;}
+.callout.cta{background:#EEF3F8;border:1px solid #2E75B6;border-radius:12px;padding:22px 24px;margin:36px 0 10px;}
+.callout.cta p{margin:0;color:#2C3E50;}
+.foot{color:#5A6B7C;font-size:13px;margin-top:40px;border-top:1px solid #D7E0EA;padding-top:18px;}
+.foot a{color:#1F5B94;}
+</style>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","headline":"Temperature and Top-P Explained: The Two Knobs That Control AI Output","datePublished":"2026-07-25","author":{"@type":"Organization","name":"ABUZ8 AI"}}
+</script>
+</head>
+<body>
+<div class="container">
+  <a href="/blog/" class="back">&larr; ABUZ8 BLOG</a>
+  <h1>Temperature and Top-P Explained: The Two Knobs That Control AI Output</h1>
+  <div class="meta-row"><span>DEVELOPERS</span><span class="dot"></span><span>JULY 25, 2026</span><span class="dot"></span><span>4 MIN READ</span></div>
+
+  <p>Every LLM API hands you two dials labeled something like <code>temperature</code> and <code>top_p</code>, usually with no explanation, and most people either ignore them or set them randomly. That's a shame, because <strong>temperature and top-p control how predictable or how varied the AI's output is</strong>, and getting them right is the difference between a factual tool that answers consistently and a brainstorming partner that surprises you. Here's what each actually does and what to set them to, without the probability-theory lecture.</p>
+
+  <h2>What temperature does</h2>
+  <p>At every step, the model has a ranked list of possible next words with different likelihoods. Temperature decides how much it favors the top of that list. <strong>Low temperature (near 0)</strong> makes it almost always pick the most likely word — output becomes focused, consistent, and repeatable; ask the same thing twice and you'll get nearly the same answer. <strong>High temperature (toward 1 and above)</strong> flattens the odds so less-likely words get a real chance — output becomes more varied, more creative, and less predictable. Think of it as a boldness dial: low plays it safe, high takes risks.</p>
+
+  <h2>What top-p does</h2>
+  <p>Top-p (also called nucleus sampling) attacks the same goal from a different angle. Instead of reshaping all the odds, it draws a line: only consider the smallest set of top words whose combined probability adds up to <code>p</code>, and ignore the long tail entirely. At <code>top_p = 0.9</code>, the model samples only from the words that make up the top 90% of likelihood and never even considers the weird 10%. Lower it and you keep the model on a tighter leash of "sensible" options. It's a cleaner way to cut off the truly unlikely picks while still allowing some variety among the reasonable ones.</p>
+
+  <h2>Do you change both?</h2>
+  <p>Generally, no — pick one and leave the other at its default. They're two ways of controlling the same thing, and tuning both at once makes the effect hard to reason about. Most practitioners adjust temperature and leave top-p alone, or vice versa. If you're not sure, just use temperature; it's the more intuitive of the two. Changing both together is the classic way to get output that behaves unpredictably and then blame the model.</p>
+
+  <h2>What to actually set</h2>
+  <p>Match the setting to the job. For <strong>factual, structured, or code output</strong> — anything where you want the same right answer every time — go low: temperature around 0 to 0.3. For <strong>drafting and general writing</strong>, the middle — 0.5 to 0.7 — gives natural variety without going off the rails. For <strong>brainstorming, names, creative copy</strong> where you <em>want</em> surprises, go higher: 0.8 to 1.0. The instinct that "smarter = higher temperature" is exactly backwards — for reliable work, lower is smarter, because you don't want your invoice extractor getting creative.</p>
+
+  <h2>The connection to hallucination</h2>
+  <p>Here's the practical payoff: high temperature increases hallucination on factual tasks, because you're literally instructing the model to consider less-likely words, and less-likely words are more often wrong. If an AI feature "makes things up," an over-cranked temperature is one of the first things to check — drop it to near zero for anything fact-based and a chunk of the problem often disappears. It's one lever among several; we cover the rest in <a href="/blog/how-to-reduce-ai-hallucinations" class="in">how to reduce AI hallucinations</a>.</p>
+
+  <h2>Where it fits with everything else</h2>
+  <p>Temperature and top-p shape <em>how</em> the model expresses an answer, but they don't give it knowledge or fix its behavior — that's what your prompt, retrieval, and structure are for. Set the temperature to match the task, write a clear <a href="/blog/how-to-write-a-system-prompt" class="in">system prompt</a>, and for machine-read output pair a low temperature with <a href="/blog/structured-outputs-json-mode-guide" class="in">structured outputs</a>. The dials are the easiest win in this whole stack: one number, big effect, thirty seconds to change.</p>
+
+  <div class="callout cta">
+    <p><strong>Two numbers control whether your AI is a reliable tool or a loose cannon — set them on purpose.</strong> Our free browser tools — <a href="/tools/ai-token-counter.html" class="in">token counter</a> and <a href="/tools/ai-llm-price-comparison.html" class="in">price comparison</a> — need no signup. And QADIR OS tunes these per task automatically, so factual work stays tight and creative work stays loose without you touching a dial. <a href="/" class="in">Join QADIR OS early access</a>.</p>
+  </div>
+  <div class="foot">Built by <a href="/">ABUZ8 LLC</a> — we're building QADIR OS, the sovereign agentic operating system.</div>
+</div>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+<script src="/blog/_blog-shared.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>

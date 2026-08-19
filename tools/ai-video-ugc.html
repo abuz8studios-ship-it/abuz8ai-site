@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Video UGC — ABUZ8</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --lapis:#0a1628;--lapis2:#0d1e38;--lapis3:#122240;
+  --gold:#c9a84c;--gold2:#e0bc6a;--gold3:#a8832a;
+  --turq:#0e9f6e;--turq2:#22a090;--turq3:#0f6a5c;
+  --red:#e05555;--green:#3dba7e;
+  --cream:#f5f0e8;--text:#f0ece4;--muted:#8a9ab5;
+  --r:12px;--r2:8px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--lapis);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh;}
+nav{background:rgba(10,22,40,.95);border-bottom:1px solid rgba(201,168,76,.2);padding:14px 32px;display:flex;align-items:center;gap:16px;position:sticky;top:0;z-index:100;backdrop-filter:blur(12px);}
+.nav-logo{font-family:'Playfair Display',serif;color:var(--gold);font-size:1.25rem;font-weight:700;text-decoration:none;}
+.nav-badge{background:rgba(201,168,76,.15);border:1px solid rgba(201,168,76,.3);color:var(--gold2);font-size:.7rem;padding:2px 8px;border-radius:20px;font-weight:600;}
+.nav-back{margin-left:auto;color:var(--muted);font-size:.85rem;text-decoration:none;}
+
+.hero{background:linear-gradient(135deg,var(--lapis2),#0c2030);border-bottom:1px solid rgba(201,168,76,.15);padding:60px 32px 48px;text-align:center;position:relative;overflow:hidden;}
+.hero::before{content:'▶';position:absolute;font-size:20rem;color:rgba(201,168,76,.02);top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none;}
+.hero-tag{background:linear-gradient(90deg,var(--red),#c0392b);color:#fff;font-size:.7rem;font-weight:700;letter-spacing:.1em;padding:4px 14px;border-radius:20px;display:inline-block;margin-bottom:16px;text-transform:uppercase;}
+.hero h1{font-family:'Playfair Display',serif;font-size:clamp(1.9rem,4.5vw,3rem);color:var(--cream);margin-bottom:14px;line-height:1.2;position:relative;z-index:1;}
+.hero h1 span{color:var(--gold);}
+.hero p{color:var(--muted);font-size:1rem;max-width:580px;margin:0 auto 28px;position:relative;z-index:1;}
+.cta-row{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:40px;position:relative;z-index:1;}
+.btn-gold{background:linear-gradient(135deg,var(--gold3),var(--gold));color:var(--lapis);font-weight:700;font-size:.95rem;padding:14px 28px;border:none;border-radius:var(--r2);cursor:pointer;font-family:'Playfair Display',serif;transition:.25s;text-decoration:none;display:inline-block;}
+.btn-gold:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(201,168,76,.3);}
+.btn-ghost{background:transparent;border:1px solid rgba(201,168,76,.4);color:var(--gold);font-size:.9rem;padding:13px 24px;border-radius:var(--r2);cursor:pointer;text-decoration:none;display:inline-block;transition:.2s;}
+.hero-stats{display:flex;gap:36px;justify-content:center;flex-wrap:wrap;position:relative;z-index:1;}
+.hstat{text-align:center;}
+.hstat-n{font-family:'Playfair Display',serif;font-size:1.7rem;color:var(--gold);font-weight:700;}
+.hstat-l{font-size:.7rem;color:var(--muted);letter-spacing:.05em;text-transform:uppercase;}
+
+/* VIDEO WALL */
+.video-wall{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:0 0 40px;max-width:700px;margin-left:auto;margin-right:auto;position:relative;z-index:1;}
+.vid-thumb{border-radius:var(--r2);aspect-ratio:9/16;display:flex;align-items:center;justify-content:center;font-size:1.4rem;position:relative;overflow:hidden;cursor:pointer;transition:.2s;}
+.vid-thumb:hover{transform:scale(1.05);}
+.vid-thumb::after{content:'▶';position:absolute;background:rgba(0,0,0,.5);width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.7rem;color:#fff;bottom:6px;right:6px;}
+.vt1{background:linear-gradient(160deg,#1e0a30,#7c3aed);}
+.vt2{background:linear-gradient(160deg,#0a2a14,#16a34a);}
+.vt3{background:linear-gradient(160deg,#1a0a10,#e11d48);}
+.vt4{background:linear-gradient(160deg,#0a1830,#2563eb);}
+.vt5{background:linear-gradient(160deg,#1e1208,#d97706);}
+
+.main{max-width:1100px;margin:0 auto;padding:48px 24px;}
+.section-title{font-family:'Playfair Display',serif;font-size:1.6rem;color:var(--cream);margin-bottom:8px;}
+.section-sub{color:var(--muted);font-size:.9rem;margin-bottom:28px;}
+
+/* CREATOR TYPES */
+.creator-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:48px;}
+@media(max-width:700px){.creator-grid{grid-template-columns:1fr 1fr;}}
+.creator-card{background:var(--lapis2);border:2px solid rgba(201,168,76,.1);border-radius:var(--r);padding:18px;text-align:center;cursor:pointer;transition:.25s;}
+.creator-card:hover,.creator-card.active{border-color:var(--gold);background:rgba(201,168,76,.05);}
+.cc-avatar{width:56px;height:56px;border-radius:50%;margin:0 auto 10px;display:flex;align-items:center;justify-content:center;font-size:1.6rem;}
+.cc-name{font-size:.85rem;font-weight:600;color:var(--cream);margin-bottom:4px;}
+.cc-style{font-size:.7rem;color:var(--muted);}
+.cc-demo{font-size:.65rem;color:var(--turq2);margin-top:6px;font-weight:600;}
+
+/* ORDER FORM */
+.order-card{background:var(--lapis2);border:1px solid rgba(201,168,76,.15);border-radius:var(--r);overflow:hidden;margin-bottom:48px;}
+.oc-header{background:linear-gradient(90deg,rgba(201,168,76,.08),transparent);border-bottom:1px solid rgba(201,168,76,.1);padding:20px 24px;display:flex;align-items:center;justify-content:space-between;}
+.oc-title{font-family:'Playfair Display',serif;font-size:1.1rem;color:var(--gold);}
+.oc-body{display:grid;grid-template-columns:1fr 1fr;gap:0;}
+@media(max-width:680px){.oc-body{grid-template-columns:1fr;}}
+.oc-left,.oc-right{padding:24px;}
+.oc-left{border-right:1px solid rgba(201,168,76,.08);}
+
+.field{margin-bottom:16px;}
+.field label{display:block;font-size:.78rem;color:var(--muted);margin-bottom:5px;font-weight:500;}
+.field input,.field select,.field textarea{width:100%;background:var(--lapis3);border:1px solid rgba(201,168,76,.18);color:var(--text);padding:10px 13px;border-radius:var(--r2);font-size:.85rem;font-family:'Inter',sans-serif;outline:none;transition:.2s;}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--gold);}
+.field textarea{resize:vertical;min-height:80px;}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+
+/* PLATFORM PILLS */
+.platform-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px;}
+.plat-pill{background:var(--lapis3);border:1px solid rgba(201,168,76,.1);border-radius:var(--r2);padding:10px 6px;text-align:center;cursor:pointer;transition:.2s;}
+.plat-pill.active{border-color:var(--gold);background:rgba(201,168,76,.08);}
+.pp-icon{font-size:1.2rem;margin-bottom:3px;}
+.pp-name{font-size:.65rem;color:var(--cream);font-weight:600;}
+.pp-size{font-size:.58rem;color:var(--muted);}
+
+/* SCRIPT PREVIEW */
+.script-box{background:var(--lapis3);border-left:3px solid var(--gold);border-radius:0 var(--r2) var(--r2) 0;padding:14px;margin-bottom:16px;}
+.sb-label{font-size:.68rem;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;}
+.sb-script{font-size:.78rem;color:var(--cream);line-height:1.7;}
+.sb-time{font-size:.68rem;color:var(--turq2);font-weight:600;margin-top:6px;}
+
+/* VIDEO SPEC */
+.spec-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px;}
+.spec-box{background:var(--lapis3);border:1px solid rgba(201,168,76,.08);border-radius:var(--r2);padding:10px;text-align:center;}
+.sp-n{font-family:'Playfair Display',serif;font-size:1.2rem;color:var(--gold);}
+.sp-l{font-size:.65rem;color:var(--muted);margin-top:2px;}
+
+/* PRICE CARD */
+.price-sum{background:var(--lapis3);border:1px solid rgba(201,168,76,.1);border-radius:var(--r2);padding:16px;margin-bottom:16px;}
+.ps-row{display:flex;justify-content:space-between;font-size:.8rem;margin-bottom:7px;align-items:center;}
+.ps-row:last-child{border-top:1px solid rgba(201,168,76,.1);padding-top:8px;margin-top:4px;margin-bottom:0;}
+.ps-label{color:var(--muted);}
+.ps-val{color:var(--cream);font-weight:600;}
+.ps-total{color:var(--gold);font-family:'Playfair Display',serif;font-size:1.1rem;}
+
+.btn-submit{width:100%;background:linear-gradient(135deg,var(--gold3),var(--gold));color:var(--lapis);font-weight:700;font-size:1rem;padding:15px;border:none;border-radius:var(--r2);cursor:pointer;font-family:'Playfair Display',serif;transition:.25s;margin-top:4px;}
+.btn-submit:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(201,168,76,.3);}
+
+/* EXAMPLES */
+.example-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:48px;}
+@media(max-width:700px){.example-grid{grid-template-columns:1fr 1fr;}}
+.ex-card{background:var(--lapis2);border:1px solid rgba(201,168,76,.08);border-radius:var(--r);overflow:hidden;transition:.2s;}
+.ex-card:hover{border-color:rgba(201,168,76,.25);}
+.ex-thumb{aspect-ratio:9/16;display:flex;align-items:center;justify-content:center;font-size:2.5rem;position:relative;overflow:hidden;}
+.ex-badge{position:absolute;top:8px;left:8px;background:rgba(10,22,40,.85);color:var(--gold);font-size:.6rem;font-weight:700;padding:3px 7px;border-radius:6px;}
+.ex-play{position:absolute;bottom:10px;right:10px;background:rgba(201,168,76,.85);color:var(--lapis);width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.7rem;}
+.ex-meta{padding:12px;}
+.ex-name{font-size:.82rem;color:var(--cream);font-weight:600;margin-bottom:3px;}
+.ex-stats{font-size:.7rem;color:var(--muted);}
+.ex-roas{font-size:.72rem;color:var(--green);font-weight:600;margin-top:4px;}
+
+/* WAITLIST */
+.waitlist-section{background:linear-gradient(135deg,rgba(201,168,76,.06),rgba(26,138,122,.04));border:1px solid rgba(201,168,76,.2);border-radius:var(--r);padding:40px;text-align:center;}
+.wl-title{font-family:'Playfair Display',serif;font-size:1.5rem;color:var(--cream);margin-bottom:8px;}
+.wl-sub{color:var(--muted);font-size:.9rem;margin-bottom:22px;}
+.wl-form{display:flex;gap:10px;max-width:460px;margin:0 auto;}
+.wl-input{flex:1;background:var(--lapis3);border:1px solid rgba(201,168,76,.25);color:var(--text);padding:12px 14px;border-radius:var(--r2);font-size:.88rem;font-family:'Inter',sans-serif;outline:none;}
+.wl-input:focus{border-color:var(--gold);}
+.wl-btn{background:var(--gold);color:var(--lapis);font-weight:700;padding:12px 20px;border:none;border-radius:var(--r2);cursor:pointer;font-size:.88rem;white-space:nowrap;transition:.2s;}
+.wl-btn:hover{background:var(--gold2);}
+.wl-success{display:none;color:var(--turq2);font-weight:600;font-size:.9rem;margin-top:10px;}
+.wl-perks{display:flex;gap:20px;justify-content:center;margin-top:16px;flex-wrap:wrap;}
+.wl-perk{font-size:.75rem;color:var(--muted);display:flex;align-items:center;gap:5px;}
+.wl-perk::before{content:'✦';color:var(--gold);font-size:.6rem;}
+
+.toast{position:fixed;bottom:24px;right:24px;background:var(--lapis3);border:1px solid rgba(201,168,76,.3);color:var(--text);padding:12px 18px;border-radius:var(--r2);font-size:.85rem;opacity:0;transform:translateY(12px);transition:.3s;z-index:999;pointer-events:none;}
+.toast.show{opacity:1;transform:translateY(0);}
+</style>
+<link rel="canonical" href="https://abuz8ai.com/tools/ai-video-ugc">
+<meta name="description" content="AI UGC Video Creator — Generate user-generated-style content videos for ads and social. Free, no signup, runs entirely in your browser. One of 169 free AI and">
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="../index.html">ABUZ8</a>
+  <span class="nav-badge">TIER D · #58</span>
+  <a class="nav-back" href="../tools.html">← All Tools</a>
+</nav>
+
+<section class="hero">
+  <div class="hero-tag">🎬 AI Video UGC</div>
+  <h1>AI Creators That <span>Convert</span><br>Like Real Influencers</h1>
+  <p>Get authentic-looking UGC videos featuring AI avatars that talk about your product — for TikTok, Reels, YouTube Shorts. No real creator needed.</p>
+  <div class="cta-row">
+    <a href="#order" class="btn-gold">Order Your Videos →</a>
+    <a href="#examples" class="btn-ghost">See Examples</a>
+  </div>
+  <div class="video-wall">
+    <div class="vid-thumb vt1">👩‍💼</div>
+    <div class="vid-thumb vt2">🧑‍🦱</div>
+    <div class="vid-thumb vt3">👩‍🦰</div>
+    <div class="vid-thumb vt4">🧔</div>
+    <div class="vid-thumb vt5">👩‍🦳</div>
+  </div>
+  <div class="hero-stats">
+    <div class="hstat"><div class="hstat-n">3.2×</div><div class="hstat-l">Avg ROAS vs Static Ads</div></div>
+    <div class="hstat"><div class="hstat-n">48hr</div><div class="hstat-l">Delivery</div></div>
+    <div class="hstat"><div class="hstat-n">50+</div><div class="hstat-l">AI Creators</div></div>
+    <div class="hstat"><div class="hstat-n">$0</div><div class="hstat-l">Creator Fees</div></div>
+  </div>
+</section>
+
+<div class="main">
+
+  <!-- CREATOR TYPES -->
+  <div style="margin-bottom:16px;">
+    <div class="section-title">Choose Your AI Creator</div>
+    <div class="section-sub">50+ diverse AI avatars — each with unique style, voice, and delivery</div>
+  </div>
+  <div class="creator-grid" id="creatorGrid">
+    <div class="creator-card active" onclick="selectCreator(this,'emma')">
+      <div class="cc-avatar" style="background:linear-gradient(135deg,#7c3aed,#4f46e5);">👩‍💼</div>
+      <div class="cc-name">Emma</div>
+      <div class="cc-style">Professional · Millennial</div>
+      <div class="cc-demo">▶ Watch sample</div>
+    </div>
+    <div class="creator-card" onclick="selectCreator(this,'marcus')">
+      <div class="cc-avatar" style="background:linear-gradient(135deg,#0d9488,#0891b2);">🧑‍💻</div>
+      <div class="cc-name">Marcus</div>
+      <div class="cc-style">Tech Bro · Gen Z</div>
+      <div class="cc-demo">▶ Watch sample</div>
+    </div>
+    <div class="creator-card" onclick="selectCreator(this,'sofia')">
+      <div class="cc-avatar" style="background:linear-gradient(135deg,#e11d48,#f59e0b);">👩‍🦰</div>
+      <div class="cc-name">Sofia</div>
+      <div class="cc-style">Lifestyle · Authentic</div>
+      <div class="cc-demo">▶ Watch sample</div>
+    </div>
+    <div class="creator-card" onclick="selectCreator(this,'james')">
+      <div class="cc-avatar" style="background:linear-gradient(135deg,#1e40af,#0f172a);">🧔</div>
+      <div class="cc-name">James</div>
+      <div class="cc-style">Authority · Expert</div>
+      <div class="cc-demo">▶ Watch sample</div>
+    </div>
+  </div>
+
+  <!-- ORDER -->
+  <div id="order" style="margin-bottom:16px;">
+    <div class="section-title">Configure Your UGC Video</div>
+    <div class="section-sub">Script-to-video in 48 hours</div>
+  </div>
+  <div class="order-card">
+    <div class="oc-header">
+      <div class="oc-title">Video Brief</div>
+    </div>
+    <div class="oc-body">
+      <div class="oc-left">
+        <div class="field">
+          <label>Product / Brand Name</label>
+          <input type="text" id="productName" placeholder="e.g. GlowSerum Pro" oninput="updateScript()">
+        </div>
+        <div class="field">
+          <label>Product Category</label>
+          <select id="category" onchange="updateScript()">
+            <option value="">Select...</option>
+            <option>Beauty / Skincare</option>
+            <option>Health & Supplements</option>
+            <option>SaaS / App</option>
+            <option>E-commerce / Physical Product</option>
+            <option>Food & Beverage</option>
+            <option>Fitness / Sports</option>
+            <option>Fashion / Accessories</option>
+            <option>Home & Garden</option>
+            <option>Finance / Investment</option>
+            <option>Education / Course</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Key Benefit (one line)</label>
+          <input type="text" id="benefit" placeholder="e.g. Clears acne in 7 days or your money back" oninput="updateScript()">
+        </div>
+        <div class="field">
+          <label>Call to Action</label>
+          <input type="text" id="cta" placeholder="e.g. Use code SAVE20 for 20% off" oninput="updateScript()">
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label>Video Length</label>
+            <select id="vidLen" onchange="updateSpec()">
+              <option value="15">15 seconds</option>
+              <option value="30" selected>30 seconds</option>
+              <option value="60">60 seconds</option>
+              <option value="90">90 seconds</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Quantity</label>
+            <select id="quantity" onchange="updateSpec()">
+              <option value="1">1 video</option>
+              <option value="3" selected>3 videos</option>
+              <option value="5">5 videos</option>
+              <option value="10">10 videos</option>
+            </select>
+          </div>
+        </div>
+        <div style="font-size:.78rem;color:var(--muted);margin-bottom:8px;font-weight:500;">Target Platforms</div>
+        <div class="platform-grid">
+          <div class="plat-pill active" onclick="this.classList.toggle('active')"><div class="pp-icon">🎵</div><div class="pp-name">TikTok</div><div class="pp-size">9:16</div></div>
+          <div class="plat-pill active" onclick="this.classList.toggle('active')"><div class="pp-icon">📸</div><div class="pp-name">Reels</div><div class="pp-size">9:16</div></div>
+          <div class="plat-pill" onclick="this.classList.toggle('active')"><div class="pp-icon">▶️</div><div class="pp-name">YT Shorts</div><div class="pp-size">9:16</div></div>
+          <div class="plat-pill" onclick="this.classList.toggle('active')"><div class="pp-icon">📘</div><div class="pp-name">Facebook</div><div class="pp-size">1:1</div></div>
+          <div class="plat-pill" onclick="this.classList.toggle('active')"><div class="pp-icon">🐦</div><div class="pp-name">Twitter/X</div><div class="pp-size">16:9</div></div>
+          <div class="plat-pill" onclick="this.classList.toggle('active')"><div class="pp-icon">💼</div><div class="pp-name">LinkedIn</div><div class="pp-size">16:9</div></div>
+        </div>
+        <div class="field">
+          <label>Hook Type</label>
+          <select id="hookType" onchange="updateScript()">
+            <option value="problem">Problem agitate ("Tired of...")</option>
+            <option value="result">Result first ("I tried X for 30 days...")</option>
+            <option value="story">Story open ("So I was scrolling...")</option>
+            <option value="question">Direct question ("What if you could...")</option>
+            <option value="stat">Shocking stat</option>
+          </select>
+        </div>
+      </div>
+      <div class="oc-right">
+        <div class="script-box">
+          <div class="sb-label">AI-Generated Script Preview</div>
+          <div class="sb-script" id="scriptPreview">Fill in the brief on the left to generate a preview script...</div>
+          <div class="sb-time" id="scriptTime"></div>
+        </div>
+        <div style="display:flex;gap:8px;margin-bottom:16px;">
+          <button onclick="regenerateScript()" style="flex:1;background:rgba(201,168,76,.08);border:1px solid rgba(201,168,76,.2);color:var(--gold);font-size:.75rem;padding:8px;border-radius:6px;cursor:pointer;">🔄 New Script</button>
+          <button onclick="copyScript()" style="flex:1;background:rgba(201,168,76,.08);border:1px solid rgba(201,168,76,.2);color:var(--gold);font-size:.75rem;padding:8px;border-radius:6px;cursor:pointer;">📋 Copy</button>
+        </div>
+        <div class="spec-row" id="specRow">
+          <div class="spec-box"><div class="sp-n" id="sp-duration">30s</div><div class="sp-l">Duration</div></div>
+          <div class="spec-box"><div class="sp-n" id="sp-words">~75</div><div class="sp-l">Words</div></div>
+          <div class="spec-box"><div class="sp-n" id="sp-qty">3</div><div class="sp-l">Videos</div></div>
+        </div>
+        <div class="price-sum">
+          <div class="ps-row"><span class="ps-label">3 × 30s UGC videos</span><span class="ps-val" id="ps-svc">$591</span></div>
+          <div class="ps-row"><span class="ps-label">Creator</span><span class="ps-val" id="ps-creator">Emma</span></div>
+          <div class="ps-row"><span class="ps-label">Delivery</span><span class="ps-val">48 hours</span></div>
+          <div class="ps-row"><span class="ps-label">Revisions</span><span class="ps-val">2 per video</span></div>
+          <div class="ps-row"><span class="ps-label">Total</span><span class="ps-val ps-total" id="ps-total">$591</span></div>
+        </div>
+        <div class="field">
+          <label>Your Email (delivery)</label>
+          <input type="email" id="orderEmail" placeholder="you@brand.com">
+        </div>
+        <button class="btn-submit" onclick="placeOrder()">🎬 Order UGC Videos</button>
+        <div style="font-size:.7rem;color:var(--muted);text-align:center;margin-top:8px;">48-hour delivery · 2 free revisions per video · Commercial rights included</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EXAMPLES -->
+  <div id="examples" style="margin-bottom:16px;">
+    <div class="section-title">Recent UGC Campaigns</div>
+    <div class="section-sub">Performance data from live campaigns using our AI-generated videos</div>
+  </div>
+  <div class="example-grid">
+    <div class="ex-card"><div class="ex-thumb" style="background:linear-gradient(160deg,#1e0a30,#7c3aed);">💄<span class="ex-badge">Beauty</span><span class="ex-play">▶</span></div><div class="ex-meta"><div class="ex-name">LuminaGlow — TikTok Hook Series</div><div class="ex-stats">5 videos · 2.8M impressions</div><div class="ex-roas">↑ 4.1× ROAS</div></div></div>
+    <div class="ex-card"><div class="ex-thumb" style="background:linear-gradient(160deg,#0a2a14,#16a34a);">💊<span class="ex-badge">Health</span><span class="ex-play">▶</span></div><div class="ex-meta"><div class="ex-name">VitaStack — Reels Campaign</div><div class="ex-stats">3 videos · 1.2M impressions</div><div class="ex-roas">↑ 3.7× ROAS</div></div></div>
+    <div class="ex-card"><div class="ex-thumb" style="background:linear-gradient(160deg,#0a1830,#2563eb);">📱<span class="ex-badge">SaaS</span><span class="ex-play">▶</span></div><div class="ex-meta"><div class="ex-name">TaskFlow App — YT Shorts Demo</div><div class="ex-stats">8 videos · 4.1M impressions</div><div class="ex-roas">↑ 2.9× ROAS</div></div></div>
+    <div class="ex-card"><div class="ex-thumb" style="background:linear-gradient(160deg,#1a0a10,#e11d48);">👗<span class="ex-badge">Fashion</span><span class="ex-play">▶</span></div><div class="ex-meta"><div class="ex-name">Velour Threads — TikTok Story</div><div class="ex-stats">6 videos · 3.5M impressions</div><div class="ex-roas">↑ 5.2× ROAS</div></div></div>
+    <div class="ex-card"><div class="ex-thumb" style="background:linear-gradient(160deg,#1e1208,#d97706);">☕<span class="ex-badge">F&B</span><span class="ex-play">▶</span></div><div class="ex-meta"><div class="ex-name">BrewBar — Reels Series</div><div class="ex-stats">4 videos · 900K impressions</div><div class="ex-roas">↑ 3.3× ROAS</div></div></div>
+    <div class="ex-card"><div class="ex-thumb" style="background:linear-gradient(160deg,#134e4a,#0d9488);">🏋️<span class="ex-badge">Fitness</span><span class="ex-play">▶</span></div><div class="ex-meta"><div class="ex-name">IronCore — Multi-Platform</div><div class="ex-stats">10 videos · 6.8M impressions</div><div class="ex-roas">↑ 4.8× ROAS</div></div></div>
+  </div>
+
+  <div class="waitlist-section">
+    <div class="wl-title">🎬 Start Your UGC Campaign</div>
+    <div class="wl-sub">Join 600+ brands using AI-generated UGC. First 3 videos free for waitlist members.</div>
+    <div class="wl-form">
+      <input class="wl-input" type="email" id="wlEmail" placeholder="marketing@brand.com">
+      <button class="wl-btn" onclick="joinWaitlist()">Get 3 Free Videos</button>
+    </div>
+    <div class="wl-success" id="wlSuccess">✦ You're in! First 3 videos free — watch your inbox.</div>
+    <div class="wl-perks">
+      <span class="wl-perk">3 free videos</span>
+      <span class="wl-perk">48-hour delivery</span>
+      <span class="wl-perk">Commercial rights</span>
+      <span class="wl-perk">Bulk discounts</span>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="/tools/_abuz8-live-brain.js" onerror="console.log('Brain offline')"></script>
+<script>
+const PRICES = { 15:137, 30:197, 60:297, 90:397 };
+const HOOKS = {
+  problem: p => `"Okay I HAVE to talk about this. I was ${p?'struggling with my skin for years':'dealing with this problem'} — tried everything. Nothing worked. Then I found [Product]..."`,
+  result:  p => `"I've been using ${p||'this product'} for 30 days straight. Here's exactly what happened — because I was NOT expecting this..."`,
+  story:   p => `"So I was scrolling TikTok at 2am and an ad for ${p||'this product'} came up. I thought it was a scam. I ordered it anyway. Best decision I ever made."`,
+  question:p => `"What if you could ${p?'solve your problem':'get results like this'} in less than a week? Because that's literally what happened when I tried ${p||'this'}..."`,
+  stat:    p => `"93% of people who try ${p||'this'} see results within 7 days. I was NOT one of the skeptics. Here's my honest review..."`,
+};
+const WORD_COUNT = { 15:37, 30:75, 60:150, 90:225 };
+let selectedCreator = 'emma';
+
+function selectCreator(el, id){
+  document.querySelectorAll('.creator-card').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  selectedCreator = id;
+  document.getElementById('ps-creator').textContent = el.querySelector('.cc-name').textContent;
+  updateSpec();
+}
+
+function updateScript(){
+  const p    = document.getElementById('productName').value;
+  const ben  = document.getElementById('benefit').value;
+  const cta  = document.getElementById('cta').value;
+  const hook = document.getElementById('hookType').value;
+  if(!p && !ben){ document.getElementById('scriptPreview').textContent = 'Fill in product name to generate preview...'; return; }
+  const hookText = HOOKS[hook](p);
+  const midText  = ben ? `\n\nHonestly? ${ben}. And I've tried everything.` : '';
+  const ctaText  = cta ? `\n\n${cta} — link in bio.` : '\n\nLink in bio to check it out.';
+  document.getElementById('scriptPreview').innerHTML = hookText + midText + ctaText;
+  const len = parseInt(document.getElementById('vidLen').value);
+  document.getElementById('scriptTime').textContent = `≈ ${WORD_COUNT[len]} words · ${len}s video`;
+  updateSpec();
+}
+
+function updateSpec(){
+  const len = document.getElementById('vidLen').value;
+  const qty = document.getElementById('quantity').value;
+  const basePrice = PRICES[len] || 197;
+  const total = basePrice * parseInt(qty);
+  document.getElementById('sp-duration').textContent = len+'s';
+  document.getElementById('sp-words').textContent    = '~'+WORD_COUNT[len];
+  document.getElementById('sp-qty').textContent      = qty;
+  document.getElementById('ps-svc').textContent      = `${qty} × ${len}s videos`;
+  document.getElementById('ps-total').textContent    = '$'+total.toLocaleString();
+}
+
+function regenerateScript(){
+  const hooks = Object.keys(HOOKS);
+  const sel   = document.getElementById('hookType');
+  sel.value   = hooks[Math.floor(Math.random()*hooks.length)];
+  updateScript();
+}
+
+function copyScript(){
+  navigator.clipboard.writeText(document.getElementById('scriptPreview').innerText).then(()=>toast('Script copied!'));
+}
+
+async function placeOrder(){
+  const product = document.getElementById('productName').value.trim();
+  const email   = document.getElementById('orderEmail').value.trim();
+  if(!product){ toast('Enter your product name'); return; }
+  if(!email || !email.includes('@')){ toast('Enter your email for delivery'); return; }
+
+  const btn = document.querySelector('.btn-submit');
+  btn.disabled = true; btn.textContent = '⟳ Processing order...';
+
+  try {
+    if(typeof window.ABUZ8 !== 'undefined' && window.ABUZ8.callBrain){
+      await window.ABUZ8.callBrain('ugc_order_submit', {
+        product, email, creator: selectedCreator,
+        category: document.getElementById('category').value,
+        benefit: document.getElementById('benefit').value,
+        cta: document.getElementById('cta').value,
+        length: document.getElementById('vidLen').value,
+        quantity: document.getElementById('quantity').value,
+        hook: document.getElementById('hookType').value,
+        ts: Date.now()
+      });
+    }
+  } catch(e){ console.log('Brain offline'); }
+
+  await new Promise(r=>setTimeout(r,1000));
+  btn.textContent = '✅ Order Placed!';
+  btn.style.background = 'linear-gradient(135deg,var(--turq3),var(--turq))';
+  toast('🎬 Videos in production! Delivery in 48 hours.', 5000);
+}
+
+async function joinWaitlist(){
+  const email = document.getElementById('wlEmail').value.trim();
+  if(!email || !email.includes('@')){ toast('Enter a valid email'); return; }
+  try {
+    if(typeof window.ABUZ8 !== 'undefined' && window.ABUZ8.callBrain){
+      await window.ABUZ8.callBrain('waitlist_add', { email, product:'ai-video-ugc', ts: Date.now() });
+    }
+  } catch(e){ console.log('Brain offline'); }
+  document.getElementById('wlSuccess').style.display = 'block';
+  document.getElementById('wlEmail').value = '';fetch('/api/waitlist',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:e,product:'ai-video-ugc',ts:Date.now()})}).catch(function(){});
+  toast('✦ 3 free videos incoming!');
+}
+
+function toast(msg, dur=2800){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), dur);
+}
+
+updateSpec();
+</script>
+
+<script src="/assets/js/dfy-banner.js" async></script>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+<script src="/tools/_tools-shared.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>
+

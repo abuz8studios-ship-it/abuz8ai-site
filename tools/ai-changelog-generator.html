@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Changelog Generator — Beautiful Changelogs from Git or Raw Notes | ABUZ8</title>
+<meta name="description" content="Paste git commits or raw notes, get a beautiful formatted changelog. Markdown, HTML, or Notion-ready. Free.">
+<link rel="canonical" href="https://abuz8ai.com/tools/ai-changelog-generator">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"AI Changelog Generator","url":"https://abuz8ai.com/tools/ai-changelog-generator","description":"Convert git commits or release notes into a beautiful, structured changelog instantly.","applicationCategory":"DeveloperApplication","isAccessibleForFree":true}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--lapis:#0a1628;--lapis2:#0f1f3d;--lapis3:#162544;--gold:#c9a84c;--gold2:#e8c96d;--turq:#0e9f6e;--turq2:#22b5a0;--text:#e8e4dc;--muted:#8892a4;--border:rgba(201,168,76,0.18);--rad:12px}
+body{background:var(--lapis);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh}
+a{color:var(--gold);text-decoration:none}
+.nav{display:flex;align-items:center;justify-content:space-between;padding:16px 40px;border-bottom:1px solid var(--border)}
+.nav-logo{font-family:'Playfair Display',serif;font-size:1.3rem;color:var(--gold)}
+.nav-links{display:flex;gap:20px;font-size:.83rem}.nav-links a{color:var(--muted)}.nav-links a:hover{color:var(--gold)}
+.hero{text-align:center;padding:44px 20px 28px;max-width:720px;margin:0 auto}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(26,138,122,0.12);border:1px solid rgba(26,138,122,0.3);border-radius:100px;padding:5px 14px;font-size:.77rem;color:var(--turq2);margin-bottom:16px}
+.hero h1{font-family:'Playfair Display',serif;font-size:clamp(1.9rem,4.5vw,3rem);line-height:1.15;margin-bottom:12px}
+.hero h1 span{color:var(--turq2)}
+.hero p{color:var(--muted);font-size:.95rem;line-height:1.7}
+.workspace{max-width:1100px;margin:28px auto 60px;padding:0 20px;display:grid;grid-template-columns:1fr 1fr;gap:20px}
+@media(max-width:800px){.workspace{grid-template-columns:1fr}}
+.panel{background:var(--lapis2);border:1px solid var(--border);border-radius:var(--rad);overflow:hidden}
+.panel-head{padding:14px 18px;border-bottom:1px solid var(--border);font-size:.95rem;font-weight:600;display:flex;align-items:center;gap:8px;justify-content:space-between}
+.panel-body{padding:16px}
+textarea.input-area{width:100%;background:var(--lapis3);border:1px solid var(--border);border-radius:8px;padding:14px;color:var(--text);font-family:'Fira Code',monospace;font-size:.82rem;line-height:1.6;resize:vertical;min-height:220px;outline:none;transition:border-color .2s}
+textarea.input-area:focus{border-color:var(--turq)}
+textarea.input-area::placeholder{color:var(--muted)}
+.opt-row{display:flex;align-items:center;justify-content:space-between;margin-top:12px;margin-bottom:8px}
+.opt-row label{font-size:.84rem;color:var(--text)}
+select.sel{background:var(--lapis3);border:1px solid var(--border);border-radius:6px;padding:6px 10px;color:var(--text);font-size:.83rem;outline:none;cursor:pointer}
+input.ver-in{background:var(--lapis3);border:1px solid var(--border);border-radius:6px;padding:6px 10px;color:var(--text);font-size:.83rem;outline:none;width:100px}
+.gen-btn{width:100%;background:var(--turq);color:#fff;border:none;border-radius:var(--rad);padding:12px;font-size:.95rem;font-weight:700;cursor:pointer;transition:all .2s;margin-top:12px}
+.gen-btn:hover{background:var(--turq2)}
+.gen-btn:disabled{opacity:.5;cursor:not-allowed}
+.sample-btn{background:transparent;border:1px solid var(--border);border-radius:6px;padding:5px 12px;font-size:.75rem;color:var(--muted);cursor:pointer;transition:all .2s;font-family:'Inter',sans-serif}
+.sample-btn:hover{border-color:var(--turq);color:var(--turq2)}
+/* Output panel */
+.out-tabs{display:flex;border-bottom:1px solid var(--border)}
+.otab{flex:1;padding:10px;text-align:center;font-size:.82rem;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;transition:all .2s}
+.otab.active{color:var(--turq2);border-bottom-color:var(--turq2)}
+.out-pane{min-height:300px;display:none}
+.out-pane.active{display:block}
+.rendered-cl{padding:20px;font-size:.88rem;line-height:1.7}
+.cl-version{margin-bottom:24px}
+.cl-ver-head{display:flex;align-items:center;gap:12px;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+.cl-ver-badge{background:var(--lapis3);border:1px solid var(--border);border-radius:6px;padding:4px 10px;font-family:'Fira Code',monospace;font-size:.82rem;color:var(--gold);font-weight:600}
+.cl-ver-date{font-size:.78rem;color:var(--muted)}
+.cl-section{margin-bottom:12px}
+.cl-section-title{font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px}
+.cl-section-title.feat{color:var(--turq2)}
+.cl-section-title.fix{color:#fb923c}
+.cl-section-title.imp{color:var(--gold2)}
+.cl-section-title.break{color:#ef4444}
+.cl-section-title.dep{color:var(--muted)}
+.cl-items{list-style:none;padding-left:0}
+.cl-items li{display:flex;gap:8px;margin-bottom:4px;font-size:.87rem;color:var(--text);align-items:flex-start}
+.cl-items li::before{content:'•';color:var(--muted);flex-shrink:0;margin-top:1px}
+.cl-scope{font-size:.75rem;background:var(--lapis3);border-radius:4px;padding:1px 7px;color:var(--muted);font-family:'Fira Code',monospace;flex-shrink:0}
+.raw-code{font-family:'Fira Code',monospace;font-size:.78rem;padding:16px;background:#060e1a;color:#b8d4ff;line-height:1.7;white-space:pre-wrap;overflow-x:auto;min-height:300px;max-height:500px;overflow-y:auto}
+.copy-bar{display:flex;gap:8px;padding:10px 16px;border-top:1px solid var(--border)}
+.copy-btn{background:var(--lapis3);border:1px solid var(--border);border-radius:6px;padding:7px 14px;font-size:.8rem;color:var(--muted);cursor:pointer;transition:all .2s;font-family:'Inter',sans-serif}
+.copy-btn:hover{border-color:var(--gold);color:var(--gold)}
+.footer{border-top:1px solid var(--border);padding:24px 40px;display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;align-items:center;font-size:.8rem;color:var(--muted)}
+.footer a{color:var(--muted)}.footer a:hover{color:var(--gold)}
+</style>
+</head>
+<body>
+<nav class="nav">
+  <div class="nav-logo">ABUZ8</div>
+  <div class="nav-links"><a href="/tools">Tools</a><a href="/free.html">Free</a><a href="/news.html">AI Daily</a></div>
+</nav>
+<section class="hero">
+  <div class="hero-badge">📝 Changelog Generator</div>
+  <h1>Git Commits → <span>Beautiful Changelog</span></h1>
+  <p>Paste your git log or bullet notes. Get a structured, categorized changelog in Markdown, HTML, or rendered format instantly.</p>
+</section>
+<div class="workspace">
+  <!-- Input -->
+  <div class="panel">
+    <div class="panel-head">
+      <span>📋 Input</span>
+      <button class="sample-btn" onclick="loadSample()">Load sample git log</button>
+    </div>
+    <div class="panel-body">
+      <textarea class="input-area" id="inputArea" placeholder="Paste git commits or release notes:
+
+feat(auth): add Google OAuth login
+fix(api): handle rate limit errors gracefully
+feat(dashboard): new analytics widget with charts
+fix(ui): button hover state on mobile
+chore: update dependencies
+docs: improve API reference
+feat(payments): Stripe subscription integration
+perf(images): lazy loading for product gallery
+BREAKING CHANGE: renamed /api/v1/users to /api/v2/users"></textarea>
+      <div class="opt-row">
+        <label>Output format</label>
+        <select class="sel" id="outputFormat">
+          <option value="keepachangelog">Keep a Changelog</option>
+          <option value="conventional">Conventional Commits</option>
+          <option value="simple">Simple List</option>
+          <option value="release">Release Notes</option>
+        </select>
+      </div>
+      <div class="opt-row">
+        <label>Version</label>
+        <input class="ver-in" id="versionIn" placeholder="v2.1.0" value="v1.0.0">
+      </div>
+      <div class="opt-row">
+        <label>Release date</label>
+        <input class="ver-in" id="dateIn" type="date" style="width:140px">
+      </div>
+      <button class="gen-btn" id="genBtn" onclick="generateChangelog()">✨ Generate Changelog</button>
+    </div>
+  </div>
+  <!-- Output -->
+  <div class="panel">
+    <div class="out-tabs">
+      <div class="otab active" id="tab-render" onclick="switchOut('render')">✨ Rendered</div>
+      <div class="otab" id="tab-md" onclick="switchOut('md')">📄 Markdown</div>
+      <div class="otab" id="tab-html" onclick="switchOut('html')">💻 HTML</div>
+    </div>
+    <div class="out-pane active" id="pane-render">
+      <div class="rendered-cl" id="renderedOutput"><div style="text-align:center;padding:60px 20px;color:var(--muted)"><div style="font-size:2rem;margin-bottom:12px">📝</div><p>Paste commits and click Generate to see your changelog.</p></div></div>
+    </div>
+    <div class="out-pane" id="pane-md">
+      <div class="raw-code" id="mdOutput">Markdown output will appear here.</div>
+    </div>
+    <div class="out-pane" id="pane-html">
+      <div class="raw-code" id="htmlOutput">HTML output will appear here.</div>
+    </div>
+    <div class="copy-bar">
+      <button class="copy-btn" onclick="copyActive()">📋 Copy</button>
+      <button class="copy-btn" onclick="downloadActive()">⬇ Download</button>
+    </div>
+  </div>
+</div>
+<footer class="footer">
+  <div>© 2026 ABUZ8 LLC</div>
+  <div style="display:flex;gap:16px"><a href="/tools">All Tools</a><a href="https://github.com/abuz8studios-ship-it" target="_blank">GitHub ↗</a><a href="/support.html">Support →</a></div>
+</footer>
+<script>
+// Set today's date as default
+document.getElementById('dateIn').value = new Date().toISOString().split('T')[0];
+
+const SAMPLE_GIT = `feat(auth): add Google OAuth login
+fix(api): handle rate limit errors gracefully  
+feat(dashboard): new analytics widget with real-time charts
+fix(ui): fix button hover state on mobile Safari
+chore: update all npm dependencies to latest
+docs: add API authentication guide
+feat(payments): Stripe subscription integration with webhooks
+perf(images): implement lazy loading for product gallery
+feat(search): add full-text search with highlighting
+fix(emails): fix broken links in welcome email template
+feat(exports): CSV and PDF export for all reports
+BREAKING CHANGE: renamed /api/v1/users to /api/v2/users — update your integrations`;
+
+function loadSample() {
+  document.getElementById('inputArea').value = SAMPLE_GIT;
+}
+
+// Parse commit types
+function classifyCommit(line) {
+  const l = line.trim();
+  if(!l) return null;
+  // Conventional commit format: type(scope)!: description
+  const m = l.match(/^(feat|fix|perf|refactor|docs|style|chore|test|build|ci|revert)(\([^)]+\))?(!)?\s*:\s*(.+)/i);
+  if(m) {
+    return {
+      type: m[1].toLowerCase(),
+      scope: m[2]?m[2].replace(/[()]/g,''):'',
+      breaking: !!m[3] || /breaking.?change/i.test(l),
+      desc: m[4].trim(),
+    };
+  }
+  // Raw line — guess from keywords
+  if(/\bfix(ed|es)?\b/i.test(l)) return {type:'fix',scope:'',breaking:false,desc:l};
+  if(/\b(add|new|feature|feat)\b/i.test(l)) return {type:'feat',scope:'',breaking:false,desc:l};
+  if(/\b(improve|enhance|update|refactor)\b/i.test(l)) return {type:'imp',scope:'',breaking:false,desc:l};
+  if(/\b(deprecat|remov|breaking)\b/i.test(l)) return {type:'break',scope:'',breaking:true,desc:l};
+  if(/\b(docs?|document)\b/i.test(l)) return {type:'docs',scope:'',breaking:false,desc:l};
+  return {type:'other',scope:'',breaking:false,desc:l};
+}
+
+function humanizeType(type) {
+  return {feat:'✨ New Features',fix:'🐛 Bug Fixes',perf:'⚡ Performance',imp:'🔧 Improvements',docs:'📚 Documentation',chore:'🔧 Maintenance',style:'💅 Styling',test:'✅ Tests',build:'📦 Build',ci:'⚙️ CI',refactor:'♻️ Refactoring',revert:'⏪ Reverted',break:'💥 Breaking Changes',other:'📌 Other Changes'}[type] || type;
+}
+
+function typeClass(type) {
+  if(['feat','new'].includes(type)) return 'feat';
+  if(['fix'].includes(type)) return 'fix';
+  if(['perf','imp','refactor'].includes(type)) return 'imp';
+  if(['break'].includes(type)) return 'break';
+  return 'dep';
+}
+
+function generateChangelog() {
+  const input = document.getElementById('inputArea').value.trim();
+  if(!input) return;
+  const btn = document.getElementById('genBtn');
+  btn.disabled=true; btn.textContent='⚡ Generating...';
+
+  const version = document.getElementById('versionIn').value.trim() || 'v1.0.0';
+  const date = document.getElementById('dateIn').value || new Date().toISOString().split('T')[0];
+  const format = document.getElementById('outputFormat').value;
+
+  // Real AI changelog via the ABUZ8 brain (Cloudflare Workers AI). No regex template assembly.
+  fetch('/api/waitlist', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      tool: 'changelog-generator',
+      data: { commits: input, version, releaseDate: date, format }
+    })
+  })
+  .then(r => r.json())
+  .then(res => {
+    if (!res.success || !res.result) throw new Error(res.error || 'Generation failed');
+
+    const md = res.result;
+    // Rendered tab — markdown converted to styled HTML.
+    document.getElementById('renderedOutput').innerHTML = mdToHtml(md);
+    // Markdown tab — the raw markdown the brain returned.
+    document.getElementById('mdOutput').textContent = md;
+    // HTML tab — a standalone HTML doc wrapping the rendered changelog.
+    const htmlOut = `<!DOCTYPE html>\n<html lang="en">\n<head>\n<meta charset="UTF-8">\n<title>Changelog ${esc(version)}</title>\n<style>\nbody{font-family:-apple-system,BlinkMacSystemFont,'Inter',sans-serif;max-width:680px;margin:0 auto;padding:40px 20px;background:#0a1628;color:#e8e4dc;line-height:1.7}\nh1,h2,h3{color:#c9a84c}\ncode{background:#162544;padding:1px 6px;border-radius:4px;font-family:monospace}\n</style></head>\n<body>\n${mdToHtml(md)}\n<script src="/assets/js/abuz8-intent.js" defer><\/script>
+<script src="/tools/_tools-shared.js" defer><\/script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>\n</html>`;
+    document.getElementById('htmlOutput').textContent = htmlOut;
+
+    btn.disabled=false; btn.textContent='✨ Regenerate';
+    switchOut('render');
+  })
+  .catch(err => {
+    btn.disabled=false; btn.textContent='✨ Generate Changelog';
+    alert('Generation failed: ' + err.message + '. Please try again in a moment.');
+  });
+}
+
+// Minimal, safe markdown → HTML renderer for AI brain output (escapes HTML first).
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function mdToHtml(md){
+  let s = esc(String(md));
+  const blocks = [];
+  s = s.replace(/```(\w*)\n?([\s\S]*?)```/g, (m, lang, code) => {
+    blocks.push('<pre style="background:#060e1a;border-radius:8px;padding:14px;overflow-x:auto;font-family:Fira Code,monospace;font-size:.8rem;line-height:1.6;white-space:pre;margin:10px 0;color:#b8d4ff">' + code.replace(/\n$/,'') + '</pre>');
+    return 'ABZBLOCK' + (blocks.length - 1) + 'ENDABZ';
+  });
+  s = s.replace(/`([^`\n]+)`/g, '<code style="background:var(--lapis3);padding:1px 6px;border-radius:4px;font-family:Fira Code,monospace;font-size:.85em">$1</code>');
+  s = s.replace(/^######\s+(.*)$/gm, '<h6>$1</h6>')
+       .replace(/^#####\s+(.*)$/gm, '<h5>$1</h5>')
+       .replace(/^####\s+(.*)$/gm, '<h4 style="color:var(--gold2);margin:14px 0 6px;font-size:.85rem;text-transform:uppercase;letter-spacing:.08em">$1</h4>')
+       .replace(/^###\s+(.*)$/gm, '<h4 style="color:var(--gold2);margin:14px 0 6px;font-size:.85rem;text-transform:uppercase;letter-spacing:.08em">$1</h4>')
+       .replace(/^##\s+(.*)$/gm, '<h3 style="color:var(--gold);margin:16px 0 8px">$1</h3>')
+       .replace(/^#\s+(.*)$/gm, '<h2 style="color:var(--gold);margin:16px 0 8px">$1</h2>');
+  s = s.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+       .replace(/(^|[^*])\*([^*\n]+)\*/g, '$1<em>$2</em>');
+  s = s.replace(/(?:^[ \t]*(?:[-*]|\d+\.)\s+.*(?:\n|$))+/gm, (block) => {
+    const ordered = /^\s*\d+\.\s/.test(block);
+    const items = block.trim().split(/\n/).map(l => l.replace(/^\s*(?:[-*]|\d+\.)\s+/, '').trim()).filter(Boolean);
+    return '<' + (ordered?'ol':'ul') + ' style="padding-left:20px;margin:8px 0">' + items.map(i=>'<li style="margin-bottom:4px">'+i+'</li>').join('') + '</' + (ordered?'ol':'ul') + '>';
+  });
+  s = s.split(/\n{2,}/).map(p => {
+    p = p.trim();
+    if (!p) return '';
+    if (/^ABZBLOCK\d+ENDABZ$/.test(p)) return p;
+    if (/^\s*<(h\d|ul|ol|pre)/.test(p)) return p;
+    return '<p style="margin-bottom:10px">' + p.replace(/\n/g, '<br>') + '</p>';
+  }).join('\n');
+  s = s.replace(/(?:<p[^>]*>)?\s*ABZBLOCK(\d+)ENDABZ\s*(?:<\/p>)?/g, (m, i) => blocks[+i]);
+  return s;
+}
+
+let activeOut = 'render';
+function switchOut(tab) {
+  activeOut = tab;
+  ['render','md','html'].forEach(t=>{
+    document.getElementById(`tab-${t}`).classList.toggle('active',t===tab);
+    document.getElementById(`pane-${t}`).classList.toggle('active',t===tab);
+  });
+}
+
+function copyActive() {
+  let text = '';
+  if(activeOut==='md') text = document.getElementById('mdOutput').textContent;
+  else if(activeOut==='html') text = document.getElementById('htmlOutput').textContent;
+  else text = document.getElementById('renderedOutput').innerText;
+  navigator.clipboard.writeText(text).then(()=>{
+    const btn=document.querySelector('.copy-btn');
+    btn.textContent='✓ Copied!';
+    setTimeout(()=>btn.textContent='📋 Copy',2000);
+  });
+}
+
+function downloadActive() {
+  let content='',ext='txt',mime='text/plain';
+  if(activeOut==='md'){content=document.getElementById('mdOutput').textContent;ext='md';}
+  else if(activeOut==='html'){content=document.getElementById('htmlOutput').textContent;ext='html';mime='text/html';}
+  else{content=document.getElementById('renderedOutput').innerHTML;ext='html';mime='text/html';}
+  const blob=new Blob([content],{type:mime});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`CHANGELOG.${ext}`;a.click();
+}
+</script>
+<script src="_abuz8-live-brain.js" defer></script>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+<script src="/tools/_tools-shared.js" defer></script>
+</body>
+</html>
+

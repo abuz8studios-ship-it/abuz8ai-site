@@ -1,0 +1,376 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UUID Generator — Free Online UUID v4 / v1 Tool | ABUZ8</title>
+<meta name="description" content="Generate cryptographically secure UUID v4 and v1 identifiers instantly. Bulk generation up to 500 UUIDs, copy all, download as .txt. Free, no signup, runs in your browser.">
+<link rel="canonical" href="https://abuz8ai.com/tools/uuid-generator">
+<meta property="og:title" content="UUID Generator — ABUZ8">
+<meta property="og:description" content="Generate cryptographically secure UUIDs (v1, v4). Bulk mode up to 500. Free.">
+<meta property="og:url" content="https://abuz8ai.com/tools/uuid-generator">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="UUID Generator — ABUZ8">
+<meta name="twitter:description" content="Generate cryptographically secure UUIDs (v1, v4). Bulk mode up to 500. Free.">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"UUID Generator","applicationCategory":"DeveloperApplication","operatingSystem":"Web","url":"https://abuz8ai.com/tools/uuid-generator.html","description":"Generate cryptographically secure UUID v4 and v1 identifiers in bulk. Free, client-side, no data sent to server.","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"provider":{"@type":"Organization","name":"ABUZ8 LLC","url":"https://abuz8ai.com"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is a UUID?","acceptedAnswer":{"@type":"Answer","text":"A UUID (Universally Unique Identifier) is a 128-bit label used to identify objects uniquely across computer systems. UUIDs are standardized by RFC 4122."}},{"@type":"Question","name":"What is the difference between UUID v1 and v4?","acceptedAnswer":{"@type":"Answer","text":"UUID v1 is time-based and includes the current timestamp plus a node (MAC address or random), making UUIDs partially sortable by creation time. UUID v4 is entirely random (using a CSPRNG), providing no embedded information and maximum privacy."}},{"@type":"Question","name":"Are these UUIDs cryptographically secure?","acceptedAnswer":{"@type":"Answer","text":"Yes. UUID v4 generation uses crypto.randomUUID() (or crypto.getRandomValues as fallback), both sourced from the browser's CSPRNG, equivalent to /dev/urandom on Linux."}}]}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap">
+<style>
+:root{--lapis:#0a1628;--lapis-mid:#0f2040;--lapis-light:#163060;--gold:#c9a84c;--gold-l:#e8d48b;--gold-d:#8a7030;--turq:#0e9f6e;--turq-l:#2fbf8f;--turq-b:#2fbf8f;--cream:#f5f0e8;--ivory:#faf8f2;--text:#e8e4d8;--dim:#8a9aaa;--card:#0d1a30;--border:#1a2e50;--green:#2a7a3a}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{background:var(--lapis);color:var(--text);font-family:'Inter',sans-serif;line-height:1.6;-webkit-font-smoothing:antialiased;min-height:100vh}
+a{color:var(--gold);text-decoration:none}
+.wrap{max-width:860px;margin:0 auto;padding:24px 20px 80px}
+/* NAV */
+.nav{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border);padding-bottom:16px;margin-bottom:32px}
+.brand{font-family:'Playfair Display',serif;font-size:18px;color:var(--cream);letter-spacing:.5px}
+.brand .acc{color:var(--gold)}
+.back{color:var(--dim);font-size:12px;letter-spacing:1.5px;text-transform:uppercase}
+.back:hover{color:var(--gold)}
+/* HERO */
+.hero{margin-bottom:36px}
+.hero .eyebrow{color:var(--turq-l);font-size:11px;letter-spacing:3px;text-transform:uppercase;font-weight:600;margin-bottom:10px}
+.hero h1{font-family:'Playfair Display',serif;font-size:clamp(1.8rem,4vw,2.8rem);color:var(--cream);font-weight:900;line-height:1.1;margin-bottom:10px}
+.hero h1 .g{color:var(--gold)}
+.hero p{color:var(--dim);font-size:15px;max-width:580px}
+/* CONTROLS */
+.controls{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:22px;margin-bottom:20px}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end;margin-bottom:16px}
+.row:last-child{margin-bottom:0}
+.field{display:flex;flex-direction:column;gap:5px;flex:1;min-width:140px}
+label{font-size:12px;letter-spacing:1px;text-transform:uppercase;color:var(--dim);font-weight:500}
+select,input[type=number]{background:var(--lapis-mid,#0f2040);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'Inter',sans-serif;font-size:14px;padding:10px 12px}
+select:focus,input[type=number]:focus{outline:none;border-color:var(--gold)}
+input[type=number]{width:110px}
+/* FORMAT TOGGLES */
+.toggles{display:flex;gap:8px;flex-wrap:wrap}
+.tog{display:flex;align-items:center;gap:5px;cursor:pointer;user-select:none;font-size:13px;color:var(--dim)}
+.tog input{accent-color:var(--gold);width:14px;height:14px}
+.tog:hover{color:var(--text)}
+/* BUTTONS */
+.btn-row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px}
+.btn{padding:10px 22px;border-radius:8px;border:none;cursor:pointer;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;letter-spacing:.5px;transition:background .15s,transform .1s}
+.btn:active{transform:scale(.97)}
+.btn-primary{background:var(--gold);color:var(--lapis)}
+.btn-primary:hover{background:var(--gold-l)}
+.btn-outline{background:transparent;border:1px solid var(--border);color:var(--dim)}
+.btn-outline:hover{border-color:var(--gold);color:var(--gold)}
+/* OUTPUT */
+.output-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.output-label{font-size:12px;letter-spacing:1px;text-transform:uppercase;color:var(--dim)}
+.output-actions{display:flex;gap:8px}
+.copy-btn{background:transparent;border:1px solid var(--border);border-radius:6px;color:var(--dim);font-family:'Inter',sans-serif;font-size:11px;padding:4px 10px;cursor:pointer;transition:all .15s}
+.copy-btn:hover,.copy-btn.ok{border-color:var(--turq-l);color:var(--turq-l)}
+.copy-btn.ok{color:var(--turq-b)}
+.uuid-list{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow-y:auto;max-height:460px}
+.uuid-item{display:flex;align-items:center;gap:10px;padding:10px 16px;border-bottom:1px solid var(--border)}
+.uuid-item:last-child{border-bottom:none}
+.uuid-item:hover{background:var(--lapis-mid,#0f2040)}
+.uuid-val{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cream);flex:1;word-break:break-all}
+.uuid-idx{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--dim);min-width:28px}
+.uuid-copy{background:transparent;border:none;color:var(--dim);cursor:pointer;font-size:12px;padding:2px 6px;border-radius:4px;font-family:'Inter',sans-serif}
+.uuid-copy:hover{color:var(--gold)}
+.uuid-copy.ok{color:var(--turq-b)}
+.empty-state{padding:40px;text-align:center;color:var(--dim)}
+/* STATS BAR */
+.stats-bar{display:flex;gap:24px;margin-top:12px;padding:10px 0;border-top:1px solid var(--border)}
+.stat{font-size:12px;color:var(--dim)}
+.stat span{color:var(--turq-l);font-family:'JetBrains Mono',monospace;font-weight:600}
+/* WAITLIST */
+.waitlist{background:linear-gradient(135deg,var(--lapis-mid,#0f2040),var(--lapis-light,#163060));border:1px solid var(--gold-d);border-radius:14px;padding:28px;margin-top:40px;text-align:center}
+.waitlist h3{font-family:'Playfair Display',serif;font-size:1.3rem;color:var(--cream);margin-bottom:8px}
+.waitlist p{color:var(--dim);font-size:13px;margin-bottom:18px}
+.waitlist-form{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.wl-input{background:var(--card);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'Inter',sans-serif;font-size:14px;padding:10px 16px;width:260px}
+.wl-input:focus{outline:none;border-color:var(--gold)}
+.wl-btn{background:var(--gold);color:var(--lapis);border:none;border-radius:8px;font-family:'Inter',sans-serif;font-size:13px;font-weight:700;padding:10px 22px;cursor:pointer}
+.wl-btn:hover{background:var(--gold-l)}
+.wl-msg{margin-top:10px;font-size:12px;color:var(--turq-b);display:none}
+/* FAQ */
+.faq{margin-top:48px}
+.faq h2{font-family:'Playfair Display',serif;font-size:1.4rem;color:var(--cream);margin-bottom:18px}
+.faq-item{border-bottom:1px solid var(--border);padding:14px 0}
+.faq-q{font-size:14px;font-weight:600;color:var(--cream);cursor:pointer;display:flex;justify-content:space-between}
+.faq-q::after{content:'＋';color:var(--gold);font-size:16px}
+.faq-item.open .faq-q::after{content:'－'}
+.faq-a{font-size:13px;color:var(--dim);display:none;padding-top:8px;line-height:1.7}
+.faq-item.open .faq-a{display:block}
+/* FOOT */
+.foot{margin-top:60px;padding-top:20px;border-top:1px solid var(--border);font-size:11px;color:var(--dim);display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.foot a{color:var(--gold)}
+@media(max-width:580px){.row{flex-direction:column}.btn-row{flex-direction:column}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <nav class="nav">
+    <a href="/index.html" class="brand">ABUZ8<span class="acc">.</span></a>
+    <a href="/tools.html" class="back">← All Tools</a>
+  </nav>
+
+  <header class="hero">
+    <div class="eyebrow">Free Developer Utility</div>
+    <h1>UUID <span class="g">Generator</span></h1>
+    <p>Generate cryptographically secure UUIDs (v1 and v4) — in bulk, formatted your way. 100% client-side. Nothing leaves your browser.</p>
+  </header>
+
+  <div class="controls">
+    <div class="row">
+      <div class="field">
+        <label>Version</label>
+        <select id="ver">
+          <option value="v4" selected>v4 — Random (recommended)</option>
+          <option value="v1">v1 — Time-based</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Quantity</label>
+        <input id="qty" type="number" min="1" max="500" value="10">
+      </div>
+      <div class="field">
+        <label>Case</label>
+        <select id="cas">
+          <option value="lower" selected>lowercase</option>
+          <option value="upper">UPPERCASE</option>
+        </select>
+      </div>
+    </div>
+    <div class="row">
+      <div class="field">
+        <label>Format options</label>
+        <div class="toggles">
+          <label class="tog"><input type="checkbox" id="braces"> {braces}</label>
+          <label class="tog"><input type="checkbox" id="nodash"> No dashes</label>
+          <label class="tog"><input type="checkbox" id="urnfmt"> URN prefix</label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn btn-primary" id="btnGen">⚡ Generate</button>
+    <button class="btn btn-outline" id="btnCopyAll">Copy All</button>
+    <button class="btn btn-outline" id="btnDl">Download .txt</button>
+    <button class="btn btn-outline" id="btnClear">Clear</button>
+  </div>
+
+  <div class="output-head">
+    <span class="output-label" id="outLabel">Results</span>
+  </div>
+
+  <div class="uuid-list" id="uuidList">
+    <div class="empty-state">Click <strong style="color:var(--gold)">Generate</strong> to create UUIDs.</div>
+  </div>
+
+  <div class="stats-bar" id="statsBar" style="display:none">
+    <div class="stat">Generated: <span id="statCount">0</span></div>
+    <div class="stat">Version: <span id="statVer">—</span></div>
+    <div class="stat">Format: <span id="statFmt">—</span></div>
+  </div>
+
+  <!-- WAITLIST -->
+  <div class="waitlist">
+    <h3>Want bulk export, history &amp; team sharing?</h3>
+    <p>Join Early Access for the premium UUID suite — bulk CSV/JSON export, named collections, API endpoint, and team workspaces.</p>
+    <div class="waitlist-form">
+      <input class="wl-input" type="email" id="wlEmail" placeholder="your@email.com">
+      <button class="wl-btn" id="wlBtn">Join Early Access</button>
+    </div>
+    <div class="wl-msg" id="wlMsg">✓ You're on the list. We'll be in touch.</div>
+  </div>
+
+  <!-- FAQ -->
+  <div class="faq">
+    <h2>About UUIDs</h2>
+    <div class="faq-item">
+      <div class="faq-q">What is a UUID?</div>
+      <div class="faq-a">A UUID (Universally Unique Identifier) is a 128-bit label used to uniquely identify objects in computer systems. Standardized by RFC 4122, they are represented as 32 hexadecimal digits in the form <code style="color:var(--turq-l)">xxxxxxxx-xxxx-Mxxx-Nxxx-xxxxxxxxxxxx</code>, where M denotes the version and N the variant.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">v4 vs v1 — which should I use?</div>
+      <div class="faq-a"><strong style="color:var(--cream)">v4 (random)</strong> is the right choice for almost every use case. It contains no embedded information about the host or time, maximizing privacy and security. <strong style="color:var(--cream)">v1 (time-based)</strong> embeds the current timestamp and a node identifier — useful when sortability by creation time matters, but leaks timing and potentially MAC address information. For database primary keys, tokens, or session IDs: always use v4.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">Are these UUIDs cryptographically secure?</div>
+      <div class="faq-a">Yes. This tool uses <code style="color:var(--turq-l)">crypto.randomUUID()</code> (or <code style="color:var(--turq-l)">crypto.getRandomValues()</code> as fallback), both backed by the browser's CSPRNG — the same source as <code style="color:var(--turq-l)">/dev/urandom</code> on Linux. They are safe to use as tokens, keys, and identifiers in security-sensitive contexts.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">Can two UUIDs ever be identical?</div>
+      <div class="faq-a">Theoretically yes, but practically no. A UUID v4 has 122 bits of randomness (~5.3 × 10³⁶ possible values). The probability of a collision between two randomly generated UUIDs is vanishingly small — roughly the probability of winning the lottery three times in a row. In practice, UUID v4 collision is treated as impossible.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">Is any data sent to a server?</div>
+      <div class="faq-a">No. All UUID generation happens entirely in your browser using the Web Crypto API. No data is transmitted anywhere. This page works fully offline once loaded.</div>
+    </div>
+  </div>
+
+  <footer class="foot">
+    <div>© 2026 ABUZ8 LLC · Client-side only · No data collected</div>
+    <div><a href="/tools.html">All Tools</a> · <a href="/index.html">Home</a> · <a href="/privacy.html">Privacy</a></div>
+  </footer>
+
+</div>
+
+<script>
+(function(){
+'use strict';
+
+/* ── UUID generators ── */
+function uuidV4(){
+  if(crypto.randomUUID) return crypto.randomUUID();
+  var b=new Uint8Array(16);
+  crypto.getRandomValues(b);
+  b[6]=(b[6]&0x0f)|0x40;
+  b[8]=(b[8]&0x3f)|0x80;
+  var h=Array.from(b).map(function(x){return x.toString(16).padStart(2,'0')});
+  return h[0]+h[1]+h[2]+h[3]+'-'+h[4]+h[5]+'-'+h[6]+h[7]+'-'+h[8]+h[9]+'-'+h[10]+h[11]+h[12]+h[13]+h[14]+h[15];
+}
+
+function uuidV1(){
+  /* RFC 4122 v1: timestamp (100-ns intervals since Oct 15, 1582) + clock seq + node */
+  var now=Date.now();
+  var ns100=BigInt(now)*10000n+122192928000000000n; /* offset to Gregorian epoch */
+  var time_low=Number(ns100&0xFFFFFFFFn);
+  var time_mid=Number((ns100>>32n)&0xFFFFn);
+  var time_hi=Number((ns100>>48n)&0x0FFFn)|0x1000; /* version 1 */
+  var clk=new Uint8Array(2);
+  crypto.getRandomValues(clk);
+  var clockSeq=((clk[0]&0x3f)|0x80).toString(16).padStart(2,'0')+(clk[1].toString(16).padStart(2,'0'));
+  var node=new Uint8Array(6);
+  crypto.getRandomValues(node);
+  node[0]|=0x01; /* multicast bit — IETF RFC 4122 §4.5: use random node with multicast bit when real MAC unavailable */
+  var nodeStr=Array.from(node).map(function(x){return x.toString(16).padStart(2,'0')}).join('');
+  return time_low.toString(16).padStart(8,'0')+'-'+
+         time_mid.toString(16).padStart(4,'0')+'-'+
+         time_hi.toString(16).padStart(4,'0')+'-'+
+         clockSeq+'-'+nodeStr;
+}
+
+function applyFormat(uuid,cas,braces,nodash,urnfmt){
+  var s=cas==='upper'?uuid.toUpperCase():uuid;
+  if(nodash) s=s.replace(/-/g,'');
+  if(braces) s='{'+s+'}';
+  if(urnfmt) s='urn:uuid:'+s;
+  return s;
+}
+
+var uuids=[];
+
+function generate(){
+  var ver=document.getElementById('ver').value;
+  var qty=Math.min(500,Math.max(1,parseInt(document.getElementById('qty').value)||1));
+  var cas=document.getElementById('cas').value;
+  var braces=document.getElementById('braces').checked;
+  var nodash=document.getElementById('nodash').checked;
+  var urnfmt=document.getElementById('urnfmt').checked;
+  uuids=[];
+  for(var i=0;i<qty;i++){
+    var raw=ver==='v1'?uuidV1():uuidV4();
+    uuids.push(applyFormat(raw,cas,braces,nodash,urnfmt));
+  }
+  render(uuids);
+  /* stats */
+  document.getElementById('statCount').textContent=qty;
+  document.getElementById('statVer').textContent=ver;
+  var fmtParts=[];
+  if(cas==='upper') fmtParts.push('UPPER');
+  if(nodash) fmtParts.push('no-dash');
+  if(braces) fmtParts.push('braces');
+  if(urnfmt) fmtParts.push('URN');
+  document.getElementById('statFmt').textContent=fmtParts.length?fmtParts.join(', '):'default';
+  document.getElementById('statsBar').style.display='flex';
+  document.getElementById('outLabel').textContent='Results ('+qty+' UUIDs)';
+}
+
+function render(list){
+  var el=document.getElementById('uuidList');
+  if(!list.length){el.innerHTML='<div class="empty-state">No UUIDs generated yet.</div>';return;}
+  var html='';
+  list.forEach(function(u,i){
+    html+='<div class="uuid-item">';
+    html+='<span class="uuid-idx">'+(i+1)+'.</span>';
+    html+='<span class="uuid-val">'+u+'</span>';
+    html+='<button class="uuid-copy" data-val="'+u+'" title="Copy">⧉</button>';
+    html+='</div>';
+  });
+  el.innerHTML=html;
+  /* copy individual */
+  el.querySelectorAll('.uuid-copy').forEach(function(btn){
+    btn.addEventListener('click',function(){
+      copyText(btn.dataset.val);
+      btn.textContent='✓';
+      btn.classList.add('ok');
+      setTimeout(function(){btn.textContent='⧉';btn.classList.remove('ok');},1200);
+    });
+  });
+}
+
+function copyText(txt){
+  if(navigator.clipboard){navigator.clipboard.writeText(txt);}
+  else{var t=document.createElement('textarea');t.value=txt;document.body.appendChild(t);t.select();document.execCommand('copy');document.body.removeChild(t);}
+}
+
+document.getElementById('btnGen').addEventListener('click',generate);
+
+document.getElementById('btnCopyAll').addEventListener('click',function(){
+  if(!uuids.length)return;
+  copyText(uuids.join('\n'));
+  var btn=document.getElementById('btnCopyAll');
+  btn.textContent='✓ Copied!';
+  setTimeout(function(){btn.textContent='Copy All';},1600);
+});
+
+document.getElementById('btnDl').addEventListener('click',function(){
+  if(!uuids.length)return;
+  var blob=new Blob([uuids.join('\n')],{type:'text/plain'});
+  var a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='uuids-'+Date.now()+'.txt';
+  a.click();
+  URL.revokeObjectURL(a.href);
+});
+
+document.getElementById('btnClear').addEventListener('click',function(){
+  uuids=[];
+  document.getElementById('uuidList').innerHTML='<div class="empty-state">Click <strong style="color:var(--gold)">Generate</strong> to create UUIDs.</div>';
+  document.getElementById('statsBar').style.display='none';
+  document.getElementById('outLabel').textContent='Results';
+});
+
+/* Keyboard shortcut: Enter in qty field → generate */
+document.getElementById('qty').addEventListener('keydown',function(e){if(e.key==='Enter')generate();});
+
+/* FAQ accordion */
+document.querySelectorAll('.faq-q').forEach(function(q){
+  q.addEventListener('click',function(){
+    var item=q.parentElement;
+    item.classList.toggle('open');
+  });
+});
+
+/* WAITLIST */
+document.getElementById('wlBtn').addEventListener('click',function(){
+  var email=document.getElementById('wlEmail').value.trim();
+  if(!email||!email.includes('@'))return;
+  fetch('/api/waitlist',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:email,tool:'uuid-generator',ts:Date.now()})})
+    .catch(function(){});
+  document.getElementById('wlMsg').style.display='block';
+  document.getElementById('wlBtn').disabled=true;
+  document.getElementById('wlBtn').textContent='Joined ✓';
+  try{localStorage.setItem('wl_uuid_gen','1');}catch(e){}
+});
+if(typeof localStorage!=='undefined'){try{if(localStorage.getItem('wl_uuid_gen')){document.getElementById('wlBtn').disabled=true;document.getElementById('wlBtn').textContent='Joined ✓';document.getElementById('wlMsg').style.display='block';}}catch(e){}}
+
+/* Auto-generate on load */
+generate();
+
+})();
+</script>
+<script src="/tools/_abuz8-live-brain.js" defer></script>
+<script src="/tools/_tools-shared.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>

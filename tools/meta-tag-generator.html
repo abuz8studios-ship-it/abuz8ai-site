@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Meta Tag Generator — Create SEO Meta Tags Instantly | ABUZ8</title>
+  <meta name="description" content="Free meta tag generator for SEO. Create title tags, meta descriptions, Open Graph, Twitter Cards, and canonical URLs with live preview and one-click copy. No signup required." />
+  <meta name="keywords" content="meta tag generator, SEO meta tags, open graph generator, twitter card generator, meta description generator, title tag generator, SEO tools, free meta tag tool, og tags, social preview" />
+  <meta property="og:title" content="Meta Tag Generator — Create SEO Meta Tags Instantly | ABUZ8" />
+  <meta property="og:description" content="Generate perfect meta tags for SEO, Open Graph, and Twitter Cards with live preview." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://abuz8ai.com/tools/meta-tag-generator" />
+  <link rel="canonical" href="https://abuz8ai.com/tools/meta-tag-generator" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Meta Tag Generator",
+    "description": "Free online meta tag generator for SEO. Create title, description, Open Graph, Twitter Card, and canonical tags with live preview.",
+    "url": "https://abuz8ai.com/tools/meta-tag-generator.html",
+    "applicationCategory": "DeveloperApplication",
+    "operatingSystem": "Any",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+    "author": { "@type": "Organization", "name": "ABUZ8 LLC", "url": "https://abuz8ai.com" }
+  }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --lapis: #0a1628;
+      --card: #0d1a30;
+      --card-alt: #0f1e35;
+      --gold: #c9a84c;
+      --gold-dim: #a07830;
+      --teal: #0e9f6e;
+      --teal-bright: #2fbf8f;
+      --cream: #e8dcc8;
+      --text: #cdd6f4;
+      --text-dim: #8896b0;
+      --border: #1e2d45;
+      --red: #e05c5c;
+      --green: #4caf88;
+      --blue: #5b8def;
+      --orange: #e0944c;
+      --font-heading: 'Playfair Display', Georgia, serif;
+      --font-body: 'Inter', system-ui, sans-serif;
+      --font-mono: 'JetBrains Mono', 'Courier New', monospace;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--lapis);
+      color: var(--text);
+      font-family: var(--font-body);
+      font-size: 15px;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+    a { color: var(--gold); text-decoration: none; transition: color 0.2s; }
+    a:hover { color: var(--teal-bright); }
+
+    /* -- NAV -- */
+    nav {
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      padding: 0 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 60px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .nav-logo {
+      font-family: var(--font-heading);
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--gold);
+    }
+    .nav-links { display: flex; gap: 1.5rem; align-items: center; }
+    .nav-links a { color: var(--text-dim); font-size: 0.85rem; font-weight: 500; }
+    .nav-links a:hover { color: var(--gold); }
+    .nav-cta {
+      background: var(--gold);
+      color: var(--lapis);
+      padding: 0.45rem 1.1rem;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 0.82rem;
+    }
+    .nav-cta:hover { background: var(--teal-bright); color: var(--lapis); }
+
+    /* -- HERO -- */
+    .hero {
+      text-align: center;
+      padding: 3rem 2rem 2rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .hero h1 {
+      font-family: var(--font-heading);
+      font-size: 2.2rem;
+      color: var(--cream);
+      margin-bottom: 0.6rem;
+    }
+    .hero h1 span { color: var(--gold); }
+    .hero p { color: var(--text-dim); max-width: 600px; margin: 0 auto; font-size: 0.95rem; }
+
+    /* -- MAIN LAYOUT -- */
+    .app {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+    }
+    @media (max-width: 768px) {
+      .app { grid-template-columns: 1fr; }
+    }
+
+    /* -- PANELS -- */
+    .panel {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.5rem;
+    }
+    .panel h2 {
+      font-family: var(--font-heading);
+      font-size: 1.2rem;
+      color: var(--cream);
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .panel h2 .icon { color: var(--gold); }
+
+    /* -- FORM ELEMENTS -- */
+    .field { margin-bottom: 1rem; }
+    .field label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-dim);
+      margin-bottom: 0.3rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .field input, .field textarea, .field select {
+      width: 100%;
+      background: var(--lapis);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 0.6rem 0.8rem;
+      color: var(--text);
+      font-family: var(--font-body);
+      font-size: 0.9rem;
+      transition: border-color 0.2s;
+    }
+    .field input:focus, .field textarea:focus, .field select:focus {
+      outline: none;
+      border-color: var(--gold);
+    }
+    .field textarea { resize: vertical; min-height: 60px; }
+    .field .char-count {
+      text-align: right;
+      font-size: 0.75rem;
+      margin-top: 0.2rem;
+    }
+    .char-ok { color: var(--green); }
+    .char-warn { color: var(--orange); }
+    .char-over { color: var(--red); }
+
+    /* -- TABS -- */
+    .tabs {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1.2rem;
+      flex-wrap: wrap;
+    }
+    .tab-btn {
+      background: var(--card-alt);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 0.4rem 0.9rem;
+      color: var(--text-dim);
+      font-size: 0.8rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .tab-btn:hover { border-color: var(--gold-dim); color: var(--text); }
+    .tab-btn.active { background: var(--gold); color: var(--lapis); border-color: var(--gold); font-weight: 600; }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    /* -- OUTPUT -- */
+    .output-box {
+      background: var(--lapis);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem;
+      position: relative;
+      margin-bottom: 1rem;
+    }
+    .output-box pre {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: var(--teal-bright);
+      white-space: pre-wrap;
+      word-break: break-all;
+      line-height: 1.5;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+    .copy-btn {
+      position: absolute;
+      top: 0.5rem;
+      right: 0.5rem;
+      background: var(--card-alt);
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      padding: 0.3rem 0.7rem;
+      color: var(--text-dim);
+      font-size: 0.75rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .copy-btn:hover { background: var(--gold); color: var(--lapis); border-color: var(--gold); }
+    .copy-btn.copied { background: var(--green); color: #fff; border-color: var(--green); }
+
+    /* -- PREVIEW CARDS -- */
+    .preview-section { margin-top: 1.5rem; }
+    .preview-section h3 {
+      font-size: 0.85rem;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.8rem;
+    }
+    .google-preview {
+      background: #fff;
+      border-radius: 8px;
+      padding: 1.2rem;
+      max-width: 600px;
+    }
+    .google-preview .gp-url { color: #202124; font-size: 0.8rem; font-family: Arial, sans-serif; }
+    .google-preview .gp-title { color: #1a0dab; font-size: 1.15rem; font-family: Arial, sans-serif; margin: 0.2rem 0; cursor: pointer; }
+    .google-preview .gp-title:hover { text-decoration: underline; }
+    .google-preview .gp-desc { color: #4d5156; font-size: 0.85rem; font-family: Arial, sans-serif; line-height: 1.4; }
+
+    .social-preview {
+      background: var(--card-alt);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+      max-width: 500px;
+      margin-top: 0.8rem;
+    }
+    .social-preview .sp-image {
+      width: 100%;
+      height: 200px;
+      background: linear-gradient(135deg, var(--card) 0%, var(--lapis) 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-dim);
+      font-size: 0.85rem;
+    }
+    .social-preview .sp-body { padding: 0.8rem 1rem; }
+    .social-preview .sp-site { color: var(--text-dim); font-size: 0.75rem; text-transform: uppercase; }
+    .social-preview .sp-title { color: var(--cream); font-size: 0.95rem; font-weight: 600; margin: 0.2rem 0; }
+    .social-preview .sp-desc { color: var(--text-dim); font-size: 0.82rem; line-height: 1.4; }
+
+    /* -- SCORE -- */
+    .score-bar {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      margin-bottom: 1rem;
+      padding: 0.8rem;
+      background: var(--card-alt);
+      border-radius: 8px;
+      border: 1px solid var(--border);
+    }
+    .score-ring {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 1rem;
+      flex-shrink: 0;
+    }
+    .score-ring.good { background: rgba(76,175,136,0.15); color: var(--green); border: 2px solid var(--green); }
+    .score-ring.ok { background: rgba(224,148,76,0.15); color: var(--orange); border: 2px solid var(--orange); }
+    .score-ring.bad { background: rgba(224,92,92,0.15); color: var(--red); border: 2px solid var(--red); }
+    .score-label { font-size: 0.85rem; color: var(--text-dim); }
+    .score-label strong { color: var(--text); display: block; font-size: 0.9rem; }
+
+    /* -- CTA -- */
+    .cta-box {
+      background: linear-gradient(135deg, rgba(201,168,76,0.08) 0%, rgba(26,138,122,0.08) 100%);
+      border: 1px solid var(--gold-dim);
+      border-radius: 10px;
+      padding: 1.5rem;
+      text-align: center;
+      margin-top: 2rem;
+    }
+    .cta-box h3 { font-family: var(--font-heading); color: var(--cream); margin-bottom: 0.5rem; }
+    .cta-box p { color: var(--text-dim); font-size: 0.9rem; margin-bottom: 1rem; }
+    .cta-btn {
+      display: inline-block;
+      background: var(--gold);
+      color: var(--lapis);
+      padding: 0.7rem 2rem;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      border: none;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .cta-btn:hover { background: var(--teal-bright); }
+
+    /* -- FOOTER -- */
+    footer {
+      text-align: center;
+      padding: 2rem;
+      border-top: 1px solid var(--border);
+      color: var(--text-dim);
+      font-size: 0.8rem;
+      margin-top: 3rem;
+    }
+    footer a { color: var(--gold); }
+  </style>
+</head>
+<body>
+  <!-- NAV -->
+  <nav>
+    <a href="/" class="nav-logo">ABUZ8</a>
+    <div class="nav-links">
+      <a href="/tools/">Tools</a>
+      <a href="/blog/">Blog</a>
+      <a href="/pricing.html">Pricing</a>
+      <a href="/tools/ai-waiting-list-page.html" class="nav-cta">Join Waitlist</a>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <h1><span>Meta Tag</span> Generator</h1>
+    <p>Create perfect SEO meta tags, Open Graph, and Twitter Card markup with live Google &amp; social previews. Pure client-side — your data never leaves your browser.</p>
+  </section>
+
+  <!-- APP -->
+  <div class="app">
+    <!-- LEFT: INPUT -->
+    <div class="panel">
+      <h2><span class="icon">&#9998;</span> Page Details</h2>
+      <div class="tabs">
+        <button class="tab-btn active" data-tab="basic">Basic SEO</button>
+        <button class="tab-btn" data-tab="og">Open Graph</button>
+        <button class="tab-btn" data-tab="twitter">Twitter Card</button>
+        <button class="tab-btn" data-tab="advanced">Advanced</button>
+      </div>
+
+      <!-- BASIC SEO TAB -->
+      <div class="tab-content active" id="tab-basic">
+        <div class="field">
+          <label>Page Title</label>
+          <input type="text" id="title" placeholder="My Awesome Page — Brand Name" maxlength="120" />
+          <div class="char-count" id="title-count">0 / 60 characters</div>
+        </div>
+        <div class="field">
+          <label>Meta Description</label>
+          <textarea id="description" placeholder="A concise summary of your page content for search engines..." maxlength="320" rows="3"></textarea>
+          <div class="char-count" id="desc-count">0 / 160 characters</div>
+        </div>
+        <div class="field">
+          <label>Page URL</label>
+          <input type="url" id="url" placeholder="https://example.com/page" />
+        </div>
+        <div class="field">
+          <label>Keywords (comma-separated)</label>
+          <input type="text" id="keywords" placeholder="keyword1, keyword2, keyword3" />
+        </div>
+        <div class="field">
+          <label>Robots</label>
+          <select id="robots">
+            <option value="index, follow">index, follow (default)</option>
+            <option value="noindex, follow">noindex, follow</option>
+            <option value="index, nofollow">index, nofollow</option>
+            <option value="noindex, nofollow">noindex, nofollow</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- OPEN GRAPH TAB -->
+      <div class="tab-content" id="tab-og">
+        <div class="field">
+          <label>OG Title (defaults to page title)</label>
+          <input type="text" id="og-title" placeholder="Leave blank to use page title" />
+        </div>
+        <div class="field">
+          <label>OG Description (defaults to meta description)</label>
+          <textarea id="og-desc" placeholder="Leave blank to use meta description" rows="2"></textarea>
+        </div>
+        <div class="field">
+          <label>OG Image URL</label>
+          <input type="url" id="og-image" placeholder="https://example.com/image.jpg (1200x630 recommended)" />
+        </div>
+        <div class="field">
+          <label>OG Type</label>
+          <select id="og-type">
+            <option value="website">website</option>
+            <option value="article">article</option>
+            <option value="product">product</option>
+            <option value="profile">profile</option>
+            <option value="video.other">video</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Site Name</label>
+          <input type="text" id="og-sitename" placeholder="Your Brand Name" />
+        </div>
+        <div class="field">
+          <label>Locale</label>
+          <input type="text" id="og-locale" placeholder="en_US" value="en_US" />
+        </div>
+      </div>
+
+      <!-- TWITTER CARD TAB -->
+      <div class="tab-content" id="tab-twitter">
+        <div class="field">
+          <label>Card Type</label>
+          <select id="tw-card">
+            <option value="summary_large_image">summary_large_image</option>
+            <option value="summary">summary</option>
+            <option value="app">app</option>
+            <option value="player">player</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Twitter Title (defaults to page title)</label>
+          <input type="text" id="tw-title" placeholder="Leave blank to use page title" />
+        </div>
+        <div class="field">
+          <label>Twitter Description (defaults to meta description)</label>
+          <textarea id="tw-desc" placeholder="Leave blank to use meta description" rows="2"></textarea>
+        </div>
+        <div class="field">
+          <label>Twitter Image URL (defaults to OG image)</label>
+          <input type="url" id="tw-image" placeholder="Leave blank to use OG image" />
+        </div>
+        <div class="field">
+          <label>@site Handle</label>
+          <input type="text" id="tw-site" placeholder="@yourbrand" />
+        </div>
+        <div class="field">
+          <label>@creator Handle</label>
+          <input type="text" id="tw-creator" placeholder="@yourname" />
+        </div>
+      </div>
+
+      <!-- ADVANCED TAB -->
+      <div class="tab-content" id="tab-advanced">
+        <div class="field">
+          <label>Canonical URL</label>
+          <input type="url" id="canonical" placeholder="https://example.com/canonical-page" />
+        </div>
+        <div class="field">
+          <label>Author</label>
+          <input type="text" id="author" placeholder="Author Name" />
+        </div>
+        <div class="field">
+          <label>Language</label>
+          <input type="text" id="lang" placeholder="en" value="en" />
+        </div>
+        <div class="field">
+          <label>Theme Color</label>
+          <input type="color" id="theme-color" value="#0a1628" style="height:38px;" />
+        </div>
+        <div class="field">
+          <label>Viewport</label>
+          <select id="viewport">
+            <option value="width=device-width, initial-scale=1.0">Responsive (default)</option>
+            <option value="width=device-width, initial-scale=1.0, maximum-scale=1.0">No zoom</option>
+            <option value="width=1024">Fixed 1024px</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: OUTPUT + PREVIEW -->
+    <div>
+      <!-- SCORE -->
+      <div class="score-bar" id="score-bar">
+        <div class="score-ring good" id="score-ring">0</div>
+        <div class="score-label">
+          <strong id="score-text">Enter details to see your SEO score</strong>
+          <span id="score-tips"></span>
+        </div>
+      </div>
+
+      <!-- GENERATED CODE -->
+      <div class="panel">
+        <h2><span class="icon">&#128196;</span> Generated Meta Tags</h2>
+        <div class="output-box">
+          <button class="copy-btn" id="copy-all" onclick="copyOutput()">Copy All</button>
+          <pre id="output"><!-- Meta tags will appear here --></pre>
+        </div>
+      </div>
+
+      <!-- PREVIEWS -->
+      <div class="panel preview-section">
+        <h2><span class="icon">&#128065;</span> Live Previews</h2>
+        <h3>Google Search Result</h3>
+        <div class="google-preview">
+          <div class="gp-url" id="prev-url">example.com</div>
+          <div class="gp-title" id="prev-title">Your Page Title</div>
+          <div class="gp-desc" id="prev-desc">Your meta description will appear here...</div>
+        </div>
+
+        <h3 style="margin-top:1.2rem;">Social Share Preview</h3>
+        <div class="social-preview">
+          <div class="sp-image" id="prev-og-image">1200 × 630 — No image set</div>
+          <div class="sp-body">
+            <div class="sp-site" id="prev-og-site">example.com</div>
+            <div class="sp-title" id="prev-og-title">Your OG Title</div>
+            <div class="sp-desc" id="prev-og-desc">Your OG description...</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CTA -->
+      <div class="cta-box">
+        <h3>Want AI to write your meta tags?</h3>
+        <p>QADIR OS generates SEO-optimized meta tags from your page content automatically.</p>
+        <a href="/tools/ai-waiting-list-page.html" class="cta-btn">Join the Waitlist</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <p>&copy; 2026 <a href="/">ABUZ8 LLC</a> &middot; All tools run 100% client-side &middot; <a href="/tools/">More Free Tools</a></p>
+  </footer>
+
+  <script>
+    // ── TAB SWITCHING ──
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+      });
+    });
+
+    // ── CHAR COUNTERS ──
+    const titleEl = document.getElementById('title');
+    const descEl = document.getElementById('description');
+    const titleCount = document.getElementById('title-count');
+    const descCount = document.getElementById('desc-count');
+
+    function updateCharCount(input, display, ideal) {
+      const len = input.value.length;
+      const cls = len === 0 ? 'char-ok' : len <= ideal ? 'char-ok' : len <= ideal + 10 ? 'char-warn' : 'char-over';
+      display.className = 'char-count ' + cls;
+      display.textContent = len + ' / ' + ideal + ' characters';
+    }
+
+    titleEl.addEventListener('input', () => { updateCharCount(titleEl, titleCount, 60); generate(); });
+    descEl.addEventListener('input', () => { updateCharCount(descEl, descCount, 160); generate(); });
+
+    // ── LISTEN TO ALL INPUTS ──
+    document.querySelectorAll('input, textarea, select').forEach(el => {
+      el.addEventListener('input', generate);
+      el.addEventListener('change', generate);
+    });
+
+    // ── HELPER: escape HTML ──
+    function esc(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+    // ── MAIN GENERATE ──
+    function generate() {
+      const title = titleEl.value.trim();
+      const desc = descEl.value.trim();
+      const url = document.getElementById('url').value.trim();
+      const keywords = document.getElementById('keywords').value.trim();
+      const robots = document.getElementById('robots').value;
+      const canonical = document.getElementById('canonical').value.trim();
+      const author = document.getElementById('author').value.trim();
+      const lang = document.getElementById('lang').value.trim() || 'en';
+      const themeColor = document.getElementById('theme-color').value;
+      const viewport = document.getElementById('viewport').value;
+
+      // OG
+      const ogTitle = document.getElementById('og-title').value.trim() || title;
+      const ogDesc = document.getElementById('og-desc').value.trim() || desc;
+      const ogImage = document.getElementById('og-image').value.trim();
+      const ogType = document.getElementById('og-type').value;
+      const ogSiteName = document.getElementById('og-sitename').value.trim();
+      const ogLocale = document.getElementById('og-locale').value.trim();
+
+      // Twitter
+      const twCard = document.getElementById('tw-card').value;
+      const twTitle = document.getElementById('tw-title').value.trim() || ogTitle;
+      const twDesc = document.getElementById('tw-desc').value.trim() || ogDesc;
+      const twImage = document.getElementById('tw-image').value.trim() || ogImage;
+      const twSite = document.getElementById('tw-site').value.trim();
+      const twCreator = document.getElementById('tw-creator').value.trim();
+
+      // ── BUILD OUTPUT ──
+      let out = '';
+      out += '<meta charset="UTF-8" />\n';
+      out += '<meta name="viewport" content="' + esc(viewport) + '" />\n';
+      if (title) out += '<title>' + esc(title) + '</title>\n';
+      if (desc) out += '<meta name="description" content="' + esc(desc) + '" />\n';
+      if (keywords) out += '<meta name="keywords" content="' + esc(keywords) + '" />\n';
+      out += '<meta name="robots" content="' + esc(robots) + '" />\n';
+      if (author) out += '<meta name="author" content="' + esc(author) + '" />\n';
+      if (themeColor) out += '<meta name="theme-color" content="' + esc(themeColor) + '" />\n';
+
+      // Canonical
+      if (canonical) out += '<link rel="canonical" href="' + esc(canonical) + '" />\n';
+      else if (url) out += '<link rel="canonical" href="' + esc(url) + '" />\n';
+
+      // OG
+      out += '\n<!-- Open Graph -->\n';
+      if (ogTitle) out += '<meta property="og:title" content="' + esc(ogTitle) + '" />\n';
+      if (ogDesc) out += '<meta property="og:description" content="' + esc(ogDesc) + '" />\n';
+      out += '<meta property="og:type" content="' + esc(ogType) + '" />\n';
+      if (url) out += '<meta property="og:url" content="' + esc(url) + '" />\n';
+      if (ogImage) out += '<meta property="og:image" content="' + esc(ogImage) + '" />\n';
+      if (ogSiteName) out += '<meta property="og:site_name" content="' + esc(ogSiteName) + '" />\n';
+      if (ogLocale) out += '<meta property="og:locale" content="' + esc(ogLocale) + '" />\n';
+
+      // Twitter
+      out += '\n<!-- Twitter Card -->\n';
+      out += '<meta name="twitter:card" content="' + esc(twCard) + '" />\n';
+      if (twTitle) out += '<meta name="twitter:title" content="' + esc(twTitle) + '" />\n';
+      if (twDesc) out += '<meta name="twitter:description" content="' + esc(twDesc) + '" />\n';
+      if (twImage) out += '<meta name="twitter:image" content="' + esc(twImage) + '" />\n';
+      if (twSite) out += '<meta name="twitter:site" content="' + esc(twSite) + '" />\n';
+      if (twCreator) out += '<meta name="twitter:creator" content="' + esc(twCreator) + '" />\n';
+
+      document.getElementById('output').textContent = out;
+
+      // ── UPDATE PREVIEWS ──
+      // Google
+      const displayUrl = url || 'https://example.com';
+      try { document.getElementById('prev-url').textContent = new URL(displayUrl).hostname + ' › ' + new URL(displayUrl).pathname; }
+      catch(e) { document.getElementById('prev-url').textContent = displayUrl; }
+      document.getElementById('prev-title').textContent = title || 'Your Page Title';
+      document.getElementById('prev-desc').textContent = desc || 'Your meta description will appear here...';
+
+      // Social preview
+      const imgEl = document.getElementById('prev-og-image');
+      if (ogImage) {
+        imgEl.innerHTML = '<img src="' + esc(ogImage) + '" alt="OG Preview" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.textContent=\'Image failed to load\'" />';
+      } else {
+        imgEl.textContent = '1200 × 630 — No image set';
+      }
+      document.getElementById('prev-og-site').textContent = ogSiteName || (url ? (() => { try { return new URL(url).hostname; } catch(e) { return 'example.com'; } })() : 'example.com');
+      document.getElementById('prev-og-title').textContent = ogTitle || 'Your OG Title';
+      document.getElementById('prev-og-desc').textContent = ogDesc || 'Your OG description...';
+
+      // ── SEO SCORE ──
+      calcScore(title, desc, url, keywords, ogTitle, ogImage, canonical);
+    }
+
+    function calcScore(title, desc, url, keywords, ogTitle, ogImage, canonical) {
+      let score = 0;
+      const tips = [];
+
+      // Title: exists (10), length 30-60 (15)
+      if (title) { score += 10; } else { tips.push('Add a page title'); }
+      if (title.length >= 30 && title.length <= 60) { score += 15; }
+      else if (title.length > 0 && title.length < 30) { tips.push('Title is short — aim for 30-60 chars'); score += 5; }
+      else if (title.length > 60) { tips.push('Title may be truncated — keep under 60 chars'); score += 5; }
+
+      // Desc: exists (10), length 120-160 (15)
+      if (desc) { score += 10; } else { tips.push('Add a meta description'); }
+      if (desc.length >= 120 && desc.length <= 160) { score += 15; }
+      else if (desc.length > 0 && desc.length < 120) { tips.push('Description is short — aim for 120-160 chars'); score += 5; }
+      else if (desc.length > 160) { tips.push('Description may be truncated — keep under 160 chars'); score += 5; }
+
+      // URL (10)
+      if (url) { score += 10; } else { tips.push('Add a page URL'); }
+
+      // Keywords (5)
+      if (keywords) { score += 5; }
+
+      // OG title (10)
+      if (ogTitle) { score += 10; }
+
+      // OG image (15)
+      if (ogImage) { score += 15; } else { tips.push('Add an OG image for social sharing'); }
+
+      // Canonical (10)
+      if (canonical || url) { score += 10; } else { tips.push('Add a canonical URL'); }
+
+      // Display
+      const ring = document.getElementById('score-ring');
+      ring.textContent = score;
+      ring.className = 'score-ring ' + (score >= 80 ? 'good' : score >= 50 ? 'ok' : 'bad');
+      document.getElementById('score-text').textContent =
+        score >= 80 ? 'Excellent SEO coverage' :
+        score >= 50 ? 'Good — a few improvements possible' :
+        'Needs work — fill in more fields';
+      document.getElementById('score-tips').textContent = tips.length ? tips.join(' · ') : '';
+    }
+
+    // ── COPY TO CLIPBOARD ──
+    function copyOutput() {
+      const text = document.getElementById('output').textContent;
+      navigator.clipboard.writeText(text).then(() => {
+        const btn = document.getElementById('copy-all');
+        btn.textContent = 'Copied!';
+        btn.classList.add('copied');
+        setTimeout(() => { btn.textContent = 'Copy All'; btn.classList.remove('copied'); }, 2000);
+      });
+    }
+
+    // ── INIT ──
+    generate();
+  </script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+
+<!-- ABUZ8 EARLY ACCESS — injected 2026-08-09-earlyaccess -->
+<section class="waitlist-wrap" id="abuz8-early-access" aria-labelledby="abuz8-ea-h">
+  <div class="abuz8-ea-card">
+    <p class="abuz8-ea-kicker">ABUZ8 AI</p>
+    <h2 id="abuz8-ea-h">Stop shipping pages with weak meta tags &mdash; let an agent own it.</h2>
+    <p class="abuz8-ea-sub">
+      This tool is free and always will be. What we are building next is the layer above it:
+      an agent that runs this step for you on every repo, every deploy, every page &mdash;
+      without you opening a tab. Early Access opens in waves.
+    </p>
+    <div class="abuz8-ea-row">
+      <label class="abuz8-ea-sr" for="wl-email">Email address</label>
+      <input id="wl-email" type="email" inputmode="email" autocomplete="email"
+             placeholder="you@company.com" aria-describedby="wl-msg">
+      <button id="wl-submit" type="button">Join Early Access</button>
+    </div>
+    <p id="wl-msg" class="abuz8-ea-msg" role="status" aria-live="polite"></p>
+    <p class="abuz8-ea-fine">No spam. No card. Leave any time.</p>
+  </div>
+</section>
+
+<style>
+  #abuz8-early-access{
+    --ea-lapis:#0a1628; --ea-lapis2:#0f2040; --ea-lapis3:#163060;
+    --ea-gold:#c9a84c; --ea-gold2:#e8d48b;
+    --ea-turq:#0e9f6e; --ea-turq2:#2fbf8f;
+    --ea-text:#e8e4d8; --ea-dim:#8a9aaa; --ea-border:rgba(201,168,76,0.18);
+    display:block; padding:56px 20px 64px; background:var(--ea-lapis);
+    font-family:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;
+  }
+  #abuz8-early-access *{box-sizing:border-box;}
+  .abuz8-ea-card{
+    max-width:720px; margin:0 auto; padding:36px 32px;
+    background:linear-gradient(135deg,var(--ea-lapis2),var(--ea-lapis3));
+    border:1px solid var(--ea-border); border-radius:18px;
+    box-shadow:0 8px 32px rgba(0,0,0,0.4);
+  }
+  .abuz8-ea-kicker{
+    margin:0 0 10px; font-size:11px; letter-spacing:.18em; text-transform:uppercase;
+    color:var(--ea-gold); font-family:'JetBrains Mono',ui-monospace,Menlo,Consolas,monospace;
+  }
+  #abuz8-early-access h2{
+    margin:0 0 14px; font-family:'Playfair Display',Georgia,serif;
+    font-size:clamp(22px,3.4vw,32px); line-height:1.22; font-weight:600; color:var(--ea-text);
+  }
+  .abuz8-ea-sub{margin:0 0 22px; color:var(--ea-dim); font-size:15px; line-height:1.6;}
+  .abuz8-ea-row{display:flex; gap:10px; flex-wrap:wrap;}
+  .abuz8-ea-sr{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap;}
+  #abuz8-early-access input#wl-email{
+    flex:1 1 260px; min-width:0; padding:13px 15px; font-size:15px;
+    color:var(--ea-text); background:rgba(10,22,40,0.72);
+    border:1px solid var(--ea-border); border-radius:10px; font-family:inherit;
+  }
+  #abuz8-early-access input#wl-email::placeholder{color:#6a7a8a;}
+  #abuz8-early-access input#wl-email:focus{
+    outline:none; border-color:var(--ea-gold); box-shadow:0 0 0 3px rgba(201,168,76,0.16);
+  }
+  #abuz8-early-access button#wl-submit{
+    flex:0 0 auto; padding:13px 26px; font-size:15px; font-weight:600; cursor:pointer;
+    color:#06121f; background:linear-gradient(135deg,var(--ea-gold2),var(--ea-gold));
+    border:none; border-radius:10px; font-family:inherit;
+    transition:transform .16s ease, filter .16s ease;
+  }
+  #abuz8-early-access button#wl-submit:hover{transform:translateY(-1px); filter:brightness(1.06);}
+  #abuz8-early-access button#wl-submit:focus-visible{outline:2px solid var(--ea-turq2); outline-offset:2px;}
+  #abuz8-early-access button#wl-submit[disabled]{opacity:.6; cursor:default; transform:none;}
+  .abuz8-ea-msg{margin:14px 0 0; min-height:20px; font-size:14px; color:var(--ea-dim);}
+  .abuz8-ea-fine{margin:10px 0 0; font-size:12.5px; color:#6a7a8a;}
+  @media (prefers-reduced-motion:reduce){
+    #abuz8-early-access button#wl-submit{transition:none;}
+  }
+  @media (max-width:520px){
+    .abuz8-ea-card{padding:28px 20px;}
+    #abuz8-early-access button#wl-submit{flex:1 1 100%;}
+  }
+</style>
+
+<script>
+(function(){
+  var TOOL = 'meta-tag-generator';
+  var input = document.getElementById('wl-email');
+  var btn   = document.getElementById('wl-submit');
+  var msg   = document.getElementById('wl-msg');
+  if (!input || !btn || !msg) return;
+
+  function say(text, ok){
+    msg.style.color = ok === true ? '#2fbf8f' : (ok === false ? '#e05555' : '#8a9aaa');
+    msg.textContent = text;
+  }
+
+  async function join(){
+    var email = (input.value || '').trim();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      say('Please enter a valid email address.', false);
+      input.focus();
+      return;
+    }
+    btn.disabled = true;
+    say('Saving your spot\u2026');
+
+    var payload = { email: email, tool: TOOL, ts: new Date().toISOString() };
+    var saved = false;
+    try {
+      var r = await fetch('/api/waitlist', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      if (r.ok) saved = true;
+    } catch (_) {}
+
+    try {
+      var list = JSON.parse(localStorage.getItem('abuz8_waitlist') || '[]');
+      list.push(payload);
+      localStorage.setItem('abuz8_waitlist', JSON.stringify(list));
+    } catch (_) {}
+
+    try { if (typeof gtag === 'function') gtag('event', 'waitlist_join', { tool: TOOL }); } catch (_) {}
+
+    say(saved
+      ? '\u2713 You\u2019re in. Watch your inbox for the Early Access invite.'
+      : '\u2713 Saved locally. We\u2019ll confirm by email once you reconnect.', true);
+    input.value = '';
+    btn.disabled = false;
+  }
+
+  btn.addEventListener('click', join);
+  input.addEventListener('keydown', function(e){ if (e.key === 'Enter') join(); });
+})();
+</script>
+<!-- /ABUZ8 EARLY ACCESS -->
+
+</body>
+</html>

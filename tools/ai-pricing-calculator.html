@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Pricing Calculator — Price Your Services Right | ABUZ8 AI</title>
+<meta name="description" content="Stop undercharging. Calculate your true hourly rate, project price, and profit margin in seconds. Free pricing calculator for freelancers and agencies.">
+<meta name="keywords" content="pricing calculator, freelance pricing, hourly rate calculator, project pricing, profit margin calculator, service pricing tool">
+<meta property="og:title" content="AI Pricing Calculator — Price Your Services Right | ABUZ8 AI">
+<meta property="og:description" content="Calculate your true hourly rate, project price, and profit margin in seconds. Free.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://abuz8ai.com/tools/ai-pricing-calculator">
+<link rel="canonical" href="https://abuz8ai.com/tools/ai-pricing-calculator">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "AI Pricing Calculator",
+  "url": "https://abuz8ai.com/tools/ai-pricing-calculator.html",
+  "description": "Free pricing calculator for freelancers and agencies. Calculate true hourly rates and project prices.",
+  "applicationCategory": "BusinessApplication",
+  "operatingSystem": "Any",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+  "provider": { "@type": "Organization", "name": "ABUZ8 AI", "url": "https://abuz8ai.com" }
+}
+</script>
+<style>
+:root{--lapis:#0a1628;--lapis-mid:#0f2040;--lapis-light:#163060;--gold:#c9a84c;--gold-light:#e8d48b;--gold-dim:#8a7030;--turq:#0e9f6e;--turq-light:#2fbf8f;--turq-bright:#2fbf8f;--cream:#f5f0e8;--text:#e8e4d8;--dim:#8a9aaa;--card:#0d1a30;--border:#1a2e50;--red:#e05555;--green:#22c55e;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--lapis);color:var(--text);font-family:'Inter',system-ui,sans-serif;line-height:1.6;min-height:100vh;}
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@400;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+nav{background:rgba(10,22,40,0.95);border-bottom:1px solid var(--border);padding:1rem 2rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;backdrop-filter:blur(8px);}
+.nav-logo{font-family:'Playfair Display',serif;font-size:1.25rem;color:var(--gold);font-weight:700;text-decoration:none;}
+.nav-back{color:var(--dim);font-size:0.875rem;text-decoration:none;transition:color 0.2s;}
+.nav-back:hover{color:var(--gold);}
+
+.hero{text-align:center;padding:3.5rem 2rem 2rem;max-width:750px;margin:0 auto;}
+.hero-badge{display:inline-block;background:rgba(201,168,76,0.12);color:var(--gold);border:1px solid rgba(201,168,76,0.3);padding:0.35rem 1rem;border-radius:999px;font-size:0.8rem;font-weight:600;letter-spacing:0.05em;text-transform:uppercase;margin-bottom:1.25rem;}
+h1{font-family:'Playfair Display',serif;font-size:clamp(1.9rem,4vw,3rem);color:var(--cream);line-height:1.2;margin-bottom:0.75rem;}
+h1 span{color:var(--gold);}
+.hero p{color:var(--dim);font-size:1.05rem;max-width:520px;margin:0 auto;}
+
+/* Tabs */
+.tabs{display:flex;gap:0.5rem;max-width:1000px;margin:2rem auto 0;padding:0 1.5rem;}
+.tab-btn{background:transparent;border:1px solid var(--border);color:var(--dim);padding:0.6rem 1.4rem;border-radius:8px;font-family:inherit;font-size:0.9rem;cursor:pointer;transition:all 0.2s;font-weight:500;}
+.tab-btn.active{background:var(--gold);color:var(--lapis);border-color:var(--gold);font-weight:700;}
+.tab-btn:hover:not(.active){border-color:var(--gold-dim);color:var(--gold);}
+
+.tool-area{max-width:1000px;margin:0 auto;padding:1.5rem 1.5rem 4rem;}
+.tab-panel{display:none;}
+.tab-panel.active{display:block;}
+
+/* Layout */
+.calc-layout{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;align-items:start;}
+@media(max-width:700px){.calc-layout{grid-template-columns:1fr;}}
+
+.section-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.5rem;margin-bottom:1.25rem;}
+.section-title{font-size:0.75rem;font-weight:700;color:var(--dim);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:1.25rem;display:flex;align-items:center;gap:0.5rem;}
+.section-title::before{content:'';display:block;width:3px;height:14px;background:var(--gold);border-radius:2px;}
+.form-group{display:flex;flex-direction:column;gap:0.4rem;margin-bottom:0.875rem;}
+label{font-size:0.78rem;font-weight:600;color:var(--dim);}
+label small{font-weight:400;opacity:0.7;}
+input[type="number"],input[type="text"],select{background:var(--lapis-mid);border:1px solid var(--border);color:var(--text);padding:0.6rem 0.9rem;border-radius:7px;font-family:inherit;font-size:0.92rem;width:100%;transition:border-color 0.2s;}
+input:focus,select:focus{outline:none;border-color:var(--gold);}
+select option{background:var(--lapis-mid);}
+
+/* Input with prefix */
+.input-prefix{position:relative;}
+.input-prefix span{position:absolute;left:0.9rem;top:50%;transform:translateY(-50%);color:var(--gold);font-weight:700;font-size:0.9rem;pointer-events:none;}
+.input-prefix input{padding-left:1.75rem;}
+
+/* Slider */
+.slider-row{display:flex;align-items:center;gap:0.75rem;}
+input[type="range"]{flex:1;-webkit-appearance:none;height:4px;background:var(--border);border-radius:2px;outline:none;cursor:pointer;}
+input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;background:var(--gold);border-radius:50%;cursor:pointer;transition:transform 0.15s;}
+input[type="range"]::-webkit-slider-thumb:hover{transform:scale(1.15);}
+.slider-value{font-family:'JetBrains Mono',monospace;color:var(--gold);font-size:0.9rem;min-width:48px;text-align:right;}
+
+/* Results */
+.result-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.5rem;position:sticky;top:80px;}
+.result-title{font-family:'Playfair Display',serif;color:var(--cream);font-size:1.15rem;margin-bottom:1.25rem;}
+
+.metric{margin-bottom:1rem;padding-bottom:1rem;border-bottom:1px solid var(--border);}
+.metric:last-of-type{border-bottom:none;margin-bottom:0.5rem;}
+.metric-label{font-size:0.78rem;font-weight:600;color:var(--dim);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:0.25rem;}
+.metric-value{font-family:'JetBrains Mono',monospace;font-size:1.6rem;font-weight:700;color:var(--gold);line-height:1;}
+.metric-sub{font-size:0.78rem;color:var(--dim);margin-top:0.3rem;}
+.metric.highlight .metric-value{font-size:2rem;color:var(--turq-bright);}
+.metric.red .metric-value{color:var(--red);}
+
+/* Health bar */
+.health-bar-wrap{margin:1rem 0;}
+.health-label-row{display:flex;justify-content:space-between;margin-bottom:0.4rem;font-size:0.78rem;color:var(--dim);}
+.health-bar{height:8px;background:var(--border);border-radius:4px;overflow:hidden;}
+.health-bar-fill{height:100%;border-radius:4px;transition:width 0.4s ease,background 0.4s;}
+
+.callout{background:rgba(201,168,76,0.08);border:1px solid rgba(201,168,76,0.2);border-radius:8px;padding:1rem;font-size:0.83rem;color:var(--text);margin-top:1rem;line-height:1.5;}
+.callout strong{color:var(--gold);}
+
+.btn-copy-result{background:transparent;border:1px solid var(--border);color:var(--dim);padding:0.6rem 1.2rem;border-radius:7px;font-family:inherit;font-size:0.85rem;cursor:pointer;transition:all 0.2s;width:100%;margin-top:0.75rem;font-weight:500;}
+.btn-copy-result:hover{border-color:var(--gold);color:var(--gold);}
+
+/* Waitlist */
+.waitlist-section{max-width:700px;margin:3rem auto;background:linear-gradient(135deg,rgba(201,168,76,0.08) 0%,rgba(26,138,122,0.08) 100%);border:1px solid rgba(201,168,76,0.25);border-radius:16px;padding:2.5rem;text-align:center;}
+.waitlist-section h2{font-family:'Playfair Display',serif;color:var(--cream);margin-bottom:0.75rem;font-size:1.75rem;}
+.waitlist-section p{color:var(--dim);margin-bottom:1.75rem;}
+.waitlist-form{display:flex;gap:0.75rem;max-width:420px;margin:0 auto;}
+.waitlist-form input{flex:1;background:var(--lapis-mid);border:1px solid var(--border);color:var(--text);padding:0.75rem 1rem;border-radius:8px;font-family:inherit;font-size:0.95rem;}
+.waitlist-form input:focus{outline:none;border-color:var(--gold);}
+.btn-waitlist{background:var(--gold);color:var(--lapis);border:none;padding:0.75rem 1.5rem;border-radius:8px;font-family:inherit;font-size:0.9rem;font-weight:700;cursor:pointer;white-space:nowrap;transition:background 0.2s;}
+.btn-waitlist:hover{background:var(--gold-light);}
+.waitlist-note{font-size:0.8rem;color:var(--dim);margin-top:0.75rem;opacity:0.7;}
+.waitlist-success{display:none;color:var(--turq-bright);font-weight:600;}
+
+footer{border-top:1px solid var(--border);padding:2rem;text-align:center;color:var(--dim);font-size:0.875rem;}
+footer a{color:var(--gold);text-decoration:none;}
+</style>
+<script src="_abuz8-live-brain.js" defer></script>
+
+<script src="_abuz8-config.js" defer></script>
+</head>
+<body>
+
+<nav>
+  <a href="https://abuz8ai.com" class="nav-logo">ABUZ8 AI</a>
+  <a href="https://abuz8ai.com/tools.html" class="nav-back">← All Tools</a>
+</nav>
+
+<div class="hero">
+  <div class="hero-badge">Free Tool</div>
+  <h1>Stop Undercharging.<br><span>Price With Confidence.</span></h1>
+  <p>Calculate your true hourly rate, project price, and profit margin — built on the math freelancers and agencies actually need.</p>
+</div>
+
+<div class="tabs">
+  <button class="tab-btn active" onclick="switchTab('hourly',this)">Hourly Rate</button>
+  <button class="tab-btn" onclick="switchTab('project',this)">Project Pricing</button>
+  <button class="tab-btn" onclick="switchTab('margin',this)">Profit Margin</button>
+</div>
+
+<div class="tool-area">
+
+  <!-- TAB 1: HOURLY RATE -->
+  <div class="tab-panel active" id="tab-hourly">
+    <div class="calc-layout">
+      <div>
+        <div class="section-card">
+          <div class="section-title">Your Annual Costs</div>
+          <div class="form-group">
+            <label>Target Annual Income <small>(before taxes)</small></label>
+            <div class="input-prefix"><span>$</span><input type="number" id="h-income" value="80000" min="0" oninput="calcHourly()"></div>
+          </div>
+          <div class="form-group">
+            <label>Annual Business Expenses <small>(software, tools, etc.)</small></label>
+            <div class="input-prefix"><span>$</span><input type="number" id="h-expenses" value="5000" min="0" oninput="calcHourly()"></div>
+          </div>
+          <div class="form-group">
+            <label>Annual Taxes / Self-Employment <small>(%)</small></label>
+            <div class="slider-row">
+              <input type="range" id="h-tax" min="0" max="50" value="25" oninput="syncSlider('h-tax','h-tax-val','%');calcHourly()">
+              <span class="slider-value" id="h-tax-val">25%</span>
+            </div>
+          </div>
+        </div>
+        <div class="section-card">
+          <div class="section-title">Your Working Time</div>
+          <div class="form-group">
+            <label>Billable Weeks Per Year <small>(52 − vacation)</small></label>
+            <div class="slider-row">
+              <input type="range" id="h-weeks" min="20" max="52" value="46" oninput="syncSlider('h-weeks','h-weeks-val','wks');calcHourly()">
+              <span class="slider-value" id="h-weeks-val">46wks</span>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Billable Hours Per Week <small>(exclude admin, sales)</small></label>
+            <div class="slider-row">
+              <input type="range" id="h-hours" min="5" max="60" value="30" oninput="syncSlider('h-hours','h-hours-val','hrs');calcHourly()">
+              <span class="slider-value" id="h-hours-val">30hrs</span>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Buffer / Profit Margin <small>(%)</small></label>
+            <div class="slider-row">
+              <input type="range" id="h-buffer" min="0" max="50" value="20" oninput="syncSlider('h-buffer','h-buffer-val','%');calcHourly()">
+              <span class="slider-value" id="h-buffer-val">20%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="result-card" id="hourly-result">
+        <div class="result-title">Your True Hourly Rate</div>
+        <div class="metric highlight">
+          <div class="metric-label">Minimum Viable Rate</div>
+          <div class="metric-value" id="h-min-rate">—</div>
+          <div class="metric-sub">Below this = you're losing money</div>
+        </div>
+        <div class="metric">
+          <div class="metric-label">Recommended Rate (with buffer)</div>
+          <div class="metric-value" id="h-rec-rate">—</div>
+          <div class="metric-sub">Target rate for sustainable growth</div>
+        </div>
+        <div class="metric">
+          <div class="metric-label">Annual Billable Hours</div>
+          <div class="metric-value" id="h-bill-hours">—</div>
+        </div>
+        <div class="metric">
+          <div class="metric-label">Total Cost Needed</div>
+          <div class="metric-value" id="h-total-needed">—</div>
+          <div class="metric-sub">Income + expenses + taxes</div>
+        </div>
+        <div class="callout" id="h-callout"></div>
+        <button class="btn-copy-result" onclick="copyHourlyResult()">Copy Rate Summary</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 2: PROJECT PRICING -->
+  <div class="tab-panel" id="tab-project">
+    <div class="calc-layout">
+      <div>
+        <div class="section-card">
+          <div class="section-title">Project Scope</div>
+          <div class="form-group">
+            <label>Estimated Hours to Complete</label>
+            <input type="number" id="p-hours" value="40" min="0" oninput="calcProject()">
+          </div>
+          <div class="form-group">
+            <label>Your Hourly Rate</label>
+            <div class="input-prefix"><span>$</span><input type="number" id="p-rate" value="100" min="0" oninput="calcProject()"></div>
+          </div>
+          <div class="form-group">
+            <label>Complexity Multiplier</label>
+            <select id="p-complexity" onchange="calcProject()">
+              <option value="1.0">Standard (1.0x)</option>
+              <option value="1.2">Moderate Complexity (1.2x)</option>
+              <option value="1.5" selected>High Complexity (1.5x)</option>
+              <option value="2.0">Expert / Specialized (2.0x)</option>
+            </select>
+          </div>
+        </div>
+        <div class="section-card">
+          <div class="section-title">Costs & Risk</div>
+          <div class="form-group">
+            <label>Estimated Hard Costs <small>(software, assets, contractors)</small></label>
+            <div class="input-prefix"><span>$</span><input type="number" id="p-costs" value="0" min="0" oninput="calcProject()"></div>
+          </div>
+          <div class="form-group">
+            <label>Risk Buffer <small>(%)</label>
+            <div class="slider-row">
+              <input type="range" id="p-risk" min="0" max="50" value="15" oninput="syncSlider('p-risk','p-risk-val','%');calcProject()">
+              <span class="slider-value" id="p-risk-val">15%</span>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Urgency / Rush Fee <small>(%)</small></label>
+            <div class="slider-row">
+              <input type="range" id="p-rush" min="0" max="100" value="0" oninput="syncSlider('p-rush','p-rush-val','%');calcProject()">
+              <span class="slider-value" id="p-rush-val">0%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="result-card">
+        <div class="result-title">Project Price Breakdown</div>
+        <div class="metric">
+          <div class="metric-label">Base Labour Cost</div>
+          <div class="metric-value" id="p-base">—</div>
+          <div class="metric-sub">Hours × Rate × Complexity</div>
+        </div>
+        <div class="metric">
+          <div class="metric-label">After Risk Buffer</div>
+          <div class="metric-value" id="p-after-risk">—</div>
+        </div>
+        <div class="metric">
+          <div class="metric-label">Hard Costs Included</div>
+          <div class="metric-value" id="p-hard-costs">—</div>
+        </div>
+        <div class="metric highlight">
+          <div class="metric-label">Quote This Price</div>
+          <div class="metric-value" id="p-total">—</div>
+          <div class="metric-sub">Including all fees and costs</div>
+        </div>
+        <div class="metric">
+          <div class="metric-label">Effective Hourly Rate</div>
+          <div class="metric-value" id="p-effective">—</div>
+        </div>
+        <button class="btn-copy-result" onclick="copyProjectResult()">Copy Quote Summary</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 3: PROFIT MARGIN -->
+  <div class="tab-panel" id="tab-margin">
+    <div class="calc-layout">
+      <div>
+        <div class="section-card">
+          <div class="section-title">Revenue & Costs</div>
+          <div class="form-group">
+            <label>Revenue / Price Charged</label>
+            <div class="input-prefix"><span>$</span><input type="number" id="m-revenue" value="5000" min="0" oninput="calcMargin()"></div>
+          </div>
+          <div class="form-group">
+            <label>Cost of Goods / Labour</label>
+            <div class="input-prefix"><span>$</span><input type="number" id="m-cogs" value="2000" min="0" oninput="calcMargin()"></div>
+          </div>
+          <div class="form-group">
+            <label>Operating Expenses</label>
+            <div class="input-prefix"><span>$</span><input type="number" id="m-opex" value="500" min="0" oninput="calcMargin()"></div>
+          </div>
+          <div class="form-group">
+            <label>Tax Rate (%)</label>
+            <div class="slider-row">
+              <input type="range" id="m-tax" min="0" max="50" value="25" oninput="syncSlider('m-tax','m-tax-val','%');calcMargin()">
+              <span class="slider-value" id="m-tax-val">25%</span>
+            </div>
+          </div>
+        </div>
+        <div class="section-card">
+          <div class="section-title">Goal Check</div>
+          <div class="form-group">
+            <label>Target Net Margin (%)</label>
+            <div class="slider-row">
+              <input type="range" id="m-target" min="5" max="90" value="30" oninput="syncSlider('m-target','m-target-val','%');calcMargin()">
+              <span class="slider-value" id="m-target-val">30%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="result-card">
+        <div class="result-title">Margin Analysis</div>
+        <div class="metric">
+          <div class="metric-label">Gross Profit</div>
+          <div class="metric-value" id="m-gross">—</div>
+        </div>
+        <div class="metric">
+          <div class="metric-label">Gross Margin</div>
+          <div class="metric-value" id="m-gross-pct">—</div>
+        </div>
+        <div class="metric">
+          <div class="metric-label">Operating Profit (EBIT)</div>
+          <div class="metric-value" id="m-ebit">—</div>
+        </div>
+        <div class="metric highlight">
+          <div class="metric-label">Net Profit (after tax)</div>
+          <div class="metric-value" id="m-net">—</div>
+        </div>
+        <div class="metric">
+          <div class="metric-label">Net Margin</div>
+          <div class="metric-value" id="m-net-pct">—</div>
+        </div>
+        <div class="health-bar-wrap">
+          <div class="health-label-row"><span>Margin Health</span><span id="m-health-label">—</span></div>
+          <div class="health-bar"><div class="health-bar-fill" id="m-health-fill" style="width:0%"></div></div>
+        </div>
+        <div class="metric">
+          <div class="metric-label">Price Needed for Target Margin</div>
+          <div class="metric-value" id="m-needed-price">—</div>
+        </div>
+        <button class="btn-copy-result" onclick="copyMarginResult()">Copy Margin Report</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Waitlist -->
+  <div class="waitlist-section">
+    <h2>AI Pricing Intelligence</h2>
+    <p>Competitor rate analysis, value-based pricing recommendations, market benchmarks by niche, and a pricing audit for your current services. Join the list.</p>
+    <div class="waitlist-form">
+      <input type="email" id="waitlistEmail" placeholder="your@email.com">
+      <button class="btn-waitlist" onclick="joinWaitlist()">Join Early Access</button>
+    </div>
+    <div class="waitlist-success" id="waitlistSuccess">✓ You're on the list. First to know.</div>
+    <p class="waitlist-note">No spam. No pitch decks. Just the tool.</p>
+  </div>
+</div>
+
+<footer>
+  <p>© 2026 ABUZ8 AI — <a href="https://abuz8ai.com">abuz8ai.com</a> · <a href="https://abuz8ai.com/tools.html">All Tools</a></p>
+</footer>
+
+<script>
+function syncSlider(sliderId, valId, unit) {
+  document.getElementById(valId).textContent = document.getElementById(sliderId).value + unit;
+}
+
+function fmt(n) { return '$' + Math.round(n).toLocaleString(); }
+function fmtDec(n,d=0) { return '$' + n.toFixed(d); }
+function pct(n) { return n.toFixed(1)+'%'; }
+
+function switchTab(name, btn) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+  btn.classList.add('active');
+}
+
+// --- HOURLY ---
+function calcHourly() {
+  const income = parseFloat(document.getElementById('h-income').value)||0;
+  const expenses = parseFloat(document.getElementById('h-expenses').value)||0;
+  const taxPct = parseFloat(document.getElementById('h-tax').value)||0;
+  const weeks = parseFloat(document.getElementById('h-weeks').value)||46;
+  const hpw = parseFloat(document.getElementById('h-hours').value)||30;
+  const buffer = parseFloat(document.getElementById('h-buffer').value)||0;
+
+  const taxMult = 1 + taxPct/100;
+  const totalNeeded = (income * taxMult) + expenses;
+  const billableHours = weeks * hpw;
+  const minRate = totalNeeded / billableHours;
+  const recRate = minRate * (1 + buffer/100);
+
+  document.getElementById('h-min-rate').textContent = fmt(minRate)+'/hr';
+  document.getElementById('h-rec-rate').textContent = fmt(recRate)+'/hr';
+  document.getElementById('h-bill-hours').textContent = Math.round(billableHours).toLocaleString()+' hrs/yr';
+  document.getElementById('h-total-needed').textContent = fmt(totalNeeded)+'/yr';
+
+  let msg;
+  if (minRate < 30) msg = `<strong>Heads up:</strong> Your minimum is under $30/hr. That's below living wage in most cities. Increase your income target or reduce your non-billable hours.`;
+  else if (minRate < 75) msg = `<strong>Solid foundation.</strong> Your recommended rate of ${fmt(recRate)}/hr is competitive for many markets. Consider your experience level and niche premium.`;
+  else if (minRate < 150) msg = `<strong>Strong positioning.</strong> At ${fmt(recRate)}/hr, you're in the professional tier. Premium clients expect premium rates — own it.`;
+  else msg = `<strong>Executive rate.</strong> At ${fmt(recRate)}/hr, you're competing at the top of the market. Ensure your portfolio and positioning match the price point.`;
+  document.getElementById('h-callout').innerHTML = msg;
+}
+
+function copyHourlyResult() {
+  const min = document.getElementById('h-min-rate').textContent;
+  const rec = document.getElementById('h-rec-rate').textContent;
+  const hrs = document.getElementById('h-bill-hours').textContent;
+  navigator.clipboard.writeText(`Hourly Rate Calculation\nMinimum Viable Rate: ${min}\nRecommended Rate: ${rec}\nBillable Hours/Year: ${hrs}`).then(() => {
+    const btn = document.querySelector('#tab-hourly .btn-copy-result');
+    btn.textContent = 'Copied!'; setTimeout(() => btn.textContent='Copy Rate Summary',1500);
+  });
+}
+
+// --- PROJECT ---
+function calcProject() {
+  const hours = parseFloat(document.getElementById('p-hours').value)||0;
+  const rate = parseFloat(document.getElementById('p-rate').value)||0;
+  const complexity = parseFloat(document.getElementById('p-complexity').value)||1;
+  const costs = parseFloat(document.getElementById('p-costs').value)||0;
+  const risk = parseFloat(document.getElementById('p-risk').value)||0;
+  const rush = parseFloat(document.getElementById('p-rush').value)||0;
+
+  const base = hours * rate * complexity;
+  const afterRisk = base * (1 + risk/100);
+  const afterRush = afterRisk * (1 + rush/100);
+  const total = afterRush + costs;
+  const effective = hours > 0 ? total/hours : 0;
+
+  document.getElementById('p-base').textContent = fmt(base);
+  document.getElementById('p-after-risk').textContent = fmt(afterRisk);
+  document.getElementById('p-hard-costs').textContent = fmt(costs);
+  document.getElementById('p-total').textContent = fmt(total);
+  document.getElementById('p-effective').textContent = fmt(effective)+'/hr';
+}
+
+function copyProjectResult() {
+  const total = document.getElementById('p-total').textContent;
+  const eff = document.getElementById('p-effective').textContent;
+  navigator.clipboard.writeText(`Project Quote: ${total}\nEffective Rate: ${eff}`).then(() => {
+    const btn = document.querySelector('#tab-project .btn-copy-result');
+    btn.textContent = 'Copied!'; setTimeout(() => btn.textContent='Copy Quote Summary',1500);
+  });
+}
+
+// --- MARGIN ---
+function calcMargin() {
+  const revenue = parseFloat(document.getElementById('m-revenue').value)||0;
+  const cogs = parseFloat(document.getElementById('m-cogs').value)||0;
+  const opex = parseFloat(document.getElementById('m-opex').value)||0;
+  const tax = parseFloat(document.getElementById('m-tax').value)||0;
+  const target = parseFloat(document.getElementById('m-target').value)||30;
+
+  const gross = revenue - cogs;
+  const grossPct = revenue > 0 ? gross/revenue*100 : 0;
+  const ebit = gross - opex;
+  const net = ebit * (1 - tax/100);
+  const netPct = revenue > 0 ? net/revenue*100 : 0;
+
+  // Price needed: net/rev = target/100 → net = rev*(target/100) → rev*(1-tax/100)*(1-opex_pct) - cogs = 0... simplify
+  // needed: (cogs+opex) / ((1-target/100)*(1-tax/100)) — rough
+  const neededRev = revenue > 0 ? (cogs+opex) / ((1-target/100) * (1-tax/100)) : 0;
+
+  document.getElementById('m-gross').textContent = fmt(gross);
+  document.getElementById('m-gross-pct').textContent = pct(grossPct);
+  document.getElementById('m-ebit').textContent = fmt(ebit);
+  document.getElementById('m-net').textContent = fmt(net);
+  document.getElementById('m-net-pct').textContent = pct(netPct);
+  document.getElementById('m-needed-price').textContent = fmt(neededRev);
+
+  // Health bar
+  const fill = document.getElementById('m-health-fill');
+  const lbl = document.getElementById('m-health-label');
+  const pctVal = Math.max(0, Math.min(100, netPct));
+  fill.style.width = pctVal+'%';
+  if (netPct < 0) { fill.style.background='var(--red)'; lbl.textContent='Loss'; lbl.style.color='var(--red)'; }
+  else if (netPct < 15) { fill.style.background='#f59e0b'; lbl.textContent='Thin'; lbl.style.color='#f59e0b'; }
+  else if (netPct < 30) { fill.style.background='var(--turq)'; lbl.textContent='Healthy'; lbl.style.color='var(--turq-bright)'; }
+  else { fill.style.background='var(--gold)'; lbl.textContent='Strong'; lbl.style.color='var(--gold)'; }
+
+  // Net metric color
+  const netEl = document.getElementById('m-net');
+  netEl.style.color = net < 0 ? 'var(--red)' : 'var(--turq-bright)';
+}
+
+function copyMarginResult() {
+  const net = document.getElementById('m-net').textContent;
+  const netPct = document.getElementById('m-net-pct').textContent;
+  const gross = document.getElementById('m-gross-pct').textContent;
+  navigator.clipboard.writeText(`Margin Report\nGross Margin: ${gross}\nNet Profit: ${net} (${netPct})`).then(() => {
+    const btn = document.querySelector('#tab-margin .btn-copy-result');
+    btn.textContent = 'Copied!'; setTimeout(() => btn.textContent='Copy Margin Report',1500);
+  });
+}
+
+async function joinWaitlist() {
+  const email = document.getElementById('waitlistEmail').value.trim();
+  if (!email||!email.includes('@')) { alert('Please enter a valid email.'); return; }
+  try { await fetch('https://abuz8ai.com/api/waitlist', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ email, tool:'ai-pricing-calculator', ts:Date.now() }) }); } catch(e){}
+  document.querySelector('.waitlist-form').style.display='none';
+  document.getElementById('waitlistSuccess').style.display='block';
+  gtag('event','waitlist_signup',{tool:'ai-pricing-calculator'});
+}
+
+// Init
+calcHourly(); calcProject(); calcMargin();
+</script>
+
+<script src="/assets/js/dfy-banner.js" async></script>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+<script src="/tools/_tools-shared.js" defer></script>
+
+  <section style="background:var(--lapis-2);border:1px solid var(--gold);border-radius:16px;padding:24px 32px;margin-top:24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;">
+    <div>
+      <h3 style="font-family:'Playfair Display',serif;font-size:22px;color:var(--cream);margin-bottom:4px;">Ready for the next level?</h3>
+      <p style="color:var(--dim);font-size:14px;">28 premium toolkits, real deliverables. From $17 to $97.</p>
+    </div>
+    <a href="/store.html" style="background:var(--gold);color:var(--lapis);font-weight:700;padding:12px 28px;border-radius:999px;font-size:14px;letter-spacing:.5px;">Browse the Store →</a>
+  </section>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>
+

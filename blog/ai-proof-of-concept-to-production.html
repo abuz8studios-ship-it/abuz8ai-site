@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<!-- Published 2026-08-15. ABUZ8 LLC. -->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Proof of Concept to Production — The Gap Nobody Budgets For | ABUZ8</title>
+<meta name="description" content="Moving an AI proof of concept to production: the exit criteria, the six things a POC never tests, and how to tell a pilot that will scale from one that only demos.">
+<meta name="keywords" content="ai proof of concept to production, ai pilot to production, why ai pilots fail, ai poc exit criteria, scaling ai prototype">
+<link rel="canonical" href="https://abuz8ai.com/blog/ai-proof-of-concept-to-production">
+<meta property="og:title" content="AI Proof of Concept to Production — The Gap Nobody Budgets For">
+<meta property="og:type" content="article">
+<link rel="stylesheet" href="/blog/_blog-base.css">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@300;400;600;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
+<script type="application/ld+json">
+{"@context": "https://schema.org", "@type": "BlogPosting", "headline": "AI Proof of Concept to Production — The Gap Nobody Budgets For", "datePublished": "2026-08-15", "author": {"@type": "Organization", "name": "ABUZ8 AI"}}
+</script>
+</head>
+<body>
+<div class="container">
+  <a href="/blog/" class="back">&larr; ABUZ8 BLOG</a>
+  <h1>AI Proof of Concept to Production — The Gap Nobody Budgets For</h1>
+  <div class="meta-row"><span>DILIGENCE</span><span class="dot"></span><span>AUGUST 15, 2026</span><span class="dot"></span><span>5 MIN READ</span></div>
+
+  <p>The AI proof of concept works. Everyone is impressed. Six months later it is still a proof of concept, and nobody can quite explain why. Moving an <strong>AI proof of concept to production</strong> fails so predictably because a POC is designed to answer one question — is this possible? — and production asks six entirely different ones that the POC was never built to touch.</p>
+
+  <h2>What a POC actually proved</h2>
+  <p>That the model can do the task on inputs someone chose, once, with a human present to interpret the output. That is a real and useful finding. It is not evidence about behaviour on unchosen inputs, at volume, unattended, when a provider is down, when the API changes, or when the person who built it goes on holiday. Confusing the first for the second is the entire failure mode, and it happens because the demo is emotionally convincing in a way that a p95 latency chart is not.</p>
+
+  <h2>The six things a POC never tests</h2>
+  <p><strong>1. The unhappy path.</strong> POC inputs are curated by definition — the builder picked documents that parse, tickets that are legible, questions that are answerable. Production sends the scanned fax, the two-language email, the ticket that is three unrelated complaints in one paragraph. Estimate the share of real traffic that is messy, then check whether the POC ever saw any of it. Usually the answer is none.</p>
+  <p><strong>2. Cost at real volume.</strong> A POC runs a few hundred calls and costs less than lunch, so nobody models it. Agentic workloads are the ones where this bites hardest, because a loop makes many model calls per human action — the multiplier between "a user did something" and "we made an API call" is often ten or more. Do the arithmetic at target volume before committing, using the method in <a href="/blog/how-much-does-an-ai-agent-cost.html" class="in">how much an AI agent costs</a>.</p>
+  <p><strong>3. Failure behaviour.</strong> During a POC, when something breaks, a human notices and reruns it. In production nobody is watching, so the question is what the system does on its own — retry, fail over, escalate, or silently produce nothing. The seven common collapse modes are catalogued in <a href="/blog/why-ai-agents-fail-in-production.html" class="in">why AI agents fail in production</a>.</p>
+  <p><strong>4. Measurement.</strong> POC success is a room agreeing the output looked good. Production success is a defined metric, computed automatically, trending over time. If you cannot state what percentage of tasks succeeded last week without asking someone, you do not have a production system — you have a demo running continuously. The metric set is in <a href="/blog/ai-agent-reliability-metrics.html" class="in">agent reliability metrics</a>.</p>
+  <p><strong>5. Change.</strong> Models get deprecated, prices change, tool APIs shift shape, prompts that worked degrade after a provider updates a checkpoint. A POC is a photograph; production is a film. Someone has to own the ongoing work, and if no name is attached to that in the plan, the system decays quietly from its first week.</p>
+  <p><strong>6. Blast radius.</strong> A POC reads. Production often writes — sends the email, updates the record, moves the money. The moment an agent takes actions with consequences, the reliability bar rises sharply and the approval architecture becomes part of the product rather than a wrapper around it.</p>
+
+  <div class="callout">
+    <p><strong>Write the exit criteria before the POC starts.</strong> "We proceed if it achieves X% on Y task class over Z real inputs, at a modelled cost under $N per completed task." Written afterwards, the criteria will be quietly shaped by the result — not through dishonesty, just through the ordinary human tendency to grade against what happened.</p>
+  </div>
+
+  <h2>A shape that works</h2>
+  <p>Run the POC on real inputs from the beginning, including the ugly ones. It will look worse. That is the point — a POC that only handles clean data has deferred the hard finding to the expensive phase.</p>
+  <p>Then instrument before you scale, not after. The columns you did not log during the pilot are questions you cannot answer when someone asks why the bill tripled; the minimum viable schema is in <a href="/blog/llm-routing-telemetry-guide.html" class="in">the routing telemetry guide</a>. Then ship narrow: one task class, real users, human approval on anything with side effects, and remove the approval only after the measured success rate earns it.</p>
+  <p>Ship narrow rather than broad. One task class fully in production teaches you more than five in pilot, because only the production one encounters the whole distribution of reality.</p>
+
+  <h2>The infrastructure decision hiding inside</h2>
+  <p>Where the system runs turns out to shape almost everything above. On metered APIs, every unhappy-path retry and every extra evaluation run has a price, which quietly discourages exactly the testing that makes the system trustworthy. On hardware you own, the marginal call costs electricity — so you can afford to run the full ugly dataset nightly, replay a month of traffic against a new prompt, and grade a sample every week without a budget conversation.</p>
+  <p>That is the design premise behind QADIR OS: local-first inference across lanes you control, with commercial models available when a task genuinely needs one, and every call written to a local database so the cost and reliability questions are queries rather than estimates. Our own routing log holds 1,469 calls across 89.9 days, with 1.4% of traffic reaching premium lanes at a total spend of $0.14 — and it also holds a 19.9% success rate defect we can name precisely because the telemetry exists. Both halves came from instrumenting first. The trade-offs of owning the compute are in <a href="/blog/local-ai-vs-cloud-ai.html" class="in">local AI vs. cloud AI</a>.</p>
+
+  <h2>Frequently asked questions</h2>
+  <p><strong>How long should an AI POC run?</strong> Long enough to hit real variance — typically four to six weeks on genuine inputs. Shorter than that and you have measured a good week; much longer without a decision usually means the exit criteria were never written down.</p>
+  <p><strong>What is the single most common reason a pilot stalls?</strong> No owner for the production phase. The pilot is exciting and staffed; the hardening, instrumentation and change management that follow are neither, so the work sits unassigned while everyone waits for a decision nobody is responsible for making.</p>
+  <p><strong>Should we build or buy at this stage?</strong> Decide it on the exit-criteria data rather than in advance. Once you know your real success rate, real cost per completed task and real failure distribution, the build-or-buy question usually answers itself — and you can hold any vendor to the same numbers using the <a href="/blog/ai-vendor-due-diligence-checklist.html" class="in">vendor diligence checklist</a>.</p>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"How long should an AI proof of concept run?","acceptedAnswer":{"@type":"Answer","text":"Long enough to hit real variance — typically four to six weeks on genuine inputs. Shorter measures a good week; much longer usually means exit criteria were never written."}},{"@type":"Question","name":"Why do AI pilots stall before production?","acceptedAnswer":{"@type":"Answer","text":"Most often because no one owns the production phase. Hardening, instrumentation and change management are unglamorous and frequently unassigned."}},{"@type":"Question","name":"Should we build or buy an AI system after a POC?","acceptedAnswer":{"@type":"Answer","text":"Decide from the exit-criteria data — real success rate, cost per completed task and failure distribution — then hold vendors to the same numbers."}}]}
+  </script>
+
+  <div class="callout cta">
+    <p><strong>Write your exit criteria this week</strong> — one sentence naming the task class, the success threshold, the input set and the cost ceiling. Then instrument before you scale. If you want a runtime that logs it all locally by default, <a href="/" class="in">join the QADIR OS early-access list</a>.</p>
+  </div>
+
+  <div class="foot">Built by <a href="/">ABUZ8 LLC</a> — we're building QADIR OS, the sovereign agentic operating system. This article is general information, not legal advice.</div>
+</div>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+<script src="/blog/_blog-shared.js" defer></script>
+<script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>

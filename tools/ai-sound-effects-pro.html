@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Sound Effects Pro — Instant SFX for Any Scene | ABUZ8</title>
+<meta name="description" content="Generate any sound effect from text in seconds. Cinematic impacts, nature ambience, UI sounds, weapons, horror, comedy — unlimited length. Runs on local RTX 5090. Join early access.">
+<meta name="keywords" content="ai sound effects, ai sfx generator, ai audio effects, text to sound effect, comfyui audio, audiocraft sfx, ai foley, ai sound design, instant sfx">
+<link rel="canonical" href="https://abuz8ai.com/tools/ai-sound-effects-pro">
+<meta property="og:title" content="AI Sound Effects Pro — Instant SFX for Any Scene | ABUZ8">
+<meta property="og:description" content="6 SFX categories. ~8s per effect. Unlimited duration. Runs locally on RTX 5090. Early access open.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://abuz8ai.com/tools/ai-sound-effects-pro">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="AI Sound Effects Pro | ABUZ8">
+<meta name="twitter:description" content="6 SFX categories. Instant audio generation. Local GPU. Join early access.">
+<link rel="stylesheet" href="/assets/css/abuz8-mach3.css">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@300;400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"SoftwareApplication","name":"AI Sound Effects Pro","applicationCategory":"MultimediaApplication","operatingSystem":"Web","description":"Generate any sound effect from a text description using AudioCraft-based diffusion running on local RTX 5090. Six categories: Cinematic Impact, Nature & Ambient, UI & Tech, Weapons & Combat, Horror & Tension, Comedy & Cartoon. Variable duration from 0.5s to 10s. Visual conditioning from a reference image. No watermarks, no third-party audio processors.","offers":{"@type":"Offer","price":"0","priceCurrency":"USD","availability":"https://schema.org/PreOrder"},"creator":{"@type":"Organization","name":"ABUZ8 LLC","url":"https://abuz8ai.com"}}
+</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"HowTo","name":"Generate a Sound Effect with AI","step":[{"@type":"HowToStep","name":"Describe the sound","text":"Type a natural-language description of the sound effect you need — e.g. 'a heavy wooden door slamming shut in a cathedral reverb' or 'cartoon boing with ascending pitch and light drum hit'."},{"@type":"HowToStep","name":"Choose duration and category","text":"Select a duration chip from 0.5s to 10s and choose the SFX category that matches your need — Cinematic Impact, Nature & Ambient, UI & Tech, Weapons & Combat, Horror & Tension, or Comedy & Cartoon."},{"@type":"HowToStep","name":"Optionally add a reference image","text":"Upload an image of the scene you're scoring. The visual conditioning helps the AudioCraft model tonally match the environment — e.g. a dark cave image will bias reverb and low frequencies."},{"@type":"HowToStep","name":"Generate and download","text":"AudioCraft diffusion runs on a local RTX 5090 in approximately 8 seconds. WAV file is returned and plays inline. Download in one click. Nothing is stored after the session."}]}
+</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What makes this different from other SFX generators?","acceptedAnswer":{"@type":"Answer","text":"AI Sound Effects Pro runs AudioCraft locally on dedicated RTX 5090 hardware. There's no upload queue, no subscription throttle, and no compressed preview — you get full-quality WAV output in about 8 seconds. The visual conditioning feature is unique: drop an image of your scene and the model tunes the tonal character to match."}},{"@type":"Question","name":"What file format is the output?","acceptedAnswer":{"@type":"Answer","text":"Output is WAV at 44.1kHz stereo. Ready to drop into any DAW, video editor, or game engine without transcoding."}},{"@type":"Question","name":"Can I use outputs commercially?","acceptedAnswer":{"@type":"Answer","text":"Yes. Early access outputs are cleared for personal and commercial use — film, games, ads, content creation. Full license terms published at launch."}},{"@type":"Question","name":"How does visual conditioning work?","acceptedAnswer":{"@type":"Answer","text":"If you upload a reference image, it is passed through a lightweight visual encoder that extracts scene attributes — indoor vs outdoor, density, colour temperature — and conditions the AudioCraft model accordingly. A dark stone dungeon will skew reverb and low rumble; a sunny meadow will bias high-frequency detail and brightness."}},{"@type":"Question","name":"What is the maximum duration?","acceptedAnswer":{"@type":"Answer","text":"The current UI offers 0.5s, 1s, 2s, 5s, and 10s chips. Longer continuous audio (30s+) will be available for early access subscribers via batch mode."}},{"@type":"Question","name":"Can I generate multiple variations?","acceptedAnswer":{"@type":"Answer","text":"Yes — use the batch size chips (×1, ×3, ×6) to generate multiple takes in one run. Useful for foley work where you want to pick the best variation."}},{"@type":"Question","name":"Is my audio data used for training?","acceptedAnswer":{"@type":"Answer","text":"No. Prompts and generated audio are not retained after your session. We do not train on user data."}}]}
+</script>
+</head>
+<body>
+<script>
+(function(){
+  var comfyUrl=(window.ABUZ8_COMFY_BASE)||'https://comfy.abuz8ai.com';
+  var checked=false,comfyLive=false;
+  window._checkComfy=async function(){
+    if(checked)return comfyLive;
+    try{var r=await fetch(comfyUrl+'/system_stats',{signal:AbortSignal.timeout(3000)});comfyLive=r.ok;checked=true;}catch(_){comfyLive=false;checked=true;}
+    return comfyLive;
+  };
+})();
+</script>
+<style>
+:root{
+  --lapis:#0a1628;--lapis-2:#0d1a30;--lapis-3:#111f38;
+  --gold:#c9a84c;--gold-2:#e6c879;
+  --turq:#0e9f6e;--turq-2:#2bb39e;
+  --cream:#f5f0e8;--text:#e8e4d8;--dim:#8a9aaa;--border:#1a2e50;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{background:var(--lapis);color:var(--text);font-family:'Inter',sans-serif;line-height:1.6;min-height:100vh;-webkit-font-smoothing:antialiased}
+a{color:var(--gold);text-decoration:none}
+.mono{font-family:'JetBrains Mono',monospace}
+.wrap{max-width:1200px;margin:0 auto;padding:32px 24px}
+.nav{display:flex;justify-content:space-between;align-items:center;padding-bottom:20px;border-bottom:1px solid var(--border);margin-bottom:40px}
+.brand{font-family:'Playfair Display',serif;font-size:22px;color:var(--cream);letter-spacing:.5px}
+.brand .acc{color:var(--gold)}
+.back{font-size:11px;color:var(--dim);letter-spacing:2px;text-transform:uppercase}
+.back:hover{color:var(--gold)}
+.hero{display:grid;grid-template-columns:1.1fr .9fr;gap:48px;align-items:center;margin-bottom:56px}
+@media(max-width:880px){.hero{grid-template-columns:1fr}}
+.eyebrow{color:var(--turq-2);font-size:11px;letter-spacing:3px;text-transform:uppercase;margin-bottom:18px;font-weight:600}
+h1{font-family:'Playfair Display',serif;font-size:clamp(2.2rem,5vw,4rem);color:var(--cream);line-height:1.05;margin-bottom:20px;font-weight:900}
+h1 .gold{color:var(--gold)}
+.lede{color:var(--dim);font-size:18px;font-weight:300;max-width:540px;margin-bottom:28px}
+.row-stats{display:flex;gap:32px;margin-top:20px;flex-wrap:wrap}
+.stat{border-left:2px solid var(--gold);padding-left:14px}
+.stat .n{font-family:'Playfair Display',serif;font-size:28px;color:var(--cream);font-weight:700;line-height:1}
+.stat .l{font-size:10px;color:var(--dim);letter-spacing:2px;text-transform:uppercase;margin-top:6px}
+.gallery{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;border-radius:18px;overflow:hidden;border:1px solid var(--border);background:var(--lapis-2);padding:10px}
+.gal-card{aspect-ratio:3/4;border-radius:12px;background:linear-gradient(135deg,#1a2e50,#0d1a30);position:relative;overflow:hidden;display:flex;align-items:flex-end;padding:14px}
+.gal-card::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 30% 20%,rgba(26,138,122,0.22),transparent 60%)}
+.gal-card .tag{position:relative;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--turq-2);font-weight:600}
+</style>
+<style>
+.bench{display:grid;grid-template-columns:1fr 1fr;gap:32px;background:var(--lapis-2);border:1px solid var(--border);border-radius:22px;padding:36px;margin-bottom:56px}
+@media(max-width:880px){.bench{grid-template-columns:1fr}}
+.panel h3{font-family:'Playfair Display',serif;font-size:24px;color:var(--cream);margin-bottom:6px}
+.panel .pre{color:var(--turq-2);font-size:10px;letter-spacing:3px;text-transform:uppercase;margin-bottom:18px;font-weight:600}
+.drop{border:2px dashed var(--border);border-radius:14px;padding:36px 14px;text-align:center;cursor:pointer;transition:.2s;background:rgba(255,255,255,0.02)}
+.drop:hover,.drop.hot{border-color:var(--gold);background:rgba(201,168,76,0.06)}
+.drop .ico{font-size:28px;margin-bottom:6px;color:var(--gold)}
+.drop .t{font-weight:600;color:var(--cream);font-size:13px}
+.drop .h{font-size:11px;color:var(--dim);margin-top:4px}
+.thumb{display:none;margin-top:12px;border-radius:10px;overflow:hidden;border:1px solid var(--border)}
+.thumb img{width:100%;display:block}
+.field{margin-bottom:18px}
+.field label{display:block;font-size:10px;color:var(--gold);letter-spacing:2.5px;text-transform:uppercase;margin-bottom:8px;font-weight:700}
+.input,.select,.textarea{width:100%;padding:13px 14px;background:#0f2040;border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:inherit;font-size:14px}
+.input:focus,.select:focus,.textarea:focus{outline:none;border-color:var(--gold)}
+.textarea{resize:vertical;min-height:100px;line-height:1.6}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
+.chip{padding:8px 14px;border:1px solid var(--border);border-radius:999px;font-size:12px;cursor:pointer;color:var(--dim);background:transparent;transition:.15s}
+.chip:hover{border-color:var(--turq-2);color:var(--text)}
+.chip.on{background:var(--gold);color:var(--lapis);border-color:var(--gold);font-weight:600}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:16px 20px;border-radius:12px;font-weight:700;font-size:14px;text-transform:uppercase;letter-spacing:2px;cursor:pointer;border:none;transition:.2s}
+.btn-gold{background:linear-gradient(180deg,var(--gold-2),var(--gold));color:var(--lapis)}
+.btn-gold:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(201,168,76,0.28)}
+.btn[disabled]{opacity:.5;cursor:not-allowed;transform:none;box-shadow:none}
+.status{margin-top:18px;padding:14px 16px;border-radius:10px;background:#0f2040;border:1px solid var(--border);font-size:13px;display:none}
+.status.show{display:block}
+.status.ok{border-color:var(--turq-2)}
+.status.err{border-color:#c95a4c}
+.bar{height:6px;background:var(--lapis);border-radius:99px;overflow:hidden;margin-top:10px}
+.bar > i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--turq),var(--gold));transition:width .4s}
+.audio-player{display:none;margin-top:18px;background:#0f2040;border:1px solid var(--turq-2);border-radius:12px;padding:18px}
+.audio-player.show{display:block}
+.audio-player .player-label{font-size:10px;color:var(--turq-2);letter-spacing:2px;text-transform:uppercase;margin-bottom:10px;font-weight:700}
+.audio-player audio{width:100%;border-radius:8px}
+.audio-player .dl-btn{display:inline-flex;align-items:center;gap:8px;margin-top:10px;padding:8px 16px;border-radius:8px;font-size:12px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;border:1px solid var(--gold);color:var(--gold);background:transparent;transition:.15s;text-decoration:none}
+.audio-player .dl-btn:hover{background:rgba(201,168,76,0.12)}
+.audio-results{display:flex;flex-direction:column;gap:10px;margin-top:18px}
+.section-title{font-family:'Playfair Display',serif;font-size:32px;color:var(--cream);margin-bottom:28px}
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-bottom:56px}
+@media(max-width:880px){.steps{grid-template-columns:repeat(2,1fr)}}
+.step{background:var(--lapis-2);border:1px solid var(--border);border-radius:16px;padding:22px}
+.step .num{font-family:'Playfair Display',serif;font-size:34px;color:var(--gold);font-weight:900;line-height:1}
+.step h4{font-size:14px;color:var(--cream);margin:10px 0 6px;letter-spacing:.5px}
+.step p{font-size:13px;color:var(--dim)}
+.cta{background:linear-gradient(135deg,var(--lapis-3),var(--lapis-2));border:1px solid var(--gold);border-radius:24px;padding:48px;text-align:center;margin-bottom:48px;position:relative;overflow:hidden}
+.cta::before{content:'';position:absolute;inset:-1px;background:radial-gradient(circle at 80% 0%,rgba(201,168,76,0.16),transparent 50%);pointer-events:none}
+.cta h2{font-family:'Playfair Display',serif;font-size:clamp(1.8rem,4vw,2.8rem);color:var(--cream);margin-bottom:14px;position:relative}
+.cta p{color:var(--dim);max-width:540px;margin:0 auto 28px;position:relative}
+.waitform{display:flex;gap:10px;max-width:520px;margin:0 auto;position:relative;flex-wrap:wrap}
+.waitform .input{flex:1;min-width:240px}
+.waitform .btn{width:auto;padding:13px 24px}
+.tinynote{margin-top:14px;font-size:11px;color:var(--dim);letter-spacing:1px;position:relative}
+.foot{padding:32px 0;border-top:1px solid var(--border);color:var(--dim);font-size:12px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+<div class="wrap">
+  <nav class="nav">
+    <a href="/index.html" class="brand">ABUZ<span class="acc">8</span></a>
+    <a href="../tools.html" class="back">&larr; All Tools</a>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div>
+      <div class="eyebrow">AI Sound Effects Pro · Tier A · ComfyUI</div>
+      <h1>Any sound.<br><span class="gold">Any scene.</span><br>8 seconds.</h1>
+      <p class="lede">The fastest SFX pipeline on the planet — AudioCraft diffusion on local RTX 5090. Describe any sound in plain English, get studio-quality WAV in seconds. No watermarks, no subscription throttle.</p>
+      <div class="row-stats">
+        <div class="stat"><div class="n">~8s</div><div class="l">Per SFX</div></div>
+        <div class="stat"><div class="n">∞</div><div class="l">No length cap</div></div>
+        <div class="stat"><div class="n">RTX&nbsp;5090</div><div class="l">Local render</div></div>
+      </div>
+    </div>
+    <div class="gallery" aria-hidden="true">
+      <div class="gal-card"><span class="tag">Cinematic Impact</span></div>
+      <div class="gal-card"><span class="tag">Nature &amp; Ambient</span></div>
+      <div class="gal-card"><span class="tag">UI &amp; Tech</span></div>
+      <div class="gal-card"><span class="tag">Weapons &amp; Combat</span></div>
+      <div class="gal-card"><span class="tag">Horror &amp; Tension</span></div>
+      <div class="gal-card"><span class="tag">Comedy &amp; Cartoon</span></div>
+    </div>
+  </section>
+
+  <!-- WORKBENCH -->
+  <section class="bench" id="bench">
+    <div class="panel">
+      <div class="pre">Step 01 · Describe the Sound</div>
+      <h3>Your SFX prompt</h3>
+      <p style="color:var(--dim);font-size:13px;margin:8px 0 18px">Describe exactly what you hear. The more specific the better — include environment, texture, intensity, and any pitch or rhythm details.</p>
+
+      <div class="field">
+        <label>Sound Description</label>
+        <textarea class="textarea" id="promptInput" placeholder="e.g. a heavy iron gate slamming shut with long stone corridor reverb, metallic clank and rumble fade" maxlength="400"></textarea>
+      </div>
+
+      <div class="field">
+        <label>Duration</label>
+        <div class="chips" id="durChips">
+          <button class="chip" data-dur="0.5">0.5s</button>
+          <button class="chip on" data-dur="1">1s</button>
+          <button class="chip" data-dur="2">2s</button>
+          <button class="chip" data-dur="5">5s</button>
+          <button class="chip" data-dur="10">10s</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <div style="font-size:10px;color:var(--gold);letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;font-weight:700">Reference Image <span style="color:var(--dim);font-weight:400">(optional — visual conditioning)</span></div>
+        <label class="drop" id="dropRef">
+          <div class="ico">◈</div>
+          <div class="t">Scene Image</div>
+          <div class="h">PNG · JPG · ≤ 10MB · conditions tone to match the scene</div>
+          <input id="fileRef" type="file" accept="image/png,image/jpeg" hidden>
+        </label>
+        <div class="thumb" id="thumbRef"><img id="thumbRefImg" alt="Reference scene preview"></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="pre">Step 02 · Configure</div>
+      <h3>SFX options</h3>
+
+      <div class="field">
+        <label>SFX Category</label>
+        <div class="chips" id="catChips">
+          <button class="chip on" data-cat="cinematic">Cinematic Impact</button>
+          <button class="chip" data-cat="nature">Nature &amp; Ambient</button>
+          <button class="chip" data-cat="ui">UI &amp; Tech</button>
+          <button class="chip" data-cat="weapons">Weapons &amp; Combat</button>
+          <button class="chip" data-cat="horror">Horror &amp; Tension</button>
+          <button class="chip" data-cat="comedy">Comedy &amp; Cartoon</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Quality</label>
+        <select class="select" id="quality">
+          <option value="draft">Draft — fastest (~4s)</option>
+          <option value="standard" selected>Standard — balanced (~8s)</option>
+          <option value="pro">Pro — maximum quality (~14s)</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label>Batch Size</label>
+        <div class="chips" id="batchChips">
+          <button class="chip on" data-batch="1">&times;1</button>
+          <button class="chip" data-batch="3">&times;3</button>
+          <button class="chip" data-batch="6">&times;6</button>
+        </div>
+      </div>
+
+      <button class="btn btn-gold" id="run">Generate SFX</button>
+
+      <div class="status" id="status">
+        <div class="mono" id="status-text">Idle.</div>
+        <div class="bar"><i id="status-bar"></i></div>
+      </div>
+
+      <div class="audio-results" id="audioResults"></div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <h2 class="section-title">How it actually works</h2>
+  <div class="steps">
+    <div class="step"><div class="num">01</div><h4>Prompt synthesis</h4><p>Your text description is tokenized and enriched with category-specific acoustic priors — reverb profile, frequency range, and dynamic envelope matching your chosen SFX category.</p></div>
+    <div class="step"><div class="num">02</div><h4>AudioCraft diffusion</h4><p>Meta's AudioCraft model runs a diffusion pass conditioned on your prompt and optional visual embeddings. The model synthesizes raw audio in the latent space before decoding.</p></div>
+    <div class="step"><div class="num">03</div><h4>Duration control</h4><p>The decoded audio is trimmed or looped to match your requested duration. Pro quality mode applies a final mastering pass — EQ, transient shaping, and loudness normalization.</p></div>
+    <div class="step"><div class="num">04</div><h4>Local delivery</h4><p>Renders on private RTX 5090 hardware in ~8 seconds. WAV delivered inline for immediate playback. Download in one click. Nothing stored after your session.</p></div>
+  </div>
+
+  <!-- WAITLIST CTA -->
+  <section class="cta" id="early-access">
+    <h2>Join Early Access</h2>
+    <p>First 20 SFX on us. Early-access members get a permanent creator discount — locked in forever, even as we scale pricing.</p>
+    <form class="waitform" id="wait" novalidate>
+      <input type="email" class="input" id="wait-email" placeholder="you@company.com" required autocomplete="email">
+      <button type="submit" class="btn btn-gold">Join Early Access</button>
+    </form>
+    <div class="tinynote mono">No spam. No fluff. Unsubscribe with one click.</div>
+    <div class="status" id="wait-status" style="max-width:520px;margin:18px auto 0"><div id="wait-msg" class="mono">Idle.</div></div>
+  </section>
+
+  <footer class="foot">
+    <div>&copy; 2026 ABUZ8 LLC</div>
+    <div><a href="/privacy.html">Privacy</a> &middot; <a href="/terms.html">Terms</a> &middot; <a href="../tools.html">All tools</a></div>
+  </footer>
+</div>
+
+<script>
+/* AI SOUND EFFECTS PRO — frontend wiring
+ * Pipeline: AudioCraft SFX diffusion via /api/sfx
+ * Falls back to waitlist CTA if ComfyUI is unreachable
+ */
+(function(){
+  'use strict';
+  const COMFY=(window.ABUZ8_COMFY_BASE)||'https://comfy.abuz8ai.com';
+  const SFX_API=COMFY+'/api/sfx';
+  const $=(s)=>document.querySelector(s);
+
+  const dropRef=$('#dropRef'),fileRef=$('#fileRef');
+  const thumbRef=$('#thumbRef'),thumbRefImg=$('#thumbRefImg');
+  const run=$('#run'),statusEl=$('#status'),statusText=$('#status-text'),statusBar=$('#status-bar');
+  const audioResults=$('#audioResults'),promptInput=$('#promptInput');
+  const wait=$('#wait'),waitEmail=$('#wait-email'),waitStatus=$('#wait-status'),waitMsg=$('#wait-msg');
+
+  const state={refFile:null,duration:1,category:'cinematic',quality:'standard',batch:1};
+
+  /* Duration chips */
+  document.querySelectorAll('#durChips .chip').forEach(c=>{
+    c.addEventListener('click',(e)=>{e.preventDefault();document.querySelectorAll('#durChips .chip').forEach(x=>x.classList.remove('on'));c.classList.add('on');state.duration=parseFloat(c.dataset.dur);});
+  });
+  /* Category chips */
+  document.querySelectorAll('#catChips .chip').forEach(c=>{
+    c.addEventListener('click',(e)=>{e.preventDefault();document.querySelectorAll('#catChips .chip').forEach(x=>x.classList.remove('on'));c.classList.add('on');state.category=c.dataset.cat;});
+  });
+  /* Batch chips */
+  document.querySelectorAll('#batchChips .chip').forEach(c=>{
+    c.addEventListener('click',(e)=>{e.preventDefault();document.querySelectorAll('#batchChips .chip').forEach(x=>x.classList.remove('on'));c.classList.add('on');state.batch=parseInt(c.dataset.batch,10);});
+  });
+  $('#quality').addEventListener('change',(e)=>{state.quality=e.target.value;});
+
+  /* Reference image drop zone */
+  dropRef.addEventListener('click',()=>fileRef.click());
+  ['dragenter','dragover'].forEach(ev=>dropRef.addEventListener(ev,(e)=>{e.preventDefault();dropRef.classList.add('hot');}));
+  ['dragleave','drop'].forEach(ev=>dropRef.addEventListener(ev,(e)=>{e.preventDefault();dropRef.classList.remove('hot');}));
+  dropRef.addEventListener('drop',(e)=>{if(e.dataTransfer.files[0])loadRef(e.dataTransfer.files[0]);});
+  fileRef.addEventListener('change',(e)=>{if(e.target.files[0])loadRef(e.target.files[0]);});
+
+  function loadRef(f){
+    if(!/^image\/(png|jpeg)$/.test(f.type)){return setStatus('Use a PNG or JPG.','err',0);}
+    if(f.size>10*1024*1024){return setStatus('Max 10MB.','err',0);}
+    state.refFile=f;
+    const r=new FileReader();r.onload=(e)=>{thumbRefImg.src=e.target.result;thumbRef.style.display='block';};r.readAsDataURL(f);
+    setStatus('Reference image loaded · visual conditioning active.','ok',5);
+  }
+
+  function setStatus(msg,kind,pct){
+    statusEl.classList.add('show');statusEl.classList.remove('ok','err');
+    if(kind)statusEl.classList.add(kind);
+    statusText.textContent=msg;
+    if(typeof pct==='number')statusBar.style.width=Math.max(0,Math.min(100,pct))+'%';
+  }
+
+  async function toBase64(f){
+    return new Promise((res,rej)=>{const r=new FileReader();r.onload=(e)=>res(e.target.result.split(',')[1]);r.onerror=rej;r.readAsDataURL(f);});
+  }
+
+  function renderAudioResults(results){
+    audioResults.innerHTML='';
+    results.forEach((item,i)=>{
+      const div=document.createElement('div');div.className='audio-player show';
+      const label=document.createElement('div');label.className='player-label';label.textContent='Take '+(i+1)+' · '+state.duration+'s · '+state.category;
+      const audio=document.createElement('audio');audio.controls=true;audio.style.width='100%';
+      if(item.url){audio.src=item.url;}
+      else if(item.data){audio.src='data:audio/wav;base64,'+item.data;}
+      const dlBtn=document.createElement('a');dlBtn.className='dl-btn';dlBtn.textContent='Download WAV';
+      dlBtn.href=item.url||('data:audio/wav;base64,'+(item.data||''));
+      dlBtn.download='abuz8-sfx-take'+(i+1)+'.wav';
+      div.appendChild(label);div.appendChild(audio);div.appendChild(dlBtn);
+      audioResults.appendChild(div);
+    });
+  }
+
+  run.addEventListener('click',async()=>{
+    const prompt=(promptInput.value||'').trim();
+    if(!prompt){setStatus('Describe the sound effect you need.','err',0);return;}
+    run.disabled=true;audioResults.innerHTML='';
+    try{
+      setStatus('Sending to AudioCraft render node…','ok',10);
+      const payload={
+        prompt,
+        duration:state.duration,
+        category:state.category,
+        quality:state.quality,
+        batch:state.batch,
+        ts:Date.now()
+      };
+      if(state.refFile){
+        setStatus('Encoding reference image…','ok',18);
+        payload.ref_image_b64=await toBase64(state.refFile);
+      }
+      setStatus('Running AudioCraft diffusion · ~8s…','ok',30);
+      const resp=await fetch(SFX_API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+      if(!resp.ok)throw new Error('SFX API error: '+resp.status);
+      const j=await resp.json();
+      const items=j.results||j.outputs||[];
+      if(!items.length)throw new Error('No audio returned.');
+      setStatus('Done · '+items.length+' take'+(items.length>1?'s':'')+' ready.','ok',100);
+      renderAudioResults(items);
+    }catch(err){
+      console.warn('[sfx]',err);
+      setStatus('Render node unreachable. Join early access — we\'ll generate your SFX on our cloud rig.','err',0);
+      document.getElementById('early-access').scrollIntoView({behavior:'smooth',block:'start'});
+    }finally{run.disabled=false;}
+  });
+
+  /* WAITLIST */
+  wait.addEventListener('submit',async(e)=>{
+    e.preventDefault();
+    const email=(waitEmail.value||'').trim();
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
+      waitStatus.classList.add('show','err');waitStatus.classList.remove('ok');waitMsg.textContent='Enter a valid email.';return;
+    }
+    waitStatus.classList.add('show');waitStatus.classList.remove('err');waitStatus.classList.add('ok');
+    waitMsg.textContent='Reserving your spot…';
+    try{
+      const r=await fetch('/api/waitlist',{method:'POST',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({email,product:'ai-sound-effects-pro',ts:Date.now(),referrer:document.referrer||null})});
+      if(!r.ok)throw new Error('waitlist '+r.status);
+      waitMsg.textContent="You're in. We'll email you when your slot opens.";
+      try{gtag('event','waitlist_join',{product:'ai-sound-effects-pro'});}catch(e){}
+      wait.reset();
+    }catch(err){
+      try{
+        await fetch('/functions/waitlist',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,product:'ai-sound-effects-pro'})});
+        waitMsg.textContent="You're in. We'll email you when your slot opens.";
+      }catch(e2){
+        waitMsg.textContent='Saved locally. We\'ll sync when the network is back.';
+        try{const q=JSON.parse(localStorage.getItem('abuz8_waitlist_queue')||'[]');q.push({email,product:'ai-sound-effects-pro',ts:Date.now()});localStorage.setItem('abuz8_waitlist_queue',JSON.stringify(q));}catch(e3){}
+      }
+    }
+  });
+})();
+</script>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+<script src="/tools/_abuz8-live-brain.js" defer></script>
+<script src="/tools/_tools-shared.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>
+

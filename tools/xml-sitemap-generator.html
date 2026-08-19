@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>XML Sitemap Generator — Free Online Sitemap.xml Builder | ABUZ8</title>
+  <meta name="description" content="Free XML sitemap generator. Paste your URLs, set priority, changefreq and lastmod, and download a valid sitemap.xml for Google Search Console. Auto-priority by depth, dedupe, 50k-limit checks. 100% client-side, no signup." />
+  <meta name="keywords" content="xml sitemap generator, sitemap generator, sitemap.xml builder, create sitemap online, sitemap generator free, google sitemap generator, sitemap priority changefreq, lastmod sitemap, seo tools, search console sitemap" />
+  <meta property="og:title" content="XML Sitemap Generator — Free Sitemap.xml Builder | ABUZ8" />
+  <meta property="og:description" content="Paste URLs, tune priority/changefreq/lastmod, download a valid sitemap.xml. Auto-priority by depth, dedupe, protocol-limit checks. Runs 100% in your browser." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://abuz8ai.com/tools/xml-sitemap-generator" />
+  <link rel="canonical" href="https://abuz8ai.com/tools/xml-sitemap-generator" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebApplication",
+        "name": "XML Sitemap Generator",
+        "description": "Free online XML sitemap generator. Paste URLs, set lastmod, changefreq and priority (or auto-priority by depth), validate against sitemap protocol limits, and download sitemap.xml. Runs 100% in your browser.",
+        "url": "https://abuz8ai.com/tools/xml-sitemap-generator.html",
+        "applicationCategory": "DeveloperApplication",
+        "operatingSystem": "Any",
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+        "author": { "@type": "Organization", "name": "ABUZ8 LLC", "url": "https://abuz8ai.com" }
+      },
+      {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          { "@type": "ListItem", "position": 1, "name": "ABUZ8", "item": "https://abuz8ai.com/" },
+          { "@type": "ListItem", "position": 2, "name": "Free Tools", "item": "https://abuz8ai.com/tools/" },
+          { "@type": "ListItem", "position": 3, "name": "XML Sitemap Generator", "item": "https://abuz8ai.com/tools/xml-sitemap-generator.html" }
+        ]
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "What is an XML sitemap?",
+            "acceptedAnswer": { "@type": "Answer", "text": "An XML sitemap is a file (usually at https://yoursite.com/sitemap.xml) that lists the URLs you want search engines to crawl and index, optionally with lastmod, changefreq and priority hints per URL. It follows the sitemaps.org 0.9 protocol and is read by Google, Bing and every major crawler." }
+          },
+          {
+            "@type": "Question",
+            "name": "Do I still need a sitemap in 2026?",
+            "acceptedAnswer": { "@type": "Answer", "text": "Yes — especially for new sites, large sites, and pages with few internal links. A sitemap doesn't boost rankings by itself, but it gets pages discovered and recrawled faster. Pages missing from a sitemap and unlinked internally can stay invisible to Google for months." }
+          },
+          {
+            "@type": "Question",
+            "name": "How do I submit a sitemap to Google?",
+            "acceptedAnswer": { "@type": "Answer", "text": "Upload sitemap.xml to your site root, add a 'Sitemap: https://yoursite.com/sitemap.xml' line to robots.txt, then submit the sitemap URL in Google Search Console under Indexing → Sitemaps. Bing Webmaster Tools has the same flow." }
+          },
+          {
+            "@type": "Question",
+            "name": "What are the sitemap size limits?",
+            "acceptedAnswer": { "@type": "Answer", "text": "One sitemap file may contain at most 50,000 URLs and be at most 50MB uncompressed. Larger sites split URLs across multiple sitemaps and reference them from a sitemap index file. This generator counts your URLs and bytes live and warns before you hit either limit." }
+          },
+          {
+            "@type": "Question",
+            "name": "Do changefreq and priority still matter?",
+            "acceptedAnswer": { "@type": "Answer", "text": "Google has said it largely ignores changefreq and priority, while lastmod is used when it's consistently accurate. Other crawlers still read all three. Best practice: keep lastmod truthful, and treat changefreq/priority as optional hints — this tool lets you emit or omit each one." }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --lapis: #0a1628;
+      --card: #0d1a30;
+      --card-alt: #0f1e35;
+      --gold: #c9a84c;
+      --gold-dim: #a07830;
+      --teal: #0e9f6e;
+      --teal-bright: #2fbf8f;
+      --cream: #e8dcc8;
+      --text: #cdd6f4;
+      --text-dim: #8896b0;
+      --border: #1e2d45;
+      --red: #e05c5c;
+      --green: #4caf88;
+      --blue: #5b8def;
+      --orange: #e0944c;
+      --font-heading: 'Playfair Display', Georgia, serif;
+      --font-body: 'Inter', system-ui, sans-serif;
+      --font-mono: 'JetBrains Mono', 'Courier New', monospace;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { background: var(--lapis); color: var(--text); font-family: var(--font-body); font-size: 15px; line-height: 1.6; min-height: 100vh; }
+    a { color: var(--gold); text-decoration: none; transition: color 0.2s; }
+    a:hover { color: var(--teal-bright); }
+
+    /* ── NAV ── */
+    nav { background: var(--card); border-bottom: 1px solid var(--border); padding: 0 2rem; display: flex; align-items: center; justify-content: space-between; height: 60px; position: sticky; top: 0; z-index: 100; }
+    .nav-logo { font-family: var(--font-heading); font-size: 1.3rem; font-weight: 700; color: var(--gold); }
+    .nav-links { display: flex; gap: 1.5rem; align-items: center; }
+    .nav-links a { color: var(--text-dim); font-size: 0.85rem; font-weight: 500; }
+    .nav-links a:hover { color: var(--gold); }
+    .nav-cta { background: var(--gold); color: var(--lapis) !important; padding: 0.45rem 1.1rem; border-radius: 6px; font-weight: 600; }
+    .nav-cta:hover { background: var(--teal-bright); }
+
+    /* ── HERO ── */
+    .hero { text-align: center; padding: 3rem 1.5rem 2rem; max-width: 820px; margin: 0 auto; }
+    .hero h1 { font-family: var(--font-heading); font-size: 2.3rem; color: var(--cream); line-height: 1.2; margin-bottom: 0.8rem; }
+    .hero h1 span { color: var(--gold); }
+    .hero p { color: var(--text-dim); font-size: 1.02rem; max-width: 640px; margin: 0 auto; }
+    .hero .badges { display: flex; gap: 0.6rem; justify-content: center; margin-top: 1.1rem; flex-wrap: wrap; }
+    .badge { border: 1px solid var(--border); background: var(--card); color: var(--text-dim); font-size: 0.72rem; padding: 0.28rem 0.7rem; border-radius: 999px; letter-spacing: 0.03em; }
+    .badge b { color: var(--teal-bright); font-weight: 600; }
+
+    /* ── LAYOUT ── */
+    .wrap { max-width: 1180px; margin: 0 auto; padding: 1rem 1.5rem 3rem; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 1.4rem; align-items: start; }
+    @media (max-width: 920px) { .wrap { grid-template-columns: 1fr; } }
+    .panel { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 1.3rem; }
+    .panel h2 { font-family: var(--font-heading); font-size: 1.15rem; color: var(--cream); margin-bottom: 0.9rem; }
+    label { display: block; font-size: 0.78rem; font-weight: 600; color: var(--text-dim); letter-spacing: 0.04em; text-transform: uppercase; margin: 0.9rem 0 0.35rem; }
+    input[type="text"], input[type="date"], textarea, select { width: 100%; background: var(--lapis); border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-family: var(--font-mono); font-size: 0.85rem; padding: 0.6rem 0.7rem; outline: none; transition: border-color 0.2s; }
+    input:focus, textarea:focus, select:focus { border-color: var(--gold-dim); }
+    textarea { min-height: 210px; resize: vertical; line-height: 1.55; }
+    .row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.7rem; }
+    @media (max-width: 560px) { .row { grid-template-columns: 1fr; } }
+    .hint { font-size: 0.74rem; color: var(--text-dim); margin-top: 0.35rem; }
+    .hint code { color: var(--teal-bright); font-family: var(--font-mono); font-size: 0.72rem; }
+
+    /* checkboxes */
+    .opts { display: grid; grid-template-columns: 1fr 1fr; gap: 0.45rem 1rem; margin-top: 0.5rem; }
+    @media (max-width: 560px) { .opts { grid-template-columns: 1fr; } }
+    .opt { display: flex; align-items: flex-start; gap: 0.5rem; font-size: 0.82rem; color: var(--text); cursor: pointer; padding: 0.3rem 0; }
+    .opt input { accent-color: var(--gold); margin-top: 0.2rem; }
+    .opt small { display: block; color: var(--text-dim); font-size: 0.72rem; }
+
+    /* stats chips */
+    .chips { display: flex; gap: 0.55rem; flex-wrap: wrap; margin-top: 1rem; }
+    .chip { background: var(--card-alt); border: 1px solid var(--border); border-radius: 8px; padding: 0.4rem 0.75rem; font-size: 0.76rem; color: var(--text-dim); }
+    .chip b { color: var(--cream); font-family: var(--font-mono); font-weight: 600; }
+    .chip.ok b { color: var(--green); }
+    .chip.warn { border-color: var(--orange); }
+    .chip.warn b { color: var(--orange); }
+    .chip.bad { border-color: var(--red); }
+    .chip.bad b { color: var(--red); }
+
+    /* ── OUTPUT ── */
+    .out-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.7rem; }
+    .out-file { font-family: var(--font-mono); font-size: 0.85rem; color: var(--teal-bright); }
+    .out-actions { display: flex; gap: 0.5rem; }
+    .act-btn { background: var(--card-alt); border: 1px solid var(--border); color: var(--text); font-family: var(--font-body); font-size: 0.8rem; font-weight: 600; padding: 0.45rem 1rem; border-radius: 7px; cursor: pointer; transition: all 0.2s; }
+    .act-btn:hover { border-color: var(--gold-dim); color: var(--gold); }
+    .act-btn.primary { background: var(--gold); border-color: var(--gold); color: var(--lapis); }
+    .act-btn.primary:hover { background: var(--teal-bright); border-color: var(--teal-bright); }
+    .act-btn.copied { background: var(--green); border-color: var(--green); color: var(--lapis); }
+    .output { background: var(--lapis); border: 1px solid var(--border); border-radius: 10px; padding: 1rem; font-family: var(--font-mono); font-size: 0.78rem; line-height: 1.6; overflow: auto; max-height: 520px; white-space: pre; color: var(--text); }
+    .output .k { color: var(--gold); }
+    .output .v { color: var(--teal-bright); }
+    .output .c { color: var(--text-dim); }
+    .skipped { margin-top: 0.8rem; background: var(--card-alt); border: 1px solid var(--border); border-radius: 8px; padding: 0.7rem 0.9rem; font-size: 0.76rem; color: var(--text-dim); display: none; }
+    .skipped.show { display: block; }
+    .skipped b { color: var(--orange); }
+    .skipped code { font-family: var(--font-mono); color: var(--red); font-size: 0.72rem; }
+
+    /* next-steps strip */
+    .next { margin-top: 1rem; background: var(--card-alt); border: 1px solid var(--border); border-radius: 10px; padding: 0.9rem 1rem; font-size: 0.8rem; }
+    .next h4 { color: var(--cream); font-size: 0.82rem; margin-bottom: 0.4rem; }
+    .next ol { margin-left: 1.1rem; color: var(--text-dim); display: grid; gap: 0.25rem; }
+    .next code { font-family: var(--font-mono); color: var(--teal-bright); font-size: 0.74rem; }
+    .next .mini { margin-left: 0.4rem; font-size: 0.7rem; padding: 0.15rem 0.55rem; }
+
+    /* CTA */
+    .cta-box { margin-top: 1.2rem; background: linear-gradient(135deg, var(--card-alt), var(--card)); border: 1px solid var(--gold-dim); border-radius: 12px; padding: 1.3rem; text-align: center; }
+    .cta-box h3 { font-family: var(--font-heading); color: var(--cream); font-size: 1.1rem; margin-bottom: 0.4rem; }
+    .cta-box p { color: var(--text-dim); font-size: 0.85rem; max-width: 460px; margin: 0 auto 0.9rem; }
+    .cta-btn { display: inline-block; background: var(--gold); color: var(--lapis); font-weight: 600; font-size: 0.88rem; padding: 0.6rem 1.5rem; border-radius: 8px; }
+    .cta-btn:hover { background: var(--teal-bright); color: var(--lapis); }
+
+    /* ── INFO ── */
+    .info { max-width: 820px; margin: 0 auto; padding: 1rem 1.5rem 2rem; }
+    .info h2 { font-family: var(--font-heading); font-size: 1.5rem; color: var(--cream); margin: 1.6rem 0 0.7rem; }
+    .info h3 { font-family: var(--font-heading); font-size: 1.12rem; color: var(--gold); margin: 1.3rem 0 0.5rem; }
+    .info p { color: var(--text-dim); margin-bottom: 0.8rem; }
+    .info strong { color: var(--text); }
+    .info code { font-family: var(--font-mono); font-size: 0.82rem; color: var(--teal-bright); background: var(--card); padding: 0.1rem 0.35rem; border-radius: 4px; }
+    .related { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.8rem; margin-top: 1rem; }
+    @media (max-width: 700px) { .related { grid-template-columns: 1fr; } }
+    .rel-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 0.9rem 1rem; font-size: 0.8rem; }
+    .rel-card a { font-weight: 600; }
+    .rel-card p { font-size: 0.74rem; margin: 0.25rem 0 0; }
+
+    footer { text-align: center; padding: 2rem; border-top: 1px solid var(--border); color: var(--text-dim); font-size: 0.8rem; margin-top: 3rem; }
+    footer a { color: var(--gold); }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="/" class="nav-logo">ABUZ8</a>
+    <div class="nav-links">
+      <a href="/tools/">Tools</a>
+      <a href="/blog/">Blog</a>
+      <a href="/pricing.html">Pricing</a>
+      <a href="/tools/ai-waiting-list-page.html" class="nav-cta">Join Waitlist</a>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <header class="hero">
+    <h1>XML <span>Sitemap Generator</span></h1>
+    <p>Paste your URLs, tune <code>lastmod</code> / <code>changefreq</code> / <code>priority</code>, and download a valid <strong>sitemap.xml</strong> ready for Google Search Console. Auto-priority by depth, dedupe, and protocol-limit checks built in.</p>
+    <div class="badges">
+      <span class="badge"><b>100%</b> client-side — URLs never leave your browser</span>
+      <span class="badge"><b>sitemaps.org</b> 0.9 protocol</span>
+      <span class="badge"><b>Free</b> · no signup</span>
+    </div>
+  </header>
+
+  <div class="wrap">
+    <!-- LEFT: CONTROLS -->
+    <div class="panel">
+      <h2>1 · Your URLs</h2>
+
+      <label for="base-url">Base URL <span style="text-transform:none;font-weight:400">(used to resolve relative paths)</span></label>
+      <input type="text" id="base-url" placeholder="https://example.com" spellcheck="false" />
+
+      <label for="url-list">URLs or paths — one per line</label>
+      <textarea id="url-list" spellcheck="false" placeholder="https://example.com/
+/about
+/blog/my-first-post
+/pricing
+# lines starting with # are ignored"></textarea>
+      <p class="hint">Mix full URLs and relative paths like <code>/about</code> — relative paths need the Base URL. Blank lines and <code>#</code> comments are skipped.</p>
+
+      <h2 style="margin-top:1.4rem">2 · Tag defaults</h2>
+      <div class="row">
+        <div>
+          <label for="lastmod-mode">lastmod</label>
+          <select id="lastmod-mode">
+            <option value="today" selected>Today</option>
+            <option value="custom">Custom date…</option>
+            <option value="none">Omit</option>
+          </select>
+          <input type="date" id="lastmod-date" style="margin-top:0.4rem; display:none" />
+        </div>
+        <div>
+          <label for="changefreq">changefreq</label>
+          <select id="changefreq">
+            <option value="">Omit</option>
+            <option value="always">always</option>
+            <option value="hourly">hourly</option>
+            <option value="daily">daily</option>
+            <option value="weekly" selected>weekly</option>
+            <option value="monthly">monthly</option>
+            <option value="yearly">yearly</option>
+            <option value="never">never</option>
+          </select>
+        </div>
+        <div>
+          <label for="priority">priority</label>
+          <select id="priority">
+            <option value="">Omit</option>
+            <option value="auto" selected>Auto (by depth)</option>
+            <option value="1.0">1.0</option>
+            <option value="0.9">0.9</option>
+            <option value="0.8">0.8</option>
+            <option value="0.7">0.7</option>
+            <option value="0.6">0.6</option>
+            <option value="0.5">0.5</option>
+            <option value="0.4">0.4</option>
+            <option value="0.3">0.3</option>
+            <option value="0.2">0.2</option>
+            <option value="0.1">0.1</option>
+          </select>
+          <p class="hint" id="auto-hint">Home 1.0 · depth 1 → 0.8 · depth 2 → 0.6 · deeper → 0.5</p>
+        </div>
+      </div>
+
+      <h2 style="margin-top:1.4rem">3 · Cleanup options</h2>
+      <div class="opts">
+        <label class="opt"><input type="checkbox" id="opt-dedupe" checked /> <span>Deduplicate URLs<small>Keep the first occurrence of each final URL</small></span></label>
+        <label class="opt"><input type="checkbox" id="opt-fragment" checked disabled /> <span>Strip #fragments<small>Required — fragments are invalid in sitemaps</small></span></label>
+        <label class="opt"><input type="checkbox" id="opt-query" /> <span>Strip query strings<small>Drop <code>?utm=…</code> and other parameters</small></span></label>
+        <label class="opt"><input type="checkbox" id="opt-sort" /> <span>Sort alphabetically<small>Otherwise input order is kept</small></span></label>
+      </div>
+      <div class="row" style="margin-top:0.6rem; grid-template-columns: 1fr 1fr;">
+        <div>
+          <label for="opt-slash">Trailing slash</label>
+          <select id="opt-slash">
+            <option value="keep" selected>Keep as-is</option>
+            <option value="add">Add to folders</option>
+            <option value="remove">Remove</option>
+          </select>
+        </div>
+        <div>
+          <label for="opt-www">Protocol</label>
+          <select id="opt-www">
+            <option value="keep" selected>Keep as-is</option>
+            <option value="https">Force HTTPS</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="chips">
+        <span class="chip ok">URLs <b id="stat-count">0</b></span>
+        <span class="chip" id="chip-skipped">Skipped <b id="stat-skipped">0</b></span>
+        <span class="chip" id="chip-bytes">Size <b id="stat-bytes">0 B</b></span>
+        <span class="chip" id="chip-limit">Limit <b id="stat-limit">OK</b></span>
+      </div>
+    </div>
+
+    <!-- RIGHT: OUTPUT -->
+    <div class="panel">
+      <div class="out-head">
+        <span class="out-file">sitemap.xml</span>
+        <div class="out-actions">
+          <button class="act-btn" id="copy-btn" onclick="copyOutput()">Copy</button>
+          <button class="act-btn primary" onclick="downloadOutput()">Download</button>
+        </div>
+      </div>
+      <pre class="output" id="output"></pre>
+      <div class="skipped" id="skipped-box"></div>
+
+      <div class="next">
+        <h4>Next steps</h4>
+        <ol>
+          <li>Upload <code>sitemap.xml</code> to your site root.</li>
+          <li>Add <code id="robots-line">Sitemap: https://example.com/sitemap.xml</code> to your robots.txt <button class="act-btn mini" id="robots-copy" onclick="copyRobotsLine()">Copy line</button> — or build the whole file with the <a href="/tools/ai-robots-txt-generator">AI Robots.txt Generator</a>.</li>
+          <li>Submit it in Google Search Console → Indexing → Sitemaps.</li>
+        </ol>
+      </div>
+
+      <!-- CTA -->
+      <div class="cta-box">
+        <h3>Want your whole site's SEO handled by an agent?</h3>
+        <p>QADIR OS agents generate and maintain sitemaps, meta tags, robots.txt and schema automatically — and resubmit to Search Console when your site changes.</p>
+        <a href="/tools/ai-waiting-list-page.html" class="cta-btn">Join the Waitlist</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- INFO / SEO COPY -->
+  <section class="info">
+    <h2>Why your site needs an XML sitemap</h2>
+    <p>Search engines discover pages two ways: by following links, and by reading your <strong>XML sitemap</strong>. A sitemap is the file — usually at <code>https://yoursite.com/sitemap.xml</code> — that lists every URL you want crawled, so new pages, deep pages, and pages with few internal links get found and indexed instead of sitting invisible. It won't boost rankings by itself, but nothing gets ranked until it gets crawled.</p>
+
+    <h3>What the three optional tags actually do</h3>
+    <p><strong>lastmod</strong> tells crawlers when a page last changed — Google uses it when it's consistently truthful, so never stamp every page with today's date on every regenerate. <strong>changefreq</strong> and <strong>priority</strong> are hints that Google mostly ignores but other crawlers still read; emit them if they're accurate, omit them if they're noise. This generator lets you do either.</p>
+
+    <h3>How auto-priority works</h3>
+    <p>With priority set to <em>Auto</em>, the tool assigns weight by URL depth: your homepage gets <code>1.0</code>, top-level pages like <code>/pricing</code> get <code>0.8</code>, second-level pages like <code>/blog/post</code> get <code>0.6</code>, and anything deeper gets <code>0.5</code>. That mirrors how link equity typically flows through a site and saves you hand-tuning hundreds of rows.</p>
+
+    <h3>Protocol limits — 50,000 URLs / 50MB</h3>
+    <p>The sitemaps.org protocol caps a single file at <strong>50,000 URLs</strong> and <strong>50MB uncompressed</strong>. The live counters in this tool track both while you type. If you're over the line, split your URLs into multiple sitemaps (by section or date) and reference them from a sitemap index file.</p>
+
+    <h3>Privacy</h3>
+    <p>Everything runs in your browser — your URL list is never uploaded, logged, or stored. Refresh the page and it's gone.</p>
+
+    <h2>Finish your on-page SEO stack</h2>
+    <div class="related">
+      <div class="rel-card">
+        <a href="/tools/meta-tag-generator">Meta Tag Generator</a>
+        <p>Title, description, Open Graph and Twitter cards with live SERP preview.</p>
+      </div>
+      <div class="rel-card">
+        <a href="/tools/ai-robots-txt-generator">AI Robots.txt Generator</a>
+        <p>Control Googlebot plus 25+ AI crawlers, and generate llms.txt.</p>
+      </div>
+      <div class="rel-card">
+        <a href="/tools/schema-markup-generator">Schema Markup Generator</a>
+        <p>JSON-LD structured data for rich results — 11 schema types.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <p>&copy; 2026 <a href="/">ABUZ8 LLC</a> &middot; All tools run 100% client-side &middot; <a href="/tools/">More Free Tools</a></p>
+  </footer>
+
+  <script>
+    // ══════════════════════════════════════════════════════════════
+    // XML SITEMAP GENERATOR — pure logic first, DOM wiring second.
+    // Mental model: a conveyor belt — raw lines go in one end, get
+    // washed (normalize), inspected (validate), weighed (priority),
+    // and boxed (XML) at the other end.
+    // ══════════════════════════════════════════════════════════════
+
+    // [PURE-BEGIN] — DOM-free, unit-testable core
+
+    function escapeXml(s) {
+      return String(s)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&apos;');
+    }
+
+    // Parse raw textarea input → array of candidate strings.
+    function parseInput(raw) {
+      return String(raw || '').split(/\r?\n/)
+        .map(l => l.trim())
+        .filter(l => l && !l.startsWith('#'));
+    }
+
+    // Normalize one candidate against options. Returns
+    // { ok:true, url } or { ok:false, reason, raw }.
+    function normalizeUrl(raw, baseUrl, opts) {
+      opts = opts || {};
+      let input = raw.trim();
+      let u;
+      try {
+        if (/^https?:\/\//i.test(input)) {
+          u = new URL(input);
+        } else if (input.startsWith('/')) {
+          if (!baseUrl) return { ok: false, reason: 'relative path but no Base URL set', raw: raw };
+          u = new URL(input, baseUrl);
+        } else if (/^[a-z0-9.-]+\.[a-z]{2,}(\/|$)/i.test(input)) {
+          u = new URL('https://' + input); // bare domain like example.com/page
+        } else {
+          return { ok: false, reason: 'not a URL or /path', raw: raw };
+        }
+      } catch (e) {
+        return { ok: false, reason: 'invalid URL', raw: raw };
+      }
+      if (u.protocol !== 'http:' && u.protocol !== 'https:') {
+        return { ok: false, reason: 'unsupported protocol', raw: raw };
+      }
+      u.hash = '';                                   // fragments never belong in sitemaps
+      if (opts.stripQuery) u.search = '';
+      if (opts.hostMode === 'https' && u.protocol === 'http:') u.protocol = 'https:';
+      let out = u.toString();
+      // Trailing slash policy (path part only; never touch the bare origin root "/")
+      const isRoot = u.pathname === '/';
+      const looksLikeFile = /\.[a-z0-9]{1,8}$/i.test(u.pathname);
+      if (!isRoot && !looksLikeFile) {
+        if (opts.slashMode === 'add' && !u.pathname.endsWith('/')) {
+          u.pathname = u.pathname + '/'; out = u.toString();
+        } else if (opts.slashMode === 'remove' && u.pathname.endsWith('/')) {
+          u.pathname = u.pathname.replace(/\/+$/, ''); out = u.toString();
+        }
+      }
+      return { ok: true, url: out };
+    }
+
+    // Depth-based priority: home 1.0, depth1 0.8, depth2 0.6, deeper 0.5.
+    function depthPriority(url) {
+      let path = '/';
+      try { path = new URL(url).pathname; } catch (e) { /* keep '/' */ }
+      const segs = path.split('/').filter(Boolean);
+      // index.html at root counts as root
+      if (segs.length === 1 && /^index\.html?$/i.test(segs[0])) return '1.0';
+      if (segs.length === 0) return '1.0';
+      if (segs.length === 1) return '0.8';
+      if (segs.length === 2) return '0.6';
+      return '0.5';
+    }
+
+    // Build entry objects from raw text + settings.
+    function buildEntries(raw, baseUrl, opts) {
+      const lines = parseInput(raw);
+      const entries = [];
+      const skipped = [];
+      const seen = new Set();
+      for (const line of lines) {
+        const n = normalizeUrl(line, baseUrl, opts);
+        if (!n.ok) { skipped.push(n); continue; }
+        if (opts.dedupe && seen.has(n.url)) continue;
+        seen.add(n.url);
+        entries.push({ loc: n.url });
+      }
+      if (opts.sort) entries.sort((a, b) => a.loc < b.loc ? -1 : a.loc > b.loc ? 1 : 0);
+      for (const e of entries) {
+        if (opts.lastmod) e.lastmod = opts.lastmod;               // 'YYYY-MM-DD' or absent
+        if (opts.changefreq) e.changefreq = opts.changefreq;
+        if (opts.priority === 'auto') e.priority = depthPriority(e.loc);
+        else if (opts.priority) e.priority = opts.priority;
+      }
+      return { entries: entries, skipped: skipped };
+    }
+
+    // Entries → sitemap.xml text.
+    function buildXml(entries) {
+      const out = [];
+      out.push('<?xml version="1.0" encoding="UTF-8"?>');
+      out.push('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">');
+      for (const e of entries) {
+        out.push('  <url>');
+        out.push('    <loc>' + escapeXml(e.loc) + '</loc>');
+        if (e.lastmod) out.push('    <lastmod>' + escapeXml(e.lastmod) + '</lastmod>');
+        if (e.changefreq) out.push('    <changefreq>' + escapeXml(e.changefreq) + '</changefreq>');
+        if (e.priority) out.push('    <priority>' + escapeXml(e.priority) + '</priority>');
+        out.push('  </url>');
+      }
+      out.push('</urlset>');
+      out.push('');
+      return out.join('\n');
+    }
+
+    function byteSize(str) {
+      if (typeof TextEncoder !== 'undefined') return new TextEncoder().encode(str).length;
+      return str.length;
+    }
+
+    function humanBytes(n) {
+      if (n < 1024) return n + ' B';
+      if (n < 1048576) return (n / 1024).toFixed(1) + ' KB';
+      return (n / 1048576).toFixed(2) + ' MB';
+    }
+
+    const LIMIT_URLS = 50000;
+    const LIMIT_BYTES = 52428800; // 50MB
+
+    function limitStatus(count, bytes) {
+      if (count > LIMIT_URLS || bytes > LIMIT_BYTES) return 'OVER';
+      if (count > LIMIT_URLS * 0.9 || bytes > LIMIT_BYTES * 0.9) return 'NEAR';
+      return 'OK';
+    }
+
+    // [PURE-END]
+
+    // ── DOM WIRING ──
+    const $ = id => document.getElementById(id);
+
+    function todayIso() {
+      const d = new Date();
+      const m = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      return d.getFullYear() + '-' + m + '-' + day;
+    }
+
+    function collectOpts() {
+      const lastmodMode = $('lastmod-mode').value;
+      let lastmod = '';
+      if (lastmodMode === 'today') lastmod = todayIso();
+      else if (lastmodMode === 'custom') lastmod = $('lastmod-date').value || '';
+      return {
+        lastmod: lastmod,
+        changefreq: $('changefreq').value,
+        priority: $('priority').value,
+        dedupe: $('opt-dedupe').checked,
+        stripQuery: $('opt-query').checked,
+        sort: $('opt-sort').checked,
+        slashMode: $('opt-slash').value,
+        hostMode: $('opt-www').value
+      };
+    }
+
+    let lastXml = '';
+
+    function generate() {
+      const baseUrl = $('base-url').value.trim();
+      const opts = collectOpts();
+      const res = buildEntries($('url-list').value, baseUrl, opts);
+      lastXml = buildXml(res.entries);
+
+      // Syntax-tinted preview: tags gold, text teal, declaration dim.
+      const pre = $('output');
+      pre.innerHTML = lastXml.split('\n').map(line => {
+        const e = escapeXml(line);
+        if (line.startsWith('<?')) return '<span class="c">' + e + '</span>';
+        return e.replace(/(&lt;\/?[a-z]+&gt;)/g, '<span class="k">$1</span>')
+                .replace(/(&lt;urlset[^&]*&gt;)/g, '<span class="k">$1</span>');
+      }).join('\n');
+
+      // Stats
+      const bytes = byteSize(lastXml);
+      $('stat-count').textContent = res.entries.length;
+      $('stat-skipped').textContent = res.skipped.length;
+      $('stat-bytes').textContent = humanBytes(bytes);
+      const lim = limitStatus(res.entries.length, bytes);
+      $('stat-limit').textContent = lim === 'OK' ? 'OK' : (lim === 'NEAR' ? 'Near limit' : 'OVER 50k/50MB');
+      $('chip-limit').className = 'chip ' + (lim === 'OK' ? 'ok' : lim === 'NEAR' ? 'warn' : 'bad');
+      $('chip-skipped').className = 'chip' + (res.skipped.length ? ' warn' : '');
+
+      // Skipped detail box
+      const box = $('skipped-box');
+      if (res.skipped.length) {
+        box.className = 'skipped show';
+        box.innerHTML = '<b>' + res.skipped.length + ' line' + (res.skipped.length > 1 ? 's' : '') + ' skipped:</b> ' +
+          res.skipped.slice(0, 8).map(s => '<code>' + escapeXml(s.raw) + '</code> (' + escapeXml(s.reason) + ')').join(' · ') +
+          (res.skipped.length > 8 ? ' · …' : '');
+      } else {
+        box.className = 'skipped';
+        box.innerHTML = '';
+      }
+
+      // robots.txt line
+      let origin = 'https://example.com';
+      try { if (baseUrl) origin = new URL(/^https?:\/\//i.test(baseUrl) ? baseUrl : 'https://' + baseUrl).origin; } catch (e) { /* keep default */ }
+      $('robots-line').textContent = 'Sitemap: ' + origin + '/sitemap.xml';
+    }
+
+    function copyOutput() {
+      navigator.clipboard.writeText(lastXml).then(() => {
+        const btn = $('copy-btn');
+        btn.textContent = 'Copied!';
+        btn.classList.add('copied');
+        setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+      });
+    }
+
+    function copyRobotsLine() {
+      navigator.clipboard.writeText($('robots-line').textContent).then(() => {
+        const btn = $('robots-copy');
+        btn.textContent = 'Copied!';
+        setTimeout(() => { btn.textContent = 'Copy line'; }, 2000);
+      });
+    }
+
+    function downloadOutput() {
+      const blob = new Blob([lastXml], { type: 'application/xml' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'sitemap.xml';
+      a.click();
+      URL.revokeObjectURL(a.href);
+    }
+
+    // lastmod custom-date toggle
+    $('lastmod-mode').addEventListener('change', () => {
+      $('lastmod-date').style.display = $('lastmod-mode').value === 'custom' ? 'block' : 'none';
+      generate();
+    });
+    // auto-hint visibility
+    $('priority').addEventListener('change', () => {
+      $('auto-hint').style.display = $('priority').value === 'auto' ? 'block' : 'none';
+      generate();
+    });
+
+    // Live regen on any input
+    ['base-url', 'url-list', 'lastmod-date', 'changefreq', 'opt-dedupe', 'opt-query', 'opt-sort', 'opt-slash', 'opt-www']
+      .forEach(id => {
+        $(id).addEventListener('input', generate);
+        $(id).addEventListener('change', generate);
+      });
+
+    // INIT — seed with a tiny example so the output is never blank
+    if (!$('url-list').value) {
+      $('base-url').value = 'https://example.com';
+      $('url-list').value = ['https://example.com/', '/about', '/pricing', '/blog/hello-world'].join('\n');
+    }
+    generate();
+  </script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+
+<!-- ABUZ8 EARLY ACCESS — injected 2026-08-09-earlyaccess -->
+<section class="waitlist-wrap" id="abuz8-early-access" aria-labelledby="abuz8-ea-h">
+  <div class="abuz8-ea-card">
+    <p class="abuz8-ea-kicker">ABUZ8 AI</p>
+    <h2 id="abuz8-ea-h">Stop letting crawlers miss your pages &mdash; let an agent own it.</h2>
+    <p class="abuz8-ea-sub">
+      This tool is free and always will be. What we are building next is the layer above it:
+      an agent that runs this step for you on every repo, every deploy, every page &mdash;
+      without you opening a tab. Early Access opens in waves.
+    </p>
+    <div class="abuz8-ea-row">
+      <label class="abuz8-ea-sr" for="wl-email">Email address</label>
+      <input id="wl-email" type="email" inputmode="email" autocomplete="email"
+             placeholder="you@company.com" aria-describedby="wl-msg">
+      <button id="wl-submit" type="button">Join Early Access</button>
+    </div>
+    <p id="wl-msg" class="abuz8-ea-msg" role="status" aria-live="polite"></p>
+    <p class="abuz8-ea-fine">No spam. No card. Leave any time.</p>
+  </div>
+</section>
+
+<style>
+  #abuz8-early-access{
+    --ea-lapis:#0a1628; --ea-lapis2:#0f2040; --ea-lapis3:#163060;
+    --ea-gold:#c9a84c; --ea-gold2:#e8d48b;
+    --ea-turq:#0e9f6e; --ea-turq2:#2fbf8f;
+    --ea-text:#e8e4d8; --ea-dim:#8a9aaa; --ea-border:rgba(201,168,76,0.18);
+    display:block; padding:56px 20px 64px; background:var(--ea-lapis);
+    font-family:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;
+  }
+  #abuz8-early-access *{box-sizing:border-box;}
+  .abuz8-ea-card{
+    max-width:720px; margin:0 auto; padding:36px 32px;
+    background:linear-gradient(135deg,var(--ea-lapis2),var(--ea-lapis3));
+    border:1px solid var(--ea-border); border-radius:18px;
+    box-shadow:0 8px 32px rgba(0,0,0,0.4);
+  }
+  .abuz8-ea-kicker{
+    margin:0 0 10px; font-size:11px; letter-spacing:.18em; text-transform:uppercase;
+    color:var(--ea-gold); font-family:'JetBrains Mono',ui-monospace,Menlo,Consolas,monospace;
+  }
+  #abuz8-early-access h2{
+    margin:0 0 14px; font-family:'Playfair Display',Georgia,serif;
+    font-size:clamp(22px,3.4vw,32px); line-height:1.22; font-weight:600; color:var(--ea-text);
+  }
+  .abuz8-ea-sub{margin:0 0 22px; color:var(--ea-dim); font-size:15px; line-height:1.6;}
+  .abuz8-ea-row{display:flex; gap:10px; flex-wrap:wrap;}
+  .abuz8-ea-sr{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap;}
+  #abuz8-early-access input#wl-email{
+    flex:1 1 260px; min-width:0; padding:13px 15px; font-size:15px;
+    color:var(--ea-text); background:rgba(10,22,40,0.72);
+    border:1px solid var(--ea-border); border-radius:10px; font-family:inherit;
+  }
+  #abuz8-early-access input#wl-email::placeholder{color:#6a7a8a;}
+  #abuz8-early-access input#wl-email:focus{
+    outline:none; border-color:var(--ea-gold); box-shadow:0 0 0 3px rgba(201,168,76,0.16);
+  }
+  #abuz8-early-access button#wl-submit{
+    flex:0 0 auto; padding:13px 26px; font-size:15px; font-weight:600; cursor:pointer;
+    color:#06121f; background:linear-gradient(135deg,var(--ea-gold2),var(--ea-gold));
+    border:none; border-radius:10px; font-family:inherit;
+    transition:transform .16s ease, filter .16s ease;
+  }
+  #abuz8-early-access button#wl-submit:hover{transform:translateY(-1px); filter:brightness(1.06);}
+  #abuz8-early-access button#wl-submit:focus-visible{outline:2px solid var(--ea-turq2); outline-offset:2px;}
+  #abuz8-early-access button#wl-submit[disabled]{opacity:.6; cursor:default; transform:none;}
+  .abuz8-ea-msg{margin:14px 0 0; min-height:20px; font-size:14px; color:var(--ea-dim);}
+  .abuz8-ea-fine{margin:10px 0 0; font-size:12.5px; color:#6a7a8a;}
+  @media (prefers-reduced-motion:reduce){
+    #abuz8-early-access button#wl-submit{transition:none;}
+  }
+  @media (max-width:520px){
+    .abuz8-ea-card{padding:28px 20px;}
+    #abuz8-early-access button#wl-submit{flex:1 1 100%;}
+  }
+</style>
+
+<script>
+(function(){
+  var TOOL = 'xml-sitemap-generator';
+  var input = document.getElementById('wl-email');
+  var btn   = document.getElementById('wl-submit');
+  var msg   = document.getElementById('wl-msg');
+  if (!input || !btn || !msg) return;
+
+  function say(text, ok){
+    msg.style.color = ok === true ? '#2fbf8f' : (ok === false ? '#e05555' : '#8a9aaa');
+    msg.textContent = text;
+  }
+
+  async function join(){
+    var email = (input.value || '').trim();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      say('Please enter a valid email address.', false);
+      input.focus();
+      return;
+    }
+    btn.disabled = true;
+    say('Saving your spot\u2026');
+
+    var payload = { email: email, tool: TOOL, ts: new Date().toISOString() };
+    var saved = false;
+    try {
+      var r = await fetch('/api/waitlist', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      if (r.ok) saved = true;
+    } catch (_) {}
+
+    try {
+      var list = JSON.parse(localStorage.getItem('abuz8_waitlist') || '[]');
+      list.push(payload);
+      localStorage.setItem('abuz8_waitlist', JSON.stringify(list));
+    } catch (_) {}
+
+    try { if (typeof gtag === 'function') gtag('event', 'waitlist_join', { tool: TOOL }); } catch (_) {}
+
+    say(saved
+      ? '\u2713 You\u2019re in. Watch your inbox for the Early Access invite.'
+      : '\u2713 Saved locally. We\u2019ll confirm by email once you reconnect.', true);
+    input.value = '';
+    btn.disabled = false;
+  }
+
+  btn.addEventListener('click', join);
+  input.addEventListener('keydown', function(e){ if (e.key === 'Enter') join(); });
+})();
+</script>
+<!-- /ABUZ8 EARLY ACCESS -->
+
+</body>
+</html>

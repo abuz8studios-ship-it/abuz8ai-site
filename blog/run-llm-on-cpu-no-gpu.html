@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Run an LLM on CPU with No GPU: What Actually Works in 2026 | ABUZ8</title>
+<meta name="description" content="Run an LLM on CPU with no GPU — which models are realistic, how much RAM you need, what speed to expect, and the free calculators to size it before you download 40GB of weights.">
+<meta name="keywords" content="run llm on cpu, llm no gpu, run ai model without gpu, cpu inference llm, local llm cpu only">
+<link rel="canonical" href="https://abuz8ai.com/blog/run-llm-on-cpu-no-gpu">
+<meta property="og:title" content="Run an LLM on CPU with No GPU: What Actually Works">
+<meta property="og:type" content="article">
+<link rel="stylesheet" href="/blog/_blog-base.css">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@300;400;600;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
+<style>
+:root{
+  --lapis:#F8FAFC; --lapis-mid:#EEF3F8; --lapis-light:#E3EBF3;
+  --card:#FFFFFF; --border:#D7E0EA;
+  --cream:#1F3A5F; --ivory:#16324F; --text:#2C3E50; --dim:#5A6B7C;
+  --gold:#1F5B94; --gold-light:#12866E; --gold-dim:#7DA3C8;
+  --turq:#0E7C63; --turq-light:#1F5B94; --turq-bright:#12866E;
+  --primary:#2E75B6;
+}
+code{background:#EEF3F8;color:#1F5B94;font-family:'JetBrains Mono',monospace;font-size:0.85em;padding:0.1em 0.35em;border-radius:4px;}
+.callout.cta{background:#EEF3F8;border:1px solid #2E75B6;border-radius:12px;padding:22px 24px;margin:36px 0 10px;}
+.callout.cta p{margin:0;color:#2C3E50;}
+.foot{color:#5A6B7C;font-size:13px;margin-top:40px;border-top:1px solid #D7E0EA;padding-top:18px;}
+.foot a{color:#1F5B94;}
+</style>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","headline":"Run an LLM on CPU with No GPU: What Actually Works","datePublished":"2026-07-24","author":{"@type":"Organization","name":"ABUZ8 AI"}}
+</script>
+</head>
+<body>
+<div class="container">
+  <a href="/blog/" class="back">&larr; ABUZ8 BLOG</a>
+  <h1>Run an LLM on CPU with No GPU: What Actually Works</h1>
+  <div class="meta-row"><span>DEVELOPERS</span><span class="dot"></span><span>JULY 24, 2026</span><span class="dot"></span><span>5 MIN READ</span></div>
+
+  <p>You can absolutely <strong>run an LLM on CPU with no GPU</strong> — the question is which model, how fast, and whether the speed is usable for what you're doing. The honest answer in 2026 is: small and mid-size quantized models run comfortably on a normal computer with enough RAM, and they're plenty for a lot of real work. What you can't do is run a giant frontier-scale model at frontier speed on a laptop. This post draws the realistic line and gives you the tools to size it before you download tens of gigabytes of weights.</p>
+
+  <h2>Why CPU inference is viable at all</h2>
+  <p>Two things made this practical: quantization and better runtimes. Quantization shrinks a model's weights from 16 bits down to 4 or 5 bits, cutting the memory footprint by roughly three-quarters with a modest quality cost — the mechanics are covered in <a href="/blog/llm-quantization-explained" class="in">LLM quantization explained</a>. Combined with runtimes that are tuned for CPU math, a quantized model that used to demand a data-center GPU now fits in ordinary system RAM and generates text at a readable pace. The trade-off is speed: a CPU produces tokens slower than a GPU, so the win is for tasks where a few seconds of latency is fine, not real-time chat at scale.</p>
+
+  <h2>What size model is realistic on CPU</h2>
+  <p>The binding constraint on CPU isn't compute, it's memory — the whole model has to fit in RAM, plus room for the context. As a rough guide: a small quantized model runs on a typical 8GB machine, a mid-size one wants 16GB, and larger open models push you toward 32GB and up. The safe move is to check the exact requirement before committing, because "it downloaded" and "it runs without swapping to disk" are different things. Put your target model and quantization into the <a href="/tools/ai-vram-calculator.html" class="in">VRAM &amp; RAM calculator</a> — it works for system memory too, and it tells you whether a model fits before you spend an hour downloading it.</p>
+
+  <h2>The file format you'll be using</h2>
+  <p>Almost every CPU-runnable model you'll find ships as a <code>GGUF</code> file — a single-file format built for exactly this: quantized weights that CPU-first runtimes load directly. If that term is new, <a href="/blog/what-is-a-gguf-model" class="in">what is a GGUF model</a> explains it in plain language. The practical takeaway: when you're browsing for a model to run without a GPU, filter for GGUF and pick a 4-bit or 5-bit quant to start, then step up the quality if your RAM allows.</p>
+
+  <h2>What speed to actually expect</h2>
+  <p>Set expectations honestly and you'll be happy; expect GPU speed and you'll be disappointed. On CPU, a small quantized model typically feels responsive for short answers, while longer generations noticeably crawl compared to a hosted API. Before you architect anything around it, estimate the throughput for your model and hardware with the <a href="/tools/ai-inference-speed-calculator.html" class="in">inference speed calculator</a> so you know whether you're looking at a snappy assistant or a batch job that runs while you get coffee. For anything latency-sensitive at volume, CPU-only is the wrong tool — but for private, occasional, or background inference, it's excellent.</p>
+
+  <h2>Is CPU-only cheaper than paying an API?</h2>
+  <p>Sometimes — it depends on volume. The hardware you already own is a sunk cost, so incremental inference is nearly free, which is compelling if you'd otherwise be paying per token all day. But if your volume is low, a hosted API may cost less than the time you'd spend maintaining a local setup. Run both scenarios through the <a href="/tools/ai-self-host-calculator.html" class="in">self-host calculator</a> to see the crossover, and read <a href="/blog/cut-ai-api-costs-with-local-models" class="in">cutting AI API costs with local models</a> for the full cost argument.</p>
+
+  <h2>Getting a model running</h2>
+  <p>Once you've confirmed a model fits your RAM, the setup is straightforward — the model-specific walkthroughs cover it end to end for the popular options: <a href="/blog/how-to-run-llama-locally" class="in">running Llama locally</a>, <a href="/blog/how-to-run-qwen-locally" class="in">running Qwen locally</a>, and <a href="/blog/how-to-run-deepseek-locally" class="in">running DeepSeek locally</a>. All three run on CPU when you pick a small enough quant; the guides note where a GPU helps but isn't required.</p>
+
+  <div class="callout cta">
+    <p><strong>No GPU is not a dead end — it's a sizing problem.</strong> The calculators above are free and answer it in seconds, no signup. And QADIR OS runs local brains on your own machine and falls back to cloud only when the task needs it, so a modest computer still gets you a capable agent. <a href="/" class="in">Join QADIR OS early access</a>.</p>
+  </div>
+  <div class="foot">Built by <a href="/">ABUZ8 LLC</a> — we're building QADIR OS, the sovereign agentic operating system.</div>
+</div>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+<script src="/blog/_blog-shared.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>

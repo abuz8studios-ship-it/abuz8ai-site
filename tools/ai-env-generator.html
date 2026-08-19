@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI ENV File Generator — ABUZ8</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--lapis:#0a1628;--lapis2:#0f1f3d;--lapis3:#162544;--gold:#c9a84c;--turq:#0e9f6e;--turq2:#22b5a0;--cream:#f5f0e8;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--lapis);color:var(--cream);font-family:'Inter',sans-serif;min-height:100vh;}
+.hero{background:linear-gradient(135deg,var(--lapis2) 0%,var(--lapis3) 100%);padding:48px 24px 36px;text-align:center;border-bottom:1px solid rgba(201,168,76,.15);}
+.hero h1{font-family:'Playfair Display',serif;font-size:clamp(2rem,5vw,3rem);color:var(--gold);margin-bottom:8px;}
+.hero p{color:rgba(245,240,232,.7);font-size:1.05rem;max-width:560px;margin:0 auto;}
+.main{max-width:1050px;margin:0 auto;padding:32px 20px;}
+.section-label{font-size:.78rem;font-weight:600;color:rgba(245,240,232,.35);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;}
+.stack-grid{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:28px;}
+.stack-btn{background:var(--lapis2);border:1px solid rgba(201,168,76,.12);border-radius:8px;padding:10px 16px;cursor:pointer;text-align:center;font-size:.85rem;color:rgba(245,240,232,.6);transition:all .2s;display:flex;align-items:center;gap:8px;}
+.stack-btn.active{background:rgba(201,168,76,.1);border-color:var(--gold);color:var(--gold);}
+.stack-btn:hover{border-color:rgba(201,168,76,.4);color:var(--cream);}
+.stack-icon{font-size:1.1rem;}
+.env-editor{background:var(--lapis2);border:1px solid rgba(201,168,76,.12);border-radius:12px;overflow:hidden;margin-bottom:24px;}
+.env-toolbar{display:flex;align-items:center;gap:8px;padding:10px 16px;border-bottom:1px solid rgba(201,168,76,.1);background:var(--lapis3);}
+.env-filename{font-family:'JetBrains Mono',monospace;font-size:.82rem;color:rgba(245,240,232,.5);flex:1;}
+.tb-btn{background:none;border:1px solid rgba(201,168,76,.15);border-radius:5px;color:rgba(245,240,232,.4);padding:5px 12px;font-size:.77rem;cursor:pointer;}
+.tb-btn:hover{border-color:var(--gold);color:var(--gold);}
+.env-vars-list{padding:0;}
+.var-row{display:grid;grid-template-columns:220px 1fr auto auto;gap:0;border-bottom:1px solid rgba(201,168,76,.06);align-items:stretch;}
+.var-row:last-child{border-bottom:none;}
+.var-key{background:rgba(0,0,0,.15);border:none;border-right:1px solid rgba(201,168,76,.08);color:var(--gold);font-family:'JetBrains Mono',monospace;font-size:.8rem;padding:10px 14px;width:100%;outline:none;}
+.var-key:focus{background:rgba(0,0,0,.25);}
+.var-val{background:transparent;border:none;color:var(--cream);font-family:'JetBrains Mono',monospace;font-size:.8rem;padding:10px 14px;width:100%;outline:none;}
+.var-val:focus{background:rgba(255,255,255,.02);}
+.var-val.secret{color:rgba(245,240,232,.35);letter-spacing:.1em;}
+.var-secret-toggle{background:none;border:none;border-left:1px solid rgba(201,168,76,.06);color:rgba(245,240,232,.25);padding:0 12px;cursor:pointer;font-size:.85rem;}
+.var-secret-toggle:hover{color:var(--gold);}
+.var-remove{background:none;border:none;border-left:1px solid rgba(201,168,76,.06);color:rgba(239,68,68,.3);padding:0 12px;cursor:pointer;font-size:.85rem;}
+.var-remove:hover{color:#ef4444;}
+.var-comment{background:rgba(201,168,76,.03);border:none;border-bottom:1px solid rgba(201,168,76,.06);color:rgba(245,240,232,.3);font-family:'JetBrains Mono',monospace;font-size:.75rem;padding:6px 14px;width:100%;grid-column:1/-1;outline:none;font-style:italic;}
+.var-comment:focus{background:rgba(201,168,76,.05);}
+.section-divider{background:var(--lapis3);border:none;border-bottom:1px solid rgba(201,168,76,.06);color:var(--gold);font-family:'JetBrains Mono',monospace;font-size:.75rem;font-weight:600;padding:8px 14px;grid-column:1/-1;text-transform:uppercase;letter-spacing:.08em;}
+.add-row{display:flex;gap:8px;padding:12px 14px;border-top:1px solid rgba(201,168,76,.1);}
+.add-key-input{background:var(--lapis3);border:1px solid rgba(201,168,76,.12);border-radius:6px;color:var(--cream);font-family:'JetBrains Mono',monospace;font-size:.8rem;padding:8px 12px;flex:1;outline:none;}
+.add-key-input:focus{border-color:rgba(201,168,76,.35);}
+.add-var-btn{background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.25);border-radius:6px;color:var(--gold);padding:8px 16px;font-size:.82rem;cursor:pointer;}
+.add-var-btn:hover{background:rgba(201,168,76,.18);}
+.output-section{margin-top:8px;}
+.out-panel{background:var(--lapis2);border:1px solid rgba(201,168,76,.12);border-radius:12px;overflow:hidden;}
+.out-tabs{display:flex;border-bottom:1px solid rgba(201,168,76,.1);}
+.out-tab{padding:12px 20px;font-size:.83rem;color:rgba(245,240,232,.4);cursor:pointer;border-bottom:2px solid transparent;}
+.out-tab.active{color:var(--gold);border-bottom-color:var(--gold);}
+.out-code{background:var(--lapis3);margin:16px;border-radius:8px;padding:20px;font-family:'JetBrains Mono',monospace;font-size:.8rem;line-height:1.8;white-space:pre;overflow-x:auto;}
+.env-key-h{color:var(--gold);}
+.env-val-h{color:rgba(245,240,232,.8);}
+.env-comment-h{color:rgba(245,240,232,.3);font-style:italic;}
+.env-section-h{color:var(--turq2);font-weight:700;}
+.gen-actions{display:flex;gap:10px;padding:12px 16px;border-top:1px solid rgba(201,168,76,.1);}
+.action-btn{background:var(--lapis3);border:1px solid rgba(201,168,76,.15);border-radius:6px;color:rgba(245,240,232,.6);padding:8px 16px;font-size:.82rem;cursor:pointer;}
+.action-btn:hover{border-color:var(--gold);color:var(--gold);}
+.gen-all-btn{background:var(--gold);color:var(--lapis);border:none;border-radius:8px;padding:12px 28px;font-weight:700;font-size:.95rem;cursor:pointer;margin-bottom:24px;width:100%;}
+.gen-all-btn:hover{opacity:.88;}
+.example-template{background:var(--lapis2);border:1px solid rgba(201,168,76,.08);border-radius:8px;padding:14px;font-size:.82rem;color:rgba(245,240,232,.5);margin-bottom:16px;cursor:pointer;transition:border-color .2s;}
+.example-template:hover{border-color:rgba(201,168,76,.3);}
+.security-tips{background:rgba(201,168,76,.05);border:1px solid rgba(201,168,76,.15);border-radius:10px;padding:16px 20px;margin-top:24px;}
+.st-title{font-size:.82rem;font-weight:600;color:var(--gold);margin-bottom:10px;}
+.st-tip{font-size:.8rem;color:rgba(245,240,232,.6);margin-bottom:6px;display:flex;gap:8px;}
+.st-tip::before{content:'⚠️';flex-shrink:0;}
+.waitlist{background:linear-gradient(135deg,var(--lapis3),var(--lapis2));border:1px solid rgba(201,168,76,.2);border-radius:12px;padding:32px;text-align:center;margin-top:40px;}
+.waitlist h3{font-family:'Playfair Display',serif;color:var(--gold);font-size:1.5rem;margin-bottom:8px;}
+.wl-form{display:flex;gap:10px;max-width:440px;margin:0 auto;}
+.wl-input{flex:1;background:var(--lapis);border:1px solid rgba(201,168,76,.25);border-radius:8px;color:var(--cream);padding:11px 16px;font-size:.92rem;outline:none;}
+.wl-btn{background:var(--gold);color:var(--lapis);border:none;border-radius:8px;padding:11px 22px;font-weight:600;cursor:pointer;}
+</style>
+<link rel="canonical" href="https://abuz8ai.com/tools/ai-env-generator">
+<meta name="description" content="AI ENV Generator — Generate .env across formats. Free, no signup, runs entirely in your browser. One of 169 free AI and developer tools by ABUZ8.">
+</head>
+<body>
+<div class="hero">
+  <h1>⚙️ AI ENV File Generator</h1>
+  <p>Pick your stack. Build your .env visually with secret masking, comments, and multi-environment export.</p>
+</div>
+<div class="main">
+  <div class="section-label">Choose your stack (select all that apply)</div>
+  <div class="stack-grid">
+    <div class="stack-btn active" onclick="toggleStack(this,'node')" id="st-node"><span class="stack-icon">🟢</span>Node.js</div>
+    <div class="stack-btn" onclick="toggleStack(this,'postgres')" id="st-postgres"><span class="stack-icon">🐘</span>PostgreSQL</div>
+    <div class="stack-btn" onclick="toggleStack(this,'redis')" id="st-redis"><span class="stack-icon">🔴</span>Redis</div>
+    <div class="stack-btn" onclick="toggleStack(this,'stripe')" id="st-stripe"><span class="stack-icon">💳</span>Stripe</div>
+    <div class="stack-btn" onclick="toggleStack(this,'jwt')" id="st-jwt"><span class="stack-icon">🔑</span>JWT / Auth</div>
+    <div class="stack-btn" onclick="toggleStack(this,'email')" id="st-email"><span class="stack-icon">📧</span>Email (SMTP)</div>
+    <div class="stack-btn" onclick="toggleStack(this,'s3')" id="st-s3"><span class="stack-icon">☁️</span>AWS S3</div>
+    <div class="stack-btn" onclick="toggleStack(this,'openai')" id="st-openai"><span class="stack-icon">🤖</span>OpenAI</div>
+    <div class="stack-btn" onclick="toggleStack(this,'cloudflare')" id="st-cloudflare"><span class="stack-icon">🌐</span>Cloudflare</div>
+    <div class="stack-btn" onclick="toggleStack(this,'sentry')" id="st-sentry"><span class="stack-icon">🐛</span>Sentry</div>
+  </div>
+
+  <button class="gen-all-btn" onclick="generateFromStack()">⚡ Generate .env from Selected Stack</button>
+
+  <div class="env-editor">
+    <div class="env-toolbar">
+      <span class="env-filename">.env</span>
+      <button class="tb-btn" onclick="switchEnvFile('.env')">Development</button>
+      <button class="tb-btn" onclick="switchEnvFile('.env.staging')">Staging</button>
+      <button class="tb-btn" onclick="switchEnvFile('.env.production')">Production</button>
+    </div>
+    <div id="envVarsList"></div>
+    <div class="add-row">
+      <input class="add-key-input" id="newKey" placeholder="NEW_VARIABLE_NAME" onkeydown="if(event.key==='Enter')addCustomVar()">
+      <button class="add-var-btn" onclick="addCustomVar()">+ Add Variable</button>
+    </div>
+  </div>
+
+  <div class="output-section">
+    <div class="out-panel">
+      <div class="out-tabs">
+        <div class="out-tab active" onclick="switchOutTab(this,'ot-env')">.env file</div>
+        <div class="out-tab" onclick="switchOutTab(this,'ot-example')">.env.example</div>
+        <div class="out-tab" onclick="switchOutTab(this,'ot-docker')">Docker Compose</div>
+        <div class="out-tab" onclick="switchOutTab(this,'ot-github')">GitHub Actions</div>
+      </div>
+      <div id="ot-env"><pre class="out-code" id="outEnv"></pre></div>
+      <div id="ot-example" style="display:none"><pre class="out-code" id="outExample"></pre></div>
+      <div id="ot-docker" style="display:none"><pre class="out-code" id="outDocker"></pre></div>
+      <div id="ot-github" style="display:none"><pre class="out-code" id="outGithub"></pre></div>
+      <div class="gen-actions">
+        <button class="action-btn" onclick="copyOutput()">📋 Copy .env</button>
+        <button class="action-btn" onclick="downloadEnv('.env')">⬇ Download .env</button>
+        <button class="action-btn" onclick="downloadEnv('.env.example')">⬇ Download .env.example</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="security-tips">
+    <div class="st-title">🔒 Security Reminders</div>
+    <div class="st-tip">Never commit .env files to git — add .env to your .gitignore</div>
+    <div class="st-tip">Use .env.example with placeholder values for documentation</div>
+    <div class="st-tip">Rotate all secrets before going to production</div>
+    <div class="st-tip">Use a secrets manager (AWS Secrets Manager, Vault) for production</div>
+    <div class="st-tip">Never log environment variables — they may appear in crash dumps</div>
+  </div>
+
+  <div class="waitlist">
+    <h3>ENV Manager Pro</h3>
+    <p>Team secrets sharing, encrypted vault, environment syncing, and one-click deploy-to-Vercel/Railway/Render.</p>
+    <div class="wl-form">
+      <input class="wl-input" id="wlEmail" type="email" placeholder="your@email.com">
+      <button class="wl-btn" onclick="joinWaitlist()">Join Waitlist</button>
+    </div>
+    <div id="wlMsg" style="margin-top:12px;font-size:.85rem;color:var(--turq2);"></div>
+  </div>
+</div>
+<script src="_abuz8-live-brain.js" defer></script>
+<script>
+const selectedStacks = new Set(['node']);
+let envVars = [];
+
+const STACK_VARS = {
+  node: [
+    {section:'Application'},
+    {key:'NODE_ENV',val:'development',comment:'development | staging | production'},
+    {key:'PORT',val:'3000',comment:'HTTP server port'},
+    {key:'APP_URL',val:'http://localhost:3000',comment:'Public-facing URL'},
+    {key:'APP_SECRET',val:'',comment:'Random 32-byte secret — run: openssl rand -hex 32',secret:true},
+  ],
+  postgres: [
+    {section:'Database'},
+    {key:'DATABASE_URL',val:'postgresql://user:password@localhost:5432/mydb',comment:'Full connection string',secret:true},
+    {key:'DB_HOST',val:'localhost',comment:''},
+    {key:'DB_PORT',val:'5432',comment:''},
+    {key:'DB_NAME',val:'mydb',comment:''},
+    {key:'DB_USER',val:'postgres',comment:''},
+    {key:'DB_PASSWORD',val:'',comment:'',secret:true},
+    {key:'DB_SSL',val:'false',comment:'Set to true in production'},
+  ],
+  redis: [
+    {section:'Redis'},
+    {key:'REDIS_URL',val:'redis://localhost:6379',comment:'Full Redis connection string',secret:true},
+    {key:'REDIS_HOST',val:'localhost',comment:''},
+    {key:'REDIS_PORT',val:'6379',comment:''},
+    {key:'REDIS_PASSWORD',val:'',comment:'Leave blank for local dev',secret:true},
+  ],
+  stripe: [
+    {section:'Stripe Payments'},
+    {key:'STRIPE_SECRET_KEY',val:'sk_test_',comment:'Never expose this on client-side',secret:true},
+    {key:'STRIPE_PUBLISHABLE_KEY',val:'pk_test_',comment:'Safe for client-side use'},
+    {key:'STRIPE_WEBHOOK_SECRET',val:'whsec_',comment:'From Stripe dashboard → Webhooks',secret:true},
+    {key:'STRIPE_PRICE_ID',val:'price_',comment:'Your product price ID'},
+  ],
+  jwt: [
+    {section:'Authentication'},
+    {key:'JWT_SECRET',val:'',comment:'Min 32 chars — run: openssl rand -hex 32',secret:true},
+    {key:'JWT_EXPIRES_IN',val:'7d',comment:'Token expiry: 1h, 7d, 30d'},
+    {key:'JWT_REFRESH_SECRET',val:'',comment:'Different from JWT_SECRET',secret:true},
+    {key:'BCRYPT_ROUNDS',val:'12',comment:'Cost factor — higher = slower but safer'},
+  ],
+  email: [
+    {section:'Email (SMTP)'},
+    {key:'SMTP_HOST',val:'smtp.gmail.com',comment:'e.g. smtp.sendgrid.net, smtp.mailgun.org'},
+    {key:'SMTP_PORT',val:'587',comment:'587 for TLS, 465 for SSL'},
+    {key:'SMTP_SECURE',val:'false',comment:'true for 465, false for 587'},
+    {key:'SMTP_USER',val:'',comment:'Your email address'},
+    {key:'SMTP_PASS',val:'',comment:'App password (not your main password)',secret:true},
+    {key:'EMAIL_FROM',val:'"My App" <noreply@myapp.com>',comment:'Sender display name + address'},
+  ],
+  s3: [
+    {section:'AWS S3'},
+    {key:'AWS_ACCESS_KEY_ID',val:'',comment:'IAM user access key',secret:true},
+    {key:'AWS_SECRET_ACCESS_KEY',val:'',comment:'IAM user secret key',secret:true},
+    {key:'AWS_REGION',val:'us-east-1',comment:'S3 bucket region'},
+    {key:'AWS_S3_BUCKET',val:'my-app-bucket',comment:'S3 bucket name'},
+    {key:'AWS_CLOUDFRONT_URL',val:'',comment:'Optional CDN URL'},
+  ],
+  openai: [
+    {section:'OpenAI'},
+    {key:'OPENAI_API_KEY',val:'sk-',comment:'From platform.openai.com/api-keys',secret:true},
+    {key:'OPENAI_ORG_ID',val:'',comment:'Optional organization ID'},
+    {key:'OPENAI_MODEL',val:'gpt-4o',comment:'Default model'},
+    {key:'OPENAI_MAX_TOKENS',val:'4096',comment:'Max response length'},
+  ],
+  cloudflare: [
+    {section:'Cloudflare'},
+    {key:'CF_ACCOUNT_ID',val:'',comment:'From Cloudflare dashboard → Overview'},
+    {key:'CF_API_TOKEN',val:'',comment:'Workers API token — scoped to Workers',secret:true},
+    {key:'CF_ZONE_ID',val:'',comment:'Your domain zone ID'},
+    {key:'WORKER_URL',val:'https://myworker.myaccount.workers.dev',comment:''},
+  ],
+  sentry: [
+    {section:'Sentry'},
+    {key:'SENTRY_DSN',val:'https://xxx@o0.ingest.sentry.io/0',comment:'From Sentry project → Settings → Client Keys'},
+    {key:'SENTRY_ENV',val:'development',comment:'Maps to Sentry environment filter'},
+    {key:'SENTRY_RELEASE',val:'',comment:'Optional: set to git SHA for source maps'},
+  ],
+};
+
+function toggleStack(el, stack){
+  if(selectedStacks.has(stack)){ selectedStacks.delete(stack); el.classList.remove('active'); }
+  else { selectedStacks.add(stack); el.classList.add('active'); }
+}
+
+function generateFromStack(){
+  envVars=[];
+  selectedStacks.forEach(s=>{ if(STACK_VARS[s]) envVars.push(...STACK_VARS[s]); });
+  renderEditor();
+  renderOutputs();
+}
+
+function renderEditor(){
+  const cont=document.getElementById('envVarsList');
+  cont.innerHTML=envVars.map((v,i)=>{
+    if(v.section) return `<div class="var-row"><div class="section-divider">## ${v.section}</div></div>`;
+    return `
+      <div class="var-row" id="vr-${i}">
+        <input class="var-key" value="${v.key||''}" oninput="updateVar(${i},'key',this.value)" placeholder="VARIABLE_NAME">
+        <input class="var-val${v.secret?' secret':''}" id="vv-${i}" value="${v.val||''}" oninput="updateVar(${i},'val',this.value)" placeholder="value" ${v.secret?'type="password"':''}>
+        <button class="var-secret-toggle" onclick="toggleSecret(${i})" title="${v.secret?'Show':'Hide'}">${v.secret?'👁':'🔒'}</button>
+        <button class="var-remove" onclick="removeVar(${i})">✕</button>
+      </div>
+      ${v.comment?`<div class="var-row" style="display:block"><input class="var-comment" value="# ${v.comment}" oninput="updateVar(${i},'comment',this.value.replace(/^# ?/,''))"></div>`:''}`;
+  }).join('');
+}
+
+function updateVar(i, field, val){ if(envVars[i]) envVars[i][field]=val; renderOutputs(); }
+function toggleSecret(i){
+  if(!envVars[i]) return;
+  envVars[i].secret=!envVars[i].secret;
+  const inp=document.getElementById('vv-'+i);
+  if(inp){ inp.type=envVars[i].secret?'password':'text'; inp.className='var-val'+(envVars[i].secret?' secret':''); }
+  renderEditor(); renderOutputs();
+}
+function removeVar(i){ envVars.splice(i,1); renderEditor(); renderOutputs(); }
+function addCustomVar(){
+  const key=document.getElementById('newKey').value.trim().toUpperCase().replace(/\s+/g,'_');
+  if(!key) return;
+  envVars.push({key,val:'',comment:'',secret:false});
+  document.getElementById('newKey').value='';
+  renderEditor(); renderOutputs();
+}
+
+function switchEnvFile(name){
+  document.querySelector('.env-filename').textContent=name;
+}
+
+function renderOutputs(){
+  // .env
+  let envOut='', exampleOut='';
+  envVars.forEach(v=>{
+    if(v.section){
+      envOut+=`\n# ── ${v.section} ──────────────────────\n`;
+      exampleOut+=`\n# ── ${v.section} ──────────────────────\n`;
+    } else {
+      if(v.comment) { envOut+=`# ${v.comment}\n`; exampleOut+=`# ${v.comment}\n`; }
+      envOut+=`${v.key}=${v.val}\n`;
+      exampleOut+=`${v.key}=${v.secret?'<your-secret-here>':v.val||'your_value_here'}\n`;
+    }
+  });
+  document.getElementById('outEnv').innerHTML=highlightEnv(envOut.trim());
+  document.getElementById('outExample').innerHTML=highlightEnv(exampleOut.trim());
+
+  // Docker Compose
+  const dcVars=envVars.filter(v=>!v.section&&v.key);
+  document.getElementById('outDocker').innerHTML=highlightEnv(`version: '3.8'\nservices:\n  app:\n    build: .\n    env_file:\n      - .env\n    environment:\n${dcVars.slice(0,6).map(v=>`      - ${v.key}=\${${v.key}}`).join('\n')}\n    ports:\n      - "\${PORT:-3000}:3000"`);
+
+  // GitHub Actions
+  const ghVars=dcVars.filter(v=>v.secret).slice(0,6);
+  document.getElementById('outGithub').innerHTML=highlightEnv(`# .github/workflows/deploy.yml\nname: Deploy\non:\n  push:\n    branches: [main]\njobs:\n  deploy:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n      - name: Deploy\n        env:\n${ghVars.map(v=>`          ${v.key}: \${{ secrets.${v.key} }}`).join('\n')}\n        run: |\n          npm ci\n          npm run deploy`);
+}
+
+function highlightEnv(text){
+  return text
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/^(##.*)$/gm,'<span class="env-section-h">$1</span>')
+    .replace(/^(#.*)$/gm,'<span class="env-comment-h">$1</span>')
+    .replace(/^([A-Z_0-9]+)(=)/gm,'<span class="env-key-h">$1</span>$2')
+    ;
+}
+
+function switchOutTab(el,tabId){
+  document.querySelectorAll('.out-tab').forEach(t=>t.classList.remove('active'));
+  ['ot-env','ot-example','ot-docker','ot-github'].forEach(id=>{ const e=document.getElementById(id); if(e) e.style.display='none'; });
+  el.classList.add('active');
+  document.getElementById(tabId).style.display='block';
+}
+
+function copyOutput(){
+  const text=document.getElementById('outEnv').textContent;
+  navigator.clipboard.writeText(text).then(()=>{
+    event.target.textContent='✓ Copied!';
+    setTimeout(()=>event.target.textContent='📋 Copy .env',2000);
+  });
+}
+function downloadEnv(name){
+  const isExample=name==='.env.example';
+  const text=isExample?document.getElementById('outExample').textContent:document.getElementById('outEnv').textContent;
+  const blob=new Blob([text],{type:'text/plain'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download=name; a.click();
+}
+
+// Generate on load with default node stack
+generateFromStack();
+
+async function joinWaitlist(){
+  const email=document.getElementById('wlEmail').value.trim();
+  if(!email||!email.includes('@')){document.getElementById('wlMsg').textContent='Enter a valid email.';return;}
+  try{await fetch('/api/waitlist',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,product:'ai-env-generator',source:'abuz8'})});}
+  catch(e){localStorage.setItem('wl_env_gen',email);}
+  document.getElementById('wlMsg').textContent='✓ On the list!';
+  document.getElementById('wlEmail').value='';
+}
+</script>
+
+<script src="/assets/js/dfy-banner.js" async></script>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+<script src="/tools/_tools-shared.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>
+

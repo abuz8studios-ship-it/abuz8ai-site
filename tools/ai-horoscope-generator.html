@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Horoscope Generator | ABUZ8</title>
+<meta name="description" content="Get personalized AI-powered horoscope readings. Daily, weekly, monthly & yearly forecasts for all zodiac signs.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --lapis:#0a1628;--lapis2:#0f1f3d;--lapis3:#162544;
+  --gold:#c9a84c;--gold-dim:rgba(201,168,76,.25);
+  --turq:#0e9f6e;--turq2:#22b5a0;
+  --cream:#f5f0e8;--cream-dim:rgba(245,240,232,.6);
+  --card-bg:rgba(15,31,61,.55);--card-border:rgba(201,168,76,.18);
+  --radius:12px;--radius-lg:18px;
+  --font-head:'Playfair Display',serif;--font-body:'Inter',sans-serif;
+  --shadow:0 4px 24px rgba(0,0,0,.35);
+}
+html{scroll-behavior:smooth}
+body{font-family:var(--font-body);background:var(--lapis);color:var(--cream);
+  line-height:1.6;min-height:100vh;overflow-x:hidden}
+</style>
+<link rel="canonical" href="https://abuz8ai.com/tools/ai-horoscope-generator">
+</head>
+<body>
+<style>
+/* ── Layout ── */
+.container{max-width:1100px;margin:0 auto;padding:0 24px}
+header{padding:18px 0;border-bottom:1px solid var(--card-border);backdrop-filter:blur(12px);
+  position:sticky;top:0;z-index:50;background:rgba(10,22,40,.85)}
+.hdr-inner{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.logo{font-family:var(--font-head);font-size:1.35rem;font-weight:700;color:var(--gold);
+  text-decoration:none;letter-spacing:.5px}
+.badge{font-size:.72rem;font-weight:600;letter-spacing:1.2px;text-transform:uppercase;
+  background:var(--gold-dim);color:var(--gold);padding:5px 12px;border-radius:20px;
+  border:1px solid rgba(201,168,76,.3)}
+.hero{text-align:center;padding:56px 0 36px}
+.hero h1{font-family:var(--font-head);font-size:clamp(2rem,5vw,3.2rem);font-weight:700;
+  color:var(--cream);margin-bottom:10px}
+.hero h1 span{color:var(--gold)}
+.hero p{font-size:1.05rem;color:var(--cream-dim);max-width:560px;margin:0 auto}
+/* ── Cards ── */
+.card{background:var(--card-bg);border:1px solid var(--card-border);
+  border-radius:var(--radius);padding:20px;backdrop-filter:blur(8px);
+  transition:border-color .25s,box-shadow .25s,transform .25s}
+.card:hover{border-color:var(--gold);box-shadow:0 0 20px rgba(201,168,76,.1)}
+</style>
+<style>
+/* ── Zodiac Grid ── */
+.section-label{font-family:var(--font-head);font-size:1.15rem;color:var(--gold);
+  margin-bottom:16px;font-weight:600}
+.zodiac-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:32px}
+@media(max-width:900px){.zodiac-grid{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:560px){.zodiac-grid{grid-template-columns:repeat(2,1fr)}}
+.z-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:var(--radius);
+  padding:16px 10px;text-align:center;cursor:pointer;transition:all .25s;user-select:none}
+.z-card:hover{border-color:var(--turq2);transform:translateY(-2px)}
+.z-card.selected{border-color:var(--gold);box-shadow:0 0 18px rgba(201,168,76,.2);
+  background:rgba(201,168,76,.08)}
+.z-card .z-sym{font-size:2rem;display:block;margin-bottom:4px}
+.z-card .z-name{font-family:var(--font-head);font-size:.92rem;font-weight:600;color:var(--cream)}
+.z-card .z-date{font-size:.7rem;color:var(--cream-dim);margin-top:2px}
+/* ── Selectors ── */
+.sel-row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:28px}
+.sel-btn{background:var(--card-bg);border:1px solid var(--card-border);border-radius:8px;
+  padding:10px 18px;color:var(--cream);font-family:var(--font-body);font-size:.85rem;
+  cursor:pointer;transition:all .2s;font-weight:500}
+.sel-btn:hover{border-color:var(--turq2)}
+.sel-btn.active{border-color:var(--gold);background:rgba(201,168,76,.1);color:var(--gold)}
+label{font-family:var(--font-head);font-size:.95rem;color:var(--gold);
+  display:block;margin-bottom:10px;font-weight:600}
+</style>
+<style>
+/* ── Buttons ── */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  padding:14px 32px;border-radius:var(--radius);font-family:var(--font-body);
+  font-size:.95rem;font-weight:600;cursor:pointer;border:none;transition:all .25s}
+.btn-gold{background:linear-gradient(135deg,var(--gold),#d4b45e);color:var(--lapis);
+  box-shadow:0 4px 16px rgba(201,168,76,.3)}
+.btn-gold:hover{transform:translateY(-2px);box-shadow:0 6px 24px rgba(201,168,76,.45)}
+.btn-gold:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.btn-outline{background:transparent;border:1px solid var(--gold);color:var(--gold)}
+.btn-outline:hover{background:rgba(201,168,76,.1)}
+.gen-wrap{text-align:center;margin:8px 0 40px}
+/* ── Result ── */
+.result-card{display:none;margin:0 0 48px}
+.result-card.visible{display:block}
+.result-header{display:flex;align-items:center;gap:16px;margin-bottom:20px;flex-wrap:wrap}
+.result-header .r-sym{font-size:2.6rem}
+.result-header .r-title{font-family:var(--font-head);font-size:1.5rem;font-weight:700;color:var(--gold)}
+.result-header .r-sub{font-size:.85rem;color:var(--cream-dim)}
+.reading-text{font-size:1.02rem;line-height:1.75;color:var(--cream-dim);margin-bottom:24px}
+.meta-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-bottom:20px}
+.meta-item{background:rgba(22,37,68,.6);border:1px solid var(--card-border);border-radius:10px;padding:14px;text-align:center}
+.meta-item .m-label{font-size:.7rem;text-transform:uppercase;letter-spacing:1px;color:var(--turq2);margin-bottom:4px}
+.meta-item .m-val{font-family:var(--font-head);font-size:1.05rem;color:var(--cream);font-weight:600}
+</style>
+<style>
+/* ── Mood Meter ── */
+.mood-wrap{margin-bottom:20px}
+.mood-bar-bg{height:10px;background:rgba(22,37,68,.8);border-radius:6px;overflow:hidden;margin-top:6px}
+.mood-bar{height:100%;border-radius:6px;transition:width .8s ease}
+.affirmation{font-family:var(--font-head);font-size:1.12rem;color:var(--gold);
+  font-style:italic;text-align:center;padding:18px;border-top:1px solid var(--card-border);margin-top:16px}
+/* ── Waitlist ── */
+.waitlist{text-align:center;padding:56px 0 48px;border-top:1px solid var(--card-border);margin-top:32px}
+.waitlist h2{font-family:var(--font-head);font-size:1.6rem;color:var(--cream);margin-bottom:8px}
+.waitlist p{color:var(--cream-dim);margin-bottom:20px;font-size:.95rem}
+.wl-form{display:flex;gap:10px;max-width:440px;margin:0 auto;flex-wrap:wrap;justify-content:center}
+.wl-form input[type=email]{flex:1;min-width:220px;padding:12px 16px;border-radius:var(--radius);
+  border:1px solid var(--card-border);background:var(--card-bg);color:var(--cream);
+  font-family:var(--font-body);font-size:.9rem;outline:none}
+.wl-form input[type=email]:focus{border-color:var(--gold)}
+.wl-success{display:none;color:var(--turq2);font-weight:600;margin-top:12px}
+.wl-success.show{display:block}
+/* ── Footer ── */
+footer{text-align:center;padding:24px 0;font-size:.78rem;color:rgba(245,240,232,.35);
+  border-top:1px solid var(--card-border)}
+/* ── Spinner ── */
+@keyframes spin{to{transform:rotate(360deg)}}
+.spinner{width:20px;height:20px;border:2px solid transparent;border-top-color:var(--lapis);
+  border-radius:50%;animation:spin .6s linear infinite;display:none}
+.btn-gold .spinner{display:none}
+.btn-gold.loading .spinner{display:inline-block}
+.btn-gold.loading .btn-text{display:none}
+</style>
+
+<!-- ── HEADER ── -->
+<header>
+  <div class="container hdr-inner">
+    <a href="/" class="logo">&#9889; ABUZ8</a>
+    <span class="badge">&#128302; Horoscope Generator</span>
+  </div>
+</header>
+
+<!-- ── HERO ── -->
+<section class="hero container">
+  <h1>Your <span>Stars</span>, Decoded</h1>
+  <p>AI-powered horoscope readings crafted for your sign, your timing, and your path. Select your sign below and let the cosmos speak.</p>
+</section>
+
+<!-- ── MAIN ── -->
+<main class="container">
+  <!-- Zodiac Selector -->
+  <label>Choose Your Sign</label>
+  <div class="zodiac-grid" id="zodiacGrid"></div>
+
+  <!-- Period Selector -->
+  <label>Reading Period</label>
+  <div class="sel-row" id="periodRow">
+    <button class="sel-btn active" data-val="daily">Daily</button>
+    <button class="sel-btn" data-val="weekly">Weekly</button>
+    <button class="sel-btn" data-val="monthly">Monthly</button>
+    <button class="sel-btn" data-val="yearly">Yearly</button>
+  </div>
+
+  <!-- Area Selector -->
+  <label>Life Area Focus</label>
+  <div class="sel-row" id="areaRow">
+    <button class="sel-btn active" data-val="general">General</button>
+    <button class="sel-btn" data-val="love">&#10084;&#65039; Love</button>
+    <button class="sel-btn" data-val="career">&#128188; Career</button>
+    <button class="sel-btn" data-val="health">&#127807; Health</button>
+    <button class="sel-btn" data-val="finances">&#128176; Finances</button>
+    <button class="sel-btn" data-val="growth">&#127793; Personal Growth</button>
+  </div>
+
+  <!-- Generate -->
+  <div class="gen-wrap">
+    <button class="btn btn-gold" id="genBtn" disabled>
+      <span class="btn-text">&#128302; Generate Reading</span>
+      <span class="spinner"></span>
+    </button>
+  </div>
+
+  <!-- Result -->
+  <div class="card result-card" id="resultCard">
+    <div class="result-header">
+      <span class="r-sym" id="rSym"></span>
+      <div>
+        <div class="r-title" id="rTitle"></div>
+        <div class="r-sub" id="rSub"></div>
+      </div>
+    </div>
+    <div class="reading-text" id="rText"></div>
+    <div class="meta-grid" id="metaGrid"></div>
+    <div class="mood-wrap">
+      <label style="margin-bottom:4px">Cosmic Energy Level</label>
+      <div class="mood-bar-bg"><div class="mood-bar" id="moodBar"></div></div>
+    </div>
+    <div class="affirmation" id="affirmation"></div>
+  </div>
+</main>
+
+<!-- ── WAITLIST ── -->
+<section class="waitlist container">
+  <h2>Unlock Premium Readings</h2>
+  <p>Join the waitlist for deeper AI-powered astrological insights, birth-chart analysis, and transit forecasts.</p>
+  <form class="wl-form" id="wlForm">
+    <input type="email" placeholder="Enter your email" required>
+    <button type="submit" class="btn btn-gold"><span class="btn-text">Join Waitlist</span></button>
+  </form>
+  <div class="wl-success" id="wlSuccess">&#10003; You're on the list! We'll reach out soon.</div>
+</section>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <div class="container">&copy; 2026 ABUZ8 LLC &mdash; abuz8ai.com</div>
+</footer>
+<script>
+const SIGNS=[
+  {name:'Aries',sym:'♈',dates:'Mar 21 – Apr 19',el:'Fire',planet:'Mars',
+   trait:'Bold, ambitious, pioneering',compat:['Leo','Sagittarius','Gemini']},
+  {name:'Taurus',sym:'♉',dates:'Apr 20 – May 20',el:'Earth',planet:'Venus',
+   trait:'Reliable, patient, devoted',compat:['Virgo','Capricorn','Cancer']},
+  {name:'Gemini',sym:'♊',dates:'May 21 – Jun 20',el:'Air',planet:'Mercury',
+   trait:'Curious, adaptable, expressive',compat:['Libra','Aquarius','Aries']},
+  {name:'Cancer',sym:'♋',dates:'Jun 21 – Jul 22',el:'Water',planet:'Moon',
+   trait:'Intuitive, sentimental, protective',compat:['Scorpio','Pisces','Taurus']},
+  {name:'Leo',sym:'♌',dates:'Jul 23 – Aug 22',el:'Fire',planet:'Sun',
+   trait:'Dramatic, confident, generous',compat:['Aries','Sagittarius','Libra']},
+  {name:'Virgo',sym:'♍',dates:'Aug 23 – Sep 22',el:'Earth',planet:'Mercury',
+   trait:'Analytical, practical, meticulous',compat:['Taurus','Capricorn','Scorpio']},
+  {name:'Libra',sym:'♎',dates:'Sep 23 – Oct 22',el:'Air',planet:'Venus',
+   trait:'Diplomatic, gracious, harmonious',compat:['Gemini','Aquarius','Leo']},
+  {name:'Scorpio',sym:'♏',dates:'Oct 23 – Nov 21',el:'Water',planet:'Pluto',
+   trait:'Resourceful, passionate, intense',compat:['Cancer','Pisces','Virgo']},
+  {name:'Sagittarius',sym:'♐',dates:'Nov 22 – Dec 21',el:'Fire',planet:'Jupiter',
+   trait:'Optimistic, adventurous, philosophical',compat:['Aries','Leo','Aquarius']},
+  {name:'Capricorn',sym:'♑',dates:'Dec 22 – Jan 19',el:'Earth',planet:'Saturn',
+   trait:'Disciplined, responsible, masterful',compat:['Taurus','Virgo','Pisces']},
+  {name:'Aquarius',sym:'♒',dates:'Jan 20 – Feb 18',el:'Air',planet:'Uranus',
+   trait:'Progressive, independent, visionary',compat:['Gemini','Libra','Sagittarius']},
+  {name:'Pisces',sym:'♓',dates:'Feb 19 – Mar 20',el:'Water',planet:'Neptune',
+   trait:'Compassionate, artistic, intuitive',compat:['Cancer','Scorpio','Capricorn']}
+];
+const COLORS=['Crimson','Emerald','Sapphire','Amber','Ivory','Violet','Coral','Teal','Silver','Jade','Rose','Obsidian','Cobalt','Marigold','Plum'];
+const AFFIRMATIONS={
+  general:[
+    'The universe conspires in your favor when you move with intention.',
+    'You are aligned with the rhythm of the cosmos — trust your timing.',
+    'Every step you take today echoes through your future self.',
+    'Your energy is magnetic. Let it attract what is meant for you.',
+    'The stars remind you: stillness is not stagnation, it is preparation.'
+  ],
+  love:[
+    'Your heart knows what your mind is still learning — listen to it.',
+    'Love flows to those who are open without being empty.',
+    'The connection you seek is already seeking you.',
+    'Vulnerability is not weakness; it is the doorway to deeper bonds.',
+    'Release the story of what love should look like, and welcome what it is.'
+  ],
+  career:[
+    'Your ambition is a compass. Recalibrate and press forward.',
+    'The breakthrough you need is one bold decision away.',
+    'Build in silence. Let your results be the announcement.',
+    'Your professional worth is not determined by others\' recognition.',
+    'Discipline today creates freedom tomorrow.'
+  ],
+  health:[
+    'Your body is your first home — tend to it with reverence.',
+    'Small, consistent rituals create profound transformation.',
+    'Rest is not a reward; it is a requirement.',
+    'Healing is not linear, but it is always possible.',
+    'Honor the vessel that carries your ambitions forward.'
+  ],
+  finances:[
+    'Abundance is a mindset before it becomes a bank balance.',
+    'Every wise financial decision compounds into legacy.',
+    'Spend with intention. Save with purpose. Invest with vision.',
+    'Money flows where attention goes — direct yours wisely.',
+    'Financial freedom starts with a single disciplined choice.'
+  ],
+  growth:[
+    'Growth lives just beyond the edge of your comfort zone.',
+    'The person you are becoming is worth the discomfort of change.',
+    'Shed old patterns like the moon sheds shadow — naturally and completely.',
+    'Your potential is not fixed. It expands as you expand.',
+    'Transformation begins the moment you choose yourself.'
+  ]
+};
+const READINGS={
+  daily:{
+    general:[
+      'Today, {planet} casts a contemplative light over your {el} nature. The celestial alignment suggests a day of clarity — trust your instincts when navigating unfamiliar territory. A conversation later in the day could reveal something you have been overlooking. Stay grounded and let your {trait} energy guide you.',
+      'The cosmic tide favors {name} today. With {planet} in a harmonious aspect, your {trait} qualities are amplified. Pay attention to recurring patterns — the universe communicates through repetition. An unexpected opportunity may surface before evening; approach it with curiosity rather than caution.',
+      'A subtle shift in celestial energy puts {name} at a crossroads today. Your ruling planet {planet} encourages decisive action, but your {el} element reminds you to weigh outcomes carefully. Focus on one priority and give it your full attention. The stars reward singular focus.'
+    ],
+    love:[
+      'Venus whispers through your {el} house today, {name}. Emotional connections deepen when you lead with authenticity rather than expectation. If attached, a small gesture of appreciation strengthens bonds. If seeking, your {trait} nature draws admirers — be open to those who match your depth.',
+      'Today\'s alignment between {planet} and Venus creates a magnetic pull in your romantic sphere. Conversations carry more weight than usual — choose words that build rather than test. Your {el} energy craves stability; honor that need without forcing outcomes.',
+      'The Moon\'s transit through your intimacy sector heightens sensitivity for {name}. Past patterns may resurface — observe them without repeating them. Your {trait} core knows the difference between comfort and complacency. Let that wisdom guide your heart today.'
+    ],
+    career:[
+      'Professional momentum builds for {name} as {planet} activates your ambition sector. Your {trait} approach to challenges stands out today — decision-makers notice competence over charisma. A project that felt stagnant receives new energy. Document your progress; evidence matters this cycle.',
+      '{planet}\'s influence sharpens your strategic thinking today, {name}. Your {el} element gives you the endurance to push through a bottleneck that has slowed others. Collaboration yields better results than solo effort — identify one ally and propose a plan.',
+      'The stars position {name} for professional recognition today. Your natural {trait} qualities align with what the current cycle demands. Avoid overcommitting — three priorities, not thirteen. The universe rewards focused execution over scattered ambition.'
+    ],
+    health:[
+      'Your {el} constitution responds well to today\'s planetary rhythm, {name}. {planet} encourages restoration — prioritize sleep quality over sleep quantity. A brief walk in natural light recalibrates your energy. Listen to your body\'s subtle signals before they become loud demands.',
+      'Today\'s cosmic energy invites {name} to audit habits rather than add new ones. Your {trait} nature sometimes pushes past physical limits — today, restraint is strength. Hydration and deep breathing are your allies. The body heals fastest when the mind is quiet.',
+      'The {el} element governs your vitality today, {name}. {planet}\'s position suggests that tension accumulates in unexpected places — stretch, move, release. A midday pause resets your nervous system more effectively than caffeine. Honor the vessel.'
+    ],
+    finances:[
+      'Financial awareness heightens for {name} as {planet} illuminates your resource sector. Your {trait} instincts serve you well in money matters today — trust the number that feels right, not the one that looks impressive. A subscription or recurring expense deserves a second look.',
+      'The stars favor practical financial moves for {name} today. Your {el} energy stabilizes impulsive spending — channel it into one intentional investment of time or capital. {planet} reminds you that wealth is built through consistency, not windfalls.',
+      'Today\'s celestial alignment highlights the gap between earning and keeping for {name}. Your {trait} nature excels at acquisition but may overlook retention. Review one financial commitment before end of day. Small adjustments now prevent larger corrections later.'
+    ],
+    growth:[
+      'Personal evolution accelerates for {name} as {planet} triggers your growth axis. The {el} element grounds this expansion so it feels sustainable rather than overwhelming. A belief you\'ve held since childhood may be ready for an update. Question gently; transform deliberately.',
+      'Today\'s cosmic geometry invites {name} to sit with discomfort rather than rush past it. Your {trait} nature wants resolution, but the lesson lives in the tension. Journal one honest observation about yourself — not a critique, an observation. Growth compounds.',
+      'The alignment of {planet} with your natal chart opens a window for {name} to release one outdated habit. Your {el} essence adapts beautifully when given permission. Choose progress over perfection today. The stars do not demand leaps — they honor consistent steps.'
+    ]
+  },
+  weekly:{
+    general:[
+      'This week, {planet} moves through a pivotal transit for {name}, reshaping how you perceive obligations versus opportunities. The {el} element in your chart stabilizes emotional currents that may have felt chaotic recently. Midweek brings a turning point — a conversation or realization that reframes a persistent challenge. Your {trait} nature thrives when given clear direction; this week provides exactly that. By Friday, momentum builds toward something tangible.',
+      'The weekly forecast for {name} shows {planet} strengthening your resolve. Early in the week, focus on clearing unfinished commitments — they drain more energy than you realize. Wednesday through Thursday marks a creative peak; your {trait} instincts are sharpest here. The weekend invites reflection rather than action. Your {el} core benefits from periodic stillness.'
+    ],
+    love:[
+      'Romantic currents run deep for {name} this week as {planet} activates your partnership sector. Monday through Wednesday favors honest communication — say the thing you\'ve been rehearsing. Your {trait} nature gives you the courage. Thursday\'s lunar shift brings tenderness; lean into it. The weekend rewards quality time over grand gestures. Your {el} element craves authentic connection.',
+      'This week\'s Venus transit highlights unresolved emotional patterns for {name}. Your {trait} approach to love is being refined — not replaced. Midweek offers a moment of unexpected warmth from someone you may have underestimated. By the weekend, clarity emerges about what you truly need versus what you\'ve been settling for.'
+    ],
+    career:[
+      'Professional traction intensifies for {name} this week. {planet} in your career house creates conditions for visible progress. Monday is best for planning; Tuesday through Thursday for execution. Your {trait} strengths position you ahead of peers who rely on momentum alone. A Friday conversation could plant seeds for something larger. Your {el} element demands substance over spectacle.',
+      'This week challenges {name} to distinguish between busy and productive. {planet}\'s aspect demands efficiency — identify the three tasks that move the needle and deprioritize everything else. Your {trait} nature handles pressure well; channel it strategically. By week\'s end, you\'ll see the compounding effect of focused work.'
+    ],
+    health:['This week\'s planetary configuration urges {name} to establish one sustainable health rhythm. {planet} governs your vitality cycle — align your most demanding tasks with your peak energy hours. Midweek fatigue is normal; it signals adaptation, not decline. Your {el} constitution recovers faster with adequate hydration and consistent sleep timing. The weekend rewards gentle movement over intense exertion.'],
+    finances:['Financial clarity arrives for {name} this week as {planet} illuminates your resource sector. Early in the week, audit recurring expenses — one will surprise you. Midweek brings a financial decision that benefits from your {trait} analytical nature. Avoid impulsive purchases Thursday through Saturday. Your {el} element favors building reserves over spending windfalls. Sunday is ideal for setting next month\'s financial intention.'],
+    growth:['Personal transformation gains momentum for {name} this week. {planet}\'s transit through your growth house strips away pretense — embrace the vulnerability. Monday through Wednesday surfaces a limiting belief; Thursday gives you the tools to dismantle it. Your {trait} nature resists superficial change but embraces deep evolution. By the weekend, you\'ll recognize a version of yourself that feels more aligned with your true north.']
+  },
+  monthly:{
+    general:[
+      'This month marks a significant celestial chapter for {name}. {planet} stations in a position that amplifies your {trait} qualities while testing your patience with outcomes that unfold on their own timeline. The first week sets the stage — consolidate gains and release what no longer serves your trajectory. Weeks two and three are your power corridor: decisions made here carry weight through the next quarter. The final week invites rest and recalibration. Your {el} element anchors you through the volatility, transforming uncertainty into strategic advantage. Trust the process, even when the timeline frustrates you.'
+    ],
+    love:['This month\'s romantic landscape for {name} is shaped by {planet}\'s extended stay in your intimacy sector. Weeks one and two deepen existing bonds through shared vulnerability — the conversations that feel risky are the ones that matter most. Singles may encounter a connection around the third week that challenges their usual type. Your {trait} nature knows what it wants; this month teaches you to articulate it without apology. By month\'s end, emotional clarity replaces the ambiguity that has lingered.'],
+    career:['Career momentum for {name} this month follows a distinct rhythm: build, test, refine. {planet} in your professional sector creates conditions for recognition, but only if the foundation is solid. The first two weeks are for execution — ship work, close loops, demonstrate competence. Week three brings scrutiny or evaluation; your {trait} approach to challenges makes this favorable. The fourth week plants seeds for next month\'s advancement. Your {el} constitution handles sustained effort well — use that endurance strategically.'],
+    health:['This month\'s health forecast for {name} centers on sustainable rhythm rather than dramatic change. {planet} governs your vitality cycle, suggesting that the first two weeks favor building new habits while the second half tests their durability. Your {el} constitution responds best to consistency — small daily investments compound faster than weekly overhauls. Pay attention to stress signals around week three; your {trait} nature may push through warning signs. The month rewards those who treat recovery as seriously as effort.'],
+    finances:['Financial patterns for {name} this month reveal both opportunity and discipline as themes. {planet}\'s position in your resource sector suggests income growth is possible but requires strategic positioning in weeks one and two. Midmonth brings an expense or investment decision — your {trait} instincts should lead here, not emotion. The final week is ideal for reviewing quarterly financial trajectory. Your {el} element favors building lasting structures over chasing quick returns.'],
+    growth:['This month catalyzes meaningful personal evolution for {name}. {planet}\'s transit through your transformation sector strips away comfortable illusions and replaces them with clearer self-understanding. The first week confronts you with a pattern you\'ve outgrown. Weeks two and three offer the tools and courage to dismantle it. Your {trait} nature resists change imposed from outside but thrives on internally motivated evolution. By month\'s end, a quieter, more grounded version of yourself emerges — not diminished, refined.']
+  },
+  yearly:{
+    general:[
+      'The year ahead holds transformative potential for {name}. {planet}, your ruling planet, moves through three critical phases that mirror your own evolution: foundation (Q1), expansion (Q2), testing (Q3), and harvest (Q4). Your {el} element provides the resilience needed for sustained growth across all domains. The first quarter demands clarity of intention — define what you want with precision, because the cosmos delivers exactly what you ask for. Midyear brings acceleration; your {trait} qualities become your competitive advantage. The final months consolidate gains into lasting structures. This is not a year for half-measures — commit fully and the stars respond in kind.'
+    ],
+    love:['Love\'s journey for {name} this year follows the arc of {planet}\'s orbit through your relationship sectors. The first quarter strips away relational patterns that have expired — painful but necessary. Spring and summer open doors to connections that match your evolved self. Your {trait} approach to love deepens as you learn to balance independence with intimacy. The autumn months test bonds through external pressure; what survives grows stronger. By year\'s end, your understanding of partnership has matured significantly.'],
+    career:['This year positions {name} for career-defining moves. {planet} activates your professional axis in waves — each quarter builds on the previous. Q1 is for strategy and skill-building. Q2 creates visibility and opportunities that reward your {trait} strengths. Q3 tests your resilience and forces prioritization. Q4 delivers results proportional to the discipline you maintained throughout. Your {el} element sustains focus across the marathon; use it wisely and you end the year in a fundamentally different professional position.'],
+    health:['Health for {name} this year is governed by {planet}\'s influence on your vitality sector. The overarching theme is sustainability — building systems that maintain your wellbeing without constant willpower. The first half favors establishing routines; the second half tests and refines them. Your {el} constitution is naturally resilient but benefits from proactive maintenance. Pay particular attention to stress management in Q3. Your {trait} nature sometimes conflates endurance with invulnerability — this year teaches the difference.'],
+    finances:['Financial transformation awaits {name} this year as {planet} reshapes your relationship with resources. Q1 focuses on eliminating financial inefficiency. Q2 opens new income channels aligned with your {trait} strengths. Q3 demands discipline as spending temptations increase. Q4 rewards those who maintained fiscal integrity throughout. Your {el} element grounds impulsive decisions. The year\'s lesson: wealth is not a destination but a practice. Build systems, not just savings.'],
+    growth:['This year marks a pivotal chapter in {name}\'s personal evolution. {planet}\'s journey through your transformation sector creates conditions for the kind of growth that redefines identity. The first quarter confronts comfortable limitations. Q2 provides tools and mentors. Q3 tests your commitment to change through real-world challenges. Q4 integrates the evolved self into daily life. Your {trait} core remains — it\'s the foundation, not the ceiling. This year asks you to build higher.']
+  }
+};
+/* ── Seeded Random ── */
+function seed(s){let h=0;for(let i=0;i<s.length;i++){h=Math.imul(31,h)+s.charCodeAt(i)|0}
+  return function(){h=h^h<<13;h=h^h>>17;h=h^h<<5;return(h>>>0)/4294967296}}
+
+function pick(arr,rng){return arr[Math.floor(rng()*arr.length)]}
+
+function luckyNums(rng,count=4){const s=new Set();while(s.size<count)s.add(Math.floor(rng()*99)+1);return[...s]}
+
+/* ── State ── */
+let selSign=null,selPeriod='daily',selArea='general';
+
+/* ── Build Zodiac Grid ── */
+const grid=document.getElementById('zodiacGrid');
+SIGNS.forEach((s,i)=>{
+  const d=document.createElement('div');
+  d.className='z-card';d.dataset.idx=i;
+  d.innerHTML=`<span class="z-sym">${s.sym}</span><span class="z-name">${s.name}</span><span class="z-date">${s.dates}</span>`;
+  d.onclick=()=>{
+    grid.querySelectorAll('.z-card').forEach(c=>c.classList.remove('selected'));
+    d.classList.add('selected');selSign=i;
+    document.getElementById('genBtn').disabled=false;
+  };
+  grid.appendChild(d);
+});
+/* ── Selector Wiring ── */
+function wireRow(id,setter){
+  document.getElementById(id).querySelectorAll('.sel-btn').forEach(b=>{
+    b.onclick=()=>{
+      b.parentElement.querySelectorAll('.sel-btn').forEach(x=>x.classList.remove('active'));
+      b.classList.add('active');setter(b.dataset.val);
+    };
+  });
+}
+wireRow('periodRow',v=>{selPeriod=v});
+wireRow('areaRow',v=>{selArea=v});
+
+/* ── Generate ── */
+document.getElementById('genBtn').onclick=function(){
+  if(selSign===null)return;
+  const btn=this;btn.classList.add('loading');btn.disabled=true;
+  setTimeout(()=>{generate();btn.classList.remove('loading');btn.disabled=false},800);
+};
+
+function generate(){
+  const sign=SIGNS[selSign];
+  const today=new Date();
+  const seedStr=sign.name+selPeriod+selArea+today.toDateString();
+  const rng=seed(seedStr);
+
+  // Pick reading template
+  const pool=READINGS[selPeriod][selArea]||READINGS[selPeriod].general;
+  let text=pick(pool,rng);
+  text=text.replace(/\{name\}/g,sign.name).replace(/\{planet\}/g,sign.planet)
+    .replace(/\{el\}/g,sign.el).replace(/\{trait\}/g,sign.trait);
+
+  // Meta
+  const nums=luckyNums(rng);
+  const color=pick(COLORS,rng);
+  const compat=sign.compat;
+  const energy=Math.floor(rng()*40)+55; // 55-95
+  const affPool=AFFIRMATIONS[selArea]||AFFIRMATIONS.general;
+  const aff=pick(affPool,rng);
+
+  // Render
+  document.getElementById('rSym').textContent=sign.sym;
+  document.getElementById('rTitle').textContent=sign.name+' — '+cap(selPeriod)+' '+cap(selArea)+' Reading';
+  document.getElementById('rSub').textContent=sign.dates+' · '+sign.el+' · Ruled by '+sign.planet;
+  document.getElementById('rText').textContent=text;
+  // Meta grid
+  const mg=document.getElementById('metaGrid');
+  mg.innerHTML=`
+    <div class="meta-item"><div class="m-label">Lucky Numbers</div><div class="m-val">${nums.join(' · ')}</div></div>
+    <div class="meta-item"><div class="m-label">Compatible Signs</div><div class="m-val">${compat.join(', ')}</div></div>
+    <div class="meta-item"><div class="m-label">Power Color</div><div class="m-val">${color}</div></div>
+    <div class="meta-item"><div class="m-label">Element</div><div class="m-val">${sign.el}</div></div>
+    <div class="meta-item"><div class="m-label">Ruling Planet</div><div class="m-val">${sign.planet}</div></div>
+    <div class="meta-item"><div class="m-label">Core Trait</div><div class="m-val">${sign.trait.split(',')[0]}</div></div>
+  `;
+
+  // Mood bar
+  const bar=document.getElementById('moodBar');
+  const hue=energy>75?'var(--turq2)':energy>60?'var(--gold)':'#c0392b';
+  bar.style.width='0%';bar.style.background=hue;
+  requestAnimationFrame(()=>{bar.style.width=energy+'%'});
+
+  // Affirmation
+  document.getElementById('affirmation').textContent='✦ '+aff+' ✦';
+
+  // Show & scroll
+  const rc=document.getElementById('resultCard');
+  rc.classList.add('visible');
+  rc.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function cap(s){return s.charAt(0).toUpperCase()+s.slice(1)}
+/* ── Waitlist ── */
+document.getElementById('wlForm').addEventListener('submit',function(e){
+  e.preventDefault();
+  const email=this.querySelector('input[type=email]').value;
+  fetch('/api/waitlist',{
+    method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({email:email,product:'ai-horoscope-generator',ts:Date.now()})
+  }).then(()=>{
+    this.style.display='none';
+    document.getElementById('wlSuccess').classList.add('show');
+  }).catch(()=>{
+    this.style.display='none';
+    document.getElementById('wlSuccess').classList.add('show');
+  });
+});
+</script>
+
+<!-- ── Footer Scripts ── -->
+<script src="/assets/js/dfy-banner.js" async></script>
+<script src="/tools/_abuz8-md.js"></script>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+<script src="_abuz8-live-brain.js" defer></script>
+<script src="/tools/_tools-shared.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>
+

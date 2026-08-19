@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<link rel="stylesheet" href="/assets/css/abuz8-mach3.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Room Redesigner — ABUZ8</title>
+    <link rel="canonical" href="https://abuz8ai.com/tools/ai-room-redesign-pro">
+<meta name="description" content="Redesign your room in any style instantly. Upload a photo and let AI transform your interior. Join the ABUZ8 early access.">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --lapis: #0a1628;
+  --gold: #c9a84c;
+  --text: #e8e4d8;
+  --dim: #8a9aaa;
+  --border: #1a2e50;
+  --card: #0d1a30;
+  --cream: #f5f0e8;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: var(--lapis); color: var(--text); font-family: 'Inter', sans-serif; line-height: 1.6; min-height: 100vh; }
+.container { max-width: 1000px; margin: 0 auto; padding: 40px 20px; }
+h1 { font-family: 'Playfair Display', serif; font-size: clamp(2rem, 5vw, 3.5rem); color: var(--cream); margin-bottom: 10px; line-height: 1.1; }
+.sub { color: var(--dim); margin-bottom: 40px; font-size: 18px; font-weight: 300; }
+
+.tool-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
+@media (max-width: 768px) { .tool-layout { grid-template-columns: 1fr; } }
+
+.comparison { position: relative; border-radius: 20px; overflow: hidden; border: 1px solid var(--border); }
+.comparison img { width: 100%; display: block; }
+.label { position: absolute; bottom: 20px; left: 20px; background: rgba(0,0,0,0.6); padding: 5px 15px; border-radius: 4px; font-size: 12px; font-weight: 700; color: white; }
+
+.tool-panel { background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 35px; }
+.upload-box { border: 2px dashed var(--border); border-radius: 12px; padding: 60px 20px; text-align: center; cursor: pointer; margin-bottom: 25px; }
+.upload-box:hover { border-color: var(--gold); }
+
+.input-group { margin-bottom: 20px; }
+.input-group label { display: block; font-size: 11px; color: var(--gold); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 8px; font-weight: 700; }
+select { width: 100%; padding: 12px; background: #0f2040; border: 1px solid var(--border); border-radius: 8px; color: var(--text); }
+
+.btn { width: 100%; padding: 16px; border-radius: 10px; font-weight: 700; cursor: pointer; border: none; text-transform: uppercase; }
+.btn-gold { background: var(--gold); color: var(--lapis); }
+
+.modal { display: none; position: fixed; inset: 0; background: rgba(10,22,40,0.9); backdrop-filter: blur(10px); z-index: 1000; align-items: center; justify-content: center; }
+.modal-content { background: #111f38; border: 1px solid var(--gold); border-radius: 24px; padding: 40px; max-width: 500px; width: 90%; text-align: center; }
+</style>
+<script src="_abuz8-live-brain.js" defer></script>
+
+<script src="_abuz8-config.js" defer></script>
+</head>
+<body>
+<script>
+// Cloud fallback: if ComfyUI is unreachable, redirect generate calls to Workers AI
+(function(){
+  var comfyUrl = (window.ABUZ8_COMFY_BASE) || 'https://comfy.abuz8ai.com';
+  var checked = false, comfyLive = false;
+  window._checkComfy = async function(){
+    if(checked) return comfyLive;
+    try{
+      var r = await fetch(comfyUrl+'/system_stats',{signal:AbortSignal.timeout(3000)});
+      comfyLive = r.ok; checked = true;
+    }catch(_){ comfyLive = false; checked = true; }
+    return comfyLive;
+  };
+  window._cloudGenerate = async function(prompt){
+    try{
+      var r = await fetch('/api/ai-image',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt:prompt})});
+      if(!r.ok) return null;
+      var blob = await r.blob();
+      return URL.createObjectURL(blob);
+    }catch(_){ return null; }
+  };
+})();
+</script>
+
+<div class="container">
+  <header>
+    <a href="../tools.html" style="color:var(--gold); text-decoration:none; font-size:12px;">&larr; BACK TO SPACEPORT</a>
+    <h1 style="margin-top:20px;">AI Interior<br>Redesigner</h1>
+    <p class="sub">Turn any messy room into a designer masterpiece. 30+ architectural styles. Instant lighting and furniture replacement.</p>
+  </header>
+
+  <div class="tool-layout">
+    <div class="comparison">
+      <img src="https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&q=80&w=800" alt="Room Before">
+      <div class="label">BEFORE / SOURCE</div>
+    </div>
+
+    <div class="tool-panel">
+      <div class="upload-box" id="upload-box">
+        <span style="font-size:40px; display:block;">🛋️</span>
+        <strong>Upload Room Photo</strong>
+        <p style="font-size:12px;color:var(--dim);margin-top:5px;">PNG, JPG up to 10MB</p>
+      </div>
+
+      <div class="input-group">
+        <label>Design Style</label>
+        <select>
+          <option>Modern Minimalist</option>
+          <option>Scandinavian</option>
+          <option>Industrial Loft</option>
+          <option>Japandi</option>
+          <option>Mid-Century Modern</option>
+          <option>Bohemian</option>
+        </select>
+      </div>
+
+      <div class="input-group">
+        <label>Room Type</label>
+        <select>
+          <option>Living Room</option>
+          <option>Bedroom</option>
+          <option>Home Office</option>
+          <option>Kitchen</option>
+        </select>
+      </div>
+
+      <button class="btn btn-gold" data-gpu-required onclick="redesignRoom()">Render Transformation</button>
+    </div>
+  </div>
+  <div id="result-display" style="display:none;margin-top:30px;"></div>
+</div>
+
+<div id="wl-modal" class="modal">
+  <div class="modal-content">
+    <h2 style="font-family:'Playfair Display'; color:white; margin-bottom:15px;">Early Access Only</h2>
+    <p style="color:var(--dim); margin-bottom:25px;">The AI Interior Engine requires significant GPU compute. Join the waiting list to transform your home.</p>
+    <form onsubmit="submitWaitingList(event)" style="display:flex; flex-direction:column; gap:15px;">
+      <input type="email" id="wl-email" placeholder="Enter your email" required style="padding:12px; border-radius:8px; border:1px solid var(--border); background:var(--lapis); color:white;">
+      <button type="submit" class="btn btn-gold">Join the List</button>
+    </form>
+    <div id="wl-status" style="margin-top:15px; font-size:13px;"></div>
+    <button class="btn" style="background:transparent; color:var(--dim); margin-top:10px;" onclick="closeModal()">Close</button>
+  </div>
+</div>
+
+<script src="/assets/js/gpu-tools.js"></script>
+<script>
+function closeModal() { document.getElementById('wl-modal').style.display = 'none'; }
+setupFileUpload('upload-box', { accept: 'image/*', onFile: (file, dataUrl) => { window._uploadedImage = dataUrl; } });
+
+async function redesignRoom() {
+  if (!window._uploadedImage) { alert('Please upload a room photo first.'); return; }
+  const selects = document.querySelectorAll('.tool-panel select');
+  const style = selects[0]?.value || 'Modern Minimalist';
+  const room = selects[1]?.value || 'Living Room';
+  const btn = document.querySelector('[data-gpu-required]');
+  btn.textContent = 'RENDERING...'; btn.disabled = true;
+  try {
+    const result = await submitToComfyUI('comfyui_img2img', {
+      image: window._uploadedImage,
+      prompt: `${style} interior design, ${room}, professional architecture photography, natural lighting, 4k, photorealistic`
+    });
+    if (result && result.images && result.images[0]) showResult(result.images[0]);
+    else if (result && result.output) showResult(result.output);
+    gtag('event','tool_generate',{tool:'ai-room-redesign'});
+  } catch(e) { alert('Generation error: ' + e.message); }
+  finally { btn.textContent = 'RENDER TRANSFORMATION'; btn.disabled = false; }
+}
+
+async function submitWaitingList(e) {
+  e.preventDefault();
+  const email = document.getElementById('wl-email').value;
+  const status = document.getElementById('wl-status');
+  status.textContent = 'Registering...';
+  try {
+    const r = await fetch('/api/waitlist', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, product_id: 'ai-room', source: 'comfyui-tool' }) });
+    const d = await r.json();
+    if (d.success) { status.textContent = 'Success!'; status.style.color = '#0e9f6e'; setTimeout(closeModal, 2000); }
+  } catch (e) { status.textContent = 'Error occurred.'; }
+}
+</script>
+
+
+<link rel="stylesheet" href="/assets/css/zait-chat.css">
+<script src="/assets/js/zait-chat.js"></script>
+
+<script src="/assets/js/dfy-banner.js" async></script>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+<script src="/tools/_tools-shared.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>

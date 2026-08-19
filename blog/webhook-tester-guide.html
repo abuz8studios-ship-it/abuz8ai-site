@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<!-- 2026-07-17 — Weekly content: webhook-tester-guide -->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Webhook Tester: Debug Webhooks Before They Debug You | ABUZ8</title>
+<meta name="description" content="How to use a webhook tester to catch the failures that cost real money: silent drops, duplicate deliveries, signature mismatches, timeout retries, and redirect traps.">
+<meta name="keywords" content="webhook tester, test webhooks online, webhook debugging, webhook signature verification, stripe webhook testing, webhook retries">
+<link rel="canonical" href="https://abuz8ai.com/blog/webhook-tester-guide">
+<meta property="og:title" content="Webhook Tester: Debug Webhooks Before They Debug You">
+<meta property="og:type" content="article">
+<link rel="stylesheet" href="/blog/_blog-base.css">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@300;400;600;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
+<style>
+:root{
+  --lapis:#0a1628; --lapis-mid:#EEF3F8; --lapis-light:#E3EBF3;
+  --card:#0d1a30; --border:#D6E0EC;
+  --text:#e8e4d8; --cream:#1F2D3D; --dim:#5A6B7D;
+  --gold:#5fa8e8; --gold-light:#255F95; --gold-dim:#7DA3C8;
+  --turq:#5fa8e8; --turq-light:#5fa8e8; --turq-bright:#255F95;
+  --primary:#5fa8e8;
+}
+body{background:var(--lapis);}
+code{background:#EEF3F8;color:#255F95;}
+.callout.cta{background:linear-gradient(135deg,#EAF2FA,#0a1628);}
+</style>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","headline":"Webhook Tester: Debug Webhooks Before They Debug You","datePublished":"2026-07-17","author":{"@type":"Organization","name":"ABUZ8 AI"}}
+</script>
+</head>
+<body>
+<div class="container">
+  <a href="/blog/" class="back">&larr; ABUZ8 BLOG</a>
+  <h1>Webhook Tester: Debug Webhooks Before They Debug You</h1>
+  <div class="meta-row"><span>DEVELOPERS</span><span class="dot"></span><span>JULY 17, 2026</span><span class="dot"></span><span>6 MIN READ</span></div>
+
+  <p>Webhooks fail differently from normal code. A broken API call fails in front of you — red text, stack trace, right now. A broken webhook fails <em>somewhere else, later, silently</em>: Stripe sent the payment event, your endpoint 302'd it into the void, and you find out three weeks later when the numbers don't reconcile. A <strong>webhook tester</strong> exists to move that discovery from "three weeks later, in accounting" to "right now, on your screen." Here's how to use one properly, and the five failure modes that account for most webhook pain in production.</p>
+
+  <h2>Webhooks are APIs with the roles reversed</h2>
+  <p>A normal API call: you send the request, you control the timing, you see the response. A webhook flips it — the other system calls <em>you</em> when something happens. Payment settled, repo pushed, form submitted, message received. That reversal is why webhooks power everything event-driven, and why they're miserable to debug: you don't control when the request comes, you can't set a breakpoint in Stripe's servers, and if your endpoint misbehaves, the evidence lives in someone else's dashboard.</p>
+
+  <p>Testing therefore has two directions. <strong>Inbound:</strong> catch what a provider actually sends you — inspect the headers, body, and signature of a real delivery. <strong>Outbound:</strong> simulate the provider — craft a payload and fire it at your endpoint to see how your code behaves. Our <a href="/tools/ai-webhook-tester.html" class="in">free webhook tester</a> does the outbound half in the browser: build the request, describe the event in plain English and let it draft the JSON, send, inspect what came back.</p>
+
+  <h2>Failure mode #1: the redirect trap</h2>
+  <p>Your site redirects http to https, or apex to www. Fine for browsers — fatal for webhooks. Most providers treat <em>any</em> 3xx as a failure and do not follow it; Stripe, notably, marks redirected deliveries as failed. The webhook "works" when you test the URL in a browser (which follows the redirect) and fails from the provider. The test: send a request to the exact configured URL and confirm you get a direct <code>200</code>, not a 301 hop. Our <a href="/blog/http-status-codes-explained.html" class="in">status code guide</a> covers why the difference matters; the fix is registering the final URL, exactly.</p>
+
+  <h2>Failure mode #2: slow handlers and the timeout spiral</h2>
+  <p>Providers give you seconds — often 5 to 10 — to respond before marking the delivery failed and scheduling a retry. The classic sin is doing real work in the handler: generate the invoice PDF, send the email, update three tables, <em>then</em> return 200. Load rises, the handler takes 12 seconds, the provider times out, retries pile onto an already-slow system, and now you're processing every event twice while falling further behind. The pattern that survives production: <strong>acknowledge fast, process async.</strong> Receive, validate the signature, queue the payload, return 200 in milliseconds. Everything else happens off the request path.</p>
+
+  <h2>Failure mode #3: duplicates (they're a promise, not a bug)</h2>
+  <p>Every serious provider delivers <em>at least once</em> — meaning duplicates are guaranteed by design. Network blips, timeout retries, provider-side redelivery: the same event will arrive twice, eventually. If your handler isn't idempotent, that's double-shipped orders and double-sent emails. The fix is small: store each event ID, skip ones you've seen. Test it by firing the identical payload twice with your tester and confirming the second is a no-op. Teams that skip this test find out via a customer email that starts with "why was I charged twice."</p>
+
+  <h2>Failure mode #4: signatures done wrong</h2>
+  <p>An unverified webhook endpoint is an open door that accepts JSON — anyone who finds the URL can forge events. Providers sign deliveries (usually HMAC over the raw body plus a timestamp) so you can verify authenticity. Two implementation traps: verifying against the <em>parsed-then-reserialized</em> body instead of the raw bytes (your JSON library reorders keys, the HMAC no longer matches — this is the number one "signatures randomly fail" cause), and skipping the timestamp check, which leaves you open to replayed captures. Verify raw bytes, reject stale timestamps, and test with a deliberately wrong signature to confirm you actually reject it.</p>
+
+  <h2>Failure mode #5: trusting, not logging</h2>
+  <p>When a provider says "delivered, 200" and your database says otherwise, you need your own record to settle the argument. Log every inbound delivery — headers, body, timestamp, your response — before any processing. Storage is cheap; a reconciliation argument with a payment provider without receipts is not.</p>
+
+  <h2>The local angle</h2>
+  <p>Webhook payloads are business events: payments, signups, messages. Piping them through third-party inspection services means a stranger holds a copy of your event stream. Fine for a hello-world test; questionable for production traffic. This is the design bias behind <strong>QADIR OS</strong> — agents that receive, inspect, and route events on <em>your</em> machine, with gateways for the channels you use and memory that persists locally. Your event stream is your business telling you what's happening; it should report to you, not to a middleman.</p>
+
+  <div class="callout cta">
+    <p><strong>Test the five failure modes today.</strong> Fire real payloads at your endpoint with the <a href="/tools/ai-webhook-tester.html" class="in">free webhook tester</a>, and grab the matching <a href="/tools/ai-curl-builder.html" class="in">cURL command</a> for your CI checks. Want the whole event loop running locally? <a href="/" class="in">Join early access</a> — no card required.</p>
+  </div>
+  <div class="foot">Built by <a href="/">ABUZ8 LLC</a> — we're building QADIR OS, the sovereign agentic operating system.</div>
+</div>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+<script src="/blog/_blog-shared.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>

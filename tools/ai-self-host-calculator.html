@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Self-Host vs Cloud AI Cost Calculator — When Owning a GPU Beats API Bills | ABUZ8</title>
+  <meta name="description" content="Free self-hosted AI cost calculator. Enter your monthly LLM usage and see when buying a GPU rig beats renting cloud APIs — break-even month, 3-year TCO, and savings for RTX 5090, 4090, RTX 6000 Ada and Mac Studio. 100% client-side." />
+  <meta name="keywords" content="self-host AI cost, local LLM vs cloud, GPU break-even calculator, self-hosted LLM cost, RTX 5090 LLM, on-prem AI cost, cloud API vs own GPU, TCO calculator AI, sovereign AI cost" />
+  <meta property="og:title" content="Self-Host vs Cloud AI Cost Calculator | ABUZ8" />
+  <meta property="og:description" content="Enter your monthly LLM usage. See when owning a GPU beats renting cloud APIs — break-even, 3-year TCO, savings. Client-side, free, no signup." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://abuz8ai.com/tools/ai-self-host-calculator" />
+  <link rel="canonical" href="https://abuz8ai.com/tools/ai-self-host-calculator" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Self-Host vs Cloud AI Cost Calculator",
+    "description": "Free client-side calculator that compares the cost of self-hosting LLMs on your own GPU against renting cloud APIs, with break-even month and 3-year TCO.",
+    "url": "https://abuz8ai.com/tools/ai-self-host-calculator.html",
+    "applicationCategory": "BusinessApplication",
+    "operatingSystem": "Any",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+    "author": { "@type": "Organization", "name": "ABUZ8 LLC", "url": "https://abuz8ai.com" }
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Is self-hosting an LLM cheaper than using cloud APIs?",
+        "acceptedAnswer": { "@type": "Answer", "text": "It depends on volume. A GPU rig is a large fixed cost up front plus electricity, while cloud APIs are pay-per-token with zero capital outlay. Below a certain monthly usage, cloud is cheaper; above it, owning hardware wins and the savings compound. This calculator finds the exact break-even month for your usage." }
+      },
+      {
+        "@type": "Question",
+        "name": "How do I calculate the break-even point for buying a GPU?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Break-even month = hardware cost / (monthly cloud spend minus monthly electricity). If your cloud spend is below your rig's running cost, owning never pays off at that volume. The tool computes this live and also shows the full 3-year total cost of ownership for both options." }
+      },
+      {
+        "@type": "Question",
+        "name": "Does a local model match cloud model quality?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Open models like Llama, DeepSeek and Qwen are strong but not always equal to a frontier cloud model on the hardest tasks. The cost-smart approach is to run everything you can locally and only call a cloud model when local output falls short of your quality bar — which is exactly what cost-aware routing automates." }
+      },
+      {
+        "@type": "Question",
+        "name": "Is my data sent to a server?",
+        "acceptedAnswer": { "@type": "Answer", "text": "No. This calculator runs entirely in your browser. Nothing you type is uploaded, logged, or stored anywhere." }
+      }
+    ]
+  }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0a1628;
+      --card: #0d1a30;
+      --card-alt: #111f38;
+      --primary: #5fa8e8;
+      --primary-dim: #2e75b6;
+      --teal: #0e9f6e;
+      --text: #e8e4d8;
+      --text-dim: #5b6b7c;
+      --border: #d8e0e8;
+      --good: #0e9f6e;
+      --good-bg: #e7f3f0;
+      --warn: #c9a84c;
+      --warn-bg: #fbf1e3;
+      --font-heading: 'Playfair Display', Georgia, serif;
+      --font-body: 'Inter', system-ui, sans-serif;
+      --font-mono: 'JetBrains Mono', 'Courier New', monospace;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      font-size: 15px;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+    a { color: var(--primary); text-decoration: none; transition: color 0.2s; }
+    a:hover { color: var(--primary-dim); }
+
+    nav {
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      padding: 0 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 60px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .nav-logo {
+      font-family: var(--font-heading);
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--primary);
+      letter-spacing: 0.02em;
+    }
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links a { color: var(--text-dim); font-size: 0.9rem; font-weight: 500; }
+    .nav-links a:hover { color: var(--primary); }
+
+    main { max-width: 980px; margin: 0 auto; padding: 3rem 1.5rem 5rem; }
+    .page-header { text-align: center; margin-bottom: 2.2rem; }
+    .page-header h1 {
+      font-family: var(--font-heading);
+      font-size: 2.4rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 0.5rem;
+      line-height: 1.18;
+    }
+    .page-header p { color: var(--text-dim); font-size: 1rem; max-width: 640px; margin: 0 auto; }
+    .privacy-note {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      margin-top: 0.9rem; padding: 0.35rem 0.9rem;
+      background: var(--good-bg); border: 1px solid #bfe0d8;
+      border-radius: 20px; font-size: 0.78rem; color: var(--good);
+    }
+
+    label { display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-dim);
+            text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.5rem; }
+    select, input[type="number"] {
+      width: 100%;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      padding: 0.7rem 0.9rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    select:focus, input:focus { border-color: var(--primary); }
+    .hint { font-size: 0.72rem; color: var(--text-dim); margin-top: 0.35rem; font-weight: 400; text-transform: none; letter-spacing: 0; }
+
+    .panel {
+      background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+      padding: 1.4rem 1.5rem; margin-bottom: 1.4rem;
+      box-shadow: 0 1px 3px rgba(44,62,80,0.04);
+    }
+    .panel h2 {
+      font-family: var(--font-heading); font-size: 1.25rem; color: var(--primary);
+      margin-bottom: 1.1rem;
+    }
+    .controls { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+    .controls .full { grid-column: 1 / -1; }
+
+    /* TWO RESULT CARDS */
+    .results { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; margin: 0.4rem 0 0; }
+    .rcard { border: 1px solid var(--border); border-radius: 12px; padding: 1.3rem 1.4rem; background: var(--card-alt); }
+    .rcard.cloud { border-top: 3px solid var(--primary); }
+    .rcard.own   { border-top: 3px solid var(--teal); }
+    .rcard .rlabel { font-size: 0.74rem; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text-dim); font-weight: 600; }
+    .rcard .rbig { font-family: var(--font-heading); font-size: 2.1rem; font-weight: 700; line-height: 1.1; margin: 0.3rem 0 0.1rem; }
+    .rcard.cloud .rbig { color: var(--primary); }
+    .rcard.own .rbig { color: var(--teal); }
+    .rcard .rsub { font-size: 0.8rem; color: var(--text-dim); }
+    .rcard ul { list-style: none; margin-top: 0.9rem; font-size: 0.82rem; }
+    .rcard li { display: flex; justify-content: space-between; padding: 0.3rem 0; border-top: 1px dashed var(--border); }
+    .rcard li span:last-child { font-family: var(--font-mono); color: var(--text); }
+
+    /* VERDICT */
+    .verdict {
+      margin: 1.4rem 0 0; padding: 1.1rem 1.3rem; border-radius: 10px;
+      font-size: 0.95rem; line-height: 1.6;
+      background: var(--good-bg); border: 1px solid #bfe0d8; color: var(--text);
+    }
+    .verdict.cloudwin { background: var(--warn-bg); border-color: #f0d9b5; }
+    .verdict strong { color: var(--primary); }
+    .verdict.cloudwin strong { color: var(--warn); }
+    .verdict .big { font-family: var(--font-heading); font-weight: 700; }
+
+    /* TABLE */
+    .table-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: 12px; margin-top: 1.3rem; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.86rem; min-width: 640px; background: var(--card); }
+    thead th {
+      background: var(--card-alt); color: var(--text-dim);
+      font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.06em;
+      text-align: right; padding: 0.8rem 1rem; border-bottom: 1px solid var(--border); font-weight: 600;
+    }
+    thead th:first-child { text-align: left; }
+    tbody td { padding: 0.7rem 1rem; border-bottom: 1px solid var(--border); text-align: right; font-family: var(--font-mono); }
+    tbody td:first-child { text-align: left; font-family: var(--font-body); }
+    tbody tr:last-child td { border-bottom: none; }
+    tbody tr.best { background: var(--good-bg); }
+    tbody tr.best td:first-child { box-shadow: inset 3px 0 0 var(--teal); }
+    .rig-name { font-weight: 600; color: var(--text); }
+    .badge-best { font-size: 0.62rem; color: var(--teal); font-weight: 700; letter-spacing: 0.05em; margin-left: 0.4rem; }
+    .never { color: var(--warn); }
+    .save-pos { color: var(--teal); font-weight: 600; }
+    .save-neg { color: var(--warn); }
+    .price-note { font-size: 0.78rem; color: var(--text-dim); margin-top: 0.9rem; line-height: 1.7; }
+    .price-note a { color: var(--text-dim); text-decoration: underline; }
+    .price-note a:hover { color: var(--primary); }
+
+    /* CTA */
+    .cta-section {
+      background: linear-gradient(135deg, #eef5fb 0%, #e7f3f0 100%);
+      border: 1px solid #cfe0ef; border-radius: 12px;
+      padding: 2.2rem 2rem; text-align: center; margin-top: 3rem;
+    }
+    .cta-section h2 { font-family: var(--font-heading); font-size: 1.5rem; color: var(--primary); margin-bottom: 0.5rem; }
+    .cta-section p { color: var(--text-dim); font-size: 0.95rem; margin-bottom: 1.2rem; max-width: 580px; margin-left: auto; margin-right: auto; }
+    .cta-form { display: flex; gap: 0.6rem; justify-content: center; flex-wrap: wrap; }
+    .cta-form input[type="email"] {
+      flex: 1; max-width: 300px; min-width: 200px;
+      background: var(--card); border: 1px solid var(--border); border-radius: 6px;
+      color: var(--text); font-family: var(--font-body); font-size: 0.9rem; padding: 0.6rem 1rem; outline: none;
+    }
+    .cta-form input[type="email"]:focus { border-color: var(--primary); }
+    button {
+      padding: 0.6rem 1.4rem; border-radius: 6px; border: none; cursor: pointer;
+      font-family: var(--font-body); font-size: 0.88rem; font-weight: 600; transition: background 0.2s;
+    }
+    .btn-primary { background: var(--primary); color: #0d1a30; }
+    .btn-primary:hover { background: var(--primary-dim); }
+    .cta-success { display: none; color: var(--teal); font-size: 0.9rem; margin-top: 0.8rem; font-weight: 600; }
+    .cta-success.visible { display: block; }
+
+    .content { margin-top: 3rem; }
+    .content h2 { font-family: var(--font-heading); font-size: 1.5rem; color: var(--primary); margin: 0 0 1rem; padding-top: 1rem; }
+    .faq-item { border-top: 1px solid var(--border); padding: 1.1rem 0; }
+    .faq-item h3 { font-size: 1rem; color: var(--text); margin-bottom: 0.4rem; font-weight: 600; }
+    .faq-item p { color: var(--text-dim); font-size: 0.9rem; }
+
+    footer {
+      background: var(--card); border-top: 1px solid var(--border);
+      text-align: center; padding: 1.5rem; font-size: 0.82rem; color: var(--text-dim);
+    }
+    footer a { color: var(--text-dim); }
+    footer a:hover { color: var(--primary); }
+
+    @media (max-width: 720px) {
+      .controls { grid-template-columns: 1fr 1fr; }
+      .results { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 600px) {
+      .page-header h1 { font-size: 1.8rem; }
+      nav { padding: 0 1rem; }
+      .nav-links { gap: 1rem; }
+      main { padding: 2rem 1rem 4rem; }
+      .controls { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="nav-logo">ABUZ8</a>
+  <ul class="nav-links">
+    <li><a href="/tools.html">Tools</a></li>
+    <li><a href="/store.html">Store</a></li>
+  </ul>
+</nav>
+
+<main>
+  <div class="page-header">
+    <h1>Self-Host vs Cloud AI Cost Calculator</h1>
+    <p>Enter your monthly LLM usage and pick a GPU rig. See exactly when owning your hardware beats renting cloud APIs — the break-even month, the 3-year total cost, and how much you keep.</p>
+    <span class="privacy-note">&#128274; 100% in-browser — nothing you enter is uploaded</span>
+  </div>
+
+  <div class="panel">
+    <h2>1. Your monthly usage</h2>
+    <div class="controls">
+      <div>
+        <label for="inTokens">Input tokens / call</label>
+        <input type="number" id="inTokens" min="0" value="1500" oninput="recalc()" />
+        <div class="hint">Avg prompt size per request.</div>
+      </div>
+      <div>
+        <label for="outTokens">Output tokens / call</label>
+        <input type="number" id="outTokens" min="0" value="800" oninput="recalc()" />
+        <div class="hint">Avg reply length per request.</div>
+      </div>
+      <div>
+        <label for="reqs">Requests / month</label>
+        <input type="number" id="reqs" min="0" value="30000" oninput="recalc()" />
+        <div class="hint">Total calls across your app.</div>
+      </div>
+      <div class="full">
+        <label for="cloudModel">Cloud model you'd rent instead</label>
+        <select id="cloudModel" onchange="recalc()"></select>
+        <div class="hint">The frontier-API price you're comparing against. Prices verified June&nbsp;2026.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2>2. The rig you'd own &amp; run it on</h2>
+    <div class="controls">
+      <div>
+        <label for="rig">GPU rig</label>
+        <select id="rig" onchange="recalc()"></select>
+        <div class="hint">Up-front hardware cost + sustained power draw.</div>
+      </div>
+      <div>
+        <label for="elec">Electricity ($/kWh)</label>
+        <input type="number" id="elec" min="0" step="0.01" value="0.16" oninput="recalc()" />
+        <div class="hint">US avg ~$0.16; check your bill.</div>
+      </div>
+      <div>
+        <label for="hours">Hours/day under load</label>
+        <input type="number" id="hours" min="0" max="24" value="8" oninput="recalc()" />
+        <div class="hint">Inference duty cycle, not idle.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="verdict" id="verdict"></div>
+
+  <div class="results">
+    <div class="rcard cloud">
+      <div class="rlabel">Rent — Cloud API</div>
+      <div class="rbig" id="cloudMonthly">$0</div>
+      <div class="rsub">per month, at your usage</div>
+      <ul>
+        <li><span>Up-front cost</span><span>$0</span></li>
+        <li><span>3-year total</span><span id="cloud3yr">$0</span></li>
+      </ul>
+    </div>
+    <div class="rcard own">
+      <div class="rlabel">Own — Self-Hosted</div>
+      <div class="rbig" id="ownMonthly">$0</div>
+      <div class="rsub">per month, electricity only</div>
+      <ul>
+        <li><span>Up-front hardware</span><span id="ownCapex">$0</span></li>
+        <li><span>3-year total</span><span id="own3yr">$0</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>GPU rig</th>
+          <th>Hardware</th>
+          <th>Power / mo</th>
+          <th>Break-even</th>
+          <th>3-yr savings vs cloud</th>
+        </tr>
+      </thead>
+      <tbody id="rigTable"></tbody>
+    </table>
+  </div>
+
+  <p class="price-note">
+    Cloud prices per 1M tokens, standard (non-cached, non-batch) tier, verified June&nbsp;2026 &mdash; confirm live rates at
+    <a href="https://openai.com/api/pricing/" target="_blank" rel="noopener">OpenAI</a>,
+    <a href="https://platform.claude.com/docs/en/about-claude/pricing" target="_blank" rel="noopener">Anthropic</a>,
+    <a href="https://ai.google.dev/gemini-api/docs/pricing" target="_blank" rel="noopener">Google</a>,
+    <a href="https://api-docs.deepseek.com/quick_start/pricing" target="_blank" rel="noopener">DeepSeek</a>.
+    Hardware costs are approximate MSRP (street prices vary); power is typical sustained draw under inference. This is a
+    <strong>cost</strong> model &mdash; it assumes a local open model (Llama / DeepSeek / Qwen) covers the work; throughput and
+    quality differ from frontier models, which is the gap cost-aware routing closes.
+  </p>
+
+  <div class="cta-section">
+    <h2>Own the floor. Rent only the ceiling.</h2>
+    <p>The math above is the whole ABUZ8 thesis: run everything you can on hardware you own, and pay a cloud API only for the few calls a local model can't clear. QADIR&nbsp;OS makes that decision automatically, per request &mdash; sovereign by default, cloud only when it has to be.</p>
+    <div class="cta-form">
+      <input type="email" id="ctaEmail" placeholder="you@company.com" />
+      <button class="btn-primary" onclick="submitWaitlist()">Join early access</button>
+    </div>
+    <div id="ctaSuccess" class="cta-success">&#10003; You're on the list. We'll be in touch.</div>
+  </div>
+
+  <div class="content">
+    <h2>Owning vs renting your AI compute</h2>
+    <div class="faq-item">
+      <h3>Is self-hosting an LLM cheaper than cloud APIs?</h3>
+      <p>It depends entirely on volume. A GPU rig is a big fixed cost up front plus electricity; cloud APIs are pay-per-token with nothing down. Below a break-even usage, cloud wins; above it, owning wins and the gap compounds every month. The calculator above finds that exact crossover for your numbers &mdash; and it will tell you honestly when cloud is the cheaper call.</p>
+    </div>
+    <div class="faq-item">
+      <h3>How is the break-even month calculated?</h3>
+      <p>Break-even month = hardware cost &divide; (monthly cloud spend &minus; monthly electricity). If your running power cost is higher than what you'd spend on cloud, owning never pays off at that volume and the tool says so. Over three years, the 3-year total compares all-in ownership (hardware + power) against cumulative cloud bills.</p>
+    </div>
+    <div class="faq-item">
+      <h3>Will a local model match a frontier cloud model?</h3>
+      <p>Open models such as Llama, DeepSeek and Qwen are strong, but not always equal to a frontier model on the hardest tasks. The cost-smart pattern is to run everything locally and escalate to a cloud model only when local output misses your quality bar &mdash; which is exactly what QADIR OS automates with cost-aware routing.</p>
+    </div>
+    <div class="faq-item">
+      <h3>Is my data sent anywhere?</h3>
+      <p>No. This calculator runs entirely in your browser. Nothing you enter is uploaded, logged, or stored.</p>
+    </div>
+  </div>
+</main>
+
+<footer>
+  ABUZ8 LLC &middot; Free AI Tools &middot; <a href="mailto:ahmad@abuz8ai.com">ahmad@abuz8ai.com</a>
+</footer>
+
+<script>
+// ── CLOUD PRICING (USD per 1M tokens) — verified June 2026 ───────────────────
+const MODELS = [
+  { name:'GPT-5.5',           in:5.00, out:30.00 },
+  { name:'GPT-5.4',           in:2.50, out:15.00 },
+  { name:'Claude Opus 4.8',   in:5.00, out:25.00 },
+  { name:'Claude Sonnet 4.6', in:3.00, out:15.00 },
+  { name:'Claude Haiku 4.5',  in:1.00, out:5.00  },
+  { name:'Gemini 2.5 Pro',    in:1.25, out:10.00 },
+  { name:'Gemini 2.5 Flash',  in:0.30, out:2.50  },
+  { name:'DeepSeek-V3',       in:0.14, out:0.28  }
+];
+
+// ── GPU RIGS — approx MSRP (USD) + sustained inference draw (W), June 2026 ────
+const RIGS = [
+  { name:'RTX 5090 (single, 32GB)',          capex:2000, watts:575  },
+  { name:'Dual RTX 5090 rig (the ABUZ8 box)', capex:6500, watts:1400 },
+  { name:'RTX 4090 (24GB)',                   capex:1600, watts:450  },
+  { name:'RTX 6000 Ada (48GB)',               capex:6800, watts:320  },
+  { name:'Mac Studio M3 Ultra (96GB)',        capex:4800, watts:280  }
+];
+
+const HORIZON = 36; // months for TCO comparison
+
+// ── FORMAT ───────────────────────────────────────────────────────────────────
+function fmtUSD(v) {
+  if (!isFinite(v)) return '—';
+  const n = Math.abs(v);
+  if (n >= 1)    return (v < 0 ? '-$' : '$') + n.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+  if (n > 0)     return (v < 0 ? '-$' : '$') + n.toFixed(2);
+  return '$0';
+}
+function fmtMonths(m) {
+  if (!isFinite(m)) return 'never';
+  if (m < 12) return m.toFixed(1) + ' mo';
+  return Math.round(m) + ' mo';
+}
+
+// ── READ INPUTS ──────────────────────────────────────────────────────────────
+function inputs() {
+  const inTok  = Math.max(0, parseInt(document.getElementById('inTokens').value, 10)  || 0);
+  const outTok = Math.max(0, parseInt(document.getElementById('outTokens').value, 10) || 0);
+  const reqs   = Math.max(0, parseInt(document.getElementById('reqs').value, 10)      || 0);
+  const elec   = Math.max(0, parseFloat(document.getElementById('elec').value)        || 0);
+  const hours  = Math.max(0, Math.min(24, parseFloat(document.getElementById('hours').value) || 0));
+  const model  = MODELS[document.getElementById('cloudModel').value] || MODELS[3];
+  const rig    = RIGS[document.getElementById('rig').value] || RIGS[1];
+  return { inTok, outTok, reqs, elec, hours, model, rig };
+}
+function cloudMonthlyFor(m, i) {
+  return (i.inTok * i.reqs / 1e6) * m.in + (i.outTok * i.reqs / 1e6) * m.out;
+}
+function powerMonthlyFor(rig, i) {
+  return (rig.watts / 1000) * i.hours * 30 * i.elec;
+}
+
+// ── MAIN RECALC ──────────────────────────────────────────────────────────────
+function recalc() {
+  const i = inputs();
+  const cloudM = cloudMonthlyFor(i.model, i);
+  const powerM = powerMonthlyFor(i.rig, i);
+  const cloud3 = cloudM * HORIZON;
+  const own3   = i.rig.capex + powerM * HORIZON;
+  const be     = cloudM > powerM ? i.rig.capex / (cloudM - powerM) : Infinity;
+  const save3  = cloud3 - own3;
+
+  document.getElementById('cloudMonthly').textContent = fmtUSD(cloudM);
+  document.getElementById('cloud3yr').textContent     = fmtUSD(cloud3);
+  document.getElementById('ownMonthly').textContent   = fmtUSD(powerM);
+  document.getElementById('ownCapex').textContent     = fmtUSD(i.rig.capex);
+  document.getElementById('own3yr').textContent       = fmtUSD(own3);
+
+  // verdict
+  const v = document.getElementById('verdict');
+  const ownWins = isFinite(be) && be <= HORIZON && save3 > 0;
+  if (cloudM <= 0) {
+    v.className = 'verdict';
+    v.innerHTML = 'Enter your monthly usage above to see when owning beats renting.';
+  } else if (ownWins) {
+    v.className = 'verdict';
+    v.innerHTML = `<span class="big">Owning wins.</span> A <strong>${i.rig.name}</strong> pays for itself in <strong>${fmtMonths(be)}</strong> vs renting <strong>${i.model.name}</strong> — then keeps printing. Over 3 years you save <strong>${fmtUSD(save3)}</strong>.`;
+  } else if (isFinite(be)) {
+    v.className = 'verdict cloudwin';
+    v.innerHTML = `<span class="big">Renting wins — for now.</span> At this volume the <strong>${i.rig.name}</strong> takes <strong>${fmtMonths(be)}</strong> to break even, so it costs <strong>${fmtUSD(-save3)}</strong> more than ${i.model.name} over 3 years. Grow your usage and the math flips.`;
+  } else {
+    v.className = 'verdict cloudwin';
+    v.innerHTML = `<span class="big">Renting wins.</span> At this volume, the rig would cost more to power than you'd spend on <strong>${i.model.name}</strong> — owning never pays off here. That's exactly when QADIR routes you to cloud.`;
+  }
+
+  // table — all rigs vs the chosen cloud model, best 3-yr savings first
+  const rows = RIGS.map(r => {
+    const p  = powerMonthlyFor(r, i);
+    const b  = cloudM > p ? r.capex / (cloudM - p) : Infinity;
+    const s  = cloud3 - (r.capex + p * HORIZON);
+    return { r, p, b, s };
+  }).sort((a, b) => b.s - a.s);
+
+  const body = document.getElementById('rigTable');
+  body.innerHTML = rows.map((row, idx) => {
+    const best = idx === 0 && row.s > 0;
+    const saveCls = row.s > 0 ? 'save-pos' : 'save-neg';
+    const beCell = isFinite(row.b) ? fmtMonths(row.b) : '<span class="never">never</span>';
+    return `<tr class="${best ? 'best' : ''}">
+      <td><span class="rig-name">${row.r.name}</span>${best ? '<span class="badge-best">BEST</span>' : ''}</td>
+      <td>${fmtUSD(row.r.capex)}</td>
+      <td>${fmtUSD(row.p)}</td>
+      <td>${beCell}</td>
+      <td class="${saveCls}">${fmtUSD(row.s)}</td>
+    </tr>`;
+  }).join('');
+}
+
+// ── WAITLIST ─────────────────────────────────────────────────────────────────
+async function submitWaitlist() {
+  const email = document.getElementById('ctaEmail').value.trim();
+  if (!email || !email.includes('@')) { alert('Please enter a valid email address.'); return; }
+  const payload = { email, product: 'qadir-os-self-host-calculator', ts: new Date().toISOString() };
+  try {
+    await fetch('/api/waitlist', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+  } catch (e) { /* graceful fallback */ }
+  document.getElementById('ctaEmail').style.display = 'none';
+  document.querySelector('.cta-form button').style.display = 'none';
+  document.getElementById('ctaSuccess').classList.add('visible');
+}
+
+// ── INIT ─────────────────────────────────────────────────────────────────────
+(function init() {
+  const cm = document.getElementById('cloudModel');
+  cm.innerHTML = MODELS.map((m, idx) => `<option value="${idx}">${m.name} ($${m.in.toFixed(2)} in / $${m.out.toFixed(2)} out per 1M)</option>`).join('');
+  cm.value = 3; // Claude Sonnet 4.6 default
+  const rg = document.getElementById('rig');
+  rg.innerHTML = RIGS.map((r, idx) => `<option value="${idx}">${r.name} — ${fmtUSD(r.capex)}, ${r.watts}W</option>`).join('');
+  rg.value = 1; // Dual RTX 5090 default
+  recalc();
+})();
+</script>
+<script src="/tools/_tools-shared.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>

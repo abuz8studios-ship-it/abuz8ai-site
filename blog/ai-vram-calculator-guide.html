@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI VRAM Calculator: How Much VRAM Do You Need to Run AI Locally? | ABUZ8</title>
+<meta name="description" content="Use our free AI VRAM calculator to find out how much GPU memory you need to run local AI models. Real numbers for 7B, 13B, and 70B models, what quantization changes, and what to do when you don't have enough.">
+<meta name="keywords" content="ai vram calculator, how much vram to run ai, llm vram requirements, local ai hardware, gpu memory for ai, run llm locally">
+<link rel="canonical" href="https://abuz8ai.com/blog/ai-vram-calculator-guide">
+<meta property="og:title" content="AI VRAM Calculator: How Much VRAM Do You Need to Run AI Locally?">
+<meta property="og:type" content="article">
+<link rel="stylesheet" href="/blog/_blog-base.css">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@300;400;600;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","headline":"AI VRAM Calculator: How Much VRAM Do You Need to Run AI Locally?","datePublished":"2026-07-19","author":{"@type":"Organization","name":"ABUZ8 AI"}}
+</script>
+</head>
+<body>
+<div class="container">
+  <a href="/blog/" class="back">&larr; ABUZ8 BLOG</a>
+  <h1>AI VRAM Calculator: How Much VRAM Do You Need to Run AI Locally?</h1>
+  <div class="meta-row"><span>LOCAL AI</span><span class="dot"></span><span>JULY 19, 2026</span><span class="dot"></span><span>6 MIN READ</span></div>
+
+  <p>"Can my GPU run this model?" is the first question everyone asks about local AI, and most answers are either vibes or a spec sheet written for people who already know. Our free <a href="/tools/ai-vram-calculator.html" class="in">AI VRAM calculator</a> gives you the real answer in seconds: pick a model size, pick a quantization, and see whether it fits in your card's memory. This guide explains the numbers behind it — so you understand <em>why</em> the answer is what it is, and what your options are when it's "no."</p>
+
+  <h2>The short answer, in one table's worth of prose</h2>
+  <p>Rough working numbers for text models: a <strong>7B model at Q4 quantization needs about 4–5GB</strong> of VRAM and runs comfortably on an 8GB card. A <strong>13B at Q4 wants roughly 8–10GB</strong> — a 12GB card is the comfortable floor. A <strong>70B at Q4 needs on the order of 40GB+</strong>, which means a workstation card, a multi-GPU rig, or aggressive CPU offloading with real speed penalties. Run the same models at full FP16 precision and the requirements roughly quadruple — a 7B jumps to ~14GB — which is exactly why almost nobody runs full precision at home. These are honest approximations, not marketing: actual usage shifts with context length, architecture, and your inference stack, which is why a <a href="/tools/ai-vram-calculator.html" class="in">calculator</a> beats memorizing a chart.</p>
+
+  <h2>What actually eats your VRAM</h2>
+  <p>Three things. <strong>Model weights</strong> are the big one — billions of parameters times bytes-per-parameter. At FP16 that's 2 bytes each; at Q4 it's roughly half a byte, which is the entire magic trick of quantization. <strong>The KV cache</strong> grows with your context window: every token in play holds attention keys and values in memory, so a 32k-token context can quietly claim gigabytes on top of the weights. Long-context work costs real memory, not just time. <strong>Overhead</strong> — CUDA buffers, the inference framework, your desktop compositor — typically shaves 1–2GB off what the box claims. An "8GB" card is a 6-something-GB card by the time your model loads.</p>
+
+  <h2>Quantization: the reason local AI is possible at all</h2>
+  <p>Quantization stores model weights at lower precision — 4-bit instead of 16-bit — trading a small amount of output quality for a 3–4x cut in memory. For most real work the quality difference between FP16 and a good Q4 or Q5 quant is hard to notice; the difference between "runs on my machine" and "doesn't" is not. This is what the GGUF format was built for, and it's why the local AI world runs on quantized models. If GGUF is new to you, read our <a href="/blog/what-is-a-gguf-model.html" class="in">plain-English GGUF explainer</a> — it's the file format you'll be downloading either way.</p>
+
+  <h2>Image and video models play by different rules</h2>
+  <p>Diffusion models (image generation) care about resolution and batch size more than parameter count — SDXL-class models want 8–12GB to be comfortable, and video generation is hungrier still: current local video pipelines are happiest at 16–24GB, though offloading tricks can squeeze them into less if you tolerate the wait. The pattern holds everywhere: VRAM is the hard ceiling, speed is the negotiable part. If it fits, it runs; the only question is how fast.</p>
+
+  <h2>Don't have enough? Your actual options</h2>
+  <p>In order of sanity: <strong>drop a quant level</strong> — Q4 instead of Q5, Q3 if you're desperate; quality degrades gradually, not off a cliff. <strong>Use a smaller model</strong> — a 7B that fits beats a 13B that's swapping to system RAM. <strong>Offload layers to CPU</strong> — most runtimes let you split a model between GPU and system memory; it works, at a real speed cost. <strong>Shrink your context window</strong> — reclaims KV cache instantly. What we won't tell you is "just buy a bigger GPU" — the whole point of running local is doing real work on hardware you already own, and a well-chosen quant on an 8GB card does more real work than most people expect.</p>
+
+  <h2>Why we care about this at all</h2>
+  <p>ABUZ8 builds QADIR OS — a sovereign, <a href="/blog/what-is-qadir-os.html" class="in">local-first agentic operating system</a> that runs AI on your machine, not on a rented meter. The first honest conversation in that world is hardware: what can your box actually run? That's why the <a href="/tools/ai-vram-calculator.html" class="in">VRAM calculator</a> is free with no signup, like the rest of the <a href="/tools.html" class="in">tool library</a>. Know your ceiling, pick your model, own your stack.</p>
+
+  <h2>The bottom line</h2>
+  <p>VRAM is the one spec that decides local AI: 8GB gets you a fast 7B, 12–16GB unlocks 13B-class models with room to breathe, 24GB opens serious territory, and quantization is the lever that makes all of it affordable. Check your card against the model you want before you download 40GB of weights — it takes ten seconds and it's the ten seconds that saves an evening.</p>
+
+  <div class="callout cta">
+    <p><strong>Find your number first.</strong> Run the free <a href="/tools/ai-vram-calculator.html" class="in">AI VRAM calculator</a>, then <a href="/" class="in">join early access</a> for QADIR OS — the sovereign agentic OS built to run on the hardware you just measured. No card required.</p>
+  </div>
+
+  <div class="foot">Built by <a href="/">ABUZ8 LLC</a> — we're building QADIR OS, the sovereign agentic operating system.</div>
+</div>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+<script src="/blog/_blog-shared.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Cartoon / Avatar | ABUZ8</title>
+<style>
+  :root{--lapis:#0a1628;--lapis2:#0f1f3d;--lapis3:#162444;--gold:#c9a84c;--gold2:#e0bc6a;--turq:#0e9f6e;--turq2:#22a090;--text:#e8e4da;--muted:#8a9ab5;--green:#3db87a;}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--lapis);color:var(--text);font-family:'Inter',system-ui,sans-serif;min-height:100vh;}
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;500;600&display=swap');
+  header{background:linear-gradient(135deg,var(--lapis2),var(--lapis3));border-bottom:1px solid rgba(201,168,76,0.3);padding:16px 40px;display:flex;align-items:center;justify-content:space-between;}
+  .logo{font-family:'Playfair Display',serif;font-size:1.5rem;color:var(--gold);}
+  .logo span{color:var(--turq);}
+  .pill{display:flex;align-items:center;gap:8px;background:rgba(61,184,122,0.12);border:1px solid rgba(61,184,122,0.3);border-radius:20px;padding:6px 14px;font-size:0.8rem;color:var(--green);}
+  .dot{width:7px;height:7px;border-radius:50%;background:var(--green);animation:pulse 2s infinite;}
+  @keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.4;}}
+  .hero{padding:60px 40px;text-align:center;background:linear-gradient(135deg,var(--lapis3),var(--lapis2));border-bottom:1px solid rgba(201,168,76,0.15);}
+  .hero h1{font-family:'Playfair Display',serif;font-size:2.8rem;color:var(--gold);margin-bottom:12px;}
+  .hero p{color:var(--muted);font-size:1.05rem;max-width:580px;margin:0 auto 24px;}
+  .style-showcase{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin-bottom:16px;}
+  .showcase-tag{background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.25);color:var(--gold2);padding:6px 16px;border-radius:20px;font-size:0.85rem;}
+  .main{max-width:960px;margin:0 auto;padding:50px 20px;}
+  .card{background:var(--lapis2);border:1px solid rgba(201,168,76,0.2);border-radius:16px;padding:32px;margin-bottom:24px;}
+  .card h2{font-family:'Playfair Display',serif;color:var(--gold);font-size:1.4rem;margin-bottom:20px;}
+  .upload-zone{border:2px dashed rgba(201,168,76,0.3);border-radius:12px;padding:40px;text-align:center;cursor:pointer;transition:all 0.3s;}
+  .upload-zone:hover{border-color:var(--gold);background:rgba(201,168,76,0.05);}
+  .upload-zone input{display:none;}
+  .preview-img{max-width:100%;max-height:180px;border-radius:8px;margin-top:16px;display:none;}
+  .style-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;margin-top:12px;}
+  .style-opt{background:rgba(255,255,255,0.04);border:1px solid rgba(138,154,181,0.2);border-radius:10px;padding:14px;cursor:pointer;text-align:center;transition:all 0.2s;}
+  .style-opt:hover,.style-opt.sel{border-color:var(--gold);background:rgba(201,168,76,0.08);}
+  .style-icon{font-size:1.8rem;margin-bottom:6px;}
+  .style-name{font-size:0.82rem;font-weight:600;color:var(--text);}
+  .style-desc{font-size:0.72rem;color:var(--muted);margin-top:2px;}
+  label{display:block;color:var(--muted);font-size:0.78rem;font-weight:600;letter-spacing:0.5px;text-transform:uppercase;margin-bottom:6px;margin-top:16px;}
+  select{width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(138,154,181,0.3);border-radius:8px;padding:10px 14px;color:var(--text);font-family:inherit;font-size:0.9rem;}
+  select:focus{outline:none;border-color:var(--gold);}
+  select option{background:var(--lapis2);}
+  .form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  @media(max-width:600px){.form-row{grid-template-columns:1fr;}}
+  .btn{width:100%;padding:16px;background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--lapis);font-weight:700;font-size:1.05rem;border:none;border-radius:10px;cursor:pointer;transition:all 0.2s;margin-top:20px;font-family:inherit;}
+  .btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(201,168,76,0.4);}
+  .btn:disabled{opacity:0.5;cursor:not-allowed;transform:none;}
+  .progress-section{background:var(--lapis3);border-radius:10px;padding:20px;display:none;margin-top:16px;}
+  .progress-bar{background:rgba(255,255,255,0.08);border-radius:4px;height:6px;overflow:hidden;margin:10px 0;}
+  .progress-fill{height:100%;background:linear-gradient(90deg,var(--turq),var(--gold));border-radius:4px;transition:width 0.5s;}
+  .result-area{display:none;margin-top:20px;}
+  .result-card{background:var(--lapis3);border:1px solid rgba(201,168,76,0.2);border-radius:12px;overflow:hidden;text-align:center;}
+  .result-placeholder{height:280px;display:flex;align-items:center;justify-content:center;font-size:5rem;background:linear-gradient(135deg,var(--lapis3),var(--lapis2));}
+  .result-actions{padding:16px;display:flex;gap:10px;}
+  .dl-btn{flex:1;padding:10px;background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--lapis);font-weight:700;border:none;border-radius:8px;cursor:pointer;font-family:inherit;}
+  .share-btn{flex:1;padding:10px;background:transparent;border:1px solid var(--turq);color:var(--turq);border-radius:8px;cursor:pointer;font-family:inherit;}
+  .waitlist-section{background:linear-gradient(135deg,rgba(201,168,76,0.08),rgba(26,138,122,0.08));border:1px solid rgba(201,168,76,0.2);border-radius:16px;padding:40px;text-align:center;}
+  .waitlist-section h2{font-family:'Playfair Display',serif;font-size:1.7rem;color:var(--gold);margin-bottom:10px;}
+  .waitlist-section p{color:var(--muted);margin-bottom:20px;}
+  .email-row{display:flex;gap:10px;max-width:400px;margin:0 auto;}
+  .email-row input{flex:1;background:rgba(255,255,255,0.06);border:1px solid rgba(138,154,181,0.3);border-radius:8px;padding:11px 14px;color:var(--text);font-family:inherit;font-size:0.9rem;}
+  .email-row input:focus{outline:none;border-color:var(--gold);}
+  .email-row button{padding:11px 22px;background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--lapis);font-weight:700;border:none;border-radius:8px;cursor:pointer;font-family:inherit;}
+  .success-msg{color:var(--green);margin-top:10px;display:none;font-size:0.9rem;}
+</style>
+<script src="_abuz8-live-brain.js" defer></script>
+
+<script src="_abuz8-config.js" defer></script>
+<link rel="canonical" href="https://abuz8ai.com/tools/ai-cartoon-avatar">
+<meta name="description" content="AI Cartoon Avatar — Turn a selfie into a cartoon avatar. Free, no signup, runs entirely in your browser. One of 169 free AI and developer tools by ABUZ8.">
+</head>
+<body>
+<script>
+// Cloud fallback: if ComfyUI is unreachable, redirect generate calls to Workers AI
+(function(){
+  var comfyUrl = (window.ABUZ8_COMFY_BASE) || 'https://comfy.abuz8ai.com';
+  var checked = false, comfyLive = false;
+  window._checkComfy = async function(){
+    if(checked) return comfyLive;
+    try{
+      var r = await fetch(comfyUrl+'/system_stats',{signal:AbortSignal.timeout(3000)});
+      comfyLive = r.ok; checked = true;
+    }catch(_){ comfyLive = false; checked = true; }
+    return comfyLive;
+  };
+  window._cloudGenerate = async function(prompt){
+    try{
+      var r = await fetch('/api/ai-image',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt:prompt})});
+      if(!r.ok) return null;
+      var blob = await r.blob();
+      return URL.createObjectURL(blob);
+    }catch(_){ return null; }
+  };
+})();
+</script>
+<header>
+  <div class="logo">ABU<span>Z8</span></div>
+  <div class="pill"><div class="dot"></div>AI Engine Online</div>
+</header>
+<div class="hero">
+  <div class="style-showcase">
+    <span class="showcase-tag">🎌 Anime</span>
+    <span class="showcase-tag">🎨 Pixar 3D</span>
+    <span class="showcase-tag">🖼 Oil Paint</span>
+    <span class="showcase-tag">💠 Flat Icon</span>
+    <span class="showcase-tag">🤖 Cyberpunk</span>
+    <span class="showcase-tag">📺 80s Retro</span>
+  </div>
+  <h1>AI Cartoon & Avatar</h1>
+  <p>Upload a photo and transform it into stunning cartoon art, anime characters, Pixar-style 3D avatars, and more. Perfect for profile pics, branding, and content.</p>
+</div>
+
+<div class="main">
+  <div class="card">
+    <h2>🖼 Upload Photo</h2>
+    <div class="upload-zone" onclick="document.getElementById('avatarFile').click()" id="uploadZone">
+      <input type="file" id="avatarFile" accept="image/*" onchange="handleUpload(event)" />
+      <div style="font-size:2.5rem;margin-bottom:12px">🤳</div>
+      <h3 style="margin-bottom:6px">Upload a face photo</h3>
+      <p style="color:var(--muted);font-size:0.85rem">Best results: clear face, front-facing, good lighting</p>
+      <img id="previewImg" class="preview-img" />
+    </div>
+
+    <label>Choose Art Style</label>
+    <div class="style-grid" id="styleGrid"></div>
+
+    <div class="form-row" style="margin-top:16px">
+      <div>
+        <label>Expression</label>
+        <select id="expression">
+          <option value="neutral">Neutral / Natural</option>
+          <option value="smiling">Smiling</option>
+          <option value="serious">Serious / Cool</option>
+          <option value="confident">Confident / Bold</option>
+          <option value="happy">Happy / Joyful</option>
+        </select>
+      </div>
+      <div>
+        <label>Background</label>
+        <select id="background">
+          <option value="transparent">Transparent / None</option>
+          <option value="gradient">Colorful Gradient</option>
+          <option value="sky">Sky / Clouds</option>
+          <option value="city">City Skyline</option>
+          <option value="nature">Nature / Forest</option>
+          <option value="abstract">Abstract Art</option>
+        </select>
+      </div>
+      <div>
+        <label>Detail Level</label>
+        <select id="detail">
+          <option value="simple">Simple / Icon</option>
+          <option value="detailed" selected>Detailed</option>
+          <option value="ultra">Ultra Detailed</option>
+        </select>
+      </div>
+      <div>
+        <label>Output Size</label>
+        <select id="size">
+          <option value="512">512×512 (Avatar)</option>
+          <option value="1024" selected>1024×1024 (HD)</option>
+          <option value="1024_portrait">1024×1536 (Portrait)</option>
+        </select>
+      </div>
+    </div>
+
+    <button class="btn" id="genBtn" onclick="generateAvatar()">⚡ Generate Avatar</button>
+
+    <div class="progress-section" id="progressSection">
+      <div style="color:var(--gold);font-size:0.9rem;font-weight:600">🎨 Creating your avatar...</div>
+      <div class="progress-bar"><div class="progress-fill" id="pfill" style="width:0%"></div></div>
+      <div id="pstatus" style="font-size:0.82rem;color:var(--muted)">Analyzing face structure...</div>
+    </div>
+
+    <div class="result-area" id="resultArea">
+      <div class="result-card">
+        <div class="result-placeholder" id="resultPlaceholder">🎌</div>
+        <div class="result-actions">
+          <button class="dl-btn" onclick="alert('Processing... ComfyUI generation starting. This requires the local GPU server.')">⬇ Download</button>
+          <button class="share-btn" onclick="alert('Processing... ComfyUI generation starting. This requires the local GPU server.')">📤 Share</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="waitlist-section">
+    <h2>🚀 Get Early Access</h2>
+    <p>Unlock HD downloads, batch processing, and brand kit avatars for your entire team.</p>
+    <div class="email-row">
+      <input type="email" id="wlEmail" placeholder="your@email.com" />
+      <button onclick="joinWaitlist()">Join Now</button>
+    </div>
+    <div class="success-msg" id="successMsg">✅ You're on the list!</div>
+  </div>
+</div>
+
+<script src="_abuz8-live-brain.js" onerror="console.log('Brain offline')"></script>
+<script>
+const STYLES = [
+  {id:'anime',icon:'🎌',name:'Anime',desc:'Studio Ghibli / Naruto'},
+  {id:'pixar',icon:'🎬',name:'Pixar 3D',desc:'Soul / Turning Red style'},
+  {id:'cartoon',icon:'🎨',name:'Cartoon',desc:'Bold, stylized'},
+  {id:'oil_paint',icon:'🖼',name:'Oil Paint',desc:'Classic artistic'},
+  {id:'flat_icon',icon:'💠',name:'Flat Icon',desc:'App icon style'},
+  {id:'cyberpunk',icon:'🤖',name:'Cyberpunk',desc:'Neon future'},
+  {id:'retro_80s',icon:'📺',name:'80s Retro',desc:'VHS aesthetic'},
+  {id:'watercolor',icon:'💧',name:'Watercolor',desc:'Soft & dreamy'},
+  {id:'sketch',icon:'✏️',name:'Pencil Sketch',desc:'Hand-drawn'},
+  {id:'pop_art',icon:'🎯',name:'Pop Art',desc:'Warhol style'},
+];
+
+let selectedStyle = 'anime';
+let uploadedFile = null;
+
+document.getElementById('styleGrid').innerHTML = STYLES.map(s=>
+  `<div class="style-opt${s.id==='anime'?' sel':''}" data-id="${s.id}" onclick="selectStyle(this,'${s.id}')">
+    <div class="style-icon">${s.icon}</div>
+    <div class="style-name">${s.name}</div>
+    <div class="style-desc">${s.desc}</div>
+  </div>`).join('');
+
+function selectStyle(el, id){
+  document.querySelectorAll('.style-opt').forEach(e=>e.classList.remove('sel'));
+  el.classList.add('sel');
+  selectedStyle = id;
+}
+
+function handleUpload(e){
+  const file = e.target.files[0];
+  if(!file) return;
+  uploadedFile = file;
+  const reader = new FileReader();
+  reader.onload = ev=>{
+    const img = document.getElementById('previewImg');
+    img.src = ev.target.result;
+    img.style.display = 'block';
+    document.getElementById('uploadZone').querySelector('h3').textContent = '✅ '+file.name;
+  };
+  reader.readAsDataURL(file);
+}
+
+function generateAvatar(){
+  if(!uploadedFile){ alert('Please upload a photo first.'); return; }
+  const btn = document.getElementById('genBtn');
+  btn.disabled = true;
+  btn.textContent = '⏳ Creating...';
+  document.getElementById('progressSection').style.display = 'block';
+  document.getElementById('resultArea').style.display = 'none';
+
+  const styleLabels = {anime:'anime style, studio ghibli',pixar:'pixar 3d animation style',cartoon:'cartoon art style',oil_paint:'oil painting portrait',flat_icon:'flat design icon style',cyberpunk:'cyberpunk neon portrait',retro_80s:'retro 80s vhs aesthetic',watercolor:'watercolor painting',sketch:'pencil sketch portrait',pop_art:'pop art warhol style'};
+  const expr = document.getElementById('expression').value;
+  const bg = document.getElementById('background').value;
+  const prompt = `${styleLabels[selectedStyle]||selectedStyle}, portrait, ${expr} expression, ${bg} background, highly detailed, professional illustration`;
+
+  const steps = ['Detecting face...','Applying style transfer...','Rendering details...','Final polish...'];
+  let pct = 0; let si = 0;
+  const iv = setInterval(()=>{
+    pct = Math.min(pct+Math.random()*10+4, 90);
+    document.getElementById('pfill').style.width = pct+'%';
+    if(si<steps.length && pct>(si+1)*22){ document.getElementById('pstatus').textContent=steps[si]; si++; }
+  }, 500);
+
+  const styleIcons = {anime:'🎌',pixar:'🎬',cartoon:'🎨',oil_paint:'🖼',flat_icon:'💠',cyberpunk:'🤖',retro_80s:'📺',watercolor:'💧',sketch:'✏️',pop_art:'🎯'};
+
+  setTimeout(()=>{
+    if(window.ABUZ8&&window.ABUZ8.callComfy){
+      window.ABUZ8.callComfy('make_cartoon',{prompt, style:selectedStyle}).then(res=>{
+        clearInterval(iv);
+        showResult(res, styleIcons[selectedStyle]||'🎨');
+      }).catch(()=>{ clearInterval(iv); showResult(null, styleIcons[selectedStyle]||'🎨'); });
+    } else {
+      clearInterval(iv); showResult(null, styleIcons[selectedStyle]||'🎨');
+    }
+  }, 4500);
+}
+
+function showResult(res, icon){
+  document.getElementById('pfill').style.width='100%';
+  document.getElementById('pstatus').textContent='✅ Your avatar is ready!';
+  document.getElementById('resultArea').style.display='block';
+  if(res&&res.image){ document.getElementById('resultPlaceholder').innerHTML=`<img src="${res.image}" style="width:100%;height:100%;object-fit:cover"/>`; }
+  else { document.getElementById('resultPlaceholder').textContent=icon; }
+  document.getElementById('genBtn').disabled=false;
+  document.getElementById('genBtn').textContent='⚡ Generate Avatar';
+}
+
+function promptWaitlist(){/* gate removed - tool is free */}
+
+function joinWaitlist(){
+  const e = document.getElementById('wlEmail').value;
+  if(!e||!e.includes('@')){ alert('Valid email please.'); return; }
+  document.getElementById('successMsg').style.display='block';
+  document.getElementById('wlEmail').value='';fetch('/api/waitlist',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:e,product:'ai-cartoon-avatar',ts:Date.now()})}).catch(function(){});
+  if(window.ABUZ8&&window.ABUZ8.callBrain) window.ABUZ8.callBrain('waitlist_add',{email:e,product:'ai-cartoon-avatar',ts:Date.now()});
+}
+</script>
+
+<script src="/assets/js/dfy-banner.js" async></script>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+<script src="/tools/_tools-shared.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>
+

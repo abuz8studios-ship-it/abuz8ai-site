@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hugging Face Hub — ABUZ8 AI</title>
+<meta name="description" content="Live trending models, datasets and Spaces from the Hugging Face public API, plus deep guides to running GGUF models locally. Independent — not affiliated.">
+<link rel="canonical" href="https://abuz8ai.com/huggingface">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Hugging Face Hub — ABUZ8 AI">
+<meta property="og:description" content="Live trending models, datasets and Spaces from the Hugging Face public API, plus deep guides to running GGUF models locally. Independent — not affiliated.">
+<meta property="og:url" content="https://abuz8ai.com/huggingface">
+<meta name="theme-color" content="#0a1628">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/abuz8-theme.css">
+<style>
+/* page-specific styles ONLY — theme vars, no new hex colors */
+.hf-section{max-width:var(--wrap);margin:0 auto;padding:0 32px 40px}
+.hf-card{color:var(--text)}
+.hf-card:hover{color:var(--text)}
+.hf-top{display:flex;justify-content:flex-start;align-items:center;gap:8px}
+.hf-pill{color:var(--green-bright);font-family:var(--font-mono);text-transform:lowercase}
+.hf-id{font-family:var(--font-mono);font-size:13px;font-weight:600;color:var(--gold-light);word-break:break-word;margin:10px 0 8px;line-height:1.45}
+.hf-meta{display:flex;gap:14px;flex-wrap:wrap;font-size:11.5px;color:var(--dim);font-family:var(--font-mono);flex:1;align-content:flex-start}
+.feed-loading{font-family:var(--font-mono);font-size:12px;color:var(--dim);border:1px dashed var(--border);border-radius:var(--r-md);padding:14px 18px;margin-bottom:16px}
+.feed-status{font-family:var(--font-mono);font-size:11px;color:var(--muted);margin-bottom:16px}
+.credit-line{font-size:12px;color:var(--muted);margin-top:20px;line-height:1.7}
+.tab-intro{color:var(--dim);font-size:14px;line-height:1.7;max-width:760px;margin-bottom:20px}
+.panel+.panel{margin-top:18px}
+h3.sub{font-family:var(--font-body);font-size:16px;color:var(--white);margin:26px 0 12px}
+.hf-choose-list{list-style:none;margin:14px 0}
+.hf-choose-list li{padding:7px 0 7px 26px;position:relative;color:var(--dim);font-size:13.5px;line-height:1.6}
+.hf-choose-list li::before{content:'✓';position:absolute;left:2px;color:var(--green-bright);font-weight:700}
+@media(max-width:640px){.hf-section{padding:0 16px 32px}}
+</style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebPage",
+      "@id": "https://abuz8ai.com/huggingface.html",
+      "url": "https://abuz8ai.com/huggingface.html",
+      "name": "Hugging Face Hub — ABUZ8 AI",
+      "description": "Live trending models, datasets and Spaces from the Hugging Face public API, plus deep guides to running GGUF models locally with llama.cpp, Ollama or LM Studio. Independent hub — not affiliated with Hugging Face.",
+      "isPartOf": { "@type": "WebSite", "name": "ABUZ8 AI", "url": "https://abuz8ai.com" }
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://abuz8ai.com/" },
+        { "@type": "ListItem", "position": 2, "name": "Hugging Face Hub", "item": "https://abuz8ai.com/huggingface.html" }
+      ]
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Is ABUZ8 affiliated with Hugging Face?",
+          "acceptedAnswer": { "@type": "Answer", "text": "No. This is an independent hub built by ABUZ8 LLC. All model, dataset and Space data is fetched live from the public Hugging Face API and belongs to its respective authors. Hugging Face and its logo are trademarks of Hugging Face, Inc." }
+        },
+        {
+          "@type": "Question",
+          "name": "Does ABUZ8 publish models on Hugging Face?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Not yet. The abuz8 Hugging Face account exists but currently has zero public models, datasets or Spaces — and we will not pretend otherwise. Publishing sovereign models and datasets is on our roadmap." }
+        },
+        {
+          "@type": "Question",
+          "name": "Where do the numbers on this page come from?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Every download and like count is fetched live from the public Hugging Face API by your own browser when the page loads. If the feed cannot be reached, the board shows a clearly labeled offline notice instead — we never display cached or fabricated numbers." }
+        },
+        {
+          "@type": "Question",
+          "name": "What is GGUF?",
+          "acceptedAnswer": { "@type": "Answer", "text": "GGUF is the single-file model format used by llama.cpp and the tools built on it (Ollama, LM Studio and others). One .gguf file contains the model weights, tokenizer and metadata, supports quantized weights, and can be memory-mapped for fast loading." }
+        },
+        {
+          "@type": "Question",
+          "name": "Which quantization level should I download?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Q4_K_M is the widely used default balance of size and quality. Pick Q5_K_M or Q6_K if you have VRAM headroom, and treat Q2/Q3 quants as a last resort — quality loss becomes noticeable, especially on smaller models." }
+        },
+        {
+          "@type": "Question",
+          "name": "How much VRAM do I need to run a model locally?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Rule of thumb: the GGUF file size plus roughly one to two gigabytes for the context cache and overhead. An 8B model at Q4_K_M (about 5 GB) fits comfortably on an 8 GB GPU. llama.cpp-based runners can also split layers between GPU and CPU RAM, trading speed for capacity." }
+        },
+        {
+          "@type": "Question",
+          "name": "Can I use a Hugging Face model commercially?",
+          "acceptedAnswer": { "@type": "Answer", "text": "It depends entirely on the model's license. Apache-2.0 and MIT models are permissive; many popular open-weights models ship custom licenses with conditions; some are research-only. The model card and LICENSE file on the model's own page are the source of truth — always read them." }
+        },
+        {
+          "@type": "Question",
+          "name": "Do I need a Hugging Face account to download models?",
+          "acceptedAnswer": { "@type": "Answer", "text": "For most public models, no — files download directly. Some models are gated: you need a free account and must accept the author's terms on the model page before downloading." }
+        }
+      ]
+    }
+  ]
+}
+</script>
+</head>
+<body>
+<div class="geo-bg"></div>
+<div class="glow-orb glow-orb-1"></div>
+<div class="glow-orb glow-orb-2"></div>
+<div class="glow-orb glow-orb-3"></div>
+
+<nav class="abuz8-nav">
+<div class="nav-inner">
+  <a href="/" style="text-decoration:none;">
+    <div class="logo">ABUZ8</div>
+    <div class="logo-sub">Sovereign AI</div>
+  </a>
+  <div class="nav-links">
+    <a href="/tools.html">Tools</a>
+    <a href="/store.html">Store</a>
+    
+    <a href="/agents.html">Agents</a>
+    <a href="/models.html">Models</a>
+    <a href="/news.html">News</a>
+    <a href="/roadmap.html">Roadmap</a>
+    <a href="/store.html" class="nav-cta">Get Started</a>
+  </div>
+</div>
+</nav>
+
+<div class="wrap">
+  <div class="crumbs"><a href="/">Home</a> › Hugging Face Hub</div>
+</div>
+
+<section class="hero">
+  <div class="hero-eyebrow">🤗 Open Model Ecosystem</div>
+  <h1>The <span class="gold">Hugging Face</span> Hub, Decoded</h1>
+  <p>Live trending boards for models, datasets and Spaces — pulled straight from the public Hugging Face API by your own browser — plus deep, honest guides to actually running those models on your own hardware. No cloud lock-in, no fake numbers.</p>
+  <div class="hero-btns">
+    <a class="btn btn-gold" href="#tab=panel-local">💻 Run Models Locally</a>
+    <a class="btn btn-outline" href="/models.html">Our Models Guide</a>
+  </div>
+  <div class="stats-row">
+    <div class="stat"><div class="stat-num" data-count="3">3</div><div class="stat-label">Live boards</div></div>
+    <div class="stat"><div class="stat-num" data-count="24">24</div><div class="stat-label">Items per board</div></div>
+    <div class="stat"><div class="stat-num" data-count="0">0</div><div class="stat-label">Fabricated numbers</div></div>
+  </div>
+</section>
+
+<section class="hf-section">
+  <div class="note-blue">
+    <strong>Independent hub.</strong> All model, dataset and Space data on this page comes live from the public
+    <a href="https://huggingface.co" target="_blank" rel="noopener noreferrer">Hugging Face</a> API and belongs to its respective authors.
+    ABUZ8 is not affiliated with, sponsored by, or endorsed by Hugging Face, Inc.
+  </div>
+  <div class="note-gold">
+    <span class="badge badge-roadmap">ROADMAP</span>&nbsp;
+    <strong>ABUZ8 on Hugging Face:</strong> our <code class="inline">abuz8</code> account currently has <strong>no public models, datasets or Spaces</strong> — and we won't pretend otherwise.
+    Publishing sovereign models and datasets is on our <a href="/roadmap.html">roadmap</a>.
+  </div>
+
+  <div class="tabs" data-tabs>
+    <div class="tab-list" role="tablist" aria-label="Hugging Face hub sections">
+      <button class="tab-btn" role="tab" id="tab-trending" aria-controls="panel-trending" aria-selected="true">🔥 Trending Models</button>
+      <button class="tab-btn" role="tab" id="tab-datasets" aria-controls="panel-datasets" aria-selected="false">📚 Datasets</button>
+      <button class="tab-btn" role="tab" id="tab-spaces" aria-controls="panel-spaces" aria-selected="false">🚀 Spaces</button>
+      <button class="tab-btn" role="tab" id="tab-local" aria-controls="panel-local" aria-selected="false">💻 Run Models Locally</button>
+      <button class="tab-btn" role="tab" id="tab-choose" aria-controls="panel-choose" aria-selected="false">🧭 Choosing a Model</button>
+      <button class="tab-btn" role="tab" id="tab-faq" aria-controls="panel-faq" aria-selected="false">❓ FAQ</button>
+    </div>
+
+    <!-- ================= TAB 1 · TRENDING MODELS ================= -->
+    <div class="tab-panel" role="tabpanel" id="panel-trending" aria-labelledby="tab-trending">
+      <p class="tab-intro">The 24 models trending on Hugging Face right now, sorted by trending score. Each card links out to the model's own page — the authors deserve the visit.</p>
+      <div id="hf-models-status" class="feed-loading">Contacting the Hugging Face public API from your browser…</div>
+      <noscript><div class="warn">JavaScript is disabled, so the live board can't load. Browse trending models directly at <a href="https://huggingface.co/models" target="_blank" rel="noopener noreferrer">huggingface.co/models</a>.</div></noscript>
+      <div id="hf-models-grid" class="grid-auto"></div>
+      <p class="credit-line">Data: Hugging Face public API (<code class="inline">/api/models?sort=trendingScore</code>), fetched client-side. Download and like counts belong to each model's authors. Not affiliated with Hugging Face.</p>
+    </div>
+
+    <!-- ================= TAB 2 · DATASETS ================= -->
+    <div class="tab-panel" role="tabpanel" id="panel-datasets" aria-labelledby="tab-datasets" hidden>
+      <p class="tab-intro">Trending public datasets — the raw material of open AI. Same live feed, same rule: every number comes from the Hugging Face API in real time or the board says so.</p>
+      <div id="hf-datasets-status" class="feed-loading">Contacting the Hugging Face public API from your browser…</div>
+      <noscript><div class="warn">JavaScript is disabled, so the live board can't load. Browse datasets directly at <a href="https://huggingface.co/datasets" target="_blank" rel="noopener noreferrer">huggingface.co/datasets</a>.</div></noscript>
+      <div id="hf-datasets-grid" class="grid-auto"></div>
+      <p class="credit-line">Data: Hugging Face public API (<code class="inline">/api/datasets?sort=trendingScore</code>), fetched client-side. All datasets belong to their authors and carry their own licenses — check each dataset card before use.</p>
+    </div>
+
+    <!-- ================= TAB 3 · SPACES ================= -->
+    <div class="tab-panel" role="tabpanel" id="panel-spaces" aria-labelledby="tab-spaces" hidden>
+      <p class="tab-intro">Spaces are live demo apps hosted on Hugging Face — the fastest way to try a model before downloading anything. These are trending right now.</p>
+      <div id="hf-spaces-status" class="feed-loading">Contacting the Hugging Face public API from your browser…</div>
+      <noscript><div class="warn">JavaScript is disabled, so the live board can't load. Browse Spaces directly at <a href="https://huggingface.co/spaces" target="_blank" rel="noopener noreferrer">huggingface.co/spaces</a>.</div></noscript>
+      <div id="hf-spaces-grid" class="grid-auto"></div>
+      <p class="credit-line">Data: Hugging Face public API (<code class="inline">/api/spaces?sort=trendingScore</code>), fetched client-side. Each Space is built and hosted by its author under its own license.</p>
+    </div>
+
+    <!-- ================= TAB 4 · RUN MODELS LOCALLY ================= -->
+    <div class="tab-panel" role="tabpanel" id="panel-local" aria-labelledby="tab-local" hidden>
+      <p class="tab-intro">This is the sovereign-AI part: taking an open model off the hub and running it on <em>your</em> hardware — no API key, no cloud bill, no data leaving your machine. Everything below is public knowledge, tested on our own RTX 5090 rig.</p>
+
+      <div class="panel panel-gold">
+        <h3 class="sub" style="margin-top:0">⚡ Quickstart — from zero to a local model</h3>
+        <ol class="steps">
+          <li><strong>Pick your runner</strong>
+            <p>Ollama is the fastest path (one installer, one command). llama.cpp gives maximum control. LM Studio is the point-and-click option. Comparison table below.</p></li>
+          <li><strong>Find a GGUF on Hugging Face</strong>
+            <p>On <a href="https://huggingface.co/models" target="_blank" rel="noopener noreferrer">huggingface.co/models</a>, filter by the <code class="inline">GGUF</code> library tag, or search a model name plus "GGUF". Community quantizers publish ready-to-run files for most popular open models.</p></li>
+          <li><strong>Match the quant to your VRAM</strong>
+            <p>Use the quantization and VRAM tables below. Default pick: the <code class="inline">Q4_K_M</code> file that fits your GPU with a gigabyte or two to spare.</p></li>
+          <li><strong>Run it</strong>
+            <p>One command — see the code block underneath these steps. First run downloads or loads the model; after that it's instant and fully offline.</p></li>
+          <li><strong>Connect your apps</strong>
+            <p>All three runners expose an OpenAI-compatible local endpoint (Ollama: <code class="inline">localhost:11434/v1</code> · llama-server: <code class="inline">localhost:8080/v1</code> · LM Studio: <code class="inline">localhost:1234/v1</code>), so any tool that speaks the OpenAI API can point at your own machine instead.</p></li>
+        </ol>
+<pre class="code"><button class="code-copy" type="button">Copy</button># Ollama — easiest (after installing from ollama.com)
+ollama run &lt;model-name&gt;
+
+# llama.cpp — OpenAI-compatible local server
+llama-server -m ./your-model-Q4_K_M.gguf -c 4096 --n-gpu-layers 99</pre>
+      </div>
+
+      <div class="panel">
+        <h3 class="sub" style="margin-top:0">📦 What GGUF actually is</h3>
+        <p class="tab-intro" style="margin-bottom:12px">GGUF is the single-file model format used by llama.cpp and everything built on top of it. One <code class="inline">.gguf</code> file bundles the weights, tokenizer and metadata; it supports quantized weights and is memory-mapped, so models load fast and don't need unpacking. When you see "GGUF" on a Hugging Face repo, it means: ready to run locally with the tools on this page.</p>
+
+        <h3 class="sub">🎚 Quantization levels — what the letters mean</h3>
+        <p class="tab-intro" style="margin-bottom:12px">Quantization stores weights in fewer bits, shrinking the file and the VRAM needed, at some cost in quality. Sizes below are approximate for an 8-billion-parameter model and vary by architecture.</p>
+        <div class="table-scroll">
+          <table class="data-table">
+            <thead><tr><th>Quant</th><th>~Bits / weight</th><th>~File size (8B model)</th><th>Quality impact</th><th>When to use</th></tr></thead>
+            <tbody>
+              <tr><td><code class="inline">Q2_K</code></td><td>~2.6</td><td>~3.2 GB</td><td>Severe — often noticeably degraded</td><td>Only when nothing else fits</td></tr>
+              <tr><td><code class="inline">Q3_K_M</code></td><td>~3.9</td><td>~4.0 GB</td><td>Noticeable loss</td><td>Very tight VRAM budgets</td></tr>
+              <tr><td><code class="inline">Q4_K_M</code></td><td>~4.8</td><td>~4.9 GB</td><td>Small loss — the community default</td><td>Best size/quality balance for most people</td></tr>
+              <tr><td><code class="inline">Q5_K_M</code></td><td>~5.7</td><td>~5.7 GB</td><td>Very small loss</td><td>When you have VRAM headroom</td></tr>
+              <tr><td><code class="inline">Q6_K</code></td><td>~6.6</td><td>~6.6 GB</td><td>Barely measurable loss</td><td>Quality-first on 12 GB+ cards</td></tr>
+              <tr><td><code class="inline">Q8_0</code></td><td>~8.5</td><td>~8.5 GB</td><td>Practically indistinguishable</td><td>Maximum quality, archival</td></tr>
+              <tr><td><code class="inline">F16</code></td><td>16</td><td>~16 GB</td><td>Original half precision</td><td>Fine-tuning bases, reference runs</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3 class="sub" style="margin-top:0">🛠 llama.cpp vs Ollama vs LM Studio</h3>
+        <div class="table-scroll">
+          <table class="data-table">
+            <thead><tr><th></th><th>llama.cpp</th><th>Ollama</th><th>LM Studio</th></tr></thead>
+            <tbody>
+              <tr><td><strong>What it is</strong></td><td>The core C/C++ inference engine GGUF runs on</td><td>A model runner built around llama.cpp</td><td>Desktop GUI for finding + running GGUF models</td></tr>
+              <tr><td><strong>Interface</strong></td><td>CLI + <code class="inline">llama-server</code></td><td>CLI + background service</td><td>Point-and-click app</td></tr>
+              <tr><td><strong>Install</strong></td><td>Build from source or grab release binaries</td><td>One installer</td><td>One installer</td></tr>
+              <tr><td><strong>Model management</strong></td><td>Manual — you download <code class="inline">.gguf</code> files yourself</td><td><code class="inline">ollama pull</code> from its registry</td><td>Built-in Hugging Face model browser</td></tr>
+              <tr><td><strong>OpenAI-compatible API</strong></td><td>Yes (<code class="inline">llama-server</code>, port 8080)</td><td>Yes (port 11434, plus its own API)</td><td>Yes (local server mode, port 1234)</td></tr>
+              <tr><td><strong>Open source</strong></td><td>Yes — MIT</td><td>Yes — MIT</td><td>App is free but closed-source</td></tr>
+              <tr><td><strong>Best for</strong></td><td>Maximum control, servers, tinkering</td><td>Fastest path to a running model</td><td>Visual browsing, non-technical users</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="credit-line">llama.cpp by Georgi Gerganov &amp; contributors · Ollama by Ollama Inc. · LM Studio by Element Labs — all credited to their authors; none are ABUZ8 products.</p>
+      </div>
+
+      <div class="panel">
+        <h3 class="sub" style="margin-top:0">🧮 How much VRAM do you need?</h3>
+        <p class="tab-intro" style="margin-bottom:12px">Rule of thumb: <strong>GGUF file size + 1–2 GB</strong> for the context cache and overhead. Longer context windows eat more VRAM. llama.cpp-family runners can split layers between GPU and CPU RAM (<code class="inline">--n-gpu-layers</code>) — slower, but it lets a big model run on a small card.</p>
+        <div class="table-scroll">
+          <table class="data-table">
+            <thead><tr><th>GPU VRAM</th><th>Comfortable fit (rule of thumb)</th></tr></thead>
+            <tbody>
+              <tr><td>4 GB</td><td>1–3B models at Q4</td></tr>
+              <tr><td>6–8 GB</td><td>7–8B at Q4_K_M</td></tr>
+              <tr><td>12 GB</td><td>8B at Q8, or 13–14B at Q4</td></tr>
+              <tr><td>16 GB</td><td>14B at Q6, or ~20B class quantized</td></tr>
+              <tr><td>24 GB</td><td>~30B class at Q4–Q5</td></tr>
+              <tr><td>32 GB</td><td>~30B at Q6–Q8, or 70B at low quant with partial CPU offload</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="note" style="margin-top:16px">These are starting points, not laws — actual fit depends on context length, architecture and your OS's own VRAM use. Start one size smaller than you think, then move up.</div>
+      </div>
+
+      <div class="note-gold">
+        <span class="badge badge-early">EARLY ACCESS</span>&nbsp;
+        <strong>ABUZ8 OS</strong> — our local-first agentic OS — bundles a local model runtime around exactly this stack. No public download yet; request an invite at <a href="/request.html">/request.html</a>.
+      </div>
+    </div>
+
+    <!-- ================= TAB 5 · CHOOSING A MODEL ================= -->
+    <div class="tab-panel" role="tabpanel" id="panel-choose" aria-labelledby="tab-choose" hidden>
+      <p class="tab-intro">A hub full of model repos and one question: which one should <em>you</em> run? Work through license first, size second, benchmarks last — in that order.</p>
+
+      <div class="panel">
+        <h3 class="sub" style="margin-top:0">⚖️ License first — always</h3>
+        <p class="tab-intro" style="margin-bottom:12px">"Open weights" is not one thing. The model card and LICENSE file on the model's own Hugging Face page are the source of truth — licenses vary by model <em>and by version</em>, so read the actual file before you build on anything.</p>
+        <div class="table-scroll">
+          <table class="data-table">
+            <thead><tr><th>License family</th><th>Commercial use</th><th>What to watch</th></tr></thead>
+            <tbody>
+              <tr><td>Apache-2.0 / MIT</td><td>Yes</td><td>Genuinely permissive — use, modify, redistribute</td></tr>
+              <tr><td>Custom "community" licenses (e.g. Llama-style)</td><td>Usually, with conditions</td><td>Extra terms such as usage policies or scale thresholds — read the license text itself</td></tr>
+              <tr><td>Open-weights with usage terms (e.g. Gemma-style)</td><td>Conditional</td><td>Acceptable-use policies attached to the weights</td></tr>
+              <tr><td>Non-commercial / research-only</td><td>No</td><td>Fine for learning and evaluation, not for products</td></tr>
+              <tr><td>Gated models</td><td>Varies</td><td>Requires a Hugging Face account + accepting the author's terms before download</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3 class="sub" style="margin-top:0">📊 Benchmark caution</h3>
+        <div class="warn" style="margin-top:0">
+          <strong>Leaderboard numbers are a starting point, not a verdict.</strong> Public benchmark scores can be inflated by training-data contamination, popular benchmarks saturate over time, and a two-point difference on a leaderboard rarely survives quantization and real workloads. The only benchmark that matters is <em>your</em> prompts on <em>your</em> hardware.
+        </div>
+        <ul class="hf-choose-list">
+          <li><strong>Define the job</strong> — chat, coding, summarization, vision, function-calling? Model families specialize.</li>
+          <li><strong>Shortlist by size</strong> — only consider models whose GGUF actually fits your VRAM (see the Run Locally tab).</li>
+          <li><strong>Check the license</strong> — table above; eliminate anything incompatible with your use.</li>
+          <li><strong>Check GGUF availability</strong> — no GGUF usually means no easy local run.</li>
+          <li><strong>Run your own 10-prompt eval</strong> — the same 10 real tasks against each finalist, judged by you.</li>
+        </ul>
+      </div>
+
+      <div class="note-blue">
+        <strong>Go deeper:</strong> our <a href="/models.html">Models guide</a> covers local model picks and setup in more detail, and the <a href="/roadmap.html">roadmap</a> shows where ABUZ8's own sovereign model publishing fits in — <span class="badge badge-roadmap">ROADMAP</span>, not yet shipped, honestly labeled.
+      </div>
+    </div>
+
+    <!-- ================= TAB 6 · FAQ ================= -->
+    <div class="tab-panel" role="tabpanel" id="panel-faq" aria-labelledby="tab-faq" hidden>
+      <p class="tab-intro">Straight answers — including the ones that don't flatter us.</p>
+
+      <details class="acc">
+        <summary>Is ABUZ8 affiliated with Hugging Face?</summary>
+        <div class="acc-body">No. This is an independent hub built by ABUZ8 LLC. All model, dataset and Space data is fetched live from the public Hugging Face API and belongs to its respective authors. Hugging Face and its logo are trademarks of Hugging Face, Inc.</div>
+      </details>
+      <details class="acc">
+        <summary>Does ABUZ8 publish models on Hugging Face?</summary>
+        <div class="acc-body">Not yet. The <code class="inline">abuz8</code> account exists but currently has <strong>zero public models, datasets or Spaces</strong> — and we won't pretend otherwise. Publishing sovereign models and datasets is on our <a href="/roadmap.html">roadmap</a>.</div>
+      </details>
+      <details class="acc">
+        <summary>Where do the numbers on this page come from?</summary>
+        <div class="acc-body">Every download and like count is fetched live from the public Hugging Face API by your own browser when the page loads. If the feed can't be reached, the board shows a clearly labeled offline notice instead — we never display cached or fabricated numbers.</div>
+      </details>
+      <details class="acc">
+        <summary>What is GGUF?</summary>
+        <div class="acc-body">The single-file model format used by llama.cpp and the tools built on it (Ollama, LM Studio and others). One <code class="inline">.gguf</code> file contains the weights, tokenizer and metadata, supports quantized weights, and is memory-mapped for fast loading.</div>
+      </details>
+      <details class="acc">
+        <summary>Which quantization level should I download?</summary>
+        <div class="acc-body"><code class="inline">Q4_K_M</code> is the widely used default balance of size and quality. Pick <code class="inline">Q5_K_M</code> or <code class="inline">Q6_K</code> if you have VRAM headroom, and treat Q2/Q3 quants as a last resort — the quality loss becomes noticeable, especially on smaller models. Full table in the Run Locally tab.</div>
+      </details>
+      <details class="acc">
+        <summary>How much VRAM do I need to run a model locally?</summary>
+        <div class="acc-body">Rule of thumb: the GGUF file size plus roughly 1–2 GB for the context cache and overhead. An 8B model at Q4_K_M (~5 GB) fits comfortably on an 8 GB GPU. llama.cpp-family runners can also split layers between GPU and CPU RAM, trading speed for capacity.</div>
+      </details>
+      <details class="acc">
+        <summary>Can I use a Hugging Face model commercially?</summary>
+        <div class="acc-body">It depends entirely on the model's license. Apache-2.0 and MIT are permissive; many popular open-weights models ship custom licenses with conditions; some are research-only. The model card and LICENSE file on the model's own page are the source of truth — always read them.</div>
+      </details>
+      <details class="acc">
+        <summary>Do I need a Hugging Face account to download models?</summary>
+        <div class="acc-body">For most public models, no — the files download directly. Some models are <em>gated</em>: you need a free account and must accept the author's terms on the model page before downloading.</div>
+      </details>
+    </div>
+  </div>
+</section>
+
+<footer class="abuz8-footer">
+<div class="foot-grid">
+  <div class="foot-brand">
+    <div class="logo">ABUZ8</div>
+    <p>Sovereign AI for everyone. Real tools, local models, no fake claims. Built on real hardware by ABUZ8 LLC, Ohio.</p>
+  </div>
+  <div class="foot-col"><h4>Platform</h4>
+    <a href="/tools.html">Free Tools</a><a href="/store.html">Store</a><a href="/models.html">Models</a><a href="/agents.html">AI Agents</a><a href="/news.html">News</a><a href="/blog/">Blog</a>
+  </div>
+  <div class="foot-col"><h4>Mission</h4>
+    <a href="/sovereign.html">Sovereign AI</a><a href="/journey.html">Journey &amp; Goals</a><a href="/roadmap.html">Roadmap</a><a href="/audit.html">Audit &amp; Transparency</a><a href="/purpose.html">Purpose</a>
+  </div>
+  <div class="foot-col"><h4>Hubs</h4>
+    <a href="/github.html">GitHub Hub</a><a href="/huggingface.html">Hugging Face Hub</a><a href="/polymarket.html">Polymarket Tester</a><a href="/community.html">Community</a><a href="/education.html">Education</a><a href="/downloads.html">Downloads</a>
+  </div>
+  <div class="foot-col"><h4>Trust</h4>
+    <a href="/security.html">Security &amp; Compliance</a><a href="/disclaimer.html">Disclaimer</a><a href="/privacy.html">Privacy</a><a href="/terms.html">Terms</a><a href="/refund.html">Refunds</a><a href="/license.html">License</a><a href="/contact.html">Contact</a><a href="/status.html">Status</a>
+  </div>
+</div>
+<div class="foot-base">
+  <div>© <span data-year>2026</span> ABUZ8 LLC. All rights reserved.</div>
+  <div>Built local-first on real hardware · No fake claims · <a href="/sovereign.html">Sovereign AI for everyone</a></div>
+</div>
+</footer>
+<script src="/assets/js/abuz8-ui.js" defer></script>
+<script src="/assets/js/abuz8-onboard.js" defer></script>
+<script>
+/* Live Hugging Face boards — public API, fetched client-side, honest offline fallback. */
+(function () {
+  'use strict';
+  var FEEDS = [
+    { url: 'https://huggingface.co/api/models?sort=trendingScore&limit=24',   mount: 'hf-models-grid',   status: 'hf-models-status',   kind: 'model',   browse: 'https://huggingface.co/models',   label: 'models' },
+    { url: 'https://huggingface.co/api/datasets?sort=trendingScore&limit=24', mount: 'hf-datasets-grid', status: 'hf-datasets-status', kind: 'dataset', browse: 'https://huggingface.co/datasets', label: 'datasets' },
+    { url: 'https://huggingface.co/api/spaces?sort=trendingScore&limit=24',   mount: 'hf-spaces-grid',   status: 'hf-spaces-status',   kind: 'space',   browse: 'https://huggingface.co/spaces',   label: 'Spaces' }
+  ];
+
+  function fmt(n) {
+    if (typeof n !== 'number' || !isFinite(n)) return null;
+    try { return new Intl.NumberFormat('en', { notation: 'compact', maximumFractionDigits: 1 }).format(n); }
+    catch (e) { return String(n); }
+  }
+  function el(tag, cls, text) {
+    var e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (text != null) e.textContent = text;
+    return e;
+  }
+  function linkFor(kind, id) {
+    if (kind === 'dataset') return 'https://huggingface.co/datasets/' + id;
+    if (kind === 'space') return 'https://huggingface.co/spaces/' + id;
+    return 'https://huggingface.co/' + id;
+  }
+  function card(kind, item) {
+    var id = item.id || item.modelId || '';
+    if (!id) return null;
+    var a = el('a', 'card hf-card');
+    a.href = linkFor(kind, id);
+    a.target = '_blank';
+    a.rel = 'noopener noreferrer';
+    var tag = kind === 'model' ? (item.pipeline_tag || 'model')
+            : kind === 'space' ? ((item.sdk ? item.sdk + ' · ' : '') + 'space')
+            : 'dataset';
+    var top = el('div', 'hf-top');
+    top.appendChild(el('span', 'pill hf-pill', tag));
+    a.appendChild(top);
+    a.appendChild(el('div', 'hf-id', id));
+    var meta = el('div', 'hf-meta');
+    var d = fmt(item.downloads), l = fmt(item.likes);
+    if (d !== null) meta.appendChild(el('span', null, '⬇ ' + d + ' downloads'));
+    if (l !== null) meta.appendChild(el('span', null, '♥ ' + l + ' likes'));
+    a.appendChild(meta);
+    a.appendChild(el('span', 'card-link', 'View on Hugging Face →'));
+    return a;
+  }
+  function offline(feed) {
+    var s = document.getElementById(feed.status);
+    if (!s) return;
+    s.className = 'warn';
+    s.innerHTML = '';
+    s.appendChild(el('strong', null, 'Live feed offline. '));
+    s.appendChild(document.createTextNode('Your browser could not reach the Hugging Face public API just now. We never show cached or made-up numbers, so this board stays empty instead. Browse ' + feed.label + ' directly: '));
+    var a = el('a', null, feed.browse.replace('https://', ''));
+    a.href = feed.browse; a.target = '_blank'; a.rel = 'noopener noreferrer';
+    s.appendChild(a);
+  }
+  function load(feed) {
+    var g = document.getElementById(feed.mount);
+    var s = document.getElementById(feed.status);
+    if (!g) return;
+    fetch(feed.url)
+      .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+      .then(function (items) {
+        if (!Array.isArray(items) || !items.length) throw new Error('empty feed');
+        g.innerHTML = '';
+        items.forEach(function (it) {
+          var c = card(feed.kind, it);
+          if (c) g.appendChild(c);
+        });
+        if (!g.children.length) throw new Error('no renderable items');
+        if (s) {
+          s.className = 'feed-status';
+          s.textContent = 'Live from huggingface.co · fetched in your browser at ' + new Date().toLocaleTimeString() + ' · sorted by trending score · top ' + g.children.length + '.';
+        }
+      })
+      .catch(function () {
+        g.innerHTML = '';
+        offline(feed);
+      });
+  }
+  function boot() { FEEDS.forEach(load); }
+  if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', boot); }
+  else { boot(); }
+})();
+</script>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Agent Cost Calculator — What an Autonomous Agent Run Really Costs | ABUZ8</title>
+  <meta name="description" content="Free AI agent cost calculator. Estimate what a multi-step autonomous agent loop actually costs to run across GPT-5, Claude, Gemini and DeepSeek — then see how smart model routing cuts the bill. 100% client-side, no signup." />
+  <meta name="keywords" content="AI agent cost calculator, LLM agent cost, autonomous agent pricing, agentic loop cost, AI agent API cost, LLM routing calculator, GPT-5 agent cost, Claude agent cost, multi-step agent tokens, AI agent budget" />
+  <meta property="og:title" content="AI Agent Cost Calculator — What an Autonomous Agent Run Really Costs | ABUZ8" />
+  <meta property="og:description" content="Agents don't make one API call — they loop. See what a multi-step agent task costs across 15 models, and how routing the routine steps to a cheaper model cuts the bill. Client-side, free, no signup." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://abuz8ai.com/tools/ai-agent-cost-calculator" />
+  <link rel="canonical" href="https://abuz8ai.com/tools/ai-agent-cost-calculator" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "AI Agent Cost Calculator",
+    "description": "Free client-side calculator for the cost of running a multi-step autonomous AI agent loop across GPT-5, Claude, Gemini and DeepSeek, with model-routing savings analysis.",
+    "url": "https://abuz8ai.com/tools/ai-agent-cost-calculator",
+    "applicationCategory": "DeveloperApplication",
+    "operatingSystem": "Any",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+    "author": { "@type": "Organization", "name": "ABUZ8 LLC", "url": "https://abuz8ai.com" }
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Why is running an AI agent so much more expensive than a single API call?",
+        "acceptedAnswer": { "@type": "Answer", "text": "An agent doesn't answer once — it loops: perceive, plan, act, verify, reflect. Each step is a separate API call, and every step re-sends the accumulated context (system prompt, tools, and the full history so far). So a single task is often 5 to 30 calls whose input grows on every step, which is why agent costs scale far faster than one-shot chat completions." }
+      },
+      {
+        "@type": "Question",
+        "name": "How do I reduce AI agent costs?",
+        "acceptedAnswer": { "@type": "Answer", "text": "The biggest lever is model routing: send the routine steps — tool calls, formatting, simple decisions — to a cheap, fast model, and reserve a frontier model only for the genuinely hard reasoning steps. Caching the static prompt prefix and trimming history also help. Routing alone typically cuts agent spend 40 to 80 percent with no quality loss on the steps that don't need the big model." }
+      },
+      {
+        "@type": "Question",
+        "name": "What is LLM model routing?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Model routing automatically picks the cheapest model that still clears the quality bar for each individual step, instead of sending every request to one expensive model. Because most steps in an agent loop are routine, routing them to a cheaper model captures most of the savings while keeping frontier quality where it actually matters." }
+      },
+      {
+        "@type": "Question",
+        "name": "Is my data sent to a server?",
+        "acceptedAnswer": { "@type": "Answer", "text": "No. This calculator runs entirely in your browser. Nothing you type is uploaded, logged, or stored anywhere." }
+      }
+    ]
+  }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --lapis: #0a1628;
+      --card: #0d1a30;
+      --card-alt: #0f1e35;
+      --gold: #c9a84c;
+      --gold-dim: #a07830;
+      --teal: #0e9f6e;
+      --teal-bright: #2fbf8f;
+      --cream: #e8dcc8;
+      --text: #cdd6f4;
+      --text-dim: #8896b0;
+      --border: #1e2d45;
+      --red: #e05c5c;
+      --green: #4caf88;
+      --font-heading: 'Playfair Display', Georgia, serif;
+      --font-body: 'Inter', system-ui, sans-serif;
+      --font-mono: 'JetBrains Mono', 'Courier New', monospace;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--lapis);
+      color: var(--text);
+      font-family: var(--font-body);
+      font-size: 15px;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+    a { color: var(--gold); text-decoration: none; transition: color 0.2s; }
+    a:hover { color: var(--teal-bright); }
+
+    /* NAV */
+    nav {
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      padding: 0 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 60px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .nav-logo {
+      font-family: var(--font-heading);
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--gold);
+      letter-spacing: 0.02em;
+    }
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links a { color: var(--text-dim); font-size: 0.9rem; font-weight: 500; }
+    .nav-links a:hover { color: var(--gold); }
+
+    /* MAIN */
+    main { max-width: 980px; margin: 0 auto; padding: 3rem 1.5rem 5rem; }
+    .page-header { text-align: center; margin-bottom: 2.2rem; }
+    .page-header h1 {
+      font-family: var(--font-heading);
+      font-size: 2.4rem;
+      font-weight: 700;
+      color: var(--gold);
+      margin-bottom: 0.5rem;
+      line-height: 1.15;
+    }
+    .page-header p { color: var(--text-dim); font-size: 1rem; max-width: 640px; margin: 0 auto; }
+
+    .privacy-note {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      margin-top: 0.9rem; padding: 0.35rem 0.9rem;
+      background: rgba(76,175,136,0.1); border: 1px solid rgba(76,175,136,0.3);
+      border-radius: 20px; font-size: 0.78rem; color: var(--green);
+    }
+
+    label { display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-dim);
+            text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.5rem; }
+    input[type="number"], select {
+      width: 100%;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      padding: 0.7rem 0.9rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    select { font-family: var(--font-body); }
+    input:focus, select:focus { border-color: var(--gold-dim); }
+    input[type="range"] { width: 100%; accent-color: var(--teal); margin-top: 0.3rem; }
+
+    /* CALC CONTROLS */
+    .calc-panel {
+      background: var(--card-alt); border: 1px solid var(--border); border-radius: 12px;
+      padding: 1.4rem 1.5rem; margin-bottom: 1.5rem;
+    }
+    .calc-panel h2 {
+      font-family: var(--font-heading); font-size: 1.3rem; color: var(--gold);
+      margin-bottom: 1.1rem;
+    }
+    .controls { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.1rem 1rem; }
+    .controls label { margin-bottom: 0.4rem; }
+    .hint { font-size: 0.72rem; color: var(--text-dim); margin-top: 0.35rem; font-weight: 400; text-transform: none; letter-spacing: 0; }
+    .full { grid-column: 1 / -1; }
+    .pct-val { color: var(--teal-bright); font-weight: 700; font-family: var(--font-mono); }
+
+    /* STAT CARDS */
+    .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin: 1.6rem 0; }
+    .stat {
+      background: var(--card); border: 1px solid var(--border); border-radius: 10px;
+      padding: 1.1rem 1rem; text-align: center;
+    }
+    .stat .num {
+      font-family: var(--font-heading); font-size: 1.85rem; font-weight: 700;
+      color: var(--gold); line-height: 1; margin-bottom: 0.3rem;
+    }
+    .stat.tokens .num { color: var(--teal-bright); }
+    .stat.saved .num { color: var(--green); }
+    .stat .lbl { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text-dim); }
+
+    /* COMPARE CARDS */
+    .compare { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 1.5rem 0 0.4rem; }
+    .compare-card {
+      background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+      padding: 1.3rem 1.4rem;
+    }
+    .compare-card.routing { border-color: rgba(52,212,176,0.45); background: linear-gradient(135deg, rgba(26,138,122,0.12) 0%, rgba(13,26,48,0.6) 100%); }
+    .compare-card .tag { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-dim); font-weight: 600; }
+    .compare-card.routing .tag { color: var(--teal-bright); }
+    .compare-card .big { font-family: var(--font-heading); font-size: 2.1rem; font-weight: 700; color: var(--cream); line-height: 1; margin: 0.5rem 0 0.2rem; }
+    .compare-card.routing .big { color: var(--teal-bright); }
+    .compare-card .sub { font-size: 0.8rem; color: var(--text-dim); }
+    .compare-card .rows { margin-top: 0.9rem; border-top: 1px solid var(--border); padding-top: 0.8rem; font-size: 0.82rem; }
+    .compare-card .rows div { display: flex; justify-content: space-between; padding: 0.2rem 0; }
+    .compare-card .rows span:last-child { font-family: var(--font-mono); color: var(--cream); }
+
+    /* SAVINGS BANNER */
+    .savings {
+      margin: 1rem 0 0.2rem; padding: 0.95rem 1.2rem; border-radius: 8px;
+      background: linear-gradient(135deg, rgba(26,138,122,0.16) 0%, rgba(201,168,76,0.1) 100%);
+      border: 1px solid rgba(52,212,176,0.3); font-size: 0.9rem; color: var(--cream);
+    }
+    .savings strong { color: var(--teal-bright); }
+
+    /* TABLE */
+    .table-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: 12px; margin-top: 1.2rem; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.86rem; min-width: 560px; }
+    thead th {
+      background: rgba(255,255,255,0.03); color: var(--text-dim);
+      font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.06em;
+      text-align: right; padding: 0.8rem 1rem; border-bottom: 1px solid var(--border); font-weight: 600;
+    }
+    thead th:first-child, thead th:nth-child(2) { text-align: left; }
+    tbody td { padding: 0.7rem 1rem; border-bottom: 1px solid var(--border); text-align: right; font-family: var(--font-mono); }
+    tbody td:first-child, tbody td:nth-child(2) { text-align: left; font-family: var(--font-body); }
+    tbody tr:last-child td { border-bottom: none; }
+    tbody tr.cheapest { background: rgba(52,212,176,0.08); }
+    tbody tr.cheapest td:first-child { box-shadow: inset 3px 0 0 var(--teal-bright); }
+    .model-name { font-weight: 600; color: var(--cream); }
+    .pill { display: inline-block; font-size: 0.68rem; padding: 0.12rem 0.55rem; border-radius: 20px;
+            font-weight: 600; letter-spacing: 0.03em; }
+    .pill.OpenAI { background: rgba(52,212,176,0.15); color: var(--teal-bright); }
+    .pill.Anthropic { background: rgba(201,168,76,0.16); color: var(--gold); }
+    .pill.Google { background: rgba(205,214,244,0.12); color: #c4cdf0; }
+    .pill.DeepSeek { background: rgba(136,150,176,0.16); color: var(--text-dim); }
+    .badge-cheap { font-size: 0.62rem; color: var(--teal-bright); font-weight: 700; letter-spacing: 0.05em; margin-left: 0.4rem; }
+    .monthly { color: var(--gold); font-weight: 600; }
+
+    .price-note { font-size: 0.78rem; color: var(--text-dim); margin-top: 0.9rem; line-height: 1.7; }
+    .price-note a { color: var(--text-dim); text-decoration: underline; }
+    .price-note a:hover { color: var(--gold); }
+
+    /* CTA */
+    .cta-section {
+      background: linear-gradient(135deg, rgba(26,138,122,0.12) 0%, rgba(201,168,76,0.08) 100%);
+      border: 1px solid rgba(201,168,76,0.2);
+      border-radius: 12px;
+      padding: 2.2rem 2rem;
+      text-align: center;
+      margin-top: 3rem;
+    }
+    .cta-section h2 {
+      font-family: var(--font-heading);
+      font-size: 1.5rem;
+      color: var(--gold);
+      margin-bottom: 0.5rem;
+    }
+    .cta-section p { color: var(--text-dim); font-size: 0.95rem; margin-bottom: 1.2rem; max-width: 580px; margin-left:auto; margin-right:auto; }
+    .cta-form { display: flex; gap: 0.6rem; justify-content: center; flex-wrap: wrap; }
+    .cta-form input[type="email"] {
+      flex: 1; max-width: 300px; min-width: 200px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text);
+      font-family: var(--font-body);
+      font-size: 0.9rem;
+      padding: 0.6rem 1rem;
+      outline: none;
+    }
+    .cta-form input[type="email"]:focus { border-color: var(--gold-dim); }
+    button {
+      padding: 0.55rem 1.3rem;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      font-family: var(--font-body);
+      font-size: 0.85rem;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+    .btn-primary { background: var(--gold); color: #0a0e18; }
+    .btn-primary:hover { background: #ddb85c; }
+    .cta-success { display: none; color: var(--teal-bright); font-size: 0.9rem; margin-top: 0.8rem; }
+    .cta-success.visible { display: block; }
+
+    /* FAQ + CONTENT */
+    .content { margin-top: 3rem; }
+    .content h2 {
+      font-family: var(--font-heading); font-size: 1.5rem; color: var(--gold);
+      margin: 0 0 1rem; padding-top: 1rem;
+    }
+    .faq-item { border-top: 1px solid var(--border); padding: 1.1rem 0; }
+    .faq-item h3 { font-size: 1rem; color: var(--cream); margin-bottom: 0.4rem; font-weight: 600; }
+    .faq-item p { color: var(--text-dim); font-size: 0.9rem; }
+
+    /* FOOTER */
+    footer {
+      background: var(--card);
+      border-top: 1px solid var(--border);
+      text-align: center;
+      padding: 1.5rem;
+      font-size: 0.82rem;
+      color: var(--text-dim);
+    }
+    footer a { color: var(--text-dim); }
+    footer a:hover { color: var(--gold); }
+
+    /* RESPONSIVE */
+    @media (max-width: 720px) {
+      .stats { grid-template-columns: repeat(2, 1fr); }
+      .controls { grid-template-columns: 1fr 1fr; }
+      .compare { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 600px) {
+      .page-header h1 { font-size: 1.8rem; }
+      nav { padding: 0 1rem; }
+      .nav-links { gap: 1rem; }
+      main { padding: 2rem 1rem 4rem; }
+      .controls { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="nav-logo">ABUZ8</a>
+  <ul class="nav-links">
+    <li><a href="/tools.html">Tools</a></li>
+    <li><a href="/store.html">Store</a></li>
+  </ul>
+</nav>
+
+<main>
+  <div class="page-header">
+    <h1>AI Agent Cost Calculator</h1>
+    <p>An agent doesn&#8217;t make one API call &mdash; it loops, re-sending a growing context on every step. Model your loop below to see what one autonomous task really costs, then watch routing the routine steps to a cheaper model cut the bill.</p>
+    <span class="privacy-note">&#128274; 100% in-browser &mdash; nothing you type is uploaded</span>
+  </div>
+
+  <div class="calc-panel">
+    <h2>Your agent loop</h2>
+    <div class="controls">
+      <div>
+        <label for="steps">Steps per task</label>
+        <input type="number" id="steps" min="1" max="200" value="8" />
+        <div class="hint">Loop iterations (plan / act / verify&hellip;) per task.</div>
+      </div>
+      <div>
+        <label for="startCtx">Start context (tokens)</label>
+        <input type="number" id="startCtx" min="0" value="3000" />
+        <div class="hint">System prompt + tools + first input.</div>
+      </div>
+      <div>
+        <label for="growth">Context growth / step</label>
+        <input type="number" id="growth" min="0" value="1500" />
+        <div class="hint">Tokens appended each step (history, tool output).</div>
+      </div>
+      <div>
+        <label for="outStep">Output tokens / step</label>
+        <input type="number" id="outStep" min="0" value="500" />
+        <div class="hint">Model&#8217;s response length per step.</div>
+      </div>
+      <div>
+        <label for="tasksDay">Tasks per day</label>
+        <input type="number" id="tasksDay" min="0" value="40" />
+        <div class="hint">Across your whole product.</div>
+      </div>
+      <div>
+        <label for="premiumModel">Frontier model (hard steps)</label>
+        <select id="premiumModel"></select>
+        <div class="hint">Used for the reasoning-heavy steps.</div>
+      </div>
+      <div>
+        <label for="cheapModel">Cheap model (routine steps)</label>
+        <select id="cheapModel"></select>
+        <div class="hint">Tool calls, formatting, simple decisions.</div>
+      </div>
+      <div class="full">
+        <label for="premiumPct">Share of steps that truly need the frontier model &mdash; <span class="pct-val" id="pctVal">25%</span></label>
+        <input type="range" id="premiumPct" min="0" max="100" step="5" value="25" />
+        <div class="hint">In most agent loops only a minority of steps need the big model. Smart routing sends the rest to the cheap one.</div>
+      </div>
+    </div>
+
+    <div class="stats">
+      <div class="stat tokens">
+        <div class="num" id="statTokens">0</div>
+        <div class="lbl">Tokens / task</div>
+      </div>
+      <div class="stat">
+        <div class="num" id="statCalls">0</div>
+        <div class="lbl">API calls / month</div>
+      </div>
+      <div class="stat">
+        <div class="num" id="statPremMo">$0</div>
+        <div class="lbl">All-frontier / mo</div>
+      </div>
+      <div class="stat saved">
+        <div class="num" id="statSaved">$0</div>
+        <div class="lbl">Saved / mo by routing</div>
+      </div>
+    </div>
+
+    <div class="compare">
+      <div class="compare-card">
+        <div class="tag">Every step on the frontier model</div>
+        <div class="big" id="premMo">$0</div>
+        <div class="sub">per month</div>
+        <div class="rows">
+          <div><span>Per task</span><span id="premTask">$0</span></div>
+          <div><span>Per day</span><span id="premDay">$0</span></div>
+        </div>
+      </div>
+      <div class="compare-card routing">
+        <div class="tag">&#9889; Smart routing (the QADIR way)</div>
+        <div class="big" id="routeMo">$0</div>
+        <div class="sub">per month</div>
+        <div class="rows">
+          <div><span>Per task</span><span id="routeTask">$0</span></div>
+          <div><span>Per day</span><span id="routeDay">$0</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="savings" id="savings"></div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Provider</th>
+            <th>Model</th>
+            <th>In $/1M</th>
+            <th>Out $/1M</th>
+            <th>Cost / task</th>
+            <th>Cost / month</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+      </table>
+    </div>
+
+    <p class="price-note">
+      &#8220;Cost / task&#8221; runs the whole loop on a single model so you can see how much the model choice alone matters. Prices per 1M tokens, standard (non-cached, non-batch) tier, verified June&nbsp;2026. Token figures are estimates; exact counts depend on each model&#8217;s tokenizer. Confirm live rates:
+      <a href="https://openai.com/api/pricing/" target="_blank" rel="noopener">OpenAI</a>,
+      <a href="https://platform.claude.com/docs/en/about-claude/pricing" target="_blank" rel="noopener">Anthropic</a>,
+      <a href="https://ai.google.dev/gemini-api/docs/pricing" target="_blank" rel="noopener">Google</a>,
+      <a href="https://api-docs.deepseek.com/quick_start/pricing" target="_blank" rel="noopener">DeepSeek</a>.
+      Tip: prompt caching can cut input cost up to ~90% on the repeated prefix &mdash; huge for agents, since the system prompt and tools repeat every step.
+    </p>
+  </div>
+
+  <div class="cta-section">
+    <h2>Your agent shouldn&#8217;t pay frontier prices for routine steps</h2>
+    <p>You just watched routing cut an agent&#8217;s bill without touching quality on the steps that matter. QADIR&nbsp;OS does this automatically on <em>every step of every loop</em> &mdash; cheapest model that clears the bar, frontier model only when the task demands it. Opus-grade output at Haiku-grade cost.</p>
+    <div class="cta-form">
+      <input type="email" id="ctaEmail" placeholder="you@company.com" />
+      <button class="btn-primary" onclick="submitWaitlist()">Join the waitlist</button>
+    </div>
+    <div id="ctaSuccess" class="cta-success">&#10003; You&#8217;re on the list. We&#8217;ll be in touch.</div>
+  </div>
+
+  <div class="content">
+    <h2>Why agent runs cost what they cost</h2>
+    <div class="faq-item">
+      <h3>Why is running an AI agent so much more expensive than a single API call?</h3>
+      <p>An agent doesn&#8217;t answer once &mdash; it loops: perceive, plan, act, verify, reflect. Each step is a separate API call, and every step re-sends the accumulated context: the system prompt, the tools, and the full history so far. So one task is often 5 to 30 calls whose input grows on every step. With the defaults above, the last step alone carries several times the tokens of the first &mdash; which is why agent costs scale far faster than a one-shot chat completion.</p>
+    </div>
+    <div class="faq-item">
+      <h3>How do I reduce AI agent costs?</h3>
+      <p>The biggest lever is routing: send the routine steps &mdash; tool calls, formatting, simple decisions &mdash; to a cheap, fast model, and reserve a frontier model only for the genuinely hard reasoning. Caching the static prompt prefix and trimming history help too. Routing alone usually cuts agent spend 40&ndash;80% with no quality loss on the steps that never needed the big model in the first place.</p>
+    </div>
+    <div class="faq-item">
+      <h3>What is LLM model routing?</h3>
+      <p>Routing automatically picks the cheapest model that still clears the quality bar for each individual step, instead of sending everything to one expensive model. Because most steps in an agent loop are routine, routing them to a cheaper model captures most of the savings while keeping frontier quality exactly where it matters. The slider above lets you see the trade-off for your own loop.</p>
+    </div>
+    <div class="faq-item">
+      <h3>Is my data sent to a server?</h3>
+      <p>No. This calculator runs entirely in your browser. Nothing you type is uploaded, logged, or stored anywhere.</p>
+    </div>
+  </div>
+</main>
+
+<footer>
+  ABUZ8 LLC &middot; Free AI Tools &middot; <a href="mailto:ahmad@abuz8ai.com">ahmad@abuz8ai.com</a>
+</footer>
+
+<script>
+// ── PRICING (USD per 1M tokens) — verified June 2026, shared with /tools/ai-token-counter ──
+const MODELS = [
+  { prov:'OpenAI',    name:'GPT-5.5',              in:5.00,  out:30.00 },
+  { prov:'OpenAI',    name:'GPT-5.4',              in:2.50,  out:15.00 },
+  { prov:'OpenAI',    name:'GPT-5.4 Mini',         in:0.75,  out:4.50  },
+  { prov:'OpenAI',    name:'GPT-5.4 Nano',         in:0.20,  out:1.25  },
+  { prov:'OpenAI',    name:'GPT-4o',               in:2.50,  out:10.00 },
+  { prov:'OpenAI',    name:'GPT-4o mini',          in:0.15,  out:0.60  },
+  { prov:'OpenAI',    name:'o3',                   in:2.00,  out:8.00  },
+  { prov:'Anthropic', name:'Claude Opus 4.8',      in:5.00,  out:25.00 },
+  { prov:'Anthropic', name:'Claude Sonnet 4.6',    in:3.00,  out:15.00 },
+  { prov:'Anthropic', name:'Claude Haiku 4.5',     in:1.00,  out:5.00  },
+  { prov:'Google',    name:'Gemini 2.5 Pro',       in:1.25,  out:10.00 },
+  { prov:'Google',    name:'Gemini 2.5 Flash',     in:0.30,  out:2.50  },
+  { prov:'Google',    name:'Gemini 2.5 Flash-Lite',in:0.10,  out:0.40  },
+  { prov:'DeepSeek',  name:'DeepSeek-V3',          in:0.14,  out:0.28  },
+  { prov:'DeepSeek',  name:'DeepSeek-R1',          in:0.55,  out:2.19  }
+];
+const DAYS_PER_MONTH = 30;
+
+// ── HELPERS ───────────────────────────────────────────────────────────────────
+function fmtUSD(v) {
+  if (v >= 1)    return '$' + v.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  if (v >= 0.01) return '$' + v.toFixed(3);
+  if (v > 0)     return '$' + v.toFixed(5);
+  return '$0.00';
+}
+function fmtUSDshort(v) {
+  if (v >= 1000) return '$' + (v/1000).toFixed(1) + 'k';
+  if (v >= 1)    return '$' + v.toFixed(2);
+  if (v > 0)     return '$' + v.toFixed(3);
+  return '$0';
+}
+function el(id){ return document.getElementById(id); }
+function numVal(id, min){ const v = parseFloat(el(id).value); return isNaN(v) ? 0 : Math.max(min ?? 0, v); }
+
+// Token totals for one task: input compounds each step (startCtx + (k-1)*growth), output is flat.
+function taskTokens(steps, startCtx, growth, outStep) {
+  let inTok = 0, lastIn = 0;
+  for (let k = 0; k < steps; k++) {
+    const stepIn = startCtx + k * growth;
+    inTok += stepIn;
+    lastIn = stepIn;
+  }
+  return { inTok, outTok: outStep * steps, lastIn };
+}
+// Cost of running an entire task on ONE model.
+function taskCostOnModel(m, inTok, outTok) {
+  return (inTok / 1e6) * m.in + (outTok / 1e6) * m.out;
+}
+
+// ── SELECT POPULATION ─────────────────────────────────────────────────────────
+function fillSelect(id, defaultName) {
+  const sel = el(id);
+  sel.innerHTML = MODELS.map((m, i) =>
+    `<option value="${i}"${m.name === defaultName ? ' selected' : ''}>${m.name} — $${m.in.toFixed(2)}/$${m.out.toFixed(2)}</option>`
+  ).join('');
+}
+
+// ── MAIN COMPUTE ──────────────────────────────────────────────────────────────
+function compute() {
+  const steps    = Math.round(numVal('steps', 1));
+  const startCtx = Math.round(numVal('startCtx', 0));
+  const growth   = Math.round(numVal('growth', 0));
+  const outStep  = Math.round(numVal('outStep', 0));
+  const tasksDay = Math.round(numVal('tasksDay', 0));
+  const pPct     = numVal('premiumPct', 0) / 100;
+  el('pctVal').textContent = Math.round(pPct * 100) + '%';
+
+  const prem  = MODELS[parseInt(el('premiumModel').value, 10) || 0];
+  const cheap = MODELS[parseInt(el('cheapModel').value, 10) || 0];
+
+  const { inTok, outTok } = taskTokens(steps, startCtx, growth, outStep);
+  const tasksMonth = tasksDay * DAYS_PER_MONTH;
+
+  // All-frontier: whole task on the frontier model.
+  const premTask = taskCostOnModel(prem, inTok, outTok);
+  // Smart routing: each step has probability pPct of frontier, else cheap. Linear, so:
+  const cheapTask = taskCostOnModel(cheap, inTok, outTok);
+  const routeTask = pPct * premTask + (1 - pPct) * cheapTask;
+
+  const premDay = premTask * tasksDay,  premMo = premTask * tasksMonth;
+  const routeDay = routeTask * tasksDay, routeMo = routeTask * tasksMonth;
+  const savedMo = premMo - routeMo;
+
+  // Stat row
+  el('statTokens').textContent = (inTok + outTok).toLocaleString();
+  el('statCalls').textContent  = (steps * tasksMonth).toLocaleString();
+  el('statPremMo').textContent = fmtUSDshort(premMo);
+  el('statSaved').textContent  = fmtUSDshort(savedMo);
+
+  // Compare cards
+  el('premTask').textContent  = fmtUSD(premTask);
+  el('premDay').textContent   = fmtUSD(premDay);
+  el('premMo').textContent    = fmtUSDshort(premMo);
+  el('routeTask').textContent = fmtUSD(routeTask);
+  el('routeDay').textContent  = fmtUSD(routeDay);
+  el('routeMo').textContent   = fmtUSDshort(routeMo);
+
+  // Savings banner
+  const savings = el('savings');
+  if (tasksMonth > 0 && premMo > 0 && savedMo > 0.0001) {
+    const pct = Math.round((savedMo / premMo) * 100);
+    savings.innerHTML = `Running <strong>${tasksDay.toLocaleString()}</strong> tasks/day of <strong>${steps}</strong> steps on <strong>${prem.name}</strong> costs <strong>${fmtUSD(premMo)}/mo</strong>. Routing the routine <strong>${Math.round((1-pPct)*100)}%</strong> of steps to <strong>${cheap.name}</strong> drops it to <strong>${fmtUSD(routeMo)}/mo</strong> — you keep <strong>${fmtUSD(savedMo)}/mo (${pct}%)</strong> for the same work.`;
+    savings.style.display = 'block';
+  } else {
+    savings.style.display = 'none';
+  }
+
+  // Per-model table (whole task on each model, cheapest first)
+  const rows = MODELS.map(m => {
+    const tc = taskCostOnModel(m, inTok, outTok);
+    return { ...m, taskCost: tc, monthly: tc * tasksMonth };
+  }).sort((a, b) => a.taskCost - b.taskCost);
+
+  el('tableBody').innerHTML = rows.map((r, i) => `
+    <tr class="${i === 0 ? 'cheapest' : ''}">
+      <td><span class="pill ${r.prov}">${r.prov}</span></td>
+      <td><span class="model-name">${r.name}</span>${i === 0 ? '<span class="badge-cheap">CHEAPEST</span>' : ''}</td>
+      <td>$${r.in.toFixed(2)}</td>
+      <td>$${r.out.toFixed(2)}</td>
+      <td>${fmtUSD(r.taskCost)}</td>
+      <td class="monthly">${fmtUSD(r.monthly)}</td>
+    </tr>
+  `).join('');
+}
+
+// ── WAITLIST ──────────────────────────────────────────────────────────────────
+async function submitWaitlist() {
+  const email = el('ctaEmail').value.trim();
+  if (!email || !email.includes('@')) { alert('Please enter a valid email address.'); return; }
+  const payload = { email, product: 'qadir-os-agent-cost-calculator', ts: new Date().toISOString() };
+  try {
+    await fetch('/api/waitlist', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+  } catch (e) { /* graceful fallback — show success anyway */ }
+  el('ctaEmail').style.display = 'none';
+  document.querySelector('.cta-form button').style.display = 'none';
+  el('ctaSuccess').classList.add('visible');
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+fillSelect('premiumModel', 'Claude Opus 4.8');
+fillSelect('cheapModel', 'Claude Haiku 4.5');
+['steps','startCtx','growth','outStep','tasksDay','premiumModel','cheapModel','premiumPct']
+  .forEach(id => el(id).addEventListener('input', compute));
+compute();
+</script>
+<script src="/tools/_tools-shared.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>

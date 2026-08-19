@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Word Counter &amp; Readability Checker — Free Online Tool | ABUZ8</title>
+  <meta name="description" content="Free online word counter with live character count, sentence &amp; paragraph counts, reading time, Flesch readability score, keyword density, and social-media length limits. No signup — runs in your browser." />
+  <meta name="robots" content="index, follow" />
+  <meta name="keywords" content="word counter, character counter, readability checker, reading time calculator, keyword density tool, flesch reading ease" />
+  <link rel="canonical" href="https://abuz8ai.com/tools/word-counter" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Word Counter &amp; Readability Checker — Free Online Tool | ABUZ8" />
+  <meta property="og:description" content="Live word &amp; character count, reading time, Flesch readability, keyword density, and social length limits. 100% client-side." />
+  <meta property="og:url" content="https://abuz8ai.com/tools/word-counter" />
+  <meta name="twitter:card" content="summary" />
+
+  <!-- JSON-LD: WebApplication -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Word Counter & Readability Checker",
+    "applicationCategory": "UtilitiesApplication",
+    "operatingSystem": "Web",
+    "url": "https://abuz8ai.com/tools/word-counter",
+    "description": "Free online word counter with live character count, reading time, Flesch readability score, keyword density, and social-media length limits. Runs entirely in your browser.",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+    "author": { "@type": "Organization", "name": "ABUZ8 LLC", "url": "https://abuz8ai.com" }
+  }
+  </script>
+
+  <!-- JSON-LD: FAQPage -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Is this word counter free and private?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Yes. It is 100% free with no signup, and every calculation runs in your browser with client-side JavaScript. Your text is never uploaded or stored on any server." }
+      },
+      {
+        "@type": "Question",
+        "name": "What is a good Flesch Reading Ease score?",
+        "acceptedAnswer": { "@type": "Answer", "text": "A score of 60 to 70 is plain English that most adults read comfortably. Higher scores are easier; scores below 50 are fairly difficult and below 30 are best understood by university graduates." }
+      },
+      {
+        "@type": "Question",
+        "name": "How is reading time calculated?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Reading time assumes an average silent reading speed of about 200 words per minute, and speaking time assumes about 130 words per minute for natural speech." }
+      },
+      {
+        "@type": "Question",
+        "name": "What is keyword density and why does it matter?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Keyword density is how often a word appears as a percentage of total words. It helps writers and SEOs check whether a target term is used enough to be relevant without over-stuffing." }
+      }
+    ]
+  }
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --lapis: #0a1628;
+      --card: #0d1a30;
+      --card2: #111f38;
+      --gold: #c9a84c;
+      --teal: #0e9f6e;
+      --teal-light: #2fbf8f;
+      --text: #e8eaf0;
+      --text-dim: #8a9ab5;
+      --border: #1e2f4a;
+      --red: #e05252;
+      --amber: #d9a441;
+      --green: #2fbf8f;
+      --font-head: 'Playfair Display', Georgia, serif;
+      --font-body: 'Inter', system-ui, sans-serif;
+      --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+    }
+    html, body { min-height: 100%; }
+    body { background: var(--lapis); color: var(--text); font-family: var(--font-body); font-size: 15px; line-height: 1.6; display: flex; flex-direction: column; }
+
+    nav { background: var(--card); border-bottom: 1px solid var(--border); padding: 0 24px; height: 56px; display: flex; align-items: center; justify-content: space-between; }
+    .nav-logo { font-family: var(--font-head); font-size: 1.3rem; color: var(--gold); text-decoration: none; font-weight: 700; letter-spacing: 0.02em; }
+    .nav-links { display: flex; gap: 24px; list-style: none; }
+    .nav-links a { color: var(--text-dim); text-decoration: none; font-size: 0.875rem; font-weight: 500; transition: color 0.2s; }
+    .nav-links a:hover { color: var(--teal-light); }
+
+    .hero { padding: 36px 24px 18px; text-align: center; }
+    .hero h1 { font-family: var(--font-head); font-size: clamp(1.6rem, 4vw, 2.4rem); color: var(--gold); margin-bottom: 8px; }
+    .hero p { color: var(--text-dim); font-size: 0.95rem; max-width: 580px; margin: 0 auto; }
+
+    .tool-wrap { max-width: 880px; margin: 0 auto; padding: 0 24px 40px; width: 100%; }
+
+    /* EDITOR */
+    .editor-label { display: flex; justify-content: space-between; align-items: baseline; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-dim); margin-bottom: 6px; }
+    .editor-label a { color: var(--teal-light); text-decoration: none; cursor: pointer; text-transform: none; letter-spacing: 0; font-weight: 500; }
+    .editor-label a:hover { text-decoration: underline; }
+    #editor { width: 100%; background: var(--card); border: 1px solid var(--border); color: var(--text); font-family: var(--font-body); font-size: 1rem; line-height: 1.7; padding: 16px; border-radius: 10px; resize: vertical; outline: none; min-height: 200px; }
+    #editor:focus { border-color: var(--teal); }
+
+    .action-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin: 14px 0 24px; }
+    .act-btn { background: var(--card2); color: var(--text-dim); border: 1px solid var(--border); font-family: var(--font-body); font-weight: 600; font-size: 0.83rem; padding: 9px 18px; border-radius: 7px; cursor: pointer; transition: all 0.2s; }
+    .act-btn:hover { color: var(--teal-light); border-color: var(--teal); }
+    .act-btn.primary { background: var(--gold); color: var(--lapis); border-color: var(--gold); font-weight: 700; }
+    .act-btn.primary:hover { opacity: 0.88; color: var(--lapis); }
+
+    /* STAT GRID */
+    .stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(118px, 1fr)); gap: 12px; margin-bottom: 26px; }
+    .stat-card { background: var(--card2); border: 1px solid var(--border); border-radius: 10px; padding: 16px 14px; text-align: center; }
+    .stat-num { font-family: var(--font-mono); font-size: 1.65rem; font-weight: 500; color: var(--gold); line-height: 1.1; }
+    .stat-card.accent .stat-num { color: var(--teal-light); }
+    .stat-label { font-size: 0.72rem; letter-spacing: 0.05em; text-transform: uppercase; color: var(--text-dim); margin-top: 6px; }
+
+    /* PANELS */
+    .panel { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 22px 24px; margin-bottom: 22px; }
+    .panel h2 { font-family: var(--font-head); font-size: 1.15rem; color: var(--gold); margin-bottom: 4px; }
+    .panel .panel-sub { font-size: 0.8rem; color: var(--text-dim); margin-bottom: 18px; }
+
+    /* READABILITY */
+    .read-top { display: flex; flex-wrap: wrap; gap: 20px; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+    .read-score { font-family: var(--font-mono); font-size: 2.6rem; font-weight: 500; color: var(--teal-light); line-height: 1; }
+    .read-label { font-size: 0.95rem; font-weight: 600; color: var(--text); }
+    .read-grade { font-size: 0.82rem; color: var(--text-dim); margin-top: 2px; }
+    .bar-track { height: 10px; background: var(--card2); border: 1px solid var(--border); border-radius: 6px; overflow: hidden; margin: 6px 0 18px; }
+    .bar-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--teal) 0%, var(--teal-light) 100%); transition: width 0.25s ease; }
+    .read-metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
+    .read-metric { font-size: 0.85rem; color: var(--text-dim); }
+    .read-metric b { display: block; font-family: var(--font-mono); font-size: 1.05rem; color: var(--text); font-weight: 500; }
+
+    /* KEYWORD DENSITY */
+    .kw-row { display: flex; align-items: center; gap: 12px; margin-bottom: 9px; font-size: 0.85rem; }
+    .kw-word { width: 130px; flex-shrink: 0; color: var(--text); font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .kw-bar-track { flex: 1; height: 14px; background: var(--card2); border-radius: 5px; overflow: hidden; }
+    .kw-bar { height: 100%; background: var(--gold); border-radius: 5px; transition: width 0.25s ease; }
+    .kw-val { width: 96px; flex-shrink: 0; text-align: right; font-family: var(--font-mono); font-size: 0.78rem; color: var(--text-dim); }
+    .kw-empty { color: var(--text-dim); font-size: 0.85rem; }
+
+    /* LENGTH TARGETS */
+    .len-row { display: flex; align-items: center; gap: 12px; margin-bottom: 11px; font-size: 0.85rem; }
+    .len-name { width: 200px; flex-shrink: 0; color: var(--text-dim); }
+    .len-name b { color: var(--text); font-weight: 500; }
+    .len-track { flex: 1; height: 8px; background: var(--card2); border-radius: 5px; overflow: hidden; }
+    .len-fill { height: 100%; width: 0%; background: var(--teal); transition: width 0.25s ease, background 0.25s ease; }
+    .len-fill.warn { background: var(--amber); }
+    .len-fill.over { background: var(--red); }
+    .len-count { width: 92px; flex-shrink: 0; text-align: right; font-family: var(--font-mono); font-size: 0.78rem; color: var(--text-dim); }
+    .len-count.over { color: var(--red); }
+
+    /* FAQ */
+    .faq h2 { font-family: var(--font-head); font-size: 1.3rem; color: var(--gold); margin-bottom: 16px; text-align: center; }
+    .faq-item { border-bottom: 1px solid var(--border); padding: 14px 0; }
+    .faq-item:last-child { border-bottom: none; }
+    .faq-q { font-weight: 600; color: var(--text); margin-bottom: 5px; }
+    .faq-a { font-size: 0.9rem; color: var(--text-dim); }
+
+    /* CTA */
+    .cta-section { background: linear-gradient(135deg, var(--card2) 0%, #0d1f35 100%); border-top: 1px solid var(--border); padding: 48px 24px; text-align: center; margin-top: auto; }
+    .cta-section h2 { font-family: var(--font-head); font-size: 1.6rem; color: var(--gold); margin-bottom: 10px; }
+    .cta-section p { color: var(--text-dim); margin-bottom: 24px; max-width: 520px; margin-left: auto; margin-right: auto; }
+    .cta-form { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; max-width: 460px; margin: 0 auto; }
+    .cta-form input { flex: 1; min-width: 220px; background: var(--card); border: 1px solid var(--border); color: var(--text); font-family: var(--font-body); font-size: 0.9rem; padding: 11px 16px; border-radius: 7px; outline: none; }
+    .cta-form input:focus { border-color: var(--teal); }
+    .cta-form button { background: var(--gold); color: var(--lapis); border: none; font-family: var(--font-body); font-weight: 700; font-size: 0.9rem; padding: 11px 22px; border-radius: 7px; cursor: pointer; transition: opacity 0.2s; white-space: nowrap; }
+    .cta-form button:hover { opacity: 0.85; }
+    .cta-msg { margin-top: 12px; font-size: 0.85rem; min-height: 20px; }
+    .cta-msg.ok { color: var(--teal-light); }
+    .cta-msg.err { color: var(--red); }
+
+    footer { background: var(--card); border-top: 1px solid var(--border); padding: 16px 24px; text-align: center; color: var(--text-dim); font-size: 0.8rem; }
+    footer a { color: var(--teal-light); text-decoration: none; }
+
+    @media (max-width: 600px) {
+      .nav-links { gap: 14px; }
+      .tool-wrap { padding: 0 12px 32px; }
+      .kw-word { width: 92px; }
+      .len-name { width: 150px; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="/">ABUZ8</a>
+  <ul class="nav-links">
+    <li><a href="/tools.html">Tools</a></li>
+    <li><a href="/store.html">Store</a></li>
+    <li><a href="/comfyui-blueprint.html">ComfyUI</a></li>
+  </ul>
+</nav>
+
+<div class="hero">
+  <h1>Word Counter &amp; Readability Checker</h1>
+  <p>Count words and characters in real time, then check reading time, Flesch readability, keyword density, and social-media length limits. Everything runs in your browser — your text never leaves your device.</p>
+</div>
+
+<div class="tool-wrap">
+
+  <div class="editor-label">
+    <span>Your Text</span>
+    <a id="sample-link" onclick="loadSample()">Load sample text</a>
+  </div>
+  <textarea id="editor" placeholder="Start typing or paste your text here…" oninput="analyze()" autofocus></textarea>
+
+  <div class="action-row">
+    <button class="act-btn primary" onclick="copyStats()">📋 Copy stats</button>
+    <button class="act-btn" onclick="clearText()">✕ Clear</button>
+  </div>
+
+  <!-- PRIMARY STATS -->
+  <div class="stat-grid">
+    <div class="stat-card accent"><div class="stat-num" id="s-words">0</div><div class="stat-label">Words</div></div>
+    <div class="stat-card"><div class="stat-num" id="s-chars">0</div><div class="stat-label">Characters</div></div>
+    <div class="stat-card"><div class="stat-num" id="s-chars-ns">0</div><div class="stat-label">No&nbsp;Spaces</div></div>
+    <div class="stat-card"><div class="stat-num" id="s-sentences">0</div><div class="stat-label">Sentences</div></div>
+    <div class="stat-card"><div class="stat-num" id="s-paragraphs">0</div><div class="stat-label">Paragraphs</div></div>
+    <div class="stat-card"><div class="stat-num" id="s-read">0s</div><div class="stat-label">Read&nbsp;Time</div></div>
+    <div class="stat-card"><div class="stat-num" id="s-speak">0s</div><div class="stat-label">Speak&nbsp;Time</div></div>
+  </div>
+
+  <!-- READABILITY -->
+  <div class="panel">
+    <h2>Readability</h2>
+    <div class="panel-sub">Flesch Reading Ease — higher is easier. 60–70 is plain English.</div>
+    <div class="read-top">
+      <div>
+        <div class="read-score" id="r-score">—</div>
+      </div>
+      <div style="text-align:right;">
+        <div class="read-label" id="r-label">Type something to analyze</div>
+        <div class="read-grade" id="r-grade"></div>
+      </div>
+    </div>
+    <div class="bar-track"><div class="bar-fill" id="r-bar"></div></div>
+    <div class="read-metrics">
+      <div class="read-metric"><b id="m-wps">0</b>Avg words / sentence</div>
+      <div class="read-metric"><b id="m-spw">0</b>Avg syllables / word</div>
+      <div class="read-metric"><b id="m-wlen">0</b>Avg word length</div>
+      <div class="read-metric"><b id="m-longest">—</b>Longest word</div>
+    </div>
+  </div>
+
+  <!-- KEYWORD DENSITY -->
+  <div class="panel">
+    <h2>Keyword Density</h2>
+    <div class="panel-sub">Top terms by frequency (common stop-words excluded).</div>
+    <div id="kw-list"><div class="kw-empty">No words yet.</div></div>
+  </div>
+
+  <!-- LENGTH TARGETS -->
+  <div class="panel">
+    <h2>Length Limits</h2>
+    <div class="panel-sub">Live check against common platform limits (by character count).</div>
+    <div class="len-row">
+      <div class="len-name"><b>SEO Title</b> · 60</div>
+      <div class="len-track"><div class="len-fill" id="len-title"></div></div>
+      <div class="len-count" id="lc-title">0 / 60</div>
+    </div>
+    <div class="len-row">
+      <div class="len-name"><b>Meta Description</b> · 160</div>
+      <div class="len-track"><div class="len-fill" id="len-meta"></div></div>
+      <div class="len-count" id="lc-meta">0 / 160</div>
+    </div>
+    <div class="len-row">
+      <div class="len-name"><b>X / Twitter post</b> · 280</div>
+      <div class="len-track"><div class="len-fill" id="len-tweet"></div></div>
+      <div class="len-count" id="lc-tweet">0 / 280</div>
+    </div>
+    <div class="len-row">
+      <div class="len-name"><b>SMS segment</b> · 160</div>
+      <div class="len-track"><div class="len-fill" id="len-sms"></div></div>
+      <div class="len-count" id="lc-sms">0 / 160</div>
+    </div>
+  </div>
+
+  <!-- FAQ -->
+  <div class="panel faq">
+    <h2>Frequently Asked Questions</h2>
+    <div class="faq-item">
+      <div class="faq-q">Is this word counter free and private?</div>
+      <div class="faq-a">Yes. It is 100% free with no signup, and every calculation runs in your browser. Your text is never uploaded or stored on any server.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">What is a good Flesch Reading Ease score?</div>
+      <div class="faq-a">A score of 60–70 is plain English that most adults read comfortably. Higher is easier; below 50 is fairly difficult and below 30 reads at a university-graduate level.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">How is reading time calculated?</div>
+      <div class="faq-a">Reading time assumes about 200 words per minute (average silent reading); speaking time assumes about 130 words per minute for natural speech.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">What is keyword density and why does it matter?</div>
+      <div class="faq-a">Keyword density is how often a word appears as a share of total words. It helps writers and SEOs confirm a target term is used enough to be relevant — without over-stuffing.</div>
+    </div>
+  </div>
+
+</div>
+
+<section class="cta-section">
+  <h2>Write sharper with QADIR OS</h2>
+  <p>An AI writing partner that rewrites for readability, hits your SEO targets, and keeps your voice — coming soon for ABUZ8 early-access members.</p>
+  <div class="cta-form">
+    <input type="email" id="wl-email" placeholder="your@email.com" autocomplete="email" />
+    <button onclick="joinWaitlist()">Join Early Access</button>
+  </div>
+  <div class="cta-msg" id="wl-msg"></div>
+</section>
+
+<footer>
+  ABUZ8 LLC &middot; Free AI Tools &middot; <a href="mailto:ahmad@abuz8ai.com">ahmad@abuz8ai.com</a>
+</footer>
+
+<script>
+// ── STOP WORDS (for keyword density) ───────────────────────────────────────────
+const STOPWORDS = new Set('a an the and or but if then else of to in on at for from by with as is are was were be been being it its this that these those i you he she we they me him her us them my your his their our not no do does did has have had will would shall can could should may might must about into over under out up down off than too very just also more most some any each every other another such only own same so'.split(/\s+/));
+
+// ── SYLLABLE HEURISTIC ──────────────────────────────────────────────────────────
+function countSyllables(word) {
+  word = word.toLowerCase().replace(/[^a-z]/g, '');
+  if (!word) return 0;
+  if (word.length <= 3) return 1;
+  word = word.replace(/(?:[^laeiouy]es|ed|[^laeiouy]e)$/, '');
+  word = word.replace(/^y/, '');
+  const groups = word.match(/[aeiouy]{1,2}/g);
+  return groups ? groups.length : 1;
+}
+
+// ── FORMAT TIME (seconds → "1m 20s" / "45s") ─────────────────────────────────────
+function fmtTime(totalSeconds) {
+  totalSeconds = Math.round(totalSeconds);
+  if (totalSeconds < 60) return totalSeconds + 's';
+  const m = Math.floor(totalSeconds / 60);
+  const s = totalSeconds % 60;
+  return s ? `${m}m ${s}s` : `${m}m`;
+}
+
+// ── READING-EASE LABEL ───────────────────────────────────────────────────────────
+function easeLabel(score) {
+  if (score >= 90) return ['Very easy', '5th-grade level'];
+  if (score >= 80) return ['Easy', '6th-grade level'];
+  if (score >= 70) return ['Fairly easy', '7th-grade level'];
+  if (score >= 60) return ['Standard', '8th–9th grade'];
+  if (score >= 50) return ['Fairly difficult', '10th–12th grade'];
+  if (score >= 30) return ['Difficult', 'College level'];
+  return ['Very difficult', 'Graduate level'];
+}
+
+// ── CORE ANALYSIS ─────────────────────────────────────────────────────────────────
+function analyze() {
+  const text = document.getElementById('editor').value;
+
+  const wordsArr = (text.trim().match(/\b[\w'-]+\b/g) || []);
+  const words = wordsArr.length;
+  const chars = text.length;
+  const charsNoSpace = text.replace(/\s/g, '').length;
+  const sentences = (text.match(/[^.!?]+[.!?]+(?:["')\]]+)?/g) || []).filter(s => /[a-z0-9]/i.test(s)).length
+                    || (words ? 1 : 0);
+  const paragraphs = text.split(/\n{1,}/).filter(p => p.trim().length > 0).length;
+
+  // primary stat cards
+  setText('s-words', words.toLocaleString());
+  setText('s-chars', chars.toLocaleString());
+  setText('s-chars-ns', charsNoSpace.toLocaleString());
+  setText('s-sentences', sentences.toLocaleString());
+  setText('s-paragraphs', paragraphs.toLocaleString());
+  setText('s-read', fmtTime((words / 200) * 60));
+  setText('s-speak', fmtTime((words / 130) * 60));
+
+  // readability
+  let totalSyllables = 0, totalLen = 0, longest = '';
+  for (const w of wordsArr) {
+    totalSyllables += countSyllables(w);
+    totalLen += w.length;
+    if (w.length > longest.length) longest = w;
+  }
+  const wps = sentences ? words / sentences : 0;          // words per sentence
+  const spw = words ? totalSyllables / words : 0;          // syllables per word
+  const wlen = words ? totalLen / words : 0;               // avg word length
+
+  setText('m-wps', words ? wps.toFixed(1) : '0');
+  setText('m-spw', words ? spw.toFixed(2) : '0');
+  setText('m-wlen', words ? wlen.toFixed(1) : '0');
+  setText('m-longest', longest || '—');
+
+  if (words >= 1 && sentences >= 1) {
+    let ease = 206.835 - 1.015 * wps - 84.6 * spw;
+    const grade = 0.39 * wps + 11.8 * spw - 15.59;
+    const clamped = Math.max(0, Math.min(100, ease));
+    const [label, gradeTxt] = easeLabel(clamped);
+    setText('r-score', Math.round(ease));
+    setText('r-label', label);
+    setText('r-grade', `${gradeTxt} · Grade ${Math.max(0, grade).toFixed(1)}`);
+    document.getElementById('r-bar').style.width = clamped + '%';
+  } else {
+    setText('r-score', '—');
+    setText('r-label', 'Type something to analyze');
+    setText('r-grade', '');
+    document.getElementById('r-bar').style.width = '0%';
+  }
+
+  // keyword density
+  renderKeywords(wordsArr, words);
+
+  // length limits (by characters)
+  updateLen('title', chars, 60);
+  updateLen('meta', chars, 160);
+  updateLen('tweet', chars, 280);
+  updateLen('sms', chars, 160);
+}
+
+function renderKeywords(wordsArr, total) {
+  const counts = {};
+  for (let w of wordsArr) {
+    w = w.toLowerCase();
+    if (w.length < 3 || STOPWORDS.has(w) || /^\d+$/.test(w)) continue;
+    counts[w] = (counts[w] || 0) + 1;
+  }
+  const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 8);
+  const list = document.getElementById('kw-list');
+  if (!sorted.length) { list.innerHTML = '<div class="kw-empty">No keywords yet — add more text.</div>'; return; }
+  const max = sorted[0][1];
+  list.innerHTML = sorted.map(([w, c]) => {
+    const pct = total ? (c / total * 100) : 0;
+    const barPct = max ? (c / max * 100) : 0;
+    return `<div class="kw-row">
+      <div class="kw-word" title="${escapeHtml(w)}">${escapeHtml(w)}</div>
+      <div class="kw-bar-track"><div class="kw-bar" style="width:${barPct.toFixed(0)}%"></div></div>
+      <div class="kw-val">${c}× · ${pct.toFixed(1)}%</div>
+    </div>`;
+  }).join('');
+}
+
+function updateLen(key, count, limit) {
+  const fill = document.getElementById('len-' + key);
+  const lbl = document.getElementById('lc-' + key);
+  const pct = Math.min(100, count / limit * 100);
+  fill.style.width = pct + '%';
+  fill.className = 'len-fill' + (count > limit ? ' over' : (count > limit * 0.9 ? ' warn' : ''));
+  lbl.className = 'len-count' + (count > limit ? ' over' : '');
+  lbl.textContent = count > limit ? `${count} / ${limit} (+${count - limit})` : `${count} / ${limit}`;
+}
+
+// ── HELPERS ────────────────────────────────────────────────────────────────────
+function setText(id, val) { document.getElementById(id).textContent = val; }
+function escapeHtml(s) { return s.replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c])); }
+
+function clearText() {
+  document.getElementById('editor').value = '';
+  analyze();
+  document.getElementById('editor').focus();
+}
+
+function loadSample() {
+  document.getElementById('editor').value =
+    "Good writing earns attention. The clearest sentences are short, concrete, and built from plain words. " +
+    "When you stack long clauses and rare words, readers slow down and drift away. " +
+    "Read your draft aloud. If you run out of breath, the sentence is too long. Cut it. " +
+    "Then check the score again — clarity is a number you can move.";
+  analyze();
+}
+
+function copyStats() {
+  const get = id => document.getElementById(id).textContent;
+  const stats =
+`Word Counter — abuz8ai.com/tools/word-counter
+Words: ${get('s-words')}
+Characters: ${get('s-chars')} (${get('s-chars-ns')} without spaces)
+Sentences: ${get('s-sentences')}
+Paragraphs: ${get('s-paragraphs')}
+Reading time: ${get('s-read')}  |  Speaking time: ${get('s-speak')}
+Flesch Reading Ease: ${get('r-score')} (${get('r-label')})
+Avg words/sentence: ${get('m-wps')}  |  Avg syllables/word: ${get('m-spw')}`;
+  navigator.clipboard.writeText(stats).then(() => showToast('Stats copied!')).catch(() => showToast('Copy failed'));
+}
+
+function showToast(msg) {
+  const t = document.createElement('div');
+  t.textContent = msg;
+  Object.assign(t.style, {
+    position:'fixed', bottom:'24px', right:'24px', background:'var(--teal)',
+    color:'#fff', padding:'10px 18px', borderRadius:'7px', fontSize:'0.85rem',
+    fontFamily:'var(--font-body)', zIndex:'9999', transition:'opacity 0.3s'
+  });
+  document.body.appendChild(t);
+  setTimeout(() => { t.style.opacity = '0'; setTimeout(() => t.remove(), 300); }, 2000);
+}
+
+// ── WAITLIST ──────────────────────────────────────────────────────────────────
+async function joinWaitlist() {
+  const email = document.getElementById('wl-email').value.trim();
+  const msg = document.getElementById('wl-msg');
+  if (!email || !/^[^@]+@[^@]+\.[^@]+$/.test(email)) {
+    msg.className = 'cta-msg err'; msg.textContent = 'Please enter a valid email.'; return;
+  }
+  msg.className = 'cta-msg'; msg.textContent = 'Sending…';
+  try {
+    const res = await fetch('/api/waitlist', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, product: 'qadir-os-word-counter', tool: 'word-counter' })
+    });
+    if (res.ok) {
+      msg.className = 'cta-msg ok'; msg.textContent = "You're on the list! We'll be in touch.";
+      document.getElementById('wl-email').value = '';
+    } else { throw new Error(); }
+  } catch {
+    msg.className = 'cta-msg ok'; msg.textContent = "You're on the list! (Saved locally — API coming soon)";
+    const list = JSON.parse(localStorage.getItem('abuz8_waitlist') || '[]');
+    list.push({ email, product: 'qadir-os-word-counter', ts: Date.now() });
+    localStorage.setItem('abuz8_waitlist', JSON.stringify(list));
+    document.getElementById('wl-email').value = '';
+  }
+}
+document.getElementById('wl-email').addEventListener('keydown', e => { if (e.key === 'Enter') joinWaitlist(); });
+
+// init
+analyze();
+</script>
+<script src="/tools/_tools-shared.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>

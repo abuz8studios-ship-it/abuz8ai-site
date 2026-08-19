@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Text Diff Checker — Free Online Text &amp; Code Compare Tool | ABUZ8</title>
+  <meta name="description" content="Free online diff checker. Compare two texts or code snippets side by side, see line and word-level changes instantly. 100% in your browser — nothing is uploaded. No signup, no limits." />
+  <meta name="robots" content="index, follow" />
+  <meta property="og:title" content="Free Text Diff Checker — Compare Text &amp; Code | ABUZ8" />
+  <meta property="og:description" content="Compare two pieces of text or code and highlight every change — line and word level. 100% client-side; your text never leaves your device." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://abuz8ai.com/tools/text-diff" />
+  <link rel="canonical" href="https://abuz8ai.com/tools/text-diff" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "ABUZ8 Text Diff Checker",
+    "applicationCategory": "DeveloperApplication",
+    "operatingSystem": "Web",
+    "url": "https://abuz8ai.com/tools/text-diff.html",
+    "description": "Free online text and code diff checker. Compares two inputs with a real longest-common-subsequence algorithm and highlights line and word level changes. Runs entirely in the browser — text is never uploaded.",
+    "featureList": "Side-by-side diff, Unified diff, Word-level highlighting, Ignore case, Ignore whitespace, Swap inputs, Copy unified diff, 100% client-side privacy",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+    "author": { "@type": "Organization", "name": "ABUZ8 LLC", "url": "https://abuz8ai.com" }
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Is my text uploaded to a server?",
+        "acceptedAnswer": { "@type": "Answer", "text": "No. The ABUZ8 Text Diff Checker runs entirely in your browser. The comparison algorithm is plain JavaScript on your own device, so your text and code are never sent to any server and the tool keeps working even offline once the page has loaded." }
+      },
+      {
+        "@type": "Question",
+        "name": "What is the difference between line and word-level diff?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Line-level diff marks whole lines as added, removed or unchanged. Word-level highlighting goes further: when a line was edited, it shows exactly which words changed inside that line, so a one-character fix does not look like a full rewrite. You can toggle word-level highlighting on or off." }
+      },
+      {
+        "@type": "Question",
+        "name": "Can I compare source code?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Yes. The tool is language-agnostic and preserves indentation and whitespace. For formatting-only changes you can switch on 'ignore whitespace' or 'ignore case' so the diff focuses on meaningful edits rather than reflow." }
+      },
+      {
+        "@type": "Question",
+        "name": "Is it really free?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Yes. There is no signup, watermark or size limit. ABUZ8 builds free in-browser tools and offers an optional early-access waitlist for the QADIR OS automation suite." }
+      }
+    ]
+  }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --lapis: #0a1628;
+      --card: #0d1a30;
+      --card2: #111f38;
+      --gold: #c9a84c;
+      --teal: #0e9f6e;
+      --teal-light: #2fbf8f;
+      --text: #e8eaf0;
+      --text-dim: #8a9ab5;
+      --border: #1e2f4a;
+      --red: #e05252;
+      --red-soft: #f0b8b8;
+      --green: #2fbf8f;
+      --green-soft: #b8f0e0;
+      --font-head: 'Playfair Display', Georgia, serif;
+      --font-body: 'Inter', system-ui, sans-serif;
+      --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+    }
+    html, body { min-height: 100%; }
+    body { background: var(--lapis); color: var(--text); font-family: var(--font-body); font-size: 15px; line-height: 1.6; display: flex; flex-direction: column; }
+
+    nav { background: var(--card); border-bottom: 1px solid var(--border); padding: 0 24px; height: 56px; display: flex; align-items: center; justify-content: space-between; }
+    .nav-logo { font-family: var(--font-head); font-size: 1.3rem; color: var(--gold); text-decoration: none; font-weight: 700; letter-spacing: 0.02em; }
+    .nav-links { display: flex; gap: 24px; list-style: none; }
+    .nav-links a { color: var(--text-dim); text-decoration: none; font-size: 0.875rem; font-weight: 500; transition: color 0.2s; }
+    .nav-links a:hover { color: var(--teal-light); }
+
+    .hero { padding: 36px 24px 12px; text-align: center; }
+    .hero h1 { font-family: var(--font-head); font-size: clamp(1.6rem, 4vw, 2.4rem); color: var(--gold); margin-bottom: 8px; }
+    .hero p { color: var(--text-dim); font-size: 0.95rem; max-width: 640px; margin: 0 auto; }
+
+    .tool-wrap { max-width: 1140px; margin: 0 auto; padding: 0 24px 40px; width: 100%; }
+
+    .privacy-badge { display: flex; align-items: center; justify-content: center; gap: 8px; background: rgba(26,138,122,0.1); border: 1px solid var(--teal); color: var(--teal-light); font-size: 0.82rem; padding: 8px 14px; border-radius: 8px; margin: 8px auto 20px; max-width: 560px; text-align: center; }
+
+    /* INPUT PANES */
+    .panes { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 14px; }
+    .pane { display: flex; flex-direction: column; }
+    .pane label { font-size: 0.72rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-dim); margin-bottom: 6px; display: flex; align-items: center; gap: 8px; }
+    .pane label .dot { width: 9px; height: 9px; border-radius: 50%; }
+    .pane.orig label .dot { background: var(--red); }
+    .pane.changed label .dot { background: var(--green); }
+    .pane textarea { width: 100%; min-height: 230px; resize: vertical; background: var(--card); border: 1px solid var(--border); color: var(--text); font-family: var(--font-mono); font-size: 0.84rem; line-height: 1.55; padding: 12px 14px; border-radius: 8px; outline: none; tab-size: 4; white-space: pre; overflow-wrap: normal; }
+    .pane textarea:focus { border-color: var(--teal); }
+
+    /* OPTIONS */
+    .options { background: var(--card2); border: 1px solid var(--border); border-radius: 10px; padding: 14px 18px; margin-bottom: 14px; display: flex; flex-wrap: wrap; align-items: center; gap: 14px 22px; }
+    .opt { display: flex; align-items: center; gap: 7px; font-size: 0.84rem; color: var(--text-dim); cursor: pointer; user-select: none; }
+    .opt input { accent-color: var(--gold); width: 15px; height: 15px; cursor: pointer; }
+    .opt:hover { color: var(--text); }
+    .seg { display: inline-flex; border: 1px solid var(--border); border-radius: 7px; overflow: hidden; }
+    .seg button { background: var(--card); color: var(--text-dim); border: none; font-family: var(--font-body); font-size: 0.82rem; font-weight: 600; padding: 7px 16px; cursor: pointer; transition: all 0.15s; }
+    .seg button.active { background: var(--gold); color: var(--lapis); }
+    .opt-spacer { margin-left: auto; }
+
+    /* ACTION ROW */
+    .action-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 18px; }
+    .act-btn { background: var(--gold); color: var(--lapis); border: none; font-family: var(--font-body); font-weight: 700; font-size: 0.875rem; padding: 10px 22px; border-radius: 7px; cursor: pointer; transition: opacity 0.2s; }
+    .act-btn:hover { opacity: 0.85; }
+    .act-btn.secondary { background: var(--card2); color: var(--text-dim); border: 1px solid var(--border); }
+    .act-btn.secondary:hover { color: var(--teal-light); border-color: var(--teal); }
+    .act-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    /* STATS */
+    .stats { display: none; align-items: center; flex-wrap: wrap; gap: 16px; background: linear-gradient(135deg, var(--card2) 0%, #0d1f35 100%); border: 1px solid var(--border); border-left: 3px solid var(--gold); border-radius: 9px; padding: 12px 18px; margin-bottom: 16px; font-size: 0.88rem; }
+    .stats.show { display: flex; }
+    .stats .pill { font-family: var(--font-mono); font-weight: 500; }
+    .stats .add { color: var(--green-soft); }
+    .stats .del { color: var(--red-soft); }
+    .stats .same { color: var(--text-dim); }
+    .stats .identical { color: var(--teal-light); font-weight: 600; }
+
+    /* DIFF OUTPUT */
+    .diff-out { border: 1px solid var(--border); border-radius: 10px; overflow: hidden; background: var(--card); }
+    .diff-empty { padding: 46px 24px; text-align: center; color: var(--text-dim); font-size: 0.9rem; }
+
+    /* side-by-side grid */
+    .diff-grid { display: grid; grid-template-columns: 46px 1fr 46px 1fr; font-family: var(--font-mono); font-size: 0.82rem; line-height: 1.55; }
+    .dg-num { text-align: right; padding: 1px 10px 1px 6px; color: #4a5e7e; user-select: none; border-right: 1px solid var(--border); background: #0b1626; }
+    .dg-txt { padding: 1px 12px; white-space: pre-wrap; word-break: break-word; min-width: 0; }
+    .row-del .dg-txt.left, .row-change .dg-txt.left { background: rgba(224,82,82,0.13); }
+    .row-ins .dg-txt.right, .row-change .dg-txt.right { background: rgba(52,212,176,0.12); }
+    .row-del .dg-txt.left { color: var(--red-soft); }
+    .row-ins .dg-txt.right { color: var(--green-soft); }
+    .blank { background: #0b1424 !important; }
+    .wd-del { background: rgba(224,82,82,0.38); border-radius: 2px; }
+    .wd-ins { background: rgba(52,212,176,0.34); color: #051a14; border-radius: 2px; }
+
+    /* unified */
+    .diff-uni { font-family: var(--font-mono); font-size: 0.82rem; line-height: 1.55; }
+    .uni-line { display: grid; grid-template-columns: 18px 1fr; padding: 1px 0; white-space: pre-wrap; word-break: break-word; }
+    .uni-line .sign { text-align: center; user-select: none; color: #4a5e7e; }
+    .uni-line .body { padding-right: 12px; }
+    .uni-add { background: rgba(52,212,176,0.12); }
+    .uni-add .sign, .uni-add .body { color: var(--green-soft); }
+    .uni-del { background: rgba(224,82,82,0.13); }
+    .uni-del .sign, .uni-del .body { color: var(--red-soft); }
+    .uni-eq .body { color: var(--text-dim); }
+
+    /* INFO / FAQ */
+    .info-section { max-width: 760px; margin: 8px auto 0; padding: 0 24px; }
+    .info-section h2 { font-family: var(--font-head); color: var(--gold); font-size: 1.35rem; margin: 28px 0 10px; }
+    .info-section h3 { color: var(--text); font-size: 1rem; margin: 18px 0 4px; }
+    .info-section p { color: var(--text-dim); font-size: 0.9rem; margin-bottom: 8px; }
+    .info-section ul { color: var(--text-dim); font-size: 0.9rem; margin: 0 0 10px 20px; }
+
+    /* CTA */
+    .cta-section { background: linear-gradient(135deg, var(--card2) 0%, #0d1f35 100%); border-top: 1px solid var(--border); padding: 48px 24px; text-align: center; margin-top: 40px; }
+    .cta-section h2 { font-family: var(--font-head); font-size: 1.6rem; color: var(--gold); margin-bottom: 10px; }
+    .cta-section p { color: var(--text-dim); margin-bottom: 24px; max-width: 520px; margin-left: auto; margin-right: auto; }
+    .cta-form { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; max-width: 460px; margin: 0 auto; }
+    .cta-form input { flex: 1; min-width: 220px; background: var(--card); border: 1px solid var(--border); color: var(--text); font-family: var(--font-body); font-size: 0.9rem; padding: 11px 16px; border-radius: 7px; outline: none; }
+    .cta-form input:focus { border-color: var(--teal); }
+    .cta-form button { background: var(--gold); color: var(--lapis); border: none; font-family: var(--font-body); font-weight: 700; font-size: 0.9rem; padding: 11px 22px; border-radius: 7px; cursor: pointer; transition: opacity 0.2s; white-space: nowrap; }
+    .cta-form button:hover { opacity: 0.85; }
+    .cta-msg { margin-top: 12px; font-size: 0.85rem; min-height: 20px; }
+    .cta-msg.ok { color: var(--teal-light); }
+    .cta-msg.err { color: var(--red); }
+
+    footer { background: var(--card); border-top: 1px solid var(--border); padding: 16px 24px; text-align: center; color: var(--text-dim); font-size: 0.8rem; }
+    footer a { color: var(--teal-light); text-decoration: none; }
+
+    @media (max-width: 720px) {
+      .nav-links { gap: 14px; }
+      .tool-wrap { padding: 0 12px 32px; }
+      .panes { grid-template-columns: 1fr; }
+      .diff-grid { grid-template-columns: 38px 1fr; }
+      .diff-grid .right-num, .diff-grid .dg-txt.right { display: none; }
+      .diff-grid.uni-on .right-num, .diff-grid.uni-on .dg-txt.right { display: block; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="/">ABUZ8</a>
+  <ul class="nav-links">
+    <li><a href="/tools.html">Tools</a></li>
+    <li><a href="/store.html">Store</a></li>
+    <li><a href="/comfyui-blueprint.html">ComfyUI</a></li>
+  </ul>
+</nav>
+
+<div class="hero">
+  <h1>Text Diff Checker</h1>
+  <p>Paste two versions of any text or code and see exactly what changed — line by line and word by word. Everything runs in your browser; nothing is uploaded.</p>
+</div>
+
+<div class="tool-wrap">
+
+  <div class="privacy-badge">🔒 100% private — the comparison runs on your device. Your text is never uploaded.</div>
+
+  <!-- INPUT PANES -->
+  <div class="panes">
+    <div class="pane orig">
+      <label for="ta-a"><span class="dot"></span> Original</label>
+      <textarea id="ta-a" spellcheck="false" placeholder="Paste the original text or code here…"></textarea>
+    </div>
+    <div class="pane changed">
+      <label for="ta-b"><span class="dot"></span> Changed</label>
+      <textarea id="ta-b" spellcheck="false" placeholder="Paste the changed version here…"></textarea>
+    </div>
+  </div>
+
+  <!-- OPTIONS -->
+  <div class="options">
+    <label class="opt"><input type="checkbox" id="opt-case" onchange="run()" /> Ignore case</label>
+    <label class="opt"><input type="checkbox" id="opt-trim" onchange="run()" /> Ignore leading/trailing spaces</label>
+    <label class="opt"><input type="checkbox" id="opt-ws" onchange="run()" /> Ignore all whitespace</label>
+    <label class="opt"><input type="checkbox" id="opt-word" checked onchange="run()" /> Word-level highlight</label>
+    <span class="opt-spacer"></span>
+    <div class="seg" id="view-seg">
+      <button class="active" id="view-split" onclick="setView('split')">Side&#8209;by&#8209;side</button>
+      <button id="view-unified" onclick="setView('unified')">Unified</button>
+    </div>
+  </div>
+
+  <!-- ACTIONS -->
+  <div class="action-row">
+    <button class="act-btn" onclick="run()">⇄ Compare</button>
+    <button class="act-btn secondary" onclick="swapSides()">⇅ Swap</button>
+    <button class="act-btn secondary" onclick="loadSample()">Sample</button>
+    <button class="act-btn secondary" id="copy-btn" onclick="copyDiff()" disabled>⧉ Copy unified diff</button>
+    <button class="act-btn secondary" onclick="clearAll()">✕ Clear</button>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats" id="stats"></div>
+
+  <!-- OUTPUT -->
+  <div class="diff-out" id="diff-out">
+    <div class="diff-empty">Enter text in both boxes (or load the sample) to see the differences.</div>
+  </div>
+
+</div>
+
+<!-- SEO / FAQ CONTENT -->
+<div class="info-section">
+  <h2>A free diff checker that keeps your text private</h2>
+  <p>This tool compares two pieces of text using a real longest-common-subsequence (LCS) algorithm — the same family of algorithm that powers <em>git diff</em>. Because it runs locally in your browser, you can safely compare contracts, configuration files, source code, essays and anything else without it ever leaving your computer.</p>
+
+  <h3>How to compare two texts</h3>
+  <ul>
+    <li>Paste the original on the left and the changed version on the right.</li>
+    <li>Choose <strong>Side-by-side</strong> to see both versions aligned, or <strong>Unified</strong> for a single git-style <code>+/-</code> view.</li>
+    <li>Keep <strong>Word-level highlight</strong> on to see exactly which words changed inside an edited line.</li>
+    <li>Use the ignore options for case or whitespace when you only care about meaningful changes.</li>
+    <li>Hit <strong>Copy unified diff</strong> to grab a patch-style diff for a commit message, ticket or email.</li>
+  </ul>
+
+  <h3>Line diff vs word diff</h3>
+  <p>A line diff tells you which lines were added or removed. Word-level highlighting refines that: when a line was merely edited, the unchanged words stay neutral and only the changed words are tinted, so a small fix reads as a small fix instead of a delete-plus-add of the whole line.</p>
+
+  <h3>Comparing code and config</h3>
+  <p>The diff is language-agnostic and preserves indentation, so it works for Python, JavaScript, JSON, YAML, SQL, Markdown or plain prose. When a change is only reformatting, switch on <em>ignore all whitespace</em> to suppress the noise and surface the lines that actually changed.</p>
+</div>
+
+<section class="cta-section">
+  <h2>Automate diffs with QADIR OS</h2>
+  <p>Watch files and pull requests, auto-summarize what changed, and route diffs into your review pipeline — coming soon for ABUZ8 early-access members.</p>
+  <div class="cta-form">
+    <input type="email" id="wl-email" placeholder="your@email.com" autocomplete="email" />
+    <button onclick="joinWaitlist()">Join Early Access</button>
+  </div>
+  <div class="cta-msg" id="wl-msg"></div>
+</section>
+
+<footer>
+  ABUZ8 LLC &middot; Free AI Tools &middot; <a href="mailto:ahmad@abuz8ai.com">ahmad@abuz8ai.com</a>
+</footer>
+
+<script>
+// ── HELPERS ───────────────────────────────────────────────────────────────────
+const $ = id => document.getElementById(id);
+const MAX_CELLS = 4000000; // ~2000x2000 lines before block-fallback
+let view = 'split';
+let lastUnified = '';
+let bigInput = false;
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+}
+function opts() {
+  return { ic: $('opt-case').checked, trim: $('opt-trim').checked, ws: $('opt-ws').checked, word: $('opt-word').checked };
+}
+function normLine(s, o) {
+  let k = s;
+  if (o.ws) k = k.replace(/\s+/g, '');
+  else if (o.trim) k = k.replace(/^\s+|\s+$/g, '');
+  if (o.ic) k = k.toLowerCase();
+  return k;
+}
+function normTok(s, o) {
+  let k = s;
+  if (o.ws && /^\s+$/.test(k)) k = '';
+  if (o.ic) k = k.toLowerCase();
+  return k;
+}
+
+// ── GENERIC LCS (Uint32 DP with prefix/suffix trim + block fallback) ───────────
+function diffMiddle(a, b, offA, offB) {
+  const n = a.length, m = b.length, ops = [];
+  if (n === 0) { for (let j = 0; j < m; j++) ops.push({ t: 'ins', j: offB + j }); return ops; }
+  if (m === 0) { for (let i = 0; i < n; i++) ops.push({ t: 'del', i: offA + i }); return ops; }
+  if ((n + 1) * (m + 1) > MAX_CELLS) {
+    bigInput = true;
+    for (let i = 0; i < n; i++) ops.push({ t: 'del', i: offA + i });
+    for (let j = 0; j < m; j++) ops.push({ t: 'ins', j: offB + j });
+    return ops;
+  }
+  const W = m + 1;
+  const dp = new Uint32Array((n + 1) * W);
+  for (let i = n - 1; i >= 0; i--) {
+    const ai = a[i], rowI = i * W, rowI1 = (i + 1) * W;
+    for (let j = m - 1; j >= 0; j--) {
+      dp[rowI + j] = (ai === b[j])
+        ? dp[rowI1 + (j + 1)] + 1
+        : (dp[rowI1 + j] >= dp[rowI + (j + 1)] ? dp[rowI1 + j] : dp[rowI + (j + 1)]);
+    }
+  }
+  let i = 0, j = 0;
+  while (i < n && j < m) {
+    if (a[i] === b[j]) { ops.push({ t: 'eq', i: offA + i, j: offB + j }); i++; j++; }
+    else if (dp[(i + 1) * W + j] >= dp[i * W + (j + 1)]) { ops.push({ t: 'del', i: offA + i }); i++; }
+    else { ops.push({ t: 'ins', j: offB + j }); j++; }
+  }
+  while (i < n) { ops.push({ t: 'del', i: offA + i }); i++; }
+  while (j < m) { ops.push({ t: 'ins', j: offB + j }); j++; }
+  return ops;
+}
+function diffSeq(aKeys, bKeys) {
+  const n = aKeys.length, m = bKeys.length;
+  let start = 0;
+  while (start < n && start < m && aKeys[start] === bKeys[start]) start++;
+  let endA = n, endB = m;
+  while (endA > start && endB > start && aKeys[endA - 1] === bKeys[endB - 1]) { endA--; endB--; }
+  const ops = [];
+  for (let i = 0; i < start; i++) ops.push({ t: 'eq', i: i, j: i });
+  const mid = diffMiddle(aKeys.slice(start, endA), bKeys.slice(start, endB), start, start);
+  for (let k = 0; k < mid.length; k++) ops.push(mid[k]);
+  const tail = n - endA;
+  for (let k = 0; k < tail; k++) ops.push({ t: 'eq', i: endA + k, j: endB + k });
+  return ops;
+}
+
+// ── WORD-LEVEL DIFF (returns {left, right} escaped HTML with spans) ─────────────
+function wordDiffHtml(lineA, lineB, o) {
+  const at = lineA.split(/(\s+)/), bt = lineB.split(/(\s+)/);
+  const ak = at.map(t => normTok(t, o)), bk = bt.map(t => normTok(t, o));
+  const ops = diffSeq(ak, bk);
+  let left = '', right = '';
+  for (const op of ops) {
+    if (op.t === 'eq') { left += escapeHtml(at[op.i]); right += escapeHtml(bt[op.j]); }
+    else if (op.t === 'del') { const tk = at[op.i]; left += tk === '' ? '' : '<span class="wd-del">' + escapeHtml(tk) + '</span>'; }
+    else { const tk = bt[op.j]; right += tk === '' ? '' : '<span class="wd-ins">' + escapeHtml(tk) + '</span>'; }
+  }
+  return { left, right };
+}
+
+// ── BUILD ROWS (pair delete/insert runs into change rows) ──────────────────────
+function buildRows(ops, A, B, o) {
+  const rows = [];
+  let pd = [], pi = [];
+  const flush = () => {
+    const c = Math.min(pd.length, pi.length);
+    for (let k = 0; k < c; k++) rows.push({ type: 'change', li: pd[k], ri: pi[k] });
+    for (let k = c; k < pd.length; k++) rows.push({ type: 'del', li: pd[k] });
+    for (let k = c; k < pi.length; k++) rows.push({ type: 'ins', ri: pi[k] });
+    pd = []; pi = [];
+  };
+  for (const op of ops) {
+    if (op.t === 'eq') { flush(); rows.push({ type: 'eq', li: op.i, ri: op.j }); }
+    else if (op.t === 'del') pd.push(op.i);
+    else pi.push(op.j);
+  }
+  flush();
+  return rows;
+}
+
+// ── RENDER ─────────────────────────────────────────────────────────────────────
+function renderSplit(rows, A, B, o) {
+  let h = '<div class="diff-grid' + (view === 'unified' ? '' : '') + '">';
+  for (const r of rows) {
+    if (r.type === 'eq') {
+      const t = escapeHtml(A[r.li]);
+      h += '<div class="dg-num">' + (r.li + 1) + '</div><div class="dg-txt left">' + t + '</div>'
+         + '<div class="dg-num right-num">' + (r.ri + 1) + '</div><div class="dg-txt right">' + t + '</div>';
+    } else if (r.type === 'del') {
+      h += '<div class="row-del" style="display:contents">'
+         + '<div class="dg-num">' + (r.li + 1) + '</div><div class="dg-txt left">' + escapeHtml(A[r.li]) + '</div>'
+         + '<div class="dg-num right-num blank"></div><div class="dg-txt right blank"></div></div>';
+    } else if (r.type === 'ins') {
+      h += '<div class="row-ins" style="display:contents">'
+         + '<div class="dg-num blank"></div><div class="dg-txt left blank"></div>'
+         + '<div class="dg-num right-num">' + (r.ri + 1) + '</div><div class="dg-txt right">' + escapeHtml(B[r.ri]) + '</div></div>';
+    } else { // change
+      let lt, rt;
+      if (o.word) { const wd = wordDiffHtml(A[r.li], B[r.ri], o); lt = wd.left; rt = wd.right; }
+      else { lt = escapeHtml(A[r.li]); rt = escapeHtml(B[r.ri]); }
+      h += '<div class="row-change" style="display:contents">'
+         + '<div class="dg-num">' + (r.li + 1) + '</div><div class="dg-txt left">' + lt + '</div>'
+         + '<div class="dg-num right-num">' + (r.ri + 1) + '</div><div class="dg-txt right">' + rt + '</div></div>';
+    }
+  }
+  return h + '</div>';
+}
+function renderUnified(ops, A, B) {
+  let h = '<div class="diff-uni">';
+  for (const op of ops) {
+    if (op.t === 'eq') h += '<div class="uni-line uni-eq"><span class="sign"> </span><span class="body">' + escapeHtml(A[op.i]) + '</span></div>';
+    else if (op.t === 'del') h += '<div class="uni-line uni-del"><span class="sign">-</span><span class="body">' + escapeHtml(A[op.i]) + '</span></div>';
+    else h += '<div class="uni-line uni-add"><span class="sign">+</span><span class="body">' + escapeHtml(B[op.j]) + '</span></div>';
+  }
+  return h + '</div>';
+}
+function buildUnifiedText(ops, A, B) {
+  let out = '--- Original\n+++ Changed\n';
+  for (const op of ops) {
+    if (op.t === 'eq') out += ' ' + A[op.i] + '\n';
+    else if (op.t === 'del') out += '-' + A[op.i] + '\n';
+    else out += '+' + B[op.j] + '\n';
+  }
+  return out;
+}
+
+// ── MAIN ───────────────────────────────────────────────────────────────────────
+function run() {
+  const o = opts();
+  bigInput = false;
+  const aRaw = $('ta-a').value, bRaw = $('ta-b').value;
+  const A = aRaw.split(/\r\n|\r|\n/);
+  const B = bRaw.split(/\r\n|\r|\n/);
+  // drop a single trailing empty line artifact from a final newline
+  if (A.length > 1 && A[A.length - 1] === '') A.pop();
+  if (B.length > 1 && B[B.length - 1] === '') B.pop();
+
+  const out = $('diff-out'), stats = $('stats');
+  if (aRaw === '' && bRaw === '') {
+    out.innerHTML = '<div class="diff-empty">Enter text in both boxes (or load the sample) to see the differences.</div>';
+    stats.className = 'stats'; $('copy-btn').disabled = true; lastUnified = ''; return;
+  }
+
+  const aKeys = A.map(s => normLine(s, o));
+  const bKeys = B.map(s => normLine(s, o));
+  const ops = diffSeq(aKeys, bKeys);
+
+  let add = 0, del = 0, same = 0;
+  for (const op of ops) { if (op.t === 'eq') same++; else if (op.t === 'del') del++; else add++; }
+
+  // stats
+  stats.className = 'stats show';
+  if (add === 0 && del === 0) {
+    stats.innerHTML = '<span class="pill identical">✓ The two inputs are identical' + ((o.ic || o.ws || o.trim) ? ' (with the selected ignore options)' : '') + '</span>';
+  } else {
+    stats.innerHTML =
+      '<span class="pill add">+' + add + ' added</span>' +
+      '<span class="pill del">-' + del + ' removed</span>' +
+      '<span class="pill same">' + same + ' unchanged</span>' +
+      (bigInput ? '<span class="pill same">· large input: block diff</span>' : '');
+  }
+
+  // output
+  if (view === 'unified') out.innerHTML = renderUnified(ops, A, B);
+  else out.innerHTML = renderSplit(buildRows(ops, A, B, o), A, B, o);
+
+  lastUnified = buildUnifiedText(ops, A, B);
+  $('copy-btn').disabled = false;
+}
+
+function setView(v) {
+  view = v;
+  $('view-split').classList.toggle('active', v === 'split');
+  $('view-unified').classList.toggle('active', v === 'unified');
+  run();
+}
+function swapSides() {
+  const a = $('ta-a').value; $('ta-a').value = $('ta-b').value; $('ta-b').value = a; run();
+}
+function clearAll() {
+  $('ta-a').value = ''; $('ta-b').value = ''; run(); $('ta-a').focus();
+}
+function loadSample() {
+  $('ta-a').value =
+'function greet(name) {\n' +
+'  const msg = "Hello, " + name;\n' +
+'  console.log(msg);\n' +
+'  return msg;\n' +
+'}\n' +
+'\n' +
+'greet("world");';
+  $('ta-b').value =
+'function greet(name, punctuation) {\n' +
+'  const msg = `Hello, ${name}${punctuation}`;\n' +
+'  console.log(msg);\n' +
+'  return msg;\n' +
+'}\n' +
+'\n' +
+'greet("world", "!");';
+  run();
+}
+async function copyDiff() {
+  if (!lastUnified) return;
+  const btn = $('copy-btn'), orig = btn.textContent;
+  try {
+    await navigator.clipboard.writeText(lastUnified);
+    btn.textContent = '✓ Copied';
+  } catch (e) {
+    const ta = document.createElement('textarea');
+    ta.value = lastUnified; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select();
+    try { document.execCommand('copy'); btn.textContent = '✓ Copied'; }
+    catch (e2) { btn.textContent = 'Copy failed'; }
+    document.body.removeChild(ta);
+  }
+  setTimeout(() => { btn.textContent = orig; }, 1400);
+}
+
+// debounce typing
+let t;
+function debounced() { clearTimeout(t); t = setTimeout(run, 260); }
+$('ta-a').addEventListener('input', debounced);
+$('ta-b').addEventListener('input', debounced);
+
+// ── WAITLIST (canonical /api/waitlist → D1, with local fallback) ───────────────
+async function joinWaitlist() {
+  const email = $('wl-email').value.trim();
+  const msg = $('wl-msg');
+  if (!email || !/^[^@]+@[^@]+\.[^@]+$/.test(email)) {
+    msg.className = 'cta-msg err'; msg.textContent = 'Please enter a valid email.'; return;
+  }
+  msg.className = 'cta-msg'; msg.textContent = 'Sending...';
+  try {
+    const res = await fetch('/api/waitlist', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, tool: 'text-diff' })
+    });
+    if (res.ok) {
+      msg.className = 'cta-msg ok'; msg.textContent = "You're on the list! We'll be in touch.";
+      $('wl-email').value = '';
+    } else { throw new Error(); }
+  } catch {
+    msg.className = 'cta-msg ok'; msg.textContent = "You're on the list! (Saved locally — API coming soon)";
+    const list = JSON.parse(localStorage.getItem('abuz8_waitlist') || '[]');
+    list.push({ email, tool: 'text-diff', ts: Date.now() });
+    localStorage.setItem('abuz8_waitlist', JSON.stringify(list));
+    $('wl-email').value = '';
+  }
+}
+$('wl-email').addEventListener('keydown', e => { if (e.key === 'Enter') joinWaitlist(); });
+</script>
+<script src="/tools/_tools-shared.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>

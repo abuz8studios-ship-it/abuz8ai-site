@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<link rel="stylesheet" href="/assets/css/abuz8-mach3.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Logo &amp; Brand Mark Generator — ABUZ8</title>
+<link rel="canonical" href="https://abuz8ai.com/tools/ai-logo-generator">
+<meta name="description" content="Generate original logo marks on your own machine. Runs against a local ComfyUI engine — your prompts and images never leave your computer. Join ABUZ8 early access.">
+<meta property="og:title" content="AI Logo &amp; Brand Mark Generator — ABUZ8">
+<meta property="og:description" content="Sovereign logo generation. Runs locally on your hardware, not our servers.">
+<meta property="og:type" content="website">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --lapis:#0a1628; --gold:#c9a84c; --turq:#1a8a7a;
+  --text:#e8e4d8; --dim:#8a9aaa; --border:#1a2e50;
+  --card:#0d1a30; --cream:#f5f0e8; --deep:#07101d;
+  --danger:#b4553f;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--lapis);color:var(--text);font-family:'Inter',system-ui,sans-serif;
+  line-height:1.6;min-height:100vh;-webkit-font-smoothing:antialiased}
+.container{max-width:1180px;margin:0 auto;padding:32px 20px 80px}
+a{color:var(--gold)}
+.back{color:var(--gold);text-decoration:none;font-size:12px;letter-spacing:2px;
+  text-transform:uppercase;font-weight:600}
+.back:hover{text-decoration:underline}
+h1{font-family:'Playfair Display',serif;font-size:clamp(2.1rem,5vw,3.4rem);
+  color:var(--cream);margin:22px 0 10px;line-height:1.08;font-weight:900}
+.sub{color:var(--dim);font-size:17px;font-weight:300;max-width:62ch;margin-bottom:14px}
+.mono{font-family:'JetBrains Mono',ui-monospace,monospace}
+
+/* engine status ribbon */
+.engine{display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+  background:var(--deep);border:1px solid var(--border);border-radius:14px;
+  padding:14px 18px;margin:24px 0 30px}
+.dot{width:9px;height:9px;border-radius:50%;background:var(--dim);flex:none}
+.dot.live{background:var(--turq)}
+.dot.off{background:var(--gold)}
+.engine-label{font-size:12px;letter-spacing:1.6px;text-transform:uppercase;font-weight:700}
+.engine-detail{font-size:12.5px;color:var(--dim);margin-left:auto}
+
+/* layout */
+.studio{display:grid;grid-template-columns:minmax(0,380px) minmax(0,1fr);gap:26px;align-items:start}
+@media(max-width:900px){.studio{grid-template-columns:1fr}}
+.panel{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:26px}
+.panel h2{font-family:'Playfair Display',serif;font-size:20px;color:var(--cream);
+  margin-bottom:18px;font-weight:700}
+
+label{display:block;font-size:10.5px;color:var(--gold);text-transform:uppercase;
+  letter-spacing:2px;margin-bottom:8px;font-weight:800}
+.field{margin-bottom:20px}
+input[type=text],textarea,select{width:100%;padding:13px 14px;background:#0f2040;
+  border:1px solid var(--border);border-radius:10px;color:var(--cream);font-size:15px;
+  font-family:inherit}
+textarea{resize:vertical;min-height:82px;line-height:1.5}
+input:focus,textarea:focus,select:focus{outline:none;border-color:var(--turq)}
+select{cursor:pointer}
+.hint{font-size:11.5px;color:var(--dim);margin-top:6px}
+
+.styles{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
+.style{background:var(--lapis);border:1px solid var(--border);padding:11px 6px;
+  border-radius:10px;text-align:center;cursor:pointer;font-size:11.5px;font-weight:600;
+  transition:border-color .18s ease,background-color .18s ease}
+.style:hover{border-color:var(--turq)}
+.style[aria-pressed=true]{border-color:var(--gold);background:rgba(201,168,76,.08);color:var(--cream)}
+
+.row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.btn{width:100%;padding:16px;border-radius:12px;font-weight:800;cursor:pointer;
+  border:none;font-size:15px;text-transform:uppercase;letter-spacing:1.8px;
+  font-family:inherit;transition:opacity .18s ease}
+.btn:hover{opacity:.9}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn-gold{background:var(--gold);color:var(--lapis)}
+.btn-ghost{background:transparent;color:var(--dim);border:1px solid var(--border)}
+
+/* progress — smooth, monotonic, seizure-safe (no blink/strobe anywhere) */
+.progress{margin-top:18px;display:none}
+.progress.on{display:block}
+.bar{height:6px;background:#0f2040;border-radius:99px;overflow:hidden}
+.bar span{display:block;height:100%;width:0;background:var(--turq);
+  transition:width .35s ease-out}
+.progress-text{font-size:12px;color:var(--dim);margin-top:8px}
+
+/* results */
+.results{min-height:340px;display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+@media(max-width:520px){.results{grid-template-columns:1fr}}
+.slot{position:relative;aspect-ratio:1;background:var(--deep);border:1px solid var(--border);
+  border-radius:16px;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.slot img{width:100%;height:100%;object-fit:contain;display:block}
+.slot-empty{color:#40587a;font-size:34px;font-family:'Playfair Display',serif}
+.slot-actions{position:absolute;left:0;right:0;bottom:0;display:flex;gap:1px;
+  background:var(--border);opacity:0;transition:opacity .2s ease}
+.slot:hover .slot-actions,.slot:focus-within .slot-actions{opacity:1}
+.slot-actions a,.slot-actions button{flex:1;padding:9px;background:var(--deep);
+  color:var(--gold);border:none;font-size:11px;font-weight:700;text-transform:uppercase;
+  letter-spacing:1.2px;cursor:pointer;text-decoration:none;text-align:center;font-family:inherit}
+.slot-actions a:hover,.slot-actions button:hover{background:#0d1a30}
+
+.notice{border-radius:14px;padding:16px 18px;font-size:14px;margin-top:18px;display:none}
+.notice.on{display:block}
+.notice-err{background:rgba(180,85,63,.1);border:1px solid var(--danger);color:#e8b8ab}
+.notice-err code{font-size:12px;color:var(--dim);display:block;margin-top:8px;
+  word-break:break-word;font-family:'JetBrains Mono',monospace}
+
+/* early access */
+.ea{background:linear-gradient(160deg,#0d1a30,#0a1628);border:1px solid var(--gold);
+  border-radius:20px;padding:34px;margin-top:44px;text-align:center}
+.ea h2{font-family:'Playfair Display',serif;font-size:clamp(1.4rem,3vw,2rem);
+  color:var(--cream);margin-bottom:12px;font-weight:700}
+.ea p{color:var(--dim);max-width:56ch;margin:0 auto 22px;font-size:15px}
+.ea-form{display:flex;gap:10px;max-width:480px;margin:0 auto;flex-wrap:wrap}
+.ea-form input{flex:1;min-width:220px}
+.ea-form .btn{width:auto;padding:15px 26px;flex:none}
+.ea-ok{color:var(--turq);font-weight:600;margin-top:14px;display:none}
+.ea-ok.on{display:block}
+
+.specs{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:16px;margin-top:40px}
+.spec{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px}
+.spec h3{font-size:11px;color:var(--gold);text-transform:uppercase;letter-spacing:1.8px;
+  margin-bottom:8px;font-weight:800}
+.spec p{font-size:13.5px;color:var(--dim);line-height:1.55}
+footer{margin-top:56px;padding-top:24px;border-top:1px solid var(--border);
+  color:var(--dim);font-size:12.5px;display:flex;gap:18px;flex-wrap:wrap}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+@media (prefers-reduced-motion: reduce){*{transition:none !important;animation:none !important}}
+</style>
+</head>
+<body>
+<div class="container">
+  <a class="back" href="../tools.html">&larr; Back to spaceport</a>
+  <h1>AI Logo &amp;<br>Brand Mark Generator</h1>
+  <p class="sub">Original logo marks generated on <strong>your</strong> hardware. When a local
+  ComfyUI engine is running, this page drives it directly — your prompts and every image stay
+  on your machine. Nothing is uploaded to ABUZ8.</p>
+
+  <div class="engine" id="engine" role="status" aria-live="polite">
+    <span class="dot" id="dot"></span>
+    <span class="engine-label" id="engineLabel">Detecting local engine…</span>
+    <span class="engine-detail mono" id="engineDetail">probing 127.0.0.1:8188</span>
+  </div>
+
+  <div class="studio">
+    <section class="panel" aria-labelledby="ctrlH">
+      <h2 id="ctrlH">Brief</h2>
+
+      <div class="field">
+        <label for="brand">Brand name</label>
+        <input type="text" id="brand" placeholder="Northwind Coffee" autocomplete="off">
+      </div>
+
+      <div class="field">
+        <label for="concept">Concept &amp; symbolism</label>
+        <textarea id="concept" placeholder="A stylised compass rose merged with a coffee bean. Calm, premium, nautical."></textarea>
+        <p class="hint">Describe the <em>mark</em>, not the text. Diffusion models render lettering poorly — add your wordmark in a vector editor afterwards.</p>
+      </div>
+
+      <div class="field">
+        <label>Style direction</label>
+        <div class="styles" id="styles" role="group" aria-label="Style direction"></div>
+      </div>
+
+      <div class="field">
+        <label for="ckpt">Engine model</label>
+        <select id="ckpt"><option>— detecting —</option></select>
+        <p class="hint" id="ckptHint">Populated live from your ComfyUI install.</p>
+      </div>
+
+      <div class="row field">
+        <div>
+          <label for="count">Marks</label>
+          <select id="count">
+            <option value="1">1</option><option value="2">2</option>
+            <option value="4" selected>4</option><option value="6">6</option>
+          </select>
+        </div>
+        <div>
+          <label for="size">Canvas</label>
+          <select id="size">
+            <option value="512">512 px</option>
+            <option value="768" selected>768 px</option>
+            <option value="1024">1024 px</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="row field">
+        <div>
+          <label for="steps">Steps</label>
+          <select id="steps">
+            <option value="12">12 — draft</option>
+            <option value="20" selected>20 — balanced</option>
+            <option value="32">32 — refined</option>
+          </select>
+        </div>
+        <div>
+          <label for="seed">Seed</label>
+          <input type="text" id="seed" class="mono" placeholder="random" autocomplete="off">
+        </div>
+      </div>
+
+      <button class="btn btn-gold" id="go" type="button">Generate marks</button>
+      <button class="btn btn-ghost" id="stop" type="button" style="margin-top:10px;display:none">Stop</button>
+
+      <div class="progress" id="prog">
+        <div class="bar"><span id="barFill"></span></div>
+        <p class="progress-text mono" id="progText">Queued…</p>
+      </div>
+
+      <div class="notice notice-err" id="err" role="alert"></div>
+    </section>
+
+    <section class="panel" aria-labelledby="outH">
+      <h2 id="outH">Marks</h2>
+      <div class="results" id="results"></div>
+      <p class="hint" id="meta" style="margin-top:16px"></p>
+    </section>
+  </div>
+
+  <section class="ea" id="ea">
+    <h2>Don't run ComfyUI yet?</h2>
+    <p id="eaCopy">ABUZ8 is packaging this engine into a one-click install — model weights,
+    runtime and this studio in a single download, no Python and no cloud account. Join the
+    early access list and we'll send it when the build is signed.</p>
+    <form class="ea-form" id="eaForm">
+      <label class="sr" for="eaEmail">Email address</label>
+      <input type="email" id="eaEmail" placeholder="you@company.com" required>
+      <button class="btn btn-gold" type="submit">Join Early Access</button>
+    </form>
+    <p class="ea-ok" id="eaOk">Saved on this device. We'll be in touch — no spam, no reselling.</p>
+  </section>
+
+  <div class="specs">
+    <div class="spec"><h3>Runs locally</h3><p>Generation happens on your GPU through ComfyUI's
+      HTTP API. Prompts and images never touch an ABUZ8 server.</p></div>
+    <div class="spec"><h3>Your models</h3><p>The model list is read live from your own
+      ComfyUI install — whatever checkpoints you've downloaded are what you can use.</p></div>
+    <div class="spec"><h3>Reproducible</h3><p>Every mark records its seed. Re-enter the seed
+      with the same brief to reproduce the exact result.</p></div>
+    <div class="spec"><h3>Seizure-safe</h3><p>No strobing, flashing or rapid-cycling
+      animation anywhere on this page. Progress is a single smooth bar.</p></div>
+  </div>
+
+  <footer>
+    <span>ABUZ8 LLC</span>
+    <a href="../tools.html">All tools</a>
+    <a href="../index.html">Home</a>
+    <span class="mono" id="ver"></span>
+  </footer>
+</div>
+
+<script src="_comfy-client.js"></script>
+<script>
+(function () {
+  'use strict';
+  var $ = function (id) { return document.getElementById(id); };
+
+  var STYLES = [
+    { id:'minimal',   label:'Minimal',   pos:'minimalist geometric logo mark, flat vector, clean negative space, single weight' },
+    { id:'monoline',  label:'Monoline',  pos:'monoline logo mark, continuous single-stroke line art, even stroke weight' },
+    { id:'emblem',    label:'Emblem',    pos:'circular emblem badge crest, symmetrical, engraved detail, heraldic' },
+    { id:'abstract',  label:'Abstract',  pos:'abstract geometric mark, overlapping shapes, bold negative space' },
+    { id:'organic',   label:'Organic',   pos:'organic flowing mark, botanical silhouette, soft curves, hand-drawn' },
+    { id:'techno',    label:'Techno',    pos:'sharp angular tech logo mark, isometric facets, precise engineered geometry' }
+  ];
+
+  var BASE_POS = 'professional logo design, centered composition on plain flat background, ' +
+                 'high contrast, crisp edges, scalable icon, brand identity mark, vector style';
+  var NEG = 'text, letters, words, typography, watermark, signature, photograph, realistic photo, ' +
+            '3d render, gradient mesh, cluttered, busy background, low quality, blurry, jpeg artifacts, ' +
+            'multiple logos, grid of logos, mockup, business card';
+
+  var client = new ComfyClient();
+  var activeStyle = 'minimal';
+  var running = false;
+  var lastRun = null;
+
+  /* ---------- style chips ---------- */
+  var stylesEl = $('styles');
+  STYLES.forEach(function (s) {
+    var b = document.createElement('button');
+    b.type = 'button'; b.className = 'style'; b.textContent = s.label;
+    b.setAttribute('aria-pressed', String(s.id === activeStyle));
+    b.addEventListener('click', function () {
+      activeStyle = s.id;
+      Array.prototype.forEach.call(stylesEl.children, function (c) {
+        c.setAttribute('aria-pressed', String(c === b));
+      });
+    });
+    stylesEl.appendChild(b);
+  });
+
+  /* ---------- results grid ---------- */
+  function renderSlots(n) {
+    var r = $('results'); r.innerHTML = '';
+    for (var i = 0; i < n; i++) {
+      var d = document.createElement('div');
+      d.className = 'slot';
+      d.innerHTML = '<span class="slot-empty" aria-hidden="true">&#9671;</span>';
+      r.appendChild(d);
+    }
+  }
+
+  function fillSlot(i, img, seed) {
+    var slots = $('results').children;
+    if (!slots[i]) return;
+    var safe = (($('brand').value || 'mark').trim().toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'mark');
+    slots[i].innerHTML =
+      '<img src="' + img.url + '" alt="Generated logo mark ' + (i + 1) + '" loading="lazy">' +
+      '<div class="slot-actions">' +
+        '<a href="' + img.url + '" download="abuz8-' + safe + '-' + seed + '-' + (i + 1) + '.png">Download</a>' +
+        '<button type="button" data-seed="' + seed + '">Seed ' + seed + '</button>' +
+      '</div>';
+    var btn = slots[i].querySelector('button');
+    btn.addEventListener('click', function () {
+      $('seed').value = btn.getAttribute('data-seed');
+      btn.textContent = 'Locked';
+      setTimeout(function () { btn.textContent = 'Seed ' + seed; }, 1400);
+    });
+  }
+
+  function setProgress(fraction, text) {
+    $('prog').classList.add('on');
+    $('barFill').style.width = Math.round(fraction * 100) + '%';
+    if (text) $('progText').textContent = text;
+  }
+
+  function showError(msg, detail) {
+    var e = $('err');
+    e.classList.add('on');
+    e.innerHTML = '<strong>' + msg + '</strong>' +
+      (detail ? '<code>' + String(detail).replace(/[<>&]/g, '') + '</code>' : '');
+  }
+  function clearError() { $('err').classList.remove('on'); $('err').innerHTML = ''; }
+
+  /* ---------- workflow graph (verified against ComfyUI 0.21.1) ---------- */
+  function buildWorkflow(cfg) {
+    return {
+      '1': { class_type: 'CheckpointLoaderSimple', inputs: { ckpt_name: cfg.ckpt } },
+      '2': { class_type: 'CLIPTextEncode', inputs: { text: cfg.positive, clip: ['1', 1] } },
+      '3': { class_type: 'CLIPTextEncode', inputs: { text: cfg.negative, clip: ['1', 1] } },
+      '4': { class_type: 'EmptyLatentImage',
+             inputs: { width: cfg.size, height: cfg.size, batch_size: cfg.batch } },
+      '5': { class_type: 'KSampler', inputs: {
+               seed: cfg.seed, steps: cfg.steps, cfg: 7.0, sampler_name: 'euler',
+               scheduler: 'normal', denoise: 1.0,
+               model: ['1', 0], positive: ['2', 0], negative: ['3', 0], latent_image: ['4', 0] } },
+      '6': { class_type: 'VAEDecode', inputs: { samples: ['5', 0], vae: ['1', 2] } },
+      '7': { class_type: 'SaveImage', inputs: { filename_prefix: 'abuz8_logo', images: ['6', 0] } }
+    };
+  }
+
+  function composePrompt() {
+    var style = STYLES.filter(function (s) { return s.id === activeStyle; })[0] || STYLES[0];
+    var concept = ($('concept').value || '').trim();
+    var brand = ($('brand').value || '').trim();
+    var parts = [style.pos, BASE_POS];
+    if (concept) parts.unshift(concept);
+    else if (brand) parts.unshift('brand mark for ' + brand);
+    return parts.join(', ');
+  }
+
+  function resolveSeed() {
+    var raw = ($('seed').value || '').trim();
+    if (/^\d+$/.test(raw)) return parseInt(raw, 10) % 4294967295;
+    return Math.floor(Math.random() * 4294967295);
+  }
+
+  /* ---------- generate ---------- */
+  function generate() {
+    if (running) return;
+    if (client.status !== 'live') {
+      showError('No local engine detected.',
+        'Start ComfyUI on 127.0.0.1:8188, then reload this page. Or join early access below for the packaged build.');
+      $('ea').scrollIntoView({ block: 'center' });
+      return;
+    }
+    clearError();
+    running = true;
+    $('go').disabled = true;
+    $('stop').style.display = 'block';
+
+    var batch = parseInt($('count').value, 10);
+    var seed = resolveSeed();
+    var cfg = {
+      ckpt: $('ckpt').value,
+      positive: composePrompt(),
+      negative: NEG,
+      size: parseInt($('size').value, 10),
+      steps: parseInt($('steps').value, 10),
+      batch: batch,
+      seed: seed
+    };
+    renderSlots(batch);
+    setProgress(0.02, 'Queued on local engine…');
+    $('meta').textContent = '';
+
+    var t0 = Date.now();
+    client.run(buildWorkflow(cfg), { maxWaitMs: 10 * 60 * 1000 })
+      .then(function (res) {
+        setProgress(1, 'Complete');
+        res.images.forEach(function (img, i) { fillSlot(i, img, seed); });
+        lastRun = { cfg: cfg, res: res };
+        $('meta').textContent = res.images.length + ' mark(s) · ' + cfg.size + 'px · ' +
+          cfg.steps + ' steps · seed ' + seed + ' · ' +
+          (Math.round((Date.now() - t0) / 100) / 10) + 's · ' + cfg.ckpt;
+      })
+      .catch(function (e) {
+        setProgress(0, 'Stopped');
+        showError('Generation failed.', (e && e.message) +
+          (e && e.detail ? ' — ' + JSON.stringify(e.detail).slice(0, 400) : ''));
+      })
+      .then(function () {
+        running = false;
+        $('go').disabled = false;
+        $('stop').style.display = 'none';
+      });
+  }
+
+  client.on('progress', function (p) {
+    setProgress(0.05 + p.fraction * 0.92, 'Sampling · step ' + p.value + ' of ' + p.max);
+  });
+  client.on('executing', function () {
+    if ($('barFill').style.width === '2%') setProgress(0.05, 'Loading model…');
+  });
+
+  $('go').addEventListener('click', generate);
+  $('stop').addEventListener('click', function () {
+    client.interrupt();
+    setProgress(0, 'Stopping…');
+  });
+
+  /* ---------- engine detection ---------- */
+  function engineOffline(reason) {
+    $('dot').className = 'dot off';
+    $('engineLabel').textContent = 'Early access mode';
+    $('engineDetail').textContent = reason || 'no local ComfyUI on 127.0.0.1:8188';
+    $('ckpt').innerHTML = '<option>engine offline</option>';
+    $('ckpt').disabled = true;
+    $('ckptHint').textContent = 'Model list appears once a local ComfyUI engine is running.';
+    $('go').textContent = 'Join early access';
+    $('go').addEventListener('click', function () {
+      $('eaEmail').focus();
+    }, { once: false });
+  }
+
+  function engineLive(info) {
+    $('dot').className = 'dot live';
+    $('engineLabel').textContent = 'Live studio mode';
+    var v = (info.stats && info.stats.system && info.stats.system.comfyui_version) || '?';
+    var dev = (info.stats && info.stats.devices && info.stats.devices[0] &&
+               info.stats.devices[0].name) || 'local device';
+    $('engineDetail').textContent = info.host.replace('http://', '') +
+      ' · ComfyUI ' + v + ' · ' + String(dev).slice(0, 42);
+    $('eaCopy').textContent = 'Your engine is live, so this studio is fully operational. ' +
+      'Join early access anyway for the signed one-click bundle, new workflow packs and ' +
+      'the model library as they ship.';
+  }
+
+  var PREFERRED = [
+    'absolutereality_v181.safetensors',
+    'Realistic_Insta_InfluencerV1.0.safetensors',
+    'anythingV3_fp16.safetensors'
+  ];
+
+  function loadCheckpoints() {
+    return client.listOptions('CheckpointLoaderSimple', 'ckpt_name').then(function (list) {
+      var sel = $('ckpt');
+      if (!list.length) {
+        sel.innerHTML = '<option>no checkpoints found</option>';
+        sel.disabled = true;
+        $('ckptHint').textContent =
+          'ComfyUI is running but has no checkpoints in models/checkpoints. Add one, then reload.';
+        return;
+      }
+      sel.innerHTML = '';
+      list.forEach(function (n) {
+        var o = document.createElement('option');
+        o.value = n;
+        o.textContent = n.replace(/\.safetensors$|\.ckpt$/, '');
+        sel.appendChild(o);
+      });
+      for (var i = 0; i < PREFERRED.length; i++) {
+        if (list.indexOf(PREFERRED[i]) !== -1) { sel.value = PREFERRED[i]; break; }
+      }
+      sel.disabled = false;
+      $('ckptHint').textContent = list.length +
+        ' checkpoint(s) detected in your install. SD1.5-class models give the cleanest marks.';
+    });
+  }
+
+  renderSlots(4);
+  $('ver').textContent = 'comfy-client v' + (window.ABUZ8_COMFY_VERSION || '1.0.0');
+
+  client.connect().then(function (info) {
+    if (info.status === 'live') { engineLive(info); return loadCheckpoints(); }
+    engineOffline();
+  }).catch(function () { engineOffline('probe failed'); });
+
+  /* ---------- early access (local-only capture; no backend claimed) ---------- */
+  $('eaForm').addEventListener('submit', function (ev) {
+    ev.preventDefault();
+    var email = ($('eaEmail').value || '').trim();
+    if (!email) return;
+    try {
+      var k = 'abuz8_early_access';
+      var cur = JSON.parse(localStorage.getItem(k) || '[]');
+      if (cur.indexOf(email) === -1) cur.push(email);
+      localStorage.setItem(k, JSON.stringify(cur));
+    } catch (e) { /* private mode — the confirmation below stays honest either way */ }
+    $('eaOk').classList.add('on');
+    $('eaEmail').value = '';
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Error Explainer — ABUZ8</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--lapis:#0a1628;--lapis2:#0f1f3d;--lapis3:#162544;--gold:#c9a84c;--turq:#0e9f6e;--turq2:#22b5a0;--cream:#f5f0e8;--red:#ef4444;--orange:#f97316;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--lapis);color:var(--cream);font-family:'Inter',sans-serif;min-height:100vh;}
+.hero{background:linear-gradient(135deg,var(--lapis2) 0%,var(--lapis3) 100%);padding:48px 24px 36px;text-align:center;border-bottom:1px solid rgba(201,168,76,.15);}
+.hero h1{font-family:'Playfair Display',serif;font-size:clamp(2rem,5vw,3rem);color:var(--gold);margin-bottom:8px;}
+.hero p{color:rgba(245,240,232,.7);font-size:1.05rem;max-width:580px;margin:0 auto;}
+.main{max-width:900px;margin:0 auto;padding:32px 20px;}
+.input-card{background:var(--lapis2);border:1px solid rgba(201,168,76,.12);border-radius:12px;padding:24px;margin-bottom:24px;}
+.input-top{display:flex;gap:12px;margin-bottom:14px;align-items:center;flex-wrap:wrap;}
+.lang-btns{display:flex;flex-wrap:wrap;gap:6px;}
+.lb{background:var(--lapis3);border:1px solid rgba(201,168,76,.1);border-radius:20px;padding:5px 13px;font-size:.78rem;cursor:pointer;color:rgba(245,240,232,.4);}
+.lb.active{background:rgba(201,168,76,.1);border-color:var(--gold);color:var(--gold);}
+.error-input{background:var(--lapis3);border:1px solid rgba(201,168,76,.12);border-radius:8px;color:var(--red);font-family:'JetBrains Mono',monospace;font-size:.8rem;padding:16px;width:100%;min-height:160px;resize:vertical;outline:none;line-height:1.7;}
+.error-input::placeholder{color:rgba(239,68,68,.25);}
+.error-input:focus{border-color:rgba(239,68,68,.3);}
+.examples-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;}
+.ex-btn{background:var(--lapis3);border:1px solid rgba(201,168,76,.1);border-radius:6px;padding:6px 12px;font-size:.78rem;color:rgba(245,240,232,.4);cursor:pointer;}
+.ex-btn:hover{border-color:rgba(201,168,76,.3);color:var(--cream);}
+.explain-btn{background:var(--gold);color:var(--lapis);border:none;border-radius:8px;padding:12px 28px;font-weight:700;font-size:.95rem;cursor:pointer;margin-top:16px;width:100%;}
+.explain-btn:hover{opacity:.88;}
+.result-card{background:var(--lapis2);border:1px solid rgba(201,168,76,.12);border-radius:12px;overflow:hidden;margin-bottom:20px;}
+.rc-header{padding:16px 20px;border-bottom:1px solid rgba(201,168,76,.1);display:flex;align-items:center;gap:12px;}
+.err-type-badge{background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.3);border-radius:6px;padding:4px 12px;font-family:'JetBrains Mono',monospace;font-size:.82rem;color:var(--red);}
+.rc-title{font-family:'Playfair Display',serif;color:var(--gold);font-size:1.15rem;}
+.rc-body{padding:20px;}
+.section-h{font-size:.78rem;font-weight:700;color:rgba(245,240,232,.35);text-transform:uppercase;letter-spacing:.08em;margin:0 0 10px;}
+.plain-english{font-size:.98rem;line-height:1.8;color:rgba(245,240,232,.85);margin-bottom:20px;padding:16px;background:rgba(201,168,76,.04);border-radius:8px;border-left:3px solid var(--gold);}
+.cause-list{list-style:none;margin-bottom:20px;}
+.cause-list li{padding:10px 14px;background:var(--lapis3);border-radius:6px;margin-bottom:6px;font-size:.88rem;display:flex;gap:10px;align-items:start;}
+.cause-icon{font-size:.95rem;flex-shrink:0;}
+.fix-steps{display:flex;flex-direction:column;gap:10px;margin-bottom:20px;}
+.fix-step{display:flex;gap:12px;}
+.fix-num{background:rgba(201,168,76,.15);border:1px solid rgba(201,168,76,.25);width:26px;height:26px;min-width:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700;color:var(--gold);}
+.fix-text{font-size:.88rem;color:rgba(245,240,232,.8);line-height:1.6;}
+.code-block{background:var(--lapis3);border-radius:8px;padding:14px;font-family:'JetBrains Mono',monospace;font-size:.78rem;line-height:1.7;margin:8px 0;white-space:pre-wrap;overflow-x:auto;}
+.code-block.bad{border-left:3px solid var(--red);}
+.code-block.good{border-left:3px solid #22c55e;}
+.related-errors{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;}
+.rel-err{background:var(--lapis3);border:1px solid rgba(201,168,76,.1);border-radius:6px;padding:6px 12px;font-family:'JetBrains Mono',monospace;font-size:.75rem;color:rgba(245,240,232,.4);cursor:pointer;}
+.rel-err:hover{border-color:rgba(201,168,76,.3);color:var(--cream);}
+.empty-state{text-align:center;padding:60px;color:rgba(245,240,232,.2);}
+.spinner{display:inline-block;width:28px;height:28px;border:3px solid rgba(201,168,76,.15);border-top-color:var(--gold);border-radius:50%;animation:spin .7s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.waitlist{background:linear-gradient(135deg,var(--lapis3),var(--lapis2));border:1px solid rgba(201,168,76,.2);border-radius:12px;padding:32px;text-align:center;margin-top:40px;}
+.waitlist h3{font-family:'Playfair Display',serif;color:var(--gold);font-size:1.5rem;margin-bottom:8px;}
+.wl-form{display:flex;gap:10px;max-width:440px;margin:0 auto;}
+.wl-input{flex:1;background:var(--lapis);border:1px solid rgba(201,168,76,.25);border-radius:8px;color:var(--cream);padding:11px 16px;font-size:.92rem;outline:none;}
+.wl-btn{background:var(--gold);color:var(--lapis);border:none;border-radius:8px;padding:11px 22px;font-weight:600;cursor:pointer;}
+</style>
+<link rel="canonical" href="https://abuz8ai.com/tools/ai-error-explainer">
+<meta name="description" content="AI Error Explainer — Plain-English error diagnosis. Free, no signup, runs entirely in your browser. One of 169 free AI and developer tools by ABUZ8.">
+</head>
+<body>
+<div class="hero">
+  <h1>💥 AI Error Explainer</h1>
+  <p>Paste any error message or stack trace. Get a plain-English explanation, root causes, and step-by-step fixes.</p>
+</div>
+<div class="main">
+  <div class="input-card">
+    <div class="input-top">
+      <div class="lang-btns">
+        <div class="lb active" onclick="setLang(this,'js')">JavaScript</div>
+        <div class="lb" onclick="setLang(this,'python')">Python</div>
+        <div class="lb" onclick="setLang(this,'go')">Go</div>
+        <div class="lb" onclick="setLang(this,'rust')">Rust</div>
+        <div class="lb" onclick="setLang(this,'sql')">SQL</div>
+        <div class="lb" onclick="setLang(this,'http')">HTTP</div>
+        <div class="lb" onclick="setLang(this,'any')">Auto-detect</div>
+      </div>
+    </div>
+    <textarea class="error-input" id="errorInput" placeholder="Paste your error message or stack trace here…&#10;&#10;TypeError: Cannot read properties of undefined (reading 'map')&#10;    at Component (/app/src/components/List.jsx:12:23)&#10;    at renderWithHooks (/app/node_modules/react-dom/cjs/react-dom.development.js:14985:18)"></textarea>
+    <div class="examples-row">
+      <button class="ex-btn" onclick="loadEx('typeerror')">TypeError: cannot read</button>
+      <button class="ex-btn" onclick="loadEx('promise')">UnhandledPromiseRejection</button>
+      <button class="ex-btn" onclick="loadEx('cors')">CORS Error</button>
+      <button class="ex-btn" onclick="loadEx('segfault')">Segfault (C/C++)</button>
+      <button class="ex-btn" onclick="loadEx('oom')">JavaScript heap OOM</button>
+      <button class="ex-btn" onclick="loadEx('py_key')">Python KeyError</button>
+      <button class="ex-btn" onclick="loadEx('sql_err')">SQL: relation does not exist</button>
+      <button class="ex-btn" onclick="loadEx('429')">HTTP 429 Too Many Requests</button>
+    </div>
+    <button class="explain-btn" onclick="explainError()">💥 Explain This Error</button>
+  </div>
+
+  <div id="emptyState" class="empty-state">
+    <div style="font-size:2.5rem;margin-bottom:10px;">💥</div>
+    <div>Paste an error to get an explanation</div>
+    <div style="font-size:.82rem;margin-top:6px;">Supports JS, Python, Go, Rust, SQL, HTTP errors & stack traces</div>
+  </div>
+  <div id="loadingState" style="display:none;text-align:center;padding:48px;">
+    <div class="spinner"></div>
+    <div style="margin-top:12px;color:rgba(245,240,232,.4);">Analyzing error…</div>
+  </div>
+  <div id="resultSection" style="display:none;"></div>
+
+  <div class="waitlist">
+    <h3>Error Explainer Pro</h3>
+    <p>IDE plugin, automatic error capture from logs, Slack/PagerDuty integration, and team error knowledge base.</p>
+    <div class="wl-form">
+      <input class="wl-input" id="wlEmail" type="email" placeholder="your@email.com">
+      <button class="wl-btn" onclick="joinWaitlist()">Join Waitlist</button>
+    </div>
+    <div id="wlMsg" style="margin-top:12px;font-size:.85rem;color:var(--turq2);"></div>
+  </div>
+</div>
+<script src="_abuz8-live-brain.js" defer></script>
+<script>
+let currentLang='js';
+function setLang(el,lang){ document.querySelectorAll('.lb').forEach(b=>b.classList.remove('active')); el.classList.add('active'); currentLang=lang; }
+
+const EXAMPLES = {
+  typeerror:`TypeError: Cannot read properties of undefined (reading 'map')
+    at ProductList (/app/src/components/ProductList.jsx:12:23)
+    at renderWithHooks (/app/node_modules/react-dom/cjs/react-dom.development.js:14985:18)
+    at mountIndeterminateComponent (/app/node_modules/react-dom/cjs/react-dom.development.js:17811:13)`,
+  promise:`UnhandledPromiseRejectionWarning: Error: connect ECONNREFUSED 127.0.0.1:5432
+    at TCPConnectWrap.afterConnect [as oncomplete] (net.js:1148:16)
+(node:12345) UnhandledPromiseRejectionWarning: Unhandled promise rejection. This error originated either by throwing inside of an async function without a catch block, or by rejecting a promise which was not handled with .catch().`,
+  cors:`Access to fetch at 'https://api.example.com/users' from origin 'http://localhost:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.`,
+  segfault:`Segmentation fault (core dumped)
+Program received signal SIGSEGV, Segmentation fault.
+0x0000000000401234 in process_data (data=0x0) at main.c:47
+47        return data->value;`,
+  oom:`FATAL ERROR: Reached heap limit Allocation failed - JavaScript heap out of memory
+ 1: 0xb7c6e0 node::Abort() [node]
+ 2: 0xa91c0f node::FatalError(char const*, char const*) [node]
+ 3: 0xd9b78e v8::Utils::ReportOOMFailure(v8::internal::Isolate*, char const*, bool) [node]
+ 4: 0xd9badf v8::internal::V8::FatalProcessOutOfMemory(v8::internal::Isolate*, char const*, bool) [node]`,
+  py_key:`Traceback (most recent call last):
+  File "app.py", line 23, in process_user
+    name = user_data['name']
+KeyError: 'name'`,
+  sql_err:`ERROR:  relation "users" does not exist
+LINE 1: SELECT * FROM users WHERE id = 1
+                      ^
+HINT:  Perhaps you meant to reference the table "Users".`,
+  '429':`HTTP 429 Too Many Requests
+{
+  "error": "rate_limit_exceeded",
+  "message": "You have exceeded your API rate limit. Current limit: 60 requests per minute.",
+  "retry_after": 47
+}`
+};
+
+const ERROR_DB = {
+  typeerror:{
+    type:'TypeError',
+    title:'Accessing property of undefined/null',
+    plain:'You\'re trying to call .map() (or any method) on a value that is undefined. This means the data you expected to be an array hasn\'t loaded yet — or the API returned nothing and your code didn\'t handle that case.',
+    causes:[
+      {icon:'⏳',text:'Data is async: you\'re rendering before the fetch/API call completes — the value is undefined on first render.'},
+      {icon:'🔌',text:'API returned null or empty: the API response was null, an empty object, or the property name is different from what you expected.'},
+      {icon:'🔤',text:'Typo in property name: you\'re accessing data.prodcuts instead of data.products.'},
+      {icon:'🔗',text:'Missing optional chain: deeply nested access like user.profile.address.city without checking if each level exists.'},
+    ],
+    fixes:[
+      {text:'Add a null check: <code>if (!products) return &lt;Loading /&gt;;</code> before rendering.'},
+      {text:'Use optional chaining: <code>products?.map(...)</code> — returns undefined instead of throwing.'},
+      {text:'Provide a default: <code>const products = data?.products ?? [];</code> — fallback to empty array.'},
+      {text:'Check the API response shape in the Network tab — confirm the property name and structure.'},
+    ],
+    bad:`// ❌ Throws if products is undefined
+function ProductList({ data }) {
+  return data.products.map(p => <div>{p.name}</div>);
+}`,
+    good:`// ✅ Safe: handles undefined/null/empty
+function ProductList({ data }) {
+  const products = data?.products ?? [];
+  if (!products.length) return <p>No products found</p>;
+  return products.map(p => <div key={p.id}>{p.name}</div>);
+}`,
+    related:['TypeError: is not a function','TypeError: Cannot set properties of null','TypeError: undefined is not iterable']
+  },
+  promise:{
+    type:'UnhandledPromiseRejection',
+    title:'Database connection refused',
+    plain:'Your app tried to connect to PostgreSQL on port 5432, but nothing is listening there. Either the database isn\'t running, the port/host is wrong in your .env, or the DB is in a different network (Docker, etc.).',
+    causes:[
+      {icon:'🔴',text:'PostgreSQL isn\'t running: the Postgres service hasn\'t been started on your machine.'},
+      {icon:'🌐',text:'Wrong host/port: DATABASE_URL points to localhost but Postgres is in a Docker container with a different hostname.'},
+      {icon:'🛡',text:'Firewall blocking: a firewall rule is blocking port 5432.'},
+      {icon:'📦',text:'Unhandled rejection: even if the DB issue is resolved, the async error isn\'t caught — it will crash Node.js in newer versions.'},
+    ],
+    fixes:[
+      {text:'Start Postgres: <code>sudo service postgresql start</code> or <code>docker compose up db</code>'},
+      {text:'Verify your DATABASE_URL in .env: <code>postgresql://user:pass@localhost:5432/dbname</code>'},
+      {text:'Test connection: <code>psql -U postgres -h localhost -p 5432</code>'},
+      {text:'Always wrap DB calls in try/catch: <code>try { await pool.connect() } catch(err) { console.error(err); process.exit(1); }</code>'},
+    ],
+    bad:`// ❌ Unhandled async error
+async function getUser(id) {
+  const res = await db.query('SELECT * FROM users WHERE id=$1', [id]);
+  return res.rows[0];
+}`,
+    good:`// ✅ Wrapped with error handling
+async function getUser(id) {
+  try {
+    const res = await db.query('SELECT * FROM users WHERE id=$1', [id]);
+    return res.rows[0];
+  } catch (err) {
+    logger.error('DB query failed:', err.message);
+    throw new Error('Failed to fetch user');
+  }
+}`,
+    related:['ECONNREFUSED 127.0.0.1:3306','ENOTFOUND hostname','ETIMEDOUT connection']
+  },
+  cors:{
+    type:'CORS Error',
+    title:'Cross-Origin Request Blocked — Missing CORS Header',
+    plain:'Your frontend (localhost:3000) made a request to a different origin (api.example.com). Browsers block this by default for security. The server needs to explicitly say "it\'s OK to accept requests from localhost:3000" by sending the right headers.',
+    causes:[
+      {icon:'🌐',text:'CORS not configured on the server: the API server isn\'t sending Access-Control-Allow-Origin headers.'},
+      {icon:'🔄',text:'Preflight OPTIONS request failing: complex requests (with custom headers or JSON body) send an OPTIONS preflight that\'s not handled.'},
+      {icon:'🛡',text:'Reverse proxy stripping headers: Nginx or a CDN is removing the CORS headers the server sends.'},
+    ],
+    fixes:[
+      {text:'Add CORS middleware (Express): <code>app.use(require(\'cors\')({ origin: \'http://localhost:3000\' }))</code>'},
+      {text:'Handle OPTIONS preflight: make sure your server returns 200 for OPTIONS requests with the right headers.'},
+      {text:'In development: use a proxy in vite.config.js or package.json "proxy" field to avoid CORS entirely.'},
+      {text:'Don\'t use a browser extension to bypass CORS in production — fix it on the server.'},
+    ],
+    bad:`// ❌ No CORS headers
+app.get('/api/users', (req, res) => {
+  res.json(users);
+});`,
+    good:`// ✅ With CORS configured
+const cors = require('cors');
+app.use(cors({
+  origin: ['http://localhost:3000', 'https://myapp.com'],
+  methods: ['GET','POST','PUT','DELETE'],
+  allowedHeaders: ['Content-Type','Authorization'],
+}));`,
+    related:['CORS: preflight response does not allow','Access-Control-Allow-Origin: null','CORS with credentials']
+  },
+  oom:{
+    type:'JavaScript Heap OOM',
+    title:'Node.js Out of Memory — Heap Limit Reached',
+    plain:'Your Node.js process ran out of memory. It either loaded too much data into RAM at once (e.g. reading a huge file), has a memory leak where objects aren\'t being garbage collected, or is processing a very large dataset without streaming.',
+    causes:[
+      {icon:'📄',text:'Loading large files entirely into memory: reading a 2GB file with fs.readFileSync fills the heap instantly.'},
+      {icon:'🔄',text:'Memory leak: event listeners or closures keeping references to objects that should be freed.'},
+      {icon:'♾️',text:'Infinite recursion or unbounded loops accumulating data.'},
+      {icon:'📦',text:'Default heap too small: Node\'s default heap is ~1.5GB; certain workloads need more.'},
+    ],
+    fixes:[
+      {text:'Stream large files: use <code>fs.createReadStream()</code> instead of <code>fs.readFileSync()</code>'},
+      {text:'Increase heap (short-term fix): <code>NODE_OPTIONS=\'--max-old-space-size=4096\' node app.js</code>'},
+      {text:'Profile memory: run with <code>node --inspect</code> and use Chrome DevTools Memory tab to find leaks.'},
+      {text:'Process data in batches: instead of loading all DB rows, paginate with LIMIT/OFFSET.'},
+    ],
+    bad:`// ❌ Loads entire file into memory
+const data = fs.readFileSync('huge-file.json');
+const parsed = JSON.parse(data);`,
+    good:`// ✅ Stream processing
+const { pipeline } = require('stream/promises');
+await pipeline(
+  fs.createReadStream('huge-file.jsonl'),
+  split2(),
+  processLineByLine
+);`,
+    related:['FATAL ERROR: invalid array length','process.memoryUsage() monitoring','Node --max-old-space-size']
+  },
+  py_key:{
+    type:'KeyError',
+    title:'Dictionary Key Does Not Exist',
+    plain:'Python is trying to access a key called \'name\' in a dictionary, but that key doesn\'t exist. Either the key has a different name (typo, different casing), the data came in an unexpected shape, or the field is optional and wasn\'t included.',
+    causes:[
+      {icon:'🔤',text:'Typo or casing: the API returns \'full_name\' but you\'re accessing [\'name\'].'},
+      {icon:'❓',text:'Optional field: \'name\' is only present in some records — not all users have it.'},
+      {icon:'🌐',text:'API schema changed: an upstream service removed or renamed the field.'},
+    ],
+    fixes:[
+      {text:'Use .get() with a default: <code>name = user_data.get(\'name\', \'Unknown\')</code>'},
+      {text:'Check key existence: <code>if \'name\' in user_data:</code>'},
+      {text:'Use a try/except: <code>try: name = user_data[\'name\']\nexcept KeyError: name = None</code>'},
+      {text:'Print the actual dict before accessing: <code>print(user_data.keys())</code> to see what\'s actually there.'},
+    ],
+    bad:`# ❌ Direct access throws KeyError if missing
+name = user_data['name']`,
+    good:`# ✅ Safe access with default
+name = user_data.get('name', 'Unknown User')
+# Or with validation
+if 'name' not in user_data:
+    raise ValueError(f"Missing required field 'name' in: {user_data}")
+name = user_data['name']`,
+    related:['AttributeError: object has no attribute','IndexError: list index out of range','TypeError: \'NoneType\' is not subscriptable']
+  },
+  sql_err:{
+    type:'PostgreSQL Error',
+    title:'Table "users" Does Not Exist',
+    plain:'PostgreSQL can\'t find a table called "users" in the current database/schema. Either you\'re connected to the wrong database, the table hasn\'t been created yet (migration not run), or the table name has different casing (Postgres is case-sensitive for quoted names).',
+    causes:[
+      {icon:'🗄',text:'Migrations not run: you created the model but never ran the migration to create the actual table.'},
+      {icon:'🔡',text:'Case sensitivity: table was created as "Users" (quoted) but you\'re querying users (unquoted = lowercase).'},
+      {icon:'📁',text:'Wrong schema: the table is in a non-public schema and search_path doesn\'t include it.'},
+      {icon:'🌐',text:'Wrong database: DATABASE_URL points to a different database than where migrations ran.'},
+    ],
+    fixes:[
+      {text:'Run migrations: <code>npx prisma migrate deploy</code> or <code>python manage.py migrate</code>'},
+      {text:'Check your database: <code>\\dt</code> in psql to list tables in the current DB.'},
+      {text:'Verify connection string: <code>echo $DATABASE_URL</code> to confirm you\'re on the right DB.'},
+      {text:'Check schema: <code>SELECT table_name FROM information_schema.tables WHERE table_schema=\'public\';</code>'},
+    ],
+    bad:`-- ❌ Table quoted with uppercase when created
+CREATE TABLE "Users" (id SERIAL PRIMARY KEY);
+-- Then querying without quotes uses lowercase:
+SELECT * FROM Users; -- relation "users" does not exist`,
+    good:`-- ✅ Consistent lowercase naming (no quotes needed)
+CREATE TABLE users (id SERIAL PRIMARY KEY);
+SELECT * FROM users; -- works fine
+-- Or always use quotes consistently:
+SELECT * FROM "Users";`,
+    related:['ERROR: column does not exist','ERROR: schema "x" does not exist','relation already exists']
+  },
+  '429':{
+    type:'HTTP 429',
+    title:'Rate Limit Exceeded — Too Many Requests',
+    plain:'You\'ve hit the API\'s rate limit — you\'re sending too many requests in a short time window. The server is telling you to slow down and will accept your requests again after the retry_after period (47 seconds in this case).',
+    causes:[
+      {icon:'🔄',text:'Polling too frequently: you\'re calling the API in a tight loop without delays.'},
+      {icon:'🚀',text:'Missing exponential backoff: on errors, you\'re retrying immediately instead of waiting.'},
+      {icon:'🔑',text:'Shared API key: multiple processes or team members sharing the same key, collectively hitting the limit.'},
+    ],
+    fixes:[
+      {text:'Honor Retry-After: read the retry_after field and wait that many seconds: <code>await sleep(data.retry_after * 1000)</code>'},
+      {text:'Implement exponential backoff: double the wait time on each retry: 1s → 2s → 4s → 8s → max 60s.'},
+      {text:'Cache responses: if you\'re calling the same endpoint repeatedly, cache results locally for N seconds.'},
+      {text:'Request a higher rate limit tier from the API provider if your use case requires it.'},
+    ],
+    bad:`// ❌ Retries immediately, hammers the API
+async function fetchWithRetry(url) {
+  while (true) {
+    const res = await fetch(url);
+    if (res.ok) return res.json();
+    // Retries instantly — makes 429 worse
+  }
+}`,
+    good:`// ✅ Exponential backoff with jitter
+async function fetchWithRetry(url, maxRetries = 5) {
+  for (let i = 0; i < maxRetries; i++) {
+    const res = await fetch(url);
+    if (res.ok) return res.json();
+    if (res.status === 429) {
+      const retryAfter = res.headers.get('Retry-After') || Math.pow(2, i);
+      await new Promise(r => setTimeout(r, retryAfter * 1000));
+    } else throw new Error(\`HTTP \${res.status}\`);
+  }
+}`,
+    related:['HTTP 503 Service Unavailable','HTTP 504 Gateway Timeout','API quota exceeded']
+  }
+};
+
+function loadEx(key){ document.getElementById('errorInput').value=EXAMPLES[key]||''; }
+
+function detectErrorType(text){
+  const t=text.toLowerCase();
+  if(t.includes('typeerror')&&(t.includes('cannot read')||t.includes('is not a function'))) return 'typeerror';
+  if(t.includes('unhandledpromise')||t.includes('econnrefused')) return 'promise';
+  if(t.includes('cors')||t.includes('access-control')) return 'cors';
+  if(t.includes('heap out of memory')||t.includes('javascript heap')) return 'oom';
+  if(t.includes('keyerror')) return 'py_key';
+  if(t.includes('relation')&&t.includes('does not exist')) return 'sql_err';
+  if(t.includes('429')||t.includes('rate_limit')) return '429';
+  return null;
+}
+
+function explainError(){
+  const text=document.getElementById('errorInput').value.trim();
+  if(!text){alert('Paste an error message first');return;}
+  document.getElementById('emptyState').style.display='none';
+  document.getElementById('resultSection').style.display='none';
+  document.getElementById('loadingState').style.display='block';
+
+  // Real AI explanation via the ABUZ8 brain (Cloudflare Workers AI). No canned error DB.
+  fetch('/api/waitlist', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      tool: 'error-explainer',
+      data: { error: text, language: currentLang }
+    })
+  })
+  .then(r => r.json())
+  .then(res => {
+    if (!res.success || !res.result) throw new Error(res.error || 'Explanation failed');
+    document.getElementById('loadingState').style.display='none';
+
+    document.getElementById('resultSection').innerHTML=`
+      <div class="result-card">
+        <div class="rc-header">
+          <span class="err-type-badge">${esc(currentLang.toUpperCase())}</span>
+          <span class="rc-title">Error Explanation</span>
+        </div>
+        <div class="rc-body">
+          <div class="plain-english">${mdToHtml(res.result)}</div>
+        </div>
+      </div>`;
+
+    document.getElementById('resultSection').style.display='block';
+  })
+  .catch(err => {
+    document.getElementById('loadingState').style.display='none';
+    document.getElementById('emptyState').style.display='block';
+    alert('Explanation failed: ' + err.message + '. Please try again in a moment.');
+  });
+}
+
+function loadRelated(err){ document.getElementById('errorInput').value=err; explainError(); }
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+// Minimal, safe markdown → HTML renderer for AI brain output (escapes HTML first).
+function mdToHtml(md){
+  let s = esc(String(md));
+  const blocks = [];
+  s = s.replace(/```(\w*)\n?([\s\S]*?)```/g, (m, lang, code) => {
+    blocks.push('<pre class="code-block" style="white-space:pre;overflow-x:auto">' + code.replace(/\n$/,'') + '</pre>');
+    return 'ABZBLOCK' + (blocks.length - 1) + 'ENDABZ';
+  });
+  s = s.replace(/`([^`\n]+)`/g, '<code style="background:var(--lapis3);padding:1px 5px;border-radius:4px;font-family:JetBrains Mono,monospace;font-size:.85em">$1</code>');
+  s = s.replace(/^######\s+(.*)$/gm, '<h6>$1</h6>')
+       .replace(/^#####\s+(.*)$/gm, '<h5>$1</h5>')
+       .replace(/^####\s+(.*)$/gm, '<h4>$1</h4>')
+       .replace(/^###\s+(.*)$/gm, '<div class="section-h" style="margin:16px 0 8px">$1</div>')
+       .replace(/^##\s+(.*)$/gm, '<div class="section-h" style="margin:16px 0 8px">$1</div>')
+       .replace(/^#\s+(.*)$/gm, '<div class="section-h" style="margin:16px 0 8px">$1</div>');
+  s = s.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+       .replace(/(^|[^*])\*([^*\n]+)\*/g, '$1<em>$2</em>');
+  s = s.replace(/(?:^[ \t]*(?:[-*]|\d+\.)\s+.*(?:\n|$))+/gm, (block) => {
+    const ordered = /^\s*\d+\.\s/.test(block);
+    const items = block.trim().split(/\n/).map(l => l.replace(/^\s*(?:[-*]|\d+\.)\s+/, '').trim()).filter(Boolean);
+    return '<' + (ordered?'ol':'ul') + ' style="padding-left:20px;margin:8px 0">' + items.map(i=>'<li style="margin-bottom:5px">'+i+'</li>').join('') + '</' + (ordered?'ol':'ul') + '>';
+  });
+  s = s.split(/\n{2,}/).map(p => {
+    p = p.trim();
+    if (!p) return '';
+    if (/^ABZBLOCK\d+ENDABZ$/.test(p)) return p;
+    if (/^\s*<(h\d|ul|ol|pre|div)/.test(p)) return p;
+    return '<p style="margin-bottom:10px">' + p.replace(/\n/g, '<br>') + '</p>';
+  }).join('\n');
+  s = s.replace(/(?:<p[^>]*>)?\s*ABZBLOCK(\d+)ENDABZ\s*(?:<\/p>)?/g, (m, i) => blocks[+i]);
+  return s;
+}
+
+async function joinWaitlist(){
+  const email=document.getElementById('wlEmail').value.trim();
+  if(!email||!email.includes('@')){document.getElementById('wlMsg').textContent='Enter a valid email.';return;}
+  try{await fetch('/api/waitlist',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,product:'ai-error-explainer',source:'abuz8'})});}
+  catch(e){localStorage.setItem('wl_error_exp',email);}
+  document.getElementById('wlMsg').textContent='✓ On the list!';
+  document.getElementById('wlEmail').value='';
+}
+</script>
+
+<script src="/assets/js/dfy-banner.js" async></script>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+<script src="/tools/_tools-shared.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>
+

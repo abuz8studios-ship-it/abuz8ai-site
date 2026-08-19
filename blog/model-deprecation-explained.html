@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>What Happens When an AI Model Is Deprecated? | ABUZ8</title>
+<meta name="description" content="Model deprecation explained: what it means when an AI provider retires a model, why 'just use the newer one' is never that simple, and how to build so a sunset date doesn't break your product on someone else's schedule.">
+<meta name="keywords" content="model deprecation, ai model deprecated, llm deprecation, model sunset, what happens when a model is retired">
+<link rel="canonical" href="https://abuz8ai.com/blog/model-deprecation-explained">
+<meta property="og:title" content="What Happens When an AI Model Is Deprecated?">
+<meta property="og:type" content="article">
+<link rel="stylesheet" href="/blog/_blog-base.css">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@300;400;600;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
+<style>
+:root{
+  --lapis:#F8FAFC; --lapis-mid:#EEF3F8; --lapis-light:#E3EBF3;
+  --card:#FFFFFF; --border:#D7E0EA;
+  --cream:#1F3A5F; --ivory:#16324F; --text:#2C3E50; --dim:#5A6B7C;
+  --gold:#1F5B94; --gold-light:#12866E; --gold-dim:#7DA3C8;
+  --turq:#0E7C63; --turq-light:#1F5B94; --turq-bright:#12866E;
+  --primary:#2E75B6;
+}
+code{background:#EEF3F8;color:#1F5B94;font-family:'JetBrains Mono',monospace;font-size:0.85em;padding:0.1em 0.35em;border-radius:4px;}
+.callout.cta{background:#EEF3F8;border:1px solid #2E75B6;border-radius:12px;padding:22px 24px;margin:36px 0 10px;}
+.callout.cta p{margin:0;color:#2C3E50;}
+.foot{color:#5A6B7C;font-size:13px;margin-top:40px;border-top:1px solid #D7E0EA;padding-top:18px;}
+.foot a{color:#1F5B94;}
+</style>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","headline":"What Happens When an AI Model Is Deprecated?","datePublished":"2026-07-27","author":{"@type":"Organization","name":"ABUZ8 AI"}}
+</script>
+</head>
+<body>
+<div class="container">
+  <a href="/blog/" class="back">&larr; ABUZ8 BLOG</a>
+  <h1>What Happens When an AI Model Is Deprecated?</h1>
+  <div class="meta-row"><span>AI AGENTS</span><span class="dot"></span><span>JULY 27, 2026</span><span class="dot"></span><span>6 MIN READ</span></div>
+
+  <p><strong>Model deprecation</strong> is when an AI provider announces that a model you may be using will be shut off on a specific date — after which requests to it stop working. It's a routine part of how cloud AI operates, and if you've built anything on top of a hosted model, it's the event most likely to break your product without warning. This guide explains what deprecation actually involves, why "just switch to the newer model" is rarely as simple as it sounds, and how to make a sunset date a non-event instead of a fire drill.</p>
+
+  <h2>What deprecation actually means</h2>
+  <p>A provider hosts models on their servers. Running old versions costs them money and holds back the hardware they'd rather point at newer ones, so periodically they announce a model is deprecated: it still works for now, but there's a date after which it's gone. You'll usually get a migration window — weeks to months — and a recommended replacement. The catch is that the clock is theirs. You didn't choose the timing, the replacement, or the behavior change that comes with it. You just got told when your current setup expires.</p>
+
+  <h2>Why "just use the newer model" isn't simple</h2>
+  <p>On paper, migrating sounds trivial: point your code at the new model name and move on. In practice, a newer model is a <em>different</em> model, and different models behave differently. Output formatting shifts. Tone changes. The prompts you spent months tuning to the old model's quirks now produce subtly different results. Edge cases you'd quietly patched around resurface because the new model handles them differently. And the newer model often costs more per <a href="/blog/what-is-a-token-in-ai" class="in">token</a>, so your bill can jump even when your usage doesn't. "Equivalent replacement" is a marketing phrase, not an engineering guarantee.</p>
+
+  <h2>The hidden cost: your tuning evaporates</h2>
+  <p>Everything you built on top of a specific model is calibrated to that model. Your prompts, your output parsers, your quality expectations, the behavior your users have come to rely on — all of it assumes the model underneath stays the same. Deprecation pulls that foundation out. The work isn't swapping a string; it's re-validating that your whole stack still produces acceptable output on the replacement, under a deadline you didn't set. Teams that treated the model as a permanent fixture discover on sunset day exactly how much invisible work was resting on it. This is <a href="/blog/llm-provider-lock-in" class="in">provider lock-in</a> presenting its bill.</p>
+
+  <h2>Why it keeps happening</h2>
+  <p>Deprecation isn't a provider being careless — it's the business model. Hosted AI improves by moving everyone to newer models, and keeping old ones alive forever is a cost they have every incentive to shed. So this will keep happening, on a cadence you don't control, for as long as your intelligence is rented. The frequency is the point: if you're on cloud models, plan for deprecation as a recurring event, not a one-time surprise. The only real question is whether each one is a config change or a crisis.</p>
+
+  <h2>How to make deprecation a non-event</h2>
+  <p>Three practices turn a sunset date into a shrug. First, keep a living <strong>evaluation set</strong> — a batch of representative inputs with known-good outputs you can run against any candidate model in minutes. When a replacement lands, you measure it instead of hoping. Second, run <a href="/blog/multi-provider-llm-routing" class="in">multi-provider routing</a> so no single model is a single point of failure; if one is deprecated, traffic shifts to others while you evaluate. Third — and this is the only true insurance — keep at least one <a href="/blog/run-your-own-ai-model" class="in">model you host yourself</a>. An open-weights model on your own hardware has no sunset date. Nobody can retire it out from under you, because nobody but you controls it.</p>
+
+  <h2>Own the exit</h2>
+  <p>You don't have to abandon cloud models — they're often the best tool for the job, and chasing the frontier means using hosted models. The move is to never be <em>trapped</em> on one. Build the abstraction layer, keep the eval set current, route across providers, and hold a local fallback in reserve. Do that and deprecation stops being a threat and becomes what it should be: a routine notification you handle in an afternoon. The teams that panic on sunset day are the ones who assumed the model would always be there. The ones who barely notice are the ones who planned their exit before they needed it.</p>
+
+  <div class="callout cta">
+    <p><strong>Every hosted model has an expiration date. A model you own doesn't.</strong> QADIR OS routes across 100+ cloud brains with automatic fallback, and runs open-weights models on your own hardware as a foundation nobody can deprecate. When a provider sunsets a model, you swap and keep moving. <a href="/" class="in">Join QADIR OS early access</a>.</p>
+  </div>
+  <div class="foot">Built by <a href="/">ABUZ8 LLC</a> — we're building QADIR OS, the sovereign agentic operating system.</div>
+</div>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+<script src="/blog/_blog-shared.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>

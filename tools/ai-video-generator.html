@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<link rel="stylesheet" href="/assets/css/abuz8-mach3.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Video Generator — ABUZ8</title>
+    <link rel="canonical" href="https://abuz8ai.com/tools/ai-video-generator-pro">
+<meta name="description" content="Generate cinematic videos from text or images. Powered by LTX-2 and Wan 2.2 technology. High-fidelity AI video production.">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --lapis: #0a1628;
+  --gold: #c9a84c;
+  --turq: #0e9f6e;
+  --text: #e8e4d8;
+  --dim: #8a9aaa;
+  --border: #1a2e50;
+  --card: #0d1a30;
+  --cream: #f5f0e8;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: var(--lapis); color: var(--text); font-family: 'Inter', sans-serif; line-height: 1.6; min-height: 100vh; }
+.container { max-width: 1000px; margin: 0 auto; padding: 40px 20px; }
+h1 { font-family: 'Playfair Display', serif; font-size: clamp(2.2rem, 5vw, 4rem); color: var(--cream); margin-bottom: 10px; }
+.sub { color: var(--dim); margin-bottom: 40px; font-size: 18px; font-weight: 300; }
+
+.tool-panel { background: var(--card); border: 1px solid var(--border); border-radius: 24px; padding: 40px; position: relative; overflow: hidden; }
+.tool-panel::after { content: 'CINEMATIC ENGINE'; position: absolute; top: 20px; right: -30px; background: var(--turq); color: white; padding: 5px 40px; font-size: 10px; font-weight: 900; transform: rotate(45deg); letter-spacing: 1px; }
+
+textarea { width: 100%; height: 120px; background: #0f2040; border: 1px solid var(--border); border-radius: 12px; color: white; padding: 20px; font-size: 16px; margin-bottom: 25px; resize: none; }
+textarea:focus { border-color: var(--gold); outline: none; }
+
+.video-options { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; margin-bottom: 30px; }
+.opt-box { background: var(--lapis); border: 1px solid var(--border); padding: 15px; border-radius: 10px; text-align: center; cursor: pointer; transition: all 0.2s; }
+.opt-box:hover { border-color: var(--turq); }
+.opt-box.active { border-color: var(--gold); background: rgba(201, 168, 76, 0.05); }
+
+.btn { width: 100%; padding: 18px; border-radius: 12px; font-weight: 800; cursor: pointer; border: none; font-size: 18px; text-transform: uppercase; letter-spacing: 2px; }
+.btn-gold { background: var(--gold); color: var(--lapis); }
+
+.preview-reel { margin-top: 50px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.reel-item { border-radius: 12px; overflow: hidden; border: 1px solid var(--border); background: #000; aspect-ratio: 16/9; }
+
+.modal { display: none; position: fixed; inset: 0; background: rgba(10,22,40,0.95); backdrop-filter: blur(15px); z-index: 1000; align-items: center; justify-content: center; }
+.modal-content { background: #111f38; border: 1px solid var(--turq); border-radius: 24px; padding: 45px; max-width: 500px; width: 90%; text-align: center; }
+</style>
+<script src="_abuz8-live-brain.js" defer></script>
+
+<script src="_abuz8-config.js" defer></script>
+</head>
+<body>
+<script>
+// Cloud fallback: if ComfyUI is unreachable, redirect generate calls to Workers AI
+(function(){
+  var comfyUrl = (window.ABUZ8_COMFY_BASE) || 'https://comfy.abuz8ai.com';
+  var checked = false, comfyLive = false;
+  window._checkComfy = async function(){
+    if(checked) return comfyLive;
+    try{
+      var r = await fetch(comfyUrl+'/system_stats',{signal:AbortSignal.timeout(3000)});
+      comfyLive = r.ok; checked = true;
+    }catch(_){ comfyLive = false; checked = true; }
+    return comfyLive;
+  };
+  window._cloudGenerate = async function(prompt){
+    try{
+      var r = await fetch('/api/ai-image',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt:prompt})});
+      if(!r.ok) return null;
+      var blob = await r.blob();
+      return URL.createObjectURL(blob);
+    }catch(_){ return null; }
+  };
+})();
+</script>
+
+<div class="container">
+  <header>
+    <a href="../tools.html" style="color:var(--gold); text-decoration:none; font-size:12px;">&larr; BACK TO SPACEPORT</a>
+    <h1 style="margin-top:20px;">AI Cinematic<br>Video Engine</h1>
+    <p class="sub">Turn text or images into high-fidelity video clips. Powered by LTX-2 (Fast) and Wan 2.2 (High-Def) distilled models.</p>
+  </header>
+
+  <div class="tool-panel">
+    <textarea id="prompt" placeholder="Describe your cinematic vision (e.g. 'A futuristic city in the desert with flying vehicles, 4k, cinematic lighting')..."></textarea>
+    
+    <div class="video-options">
+      <div class="opt-box active">
+        <strong style="display:block; font-size:12px; color:var(--gold);">SPEED</strong>
+        <span style="font-size:10px; color:var(--dim);">LTX-2 (5s Render)</span>
+      </div>
+      <div class="opt-box">
+        <strong style="display:block; font-size:12px; color:var(--turq);">QUALITY</strong>
+        <span style="font-size:10px; color:var(--dim);">Wan 2.2 (14B)</span>
+      </div>
+      <div class="opt-box">
+        <strong style="display:block; font-size:12px; color:white;">ANIMATE</strong>
+        <span style="font-size:10px; color:var(--dim);">Image to Video</span>
+      </div>
+    </div>
+
+    <button class="btn btn-gold" data-gpu-required onclick="generateVideo()">Generate Cinematic Clip</button>
+  </div>
+
+  <div id="result-display" style="display:none;margin-top:30px;"></div>
+
+  <div class="preview-reel">
+    <div class="reel-item"></div>
+    <div class="reel-item"></div>
+    <div class="reel-item"></div>
+  </div>
+</div>
+
+<div id="wl-modal" class="modal">
+  <div class="modal-content">
+    <h2 style="font-family:'Playfair Display'; color:white; margin-bottom:15px;">Elite Compute Required</h2>
+    <p style="color:var(--dim); margin-bottom:25px;">AI Video generation is currently limited to Early Access members due to high server load. Join the queue below.</p>
+    <form onsubmit="submitWaitingList(event)" style="display:flex; flex-direction:column; gap:15px;">
+      <input type="email" id="wl-email" placeholder="Enter your email" required style="padding:15px; border-radius:10px; border:1px solid var(--border); background:var(--lapis); color:white; font-size:16px;">
+      <button type="submit" class="btn btn-gold">Join the Alpha Queue</button>
+    </form>
+    <div id="wl-status" style="margin-top:15px; font-size:13px;"></div>
+    <button class="btn" style="background:transparent; color:var(--dim); margin-top:15px; font-size:12px;" onclick="closeModal()">Maybe later</button>
+  </div>
+</div>
+
+<script src="/assets/js/gpu-tools.js"></script>
+<script>
+document.querySelectorAll('.opt-box').forEach(el=>{el.addEventListener('click',()=>{document.querySelectorAll('.opt-box').forEach(x=>x.classList.remove('active'));el.classList.add('active');});});
+function closeModal() { document.getElementById('wl-modal').style.display = 'none'; }
+
+async function generateVideo() {
+  const prompt = document.getElementById('prompt').value.trim();
+  if (!prompt) { document.getElementById('prompt').style.borderColor = '#ef4444'; return; }
+  const activeOpt = document.querySelector('.opt-box.active');
+  const mode = activeOpt?.querySelector('strong')?.textContent?.trim() || 'SPEED';
+  const btn = document.querySelector('[data-gpu-required]');
+  btn.textContent = 'RENDERING...'; btn.disabled = true;
+  try {
+    let workflow = 'comfyui_video';
+    if (mode === 'SPEED') workflow = 'comfyui_ltx_t2v';
+    else if (mode === 'QUALITY') workflow = 'comfyui_video';
+    const result = await submitToComfyUI(workflow, {
+      prompt: prompt + ', cinematic, high quality, 4k'
+    });
+    if (result && result.video) {
+      const rd = document.getElementById('result-display');
+      rd.style.display = 'block';
+      rd.innerHTML = '<video controls autoplay style="width:100%;border-radius:12px;border:1px solid var(--border);" src="' + result.video + '"></video><p style="text-align:center;margin-top:12px;"><a href="' + result.video + '" download style="color:var(--gold);font-weight:700;">Download Video</a></p>';
+    } else if (result && result.images && result.images[0]) showResult(result.images[0]);
+    else if (result && result.output) showResult(result.output);
+    gtag('event','tool_generate',{tool:'ai-video-generator'});
+  } catch(e) { alert('Video generation error: ' + e.message); }
+  finally { btn.textContent = 'GENERATE CINEMATIC CLIP'; btn.disabled = false; }
+}
+
+async function submitWaitingList(e) {
+  e.preventDefault();
+  const email = document.getElementById('wl-email').value;
+  const status = document.getElementById('wl-status');
+  status.textContent = 'Securing your spot...';
+  try {
+    const response = await fetch('/api/waitlist', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, product_id: 'ai-video', source: 'comfyui-tool' })
+    });
+    const data = await response.json();
+    if (data.success) { status.textContent = 'Success!'; status.style.color = '#0e9f6e'; setTimeout(closeModal, 2000); }
+  } catch (err) { status.textContent = 'Error occurred.'; }
+}
+</script>
+
+<link rel="stylesheet" href="/assets/css/zait-chat.css">
+<script src="/assets/js/zait-chat.js"></script>
+
+<script src="/assets/js/dfy-banner.js" async></script>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+<script src="/tools/_tools-shared.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>

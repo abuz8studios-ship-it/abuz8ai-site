@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<link rel="stylesheet" href="/assets/css/abuz8-mach3.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI SEO Meta Generator — ABUZ8</title>
+<meta name="description" content="Generate perfectly optimized Meta Titles and Descriptions that rank and get clicks. Join the ABUZ8 waiting list.">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@300;400;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --lapis: #0a1628;
+  --gold: #c9a84c;
+  --text: #e8e4d8;
+  --dim: #8a9aaa;
+  --border: #1a2e50;
+  --card: #0d1a30;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: var(--lapis); color: var(--text); font-family: 'Inter', sans-serif; line-height: 1.6; min-height: 100vh; }
+.container { max-width: 1000px; margin: 0 auto; padding: 40px 20px; }
+h1 { font-family: 'Playfair Display', serif; font-size: clamp(2.2rem, 5vw, 4rem); color: white; margin-bottom: 10px; }
+.sub { color: var(--dim); margin-bottom: 40px; font-size: 18px; font-weight: 300; }
+
+.tool-panel { background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 35px; }
+.input-group { margin-bottom: 20px; }
+.input-group label { display: block; font-size: 11px; color: var(--gold); margin-bottom: 8px; font-weight: 700; text-transform: uppercase; }
+input, textarea { width: 100%; padding: 12px; background: #0f2040; border: 1px solid var(--border); border-radius: 8px; color: white; }
+
+.serp-preview { background: #fff; color: #1a0dab; padding: 25px; border-radius: 8px; margin-top: 50px; font-family: arial, sans-serif; }
+.serp-title { font-size: 20px; line-height: 1.3; margin-bottom: 3px; cursor: pointer; }
+.serp-url { color: #006621; font-size: 14px; margin-bottom: 3px; }
+.serp-desc { color: #545454; font-size: 14px; line-height: 1.5; }
+
+.btn { width: 100%; padding: 16px; border-radius: 10px; font-weight: 700; cursor: pointer; border: none; text-transform: uppercase; }
+.btn-gold { background: var(--gold); color: var(--lapis); }
+
+.modal { display: none; position: fixed; inset: 0; background: rgba(10,22,40,0.9); backdrop-filter: blur(10px); z-index: 1000; align-items: center; justify-content: center; }
+.modal-content { background: #111f38; border: 1px solid var(--gold); border-radius: 24px; padding: 40px; max-width: 500px; width: 90%; text-align: center; }
+</style>
+<script src="_abuz8-live-brain.js" defer></script>
+
+<script src="_abuz8-config.js" defer></script>
+<link rel="canonical" href="https://abuz8ai.com/tools/ai-seo-meta">
+</head>
+<body>
+
+<div class="container">
+  <header>
+    <a href="../tools.html" style="color:var(--gold); text-decoration:none; font-size:12px;">&larr; BACK TO SPACEPORT</a>
+    <h1 style="margin-top:20px;">AI SEO Meta<br>Optimizer</h1>
+    <p class="sub">Dominating the SERPs starts here. Generate pixel-perfect Meta tags that satisfy both search bots and human curiosity.</p>
+  </header>
+
+  <div class="tool-panel">
+    <div class="input-group">
+      <label>Focus Keyword</label>
+      <input type="text" placeholder="e.g. 'AI project management'">
+    </div>
+    <div class="input-group">
+      <label>Page Content / Summary</label>
+      <textarea placeholder="Paste your page text here for context..."></textarea>
+    </div>
+
+    <button class="btn btn-gold" onclick="generateSEO()">Generate SEO Tags</button>
+  </div>
+
+  <div id="results" style="display:none; background:var(--card); border:1px solid var(--border); border-radius:20px; padding:35px; margin-top:30px;">
+    <h3 style="font-family:'Playfair Display'; color:white; margin-bottom:15px;">Generated SEO Tags</h3>
+    <div id="results-content" style="white-space:pre-wrap; line-height:1.8; font-size:14px;"></div>
+    <div style="display:flex; gap:10px; margin-top:20px;">
+      <button class="btn btn-gold" style="width:auto; flex:1;" onclick="copyResults()">Copy All</button>
+      <button class="btn" style="width:auto; flex:1; background:transparent; border:1px solid var(--border); color:var(--dim);" onclick="generateSEO()">Regenerate</button>
+    </div>
+  </div>
+
+  <div id="serp-preview" class="serp-preview">
+    <div class="serp-title">Your Page Title Will Appear Here | Site Name</div>
+    <div class="serp-url">https://yourdomain.com > page-url</div>
+    <div class="serp-desc">Your meta description will appear here. We ensure it's the perfect length to avoid truncation and includes your primary keywords naturally.</div>
+  </div>
+</div>
+
+<div id="wl-modal" class="modal">
+  <div class="modal-content">
+    <h2 style="font-family:'Playfair Display'; color:white; margin-bottom:15px;">SEO Early Access</h2>
+    <p style="color:var(--dim); margin-bottom:25px;">QADIR OS is currently in private beta. Join the list to automate your entire site's SEO.</p>
+    <form onsubmit="submitWaitingList(event)" style="display:flex; flex-direction:column; gap:15px;">
+      <input type="email" id="wl-email" placeholder="Enter your email" required style="padding:12px; border-radius:8px; border:1px solid var(--border); background:var(--lapis); color:white;">
+      <button type="submit" class="btn btn-gold">Join the Beta</button>
+    </form>
+    <div id="wl-status" style="margin-top:15px; font-size:13px;"></div>
+    <button class="btn" style="background:transparent; color:var(--dim); margin-top:10px;" onclick="closeModal()">Close</button>
+  </div>
+</div>
+
+<script>
+const AI_WORKER='/api/waitlist';
+function openModal() { document.getElementById('wl-modal').style.display = 'flex'; }
+function closeModal() { document.getElementById('wl-modal').style.display = 'none'; }
+
+async function generateSEO(){
+  const inputs=document.querySelectorAll('.input-group input, .input-group textarea');
+  const keyword=inputs[0]?.value||'';
+  const content=inputs[1]?.value||'';
+  if(!keyword){alert('Please enter a focus keyword.');return;}
+  const btn=document.querySelector('.tool-panel .btn');
+  btn.textContent='GENERATING...';btn.disabled=true;
+  try{
+    const res=await fetch(AI_WORKER,{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({tool:'seo-meta',data:{keyword,content}})});
+    const json=await res.json();
+    if(json.success){
+      document.getElementById('results').style.display='block';
+      document.getElementById('results-content').textContent=json.result;
+      document.getElementById('results').scrollIntoView({behavior:'smooth'});
+      // Update SERP preview with first result
+      const lines=json.result.split('\n');
+      const titleLine=lines.find(l=>l.toLowerCase().includes('meta title'));
+      const descLine=lines.find(l=>l.toLowerCase().includes('meta description'));
+      if(titleLine){document.querySelector('.serp-title').textContent=titleLine.replace(/.*?:\s*/,'').replace(/\(.*?\)/,'').trim();}
+      if(descLine){document.querySelector('.serp-desc').textContent=descLine.replace(/.*?:\s*/,'').replace(/\(.*?\)/,'').trim();}
+      gtag('event','tool_generate',{tool:'ai-seo-meta'});
+    }else{throw new Error(json.error);}
+  }catch(e){alert('Generation error: '+e.message);}
+  finally{btn.textContent='GENERATE SEO TAGS';btn.disabled=false;}
+}
+function copyResults(){navigator.clipboard.writeText(document.getElementById('results-content').textContent);alert('Copied!');}
+
+async function submitWaitingList(e) {
+  e.preventDefault();
+  const email = document.getElementById('wl-email').value;
+  const status = document.getElementById('wl-status');
+  status.textContent = 'Registering...';
+  try {
+    const response = await fetch('/api/waitlist', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, product_id: 'ai-seo-meta', source: 'llm-tool' })
+    });
+    const data = await response.json();
+    if (data.success) {
+      status.textContent = 'Success! You\'re in.';
+      status.style.color = '#0e9f6e';
+      setTimeout(closeModal, 2000);
+    }
+  } catch (err) { status.textContent = 'Error occurred.'; }
+}
+</script>
+
+
+<link rel="stylesheet" href="/assets/css/zait-chat.css">
+<script src="/assets/js/zait-chat.js"></script>
+
+<script src="/assets/js/dfy-banner.js" async></script>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+<script src="/tools/_tools-shared.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>

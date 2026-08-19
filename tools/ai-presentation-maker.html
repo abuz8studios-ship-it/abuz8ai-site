@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Presentation Maker | ABUZ8</title>
+<style>
+  :root{--lapis:#0a1628;--lapis2:#0f1f3d;--lapis3:#162444;--gold:#c9a84c;--gold2:#e0bc6a;--turq:#0e9f6e;--turq2:#22a090;--cream:#f5f0e8;--cream2:#ede8df;--red:#e05555;--green:#3db87a;--text:#e8e4da;--muted:#8a9ab5;}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--lapis);color:var(--text);font-family:'Inter',system-ui,sans-serif;min-height:100vh;}
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;500;600&display=swap');
+  header{background:linear-gradient(135deg,var(--lapis2),var(--lapis3));border-bottom:1px solid rgba(201,168,76,0.3);padding:20px 40px;display:flex;align-items:center;gap:16px;}
+  .logo{font-family:'Playfair Display',serif;font-size:1.6rem;color:var(--gold);letter-spacing:1px;}
+  .logo span{color:var(--turq);}
+  header p{color:var(--muted);font-size:0.9rem;}
+  .hero{background:linear-gradient(135deg,var(--lapis3),var(--lapis2));padding:40px;text-align:center;border-bottom:1px solid rgba(201,168,76,0.15);}
+  .hero h1{font-family:'Playfair Display',serif;font-size:2.2rem;color:var(--gold);margin-bottom:8px;}
+  .hero p{color:var(--muted);max-width:640px;margin:0 auto;}
+  .main{max-width:1200px;margin:0 auto;padding:40px 20px;}
+  .card{background:var(--lapis2);border:1px solid rgba(201,168,76,0.2);border-radius:12px;padding:28px;margin-bottom:24px;}
+  .card h2{font-family:'Playfair Display',serif;color:var(--gold);font-size:1.3rem;margin-bottom:20px;padding-bottom:12px;border-bottom:1px solid rgba(201,168,76,0.2);}
+  .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  @media(max-width:700px){.form-grid{grid-template-columns:1fr;}}
+  .form-group{margin-bottom:0;}
+  label{display:block;color:var(--muted);font-size:0.8rem;font-weight:600;letter-spacing:0.5px;text-transform:uppercase;margin-bottom:6px;}
+  input[type=text],select,textarea{width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(138,154,181,0.3);border-radius:8px;padding:10px 14px;color:var(--text);font-family:inherit;font-size:0.9rem;transition:border 0.2s;}
+  input[type=text]:focus,select:focus,textarea:focus{outline:none;border-color:var(--gold);background:rgba(201,168,76,0.04);}
+  textarea{resize:vertical;}
+  select option{background:var(--lapis2);}
+  .structure-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-top:12px;}
+  .struct-opt{background:rgba(255,255,255,0.04);border:1px solid rgba(138,154,181,0.2);border-radius:8px;padding:12px;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;gap:10px;}
+  .struct-opt:hover{border-color:var(--gold);background:rgba(201,168,76,0.06);}
+  .struct-opt.selected{border-color:var(--gold);background:rgba(201,168,76,0.1);}
+  .struct-icon{font-size:1.4rem;}
+  .struct-name{font-size:0.9rem;font-weight:600;color:var(--text);}
+  .struct-desc{font-size:0.75rem;color:var(--muted);margin-top:2px;}
+  .btn-row{display:flex;gap:12px;flex-wrap:wrap;margin-top:20px;}
+  .btn{padding:12px 28px;background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--lapis);font-weight:700;font-size:0.95rem;border:none;border-radius:8px;cursor:pointer;transition:all 0.2s;font-family:inherit;}
+  .btn:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(201,168,76,0.4);}
+  .btn-sec{background:transparent;border:1px solid var(--turq);color:var(--turq);}
+  .btn-sec:hover{background:rgba(26,138,122,0.1);box-shadow:none;transform:none;}
+  .btn-sm{padding:7px 16px;font-size:0.8rem;}
+  /* Output */
+  #outputArea{display:none;}
+  .deck-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;flex-wrap:gap;gap:16px;}
+  .deck-title{font-family:'Playfair Display',serif;font-size:1.8rem;color:var(--gold);}
+  .deck-meta{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:24px;}
+  .deck-tag{background:rgba(201,168,76,0.12);border:1px solid rgba(201,168,76,0.25);color:var(--gold2);padding:5px 14px;border-radius:20px;font-size:0.8rem;}
+  /* Slide layout */
+  .slides-container{display:grid;grid-template-columns:220px 1fr;gap:24px;align-items:start;}
+  @media(max-width:800px){.slides-container{grid-template-columns:1fr;}}
+  .slide-nav{background:var(--lapis2);border:1px solid rgba(201,168,76,0.2);border-radius:12px;overflow:hidden;position:sticky;top:20px;}
+  .slide-nav-title{padding:14px 16px;background:rgba(201,168,76,0.08);border-bottom:1px solid rgba(201,168,76,0.2);font-size:0.8rem;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:0.5px;}
+  .slide-nav-item{padding:10px 16px;border-bottom:1px solid rgba(255,255,255,0.05);cursor:pointer;transition:all 0.15s;display:flex;align-items:center;gap:8px;}
+  .slide-nav-item:hover{background:rgba(201,168,76,0.06);}
+  .slide-nav-item.active{background:rgba(201,168,76,0.12);border-left:3px solid var(--gold);}
+  .slide-nav-num{font-size:0.75rem;color:var(--muted);min-width:20px;}
+  .slide-nav-name{font-size:0.85rem;color:var(--text);}
+  /* Slide view */
+  .slide-view-area{}
+  .slide-card{background:var(--lapis2);border:1px solid rgba(201,168,76,0.2);border-radius:12px;overflow:hidden;display:none;}
+  .slide-card.active{display:block;}
+  .slide-top{background:linear-gradient(135deg,rgba(201,168,76,0.12),rgba(26,138,122,0.08));padding:28px 32px;border-bottom:1px solid rgba(201,168,76,0.15);}
+  .slide-num{font-size:0.8rem;color:var(--turq2);font-weight:600;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;}
+  .slide-title{font-family:'Playfair Display',serif;font-size:1.6rem;color:var(--gold);}
+  .slide-subtitle{color:var(--muted);font-size:0.9rem;margin-top:4px;}
+  .slide-body{padding:28px 32px;}
+  .section-lbl{font-size:0.75rem;font-weight:700;color:var(--turq2);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:12px;margin-top:20px;}
+  .section-lbl:first-child{margin-top:0;}
+  .bullet-list{list-style:none;margin-bottom:8px;}
+  .bullet-list li{padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.05);color:var(--text);font-size:0.92rem;line-height:1.5;display:flex;align-items:flex-start;gap:10px;}
+  .bullet-list li:last-child{border:none;}
+  .bullet-list li::before{content:'◆';color:var(--gold);font-size:0.6rem;margin-top:5px;flex-shrink:0;}
+  .hook-box{background:linear-gradient(135deg,rgba(201,168,76,0.1),rgba(26,138,122,0.08));border:1px solid rgba(201,168,76,0.25);border-radius:10px;padding:16px 20px;margin-bottom:16px;}
+  .hook-box p{font-size:1rem;color:var(--cream);line-height:1.6;font-style:italic;}
+  .stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px;}
+  .stat-box{background:var(--lapis3);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:16px;text-align:center;}
+  .stat-num{font-family:'Playfair Display',serif;font-size:1.6rem;color:var(--gold);}
+  .stat-lbl{font-size:0.75rem;color:var(--muted);margin-top:4px;}
+  .note-box{background:rgba(26,138,122,0.08);border-left:3px solid var(--turq);border-radius:0 8px 8px 0;padding:12px 16px;margin-top:16px;}
+  .note-box p{font-size:0.85rem;color:var(--muted);font-style:italic;}
+  .note-box strong{color:var(--turq2);font-style:normal;}
+  .cta-box{background:linear-gradient(135deg,rgba(201,168,76,0.15),rgba(26,138,122,0.12));border:1px solid rgba(201,168,76,0.3);border-radius:12px;padding:20px 24px;text-align:center;}
+  .cta-box h3{font-family:'Playfair Display',serif;font-size:1.3rem;color:var(--gold);margin-bottom:8px;}
+  .cta-box p{color:var(--text);font-size:0.95rem;}
+  .visual-hint{background:rgba(201,168,76,0.06);border:1px dashed rgba(201,168,76,0.25);border-radius:8px;padding:12px 16px;margin-top:12px;}
+  .visual-hint p{font-size:0.82rem;color:var(--gold2);}
+  .visual-hint strong{display:block;margin-bottom:2px;}
+  .nav-arrows{display:flex;gap:12px;padding:16px 24px;background:rgba(0,0,0,0.15);border-top:1px solid rgba(255,255,255,0.06);justify-content:space-between;align-items:center;}
+  .nav-arrows .btn{margin:0;}
+  .slide-progress{font-size:0.85rem;color:var(--muted);}
+  .copy-slide-btn{padding:6px 14px;font-size:0.78rem;background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.3);color:var(--gold2);border-radius:6px;cursor:pointer;font-family:inherit;transition:all 0.2s;}
+  .copy-slide-btn:hover{background:rgba(201,168,76,0.2);}
+</style>
+<script src="_abuz8-live-brain.js" defer></script>
+
+<script src="_abuz8-config.js" defer></script>
+<link rel="canonical" href="https://abuz8ai.com/tools/ai-presentation-maker">
+<meta name="description" content="AI Presentation Maker — Slide outlines and content. Free, no signup, runs entirely in your browser. One of 169 free AI and developer tools by ABUZ8.">
+</head>
+<body>
+<header>
+  <div>
+    <div class="logo">ABU<span>Z8</span></div>
+    <p>Sovereign AI Infrastructure</p>
+  </div>
+</header>
+<div class="hero">
+  <h1>AI Presentation Maker</h1>
+  <p>Describe your presentation and get a complete slide-by-slide outline with titles, talking points, hooks, stats, visual suggestions, and speaker notes — ready to build in minutes.</p>
+</div>
+<div class="main">
+  <div id="inputSection">
+    <div class="card">
+      <h2>🎯 Presentation Brief</h2>
+      <div class="form-grid" style="margin-bottom:16px">
+        <div class="form-group">
+          <label>Presentation Topic</label>
+          <input type="text" id="topic" placeholder="e.g. Why we're the best AI platform for mid-market SaaS" />
+        </div>
+        <div class="form-group">
+          <label>Presenter Name / Company</label>
+          <input type="text" id="presenter" placeholder="e.g. Ahmad — ABUZ8 AI" />
+        </div>
+        <div class="form-group">
+          <label>Target Audience</label>
+          <select id="audience">
+            <option value="investors">Investors / VCs</option>
+            <option value="enterprise">Enterprise Buyers</option>
+            <option value="team">Internal Team</option>
+            <option value="board">Board of Directors</option>
+            <option value="customers">Customers / Prospects</option>
+            <option value="conference">Conference / Event</option>
+            <option value="partners">Partners / Channels</option>
+            <option value="recruits">Recruits / Candidates</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Goal of Presentation</label>
+          <select id="goal">
+            <option value="raise">Raise funding / Close investment</option>
+            <option value="sell">Sell product / service</option>
+            <option value="align">Align team / Share strategy</option>
+            <option value="educate">Educate / Share knowledge</option>
+            <option value="update">Board / stakeholder update</option>
+            <option value="inspire">Inspire / Keynote</option>
+            <option value="hire">Recruit talent</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Industry / Vertical</label>
+          <select id="industry">
+            <option value="ai">AI / Tech</option>
+            <option value="saas">SaaS</option>
+            <option value="fintech">Fintech</option>
+            <option value="health">Healthcare</option>
+            <option value="ecomm">E-Commerce</option>
+            <option value="enterprise">Enterprise Software</option>
+            <option value="consumer">Consumer</option>
+            <option value="general">General</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Slides Count</label>
+          <select id="slideCount">
+            <option value="5">5 slides (lightning)</option>
+            <option value="8" selected>8 slides (standard)</option>
+            <option value="12">12 slides (full deck)</option>
+            <option value="15">15 slides (comprehensive)</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group" style="margin-bottom:16px">
+        <label>Key Points to Include (optional)</label>
+        <textarea id="keyPoints" rows="3" placeholder="e.g. We have 200 enterprise customers, $2M ARR, 40% QoQ growth, patent-pending technology..."></textarea>
+      </div>
+      <div class="form-group" style="margin-bottom:4px">
+        <label>Tone</label>
+        <select id="tone">
+          <option value="confident">Confident & Bold</option>
+          <option value="professional">Professional & Formal</option>
+          <option value="friendly">Friendly & Accessible</option>
+          <option value="urgent">Urgent & Provocative</option>
+          <option value="data">Data-Driven & Analytical</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>📐 Deck Structure</h2>
+      <p style="color:var(--muted);font-size:0.9rem;margin-bottom:12px">Choose a template structure (auto-adapted to your count and goal):</p>
+      <div class="structure-grid">
+        <div class="struct-opt selected" data-struct="pitch" onclick="selectStruct(this)">
+          <div class="struct-icon">🚀</div>
+          <div><div class="struct-name">Investor Pitch</div><div class="struct-desc">Problem→Solution→Market→Traction→Ask</div></div>
+        </div>
+        <div class="struct-opt" data-struct="sales" onclick="selectStruct(this)">
+          <div class="struct-icon">💼</div>
+          <div><div class="struct-name">Sales Deck</div><div class="struct-desc">Pain→Value→Proof→ROI→CTA</div></div>
+        </div>
+        <div class="struct-opt" data-struct="strategy" onclick="selectStruct(this)">
+          <div class="struct-icon">🗺</div>
+          <div><div class="struct-name">Strategy Update</div><div class="struct-desc">Situation→Options→Recommendation→Plan</div></div>
+        </div>
+        <div class="struct-opt" data-struct="keynote" onclick="selectStruct(this)">
+          <div class="struct-icon">🎤</div>
+          <div><div class="struct-name">Keynote / Talk</div><div class="struct-desc">Hook→Story→Insight→Call to Action</div></div>
+        </div>
+        <div class="struct-opt" data-struct="report" onclick="selectStruct(this)">
+          <div class="struct-icon">📊</div>
+          <div><div class="struct-name">Quarterly Report</div><div class="struct-desc">Highlights→Metrics→Deep Dive→Next Steps</div></div>
+        </div>
+        <div class="struct-opt" data-struct="product" onclick="selectStruct(this)">
+          <div class="struct-icon">🛠</div>
+          <div><div class="struct-name">Product Demo</div><div class="struct-desc">Problem→Product→Features→Proof→Pricing</div></div>
+        </div>
+      </div>
+      <div class="btn-row">
+        <button class="btn" onclick="generateDeck()">⚡ Generate Deck Outline</button>
+        <button class="btn btn-sec" onclick="loadDemoConfig()">📋 Demo Config</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- OUTPUT -->
+  <div id="outputArea">
+    <div class="deck-header">
+      <div class="deck-title" id="deckTitle">Presentation</div>
+      <div class="btn-row">
+        <button class="btn btn-sec btn-sm" onclick="backToInput()">← Edit</button>
+        <button class="btn btn-sec btn-sm" onclick="copyFullDeck()">📋 Copy All</button>
+        <button class="btn btn-sm" onclick="downloadDeck()">⬇ Download</button>
+      </div>
+    </div>
+    <div class="deck-meta" id="deckMeta"></div>
+    <div class="slides-container">
+      <div class="slide-nav">
+        <div class="slide-nav-title">Slides</div>
+        <div id="slideNavItems"></div>
+      </div>
+      <div class="slide-view-area" id="slideViewArea"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const STRUCTURES = {
+  pitch:{
+    5:['Cover','Problem','Solution','Traction + Team','The Ask'],
+    8:['Cover','Problem','Solution','Market Size','Product Demo','Traction','Team','The Ask'],
+    12:['Cover','The Problem','Our Solution','Market Opportunity','Product Walkthrough','Business Model','Traction & Metrics','Competitive Landscape','Team','Financials','Roadmap','The Ask'],
+    15:['Cover','Executive Summary','The Problem','Root Causes','Our Solution','How It Works','Market Size','Business Model','Traction & Metrics','Competitive Landscape','Go-to-Market','Team','Financials','Roadmap','The Ask'],
+  },
+  sales:{
+    5:['Cover','The Challenge','Our Solution','Why We Win','Next Steps'],
+    8:['Cover','The Challenge','What\'s at Stake','Our Solution','How It Works','Proof / Case Studies','ROI Model','Next Steps'],
+    12:['Cover','Your World Today','The Core Challenge','Cost of Inaction','Our Solution','Key Features','How We\'re Different','Case Study 1','Case Study 2','Pricing','Implementation Plan','Next Steps'],
+    15:['Cover','About Us','Your World Today','The Core Challenge','Root Causes','Cost of Inaction','Our Solution','Key Features','How We\'re Different','Integrations','Case Study 1','Case Study 2','ROI Calculator','Pricing & Packages','Next Steps'],
+  },
+  strategy:{
+    5:['Cover','Where We Are','Where We\'re Going','The Plan','Owner & Timeline'],
+    8:['Cover','Situation Analysis','Strategic Options','Recommended Direction','Initiative Breakdown','Resource Requirements','Risks & Mitigations','Roadmap & Next Steps'],
+    12:['Cover','Executive Summary','Situation Analysis','Market Forces','Internal Assessment','Strategic Options','Recommended Direction','Initiative Breakdown','Resource Requirements','Risks & Mitigations','OKRs & KPIs','Roadmap'],
+    15:['Cover','Executive Summary','Context & Background','Market Forces','Internal Assessment','Competitive Landscape','Strategic Options','Recommended Direction','Pillar 1','Pillar 2','Pillar 3','Resource Plan','Risks & Mitigations','OKRs & KPIs','Roadmap'],
+  },
+  keynote:{
+    5:['Opening Hook','The Big Idea','The Evidence','Stories & Examples','Call to Action'],
+    8:['Opening Hook','Set the Stage','The Problem Nobody Talks About','The Insight','The Evidence','Real Stories','What You Can Do','Call to Action'],
+    12:['Opening Hook','About Me / Credibility','Setting the Scene','The Big Problem','Why It\'s Worse Than You Think','The Insight That Changes Everything','The Evidence','Story 1','Story 2','Framework / Model','What This Means for You','Call to Action'],
+    15:['Opening Hook','About Me / Credibility','Setting the Scene','Act 1: The Problem','Why It\'s Urgent','The Hidden Cost','The Turning Point','The Insight','The Evidence','Framework / Model','Story 1','Story 2','Story 3','What This Means for You','Call to Action'],
+  },
+  report:{
+    5:['Cover','Highlights','Key Metrics','Deep Dive','Looking Ahead'],
+    8:['Cover','Quarter in Review','Revenue & Growth','Product Milestones','Customer Success','Team & Operations','Key Learnings','Q3 Priorities'],
+    12:['Cover','Executive Summary','Q2 Highlights','Revenue & ARR','Pipeline & Sales','Product Shipped','Customer Metrics','Team & Hiring','Financial Summary','Key Learnings','Risks & Blockers','Q3 Plan'],
+    15:['Cover','Executive Summary','Q2 Highlights','Revenue & ARR','Pipeline & Sales','Customer Acquisition','Retention & NPS','Product Shipped','Roadmap Progress','Team & Hiring','Financial Summary','Cash Position','Key Learnings','Risks & Blockers','Q3 Plan'],
+  },
+  product:{
+    5:['Cover','The Problem','Product Overview','Key Features','Pricing & Next Steps'],
+    8:['Cover','The Problem','What We Built','Key Features','Live Demo Flow','Customer Proof','Pricing','Getting Started'],
+    12:['Cover','The Problem','Our Approach','Product Overview','Feature: Core Loop','Feature: Intelligence','Feature: Integrations','Feature: Analytics','Customer Success Story','Competitive Matrix','Pricing & Packages','Getting Started'],
+    15:['Cover','The Problem','Root Causes','Our Approach','Product Overview','Feature: Core Loop','Feature: Intelligence','Feature: Integrations','Feature: Reporting','Feature: Admin & Security','Customer Story 1','Customer Story 2','Competitive Matrix','Pricing & Packages','Getting Started'],
+  },
+};
+
+const SLIDE_TEMPLATES = {
+  'Cover':(config)=>({
+    subtitle:`${config.audience_label} | ${config.presenter||'[Presenter]'}`,
+    hook:`"${config.hook}"`,
+    bullets:[],
+    stats:[],
+    visual:'Title slide: Full-bleed background image or bold typography. Company logo top-left. Presenter name + title + date bottom.',
+    notes:`Open with 10 seconds of silence. Let the title breathe. Then deliver the opening hook with conviction. Don't start with "Hi my name is."`,
+  }),
+  'Executive Summary':(config)=>({
+    subtitle:'The 60-second version',
+    hook:'',
+    bullets:[`What we do: ${config.topic||'[topic]'}`,`Why now: Market timing and competitive window`,`Traction: [Key metric] proven in [timeframe]`,`The ask: [Specific ask or decision needed]`],
+    stats:[],
+    visual:'2×2 summary grid: Problem / Solution / Traction / Ask. Each quadrant with 1-line summary.',
+    notes:'This is your failsafe. Some audiences will only remember this slide. Make every word count.',
+  }),
+  'The Problem':(config)=>({
+    subtitle:'Why this matters to your audience',
+    hook:`Every ${config.industry_label} company faces this. Most accept it. We refused to.`,
+    bullets:[`Current reality: [Pain point #1 — make it visceral]`,`The cost: [Quantify the pain in $ or hours]`,`Why it keeps happening: [Root cause]`,`What they've tried: [Existing solutions that failed]`],
+    stats:[{num:'73%',lbl:'Of companies affected'},{num:'$2.4M',lbl:'Avg annual cost'},{num:'18 mo',lbl:'Avg time to fix'}],
+    visual:'Before/After split. Left side: chaotic status quo (red). Right side: the vision (green). Or a "cost of doing nothing" counter.',
+    notes:'Make the audience feel this problem. Use a real story or stat from a company they know.',
+  }),
+  'Problem':(config)=>({
+    subtitle:'The challenge costing your audience real money',
+    hook:`"The old way is broken. Here's what it's costing you."`,
+    bullets:[`Current pain: [Specific frustration your audience faces daily]`,`Business impact: [Revenue, time, or risk implications]`,`The gap: [What they need vs. what exists today]`],
+    stats:[{num:'3–5x',lbl:'More expensive than needed'},{num:'40%',lbl:'Time lost to manual work'},{num:'$1M+',lbl:'Avg cost of status quo'}],
+    visual:'Problem visualization: A frustrated person + the broken workflow diagram. Or a "pain iceberg" showing visible vs. hidden costs.',
+    notes:'Validate this pain with a real customer quote if possible. The more specific, the more credible.',
+  }),
+  'Our Solution':(config)=>({
+    subtitle:'The breakthrough',
+    hook:`We didn't patch the old system. We rebuilt the category.`,
+    bullets:[`What it is: [One-sentence product description]`,`How it works: [3-step process, no jargon]`,`Key differentiator: [What makes this structurally different]`,`Time to value: [How fast they see results]`],
+    stats:[],
+    visual:'Product screenshot or demo video thumbnail. Arrows showing the transformation from problem state to solution state.',
+    notes:'If you have a working product, show it here — don\'t describe it. A 30-second demo beats 5 slides of description.',
+  }),
+  'Solution':(config)=>({
+    subtitle:'What we built',
+    hook:`Not a feature. A new way of operating.`,
+    bullets:[`Core product: [What it is in plain language]`,`Key capability: [The #1 thing it does better than anything else]`,`Built for: [Specific customer profile]`,`Outcome: [What the customer gets]`],
+    stats:[],
+    visual:'Clean product UI screenshot. Or a simple "How it works" 3-step flow diagram.',
+    notes:'Lead with the outcome, not the technology. "You get X" beats "we use Y technology to do Z."',
+  }),
+  'Market Size':(config)=>({
+    subtitle:'The size of the opportunity',
+    hook:`We're not chasing a niche. We're building the category.`,
+    bullets:[`TAM: Total addressable market — the whole space`,`SAM: Serviceable addressable market — our realistic target`,`SOM: Our 3-year capture target`,`Growth rate: Market expanding at [X]% CAGR`],
+    stats:[{num:'$47B',lbl:'TAM (2026)'},{num:'$8.2B',lbl:'SAM'},{num:'$420M',lbl:'3-yr SOM target'}],
+    visual:'TAM/SAM/SOM concentric circles. Or a market map showing where we play vs. adjacencies.',
+    notes:'Source your numbers. "We estimate" is weak. Cite Gartner, IDC, or primary research. Bottom-up models are more credible than top-down.',
+  }),
+  'Market Opportunity':(config)=>({
+    subtitle:'Why this market, why now',
+    hook:`The window is open. Three forces created this opportunity at the same time.`,
+    bullets:[`Market force #1: [Technology shift, regulatory change, or behavior change]`,`Market force #2: [Second tailwind driving urgency]`,`Timing signal: [Why this couldn't have worked 3 years ago]`,`Competitive vacuum: [Why the incumbents can't move]`],
+    stats:[{num:'$12B',lbl:'Market by 2028'},{num:'32%',lbl:'YoY growth'},{num:'2x',lbl:'Buyer willingness vs 2023'}],
+    visual:'Market timing diagram: convergence of 3 forces creating a window. Or a market map with white space highlighted.',
+    notes:'"Why now" is often more important than "how big." If you can\'t answer why this couldn\'t have worked 3 years ago, re-examine.',
+  }),
+  'Traction':(config)=>({
+    subtitle:'Proof it works',
+    hook:`We don't ask you to believe us. We show you.`,
+    bullets:[`Revenue: [ARR / MRR with growth rate]`,`Customers: [Count + notable logos]`,`Growth: [Month-over-month or QoQ trajectory]`,`NPS / retention: [Signal that customers love it]`],
+    stats:[{num:'$2.1M',lbl:'ARR'},{num:'200+',lbl:'Customers'},{num:'40%',lbl:'QoQ Growth'}],
+    visual:'Revenue chart with up-and-right trajectory. Logo wall of recognizable customers. NPS score prominently displayed.',
+    notes:'Lead with your best number. Put it in the first second. Then explain the story behind it.',
+  }),
+  'Traction & Metrics':(config)=>({
+    subtitle:'Numbers that prove the thesis',
+    hook:`Every metric here tells the same story: product-market fit.`,
+    bullets:[`ARR / MRR: [Revenue + growth trend]`,`Customer count: [Total + enterprise split]`,`CAC & LTV: [Unit economics are healthy]`,`Retention: [Net revenue retention > 100%?]`,`Pipeline: [Forward-looking indicator]`],
+    stats:[{num:'$2.1M',lbl:'ARR (+40% QoQ)'},{num:'200',lbl:'Customers'},{num:'127%',lbl:'Net Revenue Retention'}],
+    visual:'4-panel metrics dashboard: ARR curve, logo wall, NRR gauge, CAC:LTV ratio bar.',
+    notes:'If NRR > 100%, say it loudly — it\'s your strongest proof of PMF. If not, lead with a metric that shows momentum.',
+  }),
+  'Team':(config)=>({
+    subtitle:'The people who execute the vision',
+    hook:`Great ideas don't win. Great teams executing great ideas win.`,
+    bullets:[`Founder/CEO: [Domain expertise + relevant background]`,`CTO/Technical: [Engineering credibility]`,`GTM/Commercial: [Sales/growth pedigree]`,`Advisors: [Who vouches for us]`],
+    stats:[],
+    visual:'Team photo grid with name, title, and 1-line credential. Advisor logos. Prior company logos (if impressive).',
+    notes:'Investors bet on the team. Spend 1/3 of your team slide on why you specifically are the right people to win this.',
+  }),
+  'The Ask':(config)=>({
+    subtitle:'What we\'re looking for',
+    hook:`We\'re not here to pitch. We\'re here to find the right partner.`,
+    bullets:[`Raise: [$ amount + round designation]`,`Use of funds: [3 buckets — hiring, product, GTM]`,`Milestones: [What this gets us to]`,`Lead investor target: [What ideal partner looks like]`],
+    stats:[{num:'$8M',lbl:'Raising'},{num:'18 mo',lbl:'Runway'},{num:'$25M',lbl:'Projected ARR at close'}],
+    visual:'Waterfall of use of funds (hire X engineers, grow sales team, etc.) with milestone markers. Fund-raising timeline.',
+    notes:'Close with conviction, not desperation. "We\'re raising $8M to hit $25M ARR. We\'d love you involved." Then stop talking.',
+  }),
+  'Next Steps':(config)=>({
+    subtitle:'The path forward',
+    hook:`Every deal that works starts with a clear first move.`,
+    bullets:[`Immediate: [What happens in the next 72 hours]`,`Short-term: [Week 1–2 actions]`,`Decision: [What we need from you and by when]`,`Contact: [Best way to reach you]`],
+    stats:[],
+    visual:'Simple 3-step timeline: Today → Week 1 → Decision Date. Or a "fast lane vs. slow lane" choice diagram.',
+    notes:'Always end with a specific ask and a specific date. "Let\'s talk" is not a next step. "Can we schedule 30 min by Friday?" is.',
+  }),
+  'Competitive Landscape':(config)=>({
+    subtitle:'Why we win',
+    hook:`We didn't enter an empty market. We found the gaps the incumbents can't fill.`,
+    bullets:[`Incumbent #1: [Strength] but [fatal weakness]`,`Incumbent #2: [Strength] but [fatal weakness]`,`Our moat: [What we do that they structurally cannot copy]`,`Our wedge: [How we win the first customer, then expand]`],
+    stats:[],
+    visual:'2×2 competitive matrix (axes = key differentiators). We are top-right. Competitors scattered. OR feature comparison table with ✓ / ✗.',
+    notes:'Don\'t show a 10-competitor landscape. Pick the 3–4 most relevant and explain why they\'re vulnerable. Never say "no competition."',
+  }),
+  'Business Model':(config)=>({
+    subtitle:'How we make money',
+    hook:`Simple, predictable, expanding revenue — by design.`,
+    bullets:[`Primary model: [SaaS / usage / transaction / service]`,`Price point: [Entry price + expansion mechanics]`,`Unit economics: [CAC, LTV, payback period]`,`Revenue mix: [Breakdown by type if relevant]`],
+    stats:[{num:'$499',lbl:'Starting ACV'},{num:'3.2x',lbl:'CAC:LTV'},{num:'6 mo',lbl:'Payback Period'}],
+    visual:'Revenue model diagram: how a customer enters, expands, and generates multi-year LTV. Or a pricing table.',
+    notes:'Investors love simple models with obvious expansion mechanics. The simpler the better.',
+  }),
+  'Financials':(config)=>({
+    subtitle:'The numbers that matter',
+    hook:`We build for returns, not for headlines.`,
+    bullets:[`Revenue trajectory: [Current + 3-year projection]`,`Gross margin: [% — software should be >70%]`,`Burn rate: [Monthly burn + runway]`,`Path to profitability: [When and how]`],
+    stats:[{num:'$2.1M',lbl:'Current ARR'},{num:'78%',lbl:'Gross Margin'},{num:'18 mo',lbl:'Current Runway'}],
+    visual:'3-year revenue projection chart (base / upside scenarios). Burn bridge waterfall showing use of raise proceeds.',
+    notes:'Know your numbers cold. Any investor who pushes back on a figure you can\'t defend has found the hole in your story.',
+  }),
+  'Roadmap':(config)=>({
+    subtitle:'Where we\'re going',
+    hook:`We\'re not building features. We\'re building a platform.`,
+    bullets:[`Now (0–3 months): [Core product hardening and core customer wins]`,`Next (3–9 months): [Key feature expansion + GTM scale]`,`Later (9–18 months): [Platform play + new market entry]`,`Vision (18–36 months): [The 10x vision]`],
+    stats:[],
+    visual:'Horizontal timeline with Now/Next/Later zones. Key milestones flagged. No more than 3 items per zone.',
+    notes:'Don\'t over-promise. Every item on this roadmap will be asked about in diligence. Be specific only about what you\'re confident in.',
+  }),
+  'How It Works':(config)=>({
+    subtitle:'Under the hood — simplified',
+    hook:`Three steps. That\'s all it takes to go from problem to outcome.`,
+    bullets:[`Step 1: [Input — what the user does to start]`,`Step 2: [Processing — what happens behind the scenes]`,`Step 3: [Output — what the user gets]`,`Integration: [How it fits into existing workflow]`],
+    stats:[],
+    visual:'3-step flow diagram with icons. Input → Engine → Output. Or a product GIF showing the core action.',
+    notes:'Simplicity signals mastery. If you can\'t explain it in 3 steps, you don\'t understand it well enough yet.',
+  }),
+  'Pricing':(config)=>({
+    subtitle:'Simple pricing that scales with you',
+    hook:`We price on value delivered, not features locked.`,
+    bullets:[`Starter: [Entry-level price + what\'s included]`,`Professional: [Mid-tier — most popular]`,`Enterprise: [Custom — for large orgs]`,`Free trial / pilot: [Risk-reversal offer]`],
+    stats:[{num:'$0',lbl:'Trial — no CC'},{num:'$249/mo',lbl:'Most popular'},{num:'Custom',lbl:'Enterprise'}],
+    visual:'3-column pricing table with feature checkmarks. "Most Popular" badge on middle tier. Annual savings callout.',
+    notes:'Always include a free trial or pilot to remove the "risk" objection. Enterprise custom pricing avoids anchoring.',
+  }),
+  'Customer Success Story':(config)=>({
+    subtitle:'Real results from real customers',
+    hook:`Numbers are nice. This story is why we exist.`,
+    bullets:[`Company: [Customer name/size/industry]`,`Challenge: [What they were struggling with]`,`Solution: [How they used your product]`,`Result: [Specific, quantified outcome]`,`Quote: "[Their words about the impact]"`],
+    stats:[{num:'3x',lbl:'ROI in 90 days'},{num:'40%',lbl:'Time savings'},{num:'$240K',lbl:'Revenue recovered'}],
+    visual:'Case study card: Company logo + photo + key metric in large text. Before/after comparison.',
+    notes:'Use a customer that looks like your ICP. The audience should see themselves in the story.',
+  }),
+  'Go-to-Market':(config)=>({
+    subtitle:'How we reach and close customers',
+    hook:`We don\'t spray and pray. We dominate one channel, then expand.`,
+    bullets:[`Primary channel: [Outbound / inbound / PLG / partnerships]`,`ICP: [Exact profile of target buyer]`,`Sales motion: [Self-serve / inside sales / enterprise]`,`CAC target: [What you\'re willing to pay]`,`Expansion: [Channels added in Year 2–3]`],
+    stats:[{num:'$850',lbl:'Target CAC'},{num:'6 mo',lbl:'Sales cycle'},{num:'3.2x',lbl:'CAC:LTV'}],
+    visual:'GTM funnel: Awareness → Interest → Evaluation → Purchase → Expansion. Or a channel matrix with ROI by channel.',
+    notes:'Be specific. "Content marketing and partnerships" is vague. "$40K/month outbound, targeting Head of RevOps at 50–500-person SaaS" is a strategy.',
+  }),
+};
+
+const DEFAULT_SLIDES = {
+  hook:`The status quo isn't broken. It's working exactly as designed — against you.`,
+  audience_label:{investors:'Investors',enterprise:'Enterprise Buyers',team:'Internal Team',board:'Board of Directors',customers:'Customers',conference:'Conference Audience',partners:'Partners',recruits:'Candidates'}
+};
+
+let selectedStruct = 'pitch';
+let generatedSlides = [];
+let currentSlide = 0;
+
+function selectStruct(el){
+  document.querySelectorAll('.struct-opt').forEach(e=>e.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedStruct = el.dataset.struct;
+}
+
+function loadDemoConfig(){
+  document.getElementById('topic').value = 'QADIR OS — The Sovereign AI Operating System';
+  document.getElementById('presenter').value = 'Ahmad — ABUZ8 AI';
+  document.getElementById('audience').value = 'investors';
+  document.getElementById('goal').value = 'raise';
+  document.getElementById('industry').value = 'ai';
+  document.getElementById('slideCount').value = '8';
+  document.getElementById('tone').value = 'confident';
+  document.getElementById('keyPoints').value = '$2.1M ARR, 200 enterprise customers, 192 MCP tools, 40% QoQ growth, raising $8M Series A';
+  document.querySelector('[data-struct="pitch"]').click();
+}
+
+function generateDeck(){
+  const topic = document.getElementById('topic').value || 'Our Presentation';
+  const presenter = document.getElementById('presenter').value || '';
+  const audience = document.getElementById('audience').value;
+  const goal = document.getElementById('goal').value;
+  const industry = document.getElementById('industry').value;
+  const slideCount = parseInt(document.getElementById('slideCount').value);
+  const tone = document.getElementById('tone').value;
+  const keyPoints = document.getElementById('keyPoints').value;
+
+  const audLabel = DEFAULT_SLIDES.audience_label[audience]||'Audience';
+  const structName = ({pitch:'Investor Pitch',sales:'Sales Deck',strategy:'Strategy Update',keynote:'Keynote / Talk',report:'Quarterly Report',product:'Product Demo'})[selectedStruct] || 'Investor Pitch';
+
+  // Header + meta from real inputs.
+  document.getElementById('deckTitle').textContent = topic;
+  document.getElementById('deckMeta').innerHTML = [
+    `<span class="deck-tag">🎯 ${audLabel}</span>`,
+    `<span class="deck-tag">📊 ${slideCount} Slides</span>`,
+    `<span class="deck-tag">🏷 ${document.getElementById('industry').options[document.getElementById('industry').selectedIndex].text}</span>`,
+    presenter?`<span class="deck-tag">👤 ${presenter}</span>`:'',
+  ].join('');
+  // The AI returns one full outline; hide the slide-nav sidebar and render into the slide view area.
+  const nav = document.querySelector('.slide-nav'); if(nav) nav.style.display='none';
+  const container = document.querySelector('.slides-container'); if(container) container.style.gridTemplateColumns='1fr';
+  const area = document.getElementById('slideViewArea');
+  area.innerHTML = '<div style="background:var(--lapis2);border:1px solid rgba(201,168,76,0.2);border-radius:12px;padding:40px;text-align:center;color:var(--muted);">⚡ Generating your deck outline with AI…</div>';
+  document.getElementById('inputSection').style.display = 'none';
+  document.getElementById('outputArea').style.display = 'block';
+  window.scrollTo(0,0);
+
+  // Real AI generation via the ABUZ8 brain (Cloudflare Workers AI). No templates.
+  fetch('/api/waitlist', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      tool: 'presentation-maker',
+      data: {
+        topic: topic,
+        presenter: presenter,
+        audience: audLabel,
+        goal: goal,
+        industry: industry,
+        slideCount: slideCount,
+        tone: tone,
+        structure: structName,
+        keyPoints: keyPoints,
+        format: 'Return a complete slide-by-slide deck outline as clean HTML. For each slide use an <h3>Slide N: Title</h3> followed by talking points in a <ul>, plus a one-line visual suggestion and a speaker note. Produce exactly the requested number of slides.'
+      }
+    })
+  })
+  .then(r => r.json())
+  .then(res => {
+    if (!res.success || !res.result) throw new Error(res.error || 'Generation failed');
+    generatedSlides = res.result;
+    area.innerHTML = `<div class="slide-card active" style="display:block;padding:8px 4px;"><div class="slide-body">${res.result}</div></div>`;
+  })
+  .catch(err => {
+    area.innerHTML = '<div style="background:var(--lapis2);border:1px solid rgba(224,85,85,0.3);border-radius:12px;padding:40px;text-align:center;color:#e05555;">Generation failed. Please try again in a moment.</div>';
+    alert('Generation failed: ' + err.message + '. Please try again in a moment.');
+  });
+}
+
+function renderOutput(topic, audLabel, slideCount, audience, goal, presenter){
+  document.getElementById('deckTitle').textContent = topic;
+  document.getElementById('deckMeta').innerHTML = [
+    `<span class="deck-tag">🎯 ${audLabel}</span>`,
+    `<span class="deck-tag">📊 ${slideCount} Slides</span>`,
+    `<span class="deck-tag">🏷 ${document.getElementById('industry').options[document.getElementById('industry').selectedIndex].text}</span>`,
+    presenter?`<span class="deck-tag">👤 ${presenter}</span>`:'',
+  ].join('');
+
+  // Nav items
+  document.getElementById('slideNavItems').innerHTML = generatedSlides.map((s,i)=>
+    `<div class="slide-nav-item${i===0?' active':''}" id="nav_${i}" onclick="showSlide(${i})">
+      <span class="slide-nav-num">${s.num}</span>
+      <span class="slide-nav-name">${s.name}</span>
+    </div>`
+  ).join('');
+
+  // Slide cards
+  document.getElementById('slideViewArea').innerHTML = generatedSlides.map((s,i)=>`
+    <div class="slide-card${i===0?' active':''}" id="slide_${i}">
+      <div class="slide-top">
+        <div class="slide-num">Slide ${s.num} of ${generatedSlides.length}</div>
+        <div class="slide-title">${s.name}</div>
+        ${s.subtitle?`<div class="slide-subtitle">${s.subtitle}</div>`:''}
+      </div>
+      <div class="slide-body">
+        ${s.hook?`<div class="hook-box"><p>${s.hook}</p></div>`:''}
+        ${s.stats&&s.stats.length?`<div class="stat-row">${s.stats.map(st=>`<div class="stat-box"><div class="stat-num">${st.num}</div><div class="stat-lbl">${st.lbl}</div></div>`).join('')}</div>`:''}
+        ${s.bullets&&s.bullets.length?`<div class="section-lbl">Talking Points</div><ul class="bullet-list">${s.bullets.map(b=>`<li>${b}</li>`).join('')}</ul>`:''}
+        ${s.visual?`<div class="visual-hint"><p><strong>🖼 Visual Suggestion</strong>${s.visual}</p></div>`:''}
+        ${s.notes?`<div class="note-box"><p><strong>Speaker Note:</strong> ${s.notes}</p></div>`:''}
+      </div>
+      <div class="nav-arrows">
+        <button class="btn btn-sec btn-sm" onclick="prevSlide()" ${i===0?'disabled':''}>← Prev</button>
+        <span class="slide-progress">${s.num} / ${generatedSlides.length}</span>
+        <button class="btn btn-sm" onclick="copySlide(${i})">📋 Copy Slide</button>
+        <button class="btn btn-sec btn-sm" onclick="nextSlide()" ${i===generatedSlides.length-1?'disabled':''}>Next →</button>
+      </div>
+    </div>`
+  ).join('');
+
+  currentSlide = 0;
+  document.getElementById('inputSection').style.display = 'none';
+  document.getElementById('outputArea').style.display = 'block';
+  window.scrollTo(0,0);
+}
+
+function showSlide(i){
+  document.querySelectorAll('.slide-card').forEach(c=>c.classList.remove('active'));
+  document.querySelectorAll('.slide-nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('slide_'+i).classList.add('active');
+  document.getElementById('nav_'+i).classList.add('active');
+  currentSlide = i;
+}
+
+function nextSlide(){ if(currentSlide<generatedSlides.length-1) showSlide(currentSlide+1); }
+function prevSlide(){ if(currentSlide>0) showSlide(currentSlide-1); }
+
+function copySlide(i){
+  const s = generatedSlides[i];
+  const text = `SLIDE ${s.num}: ${s.name}\n${s.subtitle?s.subtitle+'\n':''}\n${s.hook?'Hook: '+s.hook+'\n\n':''}`+
+    (s.bullets&&s.bullets.length?'Talking Points:\n'+s.bullets.map(b=>`• ${b}`).join('\n')+'\n\n':'')+
+    (s.visual?'Visual: '+s.visual+'\n\n':'')+
+    (s.notes?'Speaker Note: '+s.notes:'');
+  navigator.clipboard.writeText(text).then(()=>{
+    const btns = document.querySelectorAll('.copy-slide-btn');
+    if(btns[i]){ btns[i].textContent='✅ Copied!'; setTimeout(()=>btns[i].textContent='📋 Copy Slide',2000); }
+  });
+}
+
+function copyFullDeck(){
+  const text = document.getElementById('slideViewArea').innerText.trim();
+  navigator.clipboard.writeText(text).then(()=>{
+    const btn = event.target; btn.textContent='✅ Copied!'; setTimeout(()=>btn.textContent='📋 Copy All',2000);
+  });
+}
+
+function downloadDeck(){
+  const title = document.getElementById('deckTitle').textContent;
+  const body = document.getElementById('slideViewArea').innerText.trim();
+  const text = `${title}\n${'='.repeat(60)}\n\n${body}\n\nGenerated by ABUZ8 AI Presentation Maker`;
+  const blob = new Blob([text],{type:'text/plain'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `deck_${title.replace(/\s+/g,'_').slice(0,40)}_${Date.now()}.txt`;
+  a.click();
+}
+
+function backToInput(){
+  document.getElementById('inputSection').style.display='block';
+  document.getElementById('outputArea').style.display='none';
+}
+</script>
+
+<script src="/assets/js/dfy-banner.js" async></script>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+<script src="/tools/_tools-shared.js" defer></script>
+
+  <section style="background:var(--lapis-2);border:1px solid var(--gold);border-radius:16px;padding:24px 32px;margin-top:24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;">
+    <div>
+      <h3 style="font-family:'Playfair Display',serif;font-size:22px;color:var(--cream);margin-bottom:4px;">Ready for the next level?</h3>
+      <p style="color:var(--dim);font-size:14px;">28 premium toolkits, real deliverables. From $17 to $97.</p>
+    </div>
+    <a href="/store.html" style="background:var(--gold);color:var(--lapis);font-weight:700;padding:12px 28px;border-radius:999px;font-size:14px;letter-spacing:.5px;">Browse the Store →</a>
+  </section>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>
+

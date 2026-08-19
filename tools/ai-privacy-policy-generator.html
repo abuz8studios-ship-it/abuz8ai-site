@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Privacy Policy Generator | ABUZ8</title>
+<style>
+  :root {
+    --lapis:#0a1628;--lapis2:#0f1f3d;--lapis3:#162444;
+    --gold:#c9a84c;--gold2:#e2c06a;--gold3:#f0d080;
+    --turq:#0e9f6e;--turq2:#22a090;--turq3:#2ab8a5;
+    --cream:#f5f0e8;--cream2:#ede8de;
+    --text:#e8e4dc;--text2:#b8b4ac;--text3:#888480;
+    --red:#e05555;--green:#3db87a;
+    --radius:12px;--radius-sm:8px;
+    --border:1px solid rgba(201,168,76,0.18);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--lapis);color:var(--text);font-family:'Inter',system-ui,sans-serif;min-height:100vh}
+  header{background:linear-gradient(135deg,var(--lapis2),var(--lapis3));border-bottom:var(--border);padding:24px 40px;display:flex;align-items:center;gap:18px}
+  .logo{width:42px;height:42px;background:linear-gradient(135deg,var(--gold),var(--turq));border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:17px;color:var(--lapis);flex-shrink:0}
+  header h1{font-family:'Playfair Display',Georgia,serif;font-size:24px;color:var(--gold)}
+  header p{font-size:13px;color:var(--text2);margin-top:2px}
+  .badge{margin-left:auto;background:rgba(201,168,76,0.1);border:var(--border);padding:5px 13px;border-radius:20px;font-size:12px;color:var(--gold);white-space:nowrap}
+  .container{max-width:1100px;margin:0 auto;padding:28px 20px}
+  .two-col{display:grid;grid-template-columns:360px 1fr;gap:22px;align-items:start}
+  .panel{background:var(--lapis2);border:var(--border);border-radius:var(--radius);padding:22px}
+  .panel-title{font-size:11px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--gold);margin-bottom:16px}
+  .field{margin-bottom:14px}
+  label{font-size:12px;color:var(--text2);display:block;margin-bottom:5px;font-weight:500}
+  input,select,textarea{width:100%;background:var(--lapis3);border:1px solid rgba(201,168,76,0.2);border-radius:var(--radius-sm);color:var(--text);padding:9px 13px;font-size:14px;outline:none;transition:border-color 0.2s;font-family:inherit}
+  input:focus,select:focus,textarea:focus{border-color:var(--gold)}
+  select option{background:var(--lapis3)}
+  .checkbox-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px}
+  .chk-item{display:flex;align-items:flex-start;gap:8px;cursor:pointer;padding:8px 10px;background:var(--lapis3);border:1px solid rgba(201,168,76,0.15);border-radius:var(--radius-sm);transition:all 0.2s}
+  .chk-item:hover{border-color:rgba(201,168,76,0.35)}
+  .chk-item input[type=checkbox]{width:16px;height:16px;min-width:16px;accent-color:var(--gold);margin-top:2px;cursor:pointer}
+  .chk-item .chk-label{font-size:12px;color:var(--text2);line-height:1.4}
+  .chk-item .chk-label b{display:block;color:var(--text);font-size:13px}
+  .generate-btn{width:100%;background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--lapis);border:none;border-radius:var(--radius-sm);padding:13px;font-size:15px;font-weight:700;cursor:pointer;transition:all 0.2s;letter-spacing:0.5px;margin-top:6px}
+  .generate-btn:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(201,168,76,0.35)}
+
+  /* OUTPUT */
+  .output-panel{background:var(--lapis2);border:var(--border);border-radius:var(--radius);padding:24px}
+  .output-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px}
+  .output-title{font-size:11px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--gold)}
+  .btn-row{display:flex;gap:8px;flex-wrap:wrap}
+  .action-btn{background:var(--lapis3);border:var(--border);color:var(--text2);padding:7px 14px;border-radius:var(--radius-sm);cursor:pointer;font-size:13px;transition:all 0.2s}
+  .action-btn:hover{border-color:var(--gold);color:var(--gold)}
+  .action-btn.primary{background:rgba(201,168,76,0.12);border-color:rgba(201,168,76,0.35);color:var(--gold)}
+  .action-btn.primary:hover{background:rgba(201,168,76,0.2)}
+  .action-btn.copied{background:rgba(61,184,122,0.12);border-color:var(--green);color:var(--green)}
+
+  .policy-output{background:var(--lapis3);border:1px solid rgba(201,168,76,0.12);border-radius:var(--radius);padding:28px;font-size:14px;line-height:1.8;color:var(--text);white-space:pre-wrap;word-break:break-word;max-height:680px;overflow-y:auto;font-family:'Inter',sans-serif}
+  .policy-output h2{font-family:'Playfair Display',Georgia,serif;color:var(--gold);font-size:20px;margin-bottom:10px;margin-top:24px}
+  .policy-output h2:first-child{margin-top:0}
+  .policy-output h3{color:var(--gold2);font-size:15px;margin:16px 0 6px}
+  .policy-output p{margin-bottom:12px}
+  .policy-output ul{margin:8px 0 12px 20px}
+  .policy-output li{margin-bottom:6px;color:var(--text2)}
+
+  .disclaimer{background:rgba(201,168,76,0.07);border:1px solid rgba(201,168,76,0.2);border-radius:var(--radius-sm);padding:12px 16px;margin-bottom:16px;font-size:12px;color:var(--text3);line-height:1.5}
+  .disclaimer strong{color:var(--gold2)}
+  .placeholder{text-align:center;padding:60px 20px;color:var(--text3)}
+  .placeholder-icon{font-size:48px;margin-bottom:16px;opacity:.5}
+  .placeholder h3{font-size:18px;color:var(--text2);margin-bottom:8px}
+  .stats-bar{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:22px}
+  .stat{background:var(--lapis2);border:var(--border);border-radius:var(--radius-sm);padding:13px 15px;text-align:center}
+  .stat-val{font-size:21px;font-weight:700;color:var(--gold)}
+  .stat-lbl{font-size:11px;color:var(--text3);margin-top:2px}
+  @media(max-width:900px){.two-col{grid-template-columns:1fr}.stats-bar{grid-template-columns:repeat(2,1fr)}}
+</style>
+<script src="_abuz8-live-brain.js" defer></script>
+
+<script src="_abuz8-config.js" defer></script>
+<link rel="canonical" href="https://abuz8ai.com/tools/ai-privacy-policy-generator">
+<meta name="description" content="Privacy Policy Generator — Draft a privacy policy. Free, no signup, runs entirely in your browser. One of 169 free AI and developer tools by ABUZ8.">
+</head>
+<body>
+
+<header>
+  <div class="logo">A8</div>
+  <div>
+    <h1>Privacy Policy Generator</h1>
+    <p>Generate a compliant, professional Privacy Policy for your business in seconds</p>
+  </div>
+  <span class="badge">⚖ Free &amp; Client-Side</span>
+</header>
+
+<div class="container">
+  <div class="stats-bar">
+    <div class="stat"><div class="stat-val">GDPR</div><div class="stat-lbl">Compliant clauses</div></div>
+    <div class="stat"><div class="stat-val">CCPA</div><div class="stat-lbl">California ready</div></div>
+    <div class="stat"><div class="stat-val">15+</div><div class="stat-lbl">Sections covered</div></div>
+    <div class="stat"><div class="stat-val">0 $</div><div class="stat-lbl">No lawyer fees</div></div>
+  </div>
+
+  <div class="two-col">
+
+    <!-- LEFT: CONFIG -->
+    <div>
+      <div class="panel">
+        <div class="panel-title">⚙ Company Information</div>
+
+        <div class="field">
+          <label>COMPANY / APP NAME *</label>
+          <input type="text" id="companyName" placeholder="e.g. ABUZ8 AI" maxlength="80">
+        </div>
+        <div class="field">
+          <label>WEBSITE URL *</label>
+          <input type="text" id="website" placeholder="e.g. https://abuz8.ai" maxlength="100">
+        </div>
+        <div class="field">
+          <label>CONTACT EMAIL *</label>
+          <input type="email" id="contactEmail" placeholder="e.g. privacy@yourcompany.com" maxlength="80">
+        </div>
+        <div class="field">
+          <label>COMPANY COUNTRY / JURISDICTION</label>
+          <select id="jurisdiction">
+            <option value="us">United States</option>
+            <option value="eu">European Union (GDPR)</option>
+            <option value="uk">United Kingdom</option>
+            <option value="ca">Canada (PIPEDA)</option>
+            <option value="au">Australia</option>
+            <option value="global">Global / Multiple</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>BUSINESS TYPE</label>
+          <select id="bizType">
+            <option value="saas">SaaS / Web App</option>
+            <option value="ecomm">E-commerce / Online Store</option>
+            <option value="blog">Blog / Content Site</option>
+            <option value="app">Mobile App</option>
+            <option value="agency">Agency / Services</option>
+            <option value="marketplace">Marketplace / Platform</option>
+          </select>
+        </div>
+
+        <div class="panel-title" style="margin-top:18px">📋 Data You Collect</div>
+        <div class="checkbox-grid">
+          <label class="chk-item"><input type="checkbox" id="coll_email" checked><div class="chk-label"><b>Email addresses</b>Newsletter, accounts</div></label>
+          <label class="chk-item"><input type="checkbox" id="coll_name" checked><div class="chk-label"><b>Names</b>User profiles</div></label>
+          <label class="chk-item"><input type="checkbox" id="coll_payment"><div class="chk-label"><b>Payment info</b>Stripe / processor</div></label>
+          <label class="chk-item"><input type="checkbox" id="coll_usage" checked><div class="chk-label"><b>Usage data</b>Analytics, clicks</div></label>
+          <label class="chk-item"><input type="checkbox" id="coll_cookies" checked><div class="chk-label"><b>Cookies</b>Session, tracking</div></label>
+          <label class="chk-item"><input type="checkbox" id="coll_location"><div class="chk-label"><b>Location data</b>IP-based or GPS</div></label>
+          <label class="chk-item"><input type="checkbox" id="coll_device"><div class="chk-label"><b>Device info</b>Browser, OS</div></label>
+          <label class="chk-item"><input type="checkbox" id="coll_usergen"><div class="chk-label"><b>User content</b>Posts, uploads</div></label>
+        </div>
+
+        <div class="panel-title" style="margin-top:18px">🔧 Third-Party Services</div>
+        <div class="checkbox-grid">
+          <label class="chk-item"><input type="checkbox" id="svc_ga" checked><div class="chk-label"><b>Google Analytics</b>Traffic analytics</div></label>
+          <label class="chk-item"><input type="checkbox" id="svc_stripe"><div class="chk-label"><b>Stripe</b>Payments</div></label>
+          <label class="chk-item"><input type="checkbox" id="svc_mailchimp"><div class="chk-label"><b>Email Marketing</b>Mailchimp / ConvertKit</div></label>
+          <label class="chk-item"><input type="checkbox" id="svc_hotjar"><div class="chk-label"><b>Hotjar / Heatmap</b>UX analytics</div></label>
+          <label class="chk-item"><input type="checkbox" id="svc_social"><div class="chk-label"><b>Social Logins</b>Google, Facebook</div></label>
+          <label class="chk-item"><input type="checkbox" id="svc_cloud"><div class="chk-label"><b>Cloud Storage</b>AWS, GCP, Azure</div></label>
+          <label class="chk-item"><input type="checkbox" id="svc_intercom"><div class="chk-label"><b>Support Chat</b>Intercom / Crisp</div></label>
+          <label class="chk-item"><input type="checkbox" id="svc_fb_pixel"><div class="chk-label"><b>Meta Pixel</b>Ad retargeting</div></label>
+        </div>
+
+        <div class="panel-title" style="margin-top:18px">⚖ Compliance Options</div>
+        <div class="checkbox-grid">
+          <label class="chk-item"><input type="checkbox" id="opt_gdpr" checked><div class="chk-label"><b>GDPR clause</b>EU data rights</div></label>
+          <label class="chk-item"><input type="checkbox" id="opt_ccpa" checked><div class="chk-label"><b>CCPA clause</b>California rights</div></label>
+          <label class="chk-item"><input type="checkbox" id="opt_minor"><div class="chk-label"><b>Children's privacy</b>COPPA notice</div></label>
+          <label class="chk-item"><input type="checkbox" id="opt_dntrack"><div class="chk-label"><b>Do Not Track</b>DNT signals</div></label>
+        </div>
+
+        <button class="generate-btn" onclick="generatePolicy()">⚡ Generate Privacy Policy</button>
+      </div>
+    </div>
+
+    <!-- RIGHT: OUTPUT -->
+    <div id="outputPane">
+      <div class="output-panel">
+        <div class="placeholder">
+          <div class="placeholder-icon">📄</div>
+          <h3>Your Privacy Policy will appear here</h3>
+          <p>Fill in your company details and click Generate.</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// ── Generators ─────────────────────────────────────────────────────────────
+function v(id) { return document.getElementById(id); }
+function checked(id) { return document.getElementById(id).checked; }
+
+function generatePolicy() {
+  const name = v('companyName').value.trim() || 'Our Company';
+  const site = v('website').value.trim() || 'our website';
+  const email = v('contactEmail').value.trim() || 'privacy@ourcompany.com';
+  const jur   = v('jurisdiction').value;
+  const biz   = v('bizType').value;
+
+  // Collect data list (from checkboxes) — passed to the AI brain as structured fields.
+  const dataCollected = [];
+  if (checked('coll_email'))   dataCollected.push('Email addresses');
+  if (checked('coll_name'))    dataCollected.push('Full name and username');
+  if (checked('coll_payment')) dataCollected.push('Payment information');
+  if (checked('coll_usage'))   dataCollected.push('Usage data (pages visited, features used, session duration)');
+  if (checked('coll_cookies')) dataCollected.push('Cookies and similar tracking technologies');
+  if (checked('coll_location'))dataCollected.push('Location data (IP-based geolocation or device GPS)');
+  if (checked('coll_device'))  dataCollected.push('Device and browser information');
+  if (checked('coll_usergen')) dataCollected.push('User-generated content (posts, comments, uploaded files)');
+
+  // Third-party services (from checkboxes)
+  const thirdParties = [];
+  if (checked('svc_ga'))       thirdParties.push('Google Analytics');
+  if (checked('svc_stripe'))   thirdParties.push('Stripe (payments)');
+  if (checked('svc_mailchimp'))thirdParties.push('Email marketing platform (e.g., Mailchimp)');
+  if (checked('svc_hotjar'))   thirdParties.push('Hotjar (UX analytics)');
+  if (checked('svc_social'))   thirdParties.push('Google / Facebook OAuth (social login)');
+  if (checked('svc_cloud'))    thirdParties.push('Cloud infrastructure (AWS/GCP/Azure)');
+  if (checked('svc_intercom')) thirdParties.push('Customer support platform (e.g., Intercom)');
+  if (checked('svc_fb_pixel')) thirdParties.push('Meta Pixel (advertising / retargeting)');
+
+  const complianceClauses = [];
+  if (checked('opt_gdpr'))  complianceClauses.push('GDPR (EU data rights)');
+  if (checked('opt_ccpa'))  complianceClauses.push('CCPA (California rights)');
+  if (checked('opt_minor')) complianceClauses.push("Children's privacy (COPPA notice)");
+  if (checked('opt_dntrack')) complianceClauses.push('Do Not Track signals');
+
+  // Render the output-panel shell immediately with a loading state.
+  const pane = v('outputPane');
+  pane.innerHTML = `
+    <div class="output-panel">
+      <div class="output-header">
+        <div class="output-title">📄 Your Privacy Policy</div>
+        <div class="btn-row">
+          <span style="font-size:11px;color:var(--text3);align-self:center">Generating…</span>
+        </div>
+      </div>
+      <div class="policy-output" id="policyContent" style="text-align:center;color:var(--text3);padding:60px 20px;">⚙ Generating your privacy policy with AI…</div>
+    </div>
+  `;
+
+  // Real AI generation via the ABUZ8 brain (Cloudflare Workers AI). No templates.
+  fetch('/api/waitlist', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      tool: 'privacy-policy-generator',
+      data: {
+        companyName: name,
+        website: site,
+        contactEmail: email,
+        jurisdiction: jur,
+        businessType: biz,
+        dataCollected: dataCollected.join(', ') || 'Basic account information',
+        thirdPartyServices: thirdParties.join(', ') || 'None',
+        complianceClauses: complianceClauses.join(', ') || 'Standard',
+        format: 'Return a complete, professional privacy policy as clean HTML using <h2> for section headings, <h3> for sub-headings, <p> for paragraphs, and <ul>/<li> for lists.'
+      }
+    })
+  })
+  .then(r => r.json())
+  .then(res => {
+    if (!res.success || !res.result) throw new Error(res.error || 'Generation failed');
+    const html = res.result;
+    const wordCount = html.replace(/<[^>]+>/g,' ').split(/\s+/).filter(w=>w).length;
+    pane.innerHTML = `
+      <div class="output-panel">
+        <div class="output-header">
+          <div class="output-title">📄 Your Privacy Policy</div>
+          <div class="btn-row">
+            <span style="font-size:11px;color:var(--text3);align-self:center">~${wordCount} words</span>
+            <button class="action-btn primary" id="copyBtn" onclick="copyPolicy()">Copy Full Policy</button>
+            <button class="action-btn" onclick="downloadPolicy()">⬇ Download .txt</button>
+          </div>
+        </div>
+        <div class="disclaimer">
+          <strong>⚠ Legal Notice:</strong> This policy is generated for reference purposes. While it covers common privacy requirements, it does not constitute legal advice. For compliance in regulated industries or multi-jurisdiction operations, consult a qualified attorney.
+        </div>
+        <div class="policy-output" id="policyContent">${html}</div>
+      </div>
+    `;
+  })
+  .catch(err => {
+    pane.innerHTML = `
+      <div class="output-panel">
+        <div class="output-header"><div class="output-title">📄 Your Privacy Policy</div></div>
+        <div class="placeholder">
+          <div class="placeholder-icon">⚠</div>
+          <h3>Generation failed</h3>
+          <p>${err.message}. Please try again in a moment.</p>
+        </div>
+      </div>
+    `;
+    alert('Generation failed: ' + err.message + '. Please try again in a moment.');
+  });
+}
+
+function copyPolicy() {
+  const content = document.getElementById('policyContent');
+  const text = content.innerText;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.getElementById('copyBtn');
+    btn.textContent = '✓ Copied!';
+    btn.classList.add('copied');
+    setTimeout(()=>{ btn.textContent='Copy Full Policy'; btn.classList.remove('copied'); }, 2500);
+  });
+}
+
+function downloadPolicy() {
+  const name = document.getElementById('companyName').value.trim() || 'company';
+  const text = document.getElementById('policyContent').innerText;
+  const blob = new Blob([text], {type:'text/plain'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `${name.replace(/\s+/g,'-').toLowerCase()}-privacy-policy.txt`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+</script>
+
+<script src="/assets/js/dfy-banner.js" async></script>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+<script src="/tools/_tools-shared.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>
+

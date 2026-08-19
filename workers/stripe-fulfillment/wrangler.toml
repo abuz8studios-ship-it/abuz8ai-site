@@ -1,0 +1,29 @@
+name = "stripe-fulfillment"
+main = "index.js"
+compatibility_date = "2026-05-10"
+
+# Shared D1 with the waitlist worker — same DB, fulfillment_queue table.
+[[d1_databases]]
+binding = "abuz8_waiting_list"
+database_name = "abuz8-waiting-list"
+database_id = "8392eb3a-f855-484e-853e-711d036e80c1"
+
+# R2 bucket for product PDF delivery
+[[r2_buckets]]
+binding = "PRODUCTS_BUCKET"
+bucket_name = "abuz8-downloads"
+
+# Secrets (set via: wrangler secret put <NAME>)
+#   STRIPE_WEBHOOK_SECRET   whsec_… from Stripe Dashboard → Webhooks
+#   MAIL_FROM               sales@abuz8ai.com  (must be on a domain you control + DKIM)
+#   MAIL_FROM_NAME          "ABUZ8 Studios"
+#   ADMIN_BCC               abuz8studios@gmail.com
+#   DOWNLOAD_BASE           https://abuz8ai.com/downloads
+#
+# Stripe webhook endpoint URL (set in Stripe Dashboard):
+#   https://stripe-fulfillment.<your-account>.workers.dev/
+#
+# Subscribe ONLY to: checkout.session.completed
+#
+# Migrate DB once after deploy:
+#   wrangler d1 execute abuz8-waiting-list --file=./schema.sql

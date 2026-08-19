@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Model License Checker — Can You Use Llama, FLUX, SDXL & DeepSeek Commercially? | ABUZ8</title>
+  <meta name="description" content="Free AI model license checker. See at a glance whether Llama, Qwen, DeepSeek, Mistral, Phi-4, Gemma, FLUX and Stable Diffusion allow commercial use — the license, the catch, and the official source for each. 100% client-side. Factual license summary, not legal advice." />
+  <meta name="keywords" content="ai model license checker, can I use llama commercially, flux dev commercial license, sdxl commercial use, deepseek license, qwen apache 2.0, open source ai model licenses, commercial use ai models, gemma license, stable diffusion commercial license" />
+  <meta property="og:title" content="AI Model License Checker — Which Open Models Can You Ship Commercially? | ABUZ8" />
+  <meta property="og:description" content="Pick a model, see whether you can use it commercially, the exact catch, and the official license. Covers Llama, Qwen, DeepSeek, Mistral, Phi, Gemma, FLUX and Stable Diffusion. Client-side, free, no signup." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://abuz8ai.com/tools/ai-model-license-checker" />
+  <link rel="canonical" href="https://abuz8ai.com/tools/ai-model-license-checker" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "AI Model License Checker",
+    "description": "Free client-side tool that shows, for popular open AI models (Llama, Qwen, DeepSeek, Mistral, Phi-4, Gemma, FLUX, Stable Diffusion, Whisper), whether commercial use is allowed, the license it ships under, the practical catch, and a link to the official license text.",
+    "url": "https://abuz8ai.com/tools/ai-model-license-checker.html",
+    "applicationCategory": "DeveloperApplication",
+    "operatingSystem": "Any",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+    "author": { "@type": "Organization", "name": "ABUZ8 LLC", "url": "https://abuz8ai.com" }
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Which open AI models can I use commercially for free?",
+        "acceptedAnswer": { "@type": "Answer", "text": "The most permissive open models ship under Apache-2.0 or MIT, which allow commercial use, modification and redistribution with only an attribution/notice requirement. As of mid-2026 that group includes Qwen3 (Apache-2.0), DeepSeek V3/R1 (MIT), Microsoft Phi-4 (MIT), OpenAI Whisper (MIT), the open Mistral 3 models (Apache-2.0) and the FLUX.1 schnell image model (Apache-2.0). Others — Llama, Gemma, and Stable Diffusion — allow commercial use but attach conditions, and a few models such as FLUX.1 dev are non-commercial. Always confirm against the specific model card, because makers relicense between versions." }
+      },
+      {
+        "@type": "Question",
+        "name": "Can I use Meta Llama commercially?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Yes, under the Llama Community License, as long as your product has fewer than 700 million monthly active users — above that threshold you must request a separate license from Meta, which it may grant at its discretion. The free commercial grant comes with strings: you must display a 'Built with Llama' notice, any model you derive must include 'Llama' at the start of its name, and you may not use Llama outputs to train competing non-Llama models. EU-based users also face restrictions on the multimodal Llama models. It is an open-weights license with conditions, not a standard open-source license like Apache-2.0." }
+      },
+      {
+        "@type": "Question",
+        "name": "Is FLUX free for commercial use?",
+        "acceptedAnswer": { "@type": "Answer", "text": "It depends entirely on which FLUX you mean. FLUX.1 [schnell] is Apache-2.0 and can be used commercially with no revenue cap. FLUX.1 [dev] is released under a non-commercial license — its weights and outputs may only be used for non-commercial purposes unless you buy a separate commercial license from Black Forest Labs. Shipping a product on FLUX.1 dev without that license is one of the most common licensing mistakes in generative imaging, because the two models are often used interchangeably in tutorials." }
+      },
+      {
+        "@type": "Question",
+        "name": "Does Stable Diffusion allow commercial use?",
+        "acceptedAnswer": { "@type": "Answer", "text": "For the older models — Stable Diffusion 1.5 and SDXL — yes: they use the CreativeML Open RAIL-M license, which permits commercial use and selling outputs with no revenue cap, subject only to use-based restrictions (no illegal or harmful use) that must be passed downstream. The newer Stable Diffusion 3 and 3.5 models use the Stability AI Community License instead, which is free including commercial use only for individuals and organizations under 1 million dollars in annual revenue; above that a paid Stability enterprise license is required. So the answer flips depending on which generation you deploy." }
+      },
+      {
+        "@type": "Question",
+        "name": "Is this AI model license checker legal advice?",
+        "acceptedAnswer": { "@type": "Answer", "text": "No. This tool is a plain-English factual summary of publicly published model licenses, verified against the official sources on 6 July 2026. Licenses change, carry version-specific nuances, and can be interpreted differently for your exact use case. Every model here links to its official license text — read that, and consult a qualified lawyer before relying on any model commercially. Nothing here is legal advice and no attorney-client relationship is created." }
+      }
+    ]
+  }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0a1628;
+      --card: #0d1a30;
+      --card-alt: #111f38;
+      --primary: #5fa8e8;
+      --primary-dim: #2e75b6;
+      --teal: #0e9f6e;
+      --text: #e8e4d8;
+      --text-dim: #5b6b7c;
+      --border: #d8e0e8;
+      --good: #0e9f6e;
+      --good-bg: #e7f3f0;
+      --warn: #c9a84c;
+      --warn-bg: #fbf1e3;
+      --bad: #a8324a;
+      --bad-bg: #f9ecef;
+      --font-heading: 'Playfair Display', Georgia, serif;
+      --font-body: 'Inter', system-ui, sans-serif;
+      --font-mono: 'JetBrains Mono', 'Courier New', monospace;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      font-size: 15px;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+    a { color: var(--primary); text-decoration: none; transition: color 0.2s; }
+    a:hover { color: var(--primary-dim); }
+
+    nav {
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      padding: 0 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 60px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .nav-logo {
+      font-family: var(--font-heading);
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--primary);
+      letter-spacing: 0.02em;
+    }
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links a { color: var(--text-dim); font-size: 0.9rem; font-weight: 500; }
+    .nav-links a:hover { color: var(--primary); }
+
+    main { max-width: 980px; margin: 0 auto; padding: 3rem 1.5rem 5rem; }
+    .page-header { text-align: center; margin-bottom: 2.2rem; }
+    .page-header h1 {
+      font-family: var(--font-heading);
+      font-size: 2.4rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 0.5rem;
+      line-height: 1.18;
+    }
+    .page-header p { color: var(--text-dim); font-size: 1rem; max-width: 720px; margin: 0 auto; }
+    .privacy-note {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      margin-top: 0.9rem; padding: 0.35rem 0.9rem;
+      background: var(--good-bg); border: 1px solid #bfe0d8;
+      border-radius: 20px; font-size: 0.78rem; color: var(--good);
+    }
+
+    label { display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-dim);
+            text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.5rem; }
+    select, input[type="text"] {
+      width: 100%;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-family: var(--font-body);
+      font-size: 0.9rem;
+      padding: 0.7rem 0.9rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    select:focus, input:focus { border-color: var(--primary); }
+    .hint { font-size: 0.72rem; color: var(--text-dim); margin-top: 0.35rem; font-weight: 400; text-transform: none; letter-spacing: 0; }
+
+    .panel {
+      background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+      padding: 1.4rem 1.5rem; margin-bottom: 1.4rem;
+      box-shadow: 0 1px 3px rgba(44,62,80,0.04);
+    }
+    .panel h2 {
+      font-family: var(--font-heading); font-size: 1.25rem; color: var(--primary);
+      margin-bottom: 1.1rem;
+    }
+    .controls { display: grid; grid-template-columns: 2fr 1fr; gap: 1rem 1.2rem; }
+
+    /* SELECTED-MODEL DETAIL CARD */
+    .detail { border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem 1.6rem; background: var(--card-alt); border-top: 3px solid var(--primary); }
+    .detail .d-top { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.6rem 0.9rem; margin-bottom: 0.4rem; }
+    .detail .d-name { font-family: var(--font-heading); font-size: 1.6rem; font-weight: 700; color: var(--primary); line-height: 1.1; }
+    .detail .d-maker { font-size: 0.85rem; color: var(--text-dim); }
+    .detail .d-license { font-family: var(--font-mono); font-size: 0.82rem; color: var(--text); background: var(--card); border: 1px solid var(--border); border-radius: 6px; padding: 0.15rem 0.5rem; }
+    .detail .d-summary { font-size: 0.98rem; color: var(--text); margin: 0.9rem 0 0.7rem; line-height: 1.65; }
+    .detail .d-catch { font-size: 0.9rem; color: var(--text-dim); line-height: 1.6; padding: 0.8rem 1rem; background: var(--card); border-radius: 8px; border: 1px solid var(--border); }
+    .detail .d-catch strong { color: var(--warn); }
+    .detail .d-src { display: inline-block; margin-top: 0.9rem; font-size: 0.85rem; font-weight: 600; }
+    .detail .d-src a { text-decoration: underline; }
+
+    /* STATUS PILLS */
+    .pill { display: inline-flex; align-items: center; gap: 0.35rem; font-size: 0.74rem; font-weight: 700; letter-spacing: 0.03em; padding: 0.28rem 0.7rem; border-radius: 20px; white-space: nowrap; }
+    .pill.yes  { background: var(--good-bg); color: var(--good); border: 1px solid #bfe0d8; }
+    .pill.cond { background: var(--warn-bg); color: var(--warn); border: 1px solid #eccf9e; }
+    .pill.no   { background: var(--bad-bg);  color: var(--bad);  border: 1px solid #e7c2cc; }
+
+    /* FILTER ROW */
+    .filter-row { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; margin: 1.6rem 0 0.6rem; }
+    .filter-row .flabel { font-size: 0.78rem; font-weight: 600; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.06em; margin-right: 0.3rem; }
+    .chip { cursor: pointer; font-size: 0.8rem; font-weight: 600; padding: 0.35rem 0.85rem; border-radius: 20px; border: 1px solid var(--border); background: var(--card); color: var(--text-dim); transition: background 0.2s, color 0.2s, border-color 0.2s; }
+    .chip:hover { border-color: var(--primary); color: var(--primary); }
+    .chip.active { background: var(--primary); color: #0d1a30; border-color: var(--primary); }
+
+    /* TABLE */
+    .table-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: 12px; margin-top: 0.4rem; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.86rem; min-width: 640px; background: var(--card); }
+    thead th {
+      background: var(--card-alt); color: var(--text-dim);
+      font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.06em;
+      text-align: left; padding: 0.8rem 1rem; border-bottom: 1px solid var(--border); font-weight: 600;
+    }
+    tbody td { padding: 0.8rem 1rem; border-bottom: 1px solid var(--border); vertical-align: top; }
+    tbody tr:last-child td { border-bottom: none; }
+    tbody tr.row-yes  td:first-child { box-shadow: inset 3px 0 0 var(--good); }
+    tbody tr.row-cond td:first-child { box-shadow: inset 3px 0 0 var(--warn); }
+    tbody tr.row-no   td:first-child { box-shadow: inset 3px 0 0 var(--bad); }
+    .m-name { font-weight: 600; color: var(--text); }
+    .m-maker { display: block; font-size: 0.72rem; color: var(--text-dim); font-weight: 400; margin-top: 0.1rem; }
+    .m-license { font-family: var(--font-mono); font-size: 0.78rem; color: var(--text); }
+    .m-catch { font-size: 0.8rem; color: var(--text-dim); line-height: 1.5; }
+    .m-src a { font-size: 0.78rem; text-decoration: underline; white-space: nowrap; }
+    .m-local { font-size: 0.64rem; color: var(--teal); font-weight: 700; letter-spacing: 0.04em; display: block; margin-top: 0.25rem; }
+
+    .disclaimer { font-size: 0.8rem; color: var(--text-dim); line-height: 1.7; margin-top: 1rem; padding: 0.9rem 1.1rem; background: var(--warn-bg); border: 1px solid #eccf9e; border-radius: 10px; }
+    .disclaimer strong { color: var(--warn); }
+
+    /* CTA */
+    .cta-section {
+      background: linear-gradient(135deg, #eef5fb 0%, #e7f3f0 100%);
+      border: 1px solid #cfe0ef; border-radius: 12px;
+      padding: 2.2rem 2rem; text-align: center; margin-top: 3rem;
+    }
+    .cta-section h2 { font-family: var(--font-heading); font-size: 1.5rem; color: var(--primary); margin-bottom: 0.5rem; }
+    .cta-section p { color: var(--text-dim); font-size: 0.95rem; margin-bottom: 1.2rem; max-width: 620px; margin-left: auto; margin-right: auto; }
+    .cta-form { display: flex; gap: 0.6rem; justify-content: center; flex-wrap: wrap; }
+    .cta-form input[type="email"] {
+      flex: 1; max-width: 300px; min-width: 200px;
+      background: var(--card); border: 1px solid var(--border); border-radius: 6px;
+      color: var(--text); font-family: var(--font-body); font-size: 0.9rem; padding: 0.6rem 1rem; outline: none;
+    }
+    .cta-form input[type="email"]:focus { border-color: var(--primary); }
+    button {
+      padding: 0.6rem 1.4rem; border-radius: 6px; border: none; cursor: pointer;
+      font-family: var(--font-body); font-size: 0.88rem; font-weight: 600; transition: background 0.2s;
+    }
+    .btn-primary { background: var(--primary); color: #0d1a30; }
+    .btn-primary:hover { background: var(--primary-dim); }
+    .cta-success { display: none; color: var(--teal); font-size: 0.9rem; margin-top: 0.8rem; font-weight: 600; }
+    .cta-success.visible { display: block; }
+
+    .content { margin-top: 3rem; }
+    .content h2 { font-family: var(--font-heading); font-size: 1.5rem; color: var(--primary); margin: 0 0 1rem; padding-top: 1rem; }
+    .content > p { color: var(--text-dim); font-size: 0.92rem; margin-bottom: 1rem; }
+    .content > p a { text-decoration: underline; }
+    .faq-item { border-top: 1px solid var(--border); padding: 1.1rem 0; }
+    .faq-item h3 { font-size: 1rem; color: var(--text); margin-bottom: 0.4rem; font-weight: 600; }
+    .faq-item p { color: var(--text-dim); font-size: 0.9rem; }
+
+    footer {
+      background: var(--card); border-top: 1px solid var(--border);
+      text-align: center; padding: 1.5rem; font-size: 0.82rem; color: var(--text-dim);
+    }
+    footer a { color: var(--text-dim); }
+    footer a:hover { color: var(--primary); }
+
+    @media (max-width: 720px) {
+      .controls { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 600px) {
+      .page-header h1 { font-size: 1.8rem; }
+      nav { padding: 0 1rem; }
+      .nav-links { gap: 1rem; }
+      main { padding: 2rem 1rem 4rem; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="nav-logo">ABUZ8</a>
+  <ul class="nav-links">
+    <li><a href="/tools.html">Tools</a></li>
+    <li><a href="/store.html">Store</a></li>
+  </ul>
+</nav>
+
+<main>
+  <div class="page-header">
+    <h1>AI Model License Checker</h1>
+    <p>Before you ship a product on an open model, one question decides everything: <strong>can you actually use it commercially?</strong> Pick a model to see its license, whether commercial use is allowed, the exact catch, and a link straight to the official license. Covers the models people ship most — Llama, Qwen, DeepSeek, Mistral, Phi, Gemma, FLUX and Stable Diffusion.</p>
+    <span class="privacy-note">&#128274; 100% in-browser &middot; nothing you pick is uploaded</span>
+  </div>
+
+  <div class="panel">
+    <h2>Check a model</h2>
+    <div class="controls">
+      <div>
+        <label for="modelSel">Model</label>
+        <select id="modelSel" onchange="showDetail()"></select>
+        <div class="hint">Choose a model to see its full license verdict below.</div>
+      </div>
+      <div>
+        <label for="typeSel">Category</label>
+        <select id="typeSel" onchange="showDetail()">
+          <option value="all">All categories</option>
+          <option value="LLM">Text / LLM</option>
+          <option value="Image">Image generation</option>
+          <option value="Speech">Speech-to-text</option>
+        </select>
+        <div class="hint">Filters the model list above.</div>
+      </div>
+    </div>
+    <div class="detail" id="detail" style="margin-top:1.2rem"></div>
+  </div>
+
+  <div class="filter-row">
+    <span class="flabel">Show</span>
+    <span class="chip active" data-f="all" onclick="setFilter('all', this)">All models</span>
+    <span class="chip" data-f="yes" onclick="setFilter('yes', this)">&#10003; Commercial OK</span>
+    <span class="chip" data-f="cond" onclick="setFilter('cond', this)">&#9888; Conditions apply</span>
+    <span class="chip" data-f="no" onclick="setFilter('no', this)">&#10007; Non-commercial</span>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Model</th>
+          <th>License</th>
+          <th>Commercial?</th>
+          <th>The catch</th>
+          <th>Official</th>
+        </tr>
+      </thead>
+      <tbody id="licTable"></tbody>
+    </table>
+  </div>
+
+  <div class="disclaimer">
+    <strong>Not legal advice.</strong> This is a plain-English summary of publicly published model licenses, verified against each official source on <strong>6 July 2026</strong>. Licenses change between versions and carry nuances that can turn on your specific use. Always open the linked official license and consult a qualified lawyer before relying on any model commercially. No attorney-client relationship is created here.
+  </div>
+
+  <div class="cta-section">
+    <h2>Every model marked &#10003; or &#9888; here runs locally on ABUZ8&nbsp;OS.</h2>
+    <p>The commercially-usable open models on this page — Qwen, DeepSeek, Mistral, Phi, Llama, FLUX schnell, SDXL and more — all run on hardware you own inside ABUZ8&nbsp;OS: $0 per token, no per-seat SaaS, and your prompts never leave the machine. Sovereign by default, cloud only when it genuinely wins.</p>
+    <div class="cta-form">
+      <input type="email" id="ctaEmail" placeholder="you@company.com" />
+      <button class="btn-primary" onclick="submitWaitlist()">Join early access</button>
+    </div>
+    <div id="ctaSuccess" class="cta-success">&#10003; You're on the list. We'll be in touch.</div>
+  </div>
+
+  <div class="content">
+    <h2>How to read an AI model license</h2>
+    <p>Related: <a href="/tools/ai-llm-price-comparison.html">LLM API price comparison</a> &middot; <a href="/tools/ai-self-host-calculator.html">Self-host vs cloud calculator</a> &middot; <a href="/tools/ai-vram-calculator.html">VRAM calculator</a> &middot; <a href="/tools/ai-dependency-auditor.html">Dependency auditor</a></p>
+    <div class="faq-item">
+      <h3>Apache-2.0 and MIT are the green light</h3>
+      <p>These two permissive licenses let you use, modify, redistribute and commercialize the weights with essentially one obligation: keep the copyright and license notice. No revenue caps, no user-count triggers, no downstream terms to enforce. Qwen3, DeepSeek, Phi-4, Whisper, the open Mistral 3 models and FLUX.1 schnell all sit here — the safest models to build a business on.</p>
+    </div>
+    <div class="faq-item">
+      <h3>"Community" and custom licenses are commercial-with-strings</h3>
+      <p>Llama's Community License and Google's Gemma Terms allow commercial use but are not open-source in the OSI sense. They add obligations — Llama's 700M-monthly-active-user ceiling, its "Built with Llama" attribution and naming rule; Gemma's Prohibited Use Policy that you must pass to your own users, plus the maker's right to change terms. You can absolutely ship on them; you just have to honor the conditions and track version changes.</p>
+    </div>
+    <div class="faq-item">
+      <h3>Revenue-gated and non-commercial licenses are the traps</h3>
+      <p>Some licenses are free only under a revenue line — Stable Diffusion 3.5's Community License is free below $1M annual revenue and requires a paid enterprise license above it. Others are outright non-commercial: FLUX.1 dev looks and behaves like its Apache-licensed sibling schnell, but shipping a product on dev without a paid Black Forest Labs license is a real violation. When two variants share a name, check which one your weights actually are.</p>
+    </div>
+    <div class="faq-item">
+      <h3>Derivatives usually inherit the license</h3>
+      <p>Fine-tuning or distilling does not reset the terms. A model fine-tuned on Gemma stays under the Gemma Terms; a DeepSeek-R1 distill built on a Llama or Qwen base carries that base model's license, not pure MIT. Before you commercialize a fine-tune, trace it back to the base weights and apply the strictest license in the chain.</p>
+    </div>
+    <div class="faq-item">
+      <h3>The sovereign angle: you still have to honor the license — but nobody sees your data</h3>
+      <p>Running a model locally on ABUZ8&nbsp;OS does not change its license — a non-commercial model is still non-commercial on your own GPU. What local execution changes is cost and privacy: for every commercially-usable open model, you pay $0 per token and your inputs never leave the machine. Pick a green-light model here, run it sovereign, and the only bill is the hardware you already own.</p>
+    </div>
+  </div>
+</main>
+
+<footer>
+  ABUZ8 LLC &middot; Free AI Tools &middot; <a href="mailto:ahmad@abuz8ai.com">ahmad@abuz8ai.com</a>
+</footer>
+
+<script>
+// ── MODEL LICENSE DATA — every row verified against its official source on 2026-07-06 ──
+// commercial: 'yes' = permissive (Apache/MIT-class), 'cond' = allowed with conditions,
+// 'no' = non-commercial. `local:true` = a permissively-usable open weight that runs on ABUZ8 OS.
+// This is the single source of truth for BOTH the detail card and the table (data-driven, no duplication).
+const MODELS = [
+  { name:'Llama 3.3 / Llama 4', maker:'Meta', type:'LLM', license:'Llama Community License', commercial:'cond', local:true,
+    summary:'Commercial use is granted for free under Meta’s Llama Community License — an open-weights license with conditions, not a standard open-source one.',
+    catch:'You must show a “Built with Llama” notice, any derivative model name must start with “Llama”, and you can’t use outputs to train non-Llama models. Over 700M monthly active users you need a separate license from Meta; EU users face limits on the multimodal models.',
+    url:'https://www.llama.com/llama4/license/' },
+  { name:'Qwen3', maker:'Alibaba', type:'LLM', license:'Apache-2.0', commercial:'yes', local:true,
+    summary:'Fully permissive. The Qwen3 open-weight models are Apache-2.0 — commercial use, modification and redistribution are all allowed.',
+    catch:'Only the standard Apache-2.0 notice/attribution. A few other Qwen variants have used different terms, so confirm the exact model card.',
+    url:'https://github.com/QwenLM/Qwen3' },
+  { name:'DeepSeek V3 / R1', maker:'DeepSeek', type:'LLM', license:'MIT', commercial:'yes', local:true,
+    summary:'MIT-licensed weights and code. Commercial use, modification, and even distillation into other models are explicitly allowed.',
+    catch:'Some distilled variants are built on Llama or Qwen bases and inherit THOSE licenses — check the specific checkpoint, not just “DeepSeek”.',
+    url:'https://huggingface.co/deepseek-ai/DeepSeek-R1/blob/main/LICENSE' },
+  { name:'Mistral (open models)', maker:'Mistral AI', type:'LLM', license:'Apache-2.0 (most)', commercial:'yes', local:true,
+    summary:'The Mistral 3 / Ministral 3 dense models and Mistral Large 3 ship under Apache-2.0 — full commercial use with no revenue cap.',
+    catch:'Not every Mistral is Apache: some tiers use a modified-MIT with a revenue clause (roughly $20M/mo), and older premier models used the non-commercial Mistral Research License. Verify the exact model.',
+    url:'https://help.mistral.ai/en/articles/347393-under-which-license-are-mistral-s-open-models-available' },
+  { name:'Phi-4', maker:'Microsoft', type:'LLM', license:'MIT', commercial:'yes', local:true,
+    summary:'Microsoft released the full Phi-4 weights under MIT — commercial use, modification and redistribution allowed.',
+    catch:'Nothing beyond the standard MIT copyright notice. No warranty.',
+    url:'https://huggingface.co/microsoft/phi-4/blob/main/LICENSE' },
+  { name:'Whisper', maker:'OpenAI', type:'Speech', license:'MIT', commercial:'yes', local:true,
+    summary:'OpenAI’s speech-to-text model is MIT-licensed — full commercial use inside proprietary software.',
+    catch:'Keep the MIT copyright/license notice in distributions. Provided as-is, no warranty.',
+    url:'https://github.com/openai/whisper/blob/main/LICENSE' },
+  { name:'Gemma 2 / 3', maker:'Google', type:'LLM', license:'Gemma Terms of Use', commercial:'cond', local:true,
+    summary:'Commercial use is allowed, but under Google’s custom Gemma Terms — not a standard open-source license.',
+    catch:'You must pass Google’s Prohibited Use Policy downstream to your users, the terms bind every fine-tune/derivative, and Google can update terms or revoke access. (Newer Gemma releases have moved to Apache-2.0 — check your version.)',
+    url:'https://ai.google.dev/gemma/terms' },
+  { name:'FLUX.1 [schnell]', maker:'Black Forest Labs', type:'Image', license:'Apache-2.0', commercial:'yes', local:true,
+    summary:'The fast “schnell” image model is Apache-2.0 — full commercial use, no revenue cap.',
+    catch:'Only [schnell] is Apache. Do not assume the same for [dev] — see the next row.',
+    url:'https://github.com/black-forest-labs/flux/blob/main/model_licenses/LICENSE-FLUX1-schnell' },
+  { name:'FLUX.1 [dev]', maker:'Black Forest Labs', type:'Image', license:'FLUX.1-dev Non-Commercial', commercial:'no', local:false,
+    summary:'The higher-quality “dev” image model is NON-COMMERCIAL — weights and outputs may only be used for non-commercial purposes.',
+    catch:'Commercial use requires a separate paid license from Black Forest Labs. Shipping on dev by mistake (it looks just like schnell) is the classic generative-imaging licensing trap.',
+    url:'https://huggingface.co/black-forest-labs/FLUX.1-dev/blob/main/LICENSE.md' },
+  { name:'Stable Diffusion XL (SDXL)', maker:'Stability AI', type:'Image', license:'CreativeML Open RAIL-M', commercial:'yes', local:true,
+    summary:'SDXL and SD 1.5 use OpenRAIL-M — commercial use and selling outputs are allowed with no revenue cap.',
+    catch:'RAIL licenses carry use-based restrictions (no illegal/harmful use) that must pass downstream. The newer SD 3 / 3.5 use a DIFFERENT, revenue-gated license — see the next row.',
+    url:'https://github.com/Stability-AI/generative-models' },
+  { name:'Stable Diffusion 3.5', maker:'Stability AI', type:'Image', license:'Stability AI Community License', commercial:'cond', local:true,
+    summary:'Free — including commercial use — for individuals and organizations under $1M in annual revenue.',
+    catch:'Above $1M annual revenue you need a paid Stability enterprise license. This is a revenue-gated license, not a standard open-source one.',
+    url:'https://stability.ai/license' }
+];
+
+const STATUS = {
+  yes:  { pill:'yes',  label:'✓ Commercial OK', word:'Yes' },
+  cond: { pill:'cond', label:'⚠ Conditions apply', word:'With conditions' },
+  no:   { pill:'no',   label:'✗ Non-commercial', word:'No' }
+};
+
+// ── CATEGORY MATCH ──────────────────────────────────────────────────────────────
+function catMatch(m) {
+  const c = document.getElementById('typeSel').value;
+  return c === 'all' || m.type === c;
+}
+function findModel(name) { return MODELS.find(m => m.name === name); }
+
+// ── POPULATE MODEL SELECT (respects the category filter, preserves selection) ────
+function populateModelSelect() {
+  const sel = document.getElementById('modelSel');
+  const prev = sel.value;
+  const list = MODELS.filter(catMatch);
+  sel.innerHTML = '';
+  list.forEach(m => { const o = document.createElement('option'); o.value = m.name; o.textContent = m.name + ' — ' + m.maker; sel.appendChild(o); });
+  if (list.some(m => m.name === prev)) sel.value = prev;
+}
+
+// ── DETAIL CARD (selected model) ─────────────────────────────────────────────────
+function showDetail() {
+  populateModelSelect();
+  const sel = document.getElementById('modelSel');
+  const m = findModel(sel.value) || MODELS.filter(catMatch)[0];
+  const d = document.getElementById('detail');
+  if (!m) { d.innerHTML = '<p class="m-catch">No models in this category.</p>'; renderTable(); return; }
+  const s = STATUS[m.commercial];
+  d.innerHTML =
+    '<div class="d-top">' +
+      '<span class="d-name">' + m.name + '</span>' +
+      '<span class="d-maker">' + m.maker + ' &middot; ' + m.type + '</span>' +
+      '<span class="d-license">' + m.license + '</span>' +
+      '<span class="pill ' + s.pill + '">' + s.label + '</span>' +
+    '</div>' +
+    '<p class="d-summary">' + m.summary + '</p>' +
+    '<div class="d-catch"><strong>Watch out:</strong> ' + m.catch + '</div>' +
+    '<span class="d-src">Official license: <a href="' + m.url + '" target="_blank" rel="noopener">' + m.url + '</a></span>' +
+    (m.local ? '<div class="m-local">&#9656; Runs locally on ABUZ8 OS &middot; $0 / token</div>' : '');
+  renderTable();
+}
+
+// ── STATUS FILTER (chips) ────────────────────────────────────────────────────────
+let statusFilter = 'all';
+function setFilter(f, el) {
+  statusFilter = f;
+  document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  renderTable();
+}
+
+// ── TABLE (filtered by category + status) ───────────────────────────────────────
+function renderTable() {
+  const body = document.getElementById('licTable');
+  const rows = MODELS.filter(catMatch).filter(m => statusFilter === 'all' || m.commercial === statusFilter);
+  if (!rows.length) {
+    body.innerHTML = '<tr><td colspan="5" class="m-catch" style="text-align:center;padding:1.4rem">No models match this filter.</td></tr>';
+    return;
+  }
+  body.innerHTML = rows.map(m => {
+    const s = STATUS[m.commercial];
+    return '<tr class="row-' + m.commercial + '">' +
+      '<td><span class="m-name">' + m.name + '</span><span class="m-maker">' + m.maker + ' &middot; ' + m.type + '</span>' +
+        (m.local ? '<span class="m-local">&#9656; Local on ABUZ8 OS &middot; $0/token</span>' : '') + '</td>' +
+      '<td><span class="m-license">' + m.license + '</span></td>' +
+      '<td><span class="pill ' + s.pill + '">' + s.word + '</span></td>' +
+      '<td><span class="m-catch">' + m.catch + '</span></td>' +
+      '<td class="m-src"><a href="' + m.url + '" target="_blank" rel="noopener">view &#8599;</a></td>' +
+    '</tr>';
+  }).join('');
+}
+
+// ── WAITLIST ──────────────────────────────────────────────────────────────────
+async function submitWaitlist() {
+  const email = document.getElementById('ctaEmail').value.trim();
+  if (!email || !email.includes('@')) { alert('Please enter a valid email address.'); return; }
+  const payload = { email, product: 'qadir-os-model-license-checker', ts: new Date().toISOString() };
+  try {
+    await fetch('/api/waitlist', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+  } catch (e) { /* graceful fallback — never block the confirmation */ }
+  document.getElementById('ctaEmail').style.display = 'none';
+  document.querySelector('.cta-form button').style.display = 'none';
+  document.getElementById('ctaSuccess').classList.add('visible');
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+showDetail();
+</script>
+<script src="/tools/_tools-shared.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>

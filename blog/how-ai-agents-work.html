@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How AI Agents Work (Explained in Plain English) | ABUZ8</title>
+<meta name="description" content="How AI agents work, without the jargon: the perceive-plan-act loop, what the model actually does, how tools and memory fit in, and why an agent is more than a chatbot.">
+<meta name="keywords" content="how ai agents work, how do ai agents work, ai agent explained, ai agent loop, what is an ai agent">
+<link rel="canonical" href="https://abuz8ai.com/blog/how-ai-agents-work">
+<meta property="og:title" content="How AI Agents Work (Explained in Plain English)">
+<meta property="og:type" content="article">
+<link rel="stylesheet" href="/blog/_blog-base.css">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@300;400;600;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
+<style>
+:root{
+  --lapis:#F8FAFC; --lapis-mid:#EEF3F8; --lapis-light:#E3EBF3;
+  --card:#FFFFFF; --border:#D7E0EA;
+  --cream:#1F3A5F; --ivory:#16324F; --text:#2C3E50; --dim:#5A6B7C;
+  --gold:#1F5B94; --gold-light:#12866E; --gold-dim:#7DA3C8;
+  --turq:#0E7C63; --turq-light:#1F5B94; --turq-bright:#12866E;
+  --primary:#2E75B6;
+}
+code{background:#EEF3F8;color:#1F5B94;font-family:'JetBrains Mono',monospace;font-size:0.85em;padding:0.1em 0.35em;border-radius:4px;}
+.callout.cta{background:#EEF3F8;border:1px solid #2E75B6;border-radius:12px;padding:22px 24px;margin:36px 0 10px;}
+.callout.cta p{margin:0;color:#2C3E50;}
+.foot{color:#5A6B7C;font-size:13px;margin-top:40px;border-top:1px solid #D7E0EA;padding-top:18px;}
+.foot a{color:#1F5B94;}
+</style>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","headline":"How AI Agents Work (Explained in Plain English)","datePublished":"2026-07-29","author":{"@type":"Organization","name":"ABUZ8 AI"}}
+</script>
+</head>
+<body>
+<div class="container">
+  <a href="/blog/" class="back">&larr; ABUZ8 BLOG</a>
+  <h1>How AI Agents Work (Explained in Plain English)</h1>
+  <div class="meta-row"><span>AI AGENTS 101</span><span class="dot"></span><span>JULY 29, 2026</span><span class="dot"></span><span>6 MIN READ</span></div>
+
+  <p><strong>How AI agents work</strong> is simpler than the hype makes it sound: an agent takes a goal, decides on one action, does it, looks at what happened, and decides the next action — over and over until the job is done. That loop is the whole trick. The model supplies the judgment at each step; the loop, the tools, and the memory turn that judgment into finished work. Once you see the loop, every "AI agent" product on the market stops being mysterious and starts looking like the same four parts arranged slightly differently.</p>
+
+  <h2>The loop is the engine</h2>
+  <p>Strip away the branding and an agent runs one cycle: <strong>perceive → plan → act → observe → repeat</strong>. It reads the current state (your request plus whatever it has gathered so far), plans a next step, takes that step with a tool, observes the result, and feeds that result back into the next round of planning. A chatbot does one pass and stops. An agent keeps circling until it hits the goal or decides it can't. That difference — a loop instead of a single reply — is why an agent can do "download these three reports, pull the totals, and email me a summary" instead of merely describing how you'd do it. If you want the longer version, we broke the loop down in <a href="/blog/agentic-loop-explained" class="in">the agentic loop explained</a>.</p>
+
+  <h2>What the model actually does</h2>
+  <p>The model — the large language model at the center — is the part that <em>decides</em>. At each turn of the loop it looks at the goal and the results so far and answers one question: what's the best next move? Sometimes that's "call the file tool with this path," sometimes it's "we're done, here's the answer." The model isn't storing your data or running your tools; it's the judgment layer that picks the next action. That's why the same agent can swap one model for another and still function — the loop and tools stay put while the brain behind the decisions changes. Being able to swap that brain freely is the heart of <a href="/blog/model-agnostic-ai-agents" class="in">model-agnostic agents</a>.</p>
+
+  <h2>Tools are the hands</h2>
+  <p>A model on its own can only produce text. Tools are what let an agent <em>act</em> on the world: read and write files, run a shell command, drive a browser, query a database, call an API, send a message. When the model decides "search the invoices folder," the agent invokes the file tool, gets real results back, and hands them to the model for the next decision. The set of tools an agent can reach is the ceiling on what it can accomplish — a brilliant model with no tools just talks, while a modest model with the right tools gets real work done. This is why capable agents ship with a broad tool library rather than a single chat box.</p>
+
+  <h2>Memory is what makes it coherent</h2>
+  <p>Without memory, every run starts from zero. Memory is how an agent carries context — within a single task ("I already checked that folder") and across sessions ("last week you told me your invoices live here"). Short-term memory keeps the current job coherent so the agent doesn't loop on the same step; longer-term memory lets it remember your preferences, your projects, and past decisions so you're not re-explaining yourself every time. Owning that memory instead of renting it is a bigger deal than most people realize — we made the case in <a href="/blog/what-is-agent-memory" class="in">what agent memory is</a>.</p>
+
+  <h2>Putting the four parts together</h2>
+  <p>So the anatomy is: a <strong>model</strong> that decides, a <strong>loop</strong> that keeps it going, <strong>tools</strong> that let it act, and <strong>memory</strong> that keeps it coherent. Walk through a real task and you can see all four. Goal: "organize the new files in my downloads folder." The loop starts, the model plans "list the folder," the file tool returns the contents, the model observes and plans "sort by type," the tool acts, memory notes what's been moved so nothing gets done twice, and the loop exits when the folder is clean. Nothing magic — four parts, cooperating in a cycle.</p>
+
+  <h2>Where agents still trip</h2>
+  <p>Understanding the loop also makes the failure modes obvious. If the model plans a bad step, the agent does a bad thing — fast, and sometimes repeatedly, which is why good agents ask before anything destructive. If a tool is missing, the agent simply can't do that part of the job. If memory is thin, it repeats work or loses the thread on long tasks. None of these are reasons to avoid agents; they're reasons to pick one with a solid tool set, sane guardrails, and real memory. The design choices that matter map directly onto the four parts.</p>
+
+  <h2>Why this matters for what you buy</h2>
+  <p>Once you know the anatomy, evaluating any agent product gets easy. Which models can it use, and can you swap them? What tools does it ship with, and can you add your own? Where does its memory live — on your side or a vendor's? And where does the decision loop actually run? Those four questions cut straight through the marketing. An agent is not a smarter chatbot; it's a loop with hands and a memory, and the best one for you is the one whose four parts you actually control.</p>
+
+  <div class="callout cta">
+    <p><strong>QADIR OS is built around exactly this loop.</strong> A model you can swap, a broad tool library, memory that stays on your machine, and an agent loop that runs locally — the four parts, on your side of the line. <a href="/" class="in">Join QADIR OS early access</a>.</p>
+  </div>
+  <div class="foot">Built by <a href="/">ABUZ8 LLC</a> — we're building QADIR OS, the sovereign agentic operating system.</div>
+</div>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+<script src="/blog/_blog-shared.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>

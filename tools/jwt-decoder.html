@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JWT Decoder — Decode &amp; Inspect JSON Web Tokens Free | ABUZ8</title>
+  <meta name="description" content="Free JWT decoder tool. Paste any JSON Web Token to instantly decode and inspect the Header, Payload, and Signature. Check expiry, verify signatures, and copy decoded JSON." />
+  <meta name="keywords" content="JWT decoder, JSON Web Token, decode JWT, JWT inspector, JWT verifier, free JWT tool" />
+  <meta property="og:title" content="JWT Decoder — Free JSON Web Token Inspector | ABUZ8" />
+  <meta property="og:description" content="Instantly decode JWT headers, payloads, and signatures. Check token expiry and verify signatures client-side." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://abuz8ai.com/tools/jwt-decoder" />
+  <link rel="canonical" href="https://abuz8ai.com/tools/jwt-decoder" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "JWT Decoder",
+    "description": "Free client-side JWT decoder and inspector. Decode headers, payloads, verify signatures.",
+    "url": "https://abuz8ai.com/tools/jwt-decoder.html",
+    "applicationCategory": "DeveloperApplication",
+    "operatingSystem": "Any",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+    "author": { "@type": "Organization", "name": "ABUZ8 LLC", "url": "https://abuz8ai.com" }
+  }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --lapis: #0a1628;
+      --card: #0d1a30;
+      --card-alt: #0f1e35;
+      --gold: #c9a84c;
+      --gold-dim: #a07830;
+      --teal: #0e9f6e;
+      --teal-bright: #2fbf8f;
+      --cream: #e8dcc8;
+      --text: #cdd6f4;
+      --text-dim: #8896b0;
+      --border: #1e2d45;
+      --red: #e05c5c;
+      --green: #4caf88;
+      --font-heading: 'Playfair Display', Georgia, serif;
+      --font-body: 'Inter', system-ui, sans-serif;
+      --font-mono: 'JetBrains Mono', 'Courier New', monospace;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--lapis);
+      color: var(--text);
+      font-family: var(--font-body);
+      font-size: 15px;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+    a { color: var(--gold); text-decoration: none; transition: color 0.2s; }
+    a:hover { color: var(--teal-bright); }
+
+    /* NAV */
+    nav {
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      padding: 0 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 60px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .nav-logo {
+      font-family: var(--font-heading);
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--gold);
+      letter-spacing: 0.02em;
+    }
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links a { color: var(--text-dim); font-size: 0.9rem; font-weight: 500; }
+    .nav-links a:hover { color: var(--gold); }
+    /* MAIN */
+    main { max-width: 960px; margin: 0 auto; padding: 3rem 1.5rem 5rem; }
+    .page-header { text-align: center; margin-bottom: 2.5rem; }
+    .page-header h1 {
+      font-family: var(--font-heading);
+      font-size: 2.4rem;
+      font-weight: 700;
+      color: var(--gold);
+      margin-bottom: 0.5rem;
+    }
+    .page-header p { color: var(--text-dim); font-size: 1rem; max-width: 540px; margin: 0 auto; }
+
+    /* WARNING BANNER */
+    .warning-banner {
+      background: rgba(224,92,92,0.1);
+      border: 1px solid rgba(224,92,92,0.35);
+      border-left: 3px solid var(--red);
+      border-radius: 6px;
+      padding: 0.8rem 1.2rem;
+      margin-bottom: 1.8rem;
+      font-size: 0.85rem;
+      color: #f0b0b0;
+      display: flex;
+      align-items: flex-start;
+      gap: 0.6rem;
+    }
+    .warning-banner .icon { font-size: 1rem; flex-shrink: 0; margin-top: 2px; }
+
+    /* INPUT SECTION */
+    .input-section { margin-bottom: 1.8rem; }
+    label { display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-dim);
+            text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.5rem; }
+    textarea, input[type="text"], input[type="password"] {
+      width: 100%;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+      padding: 0.9rem 1rem;
+      resize: vertical;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    textarea:focus, input:focus { border-color: var(--gold-dim); }
+    textarea { min-height: 100px; }
+    .jwt-input { min-height: 80px; word-break: break-all; }
+
+    .btn-row { display: flex; gap: 0.75rem; margin-top: 1rem; flex-wrap: wrap; }
+    button {
+      padding: 0.55rem 1.3rem;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      font-family: var(--font-body);
+      font-size: 0.85rem;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+    .btn-primary { background: var(--gold); color: #0a0e18; }
+    .btn-primary:hover { background: #ddb85c; }
+    .btn-ghost { background: transparent; border: 1px solid var(--border); color: var(--text-dim); }
+    .btn-ghost:hover { border-color: var(--gold-dim); color: var(--gold); }
+    .btn-sm { padding: 0.3rem 0.8rem; font-size: 0.78rem; }
+    /* VERIFY SECTION */
+    .verify-section {
+      background: var(--card-alt);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem 1.2rem;
+      margin-bottom: 1.8rem;
+    }
+    .verify-section h3 { font-size: 0.85rem; font-weight: 600; color: var(--text-dim);
+                         text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.8rem; }
+    .verify-row { display: flex; gap: 0.75rem; align-items: flex-end; flex-wrap: wrap; }
+    .verify-row .field { flex: 1; min-width: 180px; }
+    .verify-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.35rem 0.9rem;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+    }
+    .verify-status.verified { background: rgba(76,175,136,0.15); color: var(--green); border: 1px solid rgba(76,175,136,0.3); }
+    .verify-status.invalid { background: rgba(224,92,92,0.15); color: var(--red); border: 1px solid rgba(224,92,92,0.3); }
+    .verify-status.idle { background: rgba(100,120,160,0.1); color: var(--text-dim); border: 1px solid var(--border); }
+
+    /* OUTPUT PANELS */
+    .panels { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.2rem; margin-bottom: 1.5rem; }
+    .panel {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.7rem 1rem;
+      border-bottom: 1px solid var(--border);
+      background: rgba(255,255,255,0.02);
+    }
+    .panel-title {
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .panel-title .dot {
+      width: 8px; height: 8px; border-radius: 50%; display: inline-block;
+    }
+    .dot-red { background: #e05c5c; }
+    .dot-gold { background: var(--gold); }
+    .dot-teal { background: var(--teal-bright); }
+    .panel-body {
+      padding: 0.9rem 1rem;
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      line-height: 1.7;
+      min-height: 120px;
+      white-space: pre-wrap;
+      word-break: break-all;
+      color: var(--text-dim);
+      max-height: 320px;
+      overflow-y: auto;
+    }
+    /* JSON Highlight classes */
+    .jk { color: var(--gold); }        /* key */
+    .js { color: var(--teal-bright); } /* string value */
+    .jn { color: var(--cream); }       /* number */
+    .jb { color: #a89ed0; }            /* boolean / null */
+
+    /* EXPIRY BADGE */
+    .expiry-badge {
+      margin: 0 0 1.5rem;
+      padding: 0.6rem 1rem;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      font-weight: 500;
+    }
+    .expiry-badge.ok { background: rgba(76,175,136,0.12); color: var(--green); border: 1px solid rgba(76,175,136,0.25); }
+    .expiry-badge.expired { background: rgba(224,92,92,0.12); color: var(--red); border: 1px solid rgba(224,92,92,0.25); }
+    .expiry-badge.hidden { display: none; }
+
+    /* ERROR */
+    .error-msg {
+      background: rgba(224,92,92,0.1);
+      border: 1px solid rgba(224,92,92,0.3);
+      color: var(--red);
+      padding: 0.8rem 1rem;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      margin-bottom: 1.5rem;
+      display: none;
+    }
+    .error-msg.visible { display: block; }
+    /* CTA */
+    .cta-section {
+      background: linear-gradient(135deg, rgba(26,138,122,0.12) 0%, rgba(201,168,76,0.08) 100%);
+      border: 1px solid rgba(201,168,76,0.2);
+      border-radius: 12px;
+      padding: 2rem 2rem;
+      text-align: center;
+      margin-top: 3rem;
+    }
+    .cta-section h2 {
+      font-family: var(--font-heading);
+      font-size: 1.5rem;
+      color: var(--gold);
+      margin-bottom: 0.5rem;
+    }
+    .cta-section p { color: var(--text-dim); font-size: 0.92rem; margin-bottom: 1.2rem; }
+    .cta-form { display: flex; gap: 0.6rem; justify-content: center; flex-wrap: wrap; }
+    .cta-form input[type="email"] {
+      flex: 1; max-width: 300px; min-width: 200px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text);
+      font-family: var(--font-body);
+      font-size: 0.9rem;
+      padding: 0.6rem 1rem;
+      outline: none;
+    }
+    .cta-form input[type="email"]:focus { border-color: var(--gold-dim); }
+    .cta-success { display: none; color: var(--teal-bright); font-size: 0.9rem; margin-top: 0.8rem; }
+    .cta-success.visible { display: block; }
+
+    /* FOOTER */
+    footer {
+      background: var(--card);
+      border-top: 1px solid var(--border);
+      text-align: center;
+      padding: 1.5rem;
+      font-size: 0.82rem;
+      color: var(--text-dim);
+    }
+    footer a { color: var(--text-dim); }
+    footer a:hover { color: var(--gold); }
+
+    /* RESPONSIVE */
+    @media (max-width: 600px) {
+      .page-header h1 { font-size: 1.7rem; }
+      .panels { grid-template-columns: 1fr; }
+      .verify-row { flex-direction: column; }
+      nav { padding: 0 1rem; }
+      .nav-links { gap: 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="nav-logo">ABUZ8</a>
+  <ul class="nav-links">
+    <li><a href="/tools.html">Tools</a></li>
+    <li><a href="/store.html">Store</a></li>
+  </ul>
+</nav>
+
+<main>
+  <div class="page-header">
+    <h1>JWT Decoder</h1>
+    <p>Paste any JSON Web Token to instantly decode and inspect its parts. All processing happens in your browser — nothing is sent to a server.</p>
+  </div>
+
+  <div class="warning-banner">
+    <span class="icon">&#9888;</span>
+    <span><strong>Security notice:</strong> Never paste production tokens from live systems into any online tool, including this one. Use only test or development tokens.</span>
+  </div>
+
+  <div class="input-section">
+    <label for="jwtInput">JSON Web Token (JWT)</label>
+    <textarea id="jwtInput" class="jwt-input" placeholder="Paste your JWT here: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIn0.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c" spellcheck="false"></textarea>
+    <div class="btn-row">
+      <button class="btn-primary" onclick="decodeJWT()">Decode Token</button>
+      <button class="btn-ghost" onclick="clearAll()">Clear</button>
+      <button class="btn-ghost" onclick="loadSample()">Load Sample</button>
+    </div>
+  </div>
+  <div class="verify-section">
+    <h3>&#128274; Signature Verification (optional)</h3>
+    <div class="verify-row">
+      <div class="field">
+        <label for="secretInput">Secret / Public Key (for HS256 only)</label>
+        <input type="password" id="secretInput" placeholder="Enter HMAC secret..." autocomplete="off" />
+      </div>
+      <button class="btn-ghost" onclick="verifySignature()" style="margin-bottom:0;">Verify</button>
+      <span id="verifyStatus" class="verify-status idle">Not verified</span>
+    </div>
+  </div>
+
+  <div id="errorMsg" class="error-msg"></div>
+  <div id="expiryBadge" class="expiry-badge hidden"></div>
+
+  <div class="panels">
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title"><span class="dot dot-red"></span> Header</div>
+        <button class="btn-ghost btn-sm" onclick="copyPanel('headerOutput')">Copy</button>
+      </div>
+      <div class="panel-body" id="headerOutput">Waiting for input...</div>
+    </div>
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title"><span class="dot dot-gold"></span> Payload</div>
+        <button class="btn-ghost btn-sm" onclick="copyPanel('payloadOutput')">Copy</button>
+      </div>
+      <div class="panel-body" id="payloadOutput">Waiting for input...</div>
+    </div>
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title"><span class="dot dot-teal"></span> Signature</div>
+        <button class="btn-ghost btn-sm" onclick="copyPanel('sigOutput')">Copy</button>
+      </div>
+      <div class="panel-body" id="sigOutput">Waiting for input...</div>
+    </div>
+  </div>
+
+  <div class="cta-section">
+    <h2>QADIR OS handles JWTs so you don&#8217;t have to</h2>
+    <p>QADIR OS can generate, validate, and rotate JWTs automatically in your agentic workflows — zero copy-paste, zero risk of leaking production secrets.</p>
+    <div class="cta-form">
+      <input type="email" id="ctaEmail" placeholder="you@company.com" />
+      <button class="btn-primary" onclick="submitWaitlist()">Join Waitlist</button>
+    </div>
+    <div id="ctaSuccess" class="cta-success">&#10003; You&#8217;re on the list. We&#8217;ll be in touch.</div>
+  </div>
+</main>
+
+<footer>
+  ABUZ8 LLC &middot; Free AI Tools &middot; <a href="mailto:ahmad@abuz8ai.com">ahmad@abuz8ai.com</a>
+</footer>
+
+<script>
+// ── SAMPLE JWT ──────────────────────────────────────────────────────────────
+const SAMPLE = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c3JfMTIzNDU2IiwibmFtZSI6IkFobWFkIE9zYW1hIiwiZW1haWwiOiJhaG1hZEBhYnV6OGFpLmNvbSIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTcxNjE3NjAwMCwiZXhwIjoyMDMxNzk2MDAwfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c';
+
+function b64UrlDecode(str) {
+  str = str.replace(/-/g, '+').replace(/_/g, '/');
+  while (str.length % 4) str += '=';
+  return atob(str);
+}
+
+function syntaxHighlight(obj) {
+  const json = JSON.stringify(obj, null, 2);
+  return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, match => {
+    if (/^"/.test(match)) {
+      if (/:$/.test(match)) return `<span class="jk">${match}</span>`;
+      return `<span class="js">${match}</span>`;
+    }
+    if (/true|false|null/.test(match)) return `<span class="jb">${match}</span>`;
+    return `<span class="jn">${match}</span>`;
+  });
+}
+function decodeJWT() {
+  const raw = document.getElementById('jwtInput').value.trim();
+  const err = document.getElementById('errorMsg');
+  const expiry = document.getElementById('expiryBadge');
+  err.classList.remove('visible');
+  expiry.className = 'expiry-badge hidden';
+  resetVerify();
+
+  if (!raw) { showError('Please paste a JWT token to decode.'); return; }
+
+  const parts = raw.split('.');
+  if (parts.length !== 3) {
+    showError(`Invalid JWT format. A valid JWT has 3 parts separated by dots. Found ${parts.length} part(s).`);
+    return;
+  }
+
+  let header, payload;
+  try {
+    header = JSON.parse(b64UrlDecode(parts[0]));
+  } catch(e) { showError('Could not decode JWT header. The token may be malformed or corrupted.'); return; }
+
+  try {
+    payload = JSON.parse(b64UrlDecode(parts[1]));
+  } catch(e) { showError('Could not decode JWT payload. The token may be malformed or corrupted.'); return; }
+
+  document.getElementById('headerOutput').innerHTML = syntaxHighlight(header);
+  document.getElementById('payloadOutput').innerHTML = syntaxHighlight(payload);
+  document.getElementById('sigOutput').textContent = parts[2];
+
+  // Expiry check
+  if (payload.exp) {
+    const now = Math.floor(Date.now() / 1000);
+    const diff = payload.exp - now;
+    const absDays = Math.abs(Math.round(diff / 86400));
+    const absHrs = Math.abs(Math.round(diff / 3600));
+    expiry.className = diff > 0 ? 'expiry-badge ok' : 'expiry-badge expired';
+    if (diff > 0) {
+      expiry.textContent = absDays > 1 ? `Token expires in ${absDays} days` : `Token expires in ${absHrs} hour(s)`;
+    } else {
+      expiry.textContent = absDays > 1 ? `EXPIRED ${absDays} days ago` : `EXPIRED ${absHrs} hour(s) ago`;
+    }
+  }
+}
+
+function showError(msg) {
+  const el = document.getElementById('errorMsg');
+  el.textContent = msg;
+  el.classList.add('visible');
+  ['headerOutput','payloadOutput','sigOutput'].forEach(id => {
+    document.getElementById(id).textContent = '—';
+  });
+}
+
+function resetVerify() {
+  const vs = document.getElementById('verifyStatus');
+  vs.textContent = 'Not verified';
+  vs.className = 'verify-status idle';
+}
+
+async function verifySignature() {
+  const raw = document.getElementById('jwtInput').value.trim();
+  const secret = document.getElementById('secretInput').value;
+  const vs = document.getElementById('verifyStatus');
+  if (!raw || raw.split('.').length !== 3) { vs.textContent = 'Decode token first'; vs.className = 'verify-status invalid'; return; }
+  if (!secret) { vs.textContent = 'Enter a secret'; vs.className = 'verify-status idle'; return; }
+
+  const parts = raw.split('.');
+  const signingInput = parts[0] + '.' + parts[1];
+  const enc = new TextEncoder();
+
+  try {
+    const key = await crypto.subtle.importKey('raw', enc.encode(secret), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']);
+    const sig = await crypto.subtle.sign('HMAC', key, enc.encode(signingInput));
+    const b64 = btoa(String.fromCharCode(...new Uint8Array(sig))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=/g,'');
+    if (b64 === parts[2]) {
+      vs.textContent = '✓ VERIFIED';
+      vs.className = 'verify-status verified';
+    } else {
+      vs.textContent = '✗ INVALID';
+      vs.className = 'verify-status invalid';
+    }
+  } catch(e) {
+    vs.textContent = 'Verification error';
+    vs.className = 'verify-status invalid';
+  }
+}
+
+function copyPanel(id) {
+  const el = document.getElementById(id);
+  const text = el.innerText || el.textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = el.closest('.panel').querySelector('button');
+    const orig = btn.textContent;
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = orig, 1800);
+  });
+}
+
+function clearAll() {
+  document.getElementById('jwtInput').value = '';
+  document.getElementById('secretInput').value = '';
+  ['headerOutput','payloadOutput','sigOutput'].forEach(id => {
+    document.getElementById(id).textContent = 'Waiting for input...';
+  });
+  document.getElementById('errorMsg').classList.remove('visible');
+  document.getElementById('expiryBadge').className = 'expiry-badge hidden';
+  resetVerify();
+}
+
+function loadSample() {
+  document.getElementById('jwtInput').value = SAMPLE;
+  decodeJWT();
+}
+
+async function submitWaitlist() {
+  const email = document.getElementById('ctaEmail').value.trim();
+  if (!email || !email.includes('@')) { alert('Please enter a valid email address.'); return; }
+  const payload = { email, product: 'qadir-os-jwt', ts: new Date().toISOString() };
+  try {
+    await fetch('/api/waitlist', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(payload) });
+  } catch(e) { /* graceful fallback — show success anyway */ }
+  document.getElementById('ctaEmail').style.display = 'none';
+  document.querySelector('.cta-form button').style.display = 'none';
+  document.getElementById('ctaSuccess').classList.add('visible');
+}
+
+// Auto-decode on paste
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('jwtInput').addEventListener('input', () => {
+    const v = document.getElementById('jwtInput').value.trim();
+    if (v.split('.').length === 3 && v.length > 20) decodeJWT();
+  });
+});
+</script>
+<script src="/tools/_tools-shared.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>
+

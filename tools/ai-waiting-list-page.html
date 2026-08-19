@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Waiting List Page Builder — Launch Ready in 60 Seconds | ABUZ8</title>
+<meta name="description" content="Build a high-converting waitlist page for your product launch. Customize, preview, copy the code. Free.">
+<link rel="canonical" href="https://abuz8ai.com/tools/ai-waiting-list-page">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"AI Waiting List Page Builder","url":"https://abuz8ai.com/tools/ai-waiting-list-page","description":"Build beautiful waitlist pages with counters, benefits, and email capture in seconds.","applicationCategory":"BusinessApplication","isAccessibleForFree":true}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--lapis:#0a1628;--lapis2:#0f1f3d;--lapis3:#162544;--gold:#c9a84c;--gold2:#e8c96d;--turq:#0e9f6e;--turq2:#22b5a0;--text:#e8e4dc;--muted:#8892a4;--border:rgba(201,168,76,0.18);--rad:12px}
+body{background:var(--lapis);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh}
+a{color:var(--gold);text-decoration:none}
+.nav{display:flex;align-items:center;justify-content:space-between;padding:16px 40px;border-bottom:1px solid var(--border)}
+.nav-logo{font-family:'Playfair Display',serif;font-size:1.3rem;color:var(--gold)}
+.nav-links{display:flex;gap:20px;font-size:.83rem}.nav-links a{color:var(--muted)}.nav-links a:hover{color:var(--gold)}
+.hero{text-align:center;padding:44px 20px 28px;max-width:700px;margin:0 auto}
+.hero h1{font-family:'Playfair Display',serif;font-size:clamp(1.9rem,4.5vw,3rem);line-height:1.15;margin-bottom:12px}
+.hero h1 span{color:var(--gold)}
+.hero p{color:var(--muted);font-size:.95rem;line-height:1.7}
+.main{max-width:1100px;margin:28px auto 60px;padding:0 20px;display:grid;grid-template-columns:1fr 420px;gap:24px}
+@media(max-width:880px){.main{grid-template-columns:1fr}}
+.panel{background:var(--lapis2);border:1px solid var(--border);border-radius:var(--rad)}
+.panel-head{padding:14px 18px;border-bottom:1px solid var(--border);font-size:.95rem;font-weight:600;display:flex;align-items:center;gap:8px}
+.panel-body{padding:18px}
+label.lbl{display:block;font-size:.77rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;margin-top:14px}
+label.lbl:first-child{margin-top:0}
+input.fi,textarea.fi{width:100%;background:var(--lapis3);border:1px solid var(--border);border-radius:8px;padding:10px 13px;color:var(--text);font-size:.9rem;font-family:'Inter',sans-serif;outline:none;transition:border-color .2s}
+input.fi:focus,textarea.fi:focus{border-color:var(--gold)}
+input.fi::placeholder,textarea.fi::placeholder{color:var(--muted)}
+textarea.fi{resize:vertical;min-height:56px}
+.benefit-item{display:flex;gap:8px;margin-bottom:8px;align-items:center}
+.benefit-item input{flex:1;background:var(--lapis3);border:1px solid var(--border);border-radius:6px;padding:8px 10px;color:var(--text);font-size:.85rem;font-family:'Inter',sans-serif;outline:none}
+.benefit-item input:focus{border-color:var(--turq)}
+.del-b{background:transparent;border:none;color:var(--muted);cursor:pointer;font-size:1rem;padding:4px}
+.del-b:hover{color:#ff7a4a}
+.add-btn{background:transparent;border:1px dashed var(--border);border-radius:8px;padding:8px;width:100%;color:var(--muted);cursor:pointer;font-size:.83rem;transition:all .2s;font-family:'Inter',sans-serif}
+.add-btn:hover{border-color:var(--turq);color:var(--turq2)}
+.opt-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.opt-row label{font-size:.85rem}
+select.sel{background:var(--lapis3);border:1px solid var(--border);border-radius:6px;padding:6px 10px;color:var(--text);font-size:.83rem;outline:none;cursor:pointer}
+.build-btn{width:100%;background:var(--gold);color:var(--lapis);border:none;border-radius:var(--rad);padding:13px;font-size:.95rem;font-weight:700;cursor:pointer;transition:all .2s;margin-top:14px}
+.build-btn:hover{background:var(--gold2)}
+/* Preview */
+.preview-panel{position:sticky;top:24px}
+.preview-frame{background:var(--lapis3);border-radius:var(--rad);overflow:hidden;min-height:520px}
+.preview-content{padding:0;transition:all .3s}
+.code-wrap{margin-top:12px;background:var(--lapis2);border:1px solid var(--border);border-radius:var(--rad);overflow:hidden;display:none}
+.code-wrap.show{display:block}
+.code-area{font-size:.72rem;font-family:'Fira Code',monospace;background:#060e1a;padding:14px;max-height:220px;overflow-y:auto;white-space:pre;line-height:1.6;color:#b8d4ff}
+.copy-btn{width:100%;background:var(--lapis3);border:none;border-top:1px solid var(--border);padding:10px;font-size:.83rem;color:var(--muted);cursor:pointer;transition:all .2s;font-family:'Inter',sans-serif}
+.copy-btn:hover{color:var(--turq2)}
+.footer{border-top:1px solid var(--border);padding:24px 40px;display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;align-items:center;font-size:.8rem;color:var(--muted)}
+.footer a{color:var(--muted)}.footer a:hover{color:var(--gold)}
+</style>
+</head>
+<body>
+<nav class="nav">
+  <div class="nav-logo">ABUZ8</div>
+  <div class="nav-links"><a href="/tools">Tools</a><a href="/free.html">Free</a><a href="/news.html">AI Daily</a></div>
+</nav>
+<section class="hero">
+  <h1>Build Your <span>Waitlist Page</span> in 60 Seconds</h1>
+  <p>High-converting launch pages with live counters, benefit lists, social proof, and email capture. No code, no account.</p>
+</section>
+<div class="main">
+  <div>
+    <div class="panel">
+      <div class="panel-head">🚀 Product Info</div>
+      <div class="panel-body">
+        <label class="lbl">Product Name</label>
+        <input class="fi" id="pName" placeholder="My Awesome Product" oninput="updatePreview()">
+        <label class="lbl">Tagline</label>
+        <input class="fi" id="pTagline" placeholder="The fastest way to do X without Y" oninput="updatePreview()">
+        <label class="lbl">Short Description</label>
+        <textarea class="fi" id="pDesc" placeholder="Explain what your product does and who it's for in 2 sentences." oninput="updatePreview()"></textarea>
+        <label class="lbl">Launch Date or Countdown (leave blank for 'Coming Soon')</label>
+        <input class="fi" id="pLaunch" placeholder="Q3 2026 · June 1, 2026 · Next Month" oninput="updatePreview()">
+        <label class="lbl">Spots Claimed (for social proof counter)</label>
+        <input class="fi" id="pCount" type="number" placeholder="1247" oninput="updatePreview()">
+      </div>
+    </div>
+    <div class="panel" style="margin-top:14px">
+      <div class="panel-head">✅ Benefits / Features</div>
+      <div class="panel-body">
+        <div id="benefitsContainer"></div>
+        <button class="add-btn" onclick="addBenefit()">+ Add Benefit</button>
+      </div>
+    </div>
+    <div class="panel" style="margin-top:14px">
+      <div class="panel-head">🎨 Style</div>
+      <div class="panel-body">
+        <div class="opt-row"><label>Theme</label>
+          <select class="sel" id="wlTheme" onchange="updatePreview()">
+            <option value="dark">Dark (ABUZ8)</option>
+            <option value="light">Light / Clean</option>
+            <option value="violet">Violet</option>
+            <option value="gradient">Gradient</option>
+          </select>
+        </div>
+        <div class="opt-row"><label>CTA Button</label>
+          <select class="sel" id="wlCta" onchange="updatePreview()">
+            <option>Join the Waitlist</option>
+            <option>Get Early Access</option>
+            <option>Reserve My Spot</option>
+            <option>Notify Me</option>
+            <option>I'm In</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <button class="build-btn" onclick="generatePage()">✨ Generate Page & Code</button>
+  </div>
+  <div class="preview-panel">
+    <div class="panel">
+      <div class="panel-head">👁 Preview</div>
+      <div class="preview-frame"><div class="preview-content" id="previewContent"></div></div>
+    </div>
+    <div class="code-wrap" id="codeWrap">
+      <div class="code-area" id="codeOut"></div>
+      <button class="copy-btn" onclick="copyCode()">📋 Copy HTML</button>
+    </div>
+  </div>
+</div>
+<footer class="footer">
+  <div>© 2026 ABUZ8 LLC</div>
+  <div style="display:flex;gap:16px"><a href="/tools">All Tools</a><a href="https://github.com/abuz8studios-ship-it" target="_blank">GitHub ↗</a><a href="/support.html">Support →</a></div>
+</footer>
+<script>
+const WL_THEMES = {
+  dark:{bg:'#0a1628',bg2:'#0f1f3d',text:'#e8e4dc',sub:'#8892a4',btn:'#c9a84c',btnTxt:'#0a1628',border:'rgba(201,168,76,0.2)',acc:'#c9a84c'},
+  light:{bg:'#f9fafb',bg2:'#fff',text:'#111827',sub:'#6b7280',btn:'#111827',btnTxt:'#fff',border:'#e5e7eb',acc:'#2563eb'},
+  violet:{bg:'#1e0b3e',bg2:'#2d1060',text:'#f3e8ff',sub:'rgba(243,232,255,.6)',btn:'#7c3aed',btnTxt:'#fff',border:'rgba(168,85,247,.3)',acc:'#a855f7'},
+  gradient:{bg:'linear-gradient(135deg,#0a1628 0%,#1e0b3e 100%)',bg2:'rgba(255,255,255,.05)',text:'#e8e4dc',sub:'rgba(232,228,220,.6)',btn:'#c9a84c',btnTxt:'#0a1628',border:'rgba(255,255,255,.15)',acc:'#c9a84c'},
+};
+let benefits = ['🚀 Early access before public launch','💰 Founding member pricing (50% off)','🎁 Exclusive bonuses for first 100 members'];
+let generatedHTML = '';
+
+function addBenefit(txt='') {
+  benefits.push(txt);
+  renderBenefits();
+  updatePreview();
+}
+function removeBenefit(i) { benefits.splice(i,1); renderBenefits(); updatePreview(); }
+function renderBenefits() {
+  document.getElementById('benefitsContainer').innerHTML = benefits.map((b,i)=>`
+    <div class="benefit-item">
+      <input value="${b}" placeholder="✓ Benefit description" oninput="benefits[${i}]=this.value;updatePreview()">
+      <button class="del-b" onclick="removeBenefit(${i})">✕</button>
+    </div>`).join('');
+}
+function getTheme() { return WL_THEMES[document.getElementById('wlTheme')?.value || 'dark']; }
+
+function updatePreview() {
+  const t = getTheme();
+  const name = document.getElementById('pName')?.value || 'Product Name';
+  const tagline = document.getElementById('pTagline')?.value || 'Your compelling tagline here';
+  const desc = document.getElementById('pDesc')?.value || 'Tell visitors what your product does and why they should care.';
+  const launch = document.getElementById('pLaunch')?.value || 'Coming Soon';
+  const count = parseInt(document.getElementById('pCount')?.value) || 847;
+  const cta = document.getElementById('wlCta')?.value || 'Join the Waitlist';
+  const bg = t.bg.includes('gradient') ? t.bg : t.bg;
+  document.getElementById('previewContent').innerHTML = `
+    <div style="background:${bg};min-height:520px;padding:40px 24px;font-family:Inter,sans-serif;text-align:center">
+      <div style="display:inline-block;background:${t.bg2};border:1px solid ${t.border};border-radius:100px;padding:5px 14px;font-size:.75rem;color:${t.acc};margin-bottom:16px">${launch}</div>
+      <div style="font-size:1.5rem;font-weight:900;color:${t.text};margin-bottom:8px;line-height:1.2">${name}</div>
+      <div style="font-size:.95rem;color:${t.sub};margin-bottom:12px;line-height:1.5">${tagline}</div>
+      <div style="font-size:.82rem;color:${t.sub};margin-bottom:20px;line-height:1.5;max-width:280px;margin-left:auto;margin-right:auto">${desc}</div>
+      <div style="display:flex;gap:8px;margin-bottom:20px;max-width:300px;margin-left:auto;margin-right:auto">
+        <input style="flex:1;background:${t.bg2};border:1px solid ${t.border};border-radius:8px;padding:10px 12px;color:${t.text};font-size:.85rem;outline:none;font-family:inherit" placeholder="you@email.com">
+        <button style="background:${t.btn};color:${t.btnTxt};border:none;border-radius:8px;padding:10px 14px;font-weight:700;font-size:.82rem;cursor:pointer;white-space:nowrap">${cta}</button>
+      </div>
+      <div style="font-size:.78rem;color:${t.sub};margin-bottom:20px">🔒 No spam. Unsubscribe anytime.</div>
+      <div style="background:${t.bg2};border:1px solid ${t.border};border-radius:10px;padding:12px;display:inline-block;margin-bottom:20px">
+        <div style="font-size:1.6rem;font-weight:900;color:${t.acc}">${count.toLocaleString()}</div>
+        <div style="font-size:.73rem;color:${t.sub}">people already joined</div>
+      </div>
+      <div style="text-align:left;max-width:280px;margin:0 auto">
+        ${benefits.map(b=>`<div style="display:flex;align-items:flex-start;gap:8px;margin-bottom:8px;font-size:.82rem;color:${t.text}"><span style="color:${t.acc};flex-shrink:0">✓</span>${b}</div>`).join('')}
+      </div>
+    </div>`;
+}
+
+function generatePage() {
+  const t = getTheme();
+  const name = document.getElementById('pName').value || 'Product Name';
+  const tagline = document.getElementById('pTagline').value || 'Your tagline';
+  const desc = document.getElementById('pDesc').value || 'Product description.';
+  const launch = document.getElementById('pLaunch').value || 'Coming Soon';
+  const count = parseInt(document.getElementById('pCount').value) || 847;
+  const cta = document.getElementById('wlCta').value || 'Join the Waitlist';
+  const bg = t.bg;
+  const bens = benefits.map(b=>`      <div class="benefit"><span class="check">✓</span>${b}</div>`).join('\n');
+
+  generatedHTML = `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>${name} — ${launch}</title>
+<meta name="description" content="${tagline}">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:${bg};min-height:100vh;display:flex;justify-content:center;align-items:flex-start;padding:60px 20px;font-family:-apple-system,BlinkMacSystemFont,'Inter',sans-serif;text-align:center}
+.wrap{max-width:520px;width:100%}
+.badge{display:inline-block;background:${t.bg2};border:1px solid ${t.border};border-radius:100px;padding:5px 16px;font-size:.78rem;color:${t.acc};margin-bottom:20px}
+h1{font-size:2.4rem;font-weight:900;color:${t.text};margin-bottom:10px;line-height:1.15}
+.tagline{font-size:1.1rem;color:${t.sub};margin-bottom:12px;line-height:1.5}
+.desc{font-size:.9rem;color:${t.sub};margin-bottom:28px;line-height:1.6}
+.form-row{display:flex;gap:10px;margin-bottom:10px}
+.form-row input{flex:1;background:${t.bg2};border:1px solid ${t.border};border-radius:8px;padding:12px 14px;color:${t.text};font-size:.95rem;font-family:inherit;outline:none}
+.form-row button{background:${t.btn};color:${t.btnTxt};border:none;border-radius:8px;padding:12px 20px;font-weight:700;font-size:.9rem;cursor:pointer;white-space:nowrap}
+.privacy{font-size:.78rem;color:${t.sub};margin-bottom:24px}
+.counter{display:inline-block;background:${t.bg2};border:1px solid ${t.border};border-radius:12px;padding:14px 24px;margin-bottom:24px}
+.counter .num{font-size:2rem;font-weight:900;color:${t.acc}}
+.counter .lbl{font-size:.78rem;color:${t.sub}}
+.benefits{text-align:left;margin-top:8px}
+.benefit{display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;font-size:.9rem;color:${t.text};line-height:1.5}
+.check{color:${t.acc};flex-shrink:0;font-weight:700}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="badge">${launch}</div>
+  <h1>${name}</h1>
+  <p class="tagline">${tagline}</p>
+  <p class="desc">${desc}</p>
+  <form class="form-row" onsubmit="handleSub(event)">
+    <input type="email" placeholder="your@email.com" required>
+    <button type="submit">${cta}</button>
+  </form>
+  <div class="privacy">🔒 No spam. Unsubscribe anytime.</div>
+  <div class="counter"><div class="num" id="counter">0</div><div class="lbl">people already joined</div></div>
+  <div class="benefits">
+${bens}
+  </div>
+</div>
+<script>
+(function(){
+  const target=${count};
+  let c=0;
+  const step=Math.ceil(target/60);
+  const t=setInterval(()=>{c=Math.min(c+step,target);document.getElementById('counter').textContent=c.toLocaleString();if(c>=target)clearInterval(t);},30);
+})();
+function handleSub(e){
+  e.preventDefault();
+  const btn=e.target.querySelector('button');
+  btn.textContent='✓ You\'re in!';
+  btn.style.background='#22c55e';
+  e.target.querySelector('input').disabled=true;
+}
+<\/script>
+
+<script src="/assets/js/dfy-banner.js" async><\/script>
+<script src="/assets/js/abuz8-intent.js" defer><\/script>
+<script>(function(){var orig=window.joinWaitlist||window.joinWL;function wlPost(){var els=['wlEmail','emailInput','email'];var v='';for(var i=0;i<els.length;i++){var el=document.getElementById(els[i]);if(el&&el.value){v=el.value.trim();break;}}if(v&&v.includes('@')){fetch('/api/waitlist',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:v,product:'ai-waiting-list-page',ts:Date.now()})}).catch(function(){});}if(orig)orig();}if(typeof joinWaitlist==='function')window.joinWaitlist=wlPost;if(typeof joinWL==='function')window.joinWL=wlPost;})()<\/script>
+<script src="/tools/_tools-shared.js" defer><\/script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>`;
+
+  document.getElementById('codeOut').textContent = generatedHTML;
+  document.getElementById('codeWrap').classList.add('show');
+  document.getElementById('codeWrap').scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+function copyCode() {
+  navigator.clipboard.writeText(generatedHTML).then(()=>{
+    const btn = document.querySelector('.copy-btn');
+    btn.textContent='✓ Copied!';
+    setTimeout(()=>btn.textContent='📋 Copy HTML',2000);
+  });
+}
+
+renderBenefits();
+updatePreview();
+</script>
+<script src="_abuz8-live-brain.js" defer></script>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+<script>(function(){var orig=window.joinWaitlist||window.joinWL;function wlPost(){var els=['wlEmail','emailInput','email'];var v='';for(var i=0;i<els.length;i++){var el=document.getElementById(els[i]);if(el&&el.value){v=el.value.trim();break;}}if(v&&v.includes('@')){fetch('/api/waitlist',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:v,product:'ai-waiting-list-page',ts:Date.now()})}).catch(function(){});}if(orig)orig();}if(typeof joinWaitlist==='function')window.joinWaitlist=wlPost;if(typeof joinWL==='function')window.joinWL=wlPost;})()</script>
+<script src="/tools/_tools-shared.js" defer></script>
+</body>
+</html>
+

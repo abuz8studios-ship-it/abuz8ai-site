@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Bio Writer — ABUZ8</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{--lapis:#0a1628;--lapis2:#0f2040;--gold:#c9a84c;--gold2:#e6c876;--turq:#0e9f6e;--cream:#f5f0e8;--cream2:#ede7d9;--text:#1a1a2e;--muted:#5a6070;--r:12px;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'Inter',sans-serif;background:var(--cream);color:var(--text);min-height:100vh;}
+  header{background:var(--lapis);padding:18px 32px;display:flex;align-items:center;justify-content:space-between;}
+  header .brand{font-family:'Playfair Display',serif;font-size:22px;color:#fff;}
+  header .brand span{color:var(--gold);}
+  .subtitle{color:rgba(255,255,255,0.5);font-size:12px;margin-top:2px;}
+  .main{max-width:1060px;margin:0 auto;padding:32px 20px;}
+  h1{font-family:'Playfair Display',serif;font-size:32px;color:var(--lapis);margin-bottom:6px;}
+  .hero-sub{color:var(--muted);font-size:15px;margin-bottom:32px;}
+  .layout{display:grid;grid-template-columns:380px 1fr;gap:28px;}
+  @media(max-width:740px){.layout{grid-template-columns:1fr;}}
+  .panel{background:#fff;border-radius:var(--r);padding:24px;box-shadow:0 2px 16px rgba(10,22,40,0.07);}
+  label{display:block;font-size:12px;font-weight:600;color:var(--lapis);text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px;}
+  input,textarea,select{width:100%;border:1.5px solid var(--cream2);border-radius:8px;padding:10px 13px;font-size:14px;font-family:'Inter',sans-serif;color:var(--text);background:#fff;transition:border-color .2s;outline:none;margin-bottom:18px;}
+  input:focus,textarea:focus,select:focus{border-color:var(--gold);}
+  textarea{resize:vertical;min-height:80px;}
+  .field-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  .tone-row{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px;}
+  .tone-btn{border:1.5px solid var(--cream2);background:#fff;border-radius:20px;padding:6px 14px;font-size:12px;font-weight:500;color:var(--muted);cursor:pointer;transition:all .2s;}
+  .tone-btn.active{background:var(--lapis);border-color:var(--lapis);color:#fff;}
+  .gen-btn{width:100%;background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--lapis);font-size:15px;font-weight:700;border:none;border-radius:8px;padding:14px;cursor:pointer;transition:opacity .2s;font-family:'Inter',sans-serif;}
+  .gen-btn:hover{opacity:.9;}
+  .gen-btn:disabled{opacity:.5;cursor:not-allowed;}
+  .section-label{font-family:'Playfair Display',serif;font-size:16px;font-weight:600;color:var(--lapis);margin-bottom:14px;padding-bottom:8px;border-bottom:2px solid var(--gold);}
+  .tabs{display:flex;gap:0;margin-bottom:18px;border:1.5px solid var(--cream2);border-radius:8px;overflow:hidden;}
+  .tab{flex:1;padding:9px 0;text-align:center;font-size:13px;font-weight:500;cursor:pointer;background:#fff;color:var(--muted);border:none;transition:all .2s;}
+  .tab.active{background:var(--lapis);color:#fff;}
+  .output-box{background:var(--cream);border-radius:8px;padding:20px;min-height:200px;font-size:14px;line-height:1.8;color:var(--text);white-space:pre-wrap;font-family:'Inter',sans-serif;}
+  .output-box.empty{color:var(--muted);font-style:italic;display:flex;align-items:center;justify-content:center;}
+  .actions{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap;}
+  .action-btn{border:1.5px solid var(--cream2);background:#fff;border-radius:8px;padding:8px 16px;font-size:13px;font-weight:500;color:var(--lapis);cursor:pointer;transition:all .2s;}
+  .action-btn:hover{border-color:var(--gold);color:var(--gold);}
+  .prog-bar{width:100%;height:3px;background:var(--cream2);border-radius:2px;overflow:hidden;margin-bottom:18px;display:none;}
+  .prog-fill{height:100%;width:0;background:linear-gradient(90deg,var(--turq),var(--gold));transition:width 1.2s ease;}
+  .variants{display:flex;flex-direction:column;gap:12px;}
+  .variant-card{background:#fff;border:1.5px solid var(--cream2);border-radius:8px;padding:16px;cursor:pointer;transition:border-color .2s;position:relative;}
+  .variant-card:hover{border-color:var(--gold);}
+  .variant-card.selected{border-color:var(--lapis);background:rgba(10,22,40,0.03);}
+  .variant-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--gold);margin-bottom:6px;}
+  .variant-text{font-size:13px;line-height:1.7;color:var(--text);}
+  .char-count{font-size:11px;color:var(--muted);margin-top:6px;}
+  .tip-box{background:linear-gradient(135deg,var(--lapis),var(--lapis2));border-radius:8px;padding:16px 20px;color:rgba(255,255,255,0.75);font-size:13px;line-height:1.7;}
+  .tip-box h4{color:var(--gold);font-size:13px;font-weight:600;margin-bottom:8px;}
+  .tip-box ul{padding-left:16px;}
+  .tip-box ul li{margin-bottom:4px;}
+  .platform-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:18px;}
+  .platform-btn{border:1.5px solid var(--cream2);background:#fff;border-radius:8px;padding:8px 4px;text-align:center;font-size:12px;font-weight:500;color:var(--muted);cursor:pointer;transition:all .2s;}
+  .platform-btn.active{background:var(--lapis);border-color:var(--lapis);color:#fff;}
+  .platform-btn .icon{font-size:16px;display:block;margin-bottom:3px;}
+</style>
+<script src="_abuz8-live-brain.js" defer></script>
+
+<script src="_abuz8-config.js" defer></script>
+<link rel="canonical" href="https://abuz8ai.com/tools/ai-bio-writer">
+<meta name="description" content="AI Bio Writer — Crisp profile bios in your voice. Free, no signup, runs entirely in your browser. One of 169 free AI and developer tools by ABUZ8.">
+</head>
+<body>
+
+<header>
+  <div>
+    <div class="brand">ABU<span>Z8</span></div>
+    <div class="subtitle">AI Bio Writer</div>
+  </div>
+  <div style="color:rgba(255,255,255,0.4);font-size:12px;">Free · No login required</div>
+</header>
+
+<div class="main">
+  <h1>AI Bio Writer</h1>
+  <p class="hero-sub">Generate a compelling professional bio for LinkedIn, Twitter, websites, or press kits — in seconds.</p>
+
+  <div class="layout">
+
+    <!-- LEFT: Settings -->
+    <div class="panel">
+      <div class="section-label">Your Details</div>
+
+      <label>Full Name</label>
+      <input type="text" id="name" placeholder="Alex Johnson">
+
+      <label>Your Role / Title</label>
+      <input type="text" id="role" placeholder="Founder & CEO at TechCo">
+
+      <label>Key Achievements (1-3)</label>
+      <textarea id="achievements" rows="3" placeholder="e.g. Grew startup from 0 to $2M ARR. Former Google engineer. Speaker at TED 2024."></textarea>
+
+      <label>Industry / Niche</label>
+      <input type="text" id="industry" placeholder="SaaS, AI, Finance...">
+
+      <label>Platform</label>
+      <div class="platform-row">
+        <button class="platform-btn active" onclick="setPlatform('LinkedIn',this)"><span class="icon">💼</span>LinkedIn</button>
+        <button class="platform-btn" onclick="setPlatform('Twitter',this)"><span class="icon">𝕏</span>Twitter</button>
+        <button class="platform-btn" onclick="setPlatform('Website',this)"><span class="icon">🌐</span>Website</button>
+        <button class="platform-btn" onclick="setPlatform('Instagram',this)"><span class="icon">📸</span>Instagram</button>
+        <button class="platform-btn" onclick="setPlatform('Press Kit',this)"><span class="icon">📰</span>Press</button>
+        <button class="platform-btn" onclick="setPlatform('Speaker Bio',this)"><span class="icon">🎤</span>Speaker</button>
+      </div>
+
+      <label>Tone</label>
+      <div class="tone-row">
+        <button class="tone-btn active" onclick="setTone('Professional',this)">Professional</button>
+        <button class="tone-btn" onclick="setTone('Warm & Personal',this)">Warm</button>
+        <button class="tone-btn" onclick="setTone('Bold & Punchy',this)">Bold</button>
+        <button class="tone-btn" onclick="setTone('Humble Expert',this)">Humble</button>
+        <button class="tone-btn" onclick="setTone('Visionary',this)">Visionary</button>
+      </div>
+
+      <label>POV</label>
+      <div style="display:flex;gap:8px;margin-bottom:18px;">
+        <button class="tone-btn active" id="pov3" onclick="setPov('third',this)">Third Person (He/She/They)</button>
+        <button class="tone-btn" id="pov1" onclick="setPov('first',this)">First Person (I)</button>
+      </div>
+
+      <div class="prog-bar" id="prog"><div class="prog-fill" id="progFill"></div></div>
+      <button class="gen-btn" id="genBtn" onclick="generate()">✦ Generate Bio</button>
+    </div>
+
+    <!-- RIGHT: Output -->
+    <div class="panel">
+      <div class="tabs">
+        <button class="tab active" onclick="showTab('variants',this)">Variants</button>
+        <button class="tab" onclick="showTab('selected',this)">Selected</button>
+        <button class="tab" onclick="showTab('tips',this)">Pro Tips</button>
+      </div>
+
+      <!-- Variants tab -->
+      <div id="tab-variants">
+        <div id="variantsContainer">
+          <div class="output-box empty" style="min-height:300px">
+            Your bio variants will appear here.<br>Click a card to select it.
+          </div>
+        </div>
+      </div>
+
+      <!-- Selected tab -->
+      <div id="tab-selected" style="display:none">
+        <div id="selectedOutput" class="output-box empty" style="min-height:300px">
+          Select a variant from the Variants tab.
+        </div>
+        <div class="actions">
+          <button class="action-btn" onclick="copySelected()">📋 Copy</button>
+          <button class="action-btn" onclick="downloadSelected()">⬇ Download .txt</button>
+          <button class="action-btn" onclick="regenerate()">↺ Regenerate</button>
+        </div>
+      </div>
+
+      <!-- Tips tab -->
+      <div id="tab-tips" style="display:none">
+        <div class="tip-box">
+          <h4>📌 LinkedIn Bio Best Practices</h4>
+          <ul>
+            <li>Lead with what you do, not your title</li>
+            <li>Include a quantifiable achievement in the first sentence</li>
+            <li>Third person for formal use; first person for LinkedIn</li>
+            <li>Keep it under 220 words for LinkedIn "About" section</li>
+            <li>End with a CTA: what you're looking for / open to</li>
+          </ul>
+        </div>
+        <div class="tip-box" style="margin-top:12px">
+          <h4>𝕏 Twitter Bio Tips</h4>
+          <ul>
+            <li>Max 160 characters — every word counts</li>
+            <li>Lead with your biggest hook or niche</li>
+            <li>Use emojis sparingly as separators</li>
+            <li>Include what you build or create</li>
+          </ul>
+        </div>
+        <div class="tip-box" style="margin-top:12px">
+          <h4>🎤 Speaker Bio Formula</h4>
+          <ul>
+            <li>Third person, 150-200 words</li>
+            <li>Credential hook → 3 key wins → topic expertise → CTA</li>
+            <li>Mention past speaking gigs or media features</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+let selectedTone = 'Professional';
+let selectedPlatform = 'LinkedIn';
+let selectedPov = 'third';
+let selectedBio = '';
+
+function setTone(t, el) {
+  selectedTone = t;
+  document.querySelectorAll('.tone-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+}
+
+function setPlatform(p, el) {
+  selectedPlatform = p;
+  document.querySelectorAll('.platform-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+}
+
+function setPov(p, el) {
+  selectedPov = p;
+  document.querySelectorAll('#pov1,#pov3').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+}
+
+function showTab(tab, el) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('tab-variants').style.display = tab === 'variants' ? '' : 'none';
+  document.getElementById('tab-selected').style.display = tab === 'selected' ? '' : 'none';
+  document.getElementById('tab-tips').style.display = tab === 'tips' ? '' : 'none';
+}
+
+function buildBio(name, role, achievements, industry, platform, tone, pov) {
+  const firstName = name.split(' ')[0] || name;
+  const pronoun = (pov === 'third') ? (name.includes(' ') ? name.split(' ')[0] : name) : 'I';
+  const possessive = (pov === 'third') ? 'their' : 'my';
+  const verb = (pov === 'first') ? 'am' : 'is';
+  const helps = (pov === 'first') ? 'I help' : `${firstName} helps`;
+  const built = (pov === 'first') ? "I've built" : `${firstName} has built`;
+  const brings = (pov === 'first') ? 'I bring' : `${firstName} brings`;
+
+  const achList = achievements.split(/[.,\n]/).map(a => a.trim()).filter(Boolean);
+  const ach1 = achList[0] || 'a track record of results';
+  const ach2 = achList[1] || '';
+  const ach3 = achList[2] || '';
+
+  const platformCTA = {
+    'LinkedIn': `${pronoun === 'I' ? "I'm" : `${firstName} is`} open to connecting with founders, operators, and investors shaping the future of ${industry || 'the industry'}.`,
+    'Twitter': `Building in public. DMs open.`,
+    'Website': `Let's work together — reach out below.`,
+    'Instagram': `Sharing the journey. ${pronoun === 'I' ? "I" : firstName} post daily insights on ${industry || 'business'}.`,
+    'Press Kit': `For speaking inquiries, interviews, or media requests, contact ${possessive} team directly.`,
+    'Speaker Bio': `${pronoun === 'I' ? "I" : firstName} ${verb} available for keynotes, panels, and workshops on ${industry || 'technology and business'}.`,
+  };
+
+  const toneOpeners = {
+    'Professional': `${name} ${verb} a ${industry || 'tech'} professional and ${role}.`,
+    'Warm & Personal': `${pov === 'first' ? "I'm" : name + " is"} a ${role} who genuinely loves what ${pov === 'first' ? 'I do' : 'they do'} — helping people and businesses thrive through ${industry || 'innovation'}.`,
+    'Bold & Punchy': `${name}: ${role}. ${ach1}.`,
+    'Humble Expert': `After years in ${industry || 'the industry'}, ${pov === 'first' ? "I've learned" : name + " has learned"} that results speak louder than titles. As ${role},`,
+    'Visionary': `${name} believes ${industry || 'technology'} should work for people — not the other way around. As ${role},`,
+  };
+
+  const opener = toneOpeners[tone] || toneOpeners['Professional'];
+
+  let bio = `${opener} ${ach1}`;
+
+  if (ach2) bio += ` ${pov === 'third' ? firstName : 'I'} also ${ach2.toLowerCase().startsWith(firstName.toLowerCase()) ? ach2 : (pov === 'first' ? ach2 : ach2)}.`;
+
+  bio += `\n\n${brings} deep expertise in ${industry || 'the field'}, with a focus on delivering real-world impact.`;
+
+  if (ach3) bio += ` Most recently, ${pov === 'first' ? 'I' : firstName} ${ach3.toLowerCase()}.`;
+
+  bio += `\n\n${platformCTA[platform] || platformCTA['LinkedIn']}`;
+
+  return bio.replace(/\s{2,}/g, ' ').replace(/\n /g, '\n').trim();
+}
+
+function buildShortBio(name, role, achievements, industry, tone) {
+  const firstName = name.split(' ')[0] || name;
+  const achList = achievements.split(/[.,\n]/).map(a => a.trim()).filter(Boolean);
+  const ach1 = achList[0] || 'delivering results';
+  return `${name} | ${role}. ${ach1}. Building at the intersection of ${industry || 'tech'} and impact.`.trim();
+}
+
+function buildTwitterBio(name, role, achievements, industry) {
+  const achList = achievements.split(/[.,\n]/).map(a => a.trim()).filter(Boolean);
+  const ach1 = achList[0] || 'entrepreneur';
+  const short = `${role} · ${ach1} · ${industry || 'Tech'} builder · DMs open`;
+  return short.length > 160 ? short.substring(0, 157) + '...' : short;
+}
+
+function generate() {
+  const name = document.getElementById('name').value.trim();
+  const role = document.getElementById('role').value.trim();
+  const achievements = document.getElementById('achievements').value.trim();
+  const industry = document.getElementById('industry').value.trim();
+
+  if (!name || !role) {
+    alert('Please enter your name and role.');
+    return;
+  }
+
+  const btn = document.getElementById('genBtn');
+  btn.disabled = true;
+  btn.textContent = '✦ Generating...';
+
+  const prog = document.getElementById('prog');
+  const fill = document.getElementById('progFill');
+  prog.style.display = 'block';
+  fill.style.width = '0';
+  setTimeout(() => fill.style.width = '90%', 50);
+
+  const finish = () => {
+    prog.style.display = 'none';
+    fill.style.width = '0';
+    btn.disabled = false;
+    btn.textContent = '✦ Generate Bio';
+  };
+
+  // Real AI generation via the ABUZ8 brain (Cloudflare Workers AI). No templates.
+  fetch('/api/waitlist', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      tool: 'bio-writer',
+      data: { name, role, achievements, industry, platform: selectedPlatform, tone: selectedTone, pointOfView: selectedPov, variants: 3 }
+    })
+  })
+  .then(r => r.json())
+  .then(res => {
+    if (!res.success || !res.result) throw new Error(res.error || 'Generation failed');
+    fill.style.width = '100%';
+    setTimeout(() => {
+      finish();
+      renderVariants([
+        { label: `${selectedTone} · ${selectedPlatform}`, text: res.result }
+      ]);
+      showTabByName('variants');
+    }, 250);
+  })
+  .catch(err => {
+    finish();
+    alert('Generation failed: ' + err.message + '. Please try again in a moment.');
+  });
+}
+
+function showTabByName(tab) {
+  const tabs = document.querySelectorAll('.tab');
+  tabs.forEach((t, i) => {
+    const names = ['variants', 'selected', 'tips'];
+    if (names[i] === tab) t.classList.add('active');
+    else t.classList.remove('active');
+  });
+  document.getElementById('tab-variants').style.display = tab === 'variants' ? '' : 'none';
+  document.getElementById('tab-selected').style.display = tab === 'selected' ? '' : 'none';
+  document.getElementById('tab-tips').style.display = tab === 'tips' ? '' : 'none';
+}
+
+function renderVariants(variants) {
+  const container = document.getElementById('variantsContainer');
+  container.innerHTML = '';
+  const wrap = document.createElement('div');
+  wrap.className = 'variants';
+  variants.forEach((v, i) => {
+    const card = document.createElement('div');
+    card.className = 'variant-card';
+    card.innerHTML = `<div class="variant-label">${v.label}</div><div class="variant-text">${v.text.replace(/\n/g,'<br>')}</div><div class="char-count">${v.text.length} chars · ${v.text.split(/\s+/).length} words</div>`;
+    card.onclick = () => {
+      document.querySelectorAll('.variant-card').forEach(c => c.classList.remove('selected'));
+      card.classList.add('selected');
+      selectedBio = v.text;
+      document.getElementById('selectedOutput').textContent = v.text;
+      document.getElementById('selectedOutput').classList.remove('empty');
+    };
+    wrap.appendChild(card);
+  });
+  container.appendChild(wrap);
+}
+
+function copySelected() {
+  if (!selectedBio) { alert('Select a variant first.'); return; }
+  navigator.clipboard.writeText(selectedBio).then(() => alert('Copied to clipboard!'));
+}
+
+function downloadSelected() {
+  if (!selectedBio) { alert('Select a variant first.'); return; }
+  const a = document.createElement('a');
+  a.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(selectedBio);
+  a.download = 'bio.txt';
+  a.click();
+}
+
+function regenerate() {
+  generate();
+}
+</script>
+
+<script src="/assets/js/dfy-banner.js" async></script>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+<script src="/tools/_tools-shared.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>
+

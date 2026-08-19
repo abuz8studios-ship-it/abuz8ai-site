@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Cover Letter Writer — Generate Compelling Cover Letters | ABUZ8</title>
+<meta name="description" content="Write a perfect, personalized cover letter in seconds. AI analyzes the job description and your background to craft compelling letters that get interviews.">
+<meta property="og:title" content="AI Cover Letter Writer — ABUZ8">
+<meta property="og:description" content="Generate compelling, personalized cover letters with AI. Tailored to every job. Done in seconds.">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="https://abuz8ai.com/tools/ai-cover-letter">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "AI Cover Letter Writer",
+  "applicationCategory": "BusinessApplication",
+  "description": "Generate compelling, personalized cover letters with AI",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+  "provider": { "@type": "Organization", "name": "ABUZ8 AI" }
+}
+</script>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --lapis: #0a1628;
+    --lapis-mid: #0f2040;
+    --lapis-light: #163060;
+    --gold: #c9a84c;
+    --gold-light: #e8d48b;
+    --gold-dim: #8a7030;
+    --turq: #0e9f6e;
+    --turq-light: #2fbf8f;
+    --turq-bright: #2fbf8f;
+    --cream: #f5f0e8;
+    --text: #e8e4d8;
+    --dim: #8a9aaa;
+    --card: #0d1a30;
+    --border: #1a2e50;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--lapis);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+    line-height: 1.6;
+  }
+  /* NAV */
+  nav {
+    background: rgba(10,22,40,0.95);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    backdrop-filter: blur(12px);
+  }
+  .logo { font-family: 'Playfair Display', serif; font-size: 1.4rem; color: var(--gold); font-weight: 700; text-decoration: none; }
+  .nav-links { display: flex; gap: 24px; }
+  .nav-links a { color: var(--dim); text-decoration: none; font-size: 0.875rem; transition: color 0.2s; }
+  .nav-links a:hover { color: var(--gold); }
+
+  /* HERO */
+  .hero {
+    text-align: center;
+    padding: 80px 24px 60px;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  .badge {
+    display: inline-block;
+    background: rgba(201,168,76,0.12);
+    border: 1px solid rgba(201,168,76,0.3);
+    color: var(--gold);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 6px 16px;
+    border-radius: 20px;
+    margin-bottom: 24px;
+  }
+  h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    color: var(--cream);
+    line-height: 1.15;
+    margin-bottom: 20px;
+  }
+  h1 span { color: var(--gold); }
+  .hero-sub {
+    color: var(--dim);
+    font-size: 1.1rem;
+    max-width: 560px;
+    margin: 0 auto 40px;
+  }
+  .stats-row {
+    display: flex;
+    gap: 32px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 32px;
+  }
+  .stat { text-align: center; }
+  .stat-num { font-family: 'Playfair Display', serif; font-size: 1.8rem; color: var(--gold); font-weight: 700; }
+  .stat-label { font-size: 0.8rem; color: var(--dim); }
+
+  /* TOOL */
+  .tool-section {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 24px 80px;
+  }
+  .tool-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+  }
+  .tool-tabs {
+    display: flex;
+    border-bottom: 1px solid var(--border);
+  }
+  .tab {
+    flex: 1;
+    padding: 16px;
+    text-align: center;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    color: var(--dim);
+    border: none;
+    background: none;
+    transition: all 0.2s;
+  }
+  .tab.active {
+    color: var(--gold);
+    background: rgba(201,168,76,0.06);
+    border-bottom: 2px solid var(--gold);
+  }
+  .tab:hover:not(.active) { color: var(--text); background: rgba(255,255,255,0.03); }
+  .tab-content { display: none; padding: 32px; }
+  .tab-content.active { display: block; }
+
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  @media (max-width: 640px) { .form-grid { grid-template-columns: 1fr; } }
+  .form-group { display: flex; flex-direction: column; gap: 8px; }
+  .form-group.full { grid-column: 1 / -1; }
+  label { font-size: 0.8rem; font-weight: 600; color: var(--gold); text-transform: uppercase; letter-spacing: 0.06em; }
+  input, textarea, select {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.95rem;
+    padding: 12px 16px;
+    width: 100%;
+    transition: border-color 0.2s;
+    resize: vertical;
+  }
+  input:focus, textarea:focus, select:focus {
+    outline: none;
+    border-color: var(--gold-dim);
+    background: rgba(201,168,76,0.04);
+  }
+  input::placeholder, textarea::placeholder { color: var(--dim); }
+  select option { background: var(--lapis-mid); }
+  textarea { min-height: 120px; }
+
+  .tone-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 10px; margin-top: 4px; }
+  .tone-btn {
+    padding: 10px 14px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: rgba(255,255,255,0.03);
+    color: var(--dim);
+    font-size: 0.82rem;
+    font-weight: 500;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.2s;
+  }
+  .tone-btn:hover { border-color: var(--gold-dim); color: var(--text); }
+  .tone-btn.selected { border-color: var(--gold); color: var(--gold); background: rgba(201,168,76,0.08); }
+
+  .generate-btn {
+    width: 100%;
+    margin-top: 24px;
+    padding: 16px 32px;
+    background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dim) 100%);
+    color: var(--lapis);
+    font-family: 'Inter', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: opacity 0.2s, transform 0.2s;
+    letter-spacing: 0.02em;
+  }
+  .generate-btn:hover { opacity: 0.92; transform: translateY(-1px); }
+  .generate-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+  /* OUTPUT */
+  .output-area {
+    background: rgba(255,255,255,0.02);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 28px;
+    min-height: 400px;
+    font-size: 0.95rem;
+    line-height: 1.85;
+    color: var(--text);
+    white-space: pre-wrap;
+    position: relative;
+  }
+  .output-placeholder {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    color: var(--dim);
+    font-size: 0.9rem;
+    text-align: center;
+    padding: 24px;
+  }
+  .output-placeholder svg { opacity: 0.3; }
+  .output-actions { display: flex; gap: 12px; margin-top: 16px; flex-wrap: wrap; }
+  .action-btn {
+    padding: 10px 20px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: rgba(255,255,255,0.04);
+    color: var(--text);
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .action-btn:hover { border-color: var(--turq); color: var(--turq-light); }
+  .action-btn.primary { border-color: var(--gold-dim); color: var(--gold); }
+  .action-btn.primary:hover { background: rgba(201,168,76,0.08); }
+
+  /* PROGRESS */
+  .progress-bar-wrap { width: 100%; height: 3px; background: var(--border); border-radius: 2px; margin: 16px 0; overflow: hidden; display: none; }
+  .progress-bar { height: 100%; background: linear-gradient(90deg, var(--turq), var(--gold)); border-radius: 2px; transition: width 0.4s; }
+
+  /* HOW IT WORKS */
+  .how-section { max-width: 900px; margin: 0 auto; padding: 0 24px 80px; }
+  .section-title { font-family: 'Playfair Display', serif; font-size: 2rem; color: var(--cream); text-align: center; margin-bottom: 48px; }
+  .section-title span { color: var(--gold); }
+  .steps-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 24px; }
+  .step-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 28px 24px;
+    text-align: center;
+    transition: border-color 0.3s;
+  }
+  .step-card:hover { border-color: var(--gold-dim); }
+  .step-num {
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    background: rgba(201,168,76,0.1);
+    border: 1px solid var(--gold-dim);
+    color: var(--gold);
+    font-weight: 700;
+    font-size: 1.1rem;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 16px;
+  }
+  .step-card h3 { color: var(--cream); font-size: 0.95rem; font-weight: 600; margin-bottom: 8px; }
+  .step-card p { color: var(--dim); font-size: 0.85rem; }
+
+  /* WAITLIST */
+  .waitlist-section {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 0 24px 100px;
+    text-align: center;
+  }
+  .waitlist-card {
+    background: linear-gradient(135deg, rgba(201,168,76,0.06) 0%, rgba(26,138,122,0.06) 100%);
+    border: 1px solid rgba(201,168,76,0.2);
+    border-radius: 20px;
+    padding: 48px 40px;
+  }
+  .waitlist-card h2 { font-family: 'Playfair Display', serif; font-size: 1.8rem; color: var(--cream); margin-bottom: 12px; }
+  .waitlist-card p { color: var(--dim); margin-bottom: 28px; }
+  .email-form { display: flex; gap: 12px; flex-wrap: wrap; }
+  .email-form input {
+    flex: 1;
+    min-width: 200px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 18px;
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+  }
+  .email-form button {
+    padding: 14px 28px;
+    background: linear-gradient(135deg, var(--gold), var(--gold-dim));
+    border: none;
+    border-radius: 8px;
+    color: var(--lapis);
+    font-weight: 700;
+    font-size: 0.9rem;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: opacity 0.2s;
+  }
+  .email-form button:hover { opacity: 0.9; }
+  .wl-success { color: var(--turq-bright); font-size: 0.9rem; margin-top: 12px; display: none; }
+
+  footer { border-top: 1px solid var(--border); padding: 32px 24px; text-align: center; color: var(--dim); font-size: 0.8rem; }
+  footer a { color: var(--dim); text-decoration: none; }
+  footer a:hover { color: var(--gold); }
+</style>
+<script src="_abuz8-live-brain.js" defer></script>
+
+<script src="_abuz8-config.js" defer></script>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="logo">ABUZ8</a>
+  <div class="nav-links">
+    <a href="/tools.html">Tools</a>
+    
+    <a href="/agent-board.html">Agent Board</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="badge">Free Tool — AI-Powered</div>
+  <h1>Write Cover Letters That<br><span>Actually Get Interviews</span></h1>
+  <p class="hero-sub">Paste the job description. Add your background. Get a compelling, tailored cover letter in seconds — not hours.</p>
+  <div class="stats-row">
+    <div class="stat"><div class="stat-num">3x</div><div class="stat-label">Higher Response Rate</div></div>
+    <div class="stat"><div class="stat-num">&lt;60s</div><div class="stat-label">Generation Time</div></div>
+    <div class="stat"><div class="stat-num">100%</div><div class="stat-label">Tailored to Job</div></div>
+  </div>
+</section>
+
+<!-- TOOL -->
+<section class="tool-section">
+  <div class="tool-card">
+    <div class="tool-tabs">
+      <button class="tab active" onclick="switchTab('input')">✍️ Write Letter</button>
+      <button class="tab" onclick="switchTab('output')">📄 Output</button>
+      <button class="tab" onclick="switchTab('tips')">💡 Tips</button>
+    </div>
+
+    <!-- INPUT TAB -->
+    <div class="tab-content active" id="tab-input">
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Your Name</label>
+          <input type="text" id="f-name" placeholder="Ahmad Al-Rashid">
+        </div>
+        <div class="form-group">
+          <label>Target Role</label>
+          <input type="text" id="f-role" placeholder="Senior Product Manager">
+        </div>
+        <div class="form-group">
+          <label>Company Name</label>
+          <input type="text" id="f-company" placeholder="Google DeepMind">
+        </div>
+        <div class="form-group">
+          <label>Hiring Manager Name (optional)</label>
+          <input type="text" id="f-manager" placeholder="Dr. Sarah Chen">
+        </div>
+        <div class="form-group full">
+          <label>Job Description (paste key requirements)</label>
+          <textarea id="f-jd" placeholder="Paste the job description or key requirements here. The more detail you provide, the better the letter will match what they're looking for..."></textarea>
+        </div>
+        <div class="form-group full">
+          <label>Your Background &amp; Achievements</label>
+          <textarea id="f-background" placeholder="List your relevant experience, skills, and achievements. Include specific numbers where possible (e.g. 'Led team of 12, shipped 3 products, grew revenue 40%')..."></textarea>
+        </div>
+        <div class="form-group full">
+          <label>Tone / Style</label>
+          <div class="tone-grid">
+            <button class="tone-btn selected" onclick="selectTone(this,'professional')">Professional</button>
+            <button class="tone-btn" onclick="selectTone(this,'confident')">Confident</button>
+            <button class="tone-btn" onclick="selectTone(this,'enthusiastic')">Enthusiastic</button>
+            <button class="tone-btn" onclick="selectTone(this,'executive')">Executive</button>
+            <button class="tone-btn" onclick="selectTone(this,'startup')">Startup Energy</button>
+            <button class="tone-btn" onclick="selectTone(this,'technical')">Technical</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="progress-bar-wrap" id="progress-wrap">
+        <div class="progress-bar" id="progress-bar" style="width:0%"></div>
+      </div>
+
+      <button class="generate-btn" id="gen-btn" onclick="generateLetter()">
+        Generate My Cover Letter →
+      </button>
+    </div>
+
+    <!-- OUTPUT TAB -->
+    <div class="tab-content" id="tab-output">
+      <div class="output-area" id="output-area">
+        <div class="output-placeholder" id="output-placeholder">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+            <polyline points="14 2 14 8 20 8"/>
+            <line x1="16" y1="13" x2="8" y2="13"/>
+            <line x1="16" y1="17" x2="8" y2="17"/>
+            <polyline points="10 9 9 9 8 9"/>
+          </svg>
+          <span>Fill in the form and click Generate<br>Your cover letter will appear here</span>
+        </div>
+        <span id="output-text" style="display:none"></span>
+      </div>
+      <div class="output-actions" id="output-actions" style="display:none">
+        <button class="action-btn primary" onclick="copyLetter()">📋 Copy Letter</button>
+        <button class="action-btn" onclick="downloadLetter()">⬇️ Download .txt</button>
+        <button class="action-btn" onclick="regenerate()">🔄 Regenerate</button>
+        <button class="action-btn" onclick="switchTab('input')">✏️ Edit Inputs</button>
+      </div>
+    </div>
+
+    <!-- TIPS TAB -->
+    <div class="tab-content" id="tab-tips">
+      <h3 style="color:var(--cream);font-family:'Playfair Display',serif;margin-bottom:20px;">Cover Letter Best Practices</h3>
+      <div style="display:grid;gap:16px;">
+        <div style="background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:10px;padding:20px;">
+          <div style="color:var(--gold);font-weight:600;margin-bottom:8px;">📌 Lead With Impact</div>
+          <p style="color:var(--dim);font-size:0.9rem;">Start with your biggest relevant achievement, not "I am applying for..." Hiring managers read dozens per day.</p>
+        </div>
+        <div style="background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:10px;padding:20px;">
+          <div style="color:var(--gold);font-weight:600;margin-bottom:8px;">🎯 Match Their Language</div>
+          <p style="color:var(--dim);font-size:0.9rem;">Mirror keywords from the job description. ATS systems scan for matches. Our AI does this automatically.</p>
+        </div>
+        <div style="background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:10px;padding:20px;">
+          <div style="color:var(--gold);font-weight:600;margin-bottom:8px;">📊 Quantify Everything</div>
+          <p style="color:var(--dim);font-size:0.9rem;">"Grew revenue 40%" beats "improved revenue." The more specific data you input, the stronger the output.</p>
+        </div>
+        <div style="background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:10px;padding:20px;">
+          <div style="color:var(--gold);font-weight:600;margin-bottom:8px;">⚡ Keep It Under 400 Words</div>
+          <p style="color:var(--dim);font-size:0.9rem;">Hiring managers spend 7 seconds on average. Dense paragraphs lose. Crisp, confident prose wins.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how-section">
+  <h2 class="section-title">How It <span>Works</span></h2>
+  <div class="steps-grid">
+    <div class="step-card">
+      <div class="step-num">1</div>
+      <h3>Paste the Job Description</h3>
+      <p>Drop in the full JD or key requirements. Our AI extracts what they actually care about.</p>
+    </div>
+    <div class="step-card">
+      <div class="step-num">2</div>
+      <h3>Share Your Background</h3>
+      <p>List your relevant experience and wins. Include numbers — they make your letter stand out.</p>
+    </div>
+    <div class="step-card">
+      <div class="step-num">3</div>
+      <h3>Pick Your Tone</h3>
+      <p>Executive gravitas or startup energy. Match the culture of where you're applying.</p>
+    </div>
+    <div class="step-card">
+      <div class="step-num">4</div>
+      <h3>Get Your Letter</h3>
+      <p>A tailored, compelling cover letter in under 60 seconds. Copy, refine, send.</p>
+    </div>
+  </div>
+</section>
+
+<!-- WAITLIST -->
+<section class="waitlist-section">
+  <div class="waitlist-card">
+    <h2>Want the Premium Version?</h2>
+    <p>Join the early access list for unlimited letters, LinkedIn optimization, ATS scoring, and interview prep — all in one platform.</p>
+    <form class="email-form" onsubmit="joinWaitlist(event)">
+      <input type="email" id="wl-email" placeholder="your@email.com" required>
+      <button type="submit">Join Early Access →</button>
+    </form>
+    <div class="wl-success" id="wl-success">✅ You're in! We'll email you when premium launches.</div>
+  </div>
+</section>
+
+<footer>
+  <p>&copy; 2026 ABUZ8 LLC · <a href="/disclaimer.html">Disclaimer</a> · <a href="/tools.html">All Tools</a></p>
+</footer>
+
+<script>
+let selectedTone = 'professional';
+let generatedLetter = '';
+
+function selectTone(el, tone) {
+  document.querySelectorAll('.tone-btn').forEach(b => b.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedTone = tone;
+}
+
+function switchTab(name) {
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  const tabs = document.querySelectorAll('.tab');
+  const idx = name === 'input' ? 0 : name === 'output' ? 1 : 2;
+  tabs[idx].classList.add('active');
+}
+
+function buildLetter(name, role, company, manager, jd, bg, tone) {
+  const greeting = manager ? `Dear ${manager},` : 'Dear Hiring Team,';
+  const salutation = name || 'I';
+
+  const toneVoices = {
+    professional: { open: 'I am writing to express my interest in', close: 'I look forward to discussing how my background aligns with your needs.' },
+    confident: { open: 'I am exactly the candidate you\'re looking for as', close: 'I am ready to hit the ground running and deliver results from day one.' },
+    enthusiastic: { open: 'I am thrilled to apply for', close: 'I would love the opportunity to bring this energy and expertise to your team.' },
+    executive: { open: 'Having delivered measurable outcomes at the executive level, I write to pursue', close: 'I welcome a conversation about how I can accelerate your strategic objectives.' },
+    startup: { open: 'I build things that matter — which is why I am applying for', close: 'I move fast, ship often, and obsess over impact. Let\'s build something great together.' },
+    technical: { open: 'With deep technical expertise directly relevant to', close: 'I am ready to bring this technical depth to your team and tackle your hardest problems.' }
+  };
+
+  const voice = toneVoices[tone] || toneVoices.professional;
+
+  // Extract key requirements from JD
+  const jdLines = jd.split('\n').filter(l => l.trim().length > 10).slice(0, 5);
+  const jdSummary = jdLines.length > 0 ? jdLines[0].trim().substring(0, 150) : `the ${role} position`;
+
+  // Extract top achievements from background
+  const bgLines = bg.split('\n').filter(l => l.trim().length > 10);
+  const topAchievements = bgLines.slice(0, 3).map(l => l.trim().replace(/^[-•*]\s*/, ''));
+
+  const today = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+
+  let letter = `${today}\n\n${greeting}\n\n`;
+  letter += `${voice.open} the ${role} role at ${company}.\n\n`;
+
+  if (topAchievements.length > 0) {
+    letter += `Throughout my career, I have built a track record of delivering results that matter. ${topAchievements[0]}`;
+    if (topAchievements.length > 1) {
+      letter += ` Additionally, ${topAchievements[1].toLowerCase()}`;
+    }
+    letter += `.\n\n`;
+  }
+
+  letter += `What excites me about ${company} is the opportunity to tackle challenges like: ${jdSummary}. `;
+  letter += `My background positions me to contribute meaningfully from day one — I bring not just the technical skills you require, but the strategic thinking to know when and how to apply them.\n\n`;
+
+  if (topAchievements.length > 2) {
+    letter += `Beyond the fundamentals, ${topAchievements[2].toLowerCase()}. This kind of outcome-driven approach is what I bring to every role.\n\n`;
+  }
+
+  letter += `${voice.close}\n\nSincerely,\n${name || 'Your Name'}\n`;
+
+  return letter;
+}
+
+function generateLetter() {
+  const name = document.getElementById('f-name').value.trim();
+  const role = document.getElementById('f-role').value.trim();
+  const company = document.getElementById('f-company').value.trim();
+  const manager = document.getElementById('f-manager').value.trim();
+  const jd = document.getElementById('f-jd').value.trim();
+  const bg = document.getElementById('f-background').value.trim();
+
+  if (!role || !company || !jd || !bg) {
+    alert('Please fill in: Target Role, Company Name, Job Description, and Your Background.');
+    return;
+  }
+
+  const btn = document.getElementById('gen-btn');
+  const progressWrap = document.getElementById('progress-wrap');
+  const progressBar = document.getElementById('progress-bar');
+  btn.disabled = true;
+  btn.textContent = 'Generating...';
+  progressWrap.style.display = 'block';
+
+  let prog = 0;
+  const interval = setInterval(() => {
+    prog = Math.min(prog + 6, 90);
+    progressBar.style.width = prog + '%';
+  }, 200);
+
+  const finish = () => {
+    clearInterval(interval);
+    btn.disabled = false;
+    btn.textContent = 'Generate My Cover Letter →';
+    progressWrap.style.display = 'none';
+    progressBar.style.width = '0%';
+  };
+
+  // Real AI generation via the ABUZ8 brain (Cloudflare Workers AI). No templates.
+  fetch('/api/waitlist', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      tool: 'cover-letter',
+      data: { name, role, company, manager, jobDescription: jd, background: bg, tone: selectedTone }
+    })
+  })
+  .then(r => r.json())
+  .then(res => {
+    if (!res.success || !res.result) throw new Error(res.error || 'Generation failed');
+    progressBar.style.width = '100%';
+    generatedLetter = res.result;
+
+    // Show output
+    const placeholder = document.getElementById('output-placeholder');
+    const outputText = document.getElementById('output-text');
+    placeholder.style.display = 'none';
+    outputText.style.display = 'block';
+    outputText.textContent = generatedLetter;
+    document.getElementById('output-actions').style.display = 'flex';
+
+    finish();
+    switchTab('output');
+  })
+  .catch(err => {
+    finish();
+    alert('Generation failed: ' + err.message + '. Please try again in a moment.');
+  });
+}
+
+function copyLetter() {
+  navigator.clipboard.writeText(generatedLetter).then(() => {
+    const btn = event.target;
+    btn.textContent = '✅ Copied!';
+    setTimeout(() => btn.textContent = '📋 Copy Letter', 2000);
+  });
+}
+
+function downloadLetter() {
+  const blob = new Blob([generatedLetter], { type: 'text/plain' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'cover-letter.txt';
+  a.click();
+}
+
+function regenerate() {
+  switchTab('input');
+  generateLetter();
+}
+
+function joinWaitlist(e) {
+  e.preventDefault();
+  const email = document.getElementById('wl-email').value;
+  document.getElementById('wl-success').style.display = 'block';
+  document.getElementById('wl-email').value = '';
+  // In production: POST to CF Worker endpoint
+}
+</script>
+
+<script src="/assets/js/dfy-banner.js" async></script>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+<script src="/tools/_tools-shared.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>
+

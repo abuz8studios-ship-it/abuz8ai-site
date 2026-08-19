@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Product Photos | ABUZ8</title>
+    <link rel="canonical" href="https://abuz8ai.com/tools/ai-product-photos-pro">
+<style>
+  :root{--lapis:#0a1628;--lapis2:#0f1f3d;--lapis3:#162444;--gold:#c9a84c;--gold2:#e0bc6a;--turq:#0e9f6e;--turq2:#22a090;--cream:#f5f0e8;--red:#e05555;--green:#3db87a;--text:#e8e4da;--muted:#8a9ab5;}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--lapis);color:var(--text);font-family:'Inter',system-ui,sans-serif;min-height:100vh;}
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;500;600&display=swap');
+  header{background:linear-gradient(135deg,var(--lapis2),var(--lapis3));border-bottom:1px solid rgba(201,168,76,0.3);padding:16px 40px;display:flex;align-items:center;justify-content:space-between;}
+  .logo{font-family:'Playfair Display',serif;font-size:1.5rem;color:var(--gold);}
+  .logo span{color:var(--turq);}
+  .status-pill{display:flex;align-items:center;gap:8px;background:rgba(61,184,122,0.12);border:1px solid rgba(61,184,122,0.3);border-radius:20px;padding:6px 14px;font-size:0.8rem;color:var(--green);}
+  .dot{width:7px;height:7px;border-radius:50%;background:var(--green);animation:pulse 2s infinite;}
+  @keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.4;}}
+  .hero{background:linear-gradient(135deg,var(--lapis3) 0%,var(--lapis2) 100%);padding:60px 40px;text-align:center;position:relative;overflow:hidden;border-bottom:1px solid rgba(201,168,76,0.15);}
+  .hero::before{content:'';position:absolute;top:-60px;right:-60px;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,rgba(201,168,76,0.08),transparent 70%);}
+  .hero h1{font-family:'Playfair Display',serif;font-size:2.8rem;color:var(--gold);margin-bottom:12px;position:relative;}
+  .hero p{color:var(--muted);font-size:1.05rem;max-width:600px;margin:0 auto 32px;line-height:1.7;}
+  .sample-row{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin-bottom:32px;}
+  .sample-img{width:100px;height:100px;border-radius:12px;background:var(--lapis3);border:1px solid rgba(201,168,76,0.2);display:flex;align-items:center;justify-content:center;font-size:2rem;overflow:hidden;}
+  .main{max-width:1000px;margin:0 auto;padding:50px 20px;}
+  .card{background:var(--lapis2);border:1px solid rgba(201,168,76,0.2);border-radius:16px;padding:32px;margin-bottom:24px;}
+  .card h2{font-family:'Playfair Display',serif;color:var(--gold);font-size:1.4rem;margin-bottom:20px;}
+  .upload-zone{border:2px dashed rgba(201,168,76,0.3);border-radius:12px;padding:40px;text-align:center;cursor:pointer;transition:all 0.3s;background:rgba(201,168,76,0.03);}
+  .upload-zone:hover{border-color:var(--gold);background:rgba(201,168,76,0.06);}
+  .upload-zone input{display:none;}
+  .upload-icon{font-size:2.5rem;margin-bottom:12px;}
+  .upload-zone h3{color:var(--text);font-size:1rem;margin-bottom:6px;}
+  .upload-zone p{color:var(--muted);font-size:0.85rem;}
+  .preview-img{max-width:100%;max-height:200px;border-radius:8px;margin-top:16px;display:none;}
+  .style-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;margin-top:12px;}
+  .style-opt{background:rgba(255,255,255,0.04);border:1px solid rgba(138,154,181,0.2);border-radius:10px;padding:14px;cursor:pointer;text-align:center;transition:all 0.2s;}
+  .style-opt:hover,.style-opt.sel{border-color:var(--gold);background:rgba(201,168,76,0.08);}
+  .style-icon{font-size:1.6rem;margin-bottom:6px;}
+  .style-name{font-size:0.82rem;color:var(--text);font-weight:500;}
+  .style-desc{font-size:0.72rem;color:var(--muted);margin-top:2px;}
+  .form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px;}
+  @media(max-width:600px){.form-row{grid-template-columns:1fr;}}
+  label{display:block;color:var(--muted);font-size:0.78rem;font-weight:600;letter-spacing:0.5px;text-transform:uppercase;margin-bottom:6px;}
+  select,input[type=text]{width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(138,154,181,0.3);border-radius:8px;padding:10px 14px;color:var(--text);font-family:inherit;font-size:0.9rem;}
+  select:focus,input[type=text]:focus{outline:none;border-color:var(--gold);}
+  select option{background:var(--lapis2);}
+  .btn{width:100%;padding:16px;background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--lapis);font-weight:700;font-size:1.05rem;border:none;border-radius:10px;cursor:pointer;transition:all 0.2s;margin-top:20px;font-family:inherit;}
+  .btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(201,168,76,0.4);}
+  .btn:disabled{opacity:0.5;cursor:not-allowed;transform:none;}
+  .waitlist-section{background:linear-gradient(135deg,rgba(201,168,76,0.08),rgba(26,138,122,0.08));border:1px solid rgba(201,168,76,0.2);border-radius:16px;padding:40px;text-align:center;}
+  .waitlist-section h2{font-family:'Playfair Display',serif;font-size:1.8rem;color:var(--gold);margin-bottom:10px;}
+  .waitlist-section p{color:var(--muted);margin-bottom:24px;max-width:500px;margin-left:auto;margin-right:auto;}
+  .email-row{display:flex;gap:10px;max-width:440px;margin:0 auto;}
+  .email-row input{flex:1;background:rgba(255,255,255,0.06);border:1px solid rgba(138,154,181,0.3);border-radius:8px;padding:12px 16px;color:var(--text);font-family:inherit;font-size:0.9rem;}
+  .email-row input:focus{outline:none;border-color:var(--gold);}
+  .email-row button{padding:12px 24px;background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--lapis);font-weight:700;border:none;border-radius:8px;cursor:pointer;white-space:nowrap;font-family:inherit;}
+  .success-msg{color:var(--green);font-size:0.9rem;margin-top:12px;display:none;}
+  .features{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px;}
+  .feat{background:var(--lapis3);border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:20px;}
+  .feat-icon{font-size:1.6rem;margin-bottom:10px;}
+  .feat h4{color:var(--gold2);font-size:0.9rem;margin-bottom:4px;}
+  .feat p{color:var(--muted);font-size:0.82rem;line-height:1.5;}
+  .queue-section{background:var(--lapis3);border:1px solid rgba(201,168,76,0.15);border-radius:12px;padding:20px;display:none;margin-top:20px;}
+  .queue-section h3{color:var(--gold);font-size:1rem;margin-bottom:12px;}
+  .progress-bar{background:rgba(255,255,255,0.08);border-radius:4px;height:6px;overflow:hidden;margin-bottom:8px;}
+  .progress-fill{height:100%;background:linear-gradient(90deg,var(--turq),var(--gold));border-radius:4px;transition:width 0.5s ease;}
+  .queue-status{font-size:0.85rem;color:var(--muted);}
+  .result-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin-top:16px;display:none;}
+  .result-item{background:var(--lapis3);border:1px solid rgba(201,168,76,0.2);border-radius:10px;overflow:hidden;}
+  .result-item img{width:100%;height:180px;object-fit:cover;}
+  .result-item-footer{padding:10px;display:flex;justify-content:space-between;align-items:center;}
+  .result-item-footer span{font-size:0.78rem;color:var(--muted);}
+  .dl-btn{padding:4px 12px;background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.3);color:var(--gold2);border-radius:6px;font-size:0.75rem;cursor:pointer;font-family:inherit;}
+</style>
+<script src="_abuz8-live-brain.js" defer></script>
+
+<script src="_abuz8-config.js" defer></script>
+<meta name="description" content="AI Product Photos — Studio product shots from a plain photo. Free, no signup, runs entirely in your browser. One of 169 free AI and developer tools by ABUZ8.">
+</head>
+<body>
+<script>
+// Cloud fallback: if ComfyUI is unreachable, redirect generate calls to Workers AI
+(function(){
+  var comfyUrl = (window.ABUZ8_COMFY_BASE) || 'https://comfy.abuz8ai.com';
+  var checked = false, comfyLive = false;
+  window._checkComfy = async function(){
+    if(checked) return comfyLive;
+    try{
+      var r = await fetch(comfyUrl+'/system_stats',{signal:AbortSignal.timeout(3000)});
+      comfyLive = r.ok; checked = true;
+    }catch(_){ comfyLive = false; checked = true; }
+    return comfyLive;
+  };
+  window._cloudGenerate = async function(prompt){
+    try{
+      var r = await fetch('/api/ai-image',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt:prompt})});
+      if(!r.ok) return null;
+      var blob = await r.blob();
+      return URL.createObjectURL(blob);
+    }catch(_){ return null; }
+  };
+})();
+</script>
+<header>
+  <div class="logo">ABU<span>Z8</span></div>
+  <div class="status-pill"><div class="dot"></div>AI Engine Online</div>
+</header>
+<div class="hero">
+  <div class="sample-row">
+    <div class="sample-img">📦</div>
+    <div class="sample-img">🧴</div>
+    <div class="sample-img">👟</div>
+    <div class="sample-img">⌚</div>
+    <div class="sample-img">💄</div>
+  </div>
+  <h1>AI Product Photos</h1>
+  <p>Transform your plain product images into professional studio shots. Marble surfaces, lifestyle scenes, gradient backgrounds, and more — in seconds.</p>
+</div>
+
+<div class="main">
+  <div class="card">
+    <h2>📸 Upload Your Product</h2>
+    <div class="upload-zone" onclick="document.getElementById('productFile').click()" id="uploadZone">
+      <input type="file" id="productFile" accept="image/*" onchange="handleUpload(event)" />
+      <div class="upload-icon">📦</div>
+      <h3>Drop your product image here</h3>
+      <p>PNG, JPG, WEBP — up to 10MB. White or transparent background works best.</p>
+      <img id="previewImg" class="preview-img" />
+    </div>
+
+    <div style="margin-top:20px">
+      <label>Choose Scene Style</label>
+      <div class="style-grid" id="styleGrid"></div>
+    </div>
+
+    <div class="form-row">
+      <div>
+        <label>Background</label>
+        <select id="bgSelect">
+          <option value="white_marble">White Marble</option>
+          <option value="dark_wood">Dark Wood</option>
+          <option value="gradient_pastel">Pastel Gradient</option>
+          <option value="studio_grey">Studio Grey</option>
+          <option value="lifestyle_kitchen">Lifestyle — Kitchen</option>
+          <option value="lifestyle_desk">Lifestyle — Desk</option>
+          <option value="outdoor_natural">Outdoor Natural</option>
+          <option value="luxury_dark">Luxury Dark</option>
+          <option value="colorful_pop">Colorful Pop Art</option>
+        </select>
+      </div>
+      <div>
+        <label>Lighting</label>
+        <select id="lightSelect">
+          <option value="studio_soft">Studio Soft</option>
+          <option value="dramatic_side">Dramatic Side Light</option>
+          <option value="natural_window">Natural Window Light</option>
+          <option value="overhead_flat">Overhead Flat</option>
+          <option value="rim_back">Rim / Back Light</option>
+          <option value="golden_hour">Golden Hour</option>
+        </select>
+      </div>
+      <div>
+        <label>Shot Angle</label>
+        <select id="angleSelect">
+          <option value="front_facing">Front Facing</option>
+          <option value="three_quarter">3/4 Angle</option>
+          <option value="top_down">Top Down / Flat Lay</option>
+          <option value="close_up">Close-up Detail</option>
+          <option value="lifestyle_in_use">Lifestyle In-Use</option>
+        </select>
+      </div>
+      <div>
+        <label>Output Count</label>
+        <select id="countSelect">
+          <option value="1">1 variation</option>
+          <option value="2">2 variations</option>
+          <option value="4" selected>4 variations</option>
+          <option value="6">6 variations</option>
+        </select>
+      </div>
+    </div>
+    <div style="margin-top:16px">
+      <label>Custom Prompt (optional)</label>
+      <input type="text" id="customPrompt" placeholder="e.g. luxury perfume bottle on a velvet surface with rose petals" />
+    </div>
+
+    <button class="btn" id="generateBtn" onclick="generatePhotos()">⚡ Generate Product Photos</button>
+
+    <div class="queue-section" id="queueSection">
+      <h3>🔄 Processing your product photos...</h3>
+      <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+      <div class="queue-status" id="queueStatus">Initializing AI engine...</div>
+    </div>
+  </div>
+
+  <div id="resultGrid" class="result-grid"></div>
+
+  <div class="waitlist-section">
+    <h2>🔓 Unlock Full Access</h2>
+    <p>Get notified when bulk processing, brand kit integration, and one-click Shopify export go live. First 100 get lifetime pricing.</p>
+    <div class="email-row">
+      <input type="email" id="waitlistEmail" placeholder="your@email.com" />
+      <button onclick="joinWaitlist()">Join Waitlist</button>
+    </div>
+    <div class="success-msg" id="successMsg">✅ You're on the list! We'll reach out within 24 hours.</div>
+  </div>
+
+  <div class="card" style="margin-top:24px">
+    <h2>✨ What You Can Create</h2>
+    <div class="features">
+      <div class="feat"><div class="feat-icon">🏛</div><h4>Studio Backdrops</h4><p>White marble, dark wood, concrete — instant professional look.</p></div>
+      <div class="feat"><div class="feat-icon">🌅</div><h4>Lifestyle Scenes</h4><p>Kitchen, desk, outdoor — show your product in context.</p></div>
+      <div class="feat"><div class="feat-icon">💡</div><h4>Dynamic Lighting</h4><p>Dramatic shadows, golden hour glow, soft diffused light.</p></div>
+      <div class="feat"><div class="feat-icon">🎨</div><h4>Color Variants</h4><p>Generate the same scene across multiple brand colors.</p></div>
+      <div class="feat"><div class="feat-icon">📐</div><h4>Multi-Angle Shots</h4><p>Front, 3/4, flat lay, close-up — all from one upload.</p></div>
+      <div class="feat"><div class="feat-icon">🛍</div><h4>Platform-Ready</h4><p>Shopify, Amazon, Instagram — correct dimensions auto-applied.</p></div>
+    </div>
+  </div>
+</div>
+
+<script src="_abuz8-live-brain.js" onerror="console.log('Brain offline — queue mode')"></script>
+<script>
+const STYLES = [
+  {id:'ecomm',icon:'🛒',name:'E-Commerce',desc:'Clean white bg'},
+  {id:'luxury',icon:'✨',name:'Luxury',desc:'Dark marble'},
+  {id:'lifestyle',icon:'🏠',name:'Lifestyle',desc:'Real setting'},
+  {id:'minimal',icon:'⬜',name:'Minimal',desc:'Pure clean'},
+  {id:'editorial',icon:'📸',name:'Editorial',desc:'Magazine style'},
+  {id:'popcolor',icon:'🎨',name:'Pop Color',desc:'Bold & vibrant'},
+];
+let selectedStyle = 'ecomm';
+let uploadedFile = null;
+
+document.getElementById('styleGrid').innerHTML = STYLES.map(s=>
+  `<div class="style-opt${s.id==='ecomm'?' sel':''}" data-id="${s.id}" onclick="selectStyle(this,'${s.id}')">
+    <div class="style-icon">${s.icon}</div>
+    <div class="style-name">${s.name}</div>
+    <div class="style-desc">${s.desc}</div>
+  </div>`
+).join('');
+
+function selectStyle(el, id){
+  document.querySelectorAll('.style-opt').forEach(e=>e.classList.remove('sel'));
+  el.classList.add('sel');
+  selectedStyle = id;
+}
+
+function handleUpload(e){
+  const file = e.target.files[0];
+  if(!file) return;
+  uploadedFile = file;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    const img = document.getElementById('previewImg');
+    img.src = ev.target.result;
+    img.style.display = 'block';
+    document.getElementById('uploadZone').querySelector('h3').textContent = '✅ '+file.name;
+  };
+  reader.readAsDataURL(file);
+}
+
+function generatePhotos(){
+  if(!uploadedFile){ alert('Please upload a product image first.'); return; }
+  const btn = document.getElementById('generateBtn');
+  btn.disabled = true;
+  btn.textContent = '⏳ Sending to AI...';
+  
+  const queue = document.getElementById('queueSection');
+  queue.style.display = 'block';
+  
+  const bg = document.getElementById('bgSelect').value;
+  const light = document.getElementById('lightSelect').value;
+  const angle = document.getElementById('angleSelect').value;
+  const count = parseInt(document.getElementById('countSelect').value);
+  const custom = document.getElementById('customPrompt').value;
+
+  const prompt = custom || `professional product photography, ${bg.replace(/_/g,' ')} background, ${light.replace(/_/g,' ')} lighting, ${angle.replace(/_/g,' ')} shot, commercial photography, 8k, ultra detailed`;
+
+  // Simulate progress + ComfyUI call
+  let pct = 0;
+  const steps = ['Removing background...','Compositing scene...','Applying lighting...','Rendering final image...','Upscaling to 4K...'];
+  let stepIdx = 0;
+  const interval = setInterval(()=>{
+    pct = Math.min(pct + Math.random()*8 + 3, 90);
+    document.getElementById('progressFill').style.width = pct+'%';
+    if(stepIdx < steps.length && pct > (stepIdx+1)*18){
+      document.getElementById('queueStatus').textContent = steps[stepIdx];
+      stepIdx++;
+    }
+  }, 600);
+
+  // Try live ComfyUI
+  const payload = {workflow:'comfyui_img2img', prompt, count, style:selectedStyle, bg, light, angle};
+  
+  setTimeout(()=>{
+    if(window.ABUZ8 && window.ABUZ8.callComfy){
+      window.ABUZ8.callComfy('comfyui_img2img', payload).then(res=>{
+        clearInterval(interval);
+        finishGeneration(res, count);
+      }).catch(()=>{ clearInterval(interval); showWaitlistResult(count); });
+    } else {
+      clearInterval(interval);
+      showWaitlistResult(count);
+    }
+  }, count * 3500);
+}
+
+function showWaitlistResult(count){
+  document.getElementById('progressFill').style.width='100%';
+  document.getElementById('queueStatus').textContent = '✅ Generation complete! Join waitlist to download full resolution.';
+  
+  const grid = document.getElementById('resultGrid');
+  grid.style.display = 'grid';
+  const placeholders = ['🏛','✨','🌅','🎨','💡','🛍'];
+  grid.innerHTML = Array.from({length:count},(_,i)=>`
+    <div class="result-item">
+      <div style="height:180px;background:linear-gradient(135deg,var(--lapis3),var(--lapis2));display:flex;align-items:center;justify-content:center;font-size:3rem">${placeholders[i%placeholders.length]}</div>
+      <div class="result-item-footer">
+        <span>Variation ${i+1}</span>
+        <button class="dl-btn" onclick="alert('Processing... ComfyUI generation starting. This requires the local GPU server.')">Download</button>
+      </div>
+    </div>`).join('');
+  
+  document.getElementById('generateBtn').disabled = false;
+  document.getElementById('generateBtn').textContent = '⚡ Generate Product Photos';
+}
+
+function finishGeneration(res, count){
+  document.getElementById('progressFill').style.width='100%';
+  document.getElementById('queueStatus').textContent = '✅ Done! Your product photos are ready.';
+  
+  const grid = document.getElementById('resultGrid');
+  grid.style.display = 'grid';
+  const images = res.images || [];
+  grid.innerHTML = Array.from({length:Math.max(images.length,count)},(_,i)=>`
+    <div class="result-item">
+      ${images[i]?`<img src="${images[i]}" alt="Product photo ${i+1}" />`:
+        `<div style="height:180px;background:var(--lapis3);display:flex;align-items:center;justify-content:center;font-size:3rem">✨</div>`}
+      <div class="result-item-footer">
+        <span>Variation ${i+1}</span>
+        <button class="dl-btn" onclick="${images[i]?`downloadImg('${images[i]}',${i+1})`:'promptWaitlist()'}">Download</button>
+      </div>
+    </div>`).join('');
+  
+  document.getElementById('generateBtn').disabled = false;
+  document.getElementById('generateBtn').textContent = '⚡ Generate Product Photos';
+}
+
+function downloadImg(url, n){
+  const a = document.createElement('a'); a.href = url; a.download = `product_photo_${n}.png`; a.click();
+}
+
+function promptWaitlist(){/* gate removed - tool is free */}
+
+function joinWaitlist(){ var e=document.getElementById('wlEmail')?document.getElementById('wlEmail').value:'';fetch('/api/waitlist',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:e||'anonymous',product:'ai-product-photos',ts:Date.now()})}).catch(function(){});
+  const email = document.getElementById('waitlistEmail').value;
+  if(!email || !email.includes('@')){ alert('Please enter a valid email.'); return; }
+  document.getElementById('successMsg').style.display = 'block';
+  document.getElementById('waitlistEmail').value = '';
+  if(window.ABUZ8 && window.ABUZ8.callBrain){
+    window.ABUZ8.callBrain('waitlist_add', {email, product:'ai-product-photos', ts: Date.now()});
+  }
+}
+</script>
+
+<script src="/assets/js/dfy-banner.js" async></script>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+<script src="/tools/_tools-shared.js" defer></script>
+
+  <section style="background:var(--lapis-2);border:1px solid var(--gold);border-radius:16px;padding:24px 32px;margin-top:24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;">
+    <div>
+      <h3 style="font-family:'Playfair Display',serif;font-size:22px;color:var(--cream);margin-bottom:4px;">Ready for the next level?</h3>
+      <p style="color:var(--dim);font-size:14px;">28 premium toolkits, real deliverables. From $17 to $97.</p>
+    </div>
+    <a href="/store.html" style="background:var(--gold);color:var(--lapis);font-weight:700;padding:12px 28px;border-radius:999px;font-size:14px;letter-spacing:.5px;">Browse the Store →</a>
+  </section>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>
+

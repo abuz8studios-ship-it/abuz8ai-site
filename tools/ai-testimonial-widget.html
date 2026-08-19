@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Testimonial Widget Builder — Embed Social Proof Anywhere | ABUZ8</title>
+<meta name="description" content="Build beautiful testimonial widgets — grid, carousel, wall — and get embed code instantly. Free.">
+<link rel="canonical" href="https://abuz8ai.com/tools/ai-testimonial-widget">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"AI Testimonial Widget Builder","url":"https://abuz8ai.com/tools/ai-testimonial-widget","description":"Create beautiful testimonial widgets in grid, carousel, or wall format with embed code.","applicationCategory":"BusinessApplication","isAccessibleForFree":true}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--lapis:#0a1628;--lapis2:#0f1f3d;--lapis3:#162544;--gold:#c9a84c;--gold2:#e8c96d;--turq:#0e9f6e;--turq2:#22b5a0;--text:#e8e4dc;--muted:#8892a4;--border:rgba(201,168,76,0.18);--rad:12px}
+body{background:var(--lapis);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh}
+a{color:var(--gold);text-decoration:none}
+.nav{display:flex;align-items:center;justify-content:space-between;padding:16px 40px;border-bottom:1px solid var(--border)}
+.nav-logo{font-family:'Playfair Display',serif;font-size:1.3rem;color:var(--gold)}
+.nav-links{display:flex;gap:20px;font-size:.83rem}.nav-links a{color:var(--muted)}.nav-links a:hover{color:var(--gold)}
+.hero{text-align:center;padding:44px 20px 28px;max-width:700px;margin:0 auto}
+.hero h1{font-family:'Playfair Display',serif;font-size:clamp(1.9rem,4.5vw,3rem);line-height:1.15;margin-bottom:12px}
+.hero h1 span{color:var(--gold)}
+.hero p{color:var(--muted);font-size:.95rem;line-height:1.7}
+.main{max-width:1100px;margin:28px auto 60px;padding:0 20px;display:grid;grid-template-columns:400px 1fr;gap:24px}
+@media(max-width:880px){.main{grid-template-columns:1fr}}
+.panel{background:var(--lapis2);border:1px solid var(--border);border-radius:var(--rad)}
+.panel-head{padding:14px 18px;border-bottom:1px solid var(--border);font-size:.95rem;font-weight:600;display:flex;align-items:center;gap:8px}
+.panel-body{padding:18px}
+label.lbl{display:block;font-size:.77rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;margin-top:12px}
+label.lbl:first-child{margin-top:0}
+input.fi,textarea.fi{width:100%;background:var(--lapis3);border:1px solid var(--border);border-radius:8px;padding:9px 12px;color:var(--text);font-size:.88rem;font-family:'Inter',sans-serif;outline:none;transition:border-color .2s}
+input.fi:focus,textarea.fi:focus{border-color:var(--gold)}
+input.fi::placeholder,textarea.fi::placeholder{color:var(--muted)}
+textarea.fi{resize:vertical;min-height:64px}
+select.sel{background:var(--lapis3);border:1px solid var(--border);border-radius:6px;padding:7px 10px;color:var(--text);font-size:.85rem;outline:none;cursor:pointer;width:100%}
+.t-card{background:var(--lapis3);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:10px}
+.t-card-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.t-card-title{font-size:.83rem;font-weight:600;color:var(--gold)}
+.t-del{background:transparent;border:none;color:var(--muted);cursor:pointer;font-size:.9rem}.t-del:hover{color:#ff7a4a}
+.t-star-row{display:flex;gap:3px;margin-bottom:8px}
+.t-star{font-size:1.1rem;cursor:pointer;color:#d1d5db;transition:color .15s}
+.t-star.on{color:#f59e0b}
+.add-t-btn{width:100%;background:transparent;border:1px dashed var(--border);border-radius:8px;padding:9px;color:var(--muted);cursor:pointer;font-size:.83rem;transition:all .2s;font-family:'Inter',sans-serif;margin-top:4px}
+.add-t-btn:hover{border-color:var(--turq);color:var(--turq2)}
+.opt-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.opt-row label{font-size:.85rem}
+.gen-btn{width:100%;background:var(--gold);color:var(--lapis);border:none;border-radius:var(--rad);padding:13px;font-size:.95rem;font-weight:700;cursor:pointer;transition:all .2s;margin-top:12px}
+.gen-btn:hover{background:var(--gold2)}
+/* Preview */
+.preview-pane{min-height:400px;padding:20px;background:#f3f4f6;border-radius:0 0 var(--rad) var(--rad)}
+.preview-pane.dark-bg{background:#0a1628}
+.panel-tabs{display:flex;border-bottom:1px solid var(--border)}
+.ptab{flex:1;padding:11px;text-align:center;font-size:.83rem;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;transition:all .2s}
+.ptab.active{color:var(--turq2);border-bottom-color:var(--turq2)}
+.code-pane{padding:16px;display:none}
+.code-pane.active{display:block}
+.code-area{font-size:.72rem;font-family:'Fira Code',monospace;background:#060e1a;padding:14px;border-radius:8px;max-height:320px;overflow-y:auto;white-space:pre;line-height:1.6;color:#b8d4ff}
+.code-actions{display:flex;gap:8px;margin-top:10px}
+.code-btn{background:var(--lapis3);border:1px solid var(--border);border-radius:6px;padding:8px 14px;font-size:.8rem;color:var(--muted);cursor:pointer;transition:all .2s;font-family:'Inter',sans-serif}
+.code-btn:hover{border-color:var(--gold);color:var(--gold)}
+.footer{border-top:1px solid var(--border);padding:24px 40px;display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;align-items:center;font-size:.8rem;color:var(--muted)}
+.footer a{color:var(--muted)}.footer a:hover{color:var(--gold)}
+</style>
+</head>
+<body>
+<nav class="nav">
+  <div class="nav-logo">ABUZ8</div>
+  <div class="nav-links"><a href="/tools">Tools</a><a href="/free.html">Free</a><a href="/news.html">AI Daily</a></div>
+</nav>
+<section class="hero">
+  <h1>Beautiful <span>Testimonial Widgets</span></h1>
+  <p>Add social proof anywhere on your site. Build grid, carousel, or wall layouts with your real testimonials. Embed in minutes.</p>
+</section>
+<div class="main">
+  <!-- Left -->
+  <div>
+    <div class="panel">
+      <div class="panel-head">✍️ Testimonials</div>
+      <div class="panel-body">
+        <div id="testimonialsContainer"></div>
+        <button class="add-t-btn" onclick="addTestimonial()">+ Add Testimonial</button>
+      </div>
+    </div>
+    <div class="panel" style="margin-top:14px">
+      <div class="panel-head">🎨 Style Options</div>
+      <div class="panel-body">
+        <div class="opt-row"><label>Layout</label>
+          <select class="sel" style="width:auto" id="layout" onchange="generateWidget()">
+            <option value="grid">3-Column Grid</option>
+            <option value="masonry">Masonry Wall</option>
+            <option value="list">Single Column</option>
+            <option value="carousel">Carousel</option>
+          </select>
+        </div>
+        <div class="opt-row"><label>Card Style</label>
+          <select class="sel" style="width:auto" id="cardStyle" onchange="generateWidget()">
+            <option value="light">Light Cards</option>
+            <option value="dark">Dark Cards</option>
+            <option value="minimal">Minimal (no border)</option>
+            <option value="bordered">Bordered Accent</option>
+          </select>
+        </div>
+        <div class="opt-row"><label>Show Stars</label>
+          <select class="sel" style="width:auto" id="showStars" onchange="generateWidget()">
+            <option>Yes</option>
+            <option>No</option>
+          </select>
+        </div>
+        <div class="opt-row"><label>Show Avatar</label>
+          <select class="sel" style="width:auto" id="showAvatar" onchange="generateWidget()">
+            <option>Yes (initials)</option>
+            <option>No</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <button class="gen-btn" onclick="generateWidget()">✨ Generate Widget</button>
+  </div>
+  <!-- Right -->
+  <div>
+    <div class="panel">
+      <div class="panel-tabs">
+        <div class="ptab active" id="tab-prev" onclick="switchTab('preview')">👁 Preview</div>
+        <div class="ptab" id="tab-code" onclick="switchTab('code')">💻 Embed Code</div>
+      </div>
+      <div id="pane-preview" class="preview-pane dark-bg">
+        <div id="widgetPreview" style="font-family:Inter,sans-serif"></div>
+      </div>
+      <div id="pane-code" class="code-pane">
+        <div class="code-area" id="embedCode">Generate your widget to see the embed code.</div>
+        <div class="code-actions">
+          <button class="code-btn" onclick="copyEmbed()">📋 Copy Embed Code</button>
+          <button class="code-btn" onclick="downloadWidget()">⬇ Download HTML</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<footer class="footer">
+  <div>© 2026 ABUZ8 LLC</div>
+  <div style="display:flex;gap:16px"><a href="/tools">All Tools</a><a href="https://github.com/abuz8studios-ship-it" target="_blank">GitHub ↗</a><a href="/support.html">Support →</a></div>
+</footer>
+<script>
+let testimonials = [
+  {name:'Sarah Chen',role:'CEO at TechFlow',quote:'This tool saved us 20 hours a week. The ROI was immediate and undeniable.',stars:5},
+  {name:'Marcus Lee',role:'Product Manager, Stripe',quote:'I was skeptical at first but after one demo I was completely sold. Our team loves it.',stars:5},
+  {name:'Priya Patel',role:'Founder, Buildfast',quote:'Exactly what we needed. Simple, powerful, and the support is excellent.',stars:4},
+];
+let embedHTML = '';
+
+function addTestimonial() {
+  testimonials.push({name:'',role:'',quote:'',stars:5});
+  renderTestimonials();
+  generateWidget();
+}
+function removeT(i) { testimonials.splice(i,1); renderTestimonials(); generateWidget(); }
+function setStars(tIdx, starVal) {
+  testimonials[tIdx].stars = starVal;
+  renderTestimonials();
+  generateWidget();
+}
+function renderTestimonials() {
+  document.getElementById('testimonialsContainer').innerHTML = testimonials.map((t,i)=>`
+    <div class="t-card">
+      <div class="t-card-head"><span class="t-card-title">Testimonial ${i+1}</span><button class="t-del" onclick="removeT(${i})">✕</button></div>
+      <div class="t-star-row">${[1,2,3,4,5].map(s=>`<span class="t-star ${s<=t.stars?'on':''}" onclick="setStars(${i},${s})">★</span>`).join('')}</div>
+      <textarea class="fi" placeholder="What did they say?" oninput="testimonials[${i}].quote=this.value;generateWidget()" style="margin-bottom:8px">${t.quote}</textarea>
+      <input class="fi" placeholder="Name" value="${t.name}" oninput="testimonials[${i}].name=this.value;generateWidget()" style="margin-bottom:6px">
+      <input class="fi" placeholder="Role / Company" value="${t.role}" oninput="testimonials[${i}].role=this.value;generateWidget()">
+    </div>`).join('');
+}
+
+function getInitials(name) { return name.split(' ').map(w=>w[0]||'').join('').toUpperCase().slice(0,2) || '?'; }
+function avatarColor(name) { const c=['#7c3aed','#0e9f6e','#c9a84c','#2563eb','#dc2626','#059669']; return c[name.length%c.length]; }
+function stars(n) { return '★'.repeat(n)+'☆'.repeat(5-n); }
+
+function switchTab(tab) {
+  document.getElementById('tab-prev').classList.toggle('active',tab==='preview');
+  document.getElementById('tab-code').classList.toggle('active',tab==='code');
+  document.getElementById('pane-preview').style.display = tab==='preview'?'block':'none';
+  document.getElementById('pane-code').classList.toggle('active',tab==='code');
+}
+
+function generateWidget() {
+  const layout = document.getElementById('layout')?.value || 'grid';
+  const cardStyle = document.getElementById('cardStyle')?.value || 'light';
+  const showStars = document.getElementById('showStars')?.value !== 'No';
+  const showAvatar = document.getElementById('showAvatar')?.value !== 'No';
+  const ts = testimonials.filter(t=>t.quote);
+  if(!ts.length) return;
+
+  const cardBg = {light:'#fff',dark:'#0f1f3d',minimal:'transparent',bordered:'#fff'}[cardStyle];
+  const cardBorder = {light:'#e5e7eb',dark:'rgba(201,168,76,0.2)',minimal:'none',bordered:'#c9a84c'}[cardStyle];
+  const cardText = {light:'#111',dark:'#e8e4dc',minimal:'#111',bordered:'#111'}[cardStyle];
+  const cardSub = {light:'#6b7280',dark:'#8892a4',minimal:'#6b7280',bordered:'#6b7280'}[cardStyle];
+  const quoteColor = {light:'#374151',dark:'#ccd0db',minimal:'#374151',bordered:'#374151'}[cardStyle];
+  const starColor = '#f59e0b';
+
+  const cardCss = `
+.t-card{background:${cardBg};border:1px solid ${cardBorder};border-radius:12px;padding:20px;${cardStyle==='bordered'?'border-left:3px solid #c9a84c;':''}}
+.t-stars{color:${starColor};font-size:1rem;margin-bottom:8px;letter-spacing:1px}
+.t-quote{font-size:.9rem;line-height:1.6;color:${quoteColor};margin-bottom:16px;font-style:italic}
+.t-author{display:flex;align-items:center;gap:10px}
+.t-avatar{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.78rem;font-weight:700;color:#fff;flex-shrink:0}
+.t-name{font-size:.88rem;font-weight:600;color:${cardText}}
+.t-role{font-size:.78rem;color:${cardSub}}`;
+
+  const cardHtml = (t) => `<div class="t-card">
+${showStars?`  <div class="t-stars">${'★'.repeat(t.stars)}${'☆'.repeat(5-t.stars)}</div>`:''}
+  <div class="t-quote">"${t.quote}"</div>
+  <div class="t-author">
+${showAvatar?`    <div class="t-avatar" style="background:${avatarColor(t.name)}">${getInitials(t.name)}</div>`:''}
+    <div><div class="t-name">${t.name}</div><div class="t-role">${t.role}</div></div>
+  </div>
+</div>`;
+
+  const gridCss = layout==='grid'?`display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px`
+    :layout==='list'?`display:flex;flex-direction:column;gap:16px`
+    :layout==='masonry'?`columns:3;column-gap:16px`
+    :`overflow:hidden;position:relative`;
+
+  let widgetHTML;
+  if(layout==='carousel') {
+    widgetHTML = `<div class="t-widget" style="max-width:540px;margin:0 auto;position:relative">
+<div class="t-track" id="tTrack" style="display:flex;transition:transform .4s ease;gap:16px">
+${ts.map(t=>cardHtml(t)).join('\n')}
+</div>
+<div style="display:flex;justify-content:center;gap:12px;margin-top:16px">
+  <button onclick="prevSlide()" style="background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:#fff;border-radius:8px;padding:8px 16px;cursor:pointer;font-size:1rem">‹</button>
+  <button onclick="nextSlide()" style="background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:#fff;border-radius:8px;padding:8px 16px;cursor:pointer;font-size:1rem">›</button>
+</div>
+</div>
+<script>let idx=0;const cards=document.querySelectorAll('.t-card');const track=document.getElementById('tTrack');
+function goTo(i){idx=Math.max(0,Math.min(i,cards.length-1));track.style.transform='translateX(-'+(idx*100)+'%)'}
+function nextSlide(){goTo(idx+1)}function prevSlide(){goTo(idx-1)}
+cards.forEach(c=>{c.style.minWidth='100%'})<\/script>`;
+  } else {
+    widgetHTML = `<div class="t-widget" style="${gridCss}">${ts.map(t=>cardHtml(t)).join('\n')}</div>`;
+  }
+
+  const fullHTML = `<style>*{box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,'Inter',sans-serif}${cardCss}${layout==='masonry'?'.t-card{break-inside:avoid;margin-bottom:16px}':''}</style>\n${widgetHTML}`;
+
+  embedHTML = fullHTML;
+  document.getElementById('widgetPreview').innerHTML = fullHTML;
+  document.getElementById('embedCode').textContent = fullHTML;
+}
+
+function copyEmbed() {
+  navigator.clipboard.writeText(embedHTML).then(()=>{
+    const btn=document.querySelector('.code-btn');
+    btn.textContent='✓ Copied!';
+    setTimeout(()=>btn.textContent='📋 Copy Embed Code',2000);
+  });
+}
+function downloadWidget() {
+  const blob=new Blob([`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Testimonials</title></head><body style="padding:40px">${embedHTML}
+<script src="/assets/js/dfy-banner.js" async><\/script>
+<script src="/assets/js/abuz8-intent.js" defer><\/script>
+<script>(function(){var orig=window.joinWaitlist||window.joinWL;function wlPost(){var els=['wlEmail','emailInput','email'];var v='';for(var i=0;i<els.length;i++){var el=document.getElementById(els[i]);if(el&&el.value){v=el.value.trim();break;}}if(v&&v.includes('@')){fetch('/api/waitlist',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:v,product:'ai-testimonial-widget',ts:Date.now()})}).catch(function(){});}if(orig)orig();}if(typeof joinWaitlist==='function')window.joinWaitlist=wlPost;if(typeof joinWL==='function')window.joinWL=wlPost;})()<\/script>
+<script src="/tools/_tools-shared.js" defer><\/script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body></html>`],{type:'text/html'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='testimonials.html';a.click();
+}
+
+renderTestimonials();
+generateWidget();
+</script>
+<script src="_abuz8-live-brain.js" defer></script>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+<script>(function(){var orig=window.joinWaitlist||window.joinWL;function wlPost(){var els=['wlEmail','emailInput','email'];var v='';for(var i=0;i<els.length;i++){var el=document.getElementById(els[i]);if(el&&el.value){v=el.value.trim();break;}}if(v&&v.includes('@')){fetch('/api/waitlist',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:v,product:'ai-testimonial-widget',ts:Date.now()})}).catch(function(){});}if(orig)orig();}if(typeof joinWaitlist==='function')window.joinWaitlist=wlPost;if(typeof joinWL==='function')window.joinWL=wlPost;})()</script>
+<script src="/tools/_tools-shared.js" defer></script>
+</body>
+</html>
+

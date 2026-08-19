@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Agent Permissions Guide: What to Automate, What to Gate | ABUZ8</title>
+<meta name="description" content="An AI agent permissions guide: which actions are safe to automate, which need a human confirm, and how a permission gate keeps an agent useful without being risky.">
+<meta name="keywords" content="ai agent permissions, ai agent permission gate, ai agent guardrails, control ai agent actions">
+<link rel="canonical" href="https://abuz8ai.com/blog/ai-agent-permissions-guide">
+<meta property="og:title" content="AI Agent Permissions Guide: What to Automate, What to Gate">
+<meta property="og:type" content="article">
+<link rel="stylesheet" href="/blog/_blog-base.css">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@300;400;600;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
+<style>
+:root{
+  --lapis:#F8FAFC; --lapis-mid:#EEF3F8; --lapis-light:#E3EBF3;
+  --card:#FFFFFF; --border:#D7E0EA;
+  --cream:#1F3A5F; --ivory:#16324F; --text:#2C3E50; --dim:#5A6B7C;
+  --gold:#1F5B94; --gold-light:#12866E; --gold-dim:#7DA3C8;
+  --turq:#0E7C63; --turq-light:#1F5B94; --turq-bright:#12866E;
+  --primary:#2E75B6;
+}
+code{background:#EEF3F8;color:#1F5B94;font-family:'JetBrains Mono',monospace;font-size:0.85em;padding:0.1em 0.35em;border-radius:4px;}
+.callout.cta{background:#EEF3F8;border:1px solid #2E75B6;border-radius:12px;padding:22px 24px;margin:36px 0 10px;}
+.callout.cta p{margin:0;color:#2C3E50;}
+.foot{color:#5A6B7C;font-size:13px;margin-top:40px;border-top:1px solid #D7E0EA;padding-top:18px;}
+.foot a{color:#1F5B94;}
+</style>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","headline":"AI Agent Permissions Guide: What to Automate, What to Gate","datePublished":"2026-07-30","author":{"@type":"Organization","name":"ABUZ8 AI"}}
+</script>
+</head>
+<body>
+<div class="container">
+  <a href="/blog/" class="back">&larr; ABUZ8 BLOG</a>
+  <h1>AI Agent Permissions Guide: What to Automate, What to Gate</h1>
+  <div class="meta-row"><span>AI AGENTS 101</span><span class="dot"></span><span>JULY 30, 2026</span><span class="dot"></span><span>6 MIN READ</span></div>
+
+  <p>An <strong>AI agent permissions</strong> setup is the single most important safety decision you make, and it's simpler than it sounds: sort every action the agent can take into "fine to do on its own" and "ask me first." The mistake isn't giving an agent power — agents are useful <em>because</em> they act. The mistake is giving it the power to do something irreversible before you've watched it work. This guide gives you a clean rule for drawing that line, and shows why a real permission gate should be a setting in your agent, not a note you hope it remembers.</p>
+
+  <h2>The one rule: reversibility</h2>
+  <p>Sort actions by whether they can be undone. Reading a file, searching, summarizing, drafting a reply, proposing a plan — all reversible; nothing happens to the outside world, so let the agent do them freely. Sending an email, making a payment, deleting data, posting publicly, changing a live system — irreversible or public; those get a human confirm until the agent has earned deep trust. Reversibility is a better test than "important," because it maps to the actual risk: an agent that drafts a hundred wrong emails costs you nothing to fix, while one that <em>sends</em> a single wrong one to a client cannot be taken back.</p>
+
+  <h2>The three tiers in practice</h2>
+  <p>Most setups land on three levels. <strong>Auto</strong>: read, research, draft, organize scratch work — no confirm needed. <strong>Confirm</strong>: anything that leaves your machine or changes a real record — the agent proposes, you approve with one click. <strong>Never</strong>: a short list the agent must never touch on its own, regardless of what it decides — moving money above a threshold, deleting originals, anything legal or financial. Start strict. It's easy to loosen a gate once the agent proves itself; it's painful to tighten one after it's already acted.</p>
+
+  <h2>Why "ask nicely in the prompt" isn't enough</h2>
+  <p>Plenty of people set permissions by writing "always ask before sending" into the instructions and calling it done. That's a request, not a control. A model can misread it, an edge case can slip past it, and a clever input can talk it out of it — the risk we covered in <a href="/blog/ai-agent-security-risks" class="in">AI agent security risks</a>. A real permission gate sits <em>outside</em> the model: it intercepts the action itself, so "send email" physically pauses for your yes no matter what the model concluded. When you're evaluating agent tools, this is the thing to check — is the gate enforced by the system, or just suggested to the model? The <a href="/blog/mcp-server-security-checklist" class="in">MCP server security checklist</a> gets specific about it.</p>
+
+  <h2>Loosening the gate as trust grows</h2>
+  <p>Permissions aren't set once. As an agent proves reliable on a task, you can promote actions from Confirm to Auto — but do it one at a time, and only after you've seen it handle that action correctly across real cases. A sensible path: everything gated for the <a href="/blog/ai-agent-first-week" class="in">first week</a>, then auto-approve the lowest-risk confirm action, watch it for a few days, promote the next. You end up with an agent that runs smoothly on the routine stuff and still stops to check on the moves that would hurt to get wrong. That graduated trust is the whole point of the gate.</p>
+
+  <h2>Permissions and data are two different scopes</h2>
+  <p>Don't confuse what the agent can <em>do</em> with what it can <em>see</em>. Permissions govern actions; data scope governs access. An agent might have wide read access to your files but a hard Confirm on every send — or narrow data and free rein to act within it. Set both, separately. For anything sensitive, tightening data scope (only the folder it needs, read in place, never copied out) matters as much as gating actions, which is a big part of why a <a href="/blog/private-ai-workflow" class="in">private, local-first workflow</a> is easier to reason about: the data never leaves, and the actions all pause for you.</p>
+
+  <div class="callout cta">
+    <p><strong>QADIR OS ships with the permission gate built in.</strong> Reversible work runs free; anything that sends, pays, or deletes stops for your one-click yes — enforced by the system, not left to the model — with the whole agent running local-first on your machine. <a href="/" class="in">Join QADIR OS early access</a>.</p>
+  </div>
+  <div class="foot">Built by <a href="/">ABUZ8 LLC</a> — we're building QADIR OS, the sovereign agentic operating system.</div>
+</div>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+<script src="/blog/_blog-shared.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>

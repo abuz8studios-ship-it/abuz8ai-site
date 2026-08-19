@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Context Window Planner — Visualize Token Allocation Across System Prompt, RAG, and Conversation | ABUZ8</title>
+  <meta name="description" content="Free AI context window planner. Select your model, allocate tokens across system prompt, few-shot examples, RAG documents, conversation history, and output reserve. Visual bar shows usage, warns before overflow, and estimates cost per request. 100% client-side, no data sent anywhere." />
+  <meta name="keywords" content="context window planner, AI context length calculator, LLM token allocation, context window size, system prompt tokens, RAG context budget, Claude context window, GPT context limit, Gemini context length, token budget planner, context overflow, prompt engineering tool" />
+  <meta property="og:title" content="AI Context Window Planner — Visualize Token Allocation Across System Prompt, RAG, and Conversation | ABUZ8" />
+  <meta property="og:description" content="Select your model, allocate tokens across system prompt, few-shot, RAG, conversation and output reserve. Visual bar + cost estimate. Client-side, free, no signup." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://abuz8ai.com/tools/ai-context-window-planner" />
+  <link rel="canonical" href="https://abuz8ai.com/tools/ai-context-window-planner" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "AI Context Window Planner",
+    "description": "Free client-side tool that helps developers and prompt engineers visualize how their token budget is distributed across system prompt, few-shot examples, RAG documents, conversation history, and output reserve for any major AI model. Shows a live usage bar, warns before context overflow, and estimates cost per request.",
+    "url": "https://abuz8ai.com/tools/ai-context-window-planner.html",
+    "applicationCategory": "DeveloperApplication",
+    "operatingSystem": "Any",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+    "author": { "@type": "Organization", "name": "ABUZ8 LLC", "url": "https://abuz8ai.com" }
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "What is a context window in AI models?",
+        "acceptedAnswer": { "@type": "Answer", "text": "A context window is the maximum number of tokens (roughly words or word-pieces) that a language model can process in a single request. Everything you send — system prompt, examples, retrieved documents, the conversation so far, and the space reserved for the model's reply — must fit inside this window. If you exceed it, the API returns an error or silently truncates your input. This tool helps you plan your allocation before that happens." }
+      },
+      {
+        "@type": "Question",
+        "name": "How should I allocate tokens across my context window?",
+        "acceptedAnswer": { "@type": "Answer", "text": "A common starting point: reserve 10-15% for your system prompt, 5-10% for few-shot examples if you use them, 30-50% for retrieved documents in a RAG setup, leave 15-25% for conversation history to accumulate, and always reserve at least 10-15% for the model's output. The right split depends on your use case — a chatbot needs more conversation room while a document-analysis tool needs more RAG space. This planner lets you experiment with the split and see the effect instantly." }
+      },
+      {
+        "@type": "Question",
+        "name": "What happens when I exceed the context window?",
+        "acceptedAnswer": { "@type": "Answer", "text": "When the total input tokens plus the requested output tokens exceed the model's context window, the API will return an error (most providers) or silently truncate from the beginning of your input (some older models). Either way, critical context is lost. The practical danger zone starts around 85-90% usage — leaving too little room for the reply means the model's output gets cut off mid-sentence. This tool flags yellow at 80% and red at 95% so you can adjust before hitting the wall." }
+      },
+      {
+        "@type": "Question",
+        "name": "How do I estimate the token count for my text?",
+        "acceptedAnswer": { "@type": "Answer", "text": "For English text, a rough rule of thumb is about 1.3 tokens per word, or about 4 characters per token. A 1,000-word system prompt is roughly 1,300 tokens. For code, the ratio is higher — closer to 1.5-2 tokens per word because of syntax characters. For precise counts, use a tokenizer tool (like our AI Token Counter), but for planning purposes the word-based estimate is reliable enough to budget your context window without over-engineering." }
+      },
+      {
+        "@type": "Question",
+        "name": "Is my data sent to a server?",
+        "acceptedAnswer": { "@type": "Answer", "text": "No. This planner runs entirely in your browser. Nothing you type or configure is uploaded, logged, or stored anywhere." }
+      }
+    ]
+  }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0a1628;
+      --card: #0d1a30;
+      --card-alt: #111f38;
+      --primary: #5fa8e8;
+      --primary-dim: #2e75b6;
+      --teal: #0e9f6e;
+      --text: #e8e4d8;
+      --text-dim: #5b6b7c;
+      --border: #d8e0e8;
+      --good: #0e9f6e;
+      --good-bg: #e7f3f0;
+      --warn: #c9a84c;
+      --warn-bg: #fbf1e3;
+      --danger: #c0392b;
+      --danger-bg: #fce4e4;
+      --font-heading: 'Playfair Display', Georgia, serif;
+      --font-body: 'Inter', system-ui, sans-serif;
+      --font-mono: 'JetBrains Mono', 'Courier New', monospace;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      font-size: 15px;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+    a { color: var(--primary); text-decoration: none; transition: color 0.2s; }
+    a:hover { color: var(--primary-dim); }
+
+    nav {
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      padding: 0 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 60px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .nav-logo {
+      font-family: var(--font-heading);
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--primary);
+      letter-spacing: 0.02em;
+    }
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links a { color: var(--text-dim); font-size: 0.9rem; font-weight: 500; }
+    .nav-links a:hover { color: var(--primary); }
+
+    main { max-width: 980px; margin: 0 auto; padding: 3rem 1.5rem 5rem; }
+    .page-header { text-align: center; margin-bottom: 2.2rem; }
+    .page-header h1 {
+      font-family: var(--font-heading);
+      font-size: 2.4rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 0.5rem;
+      line-height: 1.18;
+    }
+    .page-header p { color: var(--text-dim); font-size: 1rem; max-width: 680px; margin: 0 auto; }
+    .privacy-note {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      margin-top: 0.9rem; padding: 0.35rem 0.9rem;
+      background: var(--good-bg); border: 1px solid #bfe0d8;
+      border-radius: 20px; font-size: 0.78rem; color: var(--good);
+    }
+
+    label { display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-dim);
+            text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.5rem; }
+    select, input[type="number"] {
+      width: 100%; padding: 0.65rem 0.9rem;
+      border: 1px solid var(--border); border-radius: 8px;
+      background: var(--card); color: var(--text);
+      font-family: var(--font-body); font-size: 0.92rem;
+      transition: border-color 0.2s;
+    }
+    select:focus, input[type="number"]:focus { outline: none; border-color: var(--primary); }
+
+    .card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem;
+    }
+    .card-title {
+      font-family: var(--font-heading); font-size: 1.15rem; font-weight: 700;
+      color: var(--text); margin-bottom: 1rem;
+    }
+
+    /* ── Model selector row ── */
+    .model-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; }
+    @media (max-width: 600px) { .model-row { grid-template-columns: 1fr; } }
+
+    .model-meta {
+      display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.8rem;
+      margin-top: 1rem;
+    }
+    .meta-chip {
+      background: var(--card-alt); border-radius: 8px; padding: 0.6rem 0.8rem;
+      text-align: center;
+    }
+    .meta-chip .val {
+      font-family: var(--font-mono); font-size: 1.1rem; font-weight: 500;
+      color: var(--primary); display: block;
+    }
+    .meta-chip .lbl { font-size: 0.72rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.05em; }
+
+    /* ── Allocation sliders ── */
+    .alloc-grid { display: flex; flex-direction: column; gap: 1rem; }
+    .alloc-row {
+      display: grid; grid-template-columns: 160px 1fr 90px; gap: 1rem;
+      align-items: center;
+    }
+    @media (max-width: 600px) {
+      .alloc-row { grid-template-columns: 1fr; gap: 0.3rem; }
+    }
+    .alloc-label {
+      font-size: 0.85rem; font-weight: 500; color: var(--text);
+      display: flex; align-items: center; gap: 0.4rem;
+    }
+    .alloc-label .dot {
+      width: 10px; height: 10px; border-radius: 50%; display: inline-block; flex-shrink: 0;
+    }
+    .alloc-val {
+      font-family: var(--font-mono); font-size: 0.85rem; color: var(--text-dim);
+      text-align: right; white-space: nowrap;
+    }
+    input[type="range"] {
+      -webkit-appearance: none; appearance: none;
+      width: 100%; height: 6px; border-radius: 3px;
+      background: var(--border); outline: none; cursor: pointer;
+    }
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none; appearance: none;
+      width: 18px; height: 18px; border-radius: 50%;
+      background: var(--primary); border: 2px solid var(--card);
+      box-shadow: 0 1px 4px rgba(0,0,0,0.15); cursor: pointer;
+    }
+    input[type="range"]::-moz-range-thumb {
+      width: 18px; height: 18px; border-radius: 50%;
+      background: var(--primary); border: 2px solid var(--card);
+      box-shadow: 0 1px 4px rgba(0,0,0,0.15); cursor: pointer;
+    }
+
+    /* ── Visual bar ── */
+    .context-bar-wrap { margin-top: 1.5rem; }
+    .context-bar {
+      width: 100%; height: 36px; border-radius: 8px;
+      background: var(--card-alt); border: 1px solid var(--border);
+      display: flex; overflow: hidden;
+    }
+    .bar-seg {
+      height: 100%; transition: width 0.3s ease;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.65rem; font-weight: 600; color: #0d1a30;
+      overflow: hidden; white-space: nowrap; text-overflow: ellipsis;
+      padding: 0 4px;
+    }
+    .bar-seg.sys  { background: #5fa8e8; }
+    .bar-seg.few  { background: #8e44ad; }
+    .bar-seg.rag  { background: #0e9f6e; }
+    .bar-seg.conv { background: #d4a017; }
+    .bar-seg.out  { background: #c0392b; }
+    .bar-seg.free { background: transparent; }
+
+    .bar-legend {
+      display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 0.8rem;
+      font-size: 0.78rem; color: var(--text-dim);
+    }
+    .bar-legend span { display: inline-flex; align-items: center; gap: 0.3rem; }
+
+    /* ── Status badge ── */
+    .status-row {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-top: 1rem; flex-wrap: wrap; gap: 0.8rem;
+    }
+    .status-badge {
+      padding: 0.4rem 1rem; border-radius: 20px;
+      font-size: 0.82rem; font-weight: 600;
+    }
+    .status-badge.ok   { background: var(--good-bg); color: var(--good); }
+    .status-badge.warn { background: var(--warn-bg); color: var(--warn); }
+    .status-badge.over { background: var(--danger-bg); color: var(--danger); }
+    .status-detail { font-size: 0.82rem; color: var(--text-dim); }
+
+    /* ── Cost card ── */
+    .cost-grid {
+      display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem;
+    }
+    @media (max-width: 600px) { .cost-grid { grid-template-columns: 1fr; } }
+    .cost-cell {
+      background: var(--card-alt); border-radius: 10px; padding: 1rem;
+      text-align: center;
+    }
+    .cost-cell .amount {
+      font-family: var(--font-mono); font-size: 1.3rem; font-weight: 600;
+      color: var(--primary); display: block; margin-bottom: 0.2rem;
+    }
+    .cost-cell .desc { font-size: 0.75rem; color: var(--text-dim); }
+    .cost-cell.local { border: 1px dashed var(--teal); }
+    .cost-cell.local .amount { color: var(--teal); }
+
+    /* ── Tips ── */
+    .tips-list { list-style: none; padding: 0; }
+    .tips-list li {
+      padding: 0.6rem 0; border-bottom: 1px solid var(--border);
+      font-size: 0.88rem; color: var(--text);
+      display: flex; align-items: flex-start; gap: 0.5rem;
+    }
+    .tips-list li:last-child { border-bottom: none; }
+    .tip-icon { color: var(--teal); font-weight: 700; flex-shrink: 0; }
+
+    /* ── CTA ── */
+    .cta-section {
+      background: var(--card); border: 2px solid var(--primary);
+      border-radius: 14px; padding: 2rem; text-align: center;
+      margin-top: 2.5rem;
+    }
+    .cta-section h2 {
+      font-family: var(--font-heading); font-size: 1.5rem; color: var(--primary); margin-bottom: 0.5rem;
+    }
+    .cta-section p { color: var(--text-dim); font-size: 0.92rem; margin-bottom: 1.2rem; max-width: 540px; margin-left: auto; margin-right: auto; }
+    .cta-form { display: flex; gap: 0.6rem; justify-content: center; max-width: 440px; margin: 0 auto; }
+    .cta-form input {
+      flex: 1; padding: 0.7rem 1rem; border: 1px solid var(--border);
+      border-radius: 8px; font-size: 0.92rem; font-family: var(--font-body);
+    }
+    .cta-form button {
+      padding: 0.7rem 1.4rem; border: none; border-radius: 8px;
+      background: var(--primary); color: #0d1a30; font-weight: 600;
+      font-size: 0.92rem; cursor: pointer; transition: background 0.2s;
+      white-space: nowrap;
+    }
+    .cta-form button:hover { background: var(--primary-dim); }
+    #ctaSuccess {
+      display: none; color: var(--good); font-weight: 600; font-size: 0.95rem;
+      margin-top: 0.5rem;
+    }
+    #ctaSuccess.visible { display: block; }
+
+    footer {
+      text-align: center; padding: 2rem 1rem; font-size: 0.78rem; color: var(--text-dim);
+      border-top: 1px solid var(--border); margin-top: 3rem;
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="nav-logo">ABUZ8</a>
+  <ul class="nav-links">
+    <li><a href="/tools.html">Tools</a></li>
+    <li><a href="/store.html">Store</a></li>
+    <li><a href="/qadir.html">QADIR OS</a></li>
+  </ul>
+</nav>
+
+<main>
+  <div class="page-header">
+    <h1>AI Context Window Planner</h1>
+    <p>Select a model, allocate tokens across your system prompt, few-shot examples, RAG documents, conversation history, and output reserve. See exactly how much room you have left — before you hit the wall.</p>
+    <div class="privacy-note">&#128274; 100% client-side — nothing leaves your browser</div>
+  </div>
+
+  <!-- ── MODEL SELECTOR ── -->
+  <div class="card">
+    <div class="card-title">1. Choose Your Model</div>
+    <div class="model-row">
+      <div>
+        <label for="modelSelect">Model</label>
+        <select id="modelSelect" onchange="recalc()"></select>
+      </div>
+      <div>
+        <label for="customCtx">Custom context (tokens)</label>
+        <input type="number" id="customCtx" placeholder="Override window size" min="1024" onchange="recalc()" />
+      </div>
+    </div>
+    <div class="model-meta">
+      <div class="meta-chip"><span class="val" id="metaCtx">—</span><span class="lbl">Context window</span></div>
+      <div class="meta-chip"><span class="val" id="metaMaxOut">—</span><span class="lbl">Max output</span></div>
+      <div class="meta-chip"><span class="val" id="metaInputPrice">—</span><span class="lbl">Input $/1M tok</span></div>
+    </div>
+  </div>
+
+  <!-- ── ALLOCATION SLIDERS ── -->
+  <div class="card">
+    <div class="card-title">2. Allocate Your Token Budget</div>
+    <div class="alloc-grid">
+      <div class="alloc-row">
+        <div class="alloc-label"><span class="dot" style="background:#5fa8e8"></span>System Prompt</div>
+        <input type="range" id="sliderSys" min="0" max="100" value="10" oninput="recalc()" />
+        <div class="alloc-val" id="valSys">—</div>
+      </div>
+      <div class="alloc-row">
+        <div class="alloc-label"><span class="dot" style="background:#8e44ad"></span>Few-Shot Examples</div>
+        <input type="range" id="sliderFew" min="0" max="100" value="5" oninput="recalc()" />
+        <div class="alloc-val" id="valFew">—</div>
+      </div>
+      <div class="alloc-row">
+        <div class="alloc-label"><span class="dot" style="background:#0e9f6e"></span>RAG Documents</div>
+        <input type="range" id="sliderRag" min="0" max="100" value="40" oninput="recalc()" />
+        <div class="alloc-val" id="valRag">—</div>
+      </div>
+      <div class="alloc-row">
+        <div class="alloc-label"><span class="dot" style="background:#d4a017"></span>Conversation History</div>
+        <input type="range" id="sliderConv" min="0" max="100" value="30" oninput="recalc()" />
+        <div class="alloc-val" id="valConv">—</div>
+      </div>
+      <div class="alloc-row">
+        <div class="alloc-label"><span class="dot" style="background:#c0392b"></span>Output Reserve</div>
+        <input type="range" id="sliderOut" min="0" max="100" value="15" oninput="recalc()" />
+        <div class="alloc-val" id="valOut">—</div>
+      </div>
+    </div>
+
+    <!-- ── VISUAL BAR ── -->
+    <div class="context-bar-wrap">
+      <div class="context-bar" id="ctxBar"></div>
+      <div class="bar-legend">
+        <span><span class="dot" style="background:#5fa8e8"></span> System</span>
+        <span><span class="dot" style="background:#8e44ad"></span> Few-Shot</span>
+        <span><span class="dot" style="background:#0e9f6e"></span> RAG</span>
+        <span><span class="dot" style="background:#d4a017"></span> Conversation</span>
+        <span><span class="dot" style="background:#c0392b"></span> Output</span>
+      </div>
+    </div>
+
+    <div class="status-row">
+      <span class="status-badge" id="statusBadge">—</span>
+      <span class="status-detail" id="statusDetail">—</span>
+    </div>
+  </div>
+
+  <!-- ── COST ESTIMATE ── -->
+  <div class="card">
+    <div class="card-title">3. Cost Per Request</div>
+    <div class="cost-grid">
+      <div class="cost-cell">
+        <span class="amount" id="costInput">—</span>
+        <span class="desc">Input cost (tokens used)</span>
+      </div>
+      <div class="cost-cell">
+        <span class="amount" id="costOutput">—</span>
+        <span class="desc">Output cost (reserved)</span>
+      </div>
+      <div class="cost-cell local">
+        <span class="amount">$0.000</span>
+        <span class="desc">ABUZ8 OS (local model)</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── TIPS ── -->
+  <div class="card">
+    <div class="card-title">Context Window Tips</div>
+    <ul class="tips-list">
+      <li><span class="tip-icon">&#9654;</span> Always reserve at least 10% for output — a model that runs out of output tokens mid-sentence wastes the entire request cost.</li>
+      <li><span class="tip-icon">&#9654;</span> System prompts rarely need more than 2,000 tokens. If yours is larger, consider moving static instructions into a retrievable document.</li>
+      <li><span class="tip-icon">&#9654;</span> For RAG, chunk documents to 500-1,000 tokens each. Retrieve 3-5 relevant chunks rather than stuffing the full document.</li>
+      <li><span class="tip-icon">&#9654;</span> Conversation history fills fast in multi-turn chats. Implement a sliding window or summarize older turns to stay within budget.</li>
+      <li><span class="tip-icon">&#9654;</span> Few-shot examples are powerful but expensive. Two high-quality examples usually outperform five mediocre ones at half the token cost.</li>
+      <li><span class="tip-icon">&#9654;</span> Larger context windows cost more per token on some models. A 200K window at 80% usage is 8x the cost of a 200K window at 10% — only fill what you need.</li>
+    </ul>
+  </div>
+
+  <!-- ── CTA ── -->
+  <div class="cta-section">
+    <h2>Run Models Locally — Zero Token Cost</h2>
+    <p>ABUZ8 OS runs AI models on your own hardware. No context window rental fees, no per-token billing, no data leaving your machine. Ship with sovereignty.</p>
+    <div class="cta-form">
+      <input type="email" id="ctaEmail" placeholder="you@company.com" />
+      <button onclick="submitWaitlist()">Join Waitlist</button>
+    </div>
+    <div id="ctaSuccess">You're on the list. We'll reach out when it's your turn.</div>
+  </div>
+
+  <!-- ── FAQ (visible for SEO + users) ── -->
+  <div class="card" style="margin-top:2rem;">
+    <div class="card-title">Frequently Asked Questions</div>
+    <details style="margin-bottom:0.8rem;">
+      <summary style="cursor:pointer;font-weight:500;font-size:0.92rem;color:var(--text);padding:0.4rem 0;">What is a context window in AI models?</summary>
+      <p style="font-size:0.88rem;color:var(--text-dim);padding:0.4rem 0 0.2rem;">A context window is the maximum number of tokens a language model can process in one request. Everything — system prompt, examples, retrieved documents, conversation, and the output — must fit inside it. Exceed it and the API errors or silently truncates your input.</p>
+    </details>
+    <details style="margin-bottom:0.8rem;">
+      <summary style="cursor:pointer;font-weight:500;font-size:0.92rem;color:var(--text);padding:0.4rem 0;">How should I allocate tokens across my context window?</summary>
+      <p style="font-size:0.88rem;color:var(--text-dim);padding:0.4rem 0 0.2rem;">A starting point: 10-15% for system prompt, 5-10% for few-shot, 30-50% for RAG, 15-25% for conversation history, and 10-15% for output reserve. Adjust based on whether your app is chat-heavy or document-heavy.</p>
+    </details>
+    <details style="margin-bottom:0.8rem;">
+      <summary style="cursor:pointer;font-weight:500;font-size:0.92rem;color:var(--text);padding:0.4rem 0;">What happens when I exceed the context window?</summary>
+      <p style="font-size:0.88rem;color:var(--text-dim);padding:0.4rem 0 0.2rem;">Most providers return an error. Some older models silently truncate from the start. Either way, you lose critical context. This tool flags yellow at 80% and red at 95%.</p>
+    </details>
+    <details style="margin-bottom:0.8rem;">
+      <summary style="cursor:pointer;font-weight:500;font-size:0.92rem;color:var(--text);padding:0.4rem 0;">How do I estimate token count for my text?</summary>
+      <p style="font-size:0.88rem;color:var(--text-dim);padding:0.4rem 0 0.2rem;">For English: roughly 1.3 tokens per word, or about 4 characters per token. Code runs closer to 1.5-2 tokens per word. A 1,000-word system prompt is about 1,300 tokens.</p>
+    </details>
+    <details>
+      <summary style="cursor:pointer;font-weight:500;font-size:0.92rem;color:var(--text);padding:0.4rem 0;">Is my data sent to a server?</summary>
+      <p style="font-size:0.88rem;color:var(--text-dim);padding:0.4rem 0 0.2rem;">No. Everything runs in your browser. Nothing is uploaded, logged, or stored.</p>
+    </details>
+  </div>
+</main>
+
+<footer>&copy; 2026 ABUZ8 LLC &middot; <a href="/disclaimer.html">Disclaimer</a> &middot; <a href="/about.html">About</a></footer>
+
+<script>
+// ── MODEL CATALOG (context, max output, input $/1M, output $/1M) ──────────
+// Prices are illustrative defaults as of mid-2025; users should confirm live rates.
+const MODELS = [
+  { name: 'Claude Sonnet 4',         ctx: 200000, maxOut: 64000,  inP: 3.00,  outP: 15.00 },
+  { name: 'Claude Opus 4',           ctx: 200000, maxOut: 32000,  inP: 15.00, outP: 75.00 },
+  { name: 'Claude Haiku 3.5',        ctx: 200000, maxOut: 8192,   inP: 0.80,  outP: 4.00  },
+  { name: 'GPT-4.1',                 ctx: 1047576,maxOut: 32768,  inP: 2.00,  outP: 8.00  },
+  { name: 'GPT-4.1 mini',            ctx: 1047576,maxOut: 32768,  inP: 0.40,  outP: 1.60  },
+  { name: 'GPT-4o',                  ctx: 128000, maxOut: 16384,  inP: 2.50,  outP: 10.00 },
+  { name: 'GPT-4o mini',             ctx: 128000, maxOut: 16384,  inP: 0.15,  outP: 0.60  },
+  { name: 'Gemini 2.5 Pro',          ctx: 1048576,maxOut: 65536,  inP: 1.25,  outP: 10.00 },
+  { name: 'Gemini 2.5 Flash',        ctx: 1048576,maxOut: 65536,  inP: 0.15,  outP: 0.60  },
+  { name: 'Gemini 2.0 Flash',        ctx: 1048576,maxOut: 8192,   inP: 0.10,  outP: 0.40  },
+  { name: 'Llama 3.3 70B',           ctx: 128000, maxOut: 8192,   inP: 0.00,  outP: 0.00  },
+  { name: 'Llama 4 Scout',           ctx: 512000, maxOut: 16384,  inP: 0.00,  outP: 0.00  },
+  { name: 'Qwen 2.5 72B',            ctx: 131072, maxOut: 8192,   inP: 0.00,  outP: 0.00  },
+  { name: 'Mistral Large',           ctx: 128000, maxOut: 8192,   inP: 2.00,  outP: 6.00  },
+  { name: 'DeepSeek V3',             ctx: 128000, maxOut: 8192,   inP: 0.27,  outP: 1.10  },
+  { name: 'Grok 3',                  ctx: 131072, maxOut: 16384,  inP: 3.00,  outP: 15.00 },
+  { name: 'Custom / Local',          ctx: 32768,  maxOut: 4096,   inP: 0.00,  outP: 0.00  },
+];
+
+// populate model dropdown
+const sel = document.getElementById('modelSelect');
+MODELS.forEach((m, i) => {
+  const o = document.createElement('option');
+  o.value = i;
+  o.textContent = m.name;
+  sel.appendChild(o);
+});
+
+function fmtK(n) {
+  if (n >= 1000000) return (n / 1000000).toFixed(1) + 'M';
+  if (n >= 1000) return (n / 1000).toFixed(n >= 10000 ? 0 : 1) + 'K';
+  return n.toLocaleString();
+}
+function fmtUSD(n) {
+  if (n < 0.001 && n > 0) return '<$0.001';
+  return '$' + n.toFixed(4);
+}
+
+function recalc() {
+  const m = MODELS[sel.value];
+  const customVal = parseInt(document.getElementById('customCtx').value);
+  const ctx = (customVal && customVal > 0) ? customVal : m.ctx;
+  const maxOut = Math.min(m.maxOut, ctx);
+
+  // update meta chips
+  document.getElementById('metaCtx').textContent = fmtK(ctx);
+  document.getElementById('metaMaxOut').textContent = fmtK(maxOut);
+  document.getElementById('metaInputPrice').textContent = m.inP === 0 ? 'Free' : '$' + m.inP.toFixed(2);
+
+  // read slider percentages
+  const pSys  = parseInt(document.getElementById('sliderSys').value);
+  const pFew  = parseInt(document.getElementById('sliderFew').value);
+  const pRag  = parseInt(document.getElementById('sliderRag').value);
+  const pConv = parseInt(document.getElementById('sliderConv').value);
+  const pOut  = parseInt(document.getElementById('sliderOut').value);
+  const total = pSys + pFew + pRag + pConv + pOut;
+
+  // token counts
+  const tSys  = Math.round(ctx * pSys / 100);
+  const tFew  = Math.round(ctx * pFew / 100);
+  const tRag  = Math.round(ctx * pRag / 100);
+  const tConv = Math.round(ctx * pConv / 100);
+  const tOut  = Math.min(Math.round(ctx * pOut / 100), maxOut);
+  const tUsed = tSys + tFew + tRag + tConv + tOut;
+  const tFree = Math.max(0, ctx - tUsed);
+
+  // update value labels
+  document.getElementById('valSys').textContent  = fmtK(tSys)  + ' (' + pSys + '%)';
+  document.getElementById('valFew').textContent  = fmtK(tFew)  + ' (' + pFew + '%)';
+  document.getElementById('valRag').textContent  = fmtK(tRag)  + ' (' + pRag + '%)';
+  document.getElementById('valConv').textContent = fmtK(tConv) + ' (' + pConv + '%)';
+  document.getElementById('valOut').textContent  = fmtK(tOut)  + ' (' + pOut + '%)';
+
+  // visual bar
+  const bar = document.getElementById('ctxBar');
+  const pctOf = (t) => Math.max(0, (t / ctx * 100)).toFixed(2);
+  const freePct = Math.max(0, 100 - (tUsed / ctx * 100)).toFixed(2);
+  bar.innerHTML =
+    `<div class="bar-seg sys"  style="width:${pctOf(tSys)}%"  title="System: ${fmtK(tSys)}">${pSys > 6 ? pSys + '%' : ''}</div>` +
+    `<div class="bar-seg few"  style="width:${pctOf(tFew)}%"  title="Few-Shot: ${fmtK(tFew)}">${pFew > 6 ? pFew + '%' : ''}</div>` +
+    `<div class="bar-seg rag"  style="width:${pctOf(tRag)}%"  title="RAG: ${fmtK(tRag)}">${pRag > 6 ? pRag + '%' : ''}</div>` +
+    `<div class="bar-seg conv" style="width:${pctOf(tConv)}%" title="Conversation: ${fmtK(tConv)}">${pConv > 6 ? pConv + '%' : ''}</div>` +
+    `<div class="bar-seg out"  style="width:${pctOf(tOut)}%"  title="Output: ${fmtK(tOut)}">${pOut > 6 ? pOut + '%' : ''}</div>` +
+    `<div class="bar-seg free" style="width:${freePct}%"></div>`;
+
+  // status badge
+  const badge = document.getElementById('statusBadge');
+  const detail = document.getElementById('statusDetail');
+  const usedPct = (tUsed / ctx * 100);
+
+  if (total > 100) {
+    badge.className = 'status-badge over';
+    badge.textContent = 'OVER BUDGET (' + total + '%)';
+    detail.textContent = 'Your allocations sum to ' + total + '%. Reduce one or more categories to fit.';
+  } else if (usedPct >= 95) {
+    badge.className = 'status-badge over';
+    badge.textContent = 'DANGER — ' + usedPct.toFixed(1) + '% used';
+    detail.textContent = fmtK(tFree) + ' tokens free. Extremely tight — expect truncation or errors on longer inputs.';
+  } else if (usedPct >= 80) {
+    badge.className = 'status-badge warn';
+    badge.textContent = 'CAUTION — ' + usedPct.toFixed(1) + '% used';
+    detail.textContent = fmtK(tFree) + ' tokens free. Workable, but leave more headroom if inputs vary in length.';
+  } else {
+    badge.className = 'status-badge ok';
+    badge.textContent = 'HEALTHY — ' + usedPct.toFixed(1) + '% used';
+    detail.textContent = fmtK(tFree) + ' tokens free. Good headroom for variable-length inputs.';
+  }
+
+  // cost estimate per request
+  const inputTokens = tSys + tFew + tRag + tConv;
+  const costIn  = (inputTokens / 1000000) * m.inP;
+  const costOut = (tOut / 1000000) * m.outP;
+  document.getElementById('costInput').textContent  = fmtUSD(costIn);
+  document.getElementById('costOutput').textContent = fmtUSD(costOut);
+}
+
+// ── WAITLIST ──────────────────────────────────────────────────────────────────
+async function submitWaitlist() {
+  const email = document.getElementById('ctaEmail').value.trim();
+  if (!email || !email.includes('@')) { alert('Please enter a valid email address.'); return; }
+  const payload = { email, product: 'qadir-os-context-window-planner', ts: new Date().toISOString() };
+  try {
+    await fetch('/api/waitlist', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+  } catch (e) { /* graceful fallback */ }
+  document.getElementById('ctaEmail').style.display = 'none';
+  document.querySelector('.cta-form button').style.display = 'none';
+  document.getElementById('ctaSuccess').classList.add('visible');
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+recalc();
+</script>
+<script src="/tools/_tools-shared.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>

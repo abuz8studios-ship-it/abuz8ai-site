@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Contract Templates | ABUZ8</title>
+<style>
+  :root{--lapis:#0a1628;--lapis2:#0f1f3d;--lapis3:#162444;--gold:#c9a84c;--gold2:#e2c06a;--turq:#0e9f6e;--turq2:#22a090;--cream:#f5f0e8;--text:#e8e4dc;--text2:#b8b4ac;--text3:#888480;--red:#e05555;--green:#3db87a;--radius:12px;--radius-sm:8px;--border:1px solid rgba(201,168,76,0.18)}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--lapis);color:var(--text);font-family:'Inter',system-ui,sans-serif;min-height:100vh}
+  header{background:linear-gradient(135deg,var(--lapis2),var(--lapis3));border-bottom:var(--border);padding:24px 40px;display:flex;align-items:center;gap:18px}
+  .logo{width:42px;height:42px;background:linear-gradient(135deg,var(--gold),var(--turq));border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:17px;color:var(--lapis);flex-shrink:0}
+  header h1{font-family:'Playfair Display',Georgia,serif;font-size:24px;color:var(--gold)}
+  header p{font-size:13px;color:var(--text2);margin-top:2px}
+  .badge{margin-left:auto;background:rgba(201,168,76,0.1);border:var(--border);padding:5px 13px;border-radius:20px;font-size:12px;color:var(--gold);white-space:nowrap}
+  .container{max-width:1200px;margin:0 auto;padding:28px 20px}
+
+  /* CONTRACT TYPE PICKER */
+  .type-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:24px}
+  .type-card{background:var(--lapis2);border:var(--border);border-radius:var(--radius);padding:16px;cursor:pointer;transition:all 0.2s;text-align:center}
+  .type-card:hover{border-color:rgba(201,168,76,0.4);transform:translateY(-2px)}
+  .type-card.active{border-color:var(--gold);background:rgba(201,168,76,0.08)}
+  .type-icon{font-size:28px;margin-bottom:8px}
+  .type-name{font-size:13px;font-weight:600;color:var(--text);margin-bottom:3px}
+  .type-desc{font-size:11px;color:var(--text3)}
+
+  .two-col{display:grid;grid-template-columns:340px 1fr;gap:22px;align-items:start}
+  .panel{background:var(--lapis2);border:var(--border);border-radius:var(--radius);padding:22px}
+  .panel-title{font-size:11px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--gold);margin-bottom:14px}
+  .field{margin-bottom:12px}
+  label{font-size:12px;color:var(--text2);display:block;margin-bottom:5px;font-weight:500}
+  input,select,textarea{width:100%;background:var(--lapis3);border:1px solid rgba(201,168,76,0.2);border-radius:var(--radius-sm);color:var(--text);padding:9px 13px;font-size:14px;outline:none;transition:border-color 0.2s;font-family:inherit}
+  input:focus,select:focus,textarea:focus{border-color:var(--gold)}
+  select option{background:var(--lapis3)}
+  .generate-btn{width:100%;background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--lapis);border:none;border-radius:var(--radius-sm);padding:13px;font-size:15px;font-weight:700;cursor:pointer;transition:all 0.2s;letter-spacing:0.5px;margin-top:8px}
+  .generate-btn:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(201,168,76,0.35)}
+
+  .output-panel{background:var(--lapis2);border:var(--border);border-radius:var(--radius);padding:24px}
+  .output-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:10px}
+  .output-title{font-size:11px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--gold)}
+  .btn-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+  .action-btn{background:var(--lapis3);border:var(--border);color:var(--text2);padding:7px 14px;border-radius:var(--radius-sm);cursor:pointer;font-size:13px;transition:all 0.2s}
+  .action-btn:hover{border-color:var(--gold);color:var(--gold)}
+  .action-btn.primary{background:rgba(201,168,76,0.12);border-color:rgba(201,168,76,0.35);color:var(--gold)}
+  .action-btn.copied{background:rgba(61,184,122,0.12);border-color:var(--green);color:var(--green)}
+
+  .contract-output{background:var(--lapis3);border:1px solid rgba(201,168,76,0.12);border-radius:var(--radius);padding:30px;font-size:14px;line-height:1.85;color:var(--text);white-space:pre-wrap;word-break:break-word;max-height:720px;overflow-y:auto;font-family:'Inter',sans-serif}
+  .contract-output h1{font-family:'Playfair Display',Georgia,serif;color:var(--gold);font-size:22px;text-align:center;margin-bottom:6px}
+  .contract-output .subtitle{text-align:center;color:var(--text3);font-size:12px;margin-bottom:24px}
+  .contract-output h2{color:var(--gold2);font-size:15px;margin:22px 0 8px;font-weight:700;border-bottom:1px solid rgba(201,168,76,0.15);padding-bottom:4px}
+  .contract-output h3{color:var(--text);font-size:14px;margin:14px 0 5px;font-weight:600}
+  .contract-output p{margin-bottom:10px}
+  .contract-output ul{margin:6px 0 10px 20px}
+  .contract-output li{margin-bottom:5px;color:var(--text2)}
+  .contract-output .sig-block{margin-top:40px;display:grid;grid-template-columns:1fr 1fr;gap:40px}
+  .contract-output .sig-line{border-top:1px solid rgba(201,168,76,0.3);padding-top:8px;margin-top:40px;font-size:12px;color:var(--text3)}
+  .contract-output .highlight{background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.2);padding:12px 16px;border-radius:8px;margin:12px 0;color:var(--gold2)}
+
+  .disclaimer{background:rgba(201,168,76,0.07);border:1px solid rgba(201,168,76,0.2);border-radius:var(--radius-sm);padding:11px 15px;margin-bottom:14px;font-size:12px;color:var(--text3);line-height:1.5}
+  .disclaimer strong{color:var(--gold2)}
+  .placeholder{text-align:center;padding:60px 20px;color:var(--text3)}
+  .placeholder-icon{font-size:48px;margin-bottom:16px;opacity:.5}
+  .placeholder h3{font-size:18px;color:var(--text2);margin-bottom:8px}
+
+  /* dynamic field group */
+  .dynamic-fields{margin-top:14px}
+  .dynamic-fields .panel-title{margin-top:0}
+
+  @media(max-width:900px){.two-col{grid-template-columns:1fr}.type-grid{grid-template-columns:repeat(3,1fr)}}
+</style>
+<script src="_abuz8-live-brain.js" defer></script>
+
+<script src="_abuz8-config.js" defer></script>
+<link rel="canonical" href="https://abuz8ai.com/tools/ai-contract-templates">
+<meta name="description" content="Contract Templates — Common contract starters. Free, no signup, runs entirely in your browser. One of 169 free AI and developer tools by ABUZ8.">
+</head>
+<body>
+
+<header>
+  <div class="logo">A8</div>
+  <div>
+    <h1>AI Contract Templates</h1>
+    <p>Professional contracts for freelancers, agencies, SaaS, and service businesses</p>
+  </div>
+  <span class="badge">📝 Free &amp; Client-Side</span>
+</header>
+
+<div class="container">
+
+  <!-- CONTRACT TYPE -->
+  <div class="panel" style="margin-bottom:20px">
+    <div class="panel-title">📋 Select Contract Type</div>
+    <div class="type-grid">
+      <div class="type-card active" data-type="freelance" onclick="selectType(this)"><div class="type-icon">🎨</div><div class="type-name">Freelance</div><div class="type-desc">Project scope &amp; deliverables</div></div>
+      <div class="type-card" data-type="retainer" onclick="selectType(this)"><div class="type-icon">🔄</div><div class="type-name">Retainer</div><div class="type-desc">Ongoing monthly services</div></div>
+      <div class="type-card" data-type="nda" onclick="selectType(this)"><div class="type-icon">🔒</div><div class="type-name">NDA</div><div class="type-desc">Mutual or one-way</div></div>
+      <div class="type-card" data-type="saas" onclick="selectType(this)"><div class="type-icon">☁</div><div class="type-name">SaaS / Software</div><div class="type-desc">License &amp; usage terms</div></div>
+      <div class="type-card" data-type="consulting" onclick="selectType(this)"><div class="type-icon">💡</div><div class="type-name">Consulting</div><div class="type-desc">Advisory engagement</div></div>
+      <div class="type-card" data-type="affiliate" onclick="selectType(this)"><div class="type-icon">🤝</div><div class="type-name">Affiliate</div><div class="type-desc">Partner &amp; referral program</div></div>
+    </div>
+  </div>
+
+  <div class="two-col">
+    <!-- CONFIG -->
+    <div>
+      <div class="panel">
+        <div class="panel-title">⚙ Party Information</div>
+        <div class="field"><label>YOUR NAME / COMPANY ("Provider") *</label><input type="text" id="provider" placeholder="e.g. ABUZ8 LLC" maxlength="80"></div>
+        <div class="field"><label>CLIENT NAME / COMPANY ("Client") *</label><input type="text" id="client" placeholder="e.g. Acme Corp" maxlength="80"></div>
+        <div class="field"><label>GOVERNING LAW</label><input type="text" id="govLaw" placeholder="e.g. Delaware, USA" maxlength="60"></div>
+        <div class="field"><label>CONTRACT DATE</label><input type="date" id="contractDate"></div>
+
+        <!-- Dynamic fields rendered per type -->
+        <div id="dynamicFields" class="dynamic-fields"></div>
+
+        <button class="generate-btn" onclick="generateContract()">⚡ Generate Contract</button>
+      </div>
+    </div>
+
+    <!-- OUTPUT -->
+    <div id="outputPane">
+      <div class="output-panel">
+        <div class="placeholder">
+          <div class="placeholder-icon">📝</div>
+          <h3>Your contract will appear here</h3>
+          <p>Select a contract type, fill in the details, and click Generate.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+let contractType = 'freelance';
+
+// Dynamic field configs per type
+const FIELD_CONFIGS = {
+  freelance: [
+    {id:'projName', label:'PROJECT NAME', placeholder:'e.g. Brand Identity Design', type:'text'},
+    {id:'projScope', label:'SCOPE OF WORK (brief)', placeholder:'e.g. Logo, brand guidelines, 3 social templates', type:'textarea'},
+    {id:'totalFee', label:'TOTAL PROJECT FEE ($)', placeholder:'e.g. 5000', type:'text'},
+    {id:'depositPct', label:'DEPOSIT PERCENTAGE (%)', placeholder:'e.g. 50', type:'text'},
+    {id:'deliverDays', label:'ESTIMATED DELIVERY (days)', placeholder:'e.g. 30', type:'text'},
+    {id:'revisions', label:'NUMBER OF REVISIONS INCLUDED', placeholder:'e.g. 2', type:'text'},
+  ],
+  retainer: [
+    {id:'serviceDesc', label:'SERVICES INCLUDED', placeholder:'e.g. 20 hrs/mo design, weekly reports, Slack support', type:'textarea'},
+    {id:'monthlyFee', label:'MONTHLY RETAINER FEE ($)', placeholder:'e.g. 3000', type:'text'},
+    {id:'billingDay', label:'BILLING DAY OF MONTH', placeholder:'e.g. 1st of each month', type:'text'},
+    {id:'noticeDays', label:'CANCELLATION NOTICE PERIOD (days)', placeholder:'e.g. 30', type:'text'},
+    {id:'rollover', label:'UNUSED HOURS ROLLOVER?', placeholder:'e.g. No rollover / 5 hours max', type:'text'},
+  ],
+  nda: [
+    {id:'ndaType', label:'NDA TYPE', placeholder:'Mutual or One-Way (specify)', type:'text'},
+    {id:'purposeDesc', label:'PURPOSE / CONTEXT', placeholder:'e.g. Evaluating a potential business partnership', type:'textarea'},
+    {id:'ndaDuration', label:'CONFIDENTIALITY PERIOD (years)', placeholder:'e.g. 2', type:'text'},
+    {id:'disclosedBy', label:'DISCLOSING PARTY (if One-Way)', placeholder:'Leave blank if Mutual', type:'text'},
+  ],
+  saas: [
+    {id:'productName', label:'PRODUCT / SOFTWARE NAME', placeholder:'e.g. QADIR OS', type:'text'},
+    {id:'licenseType', label:'LICENSE TYPE', placeholder:'e.g. Annual SaaS subscription, per seat', type:'text'},
+    {id:'annualFee', label:'ANNUAL LICENSE FEE ($)', placeholder:'e.g. 12000', type:'text'},
+    {id:'users', label:'AUTHORIZED USERS / SEATS', placeholder:'e.g. Up to 10 named users', type:'text'},
+    {id:'sla', label:'UPTIME SLA (%)', placeholder:'e.g. 99.5%', type:'text'},
+  ],
+  consulting: [
+    {id:'engagementDesc', label:'ENGAGEMENT DESCRIPTION', placeholder:'e.g. AI strategy advisory, executive coaching', type:'textarea'},
+    {id:'hourlyRate', label:'HOURLY RATE ($)', placeholder:'e.g. 300', type:'text'},
+    {id:'estimatedHours', label:'ESTIMATED HOURS / MONTH', placeholder:'e.g. 10', type:'text'},
+    {id:'deliverables', label:'KEY DELIVERABLES', placeholder:'e.g. Monthly strategy memo, 2 calls', type:'textarea'},
+    {id:'expensePolicy', label:'EXPENSE REIMBURSEMENT', placeholder:'e.g. Approved in advance, receipts required', type:'text'},
+  ],
+  affiliate: [
+    {id:'productAff', label:'PRODUCT / SERVICE BEING PROMOTED', placeholder:'e.g. QADIR OS AI Platform', type:'text'},
+    {id:'commRate', label:'COMMISSION RATE (%)', placeholder:'e.g. 20% of first-year revenue', type:'text'},
+    {id:'cookieDays', label:'COOKIE / ATTRIBUTION WINDOW (days)', placeholder:'e.g. 90', type:'text'},
+    {id:'paymentSchedule', label:'PAYMENT SCHEDULE', placeholder:'e.g. Net-30 after month-end', type:'text'},
+    {id:'minPayout', label:'MINIMUM PAYOUT THRESHOLD ($)', placeholder:'e.g. 100', type:'text'},
+  ],
+};
+
+// ── UI ─────────────────────────────────────────────────────────────────────
+function selectType(el) {
+  document.querySelectorAll('.type-card').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  contractType = el.dataset.type;
+  renderDynamicFields();
+}
+
+function renderDynamicFields() {
+  const fields = FIELD_CONFIGS[contractType] || [];
+  const container = document.getElementById('dynamicFields');
+  if (!fields.length) { container.innerHTML = ''; return; }
+
+  const typeNames = {freelance:'Freelance Project',retainer:'Retainer',nda:'NDA',saas:'SaaS License',consulting:'Consulting',affiliate:'Affiliate'};
+  let html = `<div class="panel-title" style="margin-top:16px">📋 ${typeNames[contractType]} Details</div>`;
+  fields.forEach(f => {
+    const input = f.type === 'textarea'
+      ? `<textarea id="${f.id}" placeholder="${f.placeholder}" rows="2"></textarea>`
+      : `<input type="${f.type}" id="${f.id}" placeholder="${f.placeholder}" maxlength="120">`;
+    html += `<div class="field"><label>${f.label}</label>${input}</div>`;
+  });
+  container.innerHTML = html;
+}
+
+// ── Helper ─────────────────────────────────────────────────────────────────
+function v(id){ const el = document.getElementById(id); return el ? el.value.trim() : ''; }
+
+function fmtDate(d) {
+  if (!d) return new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
+  const dt = new Date(d + 'T12:00:00');
+  return dt.toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
+}
+
+// ── Contract Generators ────────────────────────────────────────────────────
+function buildFreelance(provider, client, govLaw, date) {
+  const proj     = v('projName')    || 'Design Project';
+  const scope    = v('projScope')   || 'As described in the project brief';
+  const fee      = v('totalFee')    || 'TBD';
+  const deposit  = v('depositPct')  || '50';
+  const deliver  = v('deliverDays') || '30';
+  const revs     = v('revisions')   || '2';
+  const depAmt   = fee !== 'TBD' ? `($${(parseFloat(fee)*parseFloat(deposit)/100).toFixed(2)})` : '';
+
+  return `<h1>Freelance Service Agreement</h1>
+<div class="subtitle">Effective ${date}</div>
+<p>This Freelance Service Agreement ("Agreement") is entered into as of <strong>${date}</strong> between:</p>
+<div class="highlight">
+  <strong>Service Provider:</strong> ${provider}<br>
+  <strong>Client:</strong> ${client}
+</div>
+
+<h2>1. Project Scope</h2>
+<p>Provider agrees to deliver the following work ("Project"):</p>
+<p><strong>Project Name:</strong> ${proj}</p>
+<p><strong>Scope of Work:</strong> ${scope}</p>
+<p>Any work outside this scope constitutes a change order and shall be quoted and approved separately in writing before work commences.</p>
+
+<h2>2. Deliverables &amp; Timeline</h2>
+<p>Provider shall deliver the completed Project within <strong>${deliver} days</strong> of receipt of the signed Agreement and initial deposit payment, unless otherwise agreed in writing. Delivery timelines are contingent on timely feedback and approvals from Client.</p>
+
+<h2>3. Fees &amp; Payment Schedule</h2>
+<ul>
+  <li><strong>Total Project Fee:</strong> $${fee}</li>
+  <li><strong>Deposit (due upon signing):</strong> ${deposit}% ${depAmt}</li>
+  <li><strong>Balance:</strong> ${100 - parseInt(deposit)}% due upon final delivery / approval</li>
+</ul>
+<p>Invoices not paid within 14 days of the due date will accrue interest at 1.5% per month. Provider reserves the right to withhold delivery of final files until full payment is received.</p>
+
+<h2>4. Revisions</h2>
+<p>This Agreement includes <strong>${revs} round(s) of revisions</strong>. Additional revisions beyond this limit will be billed at Provider's standard hourly rate. Revision requests must be submitted within 7 days of delivery.</p>
+
+<h2>5. Intellectual Property &amp; Ownership</h2>
+<p>Upon receipt of full payment, Provider assigns to Client all rights, title, and interest in the final deliverables ("Work Product"). Provider retains the right to display the work in their portfolio. All preliminary concepts, unused designs, and working files remain the property of Provider unless otherwise agreed.</p>
+<p>Client represents that all materials, content, and assets provided to Provider are owned by Client or Client has the right to use them.</p>
+
+<h2>6. Confidentiality</h2>
+<p>Both parties agree to keep confidential any non-public business information shared during the engagement. This obligation survives termination of this Agreement for a period of 2 years.</p>
+
+<h2>7. Kill Fee / Cancellation</h2>
+<p>If Client cancels the project after work has commenced:</p>
+<ul>
+  <li>Deposit is non-refundable</li>
+  <li>If work is 50%+ complete: Client owes 75% of remaining balance</li>
+  <li>If work is 75%+ complete: Client owes 100% of remaining balance</li>
+</ul>
+<p>If Provider cancels, all amounts paid beyond completed work will be refunded within 14 days.</p>
+
+<h2>8. Independent Contractor</h2>
+<p>Provider is an independent contractor and not an employee of Client. Provider is responsible for all taxes on income earned under this Agreement. Nothing in this Agreement creates a partnership, joint venture, or agency relationship.</p>
+
+<h2>9. Limitation of Liability</h2>
+<p>Provider's total liability under this Agreement shall not exceed the total fees paid by Client in the preceding 30 days. Neither party shall be liable for indirect, incidental, or consequential damages.</p>
+
+<h2>10. Governing Law</h2>
+<p>This Agreement shall be governed by the laws of <strong>${govLaw}</strong>. Any disputes shall first be attempted to be resolved informally, then through binding arbitration.</p>
+
+<div class="sig-block">
+  <div>
+    <p><strong>SERVICE PROVIDER</strong></p>
+    <p>${provider}</p>
+    <div class="sig-line">Signature &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Date</div>
+  </div>
+  <div>
+    <p><strong>CLIENT</strong></p>
+    <p>${client}</p>
+    <div class="sig-line">Signature &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Date</div>
+  </div>
+</div>`;
+}
+
+function buildRetainer(provider, client, govLaw, date) {
+  const services = v('serviceDesc')  || 'As agreed between the parties';
+  const fee      = v('monthlyFee')   || 'TBD';
+  const billing  = v('billingDay')   || '1st of each month';
+  const notice   = v('noticeDays')   || '30';
+  const rollover = v('rollover')     || 'No rollover — hours reset monthly';
+
+  return `<h1>Monthly Retainer Agreement</h1>
+<div class="subtitle">Effective ${date}</div>
+<div class="highlight">
+  <strong>Service Provider:</strong> ${provider}<br>
+  <strong>Client:</strong> ${client}
+</div>
+
+<h2>1. Services</h2>
+<p>Provider shall provide the following services on a monthly retainer basis ("Retainer Services"):</p>
+<p>${services}</p>
+<p>Services are rendered during normal business hours unless otherwise arranged. Any deliverables not completed in a given month do not carry over unless explicitly specified below.</p>
+
+<h2>2. Retainer Fee &amp; Billing</h2>
+<ul>
+  <li><strong>Monthly Retainer Fee:</strong> $${fee}</li>
+  <li><strong>Billing Date:</strong> ${billing}</li>
+  <li><strong>Payment Due:</strong> Within 7 days of invoice</li>
+  <li><strong>Unused Hours/Work:</strong> ${rollover}</li>
+</ul>
+<p>Late payments (beyond 14 days) accrue interest at 1.5% per month. Failure to pay within 30 days may result in suspension of services.</p>
+
+<h2>3. Term &amp; Cancellation</h2>
+<p>This Agreement commences on ${date} and continues on a month-to-month basis. Either party may terminate this Agreement with <strong>${notice} days' written notice</strong>. Upon termination, Client shall pay for all work completed through the effective termination date.</p>
+<p>Provider may terminate immediately for non-payment or material breach of this Agreement.</p>
+
+<h2>4. Scope Changes</h2>
+<p>Requests for services beyond the agreed retainer scope shall be quoted separately as change orders. Provider is not obligated to perform out-of-scope work without a written change order signed by both parties.</p>
+
+<h2>5. Intellectual Property</h2>
+<p>Upon full payment for each month's retainer, all deliverables created during that period are assigned to Client. Provider retains the right to display work in their portfolio.</p>
+
+<h2>6. Confidentiality</h2>
+<p>Both parties agree to maintain confidentiality of all non-public information shared during the engagement. This obligation survives termination for 2 years.</p>
+
+<h2>7. Independent Contractor</h2>
+<p>Provider is an independent contractor. Nothing herein creates an employment, partnership, or agency relationship. Provider is solely responsible for their own taxes and benefits.</p>
+
+<h2>8. Governing Law</h2>
+<p>This Agreement is governed by the laws of <strong>${govLaw}</strong>.</p>
+
+<div class="sig-block">
+  <div><p><strong>SERVICE PROVIDER</strong></p><p>${provider}</p><div class="sig-line">Signature &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Date</div></div>
+  <div><p><strong>CLIENT</strong></p><p>${client}</p><div class="sig-line">Signature &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Date</div></div>
+</div>`;
+}
+
+function buildNDA(provider, client, govLaw, date) {
+  const ndaType   = v('ndaType')      || 'Mutual';
+  const purpose   = v('purposeDesc')  || 'Evaluating a potential business relationship';
+  const duration  = v('ndaDuration')  || '2';
+  const disclose  = v('disclosedBy')  || '';
+  const isMutual  = ndaType.toLowerCase().includes('mutual');
+
+  return `<h1>Non-Disclosure Agreement</h1>
+<div class="subtitle">${ndaType} NDA — Effective ${date}</div>
+<div class="highlight">
+  <strong>Party A:</strong> ${provider}<br>
+  <strong>Party B:</strong> ${client}<br>
+  <strong>Type:</strong> ${ndaType}
+</div>
+
+<h2>1. Purpose</h2>
+<p>This Non-Disclosure Agreement ("Agreement") is entered into as of <strong>${date}</strong> between <strong>${provider}</strong> and <strong>${client}</strong> (collectively, "the Parties") for the purpose of: <strong>${purpose}</strong>.</p>
+<p>In connection with this purpose, ${isMutual ? 'each party ("Disclosing Party") may share confidential information with the other party ("Receiving Party")' : `${disclose || provider} ("Disclosing Party") may share confidential information with ${disclose ? (disclose === provider ? client : provider) : client} ("Receiving Party")`}.</p>
+
+<h2>2. Definition of Confidential Information</h2>
+<p>"Confidential Information" means any non-public information disclosed by the Disclosing Party, whether orally, in writing, or by any other means, including but not limited to:</p>
+<ul>
+  <li>Business plans, strategies, and financial projections</li>
+  <li>Technical data, trade secrets, know-how, and research</li>
+  <li>Product plans, designs, and software</li>
+  <li>Customer lists, prospect lists, and partner information</li>
+  <li>Pricing, costs, and commercial arrangements</li>
+  <li>Marketing strategies and competitive analyses</li>
+  <li>Any information marked "Confidential" or reasonably understood to be confidential given the nature of the information and circumstances of disclosure</li>
+</ul>
+
+<h2>3. Exclusions</h2>
+<p>Confidential Information does not include information that:</p>
+<ul>
+  <li>Is or becomes publicly available through no act of the Receiving Party</li>
+  <li>Was known to the Receiving Party prior to disclosure, as evidenced by written records</li>
+  <li>Is independently developed by the Receiving Party without use of Confidential Information</li>
+  <li>Is received from a third party without restriction</li>
+  <li>Is required to be disclosed by law, court order, or governmental authority (with prompt written notice to Disclosing Party where legally permissible)</li>
+</ul>
+
+<h2>4. Obligations</h2>
+<p>The Receiving Party agrees to:</p>
+<ul>
+  <li>Hold Confidential Information in strict confidence using at least the same degree of care used to protect its own confidential information (but no less than reasonable care)</li>
+  <li>Not disclose Confidential Information to any third party without prior written consent</li>
+  <li>Use Confidential Information solely for the Purpose stated above</li>
+  <li>Limit access to Confidential Information to employees or advisors with a need to know, who are bound by similar confidentiality obligations</li>
+  <li>Promptly notify Disclosing Party upon discovery of any unauthorized use or disclosure</li>
+</ul>
+
+<h2>5. Term</h2>
+<p>This Agreement is effective as of ${date} and the confidentiality obligations shall remain in force for <strong>${duration} year(s)</strong> from the date of disclosure of each item of Confidential Information, or until the information becomes publicly available through no fault of the Receiving Party.</p>
+
+<h2>6. Return / Destruction of Information</h2>
+<p>Upon request by the Disclosing Party, the Receiving Party shall promptly return or destroy all Confidential Information in its possession, including any copies, extracts, or summaries, and certify in writing that it has done so.</p>
+
+<h2>7. Remedies</h2>
+<p>The Parties acknowledge that breach of this Agreement may cause irreparable harm for which monetary damages would be an insufficient remedy. Accordingly, the Disclosing Party shall be entitled to seek equitable relief, including injunction and specific performance, without the requirement of posting bond or other security.</p>
+
+<h2>8. No License</h2>
+<p>Nothing in this Agreement grants the Receiving Party any license, right, title, or interest in or to the Confidential Information except the limited right to use it for the Purpose stated herein.</p>
+
+<h2>9. Governing Law</h2>
+<p>This Agreement shall be governed by the laws of <strong>${govLaw}</strong>.</p>
+
+<div class="sig-block">
+  <div><p><strong>PARTY A</strong></p><p>${provider}</p><div class="sig-line">Signature &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Date</div></div>
+  <div><p><strong>PARTY B</strong></p><p>${client}</p><div class="sig-line">Signature &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Date</div></div>
+</div>`;
+}
+
+function buildSaaS(provider, client, govLaw, date) {
+  const product  = v('productName') || 'Software Platform';
+  const licType  = v('licenseType') || 'Annual SaaS subscription';
+  const fee      = v('annualFee')   || 'TBD';
+  const users    = v('users')       || 'As specified in order form';
+  const sla      = v('sla')         || '99.5%';
+
+  return `<h1>Software License Agreement</h1>
+<div class="subtitle">SaaS License — Effective ${date}</div>
+<div class="highlight">
+  <strong>Licensor:</strong> ${provider}<br>
+  <strong>Licensee:</strong> ${client}<br>
+  <strong>Product:</strong> ${product}
+</div>
+
+<h2>1. License Grant</h2>
+<p>Licensor hereby grants to Licensee a limited, non-exclusive, non-transferable, non-sublicensable license to access and use <strong>${product}</strong> (the "Software") solely for Licensee's internal business purposes, subject to the terms of this Agreement.</p>
+<p><strong>License Type:</strong> ${licType}</p>
+<p><strong>Authorized Users:</strong> ${users}</p>
+<p>Licensee may not use the Software to develop a competing product, reverse-engineer, decompile, or disassemble it, or permit third parties to do so.</p>
+
+<h2>2. Fees</h2>
+<ul>
+  <li><strong>Annual License Fee:</strong> $${fee}</li>
+  <li><strong>Billing:</strong> Invoiced annually in advance</li>
+  <li><strong>Payment Terms:</strong> Net-30 from invoice date</li>
+</ul>
+<p>Fees are non-refundable except as required by law or expressly stated herein. Licensor reserves the right to adjust fees with 60 days' written notice prior to renewal.</p>
+
+<h2>3. Service Level Agreement (SLA)</h2>
+<ul>
+  <li><strong>Uptime Commitment:</strong> ${sla} monthly uptime (excluding scheduled maintenance)</li>
+  <li><strong>Scheduled Maintenance:</strong> Licensor will provide 48 hours' advance notice of planned downtime</li>
+  <li><strong>Support:</strong> Email support with response within 1 business day; critical issues within 4 hours</li>
+  <li><strong>SLA Credit:</strong> If uptime falls below commitment, Licensee may request a service credit of up to 10% of the monthly fee</li>
+</ul>
+
+<h2>4. Data &amp; Privacy</h2>
+<p>Licensor will process Licensee's data solely as necessary to provide the Software. Licensor implements industry-standard security measures. Licensee retains all ownership of their data. Upon termination, Licensor will provide a data export and delete Licensee data within 30 days.</p>
+
+<h2>5. Intellectual Property</h2>
+<p>The Software, including all updates, improvements, and documentation, is and remains the exclusive intellectual property of Licensor. This Agreement grants no ownership interest in the Software. All feedback provided by Licensee may be used by Licensor to improve the Software without compensation.</p>
+
+<h2>6. Term &amp; Termination</h2>
+<p>This Agreement commences on ${date} and continues for one year, automatically renewing unless either party provides 60 days' written notice of non-renewal prior to the renewal date.</p>
+<p>Either party may terminate immediately upon material breach that is not cured within 30 days of written notice. Upon termination, Licensee's access to the Software ceases and Licensee must cease all use.</p>
+
+<h2>7. Limitation of Liability</h2>
+<p>Licensor's total liability shall not exceed the fees paid in the 12 months preceding the claim. Neither party shall be liable for indirect, incidental, or consequential damages.</p>
+
+<h2>8. Governing Law</h2>
+<p>This Agreement is governed by the laws of <strong>${govLaw}</strong>.</p>
+
+<div class="sig-block">
+  <div><p><strong>LICENSOR</strong></p><p>${provider}</p><div class="sig-line">Signature &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Date</div></div>
+  <div><p><strong>LICENSEE</strong></p><p>${client}</p><div class="sig-line">Signature &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Date</div></div>
+</div>`;
+}
+
+function buildConsulting(provider, client, govLaw, date) {
+  const desc       = v('engagementDesc')  || 'Strategic advisory services';
+  const rate       = v('hourlyRate')      || 'TBD';
+  const hours      = v('estimatedHours')  || 'As agreed';
+  const delivs     = v('deliverables')    || 'As agreed between the parties';
+  const expenses   = v('expensePolicy')   || 'Pre-approved expenses reimbursed within 30 days';
+
+  return `<h1>Consulting Agreement</h1>
+<div class="subtitle">Effective ${date}</div>
+<div class="highlight">
+  <strong>Consultant:</strong> ${provider}<br>
+  <strong>Client:</strong> ${client}
+</div>
+
+<h2>1. Engagement</h2>
+<p>Client retains Consultant to provide consulting services as follows:</p>
+<p><strong>Description:</strong> ${desc}</p>
+<p><strong>Estimated Hours / Month:</strong> ${hours}</p>
+
+<h2>2. Deliverables</h2>
+<p>${delivs}</p>
+<p>Additional deliverables or hours beyond those estimated shall require a written change order.</p>
+
+<h2>3. Compensation</h2>
+<ul>
+  <li><strong>Hourly Rate:</strong> $${rate}/hour</li>
+  <li><strong>Invoicing:</strong> Monthly, within 5 business days of month-end</li>
+  <li><strong>Payment Terms:</strong> Net-15 from invoice date</li>
+  <li><strong>Expenses:</strong> ${expenses}</li>
+</ul>
+
+<h2>4. Confidentiality</h2>
+<p>Consultant agrees to maintain strict confidentiality of all Client proprietary information encountered during the engagement. This obligation survives termination for 3 years.</p>
+
+<h2>5. Intellectual Property</h2>
+<p>Work product specifically created for Client under this Agreement, upon full payment, is assigned to Client. Pre-existing tools, methodologies, and frameworks used by Consultant remain Consultant's property, though Client receives a license to use them as incorporated in deliverables.</p>
+
+<h2>6. Non-Solicitation</h2>
+<p>During the term of this Agreement and for 12 months thereafter, Client agrees not to directly solicit or hire any employee or contractor of Consultant without written consent.</p>
+
+<h2>7. Term &amp; Termination</h2>
+<p>This Agreement commences on ${date}. Either party may terminate with 30 days' written notice. Client shall pay for all work completed and expenses incurred through the termination date.</p>
+
+<h2>8. Independent Contractor</h2>
+<p>Consultant is an independent contractor. Nothing herein creates employment, partnership, or agency. Consultant bears sole responsibility for taxes on compensation received.</p>
+
+<h2>9. Governing Law</h2>
+<p>This Agreement is governed by the laws of <strong>${govLaw}</strong>.</p>
+
+<div class="sig-block">
+  <div><p><strong>CONSULTANT</strong></p><p>${provider}</p><div class="sig-line">Signature &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Date</div></div>
+  <div><p><strong>CLIENT</strong></p><p>${client}</p><div class="sig-line">Signature &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Date</div></div>
+</div>`;
+}
+
+function buildAffiliate(provider, client, govLaw, date) {
+  const product   = v('productAff')        || 'Products/Services';
+  const commRate  = v('commRate')          || '20%';
+  const cookies   = v('cookieDays')        || '90';
+  const schedule  = v('paymentSchedule')   || 'Net-30 after month-end';
+  const minPayout = v('minPayout')         || '100';
+
+  return `<h1>Affiliate Partner Agreement</h1>
+<div class="subtitle">Effective ${date}</div>
+<div class="highlight">
+  <strong>Company ("Merchant"):</strong> ${provider}<br>
+  <strong>Affiliate ("Partner"):</strong> ${client}<br>
+  <strong>Product:</strong> ${product}
+</div>
+
+<h2>1. Appointment</h2>
+<p>Merchant hereby appoints Partner as a non-exclusive affiliate to promote <strong>${product}</strong> through Partner's marketing channels in exchange for the commissions described herein.</p>
+
+<h2>2. Commission Structure</h2>
+<ul>
+  <li><strong>Commission Rate:</strong> ${commRate}</li>
+  <li><strong>Attribution Window:</strong> ${cookies} days from first click (cookie-based tracking)</li>
+  <li><strong>Qualified Sale:</strong> A completed purchase by a new customer referred by Partner's unique affiliate link, where the transaction is not refunded within the refund window</li>
+</ul>
+<p>Commissions are earned only on qualified sales. Self-referrals are strictly prohibited and will result in commission forfeiture and potential account termination.</p>
+
+<h2>3. Payment</h2>
+<ul>
+  <li><strong>Payment Schedule:</strong> ${schedule}</li>
+  <li><strong>Minimum Payout:</strong> $${minPayout} (amounts below this threshold roll over)</li>
+  <li><strong>Payment Method:</strong> Bank transfer, PayPal, or other agreed method</li>
+  <li><strong>Currency:</strong> USD unless otherwise agreed</li>
+</ul>
+<p>Merchant reserves the right to withhold payment for up to 60 days to account for refunds and chargebacks.</p>
+
+<h2>4. Partner Obligations</h2>
+<ul>
+  <li>Promote the product honestly and accurately; no misleading or false claims</li>
+  <li>Clearly disclose the affiliate relationship in all promotional content (FTC compliance required)</li>
+  <li>Not use spam, unsolicited emails, or prohibited advertising methods</li>
+  <li>Not engage in cookie stuffing, click fraud, or any form of artificial traffic generation</li>
+  <li>Not bid on Merchant's trademarked brand terms in paid search without prior written approval</li>
+  <li>Comply with all applicable laws and platform guidelines</li>
+</ul>
+
+<h2>5. Intellectual Property License</h2>
+<p>Merchant grants Partner a limited, non-exclusive, revocable license to use Merchant's logos, trademarks, and marketing materials solely for the purpose of promoting the product under this Agreement. Partner may not modify, alter, or create derivative works of Merchant's brand assets.</p>
+
+<h2>6. Term &amp; Termination</h2>
+<p>This Agreement commences on ${date} and continues until terminated. Either party may terminate with 14 days' written notice. Merchant may terminate immediately for breach of this Agreement, fraudulent activity, or reputational harm. Upon termination, Partner shall remove all affiliate links and stop using Merchant's marketing materials. Earned commissions for confirmed sales prior to termination will be paid on the next scheduled payment date.</p>
+
+<h2>7. Limitation of Liability</h2>
+<p>Merchant's total liability shall not exceed commissions paid in the 90 days preceding the claim. Neither party is liable for indirect or consequential damages.</p>
+
+<h2>8. Governing Law</h2>
+<p>This Agreement is governed by the laws of <strong>${govLaw}</strong>.</p>
+
+<div class="sig-block">
+  <div><p><strong>MERCHANT</strong></p><p>${provider}</p><div class="sig-line">Signature &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Date</div></div>
+  <div><p><strong>AFFILIATE PARTNER</strong></p><p>${client}</p><div class="sig-line">Signature &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Date</div></div>
+</div>`;
+}
+
+// ── Main generate ──────────────────────────────────────────────────────────
+const BUILDERS = { freelance:buildFreelance, retainer:buildRetainer, nda:buildNDA, saas:buildSaaS, consulting:buildConsulting, affiliate:buildAffiliate };
+const TYPE_NAMES = { freelance:'Freelance Agreement', retainer:'Retainer Agreement', nda:'Non-Disclosure Agreement', saas:'Software License Agreement', consulting:'Consulting Agreement', affiliate:'Affiliate Partner Agreement' };
+
+function generateContract() {
+  const provider = v('provider') || 'Service Provider';
+  const client   = v('client')   || 'Client';
+  const govLaw   = v('govLaw')   || 'Delaware, USA';
+  const date     = fmtDate(v('contractDate'));
+
+  // Gather the dynamic fields specific to the selected contract type.
+  const details = {};
+  (FIELD_CONFIGS[contractType] || []).forEach(f => { details[f.label] = v(f.id) || ''; });
+
+  const pane = document.getElementById('outputPane');
+  pane.innerHTML = `
+    <div class="output-panel">
+      <div class="output-header">
+        <div class="output-title">📝 ${TYPE_NAMES[contractType]}</div>
+        <div class="btn-row"><span style="font-size:11px;color:var(--text3)">Generating…</span></div>
+      </div>
+      <div class="contract-output" id="contractContent" style="text-align:center;color:var(--text3);padding:60px 20px;">⚙ Generating your ${TYPE_NAMES[contractType]} with AI…</div>
+    </div>
+  `;
+
+  // Real AI generation via the ABUZ8 brain (Cloudflare Workers AI). No templates.
+  fetch('/api/waitlist', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      tool: 'contract-templates',
+      data: {
+        contractType: contractType,
+        contractName: TYPE_NAMES[contractType],
+        provider: provider,
+        client: client,
+        governingLaw: govLaw,
+        contractDate: date,
+        details: details,
+        format: 'Return a complete, professional, ready-to-sign contract as clean HTML using <h1> for the contract title, <h2> for numbered clause headings, <h3> for sub-headings, <p> for paragraphs, <ul>/<li> for lists, and a signature block at the end.'
+      }
+    })
+  })
+  .then(r => r.json())
+  .then(res => {
+    if (!res.success || !res.result) throw new Error(res.error || 'Generation failed');
+    const html = res.result;
+    const wordCount = html.replace(/<[^>]+>/g,' ').split(/\s+/).filter(w=>w).length;
+    pane.innerHTML = `
+      <div class="output-panel">
+        <div class="output-header">
+          <div class="output-title">📝 ${TYPE_NAMES[contractType]}</div>
+          <div class="btn-row">
+            <span style="font-size:11px;color:var(--text3)">~${wordCount} words</span>
+            <button class="action-btn primary" id="copyBtn" onclick="copyContract()">Copy Contract</button>
+            <button class="action-btn" onclick="downloadContract()">⬇ Download .txt</button>
+          </div>
+        </div>
+        <div class="disclaimer">
+          <strong>⚠ Legal Notice:</strong> Templates are for reference only and do not constitute legal advice. Always have contracts reviewed by a qualified attorney before execution, especially for high-value engagements.
+        </div>
+        <div class="contract-output" id="contractContent">${html}</div>
+      </div>
+    `;
+  })
+  .catch(err => {
+    pane.innerHTML = `
+      <div class="output-panel">
+        <div class="output-header"><div class="output-title">📝 ${TYPE_NAMES[contractType]}</div></div>
+        <div class="placeholder">
+          <div class="placeholder-icon">⚠</div>
+          <h3>Generation failed</h3>
+          <p>${err.message}. Please try again in a moment.</p>
+        </div>
+      </div>
+    `;
+    alert('Generation failed: ' + err.message + '. Please try again in a moment.');
+  });
+}
+
+function copyContract() {
+  const text = document.getElementById('contractContent').innerText;
+  navigator.clipboard.writeText(text).then(()=>{
+    const btn = document.getElementById('copyBtn');
+    btn.textContent='✓ Copied!';btn.classList.add('copied');
+    setTimeout(()=>{btn.textContent='Copy Contract';btn.classList.remove('copied')},2500);
+  });
+}
+function downloadContract() {
+  const provider = v('provider') || 'contract';
+  const text = document.getElementById('contractContent').innerText;
+  const blob = new Blob([text],{type:'text/plain'});
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href=url; a.download=`${TYPE_NAMES[contractType].replace(/\s+/g,'-').toLowerCase()}-${provider.replace(/\s+/g,'-').toLowerCase()}.txt`; a.click();
+  URL.revokeObjectURL(url);
+}
+
+// ── Init ───────────────────────────────────────────────────────────────────
+document.getElementById('contractDate').value = new Date().toISOString().split('T')[0];
+renderDynamicFields();
+</script>
+
+<script src="/assets/js/dfy-banner.js" async></script>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+<script src="/tools/_tools-shared.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>
+

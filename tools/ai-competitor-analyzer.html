@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Competitor Analyzer — Spy on Your Competition | ABUZ8</title>
+<meta name="description" content="Instantly analyze any competitor's website, messaging, pricing, and SEO positioning. Free.">
+<link rel="canonical" href="https://abuz8ai.com/tools/ai-competitor-analyzer">
+<meta property="og:title" content="AI Competitor Analyzer — Know Your Competition Cold">
+<meta property="og:description" content="Analyze competitors' positioning, messaging, SEO, pricing strategy, and weaknesses in seconds.">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"AI Competitor Analyzer","url":"https://abuz8ai.com/tools/ai-competitor-analyzer","description":"Analyze competitors websites, messaging, SEO, and positioning to find your competitive edge.","applicationCategory":"BusinessApplication","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --lapis:#0a1628;--lapis2:#0f1f3d;--lapis3:#162544;
+  --gold:#c9a84c;--gold2:#e8c96d;
+  --turq:#0e9f6e;--turq2:#22b5a0;
+  --cream:#f5f0e8;
+  --violet:#7c3aed;--violet2:#a855f7;
+  --text:#e8e4dc;--muted:#8892a4;
+  --border:rgba(201,168,76,0.18);
+  --rad:12px;
+}
+body{background:var(--lapis);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh}
+a{color:var(--gold);text-decoration:none}
+.nav{display:flex;align-items:center;justify-content:space-between;padding:18px 40px;border-bottom:1px solid var(--border)}
+.nav-logo{font-family:'Playfair Display',serif;font-size:1.4rem;color:var(--gold)}
+.nav-links{display:flex;gap:24px;font-size:.85rem}
+.nav-links a{color:var(--muted);transition:color .2s}.nav-links a:hover{color:var(--gold)}
+
+.hero{text-align:center;padding:56px 20px 36px;max-width:780px;margin:0 auto}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(124,58,237,0.15);border:1px solid rgba(124,58,237,0.35);border-radius:100px;padding:6px 16px;font-size:.78rem;color:var(--violet2);margin-bottom:20px}
+.hero h1{font-family:'Playfair Display',serif;font-size:clamp(2rem,5vw,3.4rem);line-height:1.15;margin-bottom:16px}
+.hero h1 span{color:var(--gold)}
+.hero p{color:var(--muted);font-size:1rem;line-height:1.7;max-width:560px;margin:0 auto}
+
+.input-section{max-width:760px;margin:32px auto;padding:0 20px}
+.input-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
+@media(max-width:600px){.input-grid{grid-template-columns:1fr}}
+.input-group label{display:block;font-size:.78rem;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:.06em}
+.url-input{width:100%;background:var(--lapis3);border:1px solid var(--border);border-radius:var(--rad);padding:13px 16px;color:var(--text);font-size:.95rem;outline:none;transition:border-color .2s}
+.url-input:focus{border-color:var(--gold)}
+.url-input::placeholder{color:var(--muted)}
+.analyze-btn{width:100%;background:var(--gold);color:var(--lapis);border:none;border-radius:var(--rad);padding:14px;font-size:1rem;font-weight:700;cursor:pointer;transition:all .2s;margin-top:4px}
+.analyze-btn:hover{background:var(--gold2)}
+.analyze-btn:disabled{opacity:.5;cursor:not-allowed}
+
+.chips-row{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:6px}
+.chip{background:var(--lapis3);border:1px solid var(--border);border-radius:100px;padding:5px 13px;font-size:.78rem;color:var(--muted);cursor:pointer;user-select:none;transition:all .2s}
+.chip.active{border-color:var(--gold);color:var(--gold);background:rgba(201,168,76,.1)}
+.chip-label{font-size:.76rem;color:var(--muted);margin-bottom:7px}
+
+/* Progress */
+.progress-bar{max-width:760px;margin:0 auto;padding:0 20px;display:none}
+.progress-bar.visible{display:block}
+.prog-wrap{background:var(--lapis3);border:1px solid var(--border);border-radius:var(--rad);padding:24px}
+.prog-title{font-size:.95rem;font-weight:600;margin-bottom:16px;color:var(--gold)}
+.prog-steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px}
+.prog-step{background:var(--lapis2);border:1px solid var(--border);border-radius:8px;padding:12px;text-align:center;transition:border-color .3s}
+.prog-step.active{border-color:var(--gold);background:rgba(201,168,76,.07)}
+.prog-step.done{border-color:var(--turq);background:rgba(26,138,122,.07)}
+.prog-step-icon{font-size:1.4rem;margin-bottom:6px}
+.prog-step-label{font-size:.75rem;color:var(--muted)}
+.prog-step.active .prog-step-label{color:var(--text)}
+.prog-track{height:4px;background:var(--lapis2);border-radius:2px;margin-top:16px;overflow:hidden}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--violet),var(--gold));width:0%;transition:width .5s ease}
+
+/* Results */
+.results{max-width:760px;margin:0 auto 60px;padding:0 20px;display:none}
+.results.visible{display:block}
+
+.score-bar{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:12px;margin-bottom:24px}
+.score-card{background:var(--lapis2);border:1px solid var(--border);border-radius:var(--rad);padding:16px;text-align:center}
+.score-card .sc-val{font-family:'Playfair Display',serif;font-size:2.2rem;line-height:1;margin-bottom:4px}
+.score-card .sc-label{font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.07em}
+.sc-high{color:var(--turq2)}.sc-mid{color:var(--gold2)}.sc-low{color:#e85c2a}
+
+.section-card{background:var(--lapis2);border:1px solid var(--border);border-radius:var(--rad);margin-bottom:16px;overflow:hidden}
+.section-card-head{padding:16px 20px;display:flex;align-items:center;gap:12px;cursor:pointer;user-select:none}
+.section-card-head:hover{background:rgba(255,255,255,.02)}
+.sc-icon{font-size:1.2rem}
+.sc-title{font-weight:600;font-size:.95rem;flex:1}
+.sc-badge{font-size:.75rem;padding:3px 10px;border-radius:100px;font-weight:600}
+.badge-threat{background:rgba(232,92,42,.2);color:#ff7a4a}
+.badge-gap{background:rgba(201,168,76,.2);color:var(--gold2)}
+.badge-edge{background:rgba(26,138,122,.2);color:var(--turq2)}
+.sc-chevron{color:var(--muted);font-size:.8rem;transition:transform .2s}
+.section-card.open .sc-chevron{transform:rotate(180deg)}
+.section-card-body{max-height:0;overflow:hidden;transition:max-height .35s ease, padding .2s}
+.section-card.open .section-card-body{max-height:800px;padding:0 20px 20px}
+
+.finding{display:flex;gap:12px;margin-bottom:14px;padding:14px;background:var(--lapis3);border-radius:8px;align-items:flex-start}
+.finding:last-child{margin:0}
+.finding-icon{font-size:1.1rem;flex-shrink:0;margin-top:1px}
+.finding-body strong{display:block;font-size:.9rem;margin-bottom:4px}
+.finding-body p{font-size:.83rem;color:var(--muted);line-height:1.6}
+.finding-body .opportunity{font-size:.8rem;color:var(--turq2);margin-top:6px;font-weight:500}
+
+.vs-table{width:100%;border-collapse:collapse;font-size:.83rem;margin-bottom:16px}
+.vs-table th{padding:10px 12px;background:var(--lapis3);text-align:left;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.vs-table td{padding:10px 12px;border-top:1px solid var(--border)}
+.vs-table tr:hover td{background:rgba(255,255,255,.02)}
+.tag-win{color:var(--turq2);font-weight:600}
+.tag-lose{color:#e85c2a;font-weight:600}
+.tag-tie{color:var(--muted)}
+
+.action-box{background:linear-gradient(135deg,rgba(124,58,237,.15),rgba(201,168,76,.08));border:1px solid rgba(201,168,76,.25);border-radius:var(--rad);padding:24px;margin-bottom:20px}
+.action-box h3{font-family:'Playfair Display',serif;font-size:1.3rem;margin-bottom:14px;color:var(--gold)}
+.action-list{list-style:none}
+.action-list li{display:flex;gap:10px;margin-bottom:10px;font-size:.88rem;line-height:1.5}
+.action-list li:last-child{margin:0}
+.action-num{color:var(--gold);font-weight:700;flex-shrink:0;min-width:20px}
+
+.waitlist-cta{background:var(--lapis3);border:1px solid var(--border);border-radius:var(--rad);padding:24px;text-align:center;margin-bottom:20px}
+.waitlist-cta h3{font-family:'Playfair Display',serif;font-size:1.3rem;margin-bottom:8px}
+.waitlist-cta p{color:var(--muted);font-size:.88rem;margin-bottom:16px}
+.wl-form{display:flex;gap:10px;max-width:400px;margin:0 auto}
+.wl-email{flex:1;background:var(--lapis2);border:1px solid var(--border);border-radius:8px;padding:11px 14px;color:var(--text);font-size:.9rem;outline:none}
+.wl-email:focus{border-color:var(--gold)}
+.wl-btn{background:var(--gold);color:var(--lapis);border:none;border-radius:8px;padding:11px 18px;font-weight:700;font-size:.88rem;cursor:pointer;white-space:nowrap}
+.wl-done{color:var(--turq2);font-size:.88rem;display:none}
+
+.footer{border-top:1px solid var(--border);padding:28px 40px;display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;align-items:center;font-size:.82rem;color:var(--muted)}
+.footer a{color:var(--muted);transition:color .2s}.footer a:hover{color:var(--gold)}
+</style>
+</head>
+<body>
+<nav class="nav">
+  <div class="nav-logo">ABUZ8</div>
+  <div class="nav-links">
+    <a href="/tools">Tools</a><a href="/free.html">Free</a><a href="/news.html">AI Daily</a>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="hero-badge">🔍 Competitive Intelligence</div>
+  <h1>Know Your <span>Competition</span> Cold</h1>
+  <p>Enter your URL and a competitor's URL. Get a full breakdown of their positioning, messaging, SEO gaps, pricing strategy, and exactly where you can win.</p>
+</section>
+
+<div class="input-section">
+  <div class="input-grid">
+    <div class="input-group">
+      <label>Your Website</label>
+      <input type="url" class="url-input" id="myUrl" placeholder="https://yoursite.com">
+    </div>
+    <div class="input-group">
+      <label>Competitor's Website</label>
+      <input type="url" class="url-input" id="compUrl" placeholder="https://competitor.com">
+    </div>
+  </div>
+  <div class="chip-label">Analyze focus:</div>
+  <div class="chips-row" id="focusChips">
+    <div class="chip active" data-val="all" onclick="setFocus(this)">🎯 Everything</div>
+    <div class="chip" data-val="seo" onclick="setFocus(this)">🔍 SEO</div>
+    <div class="chip" data-val="copy" onclick="setFocus(this)">✍️ Messaging</div>
+    <div class="chip" data-val="pricing" onclick="setFocus(this)">💰 Pricing</div>
+    <div class="chip" data-val="ux" onclick="setFocus(this)">⚡ UX</div>
+  </div>
+  <button class="analyze-btn" id="analyzeBtn" onclick="startAnalysis()" style="margin-top:14px">🔍 Analyze Competitor</button>
+</div>
+
+<div class="progress-bar" id="progressBar">
+  <div class="prog-wrap">
+    <div class="prog-title">🤖 Running competitive analysis...</div>
+    <div class="prog-steps">
+      <div class="prog-step" id="ps0"><div class="prog-step-icon">🌐</div><div class="prog-step-label">Loading pages</div></div>
+      <div class="prog-step" id="ps1"><div class="prog-step-icon">✍️</div><div class="prog-step-label">Comparing messaging</div></div>
+      <div class="prog-step" id="ps2"><div class="prog-step-icon">🔍</div><div class="prog-step-label">SEO gap analysis</div></div>
+      <div class="prog-step" id="ps3"><div class="prog-step-icon">💰</div><div class="prog-step-label">Pricing intelligence</div></div>
+      <div class="prog-step" id="ps4"><div class="prog-step-icon">⚡</div><div class="prog-step-label">UX comparison</div></div>
+      <div class="prog-step" id="ps5"><div class="prog-step-icon">🎯</div><div class="prog-step-label">Finding your edge</div></div>
+    </div>
+    <div class="prog-track"><div class="prog-fill" id="progFill"></div></div>
+  </div>
+</div>
+
+<div class="results" id="results"></div>
+
+<footer class="footer">
+  <div>© 2026 ABUZ8 LLC — Free competitive intelligence</div>
+  <div style="display:flex;gap:20px">
+    <a href="/tools">All Tools</a>
+    <a href="https://github.com/abuz8studios-ship-it" target="_blank">GitHub ↗</a>
+    <a href="https://huggingface.co/abuz8studios" target="_blank">Hugging Face ↗</a>
+    <a href="/support.html">Support the work →</a>
+  </div>
+</footer>
+
+<script>
+let focus = 'all';
+function setFocus(el) {
+  document.querySelectorAll('#focusChips .chip').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  focus = el.dataset.val;
+}
+
+function startAnalysis() {
+  const myUrl = document.getElementById('myUrl').value.trim();
+  const compUrl = document.getElementById('compUrl').value.trim();
+  if(!myUrl || !compUrl) {
+    if(!myUrl) document.getElementById('myUrl').style.borderColor='var(--gold)';
+    if(!compUrl) document.getElementById('compUrl').style.borderColor='var(--gold)';
+    setTimeout(()=>{ document.getElementById('myUrl').style.borderColor=''; document.getElementById('compUrl').style.borderColor=''; },1200);
+    return;
+  }
+  document.getElementById('analyzeBtn').disabled = true;
+  document.getElementById('analyzeBtn').textContent = '🔍 Analyzing...';
+  document.getElementById('progressBar').classList.add('visible');
+  document.getElementById('results').classList.remove('visible');
+
+  const steps = [0,1,2,3,4,5];
+  const delays = [300,800,1400,2000,2600,3200];
+  const fills = [15,30,48,64,80,90];
+  const progTimers = steps.map((idx, i) => setTimeout(()=>{
+    for(let j=0;j<idx;j++) document.getElementById(`ps${j}`).className='prog-step done';
+    document.getElementById(`ps${idx}`).className='prog-step active';
+    document.getElementById('progFill').style.width = fills[i]+'%';
+  }, delays[i]));
+
+  const finish = () => {
+    progTimers.forEach(clearTimeout);
+    document.getElementById('progressBar').classList.remove('visible');
+    document.getElementById('analyzeBtn').disabled = false;
+    document.getElementById('analyzeBtn').textContent = '🔍 Analyze Again';
+  };
+
+  // Real AI competitive analysis via the ABUZ8 brain (Cloudflare Workers AI). No fabricated scores.
+  fetch('/api/waitlist', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ tool: 'competitor-analyzer', data: { myUrl, competitorUrl: compUrl, focus } })
+  })
+  .then(r => r.json())
+  .then(res => {
+    if(!res.success || !res.result) throw new Error(res.error || 'Generation failed');
+    document.getElementById('progFill').style.width = '100%';
+    showResultsText(res.result, myUrl, compUrl);
+    finish();
+    document.getElementById('results').classList.add('visible');
+  })
+  .catch(err => {
+    finish();
+    alert('Analysis failed: ' + err.message + '. Please try again in a moment.');
+  });
+}
+
+// Render the REAL AI competitive analysis (free-form HTML/text) plus the weekly-alert capture.
+function showResultsText(result, myUrl, compUrl) {
+  const me = domainName(myUrl), comp = domainName(compUrl);
+  document.getElementById('results').innerHTML = `
+  <div class="section-card open">
+    <div class="section-card-head"><span class="sc-icon">📊</span><span class="sc-title">${me} vs ${comp}</span><span class="sc-badge badge-gap">AI Analysis</span></div>
+    <div class="section-card-body" style="max-height:none;padding:20px;line-height:1.7;">${result}</div>
+  </div>
+  <div class="waitlist-cta">
+    <h3>Want weekly competitor alerts?</h3>
+    <p>Get notified when your competitor changes their pricing, messaging, or SEO strategy.</p>
+    <div class="wl-form">
+      <input type="email" class="wl-email" id="wlEmail" placeholder="your@email.com">
+      <button class="wl-btn" onclick="joinWl()">Set Alert</button>
+    </div>
+    <div class="wl-done" id="wlDone">✓ Alert set — we'll monitor and notify you.</div>
+  </div>`;
+}
+
+function domainName(url) {
+  try { return new URL(url.includes('://')?url:'https://'+url).hostname.replace('www.',''); } catch(e) { return url; }
+}
+
+function generateAnalysis(myUrl, compUrl) {
+  const seed = compUrl.length * 7 + myUrl.length * 3;
+  const rand = (n) => Math.abs(Math.sin(seed * n + n * 17)) ;
+  const rs = (min, max, n=1) => Math.floor(rand(n) * (max-min) + min);
+
+  const myScores = { seo: rs(35,72,1), messaging: rs(30,68,2), pricing: rs(40,75,3), ux: rs(38,70,4) };
+  const compScores = { seo: rs(45,85,5), messaging: rs(50,90,6), pricing: rs(35,80,7), ux: rs(42,78,8) };
+  const overall = Math.floor((myScores.seo+myScores.messaging+myScores.pricing+myScores.ux)/4);
+  const compOverall = Math.floor((compScores.seo+compScores.messaging+compScores.pricing+compScores.ux)/4);
+
+  const myKeywords = ['efficiency','streamline','automate','productivity','team','workflow'];
+  const compKeywords = ['enterprise','scale','robust','platform','solution','integrate'];
+  const myKw = myKeywords.slice(0, rs(2,5,9));
+  const compKw = compKeywords.slice(0, rs(3,6,10));
+  const gapKws = ['ROI','time-saving','cost reduction','free trial','no-code','instant'].slice(0, rs(2,4,11));
+
+  const pricingGaps = [
+    {yours:'No free tier', comp:'14-day free trial', opp:'Add a free tier or 7-day trial to match'},
+    {yours:'3 pricing tiers', comp:'2 pricing tiers', opp:'Your pricing is more complex — consider simplifying'},
+    {yours:'Monthly billing only', comp:'Annual discount (20%)', opp:'Add annual pricing with 2 months free'},
+    {yours:'No public pricing', comp:'Transparent pricing page', opp:'Transparency builds trust — show your pricing'},
+    {yours:'Per-seat pricing', comp:'Usage-based pricing', opp:'Usage pricing lowers entry barrier for small teams'},
+  ].slice(0,3);
+
+  const actions = [
+    `Target "${compKw[0]}" keyword gap — competitor ranks but you don\'t`,
+    `Add a free trial or freemium tier to counter their ${myScores.pricing < compScores.pricing ? 'stronger' : 'weaker'} pricing page`,
+    `Rewrite your hero headline to directly address their most common search intent`,
+    `Add a comparison page: "You vs ${domainName(compUrl)}" — captures bottom-funnel searchers`,
+    `Improve your page load speed — Google penalizes sites >3s and so do conversions`,
+  ].slice(0, 5);
+
+  return { myUrl, compUrl, myScores, compScores, overall, compOverall, myKw, compKw, gapKws, pricingGaps, actions };
+}
+
+function scoreCls(val){ return val>=65?'sc-high':val>=45?'sc-mid':'sc-low'; }
+function winLose(mine, theirs) { return mine > theirs ? '<span class="tag-win">▲ You Win</span>' : mine < theirs ? '<span class="tag-lose">▼ They Win</span>' : '<span class="tag-tie">Tie</span>'; }
+
+function showResults(d, myUrl, compUrl) {
+  const me = domainName(myUrl), comp = domainName(compUrl);
+  const diffClass = d.overall > d.compOverall ? 'sc-high' : d.overall < d.compOverall ? 'sc-low' : 'sc-mid';
+  let html = `
+  <div class="score-bar">
+    <div class="score-card"><div class="sc-val ${scoreCls2(d.overall)}">${d.overall}</div><div class="sc-label">Your Score</div></div>
+    <div class="score-card"><div class="sc-val ${scoreCls2(d.compOverall)}">${d.compOverall}</div><div class="sc-label">${comp} Score</div></div>
+    <div class="score-card"><div class="sc-val ${d.myScores.seo>=d.compScores.seo?'sc-high':'sc-low'}">${d.myScores.seo}/${d.compScores.seo}</div><div class="sc-label">SEO</div></div>
+    <div class="score-card"><div class="sc-val ${d.myScores.messaging>=d.compScores.messaging?'sc-high':'sc-low'}">${d.myScores.messaging}/${d.compScores.messaging}</div><div class="sc-label">Messaging</div></div>
+    <div class="score-card"><div class="sc-val ${d.myScores.ux>=d.compScores.ux?'sc-high':'sc-low'}">${d.myScores.ux}/${d.compScores.ux}</div><div class="sc-label">UX</div></div>
+  </div>`;
+
+  html += `
+  <div class="section-card open" id="sc0">
+    <div class="section-card-head" onclick="toggle('sc0')"><span class="sc-icon">📊</span><span class="sc-title">Head-to-Head Comparison</span><span class="sc-badge badge-gap">Overview</span><span class="sc-chevron">▼</span></div>
+    <div class="section-card-body">
+      <table class="vs-table">
+        <tr><th>Dimension</th><th>${me}</th><th>${comp}</th><th>Edge</th></tr>
+        <tr><td>Overall Score</td><td>${d.overall}/100</td><td>${d.compOverall}/100</td><td>${winLose(d.overall,d.compOverall)}</td></tr>
+        <tr><td>SEO</td><td>${d.myScores.seo}/100</td><td>${d.compScores.seo}/100</td><td>${winLose(d.myScores.seo,d.compScores.seo)}</td></tr>
+        <tr><td>Messaging Clarity</td><td>${d.myScores.messaging}/100</td><td>${d.compScores.messaging}/100</td><td>${winLose(d.myScores.messaging,d.compScores.messaging)}</td></tr>
+        <tr><td>Pricing Strategy</td><td>${d.myScores.pricing}/100</td><td>${d.compScores.pricing}/100</td><td>${winLose(d.myScores.pricing,d.compScores.pricing)}</td></tr>
+        <tr><td>UX / Conversion</td><td>${d.myScores.ux}/100</td><td>${d.compScores.ux}/100</td><td>${winLose(d.myScores.ux,d.compScores.ux)}</td></tr>
+      </table>
+    </div>
+  </div>`;
+
+  html += `
+  <div class="section-card" id="sc1">
+    <div class="section-card-head" onclick="toggle('sc1')"><span class="sc-icon">🔍</span><span class="sc-title">Keyword & SEO Gaps</span><span class="sc-badge badge-gap">Opportunity</span><span class="sc-chevron">▼</span></div>
+    <div class="section-card-body">
+      <div class="finding"><span class="finding-icon">🎯</span><div class="finding-body"><strong>Keywords ${comp} ranks for that you don't</strong><p>They appear to target: ${d.compKw.join(', ')}. These terms are likely driving organic traffic you're missing.</p><div class="opportunity">→ Create dedicated landing pages or blog content targeting these keywords.</div></div></div>
+      <div class="finding"><span class="finding-icon">📉</span><div class="finding-body"><strong>Gap keywords neither of you owns</strong><p>High-opportunity terms: ${d.gapKws.join(', ')} — available to capture first-mover advantage.</p><div class="opportunity">→ Publish 3 SEO-focused posts on these topics in the next 30 days.</div></div></div>
+      <div class="finding"><span class="finding-icon">🔗</span><div class="finding-body"><strong>Your keyword strengths</strong><p>You appear stronger on: ${d.myKw.join(', ')} — double down here.</p><div class="opportunity">→ Build internal linking clusters around your strongest keyword categories.</div></div></div>
+    </div>
+  </div>`;
+
+  html += `
+  <div class="section-card" id="sc2">
+    <div class="section-card-head" onclick="toggle('sc2')"><span class="sc-icon">💰</span><span class="sc-title">Pricing Intelligence</span><span class="sc-badge ${d.myScores.pricing>=d.compScores.pricing?'badge-edge':'badge-threat'}">Pricing</span><span class="sc-chevron">▼</span></div>
+    <div class="section-card-body">
+      ${d.pricingGaps.map(pg=>`<div class="finding"><span class="finding-icon">💸</span><div class="finding-body"><strong>You: ${pg.yours}</strong><p>Competitor: ${pg.comp}</p><div class="opportunity">→ ${pg.opp}</div></div></div>`).join('')}
+    </div>
+  </div>`;
+
+  html += `
+  <div class="section-card" id="sc3">
+    <div class="section-card-head" onclick="toggle('sc3')"><span class="sc-icon">✍️</span><span class="sc-title">Messaging & Positioning</span><span class="sc-badge ${d.myScores.messaging>=d.compScores.messaging?'badge-edge':'badge-threat'}">Messaging</span><span class="sc-chevron">▼</span></div>
+    <div class="section-card-body">
+      <div class="finding"><span class="finding-icon">🎯</span><div class="finding-body"><strong>Their positioning angle</strong><p>${comp} appears to lead with ${d.compKw[0]} and enterprise credibility signals. Their messaging targets buyers already sold on the category.</p><div class="opportunity">→ Counter by owning the "easier / faster / cheaper" lane if they're going premium, or vice versa.</div></div></div>
+      <div class="finding"><span class="finding-icon">📣</span><div class="finding-body"><strong>Your messaging gap</strong><p>Your current messaging uses ${d.myKw.slice(0,2).join(' and ')} — these are feature-focused. Buyers respond more to outcomes.</p><div class="opportunity">→ Rewrite your H1 to lead with the outcome, not the feature. "Cut hiring time in half" beats "AI-powered recruiting."</div></div></div>
+      <div class="finding"><span class="finding-icon">🏆</span><div class="finding-body"><strong>Create a comparison page</strong><p>"${me} vs ${comp}" pages rank for bottom-funnel searches from buyers already evaluating you.</p><div class="opportunity">→ Build a /compare/${comp.split('.')[0]} page that objectively highlights your strengths.</div></div></div>
+    </div>
+  </div>`;
+
+  html += `
+  <div class="action-box">
+    <h3>🎯 Your Top 5 Actions</h3>
+    <ul class="action-list">
+      ${d.actions.map((a,i)=>`<li><span class="action-num">${i+1}.</span><span>${a}</span></li>`).join('')}
+    </ul>
+  </div>`;
+
+  html += `
+  <div class="waitlist-cta">
+    <h3>Want weekly competitor alerts?</h3>
+    <p>Get notified when your competitor changes their pricing, messaging, or SEO strategy.</p>
+    <div class="wl-form">
+      <input type="email" class="wl-email" id="wlEmail" placeholder="your@email.com">
+      <button class="wl-btn" onclick="joinWl()">Set Alert</button>
+    </div>
+    <div class="wl-done" id="wlDone">✓ Alert set — we'll monitor and notify you.</div>
+  </div>`;
+
+  document.getElementById('results').innerHTML = html;
+}
+
+function scoreCls2(v){ return v>=65?'sc-high':v>=45?'sc-mid':'sc-low'; }
+
+function toggle(id) {
+  const card = document.getElementById(id);
+  const wasOpen = card.classList.contains('open');
+  document.querySelectorAll('.section-card').forEach(c=>c.classList.remove('open'));
+  if(!wasOpen) card.classList.add('open');
+}
+
+function joinWl() {
+  const email = document.getElementById('wlEmail').value.trim();
+  if(!email||!email.includes('@')) return;
+  fetch('/api/waitlist',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,product:'ai-competitor-analyzer',ts:new Date().toISOString()})}).catch(()=>{});
+  const s=JSON.parse(localStorage.getItem('abuz8_waitlist')||'[]');
+  s.push({email,product:'ai-competitor-analyzer',ts:new Date().toISOString()});
+  localStorage.setItem('abuz8_waitlist',JSON.stringify(s));
+  document.querySelector('.wl-form').style.display='none';
+  document.getElementById('wlDone').style.display='block';
+}
+</script>
+<script src="_abuz8-live-brain.js" defer></script>
+
+<script src="/assets/js/dfy-banner.js" async></script>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+<script src="/tools/_tools-shared.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>
+

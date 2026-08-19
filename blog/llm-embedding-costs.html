@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<!-- 2026-07-20 — Weekly content: llm-embedding-costs -->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LLM Embedding Costs: The Real Math Behind "Cheap" Vectors | ABUZ8</title>
+<meta name="description" content="LLM embedding costs explained: why the API price is the small line item, how storage and re-embedding dominate, dimension trade-offs, and when local embedding models win.">
+<meta name="keywords" content="llm embedding costs, embedding api pricing, vector database cost, embedding model comparison, rag embedding cost, local embedding models">
+<link rel="canonical" href="https://abuz8ai.com/blog/llm-embedding-costs">
+<meta property="og:title" content="LLM Embedding Costs: The Real Math Behind &quot;Cheap&quot; Vectors">
+<meta property="og:type" content="article">
+<link rel="stylesheet" href="/blog/_blog-base.css">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@300;400;600;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
+<style>
+:root{
+  --lapis:#0a1628; --lapis-mid:#EEF3F8; --lapis-light:#E3EBF3;
+  --card:#0d1a30; --border:#D6E0EC;
+  --text:#e8e4d8; --cream:#1F2D3D; --dim:#5A6B7D;
+  --gold:#5fa8e8; --gold-light:#255F95; --gold-dim:#7DA3C8;
+  --turq:#5fa8e8; --turq-light:#5fa8e8; --turq-bright:#255F95;
+  --primary:#5fa8e8;
+}
+body{background:var(--lapis);}
+code{background:#EEF3F8;color:#255F95;}
+.callout.cta{background:linear-gradient(135deg,#EAF2FA,#0a1628);}
+</style>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","headline":"LLM Embedding Costs: The Real Math Behind \"Cheap\" Vectors","datePublished":"2026-07-20","author":{"@type":"Organization","name":"ABUZ8 AI"}}
+</script>
+</head>
+<body>
+<div class="container">
+  <a href="/blog/" class="back">&larr; ABUZ8 BLOG</a>
+  <h1>LLM Embedding Costs: The Real Math Behind "Cheap" Vectors</h1>
+  <div class="meta-row"><span>DEVELOPERS</span><span class="dot"></span><span>JULY 20, 2026</span><span class="dot"></span><span>7 MIN READ</span></div>
+
+  <p>Embedding APIs look like a rounding error — pennies per million tokens, the cheapest line on any provider's price sheet. Then teams ship a RAG system and discover the truth about <strong>LLM embedding costs</strong>: the API call was never the bill. The bill is storing millions of high-dimensional vectors in a managed database forever, re-embedding the entire corpus every time you change models or chunking, and paying query-time costs on every single search. Cheap to make, expensive to keep — that's the embedding economy in one line.</p>
+
+  <p>This guide breaks the cost into its four real components, shows the dimension math most teams skip, and lays out when local embedding models quietly beat the API on every axis that matters.</p>
+
+  <h2>Component 1: The embedding call (the small one)</h2>
+  <p>Embedding a 10-million-token corpus (~40 MB of text, roughly 7,500 pages) at typical API rates costs single-digit to low-double-digit dollars. One-time. This is the number everyone quotes and the least important one in the stack. If your corpus is static and small, stop reading — you have no cost problem. Everyone else, keep going.</p>
+
+  <h2>Component 2: Storage — the one that compounds</h2>
+  <p>A single 1,536-dimension float32 vector is 6 KB. That's the tax nobody prices in: embed 10M tokens as ~20,000 chunks of 500 tokens and you hold 120 MB of vectors — trivial. Embed 100M documents, or chunk aggressively, and you're storing terabytes of floats plus an index (HNSW graphs add their own memory multiple) in a managed vector database that charges by the GB-month, forever. Storage is a recurring cost attached to a one-time act. Dimensions are the multiplier: cutting 1,536 → 512 dims (via Matryoshka-style truncation, now standard on modern models) cuts storage and search compute ~3&times;, usually for a couple of points of retrieval quality. Most products should take that trade, and int8 quantization of stored vectors takes another 4&times; off with negligible loss. If you haven't run dimension math, you're storing someone's default, not a decision.</p>
+
+  <h2>Component 3: Re-embedding — the one that ambushes you</h2>
+  <p>Vectors are frozen opinions of one specific model. Switch embedding models, change your chunking strategy, or upgrade to the provider's new version — and every stored vector is stale. Re-embed everything. The "one-time" cost from Component 1 turns out to be per-decision, and teams iterate on chunking a lot in year one. This is also the hidden lock-in: the switching cost of leaving a provider isn't the new API, it's re-processing your entire corpus through it. Budget re-embedding as a recurring line — three or four full passes in the first year is normal, not failure.</p>
+
+  <h2>Component 4: Query-time — the one that scales with success</h2>
+  <p>Every search embeds the query (tiny) and scans the index (not tiny). Query embedding costs are per-use and grow with traffic; vector-DB read units and the compute behind approximate-nearest-neighbor search grow with both traffic and corpus size. A RAG feature that gets popular multiplies all of it. Put your own corpus size, chunking, dimensions, and query volume into the free <a href="/tools/ai-embedding-cost-calculator.html" class="in">embedding cost calculator</a> — then price the full pipeline, retrieval plus generation, with the <a href="/tools/ai-rag-cost-calculator.html" class="in">RAG cost calculator</a>. The two together are the honest quote. (New to the architecture? Start with <a href="/blog/rag-explained-for-ai-agents" class="in">RAG explained for AI agents</a>.)</p>
+
+  <h2>The local counter-move</h2>
+  <p>Here's what the pricing pages don't advertise: open-weight embedding models in the small-to-mid range now sit at or near the top of retrieval benchmarks, run comfortably on consumer GPUs — even CPUs — and embed thousands of chunks per second at a marginal cost of zero. Local embedding turns Component 1 free, makes Component 3 painless (re-chunk whenever you like, re-embed overnight), and keeps your corpus — which is your business, written as text — off a third party's logs. Pair a local embedder with a local vector store and the only real cost left is disk, which you own. This is exactly how <strong>QADIR OS</strong> treats memory: a sovereign, local-first agentic OS whose search and recall run on your own hardware — full-text and semantic retrieval over everything your agents know, with zero per-query meter and nothing leaving the machine.</p>
+
+  <h2>The decision rule</h2>
+  <p>Small static corpus + low traffic → API embeddings, don't overthink it. Large corpus, high churn, high query volume, or sensitive content → local embeddings win on cost within months and on privacy from day one. In between → embed locally, serve from whichever store your ops can actually maintain. Whatever you pick: choose dimensions deliberately, version your embeddings from day one, and price the re-embed <em>before</em> you commit to a model.</p>
+
+  <div class="callout cta">
+    <p><strong>Price the whole iceberg, not the tip.</strong> Run your corpus through the free <a href="/tools/ai-embedding-cost-calculator.html" class="in">embedding cost calculator</a>, or make the meter irrelevant — <a href="/" class="in">join QADIR OS early access</a> and keep your knowledge, and your vectors, on your own machine. No card required.</p>
+  </div>
+  <div class="foot">Built by <a href="/">ABUZ8 LLC</a> — we're building QADIR OS, the sovereign agentic operating system.</div>
+</div>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+<script src="/blog/_blog-shared.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>

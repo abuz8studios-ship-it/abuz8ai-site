@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Recipe Generator — ABUZ8</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--lapis:#0a1628;--lapis2:#0f1f3d;--lapis3:#162544;--gold:#c9a84c;--turq:#0e9f6e;--turq2:#22b5a0;--cream:#f5f0e8;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--lapis);color:var(--cream);font-family:'Inter',sans-serif;min-height:100vh;}
+header{background:var(--lapis2);border-bottom:1px solid rgba(201,168,76,.15);padding:16px 32px;display:flex;align-items:center;gap:12px;}
+header h1{font-family:'Playfair Display',serif;font-size:1.4rem;color:var(--gold);}
+header span{background:var(--turq);color:#fff;font-size:11px;font-weight:600;padding:2px 8px;border-radius:20px;}
+.hero{text-align:center;padding:44px 20px 28px;}
+.hero h2{font-family:'Playfair Display',serif;font-size:2rem;color:var(--cream);margin-bottom:10px;}
+.hero p{color:rgba(245,240,232,.7);font-size:.95rem;max-width:480px;margin:0 auto;}
+.main{max-width:900px;margin:0 auto;padding:0 20px 80px;}
+.card{background:var(--lapis2);border:1px solid rgba(201,168,76,.12);border-radius:12px;padding:26px;}
+.card+.card{margin-top:16px;}
+label{display:block;font-size:12px;font-weight:700;color:var(--gold);margin-bottom:6px;letter-spacing:.05em;text-transform:uppercase;}
+textarea,input,select{width:100%;background:var(--lapis3);border:1px solid rgba(201,168,76,.2);border-radius:8px;padding:11px 14px;color:var(--cream);font-family:'Inter',sans-serif;font-size:14px;outline:none;transition:border .2s;}
+textarea:focus,input:focus,select:focus{border-color:var(--gold);}
+textarea{min-height:80px;resize:vertical;}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-top:14px;}
+.tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;}
+.tag{padding:6px 14px;border-radius:20px;border:1px solid rgba(201,168,76,.2);cursor:pointer;font-size:12px;color:rgba(245,240,232,.7);transition:all .2s;user-select:none;}
+.tag.active{background:var(--gold);border-color:var(--gold);color:var(--lapis);font-weight:700;}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:12px 24px;border-radius:8px;border:none;cursor:pointer;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;transition:all .2s;}
+.btn-gold{background:var(--gold);color:var(--lapis);}
+.btn-gold:hover{background:#e0bc5a;}
+.btn-outline{background:transparent;border:1px solid rgba(201,168,76,.3);color:var(--cream);}
+.btn-outline:hover{border-color:var(--gold);color:var(--gold);}
+.actions{margin-top:18px;display:flex;gap:12px;flex-wrap:wrap;}
+/* Recipe output */
+#recipeArea{display:none;}
+.recipe-hero{background:linear-gradient(135deg,var(--lapis3),var(--lapis2));border:1px solid rgba(201,168,76,.2);border-radius:12px;padding:24px;margin-bottom:20px;}
+.recipe-name{font-family:'Playfair Display',serif;font-size:1.8rem;color:var(--gold);margin-bottom:6px;}
+.recipe-desc{font-size:14px;color:rgba(245,240,232,.7);line-height:1.6;margin-bottom:16px;}
+.recipe-meta{display:flex;gap:16px;flex-wrap:wrap;}
+.meta-item{text-align:center;}
+.meta-val{font-size:1.2rem;font-weight:700;color:var(--turq2);}
+.meta-lbl{font-size:11px;color:rgba(245,240,232,.45);text-transform:uppercase;letter-spacing:.05em;}
+/* Ingredients */
+.ingredient-list{list-style:none;}
+.ingredient-list li{padding:8px 0;border-bottom:1px solid rgba(255,255,255,.05);font-size:14px;display:flex;align-items:center;gap:10px;cursor:pointer;transition:opacity .2s;}
+.ingredient-list li.checked{opacity:.45;text-decoration:line-through;}
+.ingredient-list li::before{content:'•';color:var(--gold);font-size:18px;line-height:1;}
+/* Steps */
+.steps-list{list-style:none;counter-reset:steps;}
+.steps-list li{padding:14px;background:var(--lapis3);border-radius:8px;margin-bottom:8px;font-size:14px;line-height:1.7;cursor:pointer;border:1px solid rgba(201,168,76,.08);transition:all .2s;display:flex;gap:12px;counter-increment:steps;}
+.steps-list li::before{content:counter(steps);min-width:26px;height:26px;border-radius:50%;background:rgba(201,168,76,.15);border:1px solid rgba(201,168,76,.3);color:var(--gold);font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.steps-list li.done{opacity:.5;text-decoration:line-through;}
+.steps-list li.done::before{background:var(--turq2);border-color:var(--turq2);color:#fff;}
+/* Nutrition */
+.nut-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;}
+.nut-box{background:var(--lapis3);border:1px solid rgba(201,168,76,.1);border-radius:8px;padding:10px;text-align:center;}
+.nut-val{font-size:1.1rem;font-weight:700;color:var(--gold);}
+.nut-lbl{font-size:11px;color:rgba(245,240,232,.45);text-transform:uppercase;letter-spacing:.04em;margin-top:2px;}
+/* Similar recipes */
+.similar-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:4px;}
+.similar-card{flex:1;min-width:140px;background:var(--lapis3);border:1px solid rgba(201,168,76,.1);border-radius:8px;padding:12px;cursor:pointer;transition:border-color .2s;}
+.similar-card:hover{border-color:rgba(201,168,76,.4);}
+.similar-card .name{font-size:13px;font-weight:600;color:var(--cream);}
+.similar-card .meta{font-size:11px;color:rgba(245,240,232,.45);margin-top:3px;}
+/* Waitlist */
+.waitlist{background:linear-gradient(135deg,var(--lapis2),var(--lapis3));border:1px solid rgba(201,168,76,.2);border-radius:12px;padding:28px;text-align:center;margin-top:16px;}
+.waitlist h3{font-family:'Playfair Display',serif;font-size:1.3rem;color:var(--gold);margin-bottom:8px;}
+.waitlist p{color:rgba(245,240,232,.7);margin-bottom:16px;font-size:14px;}
+.wl-form{display:flex;gap:10px;max-width:380px;margin:0 auto;flex-wrap:wrap;}
+.wl-form input{flex:1;min-width:180px;}
+.wl-success{color:var(--turq2);font-weight:600;display:none;}
+section-hdr{font-size:12px;font-weight:700;color:var(--gold);letter-spacing:.07em;text-transform:uppercase;display:block;margin:20px 0 10px;}
+</style>
+<link rel="canonical" href="https://abuz8ai.com/tools/ai-recipe-generator">
+<meta name="description" content="AI Recipe Generator — Recipes from what you have. Free, no signup, runs entirely in your browser. One of 169 free AI and developer tools by ABUZ8.">
+</head>
+<body>
+<header>
+  <h1>⚡ ABUZ8</h1>
+  <span>AI RECIPE GENERATOR</span>
+</header>
+<div class="hero">
+  <h2>Cook Something Amazing Tonight</h2>
+  <p>Tell the AI what ingredients you have, your dietary needs, and time available — get a complete restaurant-quality recipe.</p>
+</div>
+<div class="main">
+  <div class="card" id="inputArea">
+    <label>🥕 Ingredients You Have (optional)</label>
+    <textarea id="ingredients" placeholder="e.g. chicken breast, garlic, lemon, spinach, pasta&#10;Or leave blank and specify a dish type below"></textarea>
+
+    <div class="grid-3">
+      <div>
+        <label>Cuisine</label>
+        <select id="cuisine">
+          <option value="any">🌍 Surprise Me</option>
+          <option value="italian">🇮🇹 Italian</option>
+          <option value="asian">🍜 Asian Fusion</option>
+          <option value="mexican">🇲🇽 Mexican</option>
+          <option value="mediterranean">🫒 Mediterranean</option>
+          <option value="american">🇺🇸 American</option>
+          <option value="indian">🇮🇳 Indian</option>
+          <option value="french">🇫🇷 French</option>
+          <option value="japanese">🇯🇵 Japanese</option>
+          <option value="middleeastern">🥙 Middle Eastern</option>
+        </select>
+      </div>
+      <div>
+        <label>Meal Type</label>
+        <select id="mealType">
+          <option value="dinner" selected>🌙 Dinner</option>
+          <option value="lunch">☀️ Lunch</option>
+          <option value="breakfast">🌅 Breakfast</option>
+          <option value="snack">🍎 Snack</option>
+          <option value="dessert">🍰 Dessert</option>
+          <option value="drink">🥤 Drink / Smoothie</option>
+        </select>
+      </div>
+      <div>
+        <label>Cook Time</label>
+        <select id="cookTime">
+          <option value="15">⚡ 15 min (quick)</option>
+          <option value="30" selected>🕐 30 min</option>
+          <option value="45">🕐 45 min</option>
+          <option value="60">🕑 1 hour</option>
+          <option value="90">🕑 1.5 hours</option>
+        </select>
+      </div>
+    </div>
+
+    <div style="margin-top:14px;">
+      <label>Diet Restrictions</label>
+      <div class="tags" id="dietTags">
+        <span class="tag active" data-v="none">Any / No Restrictions</span>
+        <span class="tag" data-v="vegetarian">Vegetarian</span>
+        <span class="tag" data-v="vegan">Vegan</span>
+        <span class="tag" data-v="gluten-free">Gluten-Free</span>
+        <span class="tag" data-v="dairy-free">Dairy-Free</span>
+        <span class="tag" data-v="keto">Keto</span>
+        <span class="tag" data-v="paleo">Paleo</span>
+        <span class="tag" data-v="low-carb">Low-Carb</span>
+      </div>
+    </div>
+    <div class="actions">
+      <button class="btn btn-gold" onclick="generateRecipe()">🍳 Generate Recipe</button>
+      <button class="btn btn-outline" onclick="loadRandom()">🎲 Random Recipe</button>
+    </div>
+  </div>
+
+  <div class="card" id="recipeArea">
+    <div class="recipe-hero">
+      <div class="recipe-name" id="recipeName"></div>
+      <div class="recipe-desc" id="recipeDesc"></div>
+      <div class="recipe-meta" id="recipeMeta"></div>
+    </div>
+
+    <div style="display:flex;justify-content:flex-end;gap:8px;margin-bottom:16px;flex-wrap:wrap;">
+      <button class="btn btn-outline" onclick="generateRecipe()" style="padding:7px 14px;font-size:12px;">🔀 New Recipe</button>
+      <button class="btn btn-gold" onclick="printRecipe()" style="padding:7px 14px;font-size:12px;">🖨 Print / Save</button>
+    </div>
+
+    <section-hdr>🛒 Ingredients <span style="font-size:11px;color:rgba(245,240,232,.4);">(click to check off)</span></section-hdr>
+    <ul class="ingredient-list" id="ingredientList"></ul>
+
+    <section-hdr>👨‍🍳 Instructions</section-hdr>
+    <ol class="steps-list" id="stepsList"></ol>
+
+    <section-hdr>📊 Nutrition (per serving)</section-hdr>
+    <div class="nut-grid" id="nutGrid"></div>
+
+    <section-hdr>🍽 You Might Also Like</section-hdr>
+    <div class="similar-row" id="similarRow"></div>
+  </div>
+
+  <div class="waitlist">
+    <h3>🍳 Personalized Meal Planning</h3>
+    <p>Join for weekly recipe recommendations based on your pantry, dietary goals, and taste history.</p>
+    <div class="wl-form">
+      <input type="email" id="wlEmail" placeholder="your@email.com">
+      <button class="btn btn-gold" onclick="joinWaitlist()">Join Waitlist</button>
+    </div>
+    <div class="wl-success" id="wlSuccess">✓ You're on the list!</div>
+  </div>
+</div>
+
+<script src="_abuz8-live-brain.js" defer></script>
+<script>
+document.querySelectorAll('#dietTags .tag').forEach(t => {
+  t.addEventListener('click', () => {
+    document.querySelectorAll('#dietTags .tag').forEach(x=>x.classList.remove('active'));
+    t.classList.add('active');
+  });
+});
+
+const RECIPES = {
+  italian: {
+    dinner: [
+      {name:'Lemon Garlic Pasta al Limone',desc:'A bright, creamy pasta dish from Southern Italy — tangy lemon, sharp Parmigiano, and a silky sauce that comes together in minutes.',time:25,servings:2,cal:520,protein:18,carbs:72,fat:20,fiber:4,
+       ingredients:['200g spaghetti or linguine','2 lemons (juice + zest)','80g Parmigiano-Reggiano, finely grated','3 tbsp extra-virgin olive oil','2 garlic cloves, minced','1 tsp black pepper','Salt to taste','Fresh basil leaves'],
+       steps:['Cook pasta in heavily salted boiling water until al dente. Reserve 1 cup pasta water before draining.','In a large bowl, whisk together lemon juice, zest, grated Parmigiano, and olive oil until combined.','Add the drained pasta directly to the bowl and toss vigorously, adding pasta water a splash at a time to create a creamy emulsified sauce.','Season generously with black pepper and salt. Garnish with extra Parmigiano and fresh basil.','Serve immediately — this dish waits for no one.'],
+       similar:['Cacio e Pepe','Pasta Primavera','Aglio e Olio']},
+      {name:'Chicken Piccata',desc:'Pan-seared chicken in a bright caper-lemon butter sauce. A classic Italian-American dish that feels restaurant-worthy in 30 minutes.',time:30,servings:2,cal:480,protein:38,carbs:12,fat:28,fiber:1,
+       ingredients:['2 chicken breasts, butterflied','1/2 cup flour for dredging','3 tbsp butter','2 tbsp olive oil','3 garlic cloves, sliced','1/2 cup white wine','1/2 cup chicken stock','3 tbsp capers','2 lemons (juice)','Fresh parsley, chopped','Salt and pepper'],
+       steps:['Season chicken, dredge in flour, shake off excess.','Heat olive oil in skillet over medium-high. Cook chicken 4 min per side until golden. Remove and set aside.','In same pan, sauté garlic 30 seconds. Add white wine, scrape up the browned bits.','Add stock, lemon juice, and capers. Simmer 3 minutes.','Swirl in butter off heat. Return chicken to sauce. Garnish with parsley.'],
+       similar:['Chicken Marsala','Saltimbocca','Chicken Francese']}
+    ],
+    dessert: [
+      {name:'Classic Tiramisù',desc:'The definitive Italian dessert — espresso-soaked ladyfingers layered with mascarpone cream and dusted with bitter cocoa.',time:30,servings:6,cal:420,protein:8,carbs:45,fat:22,fiber:1,
+       ingredients:['300g mascarpone','3 eggs, separated','90g caster sugar','200ml strong espresso, cooled','30ml coffee liqueur (optional)','200g savoiardi (ladyfingers)','2 tbsp unsweetened cocoa powder'],
+       steps:['Whisk egg yolks with sugar until pale and thick. Fold in mascarpone until smooth.','Beat egg whites to stiff peaks. Gently fold into mascarpone mixture.','Mix espresso with liqueur in a shallow bowl. Briefly dip each ladyfinger and layer in a dish.','Spread half the mascarpone cream over the ladyfinger layer. Repeat.','Dust generously with cocoa powder. Refrigerate at least 4 hours (overnight is best).'],
+       similar:['Panna Cotta','Cannoli','Zuppa Inglese']}
+    ]
+  },
+  asian: {
+    dinner: [
+      {name:'Spicy Korean Tofu Stew (Sundubu Jjigae)',desc:'A bubbling, fiery tofu stew with mushrooms and silken tofu — one of Korea\'s most soul-warming dishes, ready in 25 minutes.',time:25,servings:2,cal:280,protein:16,carbs:18,fat:12,fiber:5,
+       ingredients:['400g silken tofu','100g shiitake mushrooms, sliced','1/2 onion, diced','3 garlic cloves, minced','2 tbsp gochugaru (Korean chili flakes)','1 tbsp soy sauce','1 tsp sesame oil','500ml anchovy stock or vegetable broth','2 eggs','Green onions to garnish','Salt to taste'],
+       steps:['In a stone pot or deep pan, sauté onion and garlic in sesame oil until softened.','Add gochugaru and stir 1 minute until fragrant.','Pour in stock, soy sauce, and add mushrooms. Simmer 5 minutes.','Carefully add silken tofu in large chunks — do not stir aggressively.','Crack eggs directly into the stew. Cover and cook 2-3 minutes until whites are just set.','Garnish with green onions and serve immediately with steamed rice.'],
+       similar:['Kimchi Jjigae','Doenjang Guk','Gyoza Soup']}
+    ],
+    lunch: [
+      {name:'Sesame Ginger Noodle Bowl',desc:'Cold noodles tossed in a nutty sesame-ginger sauce with crisp vegetables — the perfect lunch that\'s better the next day too.',time:20,servings:2,cal:450,protein:14,carbs:65,fat:16,fiber:6,
+       ingredients:['200g soba or ramen noodles','3 tbsp tahini or peanut butter','2 tbsp soy sauce','1 tbsp rice vinegar','1 tbsp sesame oil','1 tsp fresh ginger, grated','1 tsp honey','1 cucumber, julienned','2 carrots, julienned','4 green onions, sliced','Sesame seeds, chili flakes to garnish'],
+       steps:['Cook noodles per package. Rinse under cold water, drain well.','Whisk together tahini, soy sauce, rice vinegar, sesame oil, ginger, and honey. Add water to thin if needed.','Toss noodles with sauce until evenly coated.','Top with cucumber, carrots, and green onions.','Sprinkle with sesame seeds and chili flakes. Serve immediately or chill for 30 minutes.'],
+       similar:['Pad Thai','Dan Dan Noodles','Japchae']}
+    ]
+  },
+  mediterranean: {
+    dinner: [
+      {name:'Baked Lemon Herb Salmon with Orzo',desc:'Flaky oven-baked salmon over herby orzo with olives, tomatoes, and capers — a complete Mediterranean meal in one pan.',time:35,servings:2,cal:580,protein:42,carbs:55,fat:18,fiber:4,
+       ingredients:['2 salmon fillets (180g each)','200g orzo pasta','1 cup cherry tomatoes, halved','1/2 cup Kalamata olives','2 tbsp capers','3 garlic cloves, minced','1 lemon (juice + zest)','3 tbsp olive oil','Fresh dill, parsley','Salt, pepper, dried oregano'],
+       steps:['Preheat oven to 200°C/400°F. Cook orzo until just under al dente, drain.','Toss orzo with olive oil, garlic, tomatoes, olives, capers, lemon zest, and herbs in a baking dish.','Place salmon on top. Drizzle with remaining olive oil and lemon juice. Season generously.','Bake 15-18 minutes until salmon flakes easily. Finish under broiler for 2 minutes for color.','Rest 5 minutes before serving directly from the baking dish.'],
+       similar:['Greek Baked Fish (Psari Plaki)','Shakshuka','Spanakopita']}
+    ]
+  }
+};
+
+const RANDOM_RECIPES = [
+  {name:'Garlic Butter Steak with Roasted Veg',cuisine:'american',time:35,servings:2,cal:620,protein:45,carbs:25,fat:38,fiber:6,
+   ingredients:['2 ribeye or NY strip steaks','4 tbsp butter','4 garlic cloves, smashed','Fresh thyme + rosemary','1 head broccoli, florets','2 bell peppers, sliced','Salt and coarse black pepper','1 tbsp olive oil'],
+   steps:['Bring steaks to room temperature 30 min before cooking. Pat dry and season aggressively with salt and pepper.','Toss veg with olive oil, salt, and pepper. Roast at 220°C/425°F for 20-25 minutes.','Heat cast iron over high heat until smoking. Sear steaks 3-4 minutes per side.','Add butter, garlic, and herbs. Baste continuously for 2 minutes.','Rest steak 5-8 minutes before cutting. Slice against the grain. Serve with roasted veg.'],
+   desc:'A proper restaurant-quality steak at home — crusty exterior, buttery interior, served alongside golden roasted vegetables.',similar:['Surf and Turf','Beef Tenderloin','Lamb Chops']},
+  {name:'Shakshuka with Feta',cuisine:'middleeastern',time:25,servings:2,cal:320,protein:18,carbs:22,fat:18,fiber:6,
+   ingredients:['1 can (400g) crushed tomatoes','2 red bell peppers, diced','1 onion, diced','4 garlic cloves, minced','1 tsp cumin, 1 tsp paprika, 1/2 tsp cayenne','4 eggs','80g feta cheese, crumbled','Fresh parsley','Olive oil, salt, pepper','Crusty bread to serve'],
+   steps:['Sauté onion and peppers in olive oil over medium heat for 8 minutes until soft.','Add garlic and spices. Cook 2 minutes until fragrant.','Pour in crushed tomatoes. Season and simmer 10 minutes until slightly reduced.','Make wells in the sauce. Crack one egg into each well. Cover and cook 5-7 minutes until whites are set.','Top with crumbled feta and fresh parsley. Serve directly from the pan with crusty bread.'],
+   desc:'The iconic Middle Eastern egg dish in a spiced tomato sauce — a one-pan wonder that works for breakfast, lunch, or dinner.',similar:['Turkish Eggs (Çılbır)','Eggs in Purgatory','Huevos Rancheros']},
+];
+
+let currentRecipe = null;
+
+function generateRecipe() {
+  const ingr = document.getElementById('ingredients').value.trim();
+  const cuisine = document.getElementById('cuisine').value;
+  const mealType = document.getElementById('mealType').value;
+  const cookTime = parseInt(document.getElementById('cookTime').value);
+  const diet = document.querySelector('#dietTags .tag.active')?.dataset.v || 'none';
+
+  const btn = document.querySelector('.btn-gold');
+  btn.textContent = '🍳 Generating...'; btn.disabled=true;
+
+  // Show the recipe area with a loading state in the dedicated AI output target.
+  const area = document.getElementById('recipeArea');
+  area.style.display = 'block';
+  area.scrollIntoView({behavior:'smooth',block:'start'});
+  const out = ensureRecipeOutput();
+  out.innerHTML = '<div style="text-align:center;color:rgba(245,240,232,.5);padding:48px 20px;">🍳 Cooking up your recipe with AI…</div>';
+
+  // Real AI generation via the ABUZ8 brain (Cloudflare Workers AI). No templates.
+  fetch('/api/waitlist', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      tool: 'recipe-generator',
+      data: {
+        ingredients: ingr,
+        cuisine: cuisine,
+        mealType: mealType,
+        cookTimeMinutes: cookTime,
+        diet: diet,
+        format: 'Return one complete recipe as clean HTML: recipe name in an <h2>, a short description, total time / servings / calories, an <h3>Ingredients</h3> with a <ul> list, an <h3>Instructions</h3> with an <ol> list of steps, and an <h3>Nutrition</h3> note per serving.'
+      }
+    })
+  })
+  .then(r => r.json())
+  .then(res => {
+    if (!res.success || !res.result) throw new Error(res.error || 'Generation failed');
+    btn.textContent = '🍳 Generate Recipe'; btn.disabled=false;
+    currentRecipe = res.result;
+    out.innerHTML = ABUZ8md(res.result);
+  })
+  .catch(err => {
+    btn.textContent = '🍳 Generate Recipe'; btn.disabled=false;
+    out.innerHTML = '<div style="text-align:center;color:#e05555;padding:48px 20px;">Generation failed. Please try again in a moment.</div>';
+    alert('Generation failed: ' + err.message + '. Please try again in a moment.');
+  });
+}
+
+// Hides the legacy fixed recipe structure and returns a single AI output target
+// inside the recipe card (created once), preserving the action buttons.
+function ensureRecipeOutput() {
+  let out = document.getElementById('recipeAiOutput');
+  if (!out) {
+    document.querySelectorAll('#recipeArea .recipe-hero, #recipeArea section-hdr, #recipeArea .ingredient-list, #recipeArea .steps-list, #recipeArea .nut-grid, #recipeArea .similar-row').forEach(el => el.style.display = 'none');
+    out = document.createElement('div');
+    out.id = 'recipeAiOutput';
+    out.style.cssText = 'font-size:14px;line-height:1.8;color:var(--cream);';
+    document.getElementById('recipeArea').appendChild(out);
+  }
+  return out;
+}
+
+function findBestRecipe(cuisine, mealType, cookTime, diet, ingr) {
+  // Try to find matching recipe
+  const cuisineData = RECIPES[cuisine];
+  if(cuisineData) {
+    const meal = cuisineData[mealType] || cuisineData.dinner || Object.values(cuisineData)[0];
+    if(meal && meal.length) return meal[Math.floor(Math.random()*meal.length)];
+  }
+  // Fall back to random
+  return RANDOM_RECIPES[Math.floor(Math.random()*RANDOM_RECIPES.length)];
+}
+
+function loadRandom() {
+  // Surprise me: clear ingredients, randomize cuisine, and let the AI brain generate.
+  document.getElementById('ingredients').value = '';
+  const cuisines = ['any','italian','asian','mexican','mediterranean','american','indian','french','japanese','middleeastern'];
+  document.getElementById('cuisine').value = cuisines[Math.floor(Math.random()*cuisines.length)];
+  generateRecipe();
+}
+
+function renderRecipe(r) {
+  document.getElementById('recipeName').textContent = r.name;
+  document.getElementById('recipeDesc').textContent = r.desc;
+  document.getElementById('recipeMeta').innerHTML = [
+    {val:r.time+' min',lbl:'Total Time'},
+    {val:r.servings,lbl:'Servings'},
+    {val:r.cal+' kcal',lbl:'Per Serving'},
+    {val:r.protein+'g',lbl:'Protein'},
+  ].map(m=>`<div class="meta-item"><div class="meta-val">${m.val}</div><div class="meta-lbl">${m.lbl}</div></div>`).join('');
+
+  document.getElementById('ingredientList').innerHTML = r.ingredients.map(i=>`
+    <li onclick="this.classList.toggle('checked')">${i}</li>`).join('');
+
+  document.getElementById('stepsList').innerHTML = r.steps.map(s=>`
+    <li onclick="this.classList.toggle('done')">${s}</li>`).join('');
+
+  document.getElementById('nutGrid').innerHTML = [
+    {v:r.cal,l:'Calories'},{v:r.protein+'g',l:'Protein'},{v:r.carbs+'g',l:'Carbs'},{v:r.fat+'g',l:'Fat'},{v:r.fiber+'g',l:'Fiber'}
+  ].map(n=>`<div class="nut-box"><div class="nut-val">${n.v}</div><div class="nut-lbl">${n.l}</div></div>`).join('');
+
+  document.getElementById('similarRow').innerHTML = (r.similar||[]).map(name=>`
+    <div class="similar-card" onclick="searchRecipe('${name}')">
+      <div class="name">${name}</div>
+      <div class="meta">Similar recipe →</div>
+    </div>`).join('');
+
+  document.getElementById('recipeArea').style.display='block';
+  document.getElementById('recipeArea').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function searchRecipe(name) {
+  document.getElementById('ingredients').value = name;
+  generateRecipe();
+}
+
+function printRecipe() {
+  if(!currentRecipe) return;
+  const w = window.open('','_blank');
+  w.document.write(`<html><head><title>Recipe</title><style>body{font-family:serif;max-width:600px;margin:40px auto;} h1,h2{color:#c9a84c;} h2,h3{border-bottom:1px solid #ddd;padding-bottom:6px;margin-top:24px;} li{margin:8px 0;line-height:1.6;}</style></head><body>
+  ${currentRecipe}
+  <script src="/assets/js/abuz8-intent.js" defer><\/script>
+<script src="/tools/_tools-shared.js" defer><\/script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body></html>`);
+  w.print();
+}
+
+function joinWaitlist() {
+  const email = document.getElementById('wlEmail').value.trim();
+  if(!email||!email.includes('@')) { alert('Please enter a valid email.'); return; }
+  fetch('/api/waitlist',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,product:'ai-recipe-generator',ts:Date.now()})}).catch(()=>{});
+  document.getElementById('wlEmail').value='';
+  document.querySelector('.wl-form').style.display='none';
+  document.getElementById('wlSuccess').style.display='block';
+}
+</script>
+<script src="/tools/_abuz8-md.js"></script>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+<script src="/tools/_tools-shared.js" defer></script>
+</body>
+</html>
+

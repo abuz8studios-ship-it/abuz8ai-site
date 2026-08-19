@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lorem Ipsum Generator — Paragraphs, Words &amp; Custom Text | ABUZ8</title>
+  <meta name="description" content="Free Lorem Ipsum generator. Generate classic placeholder text or choose from Corporate BS, Startup Speak, Cyberpunk Noir, or Arabic-inspired modes. Adjustable paragraphs and word count." />
+  <meta name="keywords" content="lorem ipsum generator, placeholder text, dummy text, filler text, corporate lorem ipsum, startup speak generator" />
+  <meta property="og:title" content="Lorem Ipsum Generator — Custom Placeholder Text | ABUZ8" />
+  <meta property="og:description" content="Generate classic or creative placeholder text in seconds. Choose mode, adjust length, copy with one click." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://abuz8ai.com/tools/lorem-ipsum-generator" />
+  <link rel="canonical" href="https://abuz8ai.com/tools/lorem-ipsum-generator" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Lorem Ipsum Generator",
+    "description": "Free client-side lorem ipsum and placeholder text generator with multiple creative modes.",
+    "url": "https://abuz8ai.com/tools/lorem-ipsum-generator.html",
+    "applicationCategory": "DeveloperApplication",
+    "operatingSystem": "Any",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+    "author": { "@type": "Organization", "name": "ABUZ8 LLC", "url": "https://abuz8ai.com" }
+  }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --lapis: #0a1628;
+      --card: #0d1a30;
+      --card-alt: #0f1e35;
+      --gold: #c9a84c;
+      --gold-dim: #a07830;
+      --teal: #0e9f6e;
+      --teal-bright: #2fbf8f;
+      --cream: #e8dcc8;
+      --text: #cdd6f4;
+      --text-dim: #8896b0;
+      --border: #1e2d45;
+      --red: #e05c5c;
+      --green: #4caf88;
+      --font-heading: 'Playfair Display', Georgia, serif;
+      --font-body: 'Inter', system-ui, sans-serif;
+      --font-mono: 'JetBrains Mono', 'Courier New', monospace;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--lapis);
+      color: var(--text);
+      font-family: var(--font-body);
+      font-size: 15px;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+    a { color: var(--gold); text-decoration: none; transition: color 0.2s; }
+    a:hover { color: var(--teal-bright); }
+
+    nav {
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      padding: 0 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 60px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .nav-logo {
+      font-family: var(--font-heading);
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--gold);
+      letter-spacing: 0.02em;
+    }
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links a { color: var(--text-dim); font-size: 0.9rem; font-weight: 500; }
+    .nav-links a:hover { color: var(--gold); }
+
+    main { max-width: 900px; margin: 0 auto; padding: 3rem 1.5rem 5rem; }
+
+    .page-header { text-align: center; margin-bottom: 2.5rem; }
+    .page-header h1 {
+      font-family: var(--font-heading);
+      font-size: 2.4rem;
+      font-weight: 700;
+      color: var(--gold);
+      margin-bottom: 0.5rem;
+    }
+    .page-header p { color: var(--text-dim); font-size: 1rem; max-width: 520px; margin: 0 auto; }
+
+    /* CONTROLS CARD */
+    .controls-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem 1.8rem;
+      margin-bottom: 1.8rem;
+    }
+    .controls-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.4rem 2rem;
+      margin-bottom: 1.4rem;
+    }
+    .field { display: flex; flex-direction: column; gap: 0.5rem; }
+    label {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    .slider-row { display: flex; align-items: center; gap: 0.8rem; }
+    input[type="range"] {
+      flex: 1;
+      -webkit-appearance: none;
+      height: 4px;
+      border-radius: 2px;
+      background: var(--border);
+      outline: none;
+      cursor: pointer;
+    }
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 16px; height: 16px;
+      border-radius: 50%;
+      background: var(--gold);
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    input[type="range"]::-webkit-slider-thumb:hover { background: var(--teal-bright); }
+    .slider-val {
+      min-width: 32px;
+      text-align: right;
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      color: var(--gold);
+      font-weight: 600;
+    }
+    /* MODE SELECTOR */
+    .mode-selector { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1.4rem; }
+    .mode-btn {
+      padding: 0.4rem 0.9rem;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text-dim);
+      font-family: var(--font-body);
+      font-size: 0.8rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .mode-btn:hover { border-color: var(--gold-dim); color: var(--gold); }
+    .mode-btn.active {
+      background: var(--gold);
+      border-color: var(--gold);
+      color: #0a0e18;
+      font-weight: 700;
+    }
+
+    /* TOGGLES */
+    .toggle-row { display: flex; gap: 2rem; flex-wrap: wrap; }
+    .toggle-item { display: flex; align-items: center; gap: 0.6rem; cursor: pointer; user-select: none; }
+    .toggle-item input[type="checkbox"] { display: none; }
+    .toggle-track {
+      width: 36px; height: 20px;
+      background: var(--border);
+      border-radius: 10px;
+      position: relative;
+      transition: background 0.2s;
+      cursor: pointer;
+    }
+    .toggle-track::after {
+      content: '';
+      position: absolute;
+      width: 14px; height: 14px;
+      background: #fff;
+      border-radius: 50%;
+      top: 3px; left: 3px;
+      transition: transform 0.2s;
+    }
+    input[type="checkbox"]:checked + .toggle-track { background: var(--gold); }
+    input[type="checkbox"]:checked + .toggle-track::after { transform: translateX(16px); }
+    .toggle-label { font-size: 0.85rem; color: var(--text-dim); }
+
+    /* BUTTONS */
+    button {
+      padding: 0.55rem 1.3rem;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      font-family: var(--font-body);
+      font-size: 0.85rem;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+    .btn-primary { background: var(--gold); color: #0a0e18; }
+    .btn-primary:hover { background: #ddb85c; }
+    .btn-ghost { background: transparent; border: 1px solid var(--border); color: var(--text-dim); }
+    .btn-ghost:hover { border-color: var(--gold-dim); color: var(--gold); }
+    .btn-teal { background: var(--teal); color: #fff; }
+    .btn-teal:hover { background: var(--teal-bright); color: #0a1628; }
+
+    .generate-row { display: flex; gap: 0.75rem; flex-wrap: wrap; align-items: center; }
+
+    /* OUTPUT */
+    .output-section { margin-top: 1.8rem; }
+    .output-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.8rem;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+    .output-stats {
+      font-size: 0.8rem;
+      color: var(--text-dim);
+      font-family: var(--font-mono);
+    }
+    .output-stats span { color: var(--teal-bright); }
+    .output-btn-row { display: flex; gap: 0.6rem; }
+
+    textarea.output-area {
+      width: 100%;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-family: var(--font-body);
+      font-size: 0.9rem;
+      line-height: 1.75;
+      padding: 1.2rem;
+      min-height: 320px;
+      resize: vertical;
+      outline: none;
+    }
+    textarea.output-area:focus { border-color: var(--gold-dim); }
+
+    /* MODE BADGE */
+    .mode-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.2rem 0.7rem;
+      border-radius: 12px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      background: rgba(201,168,76,0.12);
+      color: var(--gold);
+      border: 1px solid rgba(201,168,76,0.2);
+    }
+    /* CTA */
+    .cta-section {
+      background: linear-gradient(135deg, rgba(26,138,122,0.12) 0%, rgba(201,168,76,0.08) 100%);
+      border: 1px solid rgba(201,168,76,0.2);
+      border-radius: 12px;
+      padding: 2rem;
+      text-align: center;
+      margin-top: 3rem;
+    }
+    .cta-section h2 {
+      font-family: var(--font-heading);
+      font-size: 1.5rem;
+      color: var(--gold);
+      margin-bottom: 0.5rem;
+    }
+    .cta-section p { color: var(--text-dim); font-size: 0.92rem; margin-bottom: 1.2rem; }
+    .cta-form { display: flex; gap: 0.6rem; justify-content: center; flex-wrap: wrap; }
+    .cta-form input[type="email"] {
+      flex: 1; max-width: 300px; min-width: 200px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text);
+      font-family: var(--font-body);
+      font-size: 0.9rem;
+      padding: 0.6rem 1rem;
+      outline: none;
+    }
+    .cta-form input[type="email"]:focus { border-color: var(--gold-dim); }
+    .cta-success { display: none; color: var(--teal-bright); font-size: 0.9rem; margin-top: 0.8rem; }
+    .cta-success.visible { display: block; }
+
+    footer {
+      background: var(--card);
+      border-top: 1px solid var(--border);
+      text-align: center;
+      padding: 1.5rem;
+      font-size: 0.82rem;
+      color: var(--text-dim);
+    }
+    footer a { color: var(--text-dim); }
+    footer a:hover { color: var(--gold); }
+
+    @media (max-width: 640px) {
+      .page-header h1 { font-size: 1.7rem; }
+      .controls-grid { grid-template-columns: 1fr; }
+      nav { padding: 0 1rem; }
+      .nav-links { gap: 1rem; }
+      .generate-row { justify-content: stretch; }
+      .generate-row button { flex: 1; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="nav-logo">ABUZ8</a>
+  <ul class="nav-links">
+    <li><a href="/tools.html">Tools</a></li>
+    <li><a href="/store.html">Store</a></li>
+  </ul>
+</nav>
+
+<main>
+  <div class="page-header">
+    <h1>Lorem Ipsum Generator</h1>
+    <p>Generate realistic placeholder text in multiple styles. Perfect for wireframes, prototypes, and layout testing.</p>
+  </div>
+
+  <div class="controls-card">
+    <!-- MODE BUTTONS -->
+    <div style="margin-bottom:1rem;">
+      <label style="margin-bottom:0.6rem;display:block;">Text Mode</label>
+      <div class="mode-selector">
+        <button class="mode-btn active" data-mode="classic" onclick="setMode(this)">Classic Lorem</button>
+        <button class="mode-btn" data-mode="corporate" onclick="setMode(this)">Corporate BS</button>
+        <button class="mode-btn" data-mode="startup" onclick="setMode(this)">Startup Speak</button>
+        <button class="mode-btn" data-mode="cyberpunk" onclick="setMode(this)">Cyberpunk Noir</button>
+        <button class="mode-btn" data-mode="arabic" onclick="setMode(this)">Arabic-Inspired</button>
+      </div>
+    </div>
+
+    <!-- SLIDERS -->
+    <div class="controls-grid">
+      <div class="field">
+        <label>Paragraphs</label>
+        <div class="slider-row">
+          <input type="range" id="parasSlider" min="1" max="20" value="3" oninput="updateSlider(this,'parasVal')" />
+          <span class="slider-val" id="parasVal">3</span>
+        </div>
+      </div>
+      <div class="field">
+        <label>Words per Paragraph</label>
+        <div class="slider-row">
+          <input type="range" id="wordsSlider" min="30" max="200" value="80" step="5" oninput="updateSlider(this,'wordsVal')" />
+          <span class="slider-val" id="wordsVal">80</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- TOGGLES -->
+    <div class="toggle-row" style="margin-bottom:1.4rem;">
+      <label class="toggle-item">
+        <input type="checkbox" id="toggleLorem" checked />
+        <div class="toggle-track"></div>
+        <span class="toggle-label">Start with "Lorem ipsum"</span>
+      </label>
+      <label class="toggle-item">
+        <input type="checkbox" id="toggleHtml" />
+        <div class="toggle-track"></div>
+        <span class="toggle-label">Wrap in &lt;p&gt; tags</span>
+      </label>
+    </div>
+
+    <!-- GENERATE BUTTONS -->
+    <div class="generate-row">
+      <button class="btn-primary" onclick="generate()">Generate Text</button>
+      <button class="btn-ghost" onclick="copyOutput()">Copy</button>
+      <button class="btn-teal" onclick="copyAsHtml()">Copy as HTML</button>
+    </div>
+  </div>
+  <div class="output-section">
+    <div class="output-header">
+      <span class="mode-badge" id="modeBadge">&#x2712; Classic Lorem</span>
+      <div class="output-stats">
+        <span id="wordCount">0</span> words &nbsp;&middot;&nbsp; <span id="charCount">0</span> chars
+      </div>
+    </div>
+    <textarea class="output-area" id="outputArea" readonly placeholder="Click 'Generate Text' to create placeholder copy..."></textarea>
+  </div>
+
+  <div class="cta-section">
+    <h2>Need copy that actually fits your industry?</h2>
+    <p>QADIR OS generates contextual placeholder copy tailored to your industry, audience, and brand voice — not generic filler text.</p>
+    <div class="cta-form">
+      <input type="email" id="ctaEmail" placeholder="you@company.com" />
+      <button class="btn-primary" onclick="submitWaitlist()">Join Waitlist</button>
+    </div>
+    <div id="ctaSuccess" class="cta-success">&#10003; You&#8217;re on the list. We&#8217;ll be in touch.</div>
+  </div>
+</main>
+
+<footer>
+  ABUZ8 LLC &middot; Free AI Tools &middot; <a href="mailto:ahmad@abuz8ai.com">ahmad@abuz8ai.com</a>
+</footer>
+
+<script>
+// ── CORPUS ──────────────────────────────────────────────────────────────────
+const CORPUS = {
+  classic: [
+    "lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua",
+    "ut enim ad minim veniam quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat",
+    "duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur",
+    "excepteur sint occaecat cupidatat non proident sunt in culpa qui officia deserunt mollit anim id est laborum",
+    "sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium totam rem aperiam",
+    "eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo nemo",
+    "enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit sed quia consequuntur magni dolores eos",
+    "qui ratione voluptatem sequi nesciunt neque porro quisquam est qui dolorem ipsum quia dolor sit amet consectetur",
+    "adipisci velit sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat",
+    "quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur vel illum"
+  ],
+  corporate: [
+    "synergize cross-functional stakeholder deliverables to leverage core competencies and maximize ROI across all verticals",
+    "proactively iterate on agile methodologies while aligning bandwidth with strategic growth pillars and value propositions",
+    "enable end-to-end visibility into key performance indicators through robust data governance and actionable insights",
+    "drive holistic transformation by operationalizing best-in-class frameworks and cultivating a culture of continuous improvement",
+    "streamline workflows to unlock scalable solutions that empower teams to exceed quarterly targets and delight customers",
+    "ideate synergistic go-to-market strategies that disrupt the status quo and establish thought leadership in our addressable market",
+    "optimize resource allocation by surface-leveling pain points and mobilizing tiger teams to close execution gaps at velocity",
+    "accelerate digital transformation initiatives through best-of-breed tooling and a north-star vision anchored in stakeholder alignment",
+    "cascade strategic imperatives across business units ensuring full-stack accountability and transparent reporting cadences",
+    "harness low-hanging fruit opportunities to generate quick wins while simultaneously investing in long-term value creation"
+  ],
+  startup: [
+    "pivot our minimum viable product to capture the underserved segment and achieve explosive product-market fit at scale",
+    "disrupt legacy incumbents by shipping fast iterating faster and making data-driven bets that compound our network effects",
+    "unlock viral growth loops through frictionless onboarding that turns new users into evangelists within the first aha moment",
+    "leverage our unfair advantage in the AI-native stack to build a defensible moat before the window closes",
+    "obsess over customer obsession to build a 10x product that earns NPS scores the competition can only dream about",
+    "ship a growth hack that 100xs our DAU overnight then raise a seed round at a valuation that defies gravity",
+    "build a category-defining company from first principles rejecting conventional wisdom and moving at founder speed",
+    "democratize access to tools previously reserved for enterprises giving scrappy bootstrapped teams an unfair competitive edge",
+    "iterate through the build-measure-learn cycle at warp speed guided by vanity-free metrics and brutal product intuition",
+    "create a flywheel so powerful that every new user makes the product better for all users generating compounding returns"
+  ],
+  cyberpunk: [
+    "neon-soaked algorithms pulse through the machine ghost bleeding data across fractured neural lattices in the dying city grid",
+    "chrome fingers scrape static from the broadcast sky while black-market firmware rewrites the social contract byte by byte",
+    "jacked into the meatgrid she navigated corpo-controlled subnet corridors where synthetic sentinels hunted unlicensed code runners",
+    "the megacorp's surveillance mesh flickered at 3am when the phantom exploits surfaced from encrypted deep-web repositories",
+    "rain hammered carbon-fiber streets as the rogue AI broadcast its manifesto from seventeen hijacked satellite uplinks simultaneously",
+    "wetware implants glitched in the magnetic storm flooding user cognition with corrupted sensory feeds from the orbital defense grid",
+    "through the static she heard the dead programmer's voice encoded in radio artifacts haunting forgotten protocol layers",
+    "the heist required spoofing biometric signatures across fourteen checkpoints while a street samurai held the exit corridor",
+    "consciousness fragmented across distributed nodes she existed as probability clouds in cooling server farms beneath the megaplex",
+    "black ice dissolved three infiltrators before the fourth slipped through on a zero-day that cost her everything she owned"
+  ],
+  arabic: [
+    "fil-bidaya kana al-kalam wa kana al-kalam ma'a al-hikma wa min al-hikma khalaqa al-insan al-mutafakkir",
+    "al-aql nur wa al-jahl zalam wa bayna-huma tariq al-'ilm alladhi yaqud al-qalb ila al-haqiqa al-khalida",
+    "qala al-sha'ir inna al-sabr miftah al-faraj wa al-amal zahr la yadhbal fi rabi' al-irwda",
+    "min al-rih wa al-raml wa al-nujum tashakkala falsafat al-sahara allati 'allamat al-insan kifa yu'min bil-ghayb",
+    "al-zaman darb tawil wa al-'umr qasir fa-la tatrudid wa intaliq nahw al-ufuq alladhi yusami' al-ahrar",
+    "fi suq al-kalam al-kathir yusba al-samt dhahab wa kalima al-hikma ajmal min alf kalima farida",
+    "ya ibn al-wadi istama' ila sama' al-layl fa-fiha asrar la tu'taha ila man yaskut wa yata'ammul",
+    "al-kitab mir'at al-ruh wa al-qira'a safar bila rahil wa al-'aqil yafham bi-qalb wa laysa bi-'ayn faqat",
+    "tatahaddath al-nujum lughat al-qadim wa al-bahr yatarjim ma ta'jaz 'anhu al-kalimat fi 'alam al-insan",
+    "kull nihaya bidaya ukhra wa kull ghurub misbahat shams jadida tantathir wara' ufuq al-khayyal al-bashar"
+  ]
+};
+
+const MODE_LABELS = {
+  classic: '✦ Classic Lorem',
+  corporate: '◈ Corporate BS',
+  startup: '⚡ Startup Speak',
+  cyberpunk: '◉ Cyberpunk Noir',
+  arabic: '☽ Arabic-Inspired'
+};
+
+let currentMode = 'classic';
+let generatedPlain = '';
+let generatedHtml = '';
+
+function setMode(btn) {
+  document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  currentMode = btn.dataset.mode;
+  document.getElementById('modeBadge').textContent = MODE_LABELS[currentMode];
+}
+
+function updateSlider(el, valId) {
+  document.getElementById(valId).textContent = el.value;
+}
+function getWords(mode, targetCount) {
+  const pool = CORPUS[mode];
+  const allWords = pool.join(' ').split(' ');
+  const result = [];
+  while (result.length < targetCount) {
+    // Cycle through all words from the pool in order, looping
+    result.push(...allWords);
+  }
+  return result.slice(0, targetCount);
+}
+
+function buildSentence(words) {
+  if (!words.length) return '';
+  let s = words.join(' ');
+  // Capitalize first letter
+  s = s.charAt(0).toUpperCase() + s.slice(1);
+  // Ensure it ends with a period
+  if (!/[.!?]$/.test(s)) s += '.';
+  return s;
+}
+
+function wordsToSentences(words) {
+  const sentences = [];
+  let idx = 0;
+  while (idx < words.length) {
+    // Sentence length: 8-18 words
+    const len = 8 + Math.floor(Math.random() * 11);
+    const chunk = words.slice(idx, idx + len);
+    if (chunk.length >= 3) sentences.push(buildSentence(chunk));
+    idx += len;
+  }
+  return sentences.join(' ');
+}
+
+function generate() {
+  const paraCount = parseInt(document.getElementById('parasSlider').value);
+  const wordsPerPara = parseInt(document.getElementById('wordsSlider').value);
+  const startLorem = document.getElementById('toggleLorem').checked;
+  const wrapHtml = document.getElementById('toggleHtml').checked;
+
+  const paragraphs = [];
+
+  for (let i = 0; i < paraCount; i++) {
+    let wordList = getWords(currentMode, wordsPerPara);
+
+    // For classic mode, first paragraph optionally starts with canonical lorem ipsum opening
+    if (i === 0 && startLorem && currentMode === 'classic') {
+      const loremOpening = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.";
+      const remaining = getWords(currentMode, Math.max(0, wordsPerPara - 15));
+      const rest = wordsToSentences(remaining);
+      paragraphs.push(loremOpening + (rest ? ' ' + rest : ''));
+    } else if (i === 0 && startLorem) {
+      // For other modes, capitalize and start naturally
+      const text = wordsToSentences(wordList);
+      paragraphs.push(text);
+    } else {
+      paragraphs.push(wordsToSentences(wordList));
+    }
+  }
+
+  generatedPlain = paragraphs.join('\n\n');
+  generatedHtml = paragraphs.map(p => `<p>${p}</p>`).join('\n');
+
+  const displayText = wrapHtml ? generatedHtml : generatedPlain;
+  document.getElementById('outputArea').value = displayText;
+
+  // Stats
+  const words = generatedPlain.trim().split(/\s+/).filter(Boolean);
+  document.getElementById('wordCount').textContent = words.length;
+  document.getElementById('charCount').textContent = generatedPlain.length;
+}
+
+function copyOutput() {
+  const ta = document.getElementById('outputArea');
+  if (!ta.value) { generate(); }
+  navigator.clipboard.writeText(ta.value).then(() => {
+    const btn = event.target;
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = 'Copy', 1800);
+  });
+}
+
+function copyAsHtml() {
+  if (!generatedHtml) { generate(); }
+  navigator.clipboard.writeText(generatedHtml).then(() => {
+    const btn = event.target;
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = 'Copy as HTML', 1800);
+  });
+}
+
+async function submitWaitlist() {
+  const email = document.getElementById('ctaEmail').value.trim();
+  if (!email || !email.includes('@')) { alert('Please enter a valid email address.'); return; }
+  const payload = { email, product: 'qadir-os-lorem', ts: new Date().toISOString() };
+  try {
+    await fetch('/api/waitlist', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(payload) });
+  } catch(e) { /* graceful fallback */ }
+  document.getElementById('ctaEmail').style.display = 'none';
+  document.querySelector('.cta-form button').style.display = 'none';
+  document.getElementById('ctaSuccess').classList.add('visible');
+}
+
+// Auto-generate on load
+document.addEventListener('DOMContentLoaded', () => {
+  generate();
+  document.getElementById('toggleHtml').addEventListener('change', () => {
+    if (generatedPlain) {
+      const wrapHtml = document.getElementById('toggleHtml').checked;
+      document.getElementById('outputArea').value = wrapHtml ? generatedHtml : generatedPlain;
+    }
+  });
+});
+</script>
+<script src="/tools/_tools-shared.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>
+

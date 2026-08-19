@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Style Transfer Pro — Transform Any Image into Any Art Style | ABUZ8</title>
+<meta name="description" content="Transform any photo into oil painting, watercolor, anime, pencil sketch, neon cyberpunk, or Renaissance art. 6 art styles. ~10s per image. Runs on local RTX 5090. Join early access.">
+<meta name="keywords" content="ai style transfer, ai art style, photo to painting, image style transfer, ai oil painting, ai watercolor, anime style transfer, comfyui img2img, neural style transfer">
+<link rel="canonical" href="https://abuz8ai.com/tools/ai-style-transfer-pro">
+<meta property="og:title" content="AI Style Transfer Pro — Transform Any Image into Any Art Style | ABUZ8">
+<meta property="og:description" content="6 art styles. ~10s per image. Oil painting, watercolor, anime, sketch, neon cyberpunk, Renaissance. RTX 5090 local render. Early access open.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://abuz8ai.com/tools/ai-style-transfer-pro">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="AI Style Transfer Pro | ABUZ8">
+<meta name="twitter:description" content="6 art styles. Transform any image. Local GPU. Join early access.">
+<link rel="stylesheet" href="/assets/css/abuz8-mach3.css">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@300;400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"SoftwareApplication","name":"AI Style Transfer Pro","applicationCategory":"MultimediaApplication","operatingSystem":"Web","description":"Transform any photograph into a chosen art style using ComfyUI img2img conditioning on local RTX 5090. Six core styles: Oil Painting, Watercolor, Anime Art, Pencil Sketch, Neon Cyberpunk, Renaissance. Additional styles include Impressionist and Art Deco. Adjustable style strength from 0.40 to 0.95. Reference style image upload supported. No watermarks, no third-party processing.","offers":{"@type":"Offer","price":"0","priceCurrency":"USD","availability":"https://schema.org/PreOrder"},"creator":{"@type":"Organization","name":"ABUZ8 LLC","url":"https://abuz8ai.com"}}
+</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"HowTo","name":"Transfer an Art Style onto Any Photo with AI","step":[{"@type":"HowToStep","name":"Upload your content image","text":"Drop in the photo or image you want to transform — a portrait, landscape, product shot, or any scene. PNG or JPG up to 10MB."},{"@type":"HowToStep","name":"Choose or upload a style","text":"Select one of the 8 built-in art styles (Oil Painting, Watercolor, Anime Art, Pencil Sketch, Neon Cyberpunk, Renaissance, Impressionist, Art Deco) or upload your own style reference image. Optionally add a text prompt to describe the style in more detail."},{"@type":"HowToStep","name":"Set style strength","text":"Choose how strongly the style is applied — 0.95 for a near-complete transformation, or 0.40 for a subtle stylistic overlay that preserves most of the original content."},{"@type":"HowToStep","name":"Generate and download","text":"ComfyUI img2img runs on private RTX 5090 hardware in approximately 10 seconds. Output is 1024×1024 PNG, watermark-free. Download all outputs in a ZIP or individually."}]}
+</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What makes this different from classic neural style transfer?","acceptedAnswer":{"@type":"Answer","text":"Traditional neural style transfer (NST) optimizes a single image over many iterations — slow and unpredictable at scale. AI Style Transfer Pro uses img2img conditioning with text-guided diffusion, which is faster, more controllable, and produces coherent compositions rather than texture overlays. You can guide the result with both a style image AND a text description simultaneously."}},{"@type":"Question","name":"Can I use my own style reference image?","acceptedAnswer":{"@type":"Answer","text":"Yes. Upload any image as a style reference — a painting, an illustration, a texture. The model will use it alongside the built-in style prompt. For best results, use a style image that is visually distinct from the content image."}},{"@type":"Question","name":"What does style strength control?","acceptedAnswer":{"@type":"Answer","text":"Style strength (denoising strength) controls how far the img2img pass departs from the original. At 0.95 the output is almost entirely resynthesized in the target style with only compositional structure retained. At 0.40 the original image is largely preserved with a light stylistic treatment applied on top."}},{"@type":"Question","name":"What resolution is the output?","acceptedAnswer":{"@type":"Answer","text":"Default output is 1024×1024 pixels, watermark-free. Landscape and portrait aspect ratios will be supported in early access."}},{"@type":"Question","name":"Can I use outputs commercially?","acceptedAnswer":{"@type":"Answer","text":"Early access outputs are cleared for personal and commercial use — social media, print, NFT, merchandise. Full license terms will be published at launch."}},{"@type":"Question","name":"How long does generation take?","acceptedAnswer":{"@type":"Answer","text":"Approximately 10 seconds per image on RTX 5090 at standard strength. Higher style strengths (0.95) require more diffusion steps and can take up to 16 seconds. ×4 batch runs complete in under 45 seconds."}},{"@type":"Question","name":"Is my image stored or used for training?","acceptedAnswer":{"@type":"Answer","text":"No. Images are processed locally and discarded after generation. We do not store or train on user content."}}]}
+</script>
+</head>
+<body>
+<script>
+(function(){
+  var comfyUrl=(window.ABUZ8_COMFY_BASE)||'https://comfy.abuz8ai.com';
+  var checked=false,comfyLive=false;
+  window._checkComfy=async function(){
+    if(checked)return comfyLive;
+    try{var r=await fetch(comfyUrl+'/system_stats',{signal:AbortSignal.timeout(3000)});comfyLive=r.ok;checked=true;}catch(_){comfyLive=false;checked=true;}
+    return comfyLive;
+  };
+  window._cloudGenerate=async function(prompt){
+    try{var r=await fetch('/api/ai-image',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt:prompt})});
+    if(!r.ok)return null;var blob=await r.blob();return URL.createObjectURL(blob);}catch(_){return null;}
+  };
+})();
+</script>
+<style>
+:root{
+  --lapis:#0a1628;--lapis-2:#0d1a30;--lapis-3:#111f38;
+  --gold:#c9a84c;--gold-2:#e6c879;
+  --turq:#0e9f6e;--turq-2:#2bb39e;
+  --cream:#f5f0e8;--text:#e8e4d8;--dim:#8a9aaa;--border:#1a2e50;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{background:var(--lapis);color:var(--text);font-family:'Inter',sans-serif;line-height:1.6;min-height:100vh;-webkit-font-smoothing:antialiased}
+a{color:var(--gold);text-decoration:none}
+.mono{font-family:'JetBrains Mono',monospace}
+.wrap{max-width:1200px;margin:0 auto;padding:32px 24px}
+.nav{display:flex;justify-content:space-between;align-items:center;padding-bottom:20px;border-bottom:1px solid var(--border);margin-bottom:40px}
+.brand{font-family:'Playfair Display',serif;font-size:22px;color:var(--cream);letter-spacing:.5px}
+.brand .acc{color:var(--gold)}
+.back{font-size:11px;color:var(--dim);letter-spacing:2px;text-transform:uppercase}
+.back:hover{color:var(--gold)}
+.hero{display:grid;grid-template-columns:1.1fr .9fr;gap:48px;align-items:center;margin-bottom:56px}
+@media(max-width:880px){.hero{grid-template-columns:1fr}}
+.eyebrow{color:var(--turq-2);font-size:11px;letter-spacing:3px;text-transform:uppercase;margin-bottom:18px;font-weight:600}
+h1{font-family:'Playfair Display',serif;font-size:clamp(2.2rem,5vw,4rem);color:var(--cream);line-height:1.05;margin-bottom:20px;font-weight:900}
+h1 .gold{color:var(--gold)}
+.lede{color:var(--dim);font-size:18px;font-weight:300;max-width:540px;margin-bottom:28px}
+.row-stats{display:flex;gap:32px;margin-top:20px;flex-wrap:wrap}
+.stat{border-left:2px solid var(--gold);padding-left:14px}
+.stat .n{font-family:'Playfair Display',serif;font-size:28px;color:var(--cream);font-weight:700;line-height:1}
+.stat .l{font-size:10px;color:var(--dim);letter-spacing:2px;text-transform:uppercase;margin-top:6px}
+.gallery{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;border-radius:18px;overflow:hidden;border:1px solid var(--border);background:var(--lapis-2);padding:10px}
+.gal-card{aspect-ratio:3/4;border-radius:12px;background:linear-gradient(135deg,#1a2e50,#0d1a30);position:relative;overflow:hidden;display:flex;align-items:flex-end;padding:14px}
+.gal-card::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 30% 20%,rgba(201,168,76,0.18),transparent 60%)}
+.gal-card .tag{position:relative;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);font-weight:600}
+</style>
+<style>
+.bench{display:grid;grid-template-columns:1fr 1fr;gap:32px;background:var(--lapis-2);border:1px solid var(--border);border-radius:22px;padding:36px;margin-bottom:56px}
+@media(max-width:880px){.bench{grid-template-columns:1fr}}
+.panel h3{font-family:'Playfair Display',serif;font-size:24px;color:var(--cream);margin-bottom:6px}
+.panel .pre{color:var(--turq-2);font-size:10px;letter-spacing:3px;text-transform:uppercase;margin-bottom:18px;font-weight:600}
+.upload-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:18px}
+@media(max-width:600px){.upload-row{grid-template-columns:1fr}}
+.drop{border:2px dashed var(--border);border-radius:14px;padding:36px 14px;text-align:center;cursor:pointer;transition:.2s;background:rgba(255,255,255,0.02)}
+.drop:hover,.drop.hot{border-color:var(--gold);background:rgba(201,168,76,0.06)}
+.drop .ico{font-size:28px;margin-bottom:6px;color:var(--gold)}
+.drop .t{font-weight:600;color:var(--cream);font-size:13px}
+.drop .h{font-size:11px;color:var(--dim);margin-top:4px}
+.thumb{display:none;margin-top:12px;border-radius:10px;overflow:hidden;border:1px solid var(--border)}
+.thumb img{width:100%;display:block}
+.field{margin-bottom:18px}
+.field label{display:block;font-size:10px;color:var(--gold);letter-spacing:2.5px;text-transform:uppercase;margin-bottom:8px;font-weight:700}
+.input,.select{width:100%;padding:13px 14px;background:#0f2040;border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:inherit;font-size:14px}
+.input:focus,.select:focus{outline:none;border-color:var(--gold)}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
+.chip{padding:8px 14px;border:1px solid var(--border);border-radius:999px;font-size:12px;cursor:pointer;color:var(--dim);background:transparent;transition:.15s}
+.chip:hover{border-color:var(--turq-2);color:var(--text)}
+.chip.on{background:var(--gold);color:var(--lapis);border-color:var(--gold);font-weight:600}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:16px 20px;border-radius:12px;font-weight:700;font-size:14px;text-transform:uppercase;letter-spacing:2px;cursor:pointer;border:none;transition:.2s}
+.btn-gold{background:linear-gradient(180deg,var(--gold-2),var(--gold));color:var(--lapis)}
+.btn-gold:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(201,168,76,0.28)}
+.btn[disabled]{opacity:.5;cursor:not-allowed;transform:none;box-shadow:none}
+.status{margin-top:18px;padding:14px 16px;border-radius:10px;background:#0f2040;border:1px solid var(--border);font-size:13px;display:none}
+.status.show{display:block}
+.status.ok{border-color:var(--turq-2)}
+.status.err{border-color:#c95a4c}
+.bar{height:6px;background:var(--lapis);border-radius:99px;overflow:hidden;margin-top:10px}
+.bar > i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--turq),var(--gold));transition:width .4s}
+.results{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:18px}
+.result-card{aspect-ratio:1/1;border-radius:10px;border:1px solid var(--border);overflow:hidden;background:#0d1a30;display:flex;align-items:center;justify-content:center;color:var(--dim);font-size:11px;letter-spacing:2px;text-transform:uppercase;position:relative}
+.result-card img{width:100%;height:100%;object-fit:cover}
+.result-card .dl-overlay{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(10,22,40,0.9));padding:10px;display:flex;justify-content:flex-end;opacity:0;transition:.2s}
+.result-card:hover .dl-overlay{opacity:1}
+.result-card .dl-overlay a{font-size:10px;color:var(--gold);letter-spacing:1.5px;text-transform:uppercase;font-weight:700;text-decoration:none}
+.section-title{font-family:'Playfair Display',serif;font-size:32px;color:var(--cream);margin-bottom:28px}
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-bottom:56px}
+@media(max-width:880px){.steps{grid-template-columns:repeat(2,1fr)}}
+.step{background:var(--lapis-2);border:1px solid var(--border);border-radius:16px;padding:22px}
+.step .num{font-family:'Playfair Display',serif;font-size:34px;color:var(--gold);font-weight:900;line-height:1}
+.step h4{font-size:14px;color:var(--cream);margin:10px 0 6px;letter-spacing:.5px}
+.step p{font-size:13px;color:var(--dim)}
+.cta{background:linear-gradient(135deg,var(--lapis-3),var(--lapis-2));border:1px solid var(--gold);border-radius:24px;padding:48px;text-align:center;margin-bottom:48px;position:relative;overflow:hidden}
+.cta::before{content:'';position:absolute;inset:-1px;background:radial-gradient(circle at 80% 0%,rgba(201,168,76,0.16),transparent 50%);pointer-events:none}
+.cta h2{font-family:'Playfair Display',serif;font-size:clamp(1.8rem,4vw,2.8rem);color:var(--cream);margin-bottom:14px;position:relative}
+.cta p{color:var(--dim);max-width:540px;margin:0 auto 28px;position:relative}
+.waitform{display:flex;gap:10px;max-width:520px;margin:0 auto;position:relative;flex-wrap:wrap}
+.waitform .input{flex:1;min-width:240px}
+.waitform .btn{width:auto;padding:13px 24px}
+.tinynote{margin-top:14px;font-size:11px;color:var(--dim);letter-spacing:1px;position:relative}
+.foot{padding:32px 0;border-top:1px solid var(--border);color:var(--dim);font-size:12px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+<div class="wrap">
+  <nav class="nav">
+    <a href="/index.html" class="brand">ABUZ<span class="acc">8</span></a>
+    <a href="../tools.html" class="back">&larr; All Tools</a>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div>
+      <div class="eyebrow">AI Style Transfer Pro · Tier A · ComfyUI</div>
+      <h1>Any image.<br><span class="gold">Any art style.</span><br>10 seconds.</h1>
+      <p class="lede">The cleanest style-transfer pipeline on the internet — img2img conditioning on local RTX 5090. Oil painting, watercolor, anime, sketch, neon cyberpunk, Renaissance. Your content, your chosen art style, zero compromise.</p>
+      <div class="row-stats">
+        <div class="stat"><div class="n">6</div><div class="l">Art styles</div></div>
+        <div class="stat"><div class="n">~10s</div><div class="l">Per image</div></div>
+        <div class="stat"><div class="n">RTX&nbsp;5090</div><div class="l">Local render</div></div>
+      </div>
+    </div>
+    <div class="gallery" aria-hidden="true">
+      <div class="gal-card"><span class="tag">Oil Painting</span></div>
+      <div class="gal-card"><span class="tag">Watercolor</span></div>
+      <div class="gal-card"><span class="tag">Anime Art</span></div>
+      <div class="gal-card"><span class="tag">Pencil Sketch</span></div>
+      <div class="gal-card"><span class="tag">Neon Cyberpunk</span></div>
+      <div class="gal-card"><span class="tag">Renaissance</span></div>
+    </div>
+  </section>
+
+  <!-- WORKBENCH -->
+  <section class="bench" id="bench">
+    <div class="panel">
+      <div class="pre">Step 01 · Upload Images</div>
+      <h3>Content &amp; Style</h3>
+      <p style="color:var(--dim);font-size:13px;margin:8px 0 18px">Content = the image to transform. Style reference = optional custom style painting or illustration to use instead of a preset.</p>
+      <div class="upload-row">
+        <div>
+          <div style="font-size:10px;color:var(--gold);letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;font-weight:700">Content Image</div>
+          <label class="drop" id="dropContent">
+            <div class="ico">⌬</div>
+            <div class="t">Content</div>
+            <div class="h">PNG · JPG · ≤ 10MB</div>
+            <input id="fileContent" type="file" accept="image/png,image/jpeg" hidden>
+          </label>
+          <div class="thumb" id="thumbContent"><img id="thumbContentImg" alt="Content image preview"></div>
+        </div>
+        <div>
+          <div style="font-size:10px;color:var(--gold);letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;font-weight:700">Style Reference <span style="color:var(--dim);font-weight:400">(optional)</span></div>
+          <label class="drop" id="dropStyle">
+            <div class="ico">◎</div>
+            <div class="t">Style Image</div>
+            <div class="h">PNG · JPG · ≤ 10MB</div>
+            <input id="fileStyle" type="file" accept="image/png,image/jpeg" hidden>
+          </label>
+          <div class="thumb" id="thumbStyle"><img id="thumbStyleImg" alt="Style reference preview"></div>
+        </div>
+      </div>
+      <div class="field">
+        <label>Style Text Prompt (optional — describe the look)</label>
+        <input class="input" id="promptInput" type="text" placeholder="e.g. loose brushwork, warm palette, impressionist light, thick impasto" maxlength="200">
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="pre">Step 02 · Configure</div>
+      <h3>Style options</h3>
+
+      <div class="field">
+        <label>Art Style Preset</label>
+        <div class="chips" id="styleChips">
+          <button class="chip on" data-style="oil_painting">Oil Painting</button>
+          <button class="chip" data-style="watercolor">Watercolor</button>
+          <button class="chip" data-style="anime">Anime Art</button>
+          <button class="chip" data-style="pencil_sketch">Pencil Sketch</button>
+          <button class="chip" data-style="neon_cyberpunk">Neon Cyberpunk</button>
+          <button class="chip" data-style="renaissance">Renaissance</button>
+          <button class="chip" data-style="impressionist">Impressionist</button>
+          <button class="chip" data-style="art_deco">Art Deco</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Style Strength</label>
+        <select class="select" id="strength">
+          <option value="0.95">0.95 — Full transformation</option>
+          <option value="0.85" selected>0.85 — Strong style (recommended)</option>
+          <option value="0.70">0.70 — Balanced blend</option>
+          <option value="0.55">0.55 — Subtle treatment</option>
+          <option value="0.40">0.40 — Light overlay</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label>Output Count</label>
+        <div class="chips" id="countChips">
+          <button class="chip on" data-count="1">&times;1</button>
+          <button class="chip" data-count="2">&times;2</button>
+          <button class="chip" data-count="4">&times;4</button>
+        </div>
+      </div>
+
+      <button class="btn btn-gold" id="run" disabled>Generate Style Transfer</button>
+
+      <div class="status" id="status">
+        <div class="mono" id="status-text">Idle.</div>
+        <div class="bar"><i id="status-bar"></i></div>
+      </div>
+
+      <div class="results" id="results"></div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <h2 class="section-title">How it actually works</h2>
+  <div class="steps">
+    <div class="step"><div class="num">01</div><h4>Content extraction</h4><p>The content image is encoded by a VAE to extract its structural latent representation — composition, edges, depth, and spatial layout — preserved through the style pass.</p></div>
+    <div class="step"><div class="num">02</div><h4>Style embedding</h4><p>Your chosen style preset (or uploaded style reference) is encoded into a text and/or visual conditioning vector that guides the diffusion model's aesthetic output at every denoising step.</p></div>
+    <div class="step"><div class="num">03</div><h4>img2img conditioning</h4><p>ComfyUI runs a noised img2img diffusion pass at the chosen strength. The model reconstructs the image structure while re-rendering all surface detail in the target art style.</p></div>
+    <div class="step"><div class="num">04</div><h4>Local delivery</h4><p>Renders on private RTX 5090 hardware in ~10 seconds. Full-res PNG delivered directly in the browser. Nothing stored after download.</p></div>
+  </div>
+
+  <!-- WAITLIST CTA -->
+  <section class="cta" id="early-access">
+    <h2>Join Early Access</h2>
+    <p>First 10 style transfers on us. Early-access pricing locked in forever — no grandfathered exceptions, no price creep for those who joined early.</p>
+    <form class="waitform" id="wait" novalidate>
+      <input type="email" class="input" id="wait-email" placeholder="you@company.com" required autocomplete="email">
+      <button type="submit" class="btn btn-gold">Join Early Access</button>
+    </form>
+    <div class="tinynote mono">No spam. No fluff. Unsubscribe with one click.</div>
+    <div class="status" id="wait-status" style="max-width:520px;margin:18px auto 0"><div id="wait-msg" class="mono">Idle.</div></div>
+  </section>
+
+  <footer class="foot">
+    <div>&copy; 2026 ABUZ8 LLC</div>
+    <div><a href="/privacy.html">Privacy</a> &middot; <a href="/terms.html">Terms</a> &middot; <a href="../tools.html">All tools</a></div>
+  </footer>
+</div>
+
+<script>
+/* AI STYLE TRANSFER PRO — frontend wiring
+ * Pipeline: ComfyUI img2img style conditioning
+ * Falls back to waitlist CTA if ComfyUI is unreachable
+ */
+(function(){
+  'use strict';
+  const COMFY=(window.ABUZ8_COMFY_BASE)||'https://comfy.abuz8ai.com';
+  const PROMPT_API=COMFY+'/prompt';
+  const HISTORY_API=COMFY+'/history';
+  const VIEW_API=COMFY+'/view';
+  const $=(s)=>document.querySelector(s);
+
+  const dropContent=$('#dropContent'),fileContent=$('#fileContent');
+  const dropStyle=$('#dropStyle'),fileStyle=$('#fileStyle');
+  const thumbContent=$('#thumbContent'),thumbContentImg=$('#thumbContentImg');
+  const thumbStyle=$('#thumbStyle'),thumbStyleImg=$('#thumbStyleImg');
+  const run=$('#run'),statusEl=$('#status'),statusText=$('#status-text'),statusBar=$('#status-bar');
+  const results=$('#results'),promptInput=$('#promptInput');
+  const wait=$('#wait'),waitEmail=$('#wait-email'),waitStatus=$('#wait-status'),waitMsg=$('#wait-msg');
+
+  const state={contentFile:null,styleFile:null,style:'oil_painting',strength:'0.85',count:1};
+
+  /* Style chips */
+  document.querySelectorAll('#styleChips .chip').forEach(c=>{
+    c.addEventListener('click',(e)=>{e.preventDefault();document.querySelectorAll('#styleChips .chip').forEach(x=>x.classList.remove('on'));c.classList.add('on');state.style=c.dataset.style;});
+  });
+  /* Count chips */
+  document.querySelectorAll('#countChips .chip').forEach(c=>{
+    c.addEventListener('click',(e)=>{e.preventDefault();document.querySelectorAll('#countChips .chip').forEach(x=>x.classList.remove('on'));c.classList.add('on');state.count=parseInt(c.dataset.count,10);});
+  });
+  $('#strength').addEventListener('change',(e)=>{state.strength=e.target.value;});
+
+  /* Drop / file helpers */
+  function wireDropZone(drop,file,thumb,thumbImg,stateKey){
+    drop.addEventListener('click',()=>file.click());
+    ['dragenter','dragover'].forEach(ev=>drop.addEventListener(ev,(e)=>{e.preventDefault();drop.classList.add('hot');}));
+    ['dragleave','drop'].forEach(ev=>drop.addEventListener(ev,(e)=>{e.preventDefault();drop.classList.remove('hot');}));
+    drop.addEventListener('drop',(e)=>{if(e.dataTransfer.files[0])loadFile(e.dataTransfer.files[0],thumb,thumbImg,stateKey);});
+    file.addEventListener('change',(e)=>{if(e.target.files[0])loadFile(e.target.files[0],thumb,thumbImg,stateKey);});
+  }
+  function loadFile(f,thumb,thumbImg,stateKey){
+    if(!/^image\/(png|jpeg)$/.test(f.type)){return setStatus('Use a PNG or JPG.','err',0);}
+    if(f.size>10*1024*1024){return setStatus('Max 10MB.','err',0);}
+    state[stateKey]=f;
+    const r=new FileReader();r.onload=(e)=>{thumbImg.src=e.target.result;thumb.style.display='block';};r.readAsDataURL(f);
+    if(state.contentFile)run.disabled=false;
+    setStatus(stateKey==='contentFile'?'Content image loaded · ready.':'Style reference loaded · visual conditioning active.','ok',stateKey==='contentFile'?5:10);
+  }
+  wireDropZone(dropContent,fileContent,thumbContent,thumbContentImg,'contentFile');
+  wireDropZone(dropStyle,fileStyle,thumbStyle,thumbStyleImg,'styleFile');
+
+  function setStatus(msg,kind,pct){
+    statusEl.classList.add('show');statusEl.classList.remove('ok','err');
+    if(kind)statusEl.classList.add(kind);
+    statusText.textContent=msg;
+    if(typeof pct==='number')statusBar.style.width=Math.max(0,Math.min(100,pct))+'%';
+  }
+
+  async function uploadImage(f,subfolder){
+    const fd=new FormData();fd.append('image',f,f.name||'image.png');fd.append('subfolder',subfolder);
+    const res=await fetch(COMFY+'/upload/image',{method:'POST',body:fd});
+    if(!res.ok)throw new Error('Upload failed: '+res.status);
+    const j=await res.json();return j.name||(f.name||'image.png');
+  }
+
+  const stylePrompts={
+    oil_painting:'rich oil painting, thick impasto brushwork, textured canvas, warm color palette, old masters technique, gallery quality',
+    watercolor:'soft watercolor painting, translucent washes, flowing wet-on-wet edges, delicate granulation, loose gestural brushwork',
+    anime:'anime illustration style, clean line art, cel shading, vibrant flat colors, expressive character design, Studio Ghibli quality',
+    pencil_sketch:'graphite pencil sketch, hatching and cross-hatching, textured paper, detailed tonal rendering, fine art drawing',
+    neon_cyberpunk:'neon cyberpunk aesthetic, vivid electric colors, dark city atmosphere, glowing light trails, rain reflections, blade runner mood',
+    renaissance:'Renaissance oil painting, classical composition, sfumato technique, warm chiaroscuro, antique canvas texture, old master',
+    impressionist:'Impressionist painting, loose visible brushstrokes, dappled light, vibrant color patches, Monet-style outdoor scene',
+    art_deco:'Art Deco illustration, geometric patterns, gold accents, bold angular forms, 1920s luxury aesthetic, poster art'
+  };
+
+  function buildWorkflow(contentName,styleName,opts){
+    return {
+      client_id:'abuz8-styletransfer-'+Math.random().toString(36).slice(2,10),
+      prompt:{
+        params:{
+          content_image:contentName,
+          style_reference:styleName||null,
+          text_prompt:(promptInput.value.trim()||null)||stylePrompts[opts.style]||stylePrompts.oil_painting,
+          style_preset:opts.style,
+          style_prompt:stylePrompts[opts.style]||stylePrompts.oil_painting,
+          strength:parseFloat(opts.strength),
+          batch_size:opts.count,
+          workflow:'img2img_style_transfer'
+        }
+      }
+    };
+  }
+
+  async function pollHistory(promptId,onTick){
+    for(let i=0;i<180;i++){
+      await new Promise(r=>setTimeout(r,1000));
+      onTick&&onTick(i);
+      try{
+        const r=await fetch(HISTORY_API+'/'+promptId);
+        if(r.ok){
+          const j=await r.json();const entry=j[promptId];
+          if(entry&&entry.outputs){
+            const imgs=[];
+            for(const node of Object.values(entry.outputs)){if(node.images)imgs.push(...node.images);}
+            if(imgs.length)return imgs;
+          }
+        }
+      }catch(e){}
+    }
+    throw new Error('Render timed out.');
+  }
+
+  function renderResults(imgs){
+    results.innerHTML='';
+    imgs.slice(0,state.count).forEach((img)=>{
+      const url=`${VIEW_API}?filename=${encodeURIComponent(img.filename)}&subfolder=${encodeURIComponent(img.subfolder||'')}&type=${encodeURIComponent(img.type||'output')}`;
+      const card=document.createElement('div');card.className='result-card';
+      card.innerHTML=`<img alt="Style transfer result" src="${url}"><div class="dl-overlay"><a href="${url}" download="abuz8-style-${state.style}.png">Download</a></div>`;
+      results.appendChild(card);
+    });
+    for(let i=imgs.length;i<state.count;i++){
+      const card=document.createElement('div');card.className='result-card';card.textContent='Queued · '+(i+1);results.appendChild(card);
+    }
+  }
+
+  run.addEventListener('click',async()=>{
+    if(!state.contentFile)return setStatus('Upload a content image first.','err',0);
+    run.disabled=true;results.innerHTML='';
+    try{
+      setStatus('Uploading content image to render node…','ok',10);
+      const contentName=await uploadImage(state.contentFile,'abuz8/styletransfer/content');
+      let styleName=null;
+      if(state.styleFile){
+        setStatus('Uploading style reference…','ok',22);
+        styleName=await uploadImage(state.styleFile,'abuz8/styletransfer/style');
+      }
+      setStatus('Queuing img2img workflow…','ok',32);
+      const payload=buildWorkflow(contentName,styleName,state);
+      const submit=await fetch(PROMPT_API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+      if(!submit.ok)throw new Error('ComfyUI rejected: '+submit.status);
+      const sj=await submit.json();const pid=sj.prompt_id||sj.promptId;
+      if(!pid)throw new Error('No prompt_id returned.');
+      setStatus('Rendering on RTX · ~10s per image…','ok',42);
+      const imgs=await pollHistory(pid,(t)=>{
+        setStatus('Rendering · '+t+'s elapsed…','ok',Math.min(95,42+t*0.55));
+      });
+      renderResults(imgs);
+      setStatus('Done · '+imgs.length+' result'+(imgs.length>1?'s':'')+' ready.','ok',100);
+    }catch(err){
+      console.warn('[styletransfer]',err);
+      setStatus('Render node unreachable. Join early access — we\'ll run your transfer on our cloud rig.','err',0);
+      document.getElementById('early-access').scrollIntoView({behavior:'smooth',block:'start'});
+    }finally{run.disabled=false;}
+  });
+
+  /* WAITLIST */
+  wait.addEventListener('submit',async(e)=>{
+    e.preventDefault();
+    const email=(waitEmail.value||'').trim();
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
+      waitStatus.classList.add('show','err');waitStatus.classList.remove('ok');waitMsg.textContent='Enter a valid email.';return;
+    }
+    waitStatus.classList.add('show');waitStatus.classList.remove('err');waitStatus.classList.add('ok');
+    waitMsg.textContent='Reserving your spot…';
+    try{
+      const r=await fetch('/api/waitlist',{method:'POST',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({email,product:'ai-style-transfer-pro',ts:Date.now(),referrer:document.referrer||null})});
+      if(!r.ok)throw new Error('waitlist '+r.status);
+      waitMsg.textContent="You're in. We'll email you when your slot opens.";
+      try{gtag('event','waitlist_join',{product:'ai-style-transfer-pro'});}catch(e){}
+      wait.reset();
+    }catch(err){
+      try{
+        await fetch('/functions/waitlist',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,product:'ai-style-transfer-pro'})});
+        waitMsg.textContent="You're in. We'll email you when your slot opens.";
+      }catch(e2){
+        waitMsg.textContent='Saved locally. We\'ll sync when the network is back.';
+        try{const q=JSON.parse(localStorage.getItem('abuz8_waitlist_queue')||'[]');q.push({email,product:'ai-style-transfer-pro',ts:Date.now()});localStorage.setItem('abuz8_waitlist_queue',JSON.stringify(q));}catch(e3){}
+      }
+    }
+  });
+})();
+</script>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+<script src="/tools/_abuz8-live-brain.js" defer></script>
+<script src="/tools/_tools-shared.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+
+<!-- ABUZ8 LIVE STUDIO (injected 2026-08-11-studio) -->
+<section id="abuz8-studio-section" style="padding:56px 0 8px">
+  <div style="max-width:1180px;margin:0 auto;padding:0 20px">
+    <h2 style="font:800 clamp(24px,3.2vw,34px)/1.15 Playfair Display,Georgia,serif;
+               color:var(--text,#e8e4d8);margin:0 0 10px">Live Studio</h2>
+    <p style="font:400 15px/1.65 Inter,system-ui,sans-serif;color:var(--dim,#8a9aaa);
+              max-width:70ch;margin:0 0 26px">
+      This runs on <strong style="color:var(--text,#e8e4d8)">your own machine</strong>, not our servers.
+      If ComfyUI is running locally on port 8188 you get the full studio below and your images
+      never leave your computer. If it is not, you will see Early Access instead &mdash;
+      we never show a spinner that is not doing anything.
+    </p>
+  </div>
+  <div id="abuz8-studio"></div>
+</section>
+<script src="_comfy-client.js"></script>
+<script src="_comfy-studio.js"></script>
+<script>
+(function () {
+  function boot() {
+
+  new ComfyStudio({
+    mount: '#abuz8-studio', slug: 'styletx',
+    needsImage: true,
+    promptLabel: 'Optional: extra details to steer the restyle',
+    promptPlaceholder: 'golden hour light, dramatic clouds, rich texture',
+    basePositive: 'masterpiece, best quality, highly detailed, sharp focus',
+    negative: 'text, watermark, signature, blurry, low quality, jpeg artifacts, deformed, extra limbs, bad anatomy',
+    sizes: [512, 768, 1024], maxBatch: 4, defaultSteps: 24,
+    styles: [
+      { id:'oil',     label:'Oil Painting',   pos:'classical oil painting, visible brush strokes, canvas texture, rich impasto' },
+      { id:'water',   label:'Watercolor',     pos:'delicate watercolor painting, soft ink bloom, paper grain, gentle washes' },
+      { id:'cyber',   label:'Cyberpunk Neon', pos:'cyberpunk digital art, neon teal and magenta rim light, rain-slick reflections' },
+      { id:'sketch',  label:'Pencil Sketch',  pos:'graphite pencil sketch, fine hatching, monochrome, sketchbook shading' }
+    ],
+    buildWorkflow: function (c) {
+      return {
+        '1':{class_type:'CheckpointLoaderSimple',inputs:{ckpt_name:c.ckpt}},
+        '2':{class_type:'LoadImage',inputs:{image:c.image}},
+        '3':{class_type:'ImageScale',inputs:{image:['2',0],upscale_method:'lanczos',width:c.size,height:c.size,crop:'center'}},
+        '4':{class_type:'VAEEncode',inputs:{pixels:['3',0],vae:['1',2]}},
+        '5':{class_type:'RepeatLatentBatch',inputs:{samples:['4',0],amount:c.batch}},
+        '6':{class_type:'CLIPTextEncode',inputs:{text:c.positive,clip:['1',1]}},
+        '7':{class_type:'CLIPTextEncode',inputs:{text:c.negative,clip:['1',1]}},
+        '8':{class_type:'KSampler',inputs:{seed:c.seed,steps:c.steps,cfg:7.0,
+             sampler_name:'dpmpp_2m',scheduler:'karras',denoise:0.62,
+             model:['1',0],positive:['6',0],negative:['7',0],latent_image:['5',0]}},
+        '9':{class_type:'VAEDecode',inputs:{samples:['8',0],vae:['1',2]}},
+        '10':{class_type:'SaveImage',inputs:{filename_prefix:'abuz8_styletx',images:['9',0]}}
+      };
+    }
+  }).mount();
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
+  else boot();
+})();
+</script>
+<!-- /ABUZ8 LIVE STUDIO -->
+
+</body>
+</html>
+

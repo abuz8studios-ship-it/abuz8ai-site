@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Email Signature Generator — Free Professional Signatures | ABUZ8 AI</title>
+<meta name="description" content="Create beautiful, professional email signatures in seconds. Copy as HTML or plain text. Works with Gmail, Outlook, Apple Mail. Free, no account needed.">
+<meta name="keywords" content="email signature generator, free email signature, HTML email signature, professional email signature, Gmail signature maker">
+<meta property="og:title" content="AI Email Signature Generator — Free Professional Signatures | ABUZ8 AI">
+<meta property="og:description" content="Build a professional email signature in seconds. Copy the HTML and paste into Gmail, Outlook, or any email client.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://abuz8ai.com/tools/ai-email-signature">
+<link rel="canonical" href="https://abuz8ai.com/tools/ai-email-signature">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "AI Email Signature Generator",
+  "url": "https://abuz8ai.com/tools/ai-email-signature.html",
+  "description": "Free email signature generator. Create and copy HTML email signatures for Gmail, Outlook, and more.",
+  "applicationCategory": "BusinessApplication",
+  "operatingSystem": "Any",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+  "provider": { "@type": "Organization", "name": "ABUZ8 AI", "url": "https://abuz8ai.com" }
+}
+</script>
+<style>
+:root{--lapis:#0a1628;--lapis-mid:#0f2040;--lapis-light:#163060;--gold:#c9a84c;--gold-light:#e8d48b;--gold-dim:#8a7030;--turq:#0e9f6e;--turq-light:#2fbf8f;--turq-bright:#2fbf8f;--cream:#f5f0e8;--text:#e8e4d8;--dim:#8a9aaa;--card:#0d1a30;--border:#1a2e50;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--lapis);color:var(--text);font-family:'Inter',system-ui,sans-serif;line-height:1.6;min-height:100vh;}
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@400;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+nav{background:rgba(10,22,40,0.95);border-bottom:1px solid var(--border);padding:1rem 2rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;backdrop-filter:blur(8px);}
+.nav-logo{font-family:'Playfair Display',serif;font-size:1.25rem;color:var(--gold);font-weight:700;text-decoration:none;}
+.nav-back{color:var(--dim);font-size:0.875rem;text-decoration:none;transition:color 0.2s;}
+.nav-back:hover{color:var(--gold);}
+
+.hero{text-align:center;padding:3.5rem 2rem 2rem;max-width:750px;margin:0 auto;}
+.hero-badge{display:inline-block;background:rgba(201,168,76,0.12);color:var(--gold);border:1px solid rgba(201,168,76,0.3);padding:0.35rem 1rem;border-radius:999px;font-size:0.8rem;font-weight:600;letter-spacing:0.05em;text-transform:uppercase;margin-bottom:1.25rem;}
+h1{font-family:'Playfair Display',serif;font-size:clamp(1.9rem,4vw,3rem);color:var(--cream);line-height:1.2;margin-bottom:0.75rem;}
+h1 span{color:var(--gold);}
+.hero p{color:var(--dim);font-size:1.05rem;max-width:520px;margin:0 auto;}
+
+/* Main layout */
+.main-layout{max-width:1200px;margin:0 auto;padding:2rem 1.5rem 4rem;display:grid;grid-template-columns:380px 1fr;gap:2rem;align-items:start;}
+@media(max-width:900px){.main-layout{grid-template-columns:1fr;}}
+
+/* Editor */
+.editor-panel{display:flex;flex-direction:column;gap:1rem;}
+.section-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.35rem;}
+.section-title{font-size:0.73rem;font-weight:700;color:var(--dim);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:1rem;display:flex;align-items:center;gap:0.5rem;}
+.section-title::before{content:'';display:block;width:3px;height:13px;background:var(--gold);border-radius:2px;}
+.form-group{margin-bottom:0.75rem;}
+.form-group:last-child{margin-bottom:0;}
+label{font-size:0.78rem;font-weight:600;color:var(--dim);display:block;margin-bottom:0.35rem;}
+input[type="text"],input[type="email"],input[type="url"],input[type="tel"],input[type="color"],select{background:var(--lapis-mid);border:1px solid var(--border);color:var(--text);padding:0.58rem 0.85rem;border-radius:7px;font-family:inherit;font-size:0.88rem;width:100%;transition:border-color 0.2s;}
+input:focus,select:focus{outline:none;border-color:var(--gold);}
+select option{background:var(--lapis-mid);}
+input[type="color"]{height:40px;padding:2px;cursor:pointer;}
+
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:0.6rem;}
+.toggle-row{display:flex;align-items:center;justify-content:space-between;padding:0.5rem 0;}
+.toggle-label{font-size:0.83rem;color:var(--text);}
+.toggle{position:relative;width:40px;height:22px;cursor:pointer;}
+.toggle input{opacity:0;width:0;height:0;position:absolute;}
+.toggle-track{position:absolute;inset:0;background:var(--border);border-radius:11px;transition:background 0.2s;}
+.toggle input:checked + .toggle-track{background:var(--turq);}
+.toggle-thumb{position:absolute;top:3px;left:3px;width:16px;height:16px;background:#fff;border-radius:50%;transition:transform 0.2s;}
+.toggle input:checked ~ .toggle-thumb{transform:translateX(18px);}
+
+/* Template picker */
+.template-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:0.5rem;}
+.template-opt{background:var(--lapis-mid);border:2px solid var(--border);border-radius:8px;padding:0.6rem;text-align:center;cursor:pointer;transition:all 0.2s;font-size:0.75rem;color:var(--dim);font-weight:600;}
+.template-opt:hover{border-color:var(--gold-dim);color:var(--gold);}
+.template-opt.active{border-color:var(--gold);color:var(--gold);background:rgba(201,168,76,0.08);}
+.template-preview{font-size:0.6rem;opacity:0.5;margin-bottom:3px;}
+
+/* Preview panel */
+.preview-panel{display:flex;flex-direction:column;gap:1rem;position:sticky;top:80px;}
+.preview-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.35rem;}
+.preview-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;}
+.preview-header h3{font-family:'Playfair Display',serif;color:var(--cream);font-size:1.05rem;}
+.preview-tabs{display:flex;gap:0.4rem;}
+.preview-tab{background:transparent;border:1px solid var(--border);color:var(--dim);padding:0.35rem 0.85rem;border-radius:6px;font-family:inherit;font-size:0.78rem;cursor:pointer;transition:all 0.2s;font-weight:500;}
+.preview-tab.active{background:var(--gold);color:var(--lapis);border-color:var(--gold);font-weight:700;}
+
+/* Signature container */
+.sig-container{background:#fff;border-radius:8px;padding:1.5rem;min-height:120px;}
+#sigHtml{display:block;}
+#sigCode{display:none;background:var(--lapis);border-radius:8px;padding:1rem;font-family:'JetBrains Mono',monospace;font-size:0.72rem;color:var(--turq-bright);white-space:pre-wrap;overflow-x:auto;max-height:280px;overflow-y:auto;}
+
+/* Action buttons */
+.action-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0.5rem;}
+.btn-action{background:transparent;border:1px solid var(--border);color:var(--dim);padding:0.65rem;border-radius:8px;font-family:inherit;font-size:0.8rem;cursor:pointer;transition:all 0.2s;font-weight:600;text-align:center;}
+.btn-action.primary{background:var(--gold);color:var(--lapis);border-color:var(--gold);}
+.btn-action.primary:hover{background:var(--gold-light);}
+.btn-action:hover:not(.primary){border-color:var(--gold);color:var(--gold);background:rgba(201,168,76,0.08);}
+
+/* Install guide */
+.install-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.35rem;}
+.install-card h4{font-family:'Playfair Display',serif;color:var(--cream);margin-bottom:0.75rem;font-size:1rem;}
+.install-steps{display:flex;flex-direction:column;gap:0.5rem;}
+.step{display:flex;gap:0.75rem;align-items:flex-start;}
+.step-num{background:rgba(201,168,76,0.15);color:var(--gold);border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:0.72rem;font-weight:700;flex-shrink:0;margin-top:2px;}
+.step p{font-size:0.82rem;color:var(--dim);}
+.step strong{color:var(--text);}
+.install-tabs{display:flex;gap:0.35rem;margin-bottom:0.75rem;}
+.install-tab{background:transparent;border:1px solid var(--border);color:var(--dim);padding:0.3rem 0.75rem;border-radius:5px;font-family:inherit;font-size:0.75rem;cursor:pointer;transition:all 0.2s;}
+.install-tab.active{background:rgba(201,168,76,0.12);color:var(--gold);border-color:var(--gold-dim);}
+
+/* Waitlist */
+.waitlist-section{max-width:700px;margin:2rem auto 3rem;background:linear-gradient(135deg,rgba(201,168,76,0.08) 0%,rgba(26,138,122,0.08) 100%);border:1px solid rgba(201,168,76,0.25);border-radius:16px;padding:2.5rem;text-align:center;}
+.waitlist-section h2{font-family:'Playfair Display',serif;color:var(--cream);margin-bottom:0.75rem;font-size:1.75rem;}
+.waitlist-section p{color:var(--dim);margin-bottom:1.75rem;}
+.waitlist-form{display:flex;gap:0.75rem;max-width:420px;margin:0 auto;}
+.waitlist-form input{flex:1;background:var(--lapis-mid);border:1px solid var(--border);color:var(--text);padding:0.75rem 1rem;border-radius:8px;font-family:inherit;font-size:0.95rem;}
+.waitlist-form input:focus{outline:none;border-color:var(--gold);}
+.btn-waitlist{background:var(--gold);color:var(--lapis);border:none;padding:0.75rem 1.5rem;border-radius:8px;font-family:inherit;font-size:0.9rem;font-weight:700;cursor:pointer;white-space:nowrap;transition:background 0.2s;}
+.btn-waitlist:hover{background:var(--gold-light);}
+.waitlist-note{font-size:0.8rem;color:var(--dim);margin-top:0.75rem;opacity:0.7;}
+.waitlist-success{display:none;color:var(--turq-bright);font-weight:600;}
+
+footer{border-top:1px solid var(--border);padding:2rem;text-align:center;color:var(--dim);font-size:0.875rem;}
+footer a{color:var(--gold);text-decoration:none;}
+</style>
+<script src="_abuz8-live-brain.js" defer></script>
+
+<script src="_abuz8-config.js" defer></script>
+</head>
+<body>
+
+<nav>
+  <a href="https://abuz8ai.com" class="nav-logo">ABUZ8 AI</a>
+  <a href="https://abuz8ai.com/tools.html" class="nav-back">← All Tools</a>
+</nav>
+
+<div class="hero">
+  <div class="hero-badge">Free Tool</div>
+  <h1>Email Signatures That<br><span>Actually Look Good</span></h1>
+  <p>Fill in your details, pick a template, copy the HTML. Works with Gmail, Outlook, Apple Mail, and any client that accepts HTML.</p>
+</div>
+
+<div class="main-layout">
+  <!-- Editor -->
+  <div class="editor-panel">
+
+    <!-- Template -->
+    <div class="section-card">
+      <div class="section-title">Template</div>
+      <div class="template-grid">
+        <div class="template-opt active" onclick="setTemplate('classic',this)">
+          <div class="template-preview">━━━━━━━</div>
+          Classic
+        </div>
+        <div class="template-opt" onclick="setTemplate('modern',this)">
+          <div class="template-preview">▌━━━━━━</div>
+          Modern
+        </div>
+        <div class="template-opt" onclick="setTemplate('minimal',this)">
+          <div class="template-preview">·····</div>
+          Minimal
+        </div>
+        <div class="template-opt" onclick="setTemplate('bold',this)">
+          <div class="template-preview">█ ━━━━━</div>
+          Bold
+        </div>
+        <div class="template-opt" onclick="setTemplate('compact',this)">
+          <div class="template-preview">── · ──</div>
+          Compact
+        </div>
+        <div class="template-opt" onclick="setTemplate('card',this)">
+          <div class="template-preview">┌─────┐</div>
+          Card
+        </div>
+      </div>
+    </div>
+
+    <!-- Info -->
+    <div class="section-card">
+      <div class="section-title">Your Info</div>
+      <div class="form-group">
+        <label>Full Name</label>
+        <input type="text" id="f-name" placeholder="Jane Smith" oninput="renderSig()">
+      </div>
+      <div class="form-group">
+        <label>Job Title</label>
+        <input type="text" id="f-title" placeholder="Founder & CEO" oninput="renderSig()">
+      </div>
+      <div class="form-group">
+        <label>Company</label>
+        <input type="text" id="f-company" placeholder="Acme Studio" oninput="renderSig()">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" id="f-email" placeholder="jane@acme.com" oninput="renderSig()">
+        </div>
+        <div class="form-group">
+          <label>Phone</label>
+          <input type="tel" id="f-phone" placeholder="+1 (555) 000-0000" oninput="renderSig()">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Website</label>
+        <input type="url" id="f-website" placeholder="https://acme.com" oninput="renderSig()">
+      </div>
+      <div class="form-group">
+        <label>Location <small style="font-weight:400;opacity:0.7;">(optional)</small></label>
+        <input type="text" id="f-location" placeholder="New York, NY" oninput="renderSig()">
+      </div>
+    </div>
+
+    <!-- Social -->
+    <div class="section-card">
+      <div class="section-title">Social Links</div>
+      <div class="form-group">
+        <label>LinkedIn URL</label>
+        <input type="url" id="f-linkedin" placeholder="https://linkedin.com/in/jane" oninput="renderSig()">
+      </div>
+      <div class="form-group">
+        <label>Twitter / X</label>
+        <input type="url" id="f-twitter" placeholder="https://x.com/jane" oninput="renderSig()">
+      </div>
+      <div class="form-group">
+        <label>Calendar / Booking Link</label>
+        <input type="url" id="f-cal" placeholder="https://cal.com/jane" oninput="renderSig()">
+      </div>
+    </div>
+
+    <!-- Style -->
+    <div class="section-card">
+      <div class="section-title">Style</div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Accent Color</label>
+          <input type="color" id="f-color" value="#c9a84c" oninput="renderSig()">
+        </div>
+        <div class="form-group">
+          <label>Font</label>
+          <select id="f-font" onchange="renderSig()">
+            <option value="Arial, sans-serif">Arial</option>
+            <option value="'Helvetica Neue', Helvetica, sans-serif">Helvetica</option>
+            <option value="Georgia, serif">Georgia</option>
+            <option value="'Trebuchet MS', sans-serif">Trebuchet</option>
+            <option value="Verdana, sans-serif">Verdana</option>
+            <option value="Tahoma, sans-serif">Tahoma</option>
+          </select>
+        </div>
+      </div>
+      <div class="toggle-row">
+        <span class="toggle-label">Show company divider</span>
+        <label class="toggle">
+          <input type="checkbox" id="f-divider" checked onchange="renderSig()">
+          <div class="toggle-track"></div>
+          <div class="toggle-thumb"></div>
+        </label>
+      </div>
+      <div class="toggle-row">
+        <span class="toggle-label">Show "Book a call" CTA</span>
+        <label class="toggle">
+          <input type="checkbox" id="f-cta" onchange="renderSig()">
+          <div class="toggle-track"></div>
+          <div class="toggle-thumb"></div>
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <!-- Preview -->
+  <div class="preview-panel">
+    <div class="preview-card">
+      <div class="preview-header">
+        <h3>Preview</h3>
+        <div class="preview-tabs">
+          <button class="preview-tab active" onclick="switchPreview('html',this)">Preview</button>
+          <button class="preview-tab" onclick="switchPreview('code',this)">HTML Code</button>
+        </div>
+      </div>
+      <div class="sig-container">
+        <div id="sigHtml"></div>
+        <pre id="sigCode"></pre>
+      </div>
+    </div>
+
+    <div class="action-row">
+      <button class="btn-action primary" onclick="copyHtml()">Copy HTML</button>
+      <button class="btn-action" onclick="copyPlainText()">Copy Plain Text</button>
+      <button class="btn-action" onclick="downloadHtml()">Download</button>
+    </div>
+
+    <!-- Install guide -->
+    <div class="install-card">
+      <h4>How to Install in Your Email Client</h4>
+      <div class="install-tabs">
+        <button class="install-tab active" onclick="showGuide('gmail',this)">Gmail</button>
+        <button class="install-tab" onclick="showGuide('outlook',this)">Outlook</button>
+        <button class="install-tab" onclick="showGuide('apple',this)">Apple Mail</button>
+      </div>
+      <div class="install-steps" id="guideSteps"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Waitlist -->
+<div class="waitlist-section">
+  <h2>Signature Analytics & Team Kits</h2>
+  <p>Track signature opens, link clicks, and book-a-call conversions. Generate unified signature kits for your whole team with one brand standard. Join the list.</p>
+  <div class="waitlist-form">
+    <input type="email" id="waitlistEmail" placeholder="your@email.com">
+    <button class="btn-waitlist" onclick="joinWaitlist()">Join Early Access</button>
+  </div>
+  <div class="waitlist-success" id="waitlistSuccess">✓ You're on the list. First to know.</div>
+  <p class="waitlist-note">No spam. Just the tool when it's ready.</p>
+</div>
+
+<footer>
+  <p>© 2026 ABUZ8 AI — <a href="https://abuz8ai.com">abuz8ai.com</a> · <a href="https://abuz8ai.com/tools.html">All Tools</a></p>
+</footer>
+
+<script>
+let currentTemplate = 'classic';
+let currentSigHtml = '';
+
+const GUIDES = {
+  gmail: [
+    { n:1, t:'Click the gear icon (⚙) in Gmail, then click <strong>See all settings</strong>' },
+    { n:2, t:'Go to the <strong>General</strong> tab and scroll down to <strong>Signature</strong>' },
+    { n:3, t:'Click <strong>Create new</strong>, name it, then click inside the signature box' },
+    { n:4, t:'Click <strong>Copy HTML</strong> above, then paste into Gmail\'s signature editor' },
+    { n:5, t:'Click <strong>Save Changes</strong> at the bottom. Done.' },
+  ],
+  outlook: [
+    { n:1, t:'Open Outlook, click <strong>File → Options → Mail → Signatures</strong>' },
+    { n:2, t:'Click <strong>New</strong>, name your signature, and click <strong>OK</strong>' },
+    { n:3, t:'In the Edit Signature box, click the <strong>source code</strong> icon (or paste HTML via Insert)' },
+    { n:4, t:'Click <strong>Copy HTML</strong> above, paste the code, and click <strong>OK</strong>' },
+    { n:5, t:'Set it as your default for new messages and replies.' },
+  ],
+  apple: [
+    { n:1, t:'Open Mail, go to <strong>Mail → Settings → Signatures</strong>' },
+    { n:2, t:'Select your account, click <strong>+</strong> to create a new signature' },
+    { n:3, t:'Click <strong>Download</strong> above to get the HTML file' },
+    { n:4, t:'Open the HTML file in a browser, select all, copy, and paste into Apple Mail\'s signature field' },
+    { n:5, t:'Drag the signature to your account on the left to set as default.' },
+  ]
+};
+
+function showGuide(client, btn) {
+  document.querySelectorAll('.install-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const steps = document.getElementById('guideSteps');
+  steps.innerHTML = GUIDES[client].map(s => `
+    <div class="step">
+      <div class="step-num">${s.n}</div>
+      <p>${s.t}</p>
+    </div>
+  `).join('');
+}
+
+function setTemplate(name, el) {
+  currentTemplate = name;
+  document.querySelectorAll('.template-opt').forEach(e => e.classList.remove('active'));
+  el.classList.add('active');
+  renderSig();
+}
+
+function g(id) { return document.getElementById(id).value.trim(); }
+function gb(id) { return document.getElementById(id).checked; }
+
+function renderSig() {
+  const name = g('f-name') || 'Your Name';
+  const title = g('f-title') || 'Your Title';
+  const company = g('f-company');
+  const email = g('f-email');
+  const phone = g('f-phone');
+  const website = g('f-website');
+  const location = g('f-location');
+  const linkedin = g('f-linkedin');
+  const twitter = g('f-twitter');
+  const cal = g('f-cal');
+  const color = g('f-color') || '#c9a84c';
+  const font = g('f-font') || 'Arial, sans-serif';
+  const showDivider = gb('f-divider');
+  const showCTA = gb('f-cta');
+
+  const lk = (href, text) => href ? `<a href="${href}" style="color:${color};text-decoration:none;">${text}</a>` : '';
+  const lkNoStyle = (href, text) => href ? `<a href="${href}" style="color:#555;text-decoration:none;">${text}</a>` : text;
+
+  let html = '';
+
+  if (currentTemplate === 'classic') {
+    html = `
+<table cellpadding="0" cellspacing="0" border="0" style="font-family:${font};color:#333;font-size:14px;line-height:1.5;">
+  <tr>
+    <td style="padding-right:16px;vertical-align:top;border-right:2px solid ${color};">
+      <p style="margin:0;font-size:16px;font-weight:700;color:#111;">${name}</p>
+      <p style="margin:2px 0 0;font-size:13px;color:#555;">${title}${company ? (showDivider ? ` · <strong>${company}</strong>` : '') : ''}</p>
+    </td>
+    <td style="padding-left:16px;vertical-align:top;font-size:12px;color:#555;">
+      ${email ? `<p style="margin:0;">${lk('mailto:'+email, email)}</p>` : ''}
+      ${phone ? `<p style="margin:2px 0 0;">${phone}</p>` : ''}
+      ${website ? `<p style="margin:2px 0 0;">${lk(website, website.replace('https://',''))}</p>` : ''}
+      ${location ? `<p style="margin:2px 0 0;">📍 ${location}</p>` : ''}
+    </td>
+  </tr>
+  ${(linkedin||twitter||cal) ? `<tr><td colspan="2" style="padding-top:8px;">${socialRow(linkedin,twitter,cal,color,font)}</td></tr>` : ''}
+  ${showCTA && cal ? `<tr><td colspan="2" style="padding-top:8px;">${ctaBlock(cal,color,font)}</td></tr>` : ''}
+</table>`;
+  } else if (currentTemplate === 'modern') {
+    html = `
+<table cellpadding="0" cellspacing="0" border="0" style="font-family:${font};color:#333;font-size:14px;line-height:1.5;">
+  <tr>
+    <td style="padding:0 0 8px;border-bottom:3px solid ${color};">
+      <p style="margin:0;font-size:18px;font-weight:700;color:#111;letter-spacing:-0.02em;">${name}</p>
+      <p style="margin:2px 0 0;font-size:13px;color:${color};font-weight:600;">${title}${company ? ' — '+company : ''}</p>
+    </td>
+  </tr>
+  <tr>
+    <td style="padding-top:8px;font-size:12px;color:#555;">
+      ${[email?lk('mailto:'+email,email):'', phone||'', website?lk(website,website.replace('https://','')):'', location?'📍 '+location:''].filter(Boolean).join(' &nbsp;·&nbsp; ')}
+    </td>
+  </tr>
+  ${(linkedin||twitter||cal) ? `<tr><td style="padding-top:6px;">${socialRow(linkedin,twitter,cal,color,font)}</td></tr>` : ''}
+  ${showCTA && cal ? `<tr><td style="padding-top:8px;">${ctaBlock(cal,color,font)}</td></tr>` : ''}
+</table>`;
+  } else if (currentTemplate === 'minimal') {
+    html = `
+<table cellpadding="0" cellspacing="0" border="0" style="font-family:${font};color:#555;font-size:13px;line-height:1.6;">
+  <tr><td>
+    <p style="margin:0;font-size:14px;font-weight:600;color:#111;">${name} ${title ? `<span style="color:#aaa;font-weight:400">| ${title}</span>` : ''}</p>
+    <p style="margin:2px 0 0;">${[email?lk('mailto:'+email,email):'', phone||'', website?lk(website,website.replace('https://','')):''].filter(Boolean).join(' · ')}</p>
+    ${(linkedin||twitter||cal) ? `<p style="margin:4px 0 0;">${socialRow(linkedin,twitter,cal,color,font)}</p>` : ''}
+  </td></tr>
+</table>`;
+  } else if (currentTemplate === 'bold') {
+    html = `
+<table cellpadding="0" cellspacing="0" border="0" style="font-family:${font};color:#333;font-size:14px;line-height:1.5;">
+  <tr>
+    <td style="background:${color};padding:12px 20px;border-radius:6px 0 0 6px;" width="8">&nbsp;</td>
+    <td style="padding:0 0 0 16px;">
+      <p style="margin:0;font-size:20px;font-weight:800;color:#111;letter-spacing:-0.03em;">${name}</p>
+      <p style="margin:2px 0 6px;font-size:13px;color:#555;">${title}${company ? (showDivider?` <strong style="color:${color}">· ${company}</strong>`:'')  : ''}</p>
+      <p style="margin:0;font-size:12px;color:#777;">
+        ${[email?lk('mailto:'+email,email):'', phone||'', website?lk(website,website.replace('https://','')):'', location?'📍 '+location:''].filter(Boolean).join(' &nbsp;·&nbsp; ')}
+      </p>
+      ${(linkedin||twitter||cal) ? `<p style="margin:6px 0 0;">${socialRow(linkedin,twitter,cal,color,font)}</p>` : ''}
+      ${showCTA && cal ? `<p style="margin:8px 0 0;">${ctaBlock(cal,color,font)}</p>` : ''}
+    </td>
+  </tr>
+</table>`;
+  } else if (currentTemplate === 'compact') {
+    html = `
+<p style="margin:0;font-family:${font};font-size:13px;color:#555;line-height:1.8;">
+  <strong style="color:#111;font-size:14px;">${name}</strong>${title?` · <span style="color:${color};font-weight:600;">${title}</span>`:''}${company?(showDivider?` · ${company}`:''):''}
+  <br>${[email?lk('mailto:'+email,email):'', phone||'', website?lk(website,website.replace('https://','')):''].filter(Boolean).join(' · ')}
+  ${(linkedin||twitter||cal) ? `<br>${socialRow(linkedin,twitter,cal,color,font)}` : ''}
+</p>`;
+  } else if (currentTemplate === 'card') {
+    html = `
+<table cellpadding="0" cellspacing="0" border="0" style="font-family:${font};border:1px solid #eee;border-radius:8px;overflow:hidden;max-width:480px;">
+  <tr>
+    <td style="background:${color};padding:3px;" colspan="2"></td>
+  </tr>
+  <tr>
+    <td style="padding:16px 20px;vertical-align:top;">
+      <p style="margin:0;font-size:16px;font-weight:700;color:#111;">${name}</p>
+      <p style="margin:3px 0 0;font-size:12px;color:#777;">${title}${company?` · <strong>${company}</strong>`:''}</p>
+    </td>
+  </tr>
+  <tr>
+    <td style="padding:0 20px 14px;font-size:12px;color:#555;">
+      ${[email?`<a href="mailto:${email}" style="color:${color};text-decoration:none;">${email}</a>`:'', phone||'', website?`<a href="${website}" style="color:${color};text-decoration:none;">${website.replace('https://','')}</a>`:''].filter(Boolean).join(' &nbsp;·&nbsp; ')}
+      ${(linkedin||twitter||cal) ? `<br><br>${socialRow(linkedin,twitter,cal,color,font)}` : ''}
+      ${showCTA && cal ? `<br><br>${ctaBlock(cal,color,font)}` : ''}
+    </td>
+  </tr>
+</table>`;
+  }
+
+  currentSigHtml = html.trim();
+  document.getElementById('sigHtml').innerHTML = currentSigHtml;
+  document.getElementById('sigCode').textContent = currentSigHtml;
+}
+
+function socialRow(linkedin, twitter, cal, color, font) {
+  const links = [];
+  if (linkedin) links.push(`<a href="${linkedin}" style="color:${color};text-decoration:none;font-size:12px;font-family:${font};">LinkedIn</a>`);
+  if (twitter) links.push(`<a href="${twitter}" style="color:${color};text-decoration:none;font-size:12px;font-family:${font};">Twitter/X</a>`);
+  if (cal) links.push(`<a href="${cal}" style="color:${color};text-decoration:none;font-size:12px;font-family:${font};">Calendar</a>`);
+  return links.join(' &nbsp;·&nbsp; ');
+}
+
+function ctaBlock(cal, color, font) {
+  return `<a href="${cal}" style="display:inline-block;background:${color};color:#fff;text-decoration:none;padding:6px 16px;border-radius:4px;font-size:12px;font-weight:600;font-family:${font};">📅 Book a Call</a>`;
+}
+
+function switchPreview(mode, btn) {
+  document.querySelectorAll('.preview-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  if (mode === 'html') {
+    document.getElementById('sigHtml').style.display = 'block';
+    document.getElementById('sigCode').style.display = 'none';
+  } else {
+    document.getElementById('sigHtml').style.display = 'none';
+    document.getElementById('sigCode').style.display = 'block';
+  }
+}
+
+function copyHtml() {
+  navigator.clipboard.writeText(currentSigHtml).then(() => {
+    const btn = document.querySelector('.btn-action.primary');
+    btn.textContent = '✓ Copied!';
+    setTimeout(() => btn.textContent='Copy HTML',1500);
+  });
+  gtag('event','signature_copy',{template:currentTemplate});
+}
+
+function copyPlainText() {
+  const name = g('f-name')||'Your Name';
+  const title = g('f-title');
+  const company = g('f-company');
+  const email = g('f-email');
+  const phone = g('f-phone');
+  const website = g('f-website');
+  const lines = [name, [title,company].filter(Boolean).join(' · '), email, phone, website].filter(Boolean);
+  navigator.clipboard.writeText(lines.join('\n')).then(() => {
+    const btns = document.querySelectorAll('.btn-action');
+    btns[1].textContent='✓ Copied!';
+    setTimeout(()=>btns[1].textContent='Copy Plain Text',1500);
+  });
+}
+
+function downloadHtml() {
+  const blob = new Blob([`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Email Signature</title><script src="_abuz8-live-brain.js" defer><\/script>
+</head><body style="padding:20px;font-family:Arial,sans-serif;">${currentSigHtml}
+<script src="/assets/js/dfy-banner.js" async><\/script>
+<script src="/assets/js/abuz8-intent.js" defer><\/script>
+<script src="/tools/_tools-shared.js" defer><\/script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body></html>`], {type:'text/html'});
+  const a = document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='email-signature.html'; a.click();
+  gtag('event','signature_download',{template:currentTemplate});
+}
+
+async function joinWaitlist() {
+  const email = document.getElementById('waitlistEmail').value.trim();
+  if (!email||!email.includes('@')) { alert('Please enter a valid email.'); return; }
+  try { await fetch('https://abuz8ai.com/api/waitlist', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,tool:'ai-email-signature',ts:Date.now()})}); } catch(e){}
+  document.querySelector('.waitlist-form').style.display='none';
+  document.getElementById('waitlistSuccess').style.display='block';
+  gtag('event','waitlist_signup',{tool:'ai-email-signature'});
+}
+
+// Init
+showGuide('gmail', document.querySelector('.install-tab'));
+renderSig();
+</script>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+<script src="/tools/_tools-shared.js" defer></script>
+</body>
+</html>
+

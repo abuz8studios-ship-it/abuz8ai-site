@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI API Rate Limit Calculator — TPM/RPM to Concurrent Users | ABUZ8</title>
+  <meta name="description" content="Free AI API rate limit calculator. Enter your provider's tokens-per-minute (TPM) and requests-per-minute (RPM) limits, your tokens per request, and how often each user calls — see how many concurrent users you can serve, which limit binds first, and your headroom. 100% client-side." />
+  <meta name="keywords" content="AI API rate limit calculator, tokens per minute calculator, TPM RPM calculator, OpenAI rate limit, Anthropic rate limit, how many concurrent users API, requests per minute calculator, LLM API capacity planning, 429 rate limit, TPM vs RPM" />
+  <meta property="og:title" content="AI API Rate Limit Calculator — Will Your Tier Hold Your Traffic? | ABUZ8" />
+  <meta property="og:description" content="Enter TPM and RPM limits, tokens per request, and per-user call rate. See concurrent-user capacity, which limit binds first, and headroom. Client-side, free, no signup." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://abuz8ai.com/tools/ai-rate-limit-calculator" />
+  <link rel="canonical" href="https://abuz8ai.com/tools/ai-rate-limit-calculator" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "AI API Rate Limit Calculator",
+    "description": "Free client-side calculator that converts an AI provider's tokens-per-minute (TPM) and requests-per-minute (RPM) limits into the number of concurrent users you can serve, and shows which limit binds first.",
+    "url": "https://abuz8ai.com/tools/ai-rate-limit-calculator.html",
+    "applicationCategory": "DeveloperApplication",
+    "operatingSystem": "Any",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+    "author": { "@type": "Organization", "name": "ABUZ8 LLC", "url": "https://abuz8ai.com" }
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "What is the difference between TPM and RPM?",
+        "acceptedAnswer": { "@type": "Answer", "text": "TPM (tokens per minute) caps the total tokens — input plus output — your account can process each minute. RPM (requests per minute) caps how many separate API calls you can make each minute, regardless of size. A provider enforces both at once, so your real ceiling is whichever runs out first: big requests usually hit the TPM wall, while many tiny requests hit the RPM wall." }
+      },
+      {
+        "@type": "Question",
+        "name": "How many concurrent users can one API tier serve?",
+        "acceptedAnswer": { "@type": "Answer", "text": "It depends on three things: your per-minute limits, how many tokens each request costs (input + output), and how often each user triggers a request. This calculator divides your binding per-minute request ceiling by the requests-per-user-per-minute to give a supportable concurrent-user count, and flags whether TPM or RPM is the bottleneck." }
+      },
+      {
+        "@type": "Question",
+        "name": "Why do I keep getting 429 errors even under my request limit?",
+        "acceptedAnswer": { "@type": "Answer", "text": "A 429 (Too Many Requests) fires when you exceed either limit. You can be well under your RPM and still get 429s because your requests are large and you blew through the TPM budget instead. Output tokens count toward TPM too, so long completions burn the token budget fast. Check both limits — this tool shows which one you are actually hitting." }
+      },
+      {
+        "@type": "Question",
+        "name": "Is my data sent to a server?",
+        "acceptedAnswer": { "@type": "Answer", "text": "No. This calculator runs entirely in your browser. Nothing you enter is uploaded, logged, or stored anywhere." }
+      }
+    ]
+  }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    /* ABUZ8 palette — vision-safe (Ahmad photosensitivity). No neon, no flashing. */
+    :root {
+      --bg: #0a1628;
+      --card: #0d1a30;
+      --card-alt: #111f38;
+      --primary: #5fa8e8;
+      --primary-dim: #2e75b6;
+      --teal: #0e9f6e;
+      --text: #e8e4d8;
+      --text-dim: #5b6b7c;
+      --border: #d8e0e8;
+      --good: #0e9f6e;
+      --good-bg: #e7f3f0;
+      --warn: #c9a84c;
+      --warn-bg: #fbf1e3;
+      --font-heading: 'Playfair Display', Georgia, serif;
+      --font-body: 'Inter', system-ui, sans-serif;
+      --font-mono: 'JetBrains Mono', 'Courier New', monospace;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      font-size: 15px;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+    a { color: var(--primary); text-decoration: none; transition: color 0.2s; }
+    a:hover { color: var(--primary-dim); }
+
+    nav {
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      padding: 0 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 60px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .nav-logo {
+      font-family: var(--font-heading);
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--primary);
+      letter-spacing: 0.02em;
+    }
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links a { color: var(--text-dim); font-size: 0.9rem; font-weight: 500; }
+    .nav-links a:hover { color: var(--primary); }
+
+    main { max-width: 980px; margin: 0 auto; padding: 3rem 1.5rem 5rem; }
+    .page-header { text-align: center; margin-bottom: 2.2rem; }
+    .page-header h1 {
+      font-family: var(--font-heading);
+      font-size: 2.4rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 0.5rem;
+      line-height: 1.18;
+    }
+    .page-header p { color: var(--text-dim); font-size: 1rem; max-width: 660px; margin: 0 auto; }
+    .privacy-note {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      margin-top: 0.9rem; padding: 0.35rem 0.9rem;
+      background: var(--good-bg); border: 1px solid #bfe0d8;
+      border-radius: 20px; font-size: 0.78rem; color: var(--good);
+    }
+
+    label { display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-dim);
+            text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.5rem; }
+    select, input[type="number"] {
+      width: 100%;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      padding: 0.7rem 0.9rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    select:focus, input:focus { border-color: var(--primary); }
+    .hint { font-size: 0.72rem; color: var(--text-dim); margin-top: 0.35rem; font-weight: 400; text-transform: none; letter-spacing: 0; }
+
+    .panel {
+      background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+      padding: 1.4rem 1.5rem; margin-bottom: 1.4rem;
+      box-shadow: 0 1px 3px rgba(44,62,80,0.04);
+    }
+    .panel h2 {
+      font-family: var(--font-heading); font-size: 1.25rem; color: var(--primary);
+      margin-bottom: 1.1rem;
+    }
+    .controls { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+    .controls .full { grid-column: 1 / -1; }
+
+    /* THREE RESULT CARDS */
+    .results { display: grid; grid-template-columns: 1.3fr 1fr 1fr; gap: 1rem; margin: 0.4rem 0 0; }
+    .rcard { border: 1px solid var(--border); border-radius: 12px; padding: 1.3rem 1.4rem; background: var(--card-alt); }
+    .rcard.total { border-top: 3px solid var(--primary); }
+    .rcard.reqs { border-top: 3px solid var(--teal); }
+    .rcard.bind { border-top: 3px solid #8a6db1; }
+    .rcard .rlabel { font-size: 0.74rem; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text-dim); font-weight: 600; }
+    .rcard .rbig { font-family: var(--font-heading); font-size: 2.1rem; font-weight: 700; line-height: 1.1; margin: 0.3rem 0 0.1rem; }
+    .rcard.total .rbig { color: var(--primary); }
+    .rcard.reqs .rbig { color: var(--teal); }
+    .rcard.bind .rbig { color: #8a6db1; }
+    .rcard .rsub { font-size: 0.8rem; color: var(--text-dim); }
+
+    /* VERDICT */
+    .verdict {
+      margin: 1.4rem 0 0; padding: 1.1rem 1.3rem; border-radius: 10px;
+      font-size: 0.95rem; line-height: 1.6;
+      background: var(--good-bg); border: 1px solid #bfe0d8; color: var(--text);
+    }
+    .verdict.tight { background: var(--warn-bg); border-color: #f0d9b5; }
+    .verdict strong { color: var(--primary); }
+    .verdict.tight strong { color: var(--warn); }
+    .verdict .big { font-family: var(--font-heading); font-weight: 700; }
+
+    /* TABLE */
+    .table-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: 12px; margin-top: 1.3rem; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.86rem; min-width: 620px; background: var(--card); }
+    thead th {
+      background: var(--card-alt); color: var(--text-dim);
+      font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.06em;
+      text-align: right; padding: 0.8rem 1rem; border-bottom: 1px solid var(--border); font-weight: 600;
+    }
+    thead th:first-child { text-align: left; }
+    tbody td { padding: 0.7rem 1rem; border-bottom: 1px solid var(--border); text-align: right; font-family: var(--font-mono); }
+    tbody td:first-child { text-align: left; font-family: var(--font-body); }
+    tbody tr:last-child td { border-bottom: none; }
+    tbody tr.active { background: var(--good-bg); }
+    tbody tr.active td:first-child { box-shadow: inset 3px 0 0 var(--teal); }
+    .tier-name { font-weight: 600; color: var(--text); }
+    .bind-tpm { color: var(--primary); font-weight: 600; }
+    .bind-rpm { color: #8a6db1; font-weight: 600; }
+    .price-note { font-size: 0.78rem; color: var(--text-dim); margin-top: 0.9rem; line-height: 1.7; }
+    .price-note strong { color: var(--text); }
+
+    /* CTA */
+    .cta-section {
+      background: linear-gradient(135deg, #eef5fb 0%, #e7f3f0 100%);
+      border: 1px solid #cfe0ef; border-radius: 12px;
+      padding: 2.2rem 2rem; text-align: center; margin-top: 3rem;
+    }
+    .cta-section h2 { font-family: var(--font-heading); font-size: 1.5rem; color: var(--primary); margin-bottom: 0.5rem; }
+    .cta-section p { color: var(--text-dim); font-size: 0.95rem; margin-bottom: 1.2rem; max-width: 580px; margin-left: auto; margin-right: auto; }
+    .cta-form { display: flex; gap: 0.6rem; justify-content: center; flex-wrap: wrap; }
+    .cta-form input[type="email"] {
+      flex: 1; max-width: 300px; min-width: 200px;
+      background: var(--card); border: 1px solid var(--border); border-radius: 6px;
+      color: var(--text); font-family: var(--font-body); font-size: 0.9rem; padding: 0.6rem 1rem; outline: none;
+    }
+    .cta-form input[type="email"]:focus { border-color: var(--primary); }
+    button {
+      padding: 0.6rem 1.4rem; border-radius: 6px; border: none; cursor: pointer;
+      font-family: var(--font-body); font-size: 0.88rem; font-weight: 600; transition: background 0.2s;
+    }
+    .btn-primary { background: var(--primary); color: #0d1a30; }
+    .btn-primary:hover { background: var(--primary-dim); }
+    .cta-success { display: none; color: var(--teal); font-size: 0.9rem; margin-top: 0.8rem; font-weight: 600; }
+    .cta-success.visible { display: block; }
+
+    .content { margin-top: 3rem; }
+    .content h2 { font-family: var(--font-heading); font-size: 1.5rem; color: var(--primary); margin: 0 0 1rem; padding-top: 1rem; }
+    .faq-item { border-top: 1px solid var(--border); padding: 1.1rem 0; }
+    .faq-item h3 { font-size: 1rem; color: var(--text); margin-bottom: 0.4rem; font-weight: 600; }
+    .faq-item p { color: var(--text-dim); font-size: 0.9rem; }
+
+    footer {
+      background: var(--card); border-top: 1px solid var(--border);
+      text-align: center; padding: 1.5rem; font-size: 0.82rem; color: var(--text-dim);
+    }
+    footer a { color: var(--text-dim); }
+    footer a:hover { color: var(--primary); }
+
+    @media (max-width: 760px) {
+      .controls { grid-template-columns: 1fr 1fr; }
+      .results { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 600px) {
+      .page-header h1 { font-size: 1.8rem; }
+      nav { padding: 0 1rem; }
+      .nav-links { gap: 1rem; }
+      main { padding: 2rem 1rem 4rem; }
+      .controls { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="nav-logo">ABUZ8</a>
+  <ul class="nav-links">
+    <li><a href="/tools.html">Tools</a></li>
+    <li><a href="/store.html">Store</a></li>
+  </ul>
+</nav>
+
+<main>
+  <div class="page-header">
+    <h1>AI API Rate Limit Calculator</h1>
+    <p>Enter your provider's tokens-per-minute and requests-per-minute limits, the tokens each call costs, and how often a user triggers one. See how many concurrent users your tier holds, <em>which</em> limit binds first, and how much headroom is left before the 429s start.</p>
+    <span class="privacy-note">&#128274; 100% in-browser — nothing you enter is uploaded</span>
+  </div>
+
+  <div class="panel">
+    <h2>1. Your provider limits</h2>
+    <div class="controls">
+      <div class="full">
+        <label for="tier">Tier preset</label>
+        <select id="tier" onchange="onTierChange()"></select>
+        <div class="hint">Illustrative example tiers — fill in your real dashboard numbers below. Limits change often and vary by model, so treat presets as a starting point.</div>
+      </div>
+      <div>
+        <label for="tpm">TPM — tokens / minute</label>
+        <input type="number" id="tpm" min="0" step="1000" value="200000" oninput="recalc()" />
+        <div class="hint">Total input + output tokens per minute.</div>
+      </div>
+      <div>
+        <label for="rpm">RPM — requests / minute</label>
+        <input type="number" id="rpm" min="0" step="1" value="500" oninput="recalc()" />
+        <div class="hint">Separate API calls per minute.</div>
+      </div>
+      <div>
+        <label for="util">Safety utilization</label>
+        <select id="util" onchange="recalc()">
+          <option value="1">100% — right to the limit</option>
+          <option value="0.9" selected>90% — small buffer</option>
+          <option value="0.8">80% — comfortable buffer</option>
+          <option value="0.7">70% — bursty traffic</option>
+        </select>
+        <div class="hint">Plan below the ceiling to absorb spikes.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2>2. Your workload</h2>
+    <div class="controls">
+      <div>
+        <label for="inTok">Input tokens / request</label>
+        <input type="number" id="inTok" min="0" step="50" value="800" oninput="recalc()" />
+        <div class="hint">Prompt + context + system.</div>
+      </div>
+      <div>
+        <label for="outTok">Output tokens / request</label>
+        <input type="number" id="outTok" min="0" step="50" value="400" oninput="recalc()" />
+        <div class="hint">Completion length. Counts toward TPM too.</div>
+      </div>
+      <div>
+        <label for="perUser">Requests / user / minute</label>
+        <input type="number" id="perUser" min="0" step="0.1" value="1" oninput="recalc()" />
+        <div class="hint">How often one active user calls the API.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="verdict" id="verdict"></div>
+
+  <div class="results">
+    <div class="rcard total">
+      <div class="rlabel">Concurrent users supported</div>
+      <div class="rbig" id="usersOut">0</div>
+      <div class="rsub" id="usersSub">at your per-user call rate</div>
+    </div>
+    <div class="rcard reqs">
+      <div class="rlabel">Sustained requests / min</div>
+      <div class="rbig" id="reqsOut">0</div>
+      <div class="rsub" id="reqsSub">binding ceiling</div>
+    </div>
+    <div class="rcard bind">
+      <div class="rlabel">Binding limit</div>
+      <div class="rbig" id="bindOut">—</div>
+      <div class="rsub" id="bindSub">the bottleneck</div>
+    </div>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Tier</th>
+          <th>TPM</th>
+          <th>RPM</th>
+          <th>Req/min (TPM)</th>
+          <th>Req/min (RPM)</th>
+          <th>Binds</th>
+          <th>Users</th>
+        </tr>
+      </thead>
+      <tbody id="tierTable"></tbody>
+    </table>
+  </div>
+
+  <p class="price-note">
+    Estimates, not guarantees. <strong>Tokens per request</strong> = input + output. <strong>Requests/min allowed by TPM</strong> =
+    (TPM &times; utilization) &divide; tokens-per-request. <strong>Requests/min allowed by RPM</strong> = RPM &times; utilization.
+    The <strong>binding limit</strong> is the smaller of the two; <strong>concurrent users</strong> = binding requests-per-minute &divide;
+    requests-per-user-per-minute. Real ceilings shift with streaming, retries, batching, tokenizer differences between models, and
+    per-model limits. Always confirm current numbers in your provider's dashboard.
+  </p>
+
+  <div class="cta-section">
+    <h2>Stop renting your ceiling by the token.</h2>
+    <p>Rate limits are the tax you pay for living entirely on someone else's API. QADIR&nbsp;OS runs the models it can on hardware you own — zero TPM, zero RPM, zero 429 — and routes only the overflow to a cloud tier. Own the floor, rent just the peak.</p>
+    <div class="cta-form">
+      <input type="email" id="ctaEmail" placeholder="you@company.com" />
+      <button class="btn-primary" onclick="submitWaitlist()">Join early access</button>
+    </div>
+    <div id="ctaSuccess" class="cta-success">&#10003; You're on the list. We'll be in touch.</div>
+  </div>
+
+  <div class="content">
+    <h2>Planning AI API capacity without the guesswork</h2>
+    <div class="faq-item">
+      <h3>TPM vs RPM — what is the difference?</h3>
+      <p><strong>TPM</strong> (tokens per minute) budgets the total tokens — input <em>and</em> output — your account can process each minute. <strong>RPM</strong> (requests per minute) budgets how many separate calls you can make, regardless of their size. Providers enforce both simultaneously, so your true ceiling is whichever empties first. Large requests hit the TPM wall; a flood of tiny requests hits the RPM wall.</p>
+    </div>
+    <div class="faq-item">
+      <h3>How many concurrent users can a tier hold?</h3>
+      <p>Take the binding requests-per-minute ceiling and divide by how many requests each active user makes per minute. If TPM allows 150 req/min and RPM allows 500 req/min, TPM binds at 150 — and at one request per user per minute that is 150 concurrent users. Halve the per-user rate and you double the users; double the tokens per request and you roughly halve them.</p>
+    </div>
+    <div class="faq-item">
+      <h3>Why do 429 errors appear below my request limit?</h3>
+      <p>A <strong>429 Too Many Requests</strong> fires when you cross <em>either</em> limit. You can sit well under RPM and still get throttled because your requests are large and you exhausted the TPM budget instead. Long completions are the usual culprit — output tokens count toward TPM. The table above shows exactly which limit you are hitting at your workload.</p>
+    </div>
+    <div class="faq-item">
+      <h3>Is my data sent anywhere?</h3>
+      <p>No. This calculator runs entirely in your browser. Nothing you enter is uploaded, logged, or stored.</p>
+    </div>
+  </div>
+</main>
+
+<footer>
+  ABUZ8 LLC &middot; Free AI Tools &middot; <a href="mailto:ahmad@abuz8ai.com">ahmad@abuz8ai.com</a>
+</footer>
+
+<script>
+// ── EXAMPLE TIERS — illustrative only, editable. TPM / RPM per minute. ─────────
+// Providers change these often and split them by model; presets just seed the fields.
+const TIERS = [
+  { name:'Free / trial',        tpm:40000,     rpm:3     },
+  { name:'Tier 1 (entry paid)', tpm:200000,    rpm:500   },
+  { name:'Tier 2',              tpm:2000000,   rpm:5000  },
+  { name:'Tier 3',              tpm:4000000,   rpm:5000  },
+  { name:'Tier 4',              tpm:10000000,  rpm:10000 },
+  { name:'Tier 5 / scale',      tpm:30000000,  rpm:30000 },
+  { name:'— Custom —',          custom:true }
+];
+
+// ── FORMAT ───────────────────────────────────────────────────────────────────
+function fmt(v){
+  if (!isFinite(v)) return '—';
+  if (v >= 1e6) return (v/1e6).toFixed(v >= 1e7 ? 0 : 1) + 'M';
+  if (v >= 1e3) return (v/1e3).toFixed(v >= 1e4 ? 0 : 1) + 'K';
+  return Math.round(v).toString();
+}
+function whole(v){ return isFinite(v) ? Math.floor(v).toLocaleString() : '—'; }
+
+// ── READ INPUTS ──────────────────────────────────────────────────────────────
+function num(id){ return Math.max(0, parseFloat(document.getElementById(id).value) || 0); }
+function tokensPerReq(){ return num('inTok') + num('outTok'); }
+function util(){ return parseFloat(document.getElementById('util').value) || 1; }
+
+// ── CORE MATH ────────────────────────────────────────────────────────────────
+// Returns capacity for a given tpm/rpm at the current workload + utilization.
+function capacity(tpm, rpm){
+  const u = util();
+  const tpr = tokensPerReq();
+  const perUser = num('perUser');
+  const reqByTpm = tpr > 0 ? (tpm * u) / tpr : Infinity; // TPM allows this many req/min
+  const reqByRpm = rpm * u;                              // RPM allows this many req/min
+  const binding = Math.min(reqByTpm, reqByRpm);
+  const bind = reqByTpm < reqByRpm ? 'TPM' : (reqByRpm < reqByTpm ? 'RPM' : 'Both');
+  const users = perUser > 0 ? binding / perUser : Infinity;
+  return { reqByTpm, reqByRpm, binding, bind, users };
+}
+
+// ── MAIN RECALC ──────────────────────────────────────────────────────────────
+function recalc(){
+  const tpm = num('tpm'), rpm = num('rpm');
+  const tpr = tokensPerReq();
+  const c = capacity(tpm, rpm);
+
+  document.getElementById('usersOut').textContent = whole(c.users);
+  document.getElementById('reqsOut').textContent  = whole(c.binding);
+  document.getElementById('bindOut').textContent  = c.bind;
+
+  document.getElementById('usersSub').textContent = num('perUser') + ' req/user/min · ' + (util()*100) + '% util';
+  document.getElementById('reqsSub').textContent  = 'TPM allows ' + fmt(c.reqByTpm) + ' · RPM allows ' + fmt(c.reqByRpm);
+  document.getElementById('bindSub').textContent  = c.bind === 'TPM'
+    ? 'token budget runs out first'
+    : (c.bind === 'RPM' ? 'call count runs out first' : 'both hit at once');
+
+  const v = document.getElementById('verdict');
+  if (tpr <= 0 || (tpm <= 0 && rpm <= 0)) {
+    v.className = 'verdict';
+    v.innerHTML = 'Enter your limits and a non-zero tokens-per-request to size capacity.';
+  } else if (c.bind === 'TPM') {
+    v.className = 'verdict tight';
+    v.innerHTML = `<span class="big">TPM is your bottleneck.</span> At <strong>${whole(tpr)}</strong> tokens/request you can sustain <strong>${whole(c.binding)}</strong> requests/min &mdash; the <strong>${fmt(rpm)} RPM</strong> ceiling never comes into play. That is <strong>${whole(c.users)}</strong> concurrent users. To grow: shorten prompts/outputs, cache context, or raise your TPM tier.`;
+  } else if (c.bind === 'RPM') {
+    v.className = 'verdict';
+    v.innerHTML = `<span class="big">RPM is your bottleneck.</span> Your token budget is roomy (TPM would allow <strong>${fmt(c.reqByTpm)}</strong> req/min), but the <strong>${fmt(rpm)} RPM</strong> cap holds you to <strong>${whole(c.binding)}</strong> requests/min &mdash; <strong>${whole(c.users)}</strong> concurrent users. To grow: batch calls, or raise your RPM tier.`;
+  } else {
+    v.className = 'verdict';
+    v.innerHTML = `<span class="big">TPM and RPM bind together.</span> Both allow about <strong>${whole(c.binding)}</strong> requests/min at this workload &mdash; a well-balanced tier for your request size. That is <strong>${whole(c.users)}</strong> concurrent users.`;
+  }
+
+  // table across example tiers
+  const body = document.getElementById('tierTable');
+  const activeIdx = +document.getElementById('tier').value;
+  body.innerHTML = TIERS.filter(t => !t.custom).map((t, i) => {
+    const tc = capacity(t.tpm, t.rpm);
+    const isActive = (i === activeIdx);
+    return `<tr class="${isActive ? 'active' : ''}">
+      <td><span class="tier-name">${t.name}</span></td>
+      <td>${fmt(t.tpm)}</td>
+      <td>${fmt(t.rpm)}</td>
+      <td>${fmt(tc.reqByTpm)}</td>
+      <td>${fmt(tc.reqByRpm)}</td>
+      <td class="${tc.bind === 'TPM' ? 'bind-tpm' : 'bind-rpm'}">${tc.bind}</td>
+      <td>${whole(tc.users)}</td>
+    </tr>`;
+  }).join('');
+}
+
+function onTierChange(){
+  const t = TIERS[+document.getElementById('tier').value] || TIERS[0];
+  if (!t.custom) {
+    document.getElementById('tpm').value = t.tpm;
+    document.getElementById('rpm').value = t.rpm;
+  }
+  recalc();
+}
+
+// ── WAITLIST ─────────────────────────────────────────────────────────────────
+async function submitWaitlist() {
+  const email = document.getElementById('ctaEmail').value.trim();
+  if (!email || !email.includes('@')) { alert('Please enter a valid email address.'); return; }
+  const payload = { email, product: 'qadir-os-rate-limit-calculator', ts: new Date().toISOString() };
+  try {
+    await fetch('/api/waitlist', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+  } catch (e) { /* graceful fallback */ }
+  document.getElementById('ctaEmail').style.display = 'none';
+  document.querySelector('.cta-form button').style.display = 'none';
+  document.getElementById('ctaSuccess').classList.add('visible');
+}
+
+// ── INIT ─────────────────────────────────────────────────────────────────────
+(function init() {
+  const ts = document.getElementById('tier');
+  ts.innerHTML = TIERS.map((t, i) => `<option value="${i}">${t.name}${t.tpm ? ' — ' + fmt(t.tpm) + ' TPM / ' + fmt(t.rpm) + ' RPM' : ''}</option>`).join('');
+  ts.value = 1; // Tier 1
+  onTierChange();
+})();
+</script>
+<script src="/tools/_tools-shared.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>

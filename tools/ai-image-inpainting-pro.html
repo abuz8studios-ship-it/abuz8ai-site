@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Image Inpainting Pro — Remove & Replace Anything | ABUZ8</title>
+<meta name="description" content="Remove objects, fix backgrounds, replace skies, and restore damaged images with AI-powered inpainting. ComfyUI + ControlNet on local RTX 5090. Join early access.">
+<meta name="keywords" content="ai inpainting, remove object from photo, ai background replace, image restoration ai, comfyui inpaint, ai photo editor, object removal, background replacement">
+<link rel="canonical" href="https://abuz8ai.com/tools/ai-image-inpainting-pro">
+<meta property="og:title" content="AI Image Inpainting Pro — Remove & Replace Anything | ABUZ8">
+<meta property="og:description" content="Paint over what you want removed or replaced. AI fills it seamlessly — objects, backgrounds, people, blemishes.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://abuz8ai.com/tools/ai-image-inpainting-pro">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="AI Image Inpainting Pro — Remove & Replace Anything | ABUZ8">
+<meta name="twitter:description" content="Paint a mask. AI fills it. Works on objects, people, backgrounds, text, and damage.">
+<link rel="stylesheet" href="/assets/css/abuz8-mach3.css">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@300;400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"SoftwareApplication","name":"AI Image Inpainting Pro","applicationCategory":"MultimediaApplication","operatingSystem":"Web","description":"Remove objects, replace backgrounds, and restore images using ComfyUI diffusion inpainting on local RTX 5090 GPU. Mask-guided, context-aware fill with ControlNet precision.","offers":{"@type":"Offer","price":"0","priceCurrency":"USD","availability":"https://schema.org/PreOrder"},"creator":{"@type":"Organization","name":"ABUZ8 LLC","url":"https://abuz8ai.com"}}
+</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"HowTo","name":"Remove or Replace Image Content with AI","step":[{"@type":"HowToStep","name":"Upload image","text":"Upload the image you want to edit — JPEG, PNG, or WebP supported."},{"@type":"HowToStep","name":"Paint the mask","text":"Use the brush to paint over the area you want removed or replaced."},{"@type":"HowToStep","name":"Describe the fill","text":"Optionally type what should appear in the masked area, or leave blank for auto-fill."},{"@type":"HowToStep","name":"Generate","text":"AI fills the masked region seamlessly, matching lighting, texture, and perspective."}]}
+</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is AI inpainting?","acceptedAnswer":{"@type":"Answer","text":"AI inpainting uses diffusion models to fill masked areas of an image with new, coherent content — matching the surrounding style, lighting, and texture."}},{"@type":"Question","name":"What can I remove or replace?","acceptedAnswer":{"@type":"Answer","text":"Anything: people, objects, text overlays, watermarks, power lines, vehicles, damaged areas, unwanted backgrounds — if you can paint a mask over it, AI can replace it."}},{"@type":"Question","name":"Can I specify what replaces the masked area?","acceptedAnswer":{"@type":"Answer","text":"Yes. Use the prompt field to describe the fill — e.g. 'blue sky with clouds' or 'clean white wall'. Leave it blank for intelligent auto-fill based on context."}},{"@type":"Question","name":"How accurate is the inpainting?","acceptedAnswer":{"@type":"Answer","text":"Using ComfyUI with ControlNet guidance, our engine produces seamless fills that are undetectable in most cases, especially for backgrounds and simple objects."}},{"@type":"Question","name":"What image sizes are supported?","acceptedAnswer":{"@type":"Answer","text":"Images up to 2048×2048 px. Larger images are automatically downscaled for processing and can be upscaled back using our AI Upscaler."}},{"@type":"Question","name":"Can I restore old or damaged photos?","acceptedAnswer":{"@type":"Answer","text":"Yes. Paint the damaged, torn, or faded areas and the AI will reconstruct the original content based on surrounding context."}},{"@type":"Question","name":"Is this the same as Photoshop Generative Fill?","acceptedAnswer":{"@type":"Answer","text":"Similar concept, but our engine runs on local hardware — no cloud dependency, no data sent to Adobe. The fill quality is comparable or better for photorealistic content."}},{"@type":"Question","name":"How long does it take?","acceptedAnswer":{"@type":"Answer","text":"Typically 8–20 seconds per inpainting pass on RTX 5090. Complex fills or large masks may take up to 45 seconds."}}]}
+</script>
+<style>
+:root{
+  --lapis:#0a1628; --lapis-2:#0d1a30; --lapis-3:#111f38;
+  --gold:#c9a84c; --gold-2:#e6c879;
+  --turq:#0e9f6e; --turq-2:#2bb39e;
+  --cream:#f5f0e8; --text:#e8e4d8; --dim:#8a9aaa; --border:#1a2e50;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{background:var(--lapis);color:var(--text);font-family:'Inter',sans-serif;line-height:1.6;min-height:100vh;-webkit-font-smoothing:antialiased}
+a{color:var(--gold);text-decoration:none}
+.mono{font-family:'JetBrains Mono',monospace}
+.wrap{max-width:1200px;margin:0 auto;padding:32px 24px}
+.nav{display:flex;justify-content:space-between;align-items:center;padding-bottom:20px;border-bottom:1px solid var(--border);margin-bottom:40px}
+.brand{font-family:'Playfair Display',serif;font-size:22px;color:var(--cream);letter-spacing:.5px}
+.brand .acc{color:var(--gold)}
+.back{font-size:11px;color:var(--dim);letter-spacing:2px;text-transform:uppercase}
+.back:hover{color:var(--gold)}
+.hero{display:grid;grid-template-columns:1.1fr .9fr;gap:48px;align-items:center;margin-bottom:56px}
+@media(max-width:880px){.hero{grid-template-columns:1fr}}
+.eyebrow{color:var(--turq-2);font-size:11px;letter-spacing:3px;text-transform:uppercase;margin-bottom:18px;font-weight:600}
+h1{font-family:'Playfair Display',serif;font-size:clamp(2.2rem,5vw,3.6rem);color:var(--cream);line-height:1.05;margin-bottom:20px;font-weight:900}
+h1 .gold{color:var(--gold)}
+.lede{color:var(--dim);font-size:18px;font-weight:300;max-width:540px;margin-bottom:28px}
+.row-stats{display:flex;gap:32px;margin-top:20px;flex-wrap:wrap}
+.stat{border-left:2px solid var(--gold);padding-left:14px}
+.stat .n{font-family:'Playfair Display',serif;font-size:28px;color:var(--cream);font-weight:700;line-height:1}
+.stat .l{font-size:10px;color:var(--dim);letter-spacing:2px;text-transform:uppercase;margin-top:6px}
+.badge{display:inline-flex;align-items:center;gap:8px;background:rgba(201,168,76,.12);border:1px solid rgba(201,168,76,.3);border-radius:20px;padding:6px 16px;font-size:11px;color:var(--gold);letter-spacing:2px;text-transform:uppercase;margin-bottom:24px}
+.badge .dot{width:6px;height:6px;border-radius:50%;background:var(--gold)}
+.card{background:var(--lapis-2);border:1px solid var(--border);border-radius:16px;padding:32px}
+.btn-gold{display:inline-block;background:var(--gold);color:#0a1628;font-weight:700;font-size:14px;letter-spacing:.5px;padding:14px 32px;border-radius:8px;border:none;cursor:pointer;transition:background .2s}
+.btn-gold:hover{background:var(--gold-2)}
+.btn-ghost{display:inline-block;background:transparent;color:var(--cream);font-size:14px;font-weight:600;padding:14px 28px;border-radius:8px;border:1px solid var(--border);cursor:pointer;transition:border-color .2s}
+.btn-ghost:hover{border-color:var(--gold);color:var(--gold)}
+section{margin-bottom:56px}
+h2{font-family:'Playfair Display',serif;font-size:clamp(1.8rem,3.5vw,2.8rem);color:var(--cream);margin-bottom:16px;font-weight:700}
+h2 .gold{color:var(--gold)}
+.sec-lede{color:var(--dim);font-size:17px;font-weight:300;max-width:600px;margin-bottom:40px}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+@media(max-width:768px){.grid-3{grid-template-columns:1fr}}
+.feat-card{background:var(--lapis-2);border:1px solid var(--border);border-radius:12px;padding:28px}
+.feat-icon{font-size:28px;margin-bottom:16px}
+.feat-card h3{font-family:'Playfair Display',serif;font-size:1.2rem;color:var(--cream);margin-bottom:10px}
+.feat-card p{color:var(--dim);font-size:15px;line-height:1.6}
+.workbench{background:var(--lapis-2);border:1px solid var(--border);border-radius:16px;padding:36px;margin-bottom:24px}
+.workbench-label{font-size:11px;color:var(--dim);letter-spacing:2px;text-transform:uppercase;margin-bottom:12px}
+.upload-area{border:2px dashed var(--border);border-radius:12px;padding:48px 24px;text-align:center;cursor:pointer;transition:border-color .2s;position:relative;background:var(--lapis)}
+.upload-area:hover{border-color:var(--gold)}
+.upload-area input{position:absolute;inset:0;opacity:0;cursor:pointer}
+.upload-icon{font-size:36px;margin-bottom:12px}
+.upload-area p{color:var(--dim);font-size:14px}
+.upload-area strong{color:var(--cream)}
+.canvas-wrap{position:relative;display:none;margin-top:20px}
+#previewCanvas,#maskCanvas{border-radius:8px;display:block;max-width:100%;cursor:crosshair}
+#maskCanvas{position:absolute;top:0;left:0;opacity:.6}
+.brush-row{display:flex;align-items:center;gap:16px;margin-top:12px;flex-wrap:wrap}
+.brush-row label{font-size:12px;color:var(--dim);letter-spacing:1px}
+.brush-row input[type=range]{accent-color:var(--gold);width:120px}
+.brush-row button{background:var(--lapis-3);border:1px solid var(--border);color:var(--text);padding:6px 16px;border-radius:6px;cursor:pointer;font-size:13px}
+.brush-row button:hover{border-color:var(--gold);color:var(--gold)}
+textarea,input[type=text],select{background:var(--lapis);border:1px solid var(--border);color:var(--text);border-radius:8px;padding:12px 16px;font-family:'Inter',sans-serif;font-size:14px;width:100%;outline:none;transition:border-color .2s;resize:none}
+textarea:focus,input[type=text]:focus,select:focus{border-color:var(--gold)}
+.param-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}
+@media(max-width:640px){.param-row{grid-template-columns:1fr}}
+.param-label{font-size:11px;color:var(--dim);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px}
+.output-panel{background:var(--lapis-2);border:1px solid var(--border);border-radius:12px;padding:24px;text-align:center;display:none}
+.output-panel img{max-width:100%;border-radius:8px;margin-bottom:16px}
+.output-panel .dl-btn{display:inline-block;background:var(--gold);color:#0a1628;font-weight:700;padding:10px 24px;border-radius:8px;font-size:14px;cursor:pointer;margin-top:8px}
+.loading{display:none;text-align:center;padding:40px}
+.spinner{width:40px;height:40px;border:3px solid var(--border);border-top-color:var(--gold);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 16px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.modal{display:none;position:fixed;inset:0;background:rgba(10,22,40,.9);z-index:1000;align-items:center;justify-content:center}
+.modal.active{display:flex}
+.modal-box{background:var(--lapis-2);border:1px solid var(--gold);border-radius:16px;padding:40px;max-width:440px;text-align:center}
+.modal-box h3{font-family:'Playfair Display',serif;font-size:1.6rem;color:var(--cream);margin-bottom:12px}
+.modal-box p{color:var(--dim);margin-bottom:24px}
+.waitlist-form input{margin-bottom:12px}
+.use-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+@media(max-width:600px){.use-grid{grid-template-columns:1fr}}
+.use-card{background:var(--lapis-2);border:1px solid var(--border);border-radius:10px;padding:20px}
+.use-card h4{color:var(--cream);font-size:15px;margin-bottom:8px}
+.use-card p{color:var(--dim);font-size:14px}
+.faq-item{border-bottom:1px solid var(--border);padding:20px 0}
+.faq-item h3{color:var(--cream);font-size:16px;margin-bottom:8px}
+.faq-item p{color:var(--dim);font-size:15px}
+.tech-row{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;text-align:center}
+@media(max-width:768px){.tech-row{grid-template-columns:repeat(2,1fr)}}
+.tech-cell{background:var(--lapis-2);border:1px solid var(--border);border-radius:10px;padding:20px}
+.tech-cell .tc-val{font-family:'JetBrains Mono',monospace;font-size:18px;color:var(--gold);font-weight:600;margin-bottom:6px}
+.tech-cell .tc-label{font-size:11px;color:var(--dim);letter-spacing:1px;text-transform:uppercase}
+.footer{border-top:1px solid var(--border);padding-top:32px;margin-top:56px;display:flex;justify-content:space-between;align-items:center;flex-wrap:gap;gap:16px}
+.footer p{color:var(--dim);font-size:13px}
+.footer-links{display:flex;gap:24px}
+.footer-links a{color:var(--dim);font-size:13px}
+.footer-links a:hover{color:var(--gold)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- NAV -->
+  <nav class="nav">
+    <a href="/" class="brand">ABU<span class="acc">Z8</span></a>
+    <a href="/tools.html" class="back">← All Tools</a>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div>
+      <div class="badge"><span class="dot"></span>Early Access</div>
+      <p class="eyebrow">Image Inpainting Pro</p>
+      <h1>Remove or Replace <span class="gold">Anything</span> in Your Image</h1>
+      <p class="lede">Paint a mask over what you want gone. AI fills it seamlessly — matching the surrounding light, texture, and perspective. Powered by ComfyUI diffusion inpainting on local RTX 5090.</p>
+      <div style="display:flex;gap:16px;flex-wrap:wrap">
+        <button class="btn-gold" onclick="document.getElementById('workbench').scrollIntoView({behavior:'smooth'})">Try Free Demo →</button>
+        <button class="btn-ghost" onclick="document.getElementById('wl-modal').classList.add('active')">Join Early Access</button>
+      </div>
+      <div class="row-stats">
+        <div class="stat"><div class="n">8–20s</div><div class="l">Per Fill</div></div>
+        <div class="stat"><div class="n">2048px</div><div class="l">Max Size</div></div>
+        <div class="stat"><div class="n">RTX 5090</div><div class="l">Local GPU</div></div>
+        <div class="stat"><div class="n">0</div><div class="l">Cloud Uploads</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="eyebrow">How It Works</div>
+      <div style="display:flex;flex-direction:column;gap:20px">
+        <div style="display:flex;gap:16px;align-items:flex-start">
+          <div style="background:rgba(201,168,76,.15);border:1px solid rgba(201,168,76,.3);border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;color:var(--gold);font-weight:700;flex-shrink:0">1</div>
+          <div><div style="color:var(--cream);font-weight:600;margin-bottom:4px">Upload your image</div><div style="color:var(--dim);font-size:14px">JPEG, PNG, or WebP — up to 2048×2048 px</div></div>
+        </div>
+        <div style="display:flex;gap:16px;align-items:flex-start">
+          <div style="background:rgba(201,168,76,.15);border:1px solid rgba(201,168,76,.3);border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;color:var(--gold);font-weight:700;flex-shrink:0">2</div>
+          <div><div style="color:var(--cream);font-weight:600;margin-bottom:4px">Paint the mask</div><div style="color:var(--dim);font-size:14px">Brush over what you want removed or replaced</div></div>
+        </div>
+        <div style="display:flex;gap:16px;align-items:flex-start">
+          <div style="background:rgba(201,168,76,.15);border:1px solid rgba(201,168,76,.3);border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;color:var(--gold);font-weight:700;flex-shrink:0">3</div>
+          <div><div style="color:var(--cream);font-weight:600;margin-bottom:4px">Describe the fill (optional)</div><div style="color:var(--dim);font-size:14px">"blue sky" · "clean marble wall" · leave blank for auto</div></div>
+        </div>
+        <div style="display:flex;gap:16px;align-items:flex-start">
+          <div style="background:rgba(201,168,76,.15);border:1px solid rgba(201,168,76,.3);border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;color:var(--gold);font-weight:700;flex-shrink:0">4</div>
+          <div><div style="color:var(--cream);font-weight:600;margin-bottom:4px">Download result</div><div style="color:var(--dim);font-size:14px">Full resolution PNG, undetectable fill</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WORKBENCH -->
+  <section id="workbench">
+    <h2>Inpainting <span class="gold">Workbench</span></h2>
+    <p class="sec-lede">Upload an image, paint the area to remove or replace, and let AI handle the rest.</p>
+
+    <div class="workbench">
+      <div class="workbench-label">Step 1 — Upload Image</div>
+      <div class="upload-area" id="uploadArea">
+        <input type="file" id="imgInput" accept="image/*">
+        <div class="upload-icon">🖼️</div>
+        <p><strong>Click or drag image here</strong></p>
+        <p>JPEG · PNG · WebP · up to 2048px</p>
+      </div>
+      <div class="canvas-wrap" id="canvasWrap">
+        <canvas id="previewCanvas"></canvas>
+        <canvas id="maskCanvas"></canvas>
+      </div>
+      <div class="brush-row" id="brushRow" style="display:none">
+        <label>Brush Size</label>
+        <input type="range" id="brushSize" min="5" max="80" value="24">
+        <label id="brushSizeVal">24px</label>
+        <button onclick="clearMask()">Clear Mask</button>
+        <button onclick="toggleEraser(this)">Eraser</button>
+      </div>
+
+      <div style="margin-top:24px">
+        <div class="workbench-label">Step 2 — Describe the Fill (optional)</div>
+        <input type="text" id="fillPrompt" placeholder="e.g. 'clean blue sky' · 'white marble surface' · leave blank for auto-fill">
+      </div>
+
+      <div class="param-row" style="margin-top:16px">
+        <div>
+          <div class="param-label">Inpainting Strength</div>
+          <select id="strength">
+            <option value="0.95">0.95 — Full replacement (recommended)</option>
+            <option value="0.75">0.75 — Blend with original</option>
+            <option value="0.5">0.50 — Subtle adjustment</option>
+          </select>
+        </div>
+        <div>
+          <div class="param-label">Mode</div>
+          <select id="mode">
+            <option value="remove">Remove / Auto-Fill</option>
+            <option value="replace">Replace with Prompt</option>
+            <option value="restore">Restore / Repair</option>
+          </select>
+        </div>
+      </div>
+
+      <div style="margin-top:24px;display:flex;gap:16px;flex-wrap:wrap">
+        <button class="btn-gold" onclick="runInpainting()">Generate Inpainting →</button>
+        <button class="btn-ghost" onclick="document.getElementById('wl-modal').classList.add('active')">Join Waitlist for Full Access</button>
+      </div>
+    </div>
+
+    <div class="loading" id="loadingPanel">
+      <div class="spinner"></div>
+      <p style="color:var(--dim)">AI is filling the masked region…</p>
+      <p class="mono" style="color:var(--gold);font-size:12px;margin-top:8px">comfyui_fun_inpaint · RTX 5090</p>
+    </div>
+
+    <div class="output-panel" id="outputPanel">
+      <img id="outputImg" alt="Inpainting result">
+      <br>
+      <button class="dl-btn" onclick="downloadResult()">⬇ Download PNG</button>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section>
+    <h2>What You Can <span class="gold">Fix</span></h2>
+    <p class="sec-lede">From removing photobombers to restoring century-old photos — one tool, unlimited edits.</p>
+    <div class="grid-3">
+      <div class="feat-card">
+        <div class="feat-icon">🚫</div>
+        <h3>Object Removal</h3>
+        <p>Remove people, vehicles, signs, power lines, watermarks, or any object — context-aware fill makes it look like it was never there.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">🌅</div>
+        <h3>Background Replacement</h3>
+        <p>Swap skies, change rooms, replace surfaces. Describe what you want or let the AI decide based on the surrounding scene.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">🔧</div>
+        <h3>Photo Restoration</h3>
+        <p>Repair tears, scratches, stains, and faded areas in old photos. AI reconstructs missing content based on surrounding pixels.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">✍️</div>
+        <h3>Text & Watermark Removal</h3>
+        <p>Remove stubborn watermarks, text overlays, logos, and stamps cleanly — no smearing, no residue.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">🎨</div>
+        <h3>Creative Extension</h3>
+        <p>Extend edges, add props, redecorate rooms, add accessories to portraits — anything you can describe, AI can fill.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">🏠</div>
+        <h3>Real Estate & Product</h3>
+        <p>Stage empty rooms, remove clutter, clean product backgrounds, swap furniture — professional results in seconds.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- USE CASES -->
+  <section>
+    <h2>Built For <span class="gold">Creators & Pros</span></h2>
+    <p class="sec-lede">From photographers to real estate agents — inpainting unlocks a new level of post-production speed.</p>
+    <div class="use-grid">
+      <div class="use-card">
+        <h4>📸 Photographers</h4>
+        <p>Remove distractions, fix exposure patches, retouch portraits — non-destructively and in seconds.</p>
+      </div>
+      <div class="use-card">
+        <h4>🏠 Real Estate</h4>
+        <p>Virtual staging, sky replacement, clutter removal. Turn vacant listings into magazine-ready shots.</p>
+      </div>
+      <div class="use-card">
+        <h4>🛍️ E-Commerce</h4>
+        <p>Clean product backgrounds, remove shadows, extend canvas for ad formats — consistent at scale.</p>
+      </div>
+      <div class="use-card">
+        <h4>🎬 Video & Film</h4>
+        <p>Clean up reference frames, remove rigging from stills, prepare plates for VFX compositing.</p>
+      </div>
+      <div class="use-card">
+        <h4>🏛️ Archivists</h4>
+        <p>Restore historical photos, fill missing regions, repair damage from aging, moisture, or handling.</p>
+      </div>
+      <div class="use-card">
+        <h4>📱 Social Media</h4>
+        <p>Remove photo-bombers, clean backgrounds, extend images to fit platform dimensions perfectly.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- TECH SPECS -->
+  <section>
+    <h2>Technical <span class="gold">Specs</span></h2>
+    <div class="tech-row">
+      <div class="tech-cell"><div class="tc-val">ComfyUI</div><div class="tc-label">Engine</div></div>
+      <div class="tech-cell"><div class="tc-val">ControlNet</div><div class="tc-label">Precision Guidance</div></div>
+      <div class="tech-cell"><div class="tc-val">RTX 5090</div><div class="tc-label">GPU</div></div>
+      <div class="tech-cell"><div class="tc-val">8–45s</div><div class="tc-label">Generation Time</div></div>
+    </div>
+    <div class="tech-row" style="margin-top:16px">
+      <div class="tech-cell"><div class="tc-val">2048px</div><div class="tc-label">Max Resolution</div></div>
+      <div class="tech-cell"><div class="tc-val">SDXL</div><div class="tc-label">Base Model</div></div>
+      <div class="tech-cell"><div class="tc-val">0</div><div class="tc-label">External API Calls</div></div>
+      <div class="tech-cell"><div class="tc-val">PNG</div><div class="tc-label">Output Format</div></div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section>
+    <h2>Frequently Asked <span class="gold">Questions</span></h2>
+    <div id="faq-container">
+      <div class="faq-item"><h3>What is AI inpainting?</h3><p>AI inpainting uses diffusion models to fill masked areas of an image with new, coherent content — matching the surrounding style, lighting, and texture seamlessly.</p></div>
+      <div class="faq-item"><h3>What can I remove or replace?</h3><p>Anything: people, objects, text overlays, watermarks, power lines, vehicles, damaged areas, unwanted backgrounds — if you can paint a mask over it, AI can replace it.</p></div>
+      <div class="faq-item"><h3>Can I specify what replaces the masked area?</h3><p>Yes. Use the prompt field to describe the fill — e.g. "blue sky with clouds" or "clean white wall". Leave it blank for intelligent auto-fill based on surrounding context.</p></div>
+      <div class="faq-item"><h3>How accurate is the inpainting?</h3><p>Using ComfyUI with ControlNet guidance, our engine produces seamless fills that are undetectable in most cases — especially for backgrounds and simple objects.</p></div>
+      <div class="faq-item"><h3>What image sizes are supported?</h3><p>Images up to 2048×2048 px. Larger images are automatically downscaled for processing and can be upscaled back using our AI Image Upscaler.</p></div>
+      <div class="faq-item"><h3>Can I restore old or damaged photos?</h3><p>Yes. Paint the damaged, torn, or faded areas and the AI will reconstruct the original content based on surrounding context and style.</p></div>
+      <div class="faq-item"><h3>Is this the same as Photoshop Generative Fill?</h3><p>Similar concept, but our engine runs on local hardware — no cloud dependency, no data sent to Adobe. Fill quality is comparable or superior for photorealistic content.</p></div>
+      <div class="faq-item"><h3>How long does it take?</h3><p>Typically 8–20 seconds per pass on RTX 5090. Complex fills or large masks may take up to 45 seconds. Multiple variations can be generated in sequence.</p></div>
+    </div>
+  </section>
+
+  <!-- WAITLIST -->
+  <section style="text-align:center;padding:56px 0">
+    <div class="badge" style="margin:0 auto 24px"><span class="dot"></span>Early Access Open</div>
+    <h2>Get Inpainting <span class="gold">Before Everyone Else</span></h2>
+    <p style="color:var(--dim);font-size:18px;max-width:500px;margin:0 auto 32px">Join the waitlist for full-resolution, unlimited inpainting on QADIR OS — local GPU, zero cloud dependency.</p>
+    <form id="hero-wl-form" style="display:flex;gap:12px;max-width:440px;margin:0 auto;flex-wrap:wrap">
+      <input type="email" id="hero-wl-email" placeholder="your@email.com" style="flex:1;min-width:240px">
+      <button type="submit" class="btn-gold">Join Waitlist →</button>
+    </form>
+    <p id="hero-wl-msg" style="color:var(--turq-2);margin-top:12px;font-size:14px;display:none">✓ You're on the list!</p>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <p>© 2026 ABUZ8 LLC · All rights reserved</p>
+    <div class="footer-links">
+      <a href="/">Home</a>
+      <a href="/tools.html">Tools</a>
+      <a href="/store.html">Store</a>
+      <a href="/disclaimer.html">Disclaimer</a>
+    </div>
+  </footer>
+</div>
+
+<!-- WAITLIST MODAL -->
+<div class="modal" id="wl-modal">
+  <div class="modal-box">
+    <h3>Join Early Access</h3>
+    <p>Be first in line for full-resolution AI inpainting — local GPU, unlimited edits, zero cloud.</p>
+    <form id="modal-wl-form">
+      <input type="email" id="modal-wl-email" placeholder="your@email.com" class="waitlist-form">
+      <button type="submit" class="btn-gold" style="width:100%;margin-top:8px">Secure My Spot →</button>
+    </form>
+    <p id="modal-wl-msg" style="color:var(--turq-2);margin-top:12px;font-size:14px;display:none">✓ You're on the list!</p>
+    <button onclick="document.getElementById('wl-modal').classList.remove('active')" style="background:none;border:none;color:var(--dim);cursor:pointer;margin-top:16px;font-size:13px">Close</button>
+  </div>
+</div>
+
+<!-- SERVER OFFLINE MODAL -->
+<div class="modal" id="offline-modal">
+  <div class="modal-box">
+    <h3>🔧 Server Offline</h3>
+    <p>The inpainting server is not running right now. Join the waitlist and we'll notify you when it's live.</p>
+    <form id="offline-wl-form">
+      <input type="email" id="offline-wl-email" placeholder="your@email.com" class="waitlist-form">
+      <button type="submit" class="btn-gold" style="width:100%;margin-top:8px">Notify Me When Live →</button>
+    </form>
+    <p id="offline-wl-msg" style="color:var(--turq-2);margin-top:12px;font-size:14px;display:none">✓ We'll let you know!</p>
+    <button onclick="document.getElementById('offline-modal').classList.remove('active')" style="background:none;border:none;color:var(--dim);cursor:pointer;margin-top:16px;font-size:13px">Close</button>
+  </div>
+</div>
+
+<script>
+// Canvas inpainting workbench
+let isDrawing=false, isEraser=false, imgNative={w:0,h:0};
+const imgInput=document.getElementById('imgInput');
+const previewCanvas=document.getElementById('previewCanvas');
+const maskCanvas=document.getElementById('maskCanvas');
+const pCtx=previewCanvas.getContext('2d');
+const mCtx=maskCanvas.getContext('2d');
+
+imgInput.addEventListener('change',e=>{
+  const file=e.target.files[0]; if(!file)return;
+  const url=URL.createObjectURL(file);
+  const img=new Image();
+  img.onload=()=>{
+    const maxW=Math.min(img.naturalWidth,900);
+    const scale=maxW/img.naturalWidth;
+    const W=Math.round(img.naturalWidth*scale);
+    const H=Math.round(img.naturalHeight*scale);
+    previewCanvas.width=maskCanvas.width=W;
+    previewCanvas.height=maskCanvas.height=H;
+    imgNative={w:img.naturalWidth,h:img.naturalHeight};
+    pCtx.drawImage(img,0,0,W,H);
+    mCtx.clearRect(0,0,W,H);
+    document.getElementById('canvasWrap').style.display='block';
+    document.getElementById('brushRow').style.display='flex';
+    document.getElementById('uploadArea').style.display='none';
+  };
+  img.src=url;
+});
+
+maskCanvas.addEventListener('mousedown',e=>{isDrawing=true;draw(e)});
+maskCanvas.addEventListener('mousemove',e=>{if(isDrawing)draw(e)});
+maskCanvas.addEventListener('mouseup',()=>isDrawing=false);
+maskCanvas.addEventListener('mouseleave',()=>isDrawing=false);
+maskCanvas.addEventListener('touchstart',e=>{isDrawing=true;draw(e.touches[0]);e.preventDefault()},{passive:false});
+maskCanvas.addEventListener('touchmove',e=>{if(isDrawing)draw(e.touches[0]);e.preventDefault()},{passive:false});
+maskCanvas.addEventListener('touchend',()=>isDrawing=false);
+
+function draw(e){
+  const r=maskCanvas.getBoundingClientRect();
+  const x=(e.clientX-r.left), y=(e.clientY-r.top);
+  const size=parseInt(document.getElementById('brushSize').value);
+  mCtx.globalCompositeOperation=isEraser?'destination-out':'source-over';
+  mCtx.fillStyle='rgba(255,80,80,1)';
+  mCtx.beginPath();mCtx.arc(x,y,size/2,0,Math.PI*2);mCtx.fill();
+}
+
+document.getElementById('brushSize').addEventListener('input',function(){
+  document.getElementById('brushSizeVal').textContent=this.value+'px';
+});
+
+function clearMask(){mCtx.clearRect(0,0,maskCanvas.width,maskCanvas.height)}
+function toggleEraser(btn){isEraser=!isEraser;btn.style.borderColor=isEraser?'var(--gold)':'var(--border)';btn.style.color=isEraser?'var(--gold)':'var(--text)'}
+
+async function runInpainting(){
+  const prompt=document.getElementById('fillPrompt').value;
+  const strength=document.getElementById('strength').value;
+  const mode=document.getElementById('mode').value;
+  if(!imgInput.files[0]){alert('Please upload an image first.');return;}
+  const hasMask=checkHasMask();
+  if(!hasMask){alert('Please paint a mask over the area to edit.');return;}
+  const imageData=previewCanvas.toDataURL('image/png');
+  const maskData=getMaskData();
+  document.getElementById('loadingPanel').style.display='block';
+  document.getElementById('outputPanel').style.display='none';
+  try{
+    const res=await fetch('/api/tools/run',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({tool:'comfyui_fun_inpaint',params:{image:imageData,mask:maskData,prompt:prompt||'seamless fill, high quality, photorealistic',strength:parseFloat(strength),mode,width:imgNative.w,height:imgNative.h}})
+    });
+    if(!res.ok)throw new Error('Server error: '+res.status);
+    const data=await res.json();
+    document.getElementById('loadingPanel').style.display='none';
+    if(data.image_url||data.output){
+      document.getElementById('outputImg').src=data.image_url||data.output;
+      document.getElementById('outputPanel').style.display='block';
+    }
+  }catch(err){
+    document.getElementById('loadingPanel').style.display='none';
+    document.getElementById('offline-modal').classList.add('active');
+  }
+}
+
+function checkHasMask(){const d=mCtx.getImageData(0,0,maskCanvas.width,maskCanvas.height).data;for(let i=3;i<d.length;i+=4)if(d[i]>0)return true;return false;}
+function getMaskData(){const tmp=document.createElement('canvas');tmp.width=maskCanvas.width;tmp.height=maskCanvas.height;const tc=tmp.getContext('2d');tc.fillStyle='#000';tc.fillRect(0,0,tmp.width,tmp.height);tc.drawImage(maskCanvas,0,0);return tmp.toDataURL('image/png');}
+
+function downloadResult(){const img=document.getElementById('outputImg');if(!img.src)return;const a=document.createElement('a');a.href=img.src;a.download='abuz8-inpaint-result.png';a.click();}
+
+// Waitlist handlers
+async function submitWaitlist(emailId,msgId,tool){
+  const email=document.getElementById(emailId).value;
+  if(!email||!email.includes('@')){alert('Please enter a valid email.');return;}
+  try{
+    await fetch('/api/waitlist',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,tool,source:'inpainting-pro'})});
+  }catch(e){}
+  document.getElementById(msgId).style.display='block';
+}
+
+document.getElementById('hero-wl-form').addEventListener('submit',e=>{e.preventDefault();submitWaitlist('hero-wl-email','hero-wl-msg','image-inpainting-pro')});
+document.getElementById('modal-wl-form').addEventListener('submit',e=>{e.preventDefault();submitWaitlist('modal-wl-email','modal-wl-msg','image-inpainting-pro')});
+document.getElementById('offline-wl-form').addEventListener('submit',e=>{e.preventDefault();submitWaitlist('offline-wl-email','offline-wl-msg','image-inpainting-pro')});
+
+// Close modal on outside click
+document.getElementById('wl-modal').addEventListener('click',function(e){if(e.target===this)this.classList.remove('active')});
+document.getElementById('offline-modal').addEventListener('click',function(e){if(e.target===this)this.classList.remove('active')});
+</script>
+<script src="_abuz8-live-brain.js" defer></script>
+<script src="/tools/_tools-shared.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>
+

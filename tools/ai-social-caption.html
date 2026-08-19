@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Social Caption Generator — ABUZ8</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{--lapis:#0a1628;--lapis2:#0f2040;--gold:#c9a84c;--gold2:#e6c876;--turq:#0e9f6e;--cream:#f5f0e8;--cream2:#ede7d9;--text:#1a1a2e;--muted:#5a6070;--r:12px;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'Inter',sans-serif;background:var(--cream);color:var(--text);min-height:100vh;}
+  header{background:var(--lapis);padding:18px 32px;display:flex;align-items:center;justify-content:space-between;}
+  .brand{font-family:'Playfair Display',serif;font-size:22px;color:#fff;}
+  .brand span{color:var(--gold);}
+  .subtitle{color:rgba(255,255,255,0.5);font-size:12px;margin-top:2px;}
+  .main{max-width:1080px;margin:0 auto;padding:32px 20px;}
+  h1{font-family:'Playfair Display',serif;font-size:32px;color:var(--lapis);margin-bottom:6px;}
+  .hero-sub{color:var(--muted);font-size:15px;margin-bottom:32px;}
+  .layout{display:grid;grid-template-columns:360px 1fr;gap:28px;}
+  @media(max-width:720px){.layout{grid-template-columns:1fr;}}
+  .panel{background:#fff;border-radius:var(--r);padding:24px;box-shadow:0 2px 16px rgba(10,22,40,0.07);}
+  label{display:block;font-size:12px;font-weight:600;color:var(--lapis);text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px;}
+  input,textarea,select{width:100%;border:1.5px solid var(--cream2);border-radius:8px;padding:10px 13px;font-size:14px;font-family:'Inter',sans-serif;color:var(--text);background:#fff;outline:none;margin-bottom:18px;transition:border-color .2s;}
+  input:focus,textarea:focus{border-color:var(--gold);}
+  .chips{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:18px;}
+  .chip{border:1.5px solid var(--cream2);background:#fff;border-radius:20px;padding:6px 13px;font-size:12px;font-weight:500;color:var(--muted);cursor:pointer;transition:all .2s;}
+  .chip.active{background:var(--lapis);border-color:var(--lapis);color:#fff;}
+  .gen-btn{width:100%;background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--lapis);font-size:15px;font-weight:700;border:none;border-radius:8px;padding:14px;cursor:pointer;transition:opacity .2s;font-family:'Inter',sans-serif;}
+  .gen-btn:hover{opacity:.9;}
+  .gen-btn:disabled{opacity:.5;cursor:not-allowed;}
+  .section-label{font-family:'Playfair Display',serif;font-size:16px;font-weight:600;color:var(--lapis);margin-bottom:14px;padding-bottom:8px;border-bottom:2px solid var(--gold);}
+  .prog-bar{width:100%;height:3px;background:var(--cream2);border-radius:2px;overflow:hidden;margin-bottom:18px;display:none;}
+  .prog-fill{height:100%;width:0;background:linear-gradient(90deg,var(--turq),var(--gold));transition:width 1.3s ease;}
+  .caption-card{background:var(--cream);border:1.5px solid var(--cream2);border-radius:10px;padding:18px 20px;margin-bottom:12px;cursor:pointer;transition:border-color .2s;position:relative;}
+  .caption-card:hover{border-color:var(--gold);}
+  .caption-card.selected{border-color:var(--lapis);background:rgba(10,22,40,0.03);}
+  .cap-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+  .cap-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--gold);}
+  .cap-meta{font-size:11px;color:var(--muted);}
+  .cap-body{font-size:14px;line-height:1.7;color:var(--text);white-space:pre-wrap;}
+  .cap-footer{display:flex;align-items:center;justify-content:space-between;margin-top:12px;}
+  .cap-stats{font-size:11px;color:var(--muted);}
+  .cap-actions{display:flex;gap:6px;}
+  .s-btn{border:1.5px solid var(--cream2);background:#fff;border-radius:6px;padding:5px 11px;font-size:12px;cursor:pointer;color:var(--lapis);transition:all .2s;}
+  .s-btn:hover{border-color:var(--gold);color:var(--gold);}
+  .platform-preview{background:var(--lapis);border-radius:10px;padding:18px;margin-top:16px;}
+  .platform-preview h4{color:var(--gold);font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;}
+  .preview-mock{background:rgba(255,255,255,0.08);border-radius:8px;padding:14px;color:rgba(255,255,255,0.85);font-size:13px;line-height:1.7;min-height:60px;white-space:pre-wrap;}
+  .preview-note{font-size:11px;color:rgba(255,255,255,0.4);margin-top:8px;}
+  .empty-state{text-align:center;padding:50px 20px;color:var(--muted);}
+  .empty-state .icon{font-size:38px;margin-bottom:10px;}
+  .platform-pill{display:inline-flex;align-items:center;gap:4px;background:var(--cream2);border-radius:20px;padding:4px 10px;font-size:11px;font-weight:600;color:var(--lapis);margin-left:8px;}
+</style>
+<script src="_abuz8-live-brain.js" defer></script>
+
+<script src="_abuz8-config.js" defer></script>
+<link rel="canonical" href="https://abuz8ai.com/tools/ai-social-caption">
+<meta name="description" content="AI Social Caption — Captions tuned per platform. Free, no signup, runs entirely in your browser. One of 169 free AI and developer tools by ABUZ8.">
+</head>
+<body>
+
+<header>
+  <div>
+    <div class="brand">ABU<span>Z8</span></div>
+    <div class="subtitle">AI Social Caption Generator</div>
+  </div>
+  <div style="color:rgba(255,255,255,0.4);font-size:12px;">Free · No login required</div>
+</header>
+
+<div class="main">
+  <h1>AI Social Caption Generator</h1>
+  <p class="hero-sub">Write scroll-stopping captions for Instagram, LinkedIn, Twitter, TikTok and more — optimized per platform.</p>
+
+  <div class="layout">
+
+    <!-- LEFT -->
+    <div class="panel">
+      <div class="section-label">Post Details</div>
+
+      <label>What's your post about?</label>
+      <textarea id="topic" rows="4" placeholder="e.g. We just launched our new AI tool that writes emails in 10 seconds. It's getting amazing reviews from beta users."></textarea>
+
+      <label>Platform</label>
+      <div class="chips" id="platformChips">
+        <button class="chip active" onclick="setPlatform('Instagram',this)">📸 Instagram</button>
+        <button class="chip" onclick="setPlatform('LinkedIn',this)">💼 LinkedIn</button>
+        <button class="chip" onclick="setPlatform('Twitter',this)">𝕏 Twitter</button>
+        <button class="chip" onclick="setPlatform('TikTok',this)">🎵 TikTok</button>
+        <button class="chip" onclick="setPlatform('Facebook',this)">👥 Facebook</button>
+      </div>
+
+      <label>Tone</label>
+      <div class="chips" id="toneChips">
+        <button class="chip active" onclick="setTone('Engaging',this)">Engaging</button>
+        <button class="chip" onclick="setTone('Professional',this)">Professional</button>
+        <button class="chip" onclick="setTone('Casual',this)">Casual</button>
+        <button class="chip" onclick="setTone('Inspirational',this)">Inspiring</button>
+        <button class="chip" onclick="setTone('Witty',this)">Witty</button>
+        <button class="chip" onclick="setTone('Storytelling',this)">Story</button>
+      </div>
+
+      <label>Goal</label>
+      <div class="chips" id="goalChips">
+        <button class="chip active" onclick="setGoal('Engagement',this)">💬 Engagement</button>
+        <button class="chip" onclick="setGoal('Clicks',this)">🔗 Drive Clicks</button>
+        <button class="chip" onclick="setGoal('Awareness',this)">📣 Awareness</button>
+        <button class="chip" onclick="setGoal('Sales',this)">💰 Sales</button>
+      </div>
+
+      <label>Include Hashtags?</label>
+      <div class="chips" id="hashtagChips">
+        <button class="chip active" onclick="setHashtag('Yes',this)">Yes</button>
+        <button class="chip" onclick="setHashtag('No',this)">No</button>
+        <button class="chip" onclick="setHashtag('Separate',this)">In comment</button>
+      </div>
+
+      <div class="prog-bar" id="prog"><div class="prog-fill" id="progFill"></div></div>
+      <button class="gen-btn" id="genBtn" onclick="generate()">✦ Generate Captions</button>
+    </div>
+
+    <!-- RIGHT -->
+    <div class="panel">
+      <div id="resultsArea">
+        <div class="empty-state">
+          <div class="icon">✍️</div>
+          <p>Your captions will appear here.</p>
+          <p style="margin-top:6px;font-size:12px;">We'll generate 3 variations optimized for your platform.</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+let platform = 'Instagram';
+let tone = 'Engaging';
+let goal = 'Engagement';
+let includeHashtags = 'Yes';
+let selectedCaption = '';
+
+function setPlatform(p, el) {
+  platform = p;
+  el.closest('.chips').querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+}
+
+function setTone(t, el) {
+  tone = t;
+  el.closest('.chips').querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+}
+
+function setGoal(g, el) {
+  goal = g;
+  el.closest('.chips').querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+}
+
+function setHashtag(h, el) {
+  includeHashtags = h;
+  el.closest('.chips').querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+}
+
+const PLATFORM_LIMITS = {Instagram:2200, LinkedIn:3000, Twitter:280, TikTok:2200, Facebook:63206};
+const PLATFORM_EMOJI = {Instagram:'📸', LinkedIn:'💼', Twitter:'𝕏', TikTok:'🎵', Facebook:'👥'};
+
+const CTA_BY_GOAL = {
+  'Engagement': ['Drop a 👇 in the comments — what do you think?','Tag someone who needs to see this.','Double tap if you agree! 💛','Save this for later 🔖','What\'s your take? Let\'s discuss 👇'],
+  'Clicks': ['Link in bio 👆','Grab yours before it\'s gone — link in bio.','Read the full story 👉 link in bio','Try it free — link in bio','Full breakdown in the link 👆'],
+  'Awareness': ['Share this with someone who needs it.','Spread the word — this matters.','Save and share 📌','RT to help spread the word.','Send this to a friend.'],
+  'Sales': ['Tap the link in bio to get yours.','Limited spots available — move fast.','Use code ABUZ8 for 20% off. Link in bio.','DM us "INFO" to get the details.','Shop now — link in bio 🛒'],
+};
+
+const OPENERS_BY_TONE = {
+  'Engaging': ['Here\'s something I didn\'t expect to say...','Let\'s talk about something that actually matters:','I need to share this with you:','Real talk for a second:','This changed everything for me:'],
+  'Professional': ['We\'re excited to announce:','Key insight from our team:','An update worth sharing:','The data tells an interesting story:','Here\'s what we\'ve learned:'],
+  'Casual': ['Okay so...','Ngl...','Hot take:','Not gonna lie,','So this happened:'],
+  'Inspirational': ['Every big journey starts with a single step.','What if the only thing holding you back was the story you\'re telling yourself?','Success isn\'t an event. It\'s a direction.','Your future self is watching. Make them proud.','The grind is the glory.'],
+  'Witty': ['We tried doing this the hard way first. 10/10 don\'t recommend.','Spoiler: it actually worked.','Science says this helps. We say try it and see.','This is either genius or chaos. You decide.','Plot twist:'],
+  'Storytelling': ['Six months ago, I had no idea this was possible.','It started as a small experiment.','The moment I realized everything was about to change:','I almost gave up. Then this happened.','Nobody talks about the messy middle. Let me.'],
+};
+
+const HASHTAGS_BY_PLATFORM = {
+  Instagram: '#growthmindset #entrepreneur #startup #innovation #buildingpublicly #contentcreator #instagood #explore',
+  LinkedIn: '#leadership #innovation #business #entrepreneur',
+  Twitter: '#building #startup',
+  TikTok: '#fyp #viral #trending #foryoupage',
+  Facebook: '#business #community',
+};
+
+function buildCaption(topic, variation) {
+  const openers = OPENERS_BY_TONE[tone] || OPENERS_BY_TONE['Engaging'];
+  const ctas = CTA_BY_GOAL[goal] || CTA_BY_GOAL['Engagement'];
+  const opener = openers[variation % openers.length];
+  const cta = ctas[variation % ctas.length];
+  const tags = includeHashtags === 'Yes' ? '\n\n' + HASHTAGS_BY_PLATFORM[platform] : '';
+  const tagsSep = includeHashtags === 'Separate' ? '\n\n[Comment]\n' + HASHTAGS_BY_PLATFORM[platform] : '';
+
+  let body = '';
+  switch (variation % 3) {
+    case 0:
+      body = `${opener}\n\n${topic}\n\n${cta}${tags}${tagsSep}`;
+      break;
+    case 1:
+      // Bullet format
+      const points = topic.split(/[.!]/).filter(s => s.trim().length > 10).slice(0, 3);
+      if (points.length >= 2) {
+        body = `${opener}\n\n${points.map(p => `→ ${p.trim()}`).join('\n')}\n\n${cta}${tags}${tagsSep}`;
+      } else {
+        body = `${opener}\n\n${topic}\n\n${cta}${tags}${tagsSep}`;
+      }
+      break;
+    case 2:
+      // Question hook
+      const questionHooks = [
+        `What's the biggest mistake people make with this?`,
+        `Why does this matter more than most people think?`,
+        `What would happen if you ignored this completely?`,
+        `Have you ever thought about why this keeps coming up?`,
+      ];
+      const hook = questionHooks[variation % questionHooks.length];
+      body = `${hook}\n\n${topic}\n\n${cta}${tags}${tagsSep}`;
+      break;
+  }
+
+  return body.trim();
+}
+
+function generate() {
+  const topic = document.getElementById('topic').value.trim();
+  if (!topic) { alert('Describe what your post is about.'); return; }
+
+  const btn = document.getElementById('genBtn');
+  btn.disabled = true;
+  btn.textContent = '✦ Generating...';
+  const prog = document.getElementById('prog');
+  const fill = document.getElementById('progFill');
+  prog.style.display = 'block';
+  fill.style.width = '0';
+  setTimeout(() => fill.style.width = '90%', 50);
+
+  const finish = () => {
+    prog.style.display = 'none';
+    fill.style.width = '0';
+    btn.disabled = false;
+    btn.textContent = '✦ Generate Captions';
+  };
+
+  // Real AI generation via the ABUZ8 brain (Cloudflare Workers AI). No templates.
+  fetch('/api/waitlist', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      tool: 'social-caption',
+      data: { topic, platform, tone, goal, includeHashtags, variations: 3 }
+    })
+  })
+  .then(r => r.json())
+  .then(res => {
+    if (!res.success || !res.result) throw new Error(res.error || 'Generation failed');
+    fill.style.width = '100%';
+    setTimeout(() => {
+      finish();
+      renderResults([{ label: `${tone} · ${platform}`, cap: res.result.replace(/<[^>]+>/g, '').trim() }]);
+    }, 250);
+  })
+  .catch(err => {
+    finish();
+    alert('Generation failed: ' + err.message + '. Please try again in a moment.');
+  });
+}
+
+function renderResults(captions) {
+  const area = document.getElementById('resultsArea');
+  const limit = PLATFORM_LIMITS[platform] || 2200;
+  const icon = PLATFORM_EMOJI[platform] || '';
+
+  let html = `<div class="section-label">${icon} ${platform} Captions</div>`;
+  captions.forEach((c, i) => {
+    const chars = c.cap.length;
+    const words = c.cap.split(/\s+/).length;
+    const tooLong = chars > limit;
+    html += `<div class="caption-card ${i === 0 ? 'selected' : ''}" onclick="selectCaption(this, ${i})">
+      <div class="cap-header">
+        <span class="cap-label">${c.label}</span>
+        <span class="cap-meta ${tooLong ? 'style="color:red"' : ''}">${chars}/${limit} chars</span>
+      </div>
+      <div class="cap-body">${escHtml(c.cap)}</div>
+      <div class="cap-footer">
+        <span class="cap-stats">${words} words · ${chars} chars</span>
+        <div class="cap-actions">
+          <button class="s-btn" onclick="copyCaption(event, ${i})">Copy</button>
+        </div>
+      </div>
+    </div>`;
+  });
+
+  html += `<div class="platform-preview">
+    <h4>📱 Preview · ${platform}</h4>
+    <div class="preview-mock" id="previewMock">${escHtml(captions[0].cap)}</div>
+    <div class="preview-note">This is how your caption will appear on ${platform}.</div>
+  </div>`;
+
+  area.innerHTML = html;
+  // Store captions globally
+  window._captions = captions;
+}
+
+function escHtml(str) {
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
+}
+
+function selectCaption(card, idx) {
+  document.querySelectorAll('.caption-card').forEach(c => c.classList.remove('selected'));
+  card.classList.add('selected');
+  const pm = document.getElementById('previewMock');
+  if (pm && window._captions) pm.innerHTML = escHtml(window._captions[idx].cap);
+}
+
+function copyCaption(e, idx) {
+  e.stopPropagation();
+  if (window._captions) {
+    navigator.clipboard.writeText(window._captions[idx].cap);
+    const btn = e.target;
+    btn.textContent = '✓';
+    setTimeout(() => btn.textContent = 'Copy', 1200);
+  }
+}
+</script>
+
+<script src="/assets/js/dfy-banner.js" async></script>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+<script src="/tools/_tools-shared.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>
+

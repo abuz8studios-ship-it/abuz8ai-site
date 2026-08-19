@@ -1,0 +1,979 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<link rel="stylesheet" href="/assets/css/abuz8-mach3.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cron Expression Generator — Build & Validate Cron Jobs | ABUZ8 AI</title>
+<meta name="description" content="Free cron expression generator and validator. Visually build cron schedules, see human-readable descriptions, and get next run times. No backend required.">
+<meta name="keywords" content="cron generator, cron expression builder, cron validator, cron job scheduler, unix cron, crontab generator">
+<meta property="og:title" content="Cron Expression Generator — ABUZ8">
+<meta property="og:description" content="Build cron expressions visually. Get human-readable descriptions and next run times instantly.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://abuz8ai.com/tools/cron-generator">
+<link rel="canonical" href="https://abuz8ai.com/tools/cron-generator">
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@300;400;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Cron Expression Generator",
+  "description": "Free online cron expression builder and validator with human-readable descriptions and next run time calculations.",
+  "url": "https://abuz8ai.com/tools/cron-generator.html",
+  "applicationCategory": "DeveloperApplication",
+  "operatingSystem": "Any",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  },
+  "provider": {
+    "@type": "Organization",
+    "name": "ABUZ8 AI",
+    "url": "https://abuz8ai.com"
+  }
+}
+</script>
+
+<style>
+:root {
+  --lapis: #0a1628;
+  --lapis-mid: #0f2040;
+  --lapis-light: #163060;
+  --gold: #c9a84c;
+  --gold-light: #e8d48b;
+  --gold-dim: #8a7030;
+  --turq: #0e9f6e;
+  --turq-light: #2fbf8f;
+  --turq-bright: #2fbf8f;
+  --cream: #f5f0e8;
+  --text: #e8e4d8;
+  --dim: #8a9aaa;
+  --card: #0d1a30;
+  --border: #1a2e50;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  background: var(--lapis);
+  color: var(--text);
+  font-family: 'Inter', sans-serif;
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+/* NAV */
+.nav {
+  border-bottom: 1px solid var(--border);
+  padding: 16px 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(10,22,40,0.95);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  backdrop-filter: blur(10px);
+}
+.nav-logo {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.2rem;
+  color: var(--gold);
+  text-decoration: none;
+}
+.nav-back {
+  color: var(--dim);
+  text-decoration: none;
+  font-size: 0.85rem;
+  transition: color 0.2s;
+}
+.nav-back:hover { color: var(--gold); }
+
+.container { max-width: 960px; margin: 0 auto; padding: 48px 24px 80px; }
+
+h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.6rem;
+  color: var(--cream);
+  margin-bottom: 10px;
+  line-height: 1.2;
+}
+.sub {
+  color: var(--dim);
+  margin-bottom: 40px;
+  font-weight: 300;
+  font-size: 1.05rem;
+}
+
+/* QUICK PRESETS */
+.presets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 32px;
+}
+.preset-btn {
+  background: var(--lapis-light);
+  border: 1px solid var(--border);
+  color: var(--dim);
+  padding: 6px 14px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-family: 'Inter', sans-serif;
+  transition: all 0.2s;
+}
+.preset-btn:hover, .preset-btn.active {
+  border-color: var(--gold);
+  color: var(--gold);
+  background: rgba(201,168,76,0.1);
+}
+
+/* OUTPUT CARD */
+.output-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 28px 32px;
+  margin-bottom: 28px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+}
+.cron-display {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 2.2rem;
+  color: var(--gold);
+  letter-spacing: 0.08em;
+  margin-bottom: 12px;
+  word-break: break-all;
+}
+.cron-fields-label {
+  display: flex;
+  gap: 0;
+  margin-bottom: 4px;
+}
+.field-label {
+  flex: 1;
+  text-align: center;
+  font-size: 0.65rem;
+  color: var(--turq);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-weight: 600;
+}
+.human-readable {
+  color: var(--turq-bright);
+  font-size: 1.05rem;
+  margin-top: 8px;
+  min-height: 28px;
+}
+.error-msg {
+  color: #ff6b6b;
+  font-size: 0.9rem;
+  margin-top: 8px;
+  display: none;
+}
+
+/* COPY BUTTON */
+.copy-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 16px;
+}
+.btn {
+  padding: 10px 22px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s;
+  font-size: 0.9rem;
+  font-family: 'Inter', sans-serif;
+}
+.btn-gold { background: var(--gold); color: var(--lapis); }
+.btn-gold:hover { background: var(--gold-light); transform: translateY(-1px); }
+.btn-ghost {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--dim);
+}
+.btn-ghost:hover { border-color: var(--gold); color: var(--gold); }
+.copy-feedback {
+  color: var(--turq-bright);
+  font-size: 0.85rem;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+/* BUILDER GRID */
+.builder-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 32px;
+  margin-bottom: 28px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+}
+.builder-card h2 {
+  font-family: 'Playfair Display', serif;
+  color: var(--cream);
+  font-size: 1.35rem;
+  margin-bottom: 24px;
+}
+
+.field-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 16px;
+}
+@media (max-width: 700px) {
+  .field-grid { grid-template-columns: repeat(2, 1fr); }
+  h1 { font-size: 1.8rem; }
+}
+
+.field-group label {
+  display: block;
+  font-size: 0.7rem;
+  color: var(--turq);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+.field-group input[type="text"] {
+  width: 100%;
+  background: var(--lapis-mid);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  font-family: 'JetBrains Mono', monospace;
+  padding: 10px 12px;
+  font-size: 1.1rem;
+  text-align: center;
+  transition: border-color 0.2s;
+}
+.field-group input[type="text"]:focus {
+  border-color: var(--gold);
+  outline: none;
+  background: var(--lapis-light);
+}
+.field-group input.field-error {
+  border-color: #ff6b6b;
+}
+.field-hint {
+  font-size: 0.7rem;
+  color: var(--dim);
+  margin-top: 6px;
+  text-align: center;
+}
+
+/* NEXT RUNS */
+.runs-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 28px 32px;
+  margin-bottom: 28px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+}
+.runs-card h2 {
+  font-family: 'Playfair Display', serif;
+  color: var(--cream);
+  font-size: 1.35rem;
+  margin-bottom: 18px;
+}
+.run-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.run-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  background: var(--lapis-mid);
+  border-radius: 8px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.9rem;
+}
+.run-index {
+  color: var(--gold-dim);
+  font-size: 0.75rem;
+  min-width: 24px;
+}
+.run-date { color: var(--cream); }
+.run-rel { color: var(--turq); font-size: 0.8rem; margin-left: auto; }
+
+/* MANUAL INPUT */
+.manual-section {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 28px 32px;
+  margin-bottom: 28px;
+}
+.manual-section h2 {
+  font-family: 'Playfair Display', serif;
+  color: var(--cream);
+  font-size: 1.35rem;
+  margin-bottom: 16px;
+}
+.manual-input-row {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+.manual-input-row input {
+  flex: 1;
+  background: var(--lapis-mid);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  font-family: 'JetBrains Mono', monospace;
+  padding: 12px 16px;
+  font-size: 1.1rem;
+  transition: border-color 0.2s;
+}
+.manual-input-row input:focus {
+  border-color: var(--gold);
+  outline: none;
+}
+
+/* REFERENCE */
+.ref-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 28px 32px;
+  margin-bottom: 28px;
+}
+.ref-card h2 {
+  font-family: 'Playfair Display', serif;
+  color: var(--cream);
+  font-size: 1.35rem;
+  margin-bottom: 18px;
+}
+.ref-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+.ref-table th {
+  text-align: left;
+  color: var(--turq);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border);
+}
+.ref-table td {
+  padding: 8px 12px;
+  border-bottom: 1px solid rgba(26,46,80,0.5);
+  vertical-align: top;
+}
+.ref-table td:first-child {
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--gold);
+  white-space: nowrap;
+}
+.ref-table td:last-child { color: var(--dim); }
+.ref-table tr:last-child td { border-bottom: none; }
+.ref-table tr:hover td { background: rgba(26,46,80,0.3); }
+
+/* WAITING LIST */
+.waitlist-card {
+  background: linear-gradient(135deg, var(--lapis-light) 0%, #0a2040 100%);
+  border: 1px solid var(--gold-dim);
+  border-radius: 16px;
+  padding: 40px 32px;
+  text-align: center;
+  margin-bottom: 40px;
+}
+.waitlist-card h2 {
+  font-family: 'Playfair Display', serif;
+  color: var(--cream);
+  font-size: 1.6rem;
+  margin-bottom: 10px;
+}
+.waitlist-card p {
+  color: var(--dim);
+  margin-bottom: 24px;
+  max-width: 520px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.waitlist-form {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  max-width: 480px;
+  margin: 0 auto;
+  flex-wrap: wrap;
+}
+.waitlist-form input {
+  flex: 1;
+  min-width: 220px;
+  background: var(--lapis-mid);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  padding: 12px 16px;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.95rem;
+}
+.waitlist-form input:focus { border-color: var(--gold); outline: none; }
+.waitlist-form input::placeholder { color: var(--dim); }
+.waitlist-success {
+  color: var(--turq-bright);
+  font-size: 0.95rem;
+  margin-top: 12px;
+  display: none;
+}
+
+/* FOOTER */
+.footer {
+  border-top: 1px solid var(--border);
+  padding: 24px 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: var(--dim);
+  font-size: 0.8rem;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.footer a { color: var(--dim); text-decoration: none; }
+.footer a:hover { color: var(--gold); }
+</style>
+<script src="_abuz8-live-brain.js" defer></script>
+
+<script src="_abuz8-config.js" defer></script>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="/" class="nav-logo">ABUZ8 AI</a>
+  <a href="/tools.html" class="nav-back">← All Tools</a>
+</nav>
+
+<div class="container">
+  <h1>Cron Expression Generator</h1>
+  <p class="sub">Build, validate, and decode cron schedules visually. See next run times instantly.</p>
+
+  <!-- PRESETS -->
+  <div class="presets">
+    <button class="preset-btn" onclick="applyPreset('* * * * *', this)">Every minute</button>
+    <button class="preset-btn" onclick="applyPreset('0 * * * *', this)">Every hour</button>
+    <button class="preset-btn" onclick="applyPreset('0 9 * * *', this)">Daily 9am</button>
+    <button class="preset-btn" onclick="applyPreset('0 9 * * 1-5', this)">Weekdays 9am</button>
+    <button class="preset-btn" onclick="applyPreset('0 9 * * 1', this)">Every Monday</button>
+    <button class="preset-btn" onclick="applyPreset('0 0 1 * *', this)">Monthly (1st)</button>
+    <button class="preset-btn" onclick="applyPreset('0 0 1 1 *', this)">Yearly (Jan 1)</button>
+    <button class="preset-btn" onclick="applyPreset('*/5 * * * *', this)">Every 5 min</button>
+    <button class="preset-btn" onclick="applyPreset('*/15 * * * *', this)">Every 15 min</button>
+    <button class="preset-btn" onclick="applyPreset('0 */6 * * *', this)">Every 6 hours</button>
+    <button class="preset-btn" onclick="applyPreset('0 0 * * 0', this)">Every Sunday</button>
+    <button class="preset-btn" onclick="applyPreset('30 23 * * *', this)">Nightly 11:30pm</button>
+  </div>
+
+  <!-- OUTPUT -->
+  <div class="output-card">
+    <div class="cron-fields-label">
+      <span class="field-label">minute</span>
+      <span class="field-label">hour</span>
+      <span class="field-label">day</span>
+      <span class="field-label">month</span>
+      <span class="field-label">weekday</span>
+    </div>
+    <div class="cron-display" id="cronOutput">0 9 * * *</div>
+    <div class="human-readable" id="humanReadable">At 09:00 AM, every day</div>
+    <div class="error-msg" id="errorMsg">Invalid cron expression</div>
+    <div class="copy-row">
+      <button class="btn btn-gold" onclick="copyCron()">Copy Expression</button>
+      <button class="btn btn-ghost" onclick="copyLinux()">Copy as crontab</button>
+      <span class="copy-feedback" id="copyFeedback">Copied!</span>
+    </div>
+  </div>
+
+  <!-- VISUAL BUILDER -->
+  <div class="builder-card">
+    <h2>Visual Builder</h2>
+    <div class="field-grid">
+      <div class="field-group">
+        <label>Minute</label>
+        <input type="text" id="f-min" value="0" oninput="syncFromFields()" placeholder="0-59">
+        <div class="field-hint">0–59 | * | */5</div>
+      </div>
+      <div class="field-group">
+        <label>Hour</label>
+        <input type="text" id="f-hour" value="9" oninput="syncFromFields()" placeholder="0-23">
+        <div class="field-hint">0–23 | * | */6</div>
+      </div>
+      <div class="field-group">
+        <label>Day of Month</label>
+        <input type="text" id="f-dom" value="*" oninput="syncFromFields()" placeholder="1-31">
+        <div class="field-hint">1–31 | * | */2</div>
+      </div>
+      <div class="field-group">
+        <label>Month</label>
+        <input type="text" id="f-mon" value="*" oninput="syncFromFields()" placeholder="1-12">
+        <div class="field-hint">1–12 | * | JAN</div>
+      </div>
+      <div class="field-group">
+        <label>Weekday</label>
+        <input type="text" id="f-dow" value="*" oninput="syncFromFields()" placeholder="0-7">
+        <div class="field-hint">0=Sun | * | 1-5</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MANUAL INPUT -->
+  <div class="manual-section">
+    <h2>Paste or Type Expression</h2>
+    <div class="manual-input-row">
+      <input type="text" id="manualInput" value="0 9 * * *" oninput="syncFromManual(this.value)" placeholder="e.g. 0 9 * * 1-5" spellcheck="false">
+      <button class="btn btn-ghost" onclick="clearAll()">Clear</button>
+    </div>
+  </div>
+
+  <!-- NEXT RUNS -->
+  <div class="runs-card">
+    <h2>Next 8 Run Times</h2>
+    <ul class="run-list" id="runList">
+      <li class="run-item"><span class="run-date">Computing...</span></li>
+    </ul>
+  </div>
+
+  <!-- REFERENCE -->
+  <div class="ref-card">
+    <h2>Quick Reference</h2>
+    <table class="ref-table">
+      <thead>
+        <tr>
+          <th>Symbol</th>
+          <th>Meaning</th>
+          <th>Example</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>*</td><td>Every value (wildcard)</td><td>* = every minute/hour/day</td></tr>
+        <tr><td>,</td><td>List of values</td><td>1,3,5 = 1st, 3rd, 5th</td></tr>
+        <tr><td>-</td><td>Range of values</td><td>1-5 = 1 through 5</td></tr>
+        <tr><td>/</td><td>Step values</td><td>*/15 = every 15 units</td></tr>
+        <tr><td>L</td><td>Last (day field)</td><td>L = last day of month</td></tr>
+        <tr><td>?</td><td>No specific value</td><td>Used in DOW or DOM</td></tr>
+        <tr><td>@reboot</td><td>Run at system startup</td><td>@reboot /path/to/script</td></tr>
+        <tr><td>@daily</td><td>Alias for 0 0 * * *</td><td>Midnight every day</td></tr>
+        <tr><td>@hourly</td><td>Alias for 0 * * * *</td><td>Start of every hour</td></tr>
+        <tr><td>@weekly</td><td>Alias for 0 0 * * 0</td><td>Midnight Sunday</td></tr>
+        <tr><td>@monthly</td><td>Alias for 0 0 1 * *</td><td>Midnight, 1st of month</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- WAITING LIST -->
+  <div class="waitlist-card">
+    <h2>QADIR OS — Your Autonomous AI Agent</h2>
+    <p>Imagine cron jobs that write themselves, monitor their own output, and fix errors in real time. QADIR OS makes your scheduled automation truly autonomous.</p>
+    <form class="waitlist-form" onsubmit="joinWaitlist(event)">
+      <input type="email" id="wlEmail" placeholder="your@email.com" required>
+      <button type="submit" class="btn btn-gold">Join Waiting List</button>
+    </form>
+    <div class="waitlist-success" id="wlSuccess">You're on the list. We'll reach out when QADIR OS opens early access.</div>
+  </div>
+</div>
+
+<footer class="footer">
+  <span>© 2026 ABUZ8 AI — All tools are free. No account required.</span>
+  <div style="display:flex;gap:20px;">
+    <a href="/tools.html">All Tools</a>
+    <a href="/">Home</a>
+    <a href="/disclaimer.html">Disclaimer</a>
+  </div>
+</footer>
+
+<script>
+// ─── CORE CRON ENGINE ─────────────────────────────────────────────────────────
+
+const MONTH_NAMES = ['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'];
+const DOW_NAMES   = ['sun','mon','tue','wed','thu','fri','sat'];
+
+function parseCron(expr) {
+  expr = expr.trim().toLowerCase();
+  // Handle aliases
+  const aliases = {
+    '@yearly':  '0 0 1 1 *',
+    '@annually':'0 0 1 1 *',
+    '@monthly': '0 0 1 * *',
+    '@weekly':  '0 0 * * 0',
+    '@daily':   '0 0 * * *',
+    '@midnight':'0 0 * * *',
+    '@hourly':  '0 * * * *',
+  };
+  if (aliases[expr]) expr = aliases[expr];
+
+  const parts = expr.split(/\s+/);
+  if (parts.length !== 5) return null;
+  return { min: parts[0], hour: parts[1], dom: parts[2], mon: parts[3], dow: parts[4] };
+}
+
+function expandField(field, min, max, names) {
+  field = field.toLowerCase();
+  if (names) {
+    names.forEach((n, i) => { field = field.replace(new RegExp(n, 'g'), String(i + (min === 1 ? 1 : 0))); });
+  }
+
+  if (field === '*' || field === '?') {
+    return range(min, max);
+  }
+
+  const result = new Set();
+
+  field.split(',').forEach(part => {
+    if (part.includes('/')) {
+      const [base, step] = part.split('/');
+      const s = parseInt(step);
+      if (isNaN(s) || s < 1) return;
+      const start = base === '*' ? min : parseInt(base);
+      for (let i = start; i <= max; i += s) result.add(i);
+    } else if (part.includes('-')) {
+      const [a, b] = part.split('-').map(Number);
+      for (let i = a; i <= b; i++) result.add(i);
+    } else {
+      const v = parseInt(part);
+      if (!isNaN(v)) result.add(v);
+    }
+  });
+
+  return [...result].filter(v => v >= min && v <= max).sort((a, b) => a - b);
+}
+
+function range(a, b) {
+  const r = [];
+  for (let i = a; i <= b; i++) r.push(i);
+  return r;
+}
+
+function validateField(val, min, max, names) {
+  try {
+    const r = expandField(val, min, max, names);
+    return r.length > 0;
+  } catch { return false; }
+}
+
+function validateCron(parts) {
+  if (!parts) return false;
+  return validateField(parts.min,  0, 59) &&
+         validateField(parts.hour, 0, 23) &&
+         validateField(parts.dom,  1, 31) &&
+         validateField(parts.mon,  1, 12, MONTH_NAMES) &&
+         validateField(parts.dow,  0,  7);
+}
+
+// ─── HUMAN READABLE ───────────────────────────────────────────────────────────
+
+function describe(parts) {
+  if (!parts) return '';
+
+  const mins  = expandField(parts.min,  0, 59);
+  const hours = expandField(parts.hour, 0, 23);
+  const doms  = expandField(parts.dom,  1, 31);
+  const mons  = expandField(parts.mon,  1, 12, MONTH_NAMES);
+  const dows  = expandField(parts.dow,  0,  7);
+
+  const allMins  = mins.length  === 60;
+  const allHours = hours.length === 24;
+  const allDoms  = doms.length  === 31;
+  const allMons  = mons.length  === 12;
+  const allDows  = dows.length  === 8;
+
+  // Time description
+  let timeDesc = '';
+  if (parts.min.startsWith('*/') && allHours) {
+    const step = parseInt(parts.min.split('/')[1]);
+    timeDesc = `Every ${step} minute${step>1?'s':''}`;
+  } else if (parts.hour.startsWith('*/') && allMins) {
+    const step = parseInt(parts.hour.split('/')[1]);
+    timeDesc = `Every ${step} hour${step>1?'s':''}`;
+  } else if (allMins && allHours) {
+    timeDesc = 'Every minute';
+  } else if (allMins) {
+    timeDesc = `Every minute past hour${hours.length>1?'s':''} ${formatList(hours)}`;
+  } else {
+    const timeParts = hours.map(h =>
+      mins.map(m => {
+        const ampm = h >= 12 ? 'PM' : 'AM';
+        const h12 = h % 12 || 12;
+        return `${h12}:${String(m).padStart(2,'0')} ${ampm}`;
+      }).join(', ')
+    ).join(', ');
+    timeDesc = `At ${timeParts}`;
+  }
+
+  // Day description
+  let dayDesc = '';
+  if (!allDoms && !allDows) {
+    const domStr = `day${doms.length>1?'s':''} ${formatList(doms)} of the month`;
+    const dowStr = describeDow(dows);
+    dayDesc = `, on ${domStr} and ${dowStr}`;
+  } else if (!allDoms) {
+    dayDesc = `, on day${doms.length>1?'s':''} ${formatList(doms)} of the month`;
+  } else if (!allDows) {
+    dayDesc = `, ${describeDow(dows)}`;
+  } else {
+    dayDesc = allDoms ? ', every day' : '';
+  }
+  if (allDows && allDoms) dayDesc = ', every day';
+
+  // Month description
+  let monDesc = '';
+  if (!allMons) {
+    const mNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+    monDesc = ` in ${mons.map(m => mNames[m-1]).join(', ')}`;
+  }
+
+  return `${timeDesc}${dayDesc}${monDesc}`;
+}
+
+function describeDow(dows) {
+  const names = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  // Normalize 7 → 0 (Sunday)
+  const normalized = [...new Set(dows.map(d => d === 7 ? 0 : d))].sort((a,b)=>a-b);
+  if (normalized.length === 7) return 'every day';
+  if (JSON.stringify(normalized) === JSON.stringify([1,2,3,4,5])) return 'on weekdays (Mon–Fri)';
+  if (JSON.stringify(normalized) === JSON.stringify([0,6])) return 'on weekends';
+  return `on ${normalized.map(d => names[d]).join(', ')}`;
+}
+
+function formatList(arr) {
+  if (arr.length === 1) return String(arr[0]);
+  if (arr.length === 2) return `${arr[0]} and ${arr[1]}`;
+  return arr.slice(0,-1).join(', ') + ', and ' + arr[arr.length-1];
+}
+
+// ─── NEXT RUN CALCULATOR ──────────────────────────────────────────────────────
+
+function nextRuns(parts, count = 8) {
+  if (!parts || !validateCron(parts)) return [];
+
+  const mins  = new Set(expandField(parts.min,  0, 59));
+  const hours = new Set(expandField(parts.hour, 0, 23));
+  const doms  = new Set(expandField(parts.dom,  1, 31));
+  const rawDows = expandField(parts.dow, 0, 7);
+  const dows  = new Set(rawDows.map(d => d === 7 ? 0 : d));
+  const mons  = new Set(expandField(parts.mon,  1, 12, MONTH_NAMES));
+
+  const usesDom = parts.dom !== '*' && parts.dom !== '?';
+  const usesDow = parts.dow !== '*' && parts.dow !== '?';
+
+  const runs = [];
+  let d = new Date();
+  d.setSeconds(0, 0);
+  d.setMinutes(d.getMinutes() + 1); // start from next minute
+
+  let iters = 0;
+  while (runs.length < count && iters < 100000) {
+    iters++;
+    const month = d.getMonth() + 1; // 1-12
+    const dom   = d.getDate();
+    const dow   = d.getDay();  // 0=Sun
+    const hour  = d.getHours();
+    const min   = d.getMinutes();
+
+    if (!mons.has(month)) { d.setDate(1); d.setMonth(d.getMonth() + 1); d.setHours(0,0,0,0); continue; }
+
+    const domOk = doms.has(dom);
+    const dowOk = dows.has(dow);
+    const dayOk = usesDom && usesDow ? (domOk || dowOk) : usesDom ? domOk : usesDow ? dowOk : true;
+
+    if (!dayOk) { d.setDate(d.getDate() + 1); d.setHours(0, 0, 0, 0); continue; }
+    if (!hours.has(hour)) {
+      const nextHour = [...hours].find(h => h > hour);
+      if (nextHour !== undefined) { d.setHours(nextHour, 0, 0, 0); }
+      else { d.setDate(d.getDate() + 1); d.setHours(0, 0, 0, 0); }
+      continue;
+    }
+    if (!mins.has(min)) {
+      const nextMin = [...mins].find(m => m > min);
+      if (nextMin !== undefined) { d.setMinutes(nextMin, 0, 0); }
+      else {
+        const nextHour = [...hours].find(h => h > hour);
+        if (nextHour !== undefined) { d.setHours(nextHour, 0, 0, 0); }
+        else { d.setDate(d.getDate() + 1); d.setHours(0, 0, 0, 0); }
+      }
+      continue;
+    }
+
+    runs.push(new Date(d));
+    d.setMinutes(d.getMinutes() + 1);
+  }
+  return runs;
+}
+
+function relativeTime(future) {
+  const ms = future - Date.now();
+  if (ms < 0) return 'past';
+  const secs = Math.floor(ms / 1000);
+  if (secs < 60) return `in ${secs}s`;
+  const mins = Math.floor(secs / 60);
+  if (mins < 60) return `in ${mins}m`;
+  const hrs = Math.floor(mins / 60);
+  if (hrs < 24) return `in ${hrs}h ${mins%60}m`;
+  const days = Math.floor(hrs / 24);
+  return `in ${days}d`;
+}
+
+const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+const MONTHS_SHORT = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+function formatRunDate(d) {
+  const dow = DAYS[d.getDay()];
+  const mon = MONTHS_SHORT[d.getMonth()];
+  const day = d.getDate();
+  const h   = d.getHours();
+  const m   = String(d.getMinutes()).padStart(2,'0');
+  const ampm = h >= 12 ? 'PM' : 'AM';
+  const h12  = h % 12 || 12;
+  return `${dow}, ${mon} ${day} ${d.getFullYear()} — ${h12}:${m} ${ampm}`;
+}
+
+// ─── UI SYNC ──────────────────────────────────────────────────────────────────
+
+let currentCron = '0 9 * * *';
+let activePreset = null;
+
+function updateUI(expr) {
+  currentCron = expr;
+  const parts = parseCron(expr);
+  const valid = validateCron(parts);
+
+  document.getElementById('cronOutput').textContent = expr.trim();
+  document.getElementById('manualInput').value = expr.trim();
+
+  const errEl  = document.getElementById('errorMsg');
+  const humEl  = document.getElementById('humanReadable');
+
+  if (valid) {
+    errEl.style.display = 'none';
+    humEl.style.display = 'block';
+    humEl.textContent = describe(parts);
+    renderNextRuns(parts);
+  } else {
+    humEl.style.display = 'none';
+    errEl.style.display = 'block';
+    document.getElementById('runList').innerHTML = '<li class="run-item"><span class="run-date" style="color:var(--dim)">Fix the expression to see next runs</span></li>';
+  }
+}
+
+function syncFromFields() {
+  const min  = document.getElementById('f-min').value  || '*';
+  const hour = document.getElementById('f-hour').value || '*';
+  const dom  = document.getElementById('f-dom').value  || '*';
+  const mon  = document.getElementById('f-mon').value  || '*';
+  const dow  = document.getElementById('f-dow').value  || '*';
+  const expr = `${min} ${hour} ${dom} ${mon} ${dow}`;
+  clearPresetHighlight();
+  updateUI(expr);
+}
+
+function syncFromManual(val) {
+  clearPresetHighlight();
+  const parts = val.trim().split(/\s+/);
+  if (parts.length === 5) {
+    document.getElementById('f-min').value  = parts[0];
+    document.getElementById('f-hour').value = parts[1];
+    document.getElementById('f-dom').value  = parts[2];
+    document.getElementById('f-mon').value  = parts[3];
+    document.getElementById('f-dow').value  = parts[4];
+  }
+  updateUI(val);
+}
+
+function applyPreset(expr, btn) {
+  clearPresetHighlight();
+  btn.classList.add('active');
+  activePreset = btn;
+  const parts = expr.split(' ');
+  document.getElementById('f-min').value  = parts[0];
+  document.getElementById('f-hour').value = parts[1];
+  document.getElementById('f-dom').value  = parts[2];
+  document.getElementById('f-mon').value  = parts[3];
+  document.getElementById('f-dow').value  = parts[4];
+  updateUI(expr);
+}
+
+function clearPresetHighlight() {
+  document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+}
+
+function clearAll() {
+  clearPresetHighlight();
+  ['f-min','f-hour','f-dom','f-mon','f-dow'].forEach(id => document.getElementById(id).value = '*');
+  updateUI('* * * * *');
+}
+
+function renderNextRuns(parts) {
+  const runs = nextRuns(parts, 8);
+  const list = document.getElementById('runList');
+  if (!runs.length) {
+    list.innerHTML = '<li class="run-item"><span class="run-date" style="color:var(--dim)">Could not compute next runs</span></li>';
+    return;
+  }
+  list.innerHTML = runs.map((r, i) => `
+    <li class="run-item">
+      <span class="run-index">#${i+1}</span>
+      <span class="run-date">${formatRunDate(r)}</span>
+      <span class="run-rel">${relativeTime(r)}</span>
+    </li>
+  `).join('');
+}
+
+function copyCron() {
+  navigator.clipboard.writeText(currentCron.trim()).then(() => {
+    const fb = document.getElementById('copyFeedback');
+    fb.textContent = 'Copied!';
+    fb.style.opacity = 1;
+    setTimeout(() => fb.style.opacity = 0, 1800);
+  });
+}
+
+function copyLinux() {
+  const txt = `${currentCron.trim()}  /path/to/your/script.sh`;
+  navigator.clipboard.writeText(txt).then(() => {
+    const fb = document.getElementById('copyFeedback');
+    fb.textContent = 'crontab line copied!';
+    fb.style.opacity = 1;
+    setTimeout(() => fb.style.opacity = 0, 1800);
+  });
+}
+
+// ─── WAITLIST ─────────────────────────────────────────────────────────────────
+
+function joinWaitlist(e) {
+  e.preventDefault();
+  const email = document.getElementById('wlEmail').value;
+  fetch('/api/waitlist/join', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, product: 'qadir-os', source: 'cron-generator' })
+  }).catch(() => {});
+  document.getElementById('wlSuccess').style.display = 'block';
+  document.getElementById('wlEmail').value = '';
+}
+
+// ─── INIT ─────────────────────────────────────────────────────────────────────
+
+updateUI('0 9 * * *');
+</script>
+
+<script src="/assets/js/dfy-banner.js" async></script>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+<script src="/tools/_tools-shared.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>
+

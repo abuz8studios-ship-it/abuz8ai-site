@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Agent Board — Top Open-Source Agentic Systems, Live — ABUZ8 AI</title>
+<meta name="description" content="A live, honestly-aggregated board of the top open-source agentic AI systems on GitHub — what each does, how people make money with it, and the cheapest way to replicate and launch in 72 hours. We aggregate and credit, never copy.">
+<link rel="canonical" href="https://abuz8ai.com/agent-board.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="The Agent Board — Top Open-Source Agentic Systems, Live — ABUZ8 AI">
+<meta property="og:description" content="Live GitHub stars + honest monetization + 72-hour replicate path for the top open-source AI agents. Aggregated, credited, never stolen.">
+<meta property="og:url" content="https://abuz8ai.com/agent-board.html">
+<meta name="theme-color" content="#0a1628">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/abuz8-theme.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "name": "The Agent Board — Top Open-Source Agentic Systems, Live",
+  "url": "https://abuz8ai.com/agent-board.html",
+  "description": "A live, honestly-aggregated board of the top open-source agentic AI systems on GitHub, with credited links to every project. Star counts pulled live from GitHub's public API."
+}
+</script>
+<style>
+/* page-specific styles ONLY — theme vars, no new hex colors */
+.mono{font-family:var(--font-mono)}
+.page-wrap{max-width:1180px;margin:0 auto;padding:0 24px 40px;position:relative;z-index:1}
+
+/* LIVE TICKER */
+.ticker{margin:8px 0 6px;border:1px solid var(--border);border-radius:14px;background:var(--glass-soft);overflow:hidden}
+.ticker-head{display:flex;justify-content:space-between;align-items:center;padding:12px 18px;border-bottom:1px solid var(--border);font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--dim)}
+.live-dot{display:inline-flex;align-items:center;gap:7px;color:var(--green-bright);font-weight:700}
+.live-dot::before{content:'';width:8px;height:8px;border-radius:50%;background:var(--green-bright);box-shadow:0 0 0 3px var(--green-glow)}
+.ticker-track{display:flex;gap:26px;padding:14px 18px;overflow-x:auto;white-space:nowrap;scrollbar-width:thin}
+.tick{display:inline-flex;align-items:baseline;gap:8px;font-size:13px;flex:none}
+.tick .nm{color:var(--cream);font-weight:600}
+.tick .st{font-family:var(--font-mono);color:var(--gold)}
+.tick .st::before{content:'★ '}
+
+.credit-note{display:flex;gap:12px;align-items:flex-start;background:rgba(14,159,110,.07);border:1px solid var(--border);border-left:3px solid var(--green);border-radius:12px;padding:14px 18px;margin:20px 0 8px;font-size:13px;color:var(--dim)}
+.credit-note b{color:var(--cream)}
+
+.controls{display:flex;gap:10px;flex-wrap:wrap;margin:26px 0 6px}
+.controls input{flex:1;min-width:240px;padding:12px 15px;background:var(--lapis-2);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:inherit;font-size:14px}
+.controls input:focus{outline:none;border-color:var(--gold)}
+
+.board{display:grid;grid-template-columns:1fr;gap:14px;margin-top:18px}
+.row{background:var(--glass-soft);border:1px solid var(--border);border-radius:16px;padding:22px;transition:border-color .3s;box-shadow:inset 0 1px 0 rgba(245,240,232,.04)}
+.row:hover{border-color:var(--gold)}
+.row-top{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap}
+.rank{font-family:var(--font-display);font-size:30px;color:var(--gold);font-weight:900;line-height:1;flex:none;width:46px}
+.row-id{flex:1;min-width:220px}
+.row-id h3{font-family:var(--font-display);font-size:21px;color:var(--cream);font-weight:700}
+.row-id .repo{font-family:var(--font-mono);font-size:12px;color:var(--green-bright);margin-top:2px}
+.row-id .what{font-size:14px;color:var(--text);margin-top:8px}
+.stars{flex:none;text-align:right;min-width:120px}
+.stars .v{font-family:var(--font-mono);font-size:22px;color:var(--gold);font-weight:600}
+.stars .v::before{content:'★ '}
+.stars .l{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--dim);margin-top:2px}
+.tags{margin-top:4px}
+.tag{display:inline-block;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--dim);border:1px solid var(--border);border-radius:5px;padding:2px 7px;margin:6px 6px 0 0}
+.tag.lang{color:var(--green-bright);border-color:var(--green-deep)}
+.tag.archived{color:var(--gold-light);border-color:var(--gold-dim)}
+
+.row-detail{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:18px;padding-top:18px;border-top:1px solid var(--border)}
+@media(max-width:720px){.row-detail{grid-template-columns:1fr}}
+.box .bx-h{font-size:10px;letter-spacing:2px;text-transform:uppercase;font-weight:700;margin-bottom:7px}
+.box.money .bx-h{color:var(--green-bright)}
+.box.repl .bx-h{color:var(--gold)}
+.box p{font-size:13px;color:var(--dim);line-height:1.6}
+.box .cost{display:inline-block;margin-top:8px;font-family:var(--font-mono);font-size:11px;color:var(--green-bright);background:rgba(14,159,110,.1);border:1px solid var(--border);border-radius:6px;padding:3px 9px}
+.row-cta{margin-top:16px;display:flex;gap:14px;flex-wrap:wrap;align-items:center}
+.row-cta a.src{font-size:12px;color:var(--green-bright);letter-spacing:.5px}
+.row-cta a.src:hover{color:var(--gold)}
+
+.board-credit{margin-top:40px;font-size:12px;color:var(--dim);text-align:center}
+.board-credit a{color:var(--gold)}
+</style>
+</head>
+<body>
+<div class="geo-bg"></div>
+<nav class="abuz8-nav">
+<div class="nav-inner">
+  <a href="/" style="text-decoration:none;">
+    <div class="logo">ABUZ8</div>
+    <div class="logo-sub">Sovereign AI</div>
+  </a>
+  <div class="nav-links">
+    <a href="/tools.html">Tools</a>
+    <a href="/store.html">Store</a>
+    
+    <a href="/agents.html">Agents</a>
+    <a href="/models.html">Models</a>
+    <a href="/news.html">News</a>
+    <a href="/roadmap.html">Roadmap</a>
+    <a href="/store.html" class="nav-cta">Get Started</a>
+  </div>
+</div>
+</nav>
+
+<header class="hero">
+  <div class="hero-eyebrow" data-i18n="ab.eyebrow">The Agent Board · Live from GitHub</div>
+  <h1 data-i18n="ab.h1">The systems making people money.<br><span class="gold">Honestly aggregated.</span></h1>
+  <p data-i18n="ab.sub">The top open-source agentic AI projects on GitHub — ranked by live star count. For each one: what it actually does, how people are making money with it, and the cheapest realistic way to replicate the idea and launch in 72 hours.</p>
+</header>
+
+<div class="page-wrap">
+  <div class="ticker">
+    <div class="ticker-head">
+      <span class="live-dot" id="live-label">Live · GitHub stars</span>
+      <span class="mono" id="ticker-updated">loading…</span>
+    </div>
+    <div class="ticker-track" id="ticker"></div>
+  </div>
+
+  <div class="credit-note">
+    <span style="color:var(--green-bright);font-size:18px;line-height:1">↗</span>
+    <div><b>We aggregate and credit — we never steal.</b> Every project below is open-source and links straight to its own repository and license. We don't copy their code or rebrand it. This board exists to spotlight builders worth learning from, the way our daily news feed spotlights worth-watching sources. Star counts are pulled live from GitHub's public API.</div>
+  </div>
+
+  <div class="controls">
+    <input id="search" type="search" placeholder="Search by name, what it does, or how to monetize…" aria-label="Search the board">
+  </div>
+
+  <div class="board" id="board"></div>
+
+  <div class="board-credit">Star counts © their projects, pulled live from GitHub · We aggregate, credit, and link — never copy. · More: <a href="/trending.html">Trending</a> · <a href="/news.html">AI Daily</a></div>
+</div>
+
+<script>
+/* Curated, honest analysis. Live stars merged in from /api/github-agents.
+   "how" = how people make money with it. "repl" = cheapest 72h replicate path. */
+var DATA = [
+ {repo:"n8n-io/n8n",name:"n8n",what:"Visual workflow automation with native AI-agent nodes — self-hostable Zapier for builders.",
+  how:"Agencies sell done-for-you automation builds ($500–$5k each) and monthly maintenance retainers. Self-hosting avoids per-task SaaS fees, so the margin is the service.",
+  repl:"Self-host n8n on a $6/mo VPS, build 3 niche templates (lead-gen, invoicing, content), sell setup + hosting as a productized service. Launch a Gumroad/Stripe page in 72h.",cost:"~$6/mo + a weekend"},
+ {repo:"significant-gravitas/AutoGPT",name:"AutoGPT",what:"One of the original autonomous-agent frameworks — give it a goal, it plans and executes steps.",
+  how:"Used as the engine inside niche 'autonomous research/ops' SaaS wrappers people charge $20–99/mo for.",
+  repl:"Wrap it around ONE narrow job (e.g. 'monitor competitors weekly and email a report'), put a clean UI + Stripe in front. The narrow framing is the product.",cost:"API credits only"},
+ {repo:"langgenius/dify",name:"Dify",what:"Open-source LLM app platform — build chatbots, agents, and RAG apps with a visual builder + API.",
+  how:"Consultants spin up branded customer-support and internal-knowledge bots for SMBs at $1–3k setup + hosting.",
+  repl:"Self-host Dify, ingest a client's docs, ship a branded support bot embed in a day. Sell to 3 local businesses.",cost:"~$10/mo VPS"},
+ {repo:"langchain-ai/langchain",name:"LangChain",what:"The most-used framework for chaining LLM calls, tools, memory, and agents.",
+  how:"It's the plumbing under thousands of paid AI products; freelancers bill $80–200/hr building LangChain backends.",
+  repl:"Pick a vertical (legal intake, real-estate Q&A), build a focused LangChain + RAG app, sell access. The vertical data is the moat.",cost:"API credits only"},
+ {repo:"comfyanonymous/ComfyUI",name:"ComfyUI",what:"Node-based engine for image/video/audio generation — the backbone of serious local AI media.",
+  how:"This is exactly our model: run it locally, sell the OUTPUT (headshots, product photos, video) as a service — no per-image SaaS cost.",
+  repl:"Install ComfyUI + a headshot workflow, put an upload→generate→download page in front, charge per pack.",cost:"a local GPU"},
+ {repo:"browser-use/browser-use",name:"Browser Use",what:"Lets an LLM agent actually drive a real browser — click, type, extract, complete tasks.",
+  how:"Powers paid 'AI does the web task for you' tools and lead-scraping/QA-automation services.",
+  repl:"Automate ONE repetitive browser job a niche hates (e.g. directory submissions), charge per run or monthly.",cost:"API credits only"},
+ {repo:"lobehub/lobe-chat",name:"Lobe Chat",what:"Polished open-source chat UI supporting many models, plugins, and agent personas.",
+  how:"Sold as white-label 'your-own-ChatGPT' deployments to businesses that want a branded internal assistant.",
+  repl:"Deploy Lobe Chat, brand it, connect a client's preferred model, charge a setup + monthly fee.",cost:"~$10/mo + free tier"},
+ {repo:"All-Hands-AI/OpenHands",name:"OpenHands",what:"Autonomous software-engineering agent — reads a repo, writes code, runs it, fixes itself.",
+  how:"Dev shops use it to clear small-ticket backlogs faster; some sell 'AI bug-fix' subscriptions.",
+  repl:"Offer a fixed-price 'we'll knock out 10 small issues from your backlog' service, OpenHands does the grunt work.",cost:"API credits only"},
+ {repo:"geekan/MetaGPT",name:"MetaGPT",what:"Multi-agent framework that simulates a software company (PM, architect, engineer roles).",
+  how:"Used to generate MVP scaffolds fast; agencies sell '0-to-prototype in a week' packages.",
+  repl:"Productize 'idea → working prototype demo' for non-technical founders at a flat fee.",cost:"API credits only"},
+ {repo:"mem0ai/mem0",name:"Mem0",what:"A memory layer for AI agents — long-term, personalized recall across sessions.",
+  how:"Sold as the 'memory' upgrade inside personalized-assistant and companion apps that charge monthly.",
+  repl:"Add persistent memory to an existing chatbot product as a premium feature; memory is the upsell.",cost:"free tier + API"},
+ {repo:"microsoft/autogen",name:"AutoGen",what:"Microsoft's framework for multi-agent conversations that solve tasks collaboratively.",
+  how:"Enterprises pay consultants to build multi-agent internal tools (research, analysis pipelines).",
+  repl:"Build a 2-agent 'researcher + writer' that turns a topic into a report; sell as a content service.",cost:"API credits only"},
+ {repo:"FlowiseAI/Flowise",name:"Flowise",what:"Drag-and-drop builder for LLM flows and agents — visual LangChain.",
+  how:"Low-code builders sell client chatbots without writing code; fast turnaround = high margin.",
+  repl:"Self-host Flowise, build a reusable support-bot flow, resell deployments to local businesses.",cost:"~$10/mo VPS"},
+ {repo:"crewAIInc/crewAI",name:"CrewAI",what:"Framework for orchestrating role-playing agent 'crews' that divide and conquer a task.",
+  how:"Used inside automation agencies to build multi-step 'crews' (research→draft→QA) sold as a service.",
+  repl:"Package a 3-agent crew for one workflow a niche pays for (e.g. listing descriptions), charge per batch.",cost:"API credits only"},
+ {repo:"run-llama/llama_index",name:"LlamaIndex",what:"The go-to framework for connecting LLMs to your own data (RAG done right).",
+  how:"Freelancers build 'chat with your documents' tools for law/finance/medical at premium rates.",
+  repl:"Pick a document-heavy niche, build a RAG Q&A tool over their corpus, charge per seat.",cost:"API credits only"},
+ {repo:"danny-avila/LibreChat",name:"LibreChat",what:"Self-hosted, multi-model ChatGPT clone with plugins, agents, and auth.",
+  how:"Deployed as a private branded AI workspace for teams that won't send data to OpenAI.",
+  repl:"Host LibreChat for a privacy-conscious client, connect local models, bill setup + monthly.",cost:"~$10/mo VPS"},
+ {repo:"stanfordnlp/dspy",name:"DSPy",what:"Framework that programs and auto-optimizes LLM prompts instead of hand-tuning them.",
+  how:"Used to squeeze quality out of cheaper models — the cost-savings IS the pitch to clients.",
+  repl:"Offer 'we'll cut your LLM bill 50% at the same quality' as a paid optimization audit.",cost:"API credits only"},
+ {repo:"ComposioHQ/composio",name:"Composio",what:"Gives agents 250+ ready tool integrations (Gmail, Slack, GitHub, CRMs) via one layer.",
+  how:"Speeds up building agents that DO things in real apps — sold as connected-agent products.",
+  repl:"Build an agent that automates one cross-app workflow (lead → CRM → email), sell per workflow.",cost:"free tier + API"},
+ {repo:"microsoft/semantic-kernel",name:"Semantic Kernel",what:"Microsoft's SDK for embedding AI agents into apps (C#, Python, Java).",
+  how:"Enterprise dev teams bill heavily to integrate it into existing .NET/Java systems.",
+  repl:"Offer SK integration as a service to companies already on the Microsoft stack.",cost:"API credits only"},
+ {repo:"assafelovic/gpt-researcher",name:"GPT Researcher",what:"Autonomous agent that researches a topic and writes a cited report.",
+  how:"Wrapped into paid 'instant research report' tools and market-research mini-services.",
+  repl:"Put a clean UI + Stripe in front of it for ONE niche (e.g. 'competitor reports'), charge per report.",cost:"API credits only"},
+ {repo:"openai/openai-agents-python",name:"OpenAI Agents SDK",what:"OpenAI's official lightweight framework for building agents with handoffs and tools.",
+  how:"The fastest path to a production agent on OpenAI models — used in countless paid SaaS wrappers.",
+  repl:"Build a single-purpose agent (e.g. 'AI receptionist'), wrap with a booking link + Stripe.",cost:"API credits only"}
+];
+
+var $ = function(s){return document.querySelector(s);};
+function fmt(n){ if(n==null) return "—"; return n>=1000 ? (Math.round(n/100)/10)+"k" : String(n); }
+
+var liveStars = {}, liveMeta = {};
+
+function renderTicker(){
+  var top = DATA.slice(0,12);
+  $('#ticker').innerHTML = top.map(function(d){
+    var s = liveStars[d.repo];
+    return '<span class="tick"><span class="nm">'+d.name+'</span><span class="st">'+fmt(s)+'</span></span>';
+  }).join('');
+}
+
+function renderBoard(filter){
+  filter = (filter||'').toLowerCase();
+  // sort by live stars desc (fall back to data order)
+  var rows = DATA.slice().sort(function(a,b){ return (liveStars[b.repo]||0)-(liveStars[a.repo]||0); });
+  var html = '', rank = 0;
+  rows.forEach(function(d){
+    var hay = (d.name+' '+d.what+' '+d.how+' '+d.repl+' '+d.repo).toLowerCase();
+    if(filter && hay.indexOf(filter)<0) return;
+    rank++;
+    var meta = liveMeta[d.repo]||{};
+    var lang = meta.lang ? '<span class="tag lang">'+meta.lang+'</span>' : '';
+    var arch = meta.archived ? '<span class="tag archived">archived · legacy</span>' : '';
+    html += '<div class="row">'
+      + '<div class="row-top">'
+        + '<div class="rank">'+rank+'</div>'
+        + '<div class="row-id"><h3>'+d.name+'</h3><div class="repo">'+d.repo+'</div>'
+          + '<div class="what">'+d.what+'</div><div class="tags">'+lang+arch+'</div></div>'
+        + '<div class="stars"><div class="v">'+fmt(liveStars[d.repo])+'</div><div class="l">GitHub stars</div></div>'
+      + '</div>'
+      + '<div class="row-detail">'
+        + '<div class="box money"><div class="bx-h">How people make money with it</div><p>'+d.how+'</p></div>'
+        + '<div class="box repl"><div class="bx-h">Cheapest 72-hour replicate path</div><p>'+d.repl+'</p><span class="cost">Cost: '+d.cost+'</span></div>'
+      + '</div>'
+      + '<div class="row-cta"><a class="src" href="https://github.com/'+d.repo+'" target="_blank" rel="noopener">↗ View &amp; credit on GitHub</a></div>'
+      + '</div>';
+  });
+  $('#board').innerHTML = html || '<p style="color:var(--dim);font-style:italic;padding:24px 0">Nothing matches that search.</p>';
+}
+
+async function loadStars(){
+  try{
+    var r = await fetch('/api/github-agents', {cache:'no-store'});
+    var j = await r.json();
+    if(j && j.repos){
+      Object.keys(j.repos).forEach(function(k){
+        liveStars[k] = j.repos[k].stars;
+        liveMeta[k] = j.repos[k];
+      });
+      $('#ticker-updated').textContent = 'updated ' + new Date(j.ts).toLocaleTimeString();
+      if(j.live < j.total){ $('#live-label').textContent = 'Live · GitHub stars (' + j.live + '/' + j.total + ' live)'; }
+    }else{
+      $('#live-label').textContent = 'GitHub star feed offline';
+      $('#ticker-updated').textContent = 'star counts unavailable right now';
+    }
+  }catch(e){
+    $('#live-label').textContent = 'GitHub star feed offline';
+    $('#ticker-updated').textContent = 'star counts unavailable right now';
+  }
+  renderTicker(); renderBoard($('#search').value);
+}
+
+$('#search').addEventListener('input', function(){ renderBoard(this.value); });
+
+// initial paint with blanks, then fill from live API
+renderTicker(); renderBoard('');
+loadStars();
+</script>
+
+<footer class="abuz8-footer">
+<div class="foot-grid">
+  <div class="foot-brand">
+    <div class="logo">ABUZ8</div>
+    <p>Sovereign AI for everyone. Real tools, local models, no fake claims. Built on real hardware by ABUZ8 LLC, Ohio.</p>
+  </div>
+  <div class="foot-col"><h4>Platform</h4>
+    <a href="/tools.html">Free Tools</a><a href="/store.html">Store</a><a href="/models.html">Models</a><a href="/agents.html">AI Agents</a><a href="/news.html">News</a><a href="/blog/">Blog</a>
+  </div>
+  <div class="foot-col"><h4>Mission</h4>
+    <a href="/sovereign.html">Sovereign AI</a><a href="/journey.html">Journey &amp; Goals</a><a href="/roadmap.html">Roadmap</a><a href="/audit.html">Audit &amp; Transparency</a><a href="/purpose.html">Purpose</a>
+  </div>
+  <div class="foot-col"><h4>Hubs</h4>
+    <a href="/github.html">GitHub Hub</a><a href="/huggingface.html">Hugging Face Hub</a><a href="/polymarket.html">Polymarket Tester</a><a href="/community.html">Community</a><a href="/education.html">Education</a><a href="/downloads.html">Downloads</a>
+  </div>
+  <div class="foot-col"><h4>Trust</h4>
+    <a href="/security.html">Security &amp; Compliance</a><a href="/disclaimer.html">Disclaimer</a><a href="/privacy.html">Privacy</a><a href="/terms.html">Terms</a><a href="/refund.html">Refunds</a><a href="/license.html">License</a><a href="/contact.html">Contact</a><a href="/status.html">Status</a>
+  </div>
+</div>
+<div class="foot-base">
+  <div>© <span data-year>2026</span> ABUZ8 LLC. All rights reserved.</div>
+  <div>Built local-first on real hardware · No fake claims · <a href="/sovereign.html">Sovereign AI for everyone</a></div>
+</div>
+</footer>
+<script src="/assets/js/abuz8-ui.js" defer></script>
+<script src="/assets/js/abuz8-onboard.js" defer></script>
+<script src="/assets/js/site-i18n.js" defer></script>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>

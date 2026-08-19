@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>ABUZ8 Dashboard — Live Visitor Metrics</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<link rel="stylesheet" href="/assets/css/abuz8-theme.css">
+<style>
+  :root {
+    --bg: #0a1628;
+    --panel: rgba(255,255,255,.03);
+    --panel-hi: rgba(200,165,92,.08);
+    --border: rgba(255,255,255,.08);
+    --border-hi: rgba(200,165,92,.35);
+    --gold: #c8a55c;
+    --green: #4ade80;
+    --dim: rgba(255,255,255,.55);
+    --muted: rgba(255,255,255,.35);
+    --mono: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace;
+    --sans: Inter, system-ui, -apple-system, Segoe UI, sans-serif;
+    --display: 'Fraunces', Georgia, serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg); color: #f5f0e8;
+    font-family: var(--sans);
+    min-height: 100vh; padding: 24px;
+  }
+  header {
+    display: flex; justify-content: space-between; align-items: baseline;
+    margin-bottom: 24px; padding-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+  }
+  h1 {
+    font-family: var(--display); font-weight: 400;
+    font-size: 28px; letter-spacing: -0.02em;
+  }
+  h1 .accent { color: var(--gold); }
+  .sub { color: var(--dim); font-size: 13px; margin-top: 4px; }
+  .controls { display: flex; gap: 8px; align-items: center; }
+  select, button {
+    background: var(--panel); color: #f5f0e8;
+    border: 1px solid var(--border); border-radius: 6px;
+    padding: 8px 12px; font-family: var(--sans); font-size: 13px;
+    cursor: pointer;
+  }
+  select:hover, button:hover { border-color: var(--border-hi); color: var(--gold); }
+  .grid {
+    display: grid; gap: 16px;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    margin-bottom: 20px;
+  }
+  .card {
+    background: var(--panel); border: 1px solid var(--border);
+    border-radius: 10px; padding: 20px;
+  }
+  .card.kpi { display: flex; flex-direction: column; }
+  .kpi .label {
+    font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase;
+    color: var(--muted); margin-bottom: 8px;
+  }
+  .kpi .value {
+    font-family: var(--mono); font-size: 34px; font-weight: 700;
+    color: var(--gold); line-height: 1;
+  }
+  .kpi .footnote { font-size: 12px; color: var(--dim); margin-top: 8px; }
+  .card h2 {
+    font-family: var(--display); font-weight: 400; font-size: 18px;
+    margin-bottom: 14px; color: #f5f0e8;
+  }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th, td {
+    text-align: left; padding: 8px 6px; border-bottom: 1px solid var(--border);
+  }
+  th { font-size: 11px; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); font-weight: 500; }
+  td { font-family: var(--mono); color: #f5f0e8; }
+  td.num { text-align: right; color: var(--gold); }
+  .empty { color: var(--dim); font-style: italic; font-size: 13px; padding: 12px 0; }
+  .bar {
+    display: inline-block; height: 6px; background: var(--gold);
+    border-radius: 3px; vertical-align: middle; margin-right: 6px;
+    min-width: 2px; opacity: 0.85;
+  }
+  .status-strip {
+    display: flex; gap: 20px; align-items: center; padding: 12px 16px;
+    background: var(--panel-hi); border: 1px solid var(--border-hi);
+    border-radius: 8px; margin-bottom: 20px; font-size: 13px;
+  }
+  .status-strip .dot {
+    width: 8px; height: 8px; border-radius: 50%; background: var(--green);
+    box-shadow: 0 0 8px var(--green); display: inline-block; margin-right: 8px;
+  }
+  .status-strip .dim { color: var(--dim); }
+  .status-strip code { font-family: var(--mono); color: var(--gold); font-size: 12px; }
+  footer {
+    margin-top: 32px; padding-top: 16px; border-top: 1px solid var(--border);
+    font-size: 11px; color: var(--muted); text-align: center;
+  }
+  footer a { color: var(--dim); }
+  .link-row { display: flex; gap: 12px; flex-wrap: wrap; font-size: 12px; margin-top: 8px; }
+  .link-row a { color: var(--gold); text-decoration: none; border-bottom: 1px dashed rgba(200,165,92,.4); }
+  .link-row a:hover { color: #f5d78a; }
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <h1>ABUZ8 <span class="accent">Dashboard</span></h1>
+    <div class="sub">First-party visitor metrics · No cookies · Data lives in Ahmad's own D1</div>
+  </div>
+  <div class="controls">
+    <select id="days">
+      <option value="1">Last 24h</option>
+      <option value="7" selected>Last 7 days</option>
+      <option value="30">Last 30 days</option>
+      <option value="90">Last 90 days</option>
+    </select>
+    <button id="refresh">↻ Refresh</button>
+  </div>
+</header>
+
+<div class="status-strip" id="status-strip">
+  <span><span class="dot"></span><strong>Live</strong></span>
+  <span class="dim">Endpoint: <code>/api/e?days=<span id="s-days">7</span></code></span>
+  <span class="dim">Last fetched: <span id="s-time">—</span></span>
+  <span class="dim">Note: bots excluded; event counts, not unique users</span>
+</div>
+
+<!-- KPI row -->
+<div class="grid" id="kpis"></div>
+
+<!-- Detail row -->
+<div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));">
+  <div class="card">
+    <h2>Top pages</h2>
+    <table><thead><tr><th>Path</th><th style="text-align:right">Views</th></tr></thead>
+      <tbody id="top-paths"></tbody></table>
+  </div>
+  <div class="card">
+    <h2>Where visitors came from</h2>
+    <table><thead><tr><th>Referrer host</th><th style="text-align:right">Visits</th></tr></thead>
+      <tbody id="refs"></tbody></table>
+  </div>
+  <div class="card">
+    <h2>Product funnel</h2>
+    <table><thead><tr><th>Product</th><th>Kind</th><th style="text-align:right">Count</th></tr></thead>
+      <tbody id="funnel"></tbody></table>
+  </div>
+</div>
+
+<footer>
+  <div>Data from <code>/api/e</code> (first-party pageviews + intent) — no third party involved.</div>
+  <div class="link-row">
+    <a href="/api/e?days=7" target="_blank">Raw JSON (7d)</a>
+    <a href="/api/behavior?days=7" target="_blank">Behavior scoring API</a>
+    <a href="https://dash.cloudflare.com/" target="_blank">Cloudflare Web Analytics ↗</a>
+    <a href="https://clarity.microsoft.com/" target="_blank">Microsoft Clarity ↗</a>
+    <a href="https://analytics.google.com/" target="_blank">Google Analytics 4 ↗</a>
+  </div>
+</footer>
+
+<script>
+'use strict';
+
+const $ = (id) => document.getElementById(id);
+
+async function load(days) {
+  $('s-days').textContent = days;
+  const start = Date.now();
+
+  let data;
+  try {
+    const r = await fetch('/api/e?days=' + days, { cache: 'no-store' });
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    data = await r.json();
+  } catch (err) {
+    $('kpis').innerHTML =
+      '<div class="card kpi" style="grid-column:1/-1"><div class="label">Error</div>' +
+      '<div class="value" style="color:#ff6b6b;font-size:16px">' + String(err) + '</div>' +
+      '<div class="footnote">The endpoint is reachable but returned an error. Check the D1 binding.</div></div>';
+    return;
+  }
+
+  // KPI cards
+  const totals = Object.fromEntries((data.totals || []).map((r) => [r.kind, r.n]));
+  const pv = totals.pageview || 0;
+  const store = totals.store_click || 0;
+  const checkout = totals.checkout_start || 0;
+  const dl = totals.download || 0;
+  const conv = pv > 0 ? ((checkout / pv) * 100).toFixed(2) + '%' : '—';
+
+  $('kpis').innerHTML = [
+    kpi('Pageviews', pv, 'bot traffic filtered out'),
+    kpi('Store clicks', store, 'clicked into /store or /products'),
+    kpi('Checkout starts', checkout, 'clicked a Stripe buy link'),
+    kpi('Downloads', dl, 'grabbed a file or /api/download'),
+    kpi('View → checkout', conv, 'ratio of checkout starts to pageviews'),
+  ].join('');
+
+  // Top paths — with mini bar chart
+  const topMax = Math.max(1, ...(data.top_paths || []).map((r) => r.n));
+  $('top-paths').innerHTML =
+    (data.top_paths || []).map((r) => {
+      const w = Math.round((r.n / topMax) * 100);
+      return '<tr><td><span class="bar" style="width:' + w + 'px"></span>' +
+             escape(r.path) + '</td><td class="num">' + r.n + '</td></tr>';
+    }).join('') || '<tr><td colspan="2" class="empty">No pageviews yet in this window.</td></tr>';
+
+  // Referrers
+  $('refs').innerHTML =
+    (data.referrers || []).map((r) =>
+      '<tr><td>' + escape(r.r) + '</td><td class="num">' + r.n + '</td></tr>'
+    ).join('') || '<tr><td colspan="2" class="empty">No referrer data yet.</td></tr>';
+
+  // Product funnel
+  $('funnel').innerHTML =
+    (data.product_funnel || []).map((r) =>
+      '<tr><td>' + escape(r.product) + '</td><td>' + escape(r.kind) + '</td><td class="num">' + r.n + '</td></tr>'
+    ).join('') || '<tr><td colspan="3" class="empty">No product events yet. Once someone clicks a Stripe link, this fills up.</td></tr>';
+
+  const elapsed = Date.now() - start;
+  const t = new Date();
+  $('s-time').textContent = t.toLocaleTimeString() + ' (' + elapsed + 'ms)';
+}
+
+function kpi(label, value, footnote) {
+  return '<div class="card kpi"><div class="label">' + label + '</div>' +
+         '<div class="value">' + value + '</div>' +
+         '<div class="footnote">' + footnote + '</div></div>';
+}
+
+function escape(s) {
+  return String(s == null ? '' : s)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+$('days').addEventListener('change', (e) => load(e.target.value));
+$('refresh').addEventListener('click', () => load($('days').value));
+
+load(7);
+setInterval(() => load($('days').value), 60000);  // auto-refresh every minute
+</script>
+
+</body>
+</html>

@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Automation Worth Calculator — ABUZ8 AI</title>
+<meta name="description" content="Free 60-second calculator. Answer 5 questions about your workflow, get a personalized estimate of monthly time and dollars lost to manual work — and which planned service tier fits.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://abuz8ai.com/automation-calculator.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Automation Worth Calculator — ABUZ8 AI">
+<meta property="og:description" content="60 seconds. 5 questions. A personalized estimate of what manual work costs your business — no email required.">
+<meta property="og:url" content="https://abuz8ai.com/automation-calculator.html">
+<meta name="theme-color" content="#0a1628">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/abuz8-theme.css">
+
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebApplication","name":"Automation Worth Calculator","description":"Free interactive calculator that estimates monthly time and money lost to manual work, then suggests which planned ABUZ8 service tier fits.","applicationCategory":"BusinessApplication","operatingSystem":"Web","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"publisher":{"@type":"Organization","name":"ABUZ8 LLC"}}
+</script>
+
+<style>
+/* page-specific styles ONLY — theme vars, no new palette hex */
+.hero-pill{display:inline-flex;align-items:center;gap:8px;padding:6px 14px;
+  background:rgba(14,159,110,.10);border:1px solid var(--green);border-radius:999px;
+  font-size:11px;letter-spacing:1.4px;text-transform:uppercase;color:var(--green-bright);
+  margin-bottom:18px;font-weight:700;}
+.hero p b{color:var(--text);}
+
+.calc-card{max-width:760px;margin:32px auto 0;padding:40px 36px;background:var(--glass);
+  backdrop-filter:blur(10px);border:1px solid var(--border-gold);border-radius:var(--r-lg);
+  position:relative;z-index:1;
+  box-shadow:inset 0 1px 0 rgba(245,240,232,.05),0 16px 44px rgba(4,10,22,.35);}
+
+.steps-bar{display:flex;align-items:center;gap:8px;margin-bottom:28px;}
+.step-dot{flex:1;height:5px;background:var(--lapis-mid);border-radius:3px;overflow:hidden;}
+.step-dot.done{background:var(--gold);}
+.step-dot.active{background:linear-gradient(90deg,var(--gold) 50%,var(--lapis-mid) 50%);}
+.step-label{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:8px;}
+
+.q-title{font-family:var(--font-display);font-size:26px;color:var(--ivory);margin-bottom:8px;line-height:1.2;}
+.q-sub{font-size:14px;color:var(--dim);margin-bottom:24px;}
+
+.options{display:grid;gap:10px;}
+.opt{background:var(--lapis-mid);border:1px solid var(--border);border-radius:var(--r-sm);padding:16px 20px;cursor:pointer;transition:border-color .3s,background .3s;display:flex;align-items:center;gap:14px;text-align:left;width:100%;font-family:inherit;color:var(--text);}
+.opt:hover{border-color:var(--gold);background:rgba(201,168,76,0.04);}
+.opt.selected{border-color:var(--gold);background:rgba(201,168,76,0.08);}
+.opt .check{width:22px;height:22px;border-radius:50%;border:2px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:center;}
+.opt.selected .check{border-color:var(--gold);background:var(--gold);}
+.opt.selected .check::after{content:'✓';color:var(--lapis);font-weight:800;font-size:13px;}
+.opt .lbl{flex:1;font-size:15px;line-height:1.4;}
+.opt .lbl b{color:var(--ivory);}
+.opt .lbl small{display:block;font-size:12px;color:var(--dim);margin-top:3px;}
+
+.controls{display:flex;justify-content:space-between;gap:12px;margin-top:28px;}
+.calc-btn{padding:13px 26px;border-radius:var(--r-sm);font-weight:700;font-size:14px;border:none;cursor:pointer;font-family:inherit;letter-spacing:0.3px;transition:background .3s,color .3s;}
+.calc-btn-primary{background:linear-gradient(135deg,var(--gold),var(--gold-light));color:var(--lapis);}
+.calc-btn-primary:hover{background:var(--gold-light);}
+.calc-btn-primary:disabled{opacity:0.4;cursor:not-allowed;}
+.calc-btn-ghost{background:transparent;color:var(--dim);}
+.calc-btn-ghost:hover{color:var(--gold);}
+
+/* RESULT */
+.result{display:none;}
+.result.show{display:block;animation:fadeIn .5s ease-out;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+
+.result-headline{text-align:center;margin-bottom:32px;}
+.result-headline .pre{font-size:13px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:14px;}
+.result-headline .num{font-family:var(--font-display);font-size:clamp(48px,9vw,86px);font-weight:700;color:var(--ivory);line-height:1;letter-spacing:-1px;margin-bottom:10px;}
+.result-headline .num .gold-num{color:var(--gold);}
+.result-headline .post{font-size:17px;color:var(--dim);max-width:540px;margin:0 auto;line-height:1.5;}
+.result-headline .post b{color:var(--text);}
+
+.breakdown{background:var(--lapis-mid);border:1px solid var(--border);border-radius:var(--r-sm);padding:20px 24px;margin:24px 0;font-family:var(--font-mono);font-size:13px;line-height:1.9;}
+.breakdown .row{display:flex;justify-content:space-between;border-bottom:1px dashed rgba(201,168,76,0.12);padding:6px 0;}
+.breakdown .row:last-child{border-bottom:none;font-weight:700;color:var(--gold);font-size:14px;border-top:1px solid var(--gold);margin-top:4px;padding-top:10px;}
+.breakdown .row .lbl{color:var(--dim);}
+.breakdown .row .val{color:var(--text);}
+
+.recommendation{background:linear-gradient(135deg,rgba(201,168,76,0.08),rgba(14,159,110,0.05));border:1px solid var(--gold);border-radius:var(--r-lg);padding:28px 30px;margin:24px 0;}
+.recommendation .tag{display:inline-block;background:var(--gold);color:var(--lapis);font-size:11px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;padding:3px 10px;border-radius:4px;margin-bottom:12px;}
+.recommendation h3{font-family:var(--font-display);font-size:24px;color:var(--ivory);margin-bottom:8px;}
+.recommendation .reason{font-size:14px;color:var(--dim);line-height:1.6;margin-bottom:18px;}
+.recommendation .reason b{color:var(--text);}
+.recommendation .price-row{display:flex;align-items:baseline;gap:8px;margin-bottom:16px;}
+.recommendation .price{font-family:var(--font-display);font-size:42px;font-weight:700;color:var(--ivory);line-height:1;}
+.recommendation .unit{font-size:13px;color:var(--dim);}
+.recommendation .cta{display:block;text-align:center;background:linear-gradient(135deg,var(--gold),var(--gold-light));color:var(--lapis);padding:14px 24px;border-radius:var(--r-sm);font-weight:800;font-size:15px;letter-spacing:0.5px;transition:box-shadow .3s;}
+.recommendation .cta:hover{box-shadow:0 8px 22px var(--gold-glow);color:var(--lapis);}
+.recommendation .micro{display:block;text-align:center;font-size:11px;color:var(--dim);margin-top:8px;}
+
+.alt-tiers{margin:24px 0;}
+.alt-tiers .alt-h{font-size:13px;color:var(--dim);text-align:center;margin-bottom:14px;}
+.alt-tiers .alt-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+@media(max-width:540px){.alt-tiers .alt-row{grid-template-columns:1fr;}}
+.alt-card{background:var(--lapis-mid);border:1px solid var(--border);border-radius:var(--r-sm);padding:14px 16px;text-align:center;text-decoration:none;color:var(--text);transition:border-color .3s;}
+.alt-card:hover{border-color:var(--gold);}
+.alt-card .name{font-size:13px;color:var(--gold);font-weight:700;margin-bottom:4px;}
+.alt-card .price{font-size:18px;color:var(--ivory);font-weight:700;}
+.alt-card .when{font-size:11px;color:var(--dim);margin-top:2px;}
+
+.sub-cta{text-align:center;margin-top:28px;font-size:13px;color:var(--dim);}
+.sub-cta a{color:var(--gold);}
+</style>
+</head>
+<body>
+
+<div class="geo-bg"></div>
+<nav class="abuz8-nav">
+<div class="nav-inner">
+  <a href="/" style="text-decoration:none;">
+    <div class="logo">ABUZ8</div>
+    <div class="logo-sub">Sovereign AI</div>
+  </a>
+  <div class="nav-links">
+    <a href="/tools.html">Tools</a>
+    <a href="/store.html">Store</a>
+    
+    <a href="/agents.html">Agents</a>
+    <a href="/models.html">Models</a>
+    <a href="/news.html">News</a>
+    <a href="/roadmap.html">Roadmap</a>
+    <a href="/store.html" class="nav-cta">Get Started</a>
+  </div>
+</div>
+</nav>
+
+<section class="hero">
+  <span class="hero-pill">★ Free · 60 seconds · No email required</span>
+  <h1>How much money is your business <span class="gold">leaking to manual work?</span></h1>
+  <p>Five questions. We do the math. You get an honest estimate — and which planned service tier fits. <b>No "we'll send you a PDF" — answers appear instantly.</b></p>
+</section>
+
+<div class="calc-card" id="calc">
+
+  <!-- Q1 -->
+  <div class="step active" data-step="1">
+    <div class="steps-bar">
+      <div class="step-dot active"></div>
+      <div class="step-dot"></div>
+      <div class="step-dot"></div>
+      <div class="step-dot"></div>
+      <div class="step-dot"></div>
+    </div>
+    <div class="step-label">Question 1 of 5</div>
+    <h2 class="q-title">What's your team size?</h2>
+    <p class="q-sub">This sets the realistic time-cost baseline.</p>
+    <div class="options" data-q="size">
+      <button class="opt" data-v="solo" data-mult="1"><span class="check"></span><span class="lbl"><b>Solo / just me</b><small>Founder, freelancer, indie operator</small></span></button>
+      <button class="opt" data-v="small" data-mult="3"><span class="check"></span><span class="lbl"><b>2–10 people</b><small>Small team, early-stage startup, agency</small></span></button>
+      <button class="opt" data-v="mid" data-mult="8"><span class="check"></span><span class="lbl"><b>11–50 people</b><small>Growing company, multiple departments</small></span></button>
+      <button class="opt" data-v="large" data-mult="20"><span class="check"></span><span class="lbl"><b>50+ people</b><small>Enterprise, multiple teams, formal processes</small></span></button>
+    </div>
+  </div>
+
+  <!-- Q2 -->
+  <div class="step" data-step="2" style="display:none">
+    <div class="steps-bar">
+      <div class="step-dot done"></div>
+      <div class="step-dot active"></div>
+      <div class="step-dot"></div>
+      <div class="step-dot"></div>
+      <div class="step-dot"></div>
+    </div>
+    <div class="step-label">Question 2 of 5</div>
+    <h2 class="q-title">How many hours per week does your team spend on repetitive tasks?</h2>
+    <p class="q-sub">Email triage, content reformatting, status reports, manual data entry, screenshot-to-spreadsheet, etc.</p>
+    <div class="options" data-q="hours">
+      <button class="opt" data-v="low" data-hours="5"><span class="check"></span><span class="lbl"><b>Under 5 hrs/week</b><small>Mostly automated already, just a few rough edges</small></span></button>
+      <button class="opt" data-v="med" data-hours="12"><span class="check"></span><span class="lbl"><b>5–20 hrs/week</b><small>Normal startup pain — busywork is creeping in</small></span></button>
+      <button class="opt" data-v="high" data-hours="30"><span class="check"></span><span class="lbl"><b>20–40 hrs/week</b><small>Real bleeding — eats one full FTE equivalent</small></span></button>
+      <button class="opt" data-v="bleeding" data-hours="60"><span class="check"></span><span class="lbl"><b>40+ hrs/week</b><small>Active fire — multiple people are part-time integrators</small></span></button>
+    </div>
+  </div>
+
+  <!-- Q3 -->
+  <div class="step" data-step="3" style="display:none">
+    <div class="steps-bar">
+      <div class="step-dot done"></div>
+      <div class="step-dot done"></div>
+      <div class="step-dot active"></div>
+      <div class="step-dot"></div>
+      <div class="step-dot"></div>
+    </div>
+    <div class="step-label">Question 3 of 5</div>
+    <h2 class="q-title">What's your blended hourly cost per person?</h2>
+    <p class="q-sub">Salary + taxes + benefits ÷ working hours. Use a rough estimate.</p>
+    <div class="options" data-q="rate">
+      <button class="opt" data-v="low" data-rate="25"><span class="check"></span><span class="lbl"><b>~$25/hr</b><small>Junior / VA / contractor rates</small></span></button>
+      <button class="opt" data-v="med" data-rate="50"><span class="check"></span><span class="lbl"><b>~$50/hr</b><small>Mid-level operations / marketing / sales</small></span></button>
+      <button class="opt" data-v="high" data-rate="85"><span class="check"></span><span class="lbl"><b>~$85/hr</b><small>Senior engineers / directors / specialists</small></span></button>
+      <button class="opt" data-v="exec" data-rate="150"><span class="check"></span><span class="lbl"><b>~$150/hr+</b><small>Founders, executives, principal-level talent</small></span></button>
+    </div>
+  </div>
+
+  <!-- Q4 -->
+  <div class="step" data-step="4" style="display:none">
+    <div class="steps-bar">
+      <div class="step-dot done"></div>
+      <div class="step-dot done"></div>
+      <div class="step-dot done"></div>
+      <div class="step-dot active"></div>
+      <div class="step-dot"></div>
+    </div>
+    <div class="step-label">Question 4 of 5</div>
+    <h2 class="q-title">How sophisticated is your current AI/automation stack?</h2>
+    <p class="q-sub">This affects how fast we can deploy and how big the lift is.</p>
+    <div class="options" data-q="maturity">
+      <button class="opt" data-v="zero" data-mat="1.0"><span class="check"></span><span class="lbl"><b>Basically nothing</b><small>Maybe ChatGPT in a browser tab. No real integrations.</small></span></button>
+      <button class="opt" data-v="some" data-mat="0.85"><span class="check"></span><span class="lbl"><b>A few SaaS tools, no integration</b><small>Zapier, ChatGPT API, maybe Make.com — they don't talk to each other</small></span></button>
+      <button class="opt" data-v="real" data-mat="0.65"><span class="check"></span><span class="lbl"><b>Real automations, some pain points</b><small>Custom workflows running, but you keep finding edge cases</small></span></button>
+      <button class="opt" data-v="advanced" data-mat="0.4"><span class="check"></span><span class="lbl"><b>Mature stack, optimization phase</b><small>Looking for marginal gains, not greenfield builds</small></span></button>
+    </div>
+  </div>
+
+  <!-- Q5 -->
+  <div class="step" data-step="5" style="display:none">
+    <div class="steps-bar">
+      <div class="step-dot done"></div>
+      <div class="step-dot done"></div>
+      <div class="step-dot done"></div>
+      <div class="step-dot done"></div>
+      <div class="step-dot active"></div>
+    </div>
+    <div class="step-label">Question 5 of 5</div>
+    <h2 class="q-title">When do you need this fixed?</h2>
+    <p class="q-sub">Pick honestly — this changes which tier makes sense.</p>
+    <div class="options" data-q="urgency">
+      <button class="opt" data-v="exploring" data-urg="explore"><span class="check"></span><span class="lbl"><b>Just exploring — no pressure</b><small>Want to see what's possible. Maybe next quarter.</small></span></button>
+      <button class="opt" data-v="soon" data-urg="map"><span class="check"></span><span class="lbl"><b>This quarter</b><small>Need a clear plan first, then buy-in, then build.</small></span></button>
+      <button class="opt" data-v="now" data-urg="rescue"><span class="check"></span><span class="lbl"><b>This month — project is stuck</b><small>Something's drifting and I need a rescue.</small></span></button>
+      <button class="opt" data-v="critical" data-urg="full"><span class="check"></span><span class="lbl"><b>This week — money on the line</b><small>Competitor moved. Customer waiting. Need ops live now.</small></span></button>
+    </div>
+  </div>
+
+  <div class="controls">
+    <button class="calc-btn calc-btn-ghost" id="back-btn" style="visibility:hidden">← Back</button>
+    <button class="calc-btn calc-btn-primary" id="next-btn" disabled>Next →</button>
+  </div>
+
+  <!-- RESULT -->
+  <div class="result" id="result">
+    <div class="result-headline">
+      <div class="pre">Your estimated leak</div>
+      <div class="num">$<span class="gold-num" id="leak-amount">0</span><span style="font-size:0.4em;color:var(--dim);">/month</span></div>
+      <p class="post">That's <b id="leak-hours">0</b> hours of human time per month spent on work that AI agents can help automate — based only on the answers you just gave.</p>
+    </div>
+
+    <div class="breakdown">
+      <div class="row"><span class="lbl">Team size factor:</span><span class="val" id="bd-size">—</span></div>
+      <div class="row"><span class="lbl">Hours/week on busywork:</span><span class="val" id="bd-hours">—</span></div>
+      <div class="row"><span class="lbl">Blended rate:</span><span class="val" id="bd-rate">—</span></div>
+      <div class="row"><span class="lbl">Stack maturity adjustment:</span><span class="val" id="bd-mat">—</span></div>
+      <div class="row"><span class="lbl">Annual leak (× 12):</span><span class="val" id="bd-annual">—</span></div>
+    </div>
+
+    <div class="recommendation" id="rec">
+      <span class="tag" id="rec-tag">Suggested tier</span>
+      <h3 id="rec-name">—</h3>
+      <p class="reason" id="rec-reason">—</p>
+      <div class="price-row">
+        <span class="price" id="rec-price">—</span>
+        <span class="unit" id="rec-unit">one-time</span>
+      </div>
+      <a href="#" class="cta" id="rec-cta">Continue →</a>
+      <span class="micro" id="rec-micro">—</span>
+    </div>
+
+    <div class="alt-tiers">
+      <div class="alt-h">Other planned tiers if your context shifts:</div>
+      <div class="alt-row" id="alt-row"></div>
+    </div>
+
+    <div class="sub-cta">
+      Want all three tiers explained? <a href="/done-for-you.html">See the full Done-For-You page →</a><br>
+      <span style="font-size:12px;color:var(--dim);">Or text the team directly: <a href="tel:+15139523335" style="color:var(--gold)">(513) 952-3335</a> (text-preferred · call after text)</span>
+    </div>
+  </div>
+
+</div>
+
+<footer class="abuz8-footer">
+<div class="foot-grid">
+  <div class="foot-brand">
+    <div class="logo">ABUZ8</div>
+    <p>Sovereign AI for everyone. Real tools, local models, no fake claims. Built on real hardware by ABUZ8 LLC, Ohio.</p>
+  </div>
+  <div class="foot-col"><h4>Platform</h4>
+    <a href="/tools.html">Free Tools</a><a href="/store.html">Store</a><a href="/models.html">Models</a><a href="/agents.html">AI Agents</a><a href="/news.html">News</a><a href="/blog/">Blog</a>
+  </div>
+  <div class="foot-col"><h4>Mission</h4>
+    <a href="/sovereign.html">Sovereign AI</a><a href="/journey.html">Journey &amp; Goals</a><a href="/roadmap.html">Roadmap</a><a href="/audit.html">Audit &amp; Transparency</a><a href="/purpose.html">Purpose</a>
+  </div>
+  <div class="foot-col"><h4>Hubs</h4>
+    <a href="/github.html">GitHub Hub</a><a href="/huggingface.html">Hugging Face Hub</a><a href="/polymarket.html">Polymarket Tester</a><a href="/community.html">Community</a><a href="/education.html">Education</a><a href="/downloads.html">Downloads</a>
+  </div>
+  <div class="foot-col"><h4>Trust</h4>
+    <a href="/security.html">Security &amp; Compliance</a><a href="/disclaimer.html">Disclaimer</a><a href="/privacy.html">Privacy</a><a href="/terms.html">Terms</a><a href="/refund.html">Refunds</a><a href="/license.html">License</a><a href="/contact.html">Contact</a><a href="/status.html">Status</a>
+  </div>
+</div>
+<div class="foot-base">
+  <div>© <span data-year>2026</span> ABUZ8 LLC. All rights reserved.</div>
+  <div>Built local-first on real hardware · No fake claims · <a href="/sovereign.html">Sovereign AI for everyone</a></div>
+</div>
+</footer>
+
+<script>
+const TIERS = {
+  map: {
+    name: 'Automation Map',
+    price: 'Free',
+    unit: 'one-time · in active development',
+    stripe: '/request.html?p=automation-map',
+    cta: 'Submit a request →',
+    micro: 'Coming Soon · submit a request and we log what you want'
+  },
+  rescue: {
+    name: 'Workflow Rescue Audit',
+    price: 'Free',
+    unit: 'one-time · in active development',
+    stripe: '/request.html?p=workflow-rescue',
+    cta: 'Submit a request →',
+    micro: 'Coming Soon · submit a request and we log what you want'
+  },
+  full: {
+    name: 'Qadir MCP Setup',
+    price: 'Free',
+    unit: 'in active development',
+    stripe: '/request.html?p=qadir-mcp-setup',
+    cta: 'Submit a request →',
+    micro: 'Coming Soon · submit a request and we log what you want'
+  }
+};
+
+const state = {step: 1, total: 5, answers: {}, mult: 1, hours: 0, rate: 50, mat: 1.0, urg: 'map'};
+
+const stepEls = document.querySelectorAll('.step');
+const nextBtn = document.getElementById('next-btn');
+const backBtn = document.getElementById('back-btn');
+
+function showStep(n){
+  stepEls.forEach(s => {
+    s.style.display = parseInt(s.dataset.step) === n ? 'block' : 'none';
+  });
+  document.getElementById('result').classList.remove('show');
+  backBtn.style.visibility = n > 1 ? 'visible' : 'hidden';
+  // re-enable next based on whether this step is answered
+  const q = currentQ();
+  nextBtn.disabled = !state.answers[q];
+  nextBtn.textContent = n === state.total ? 'See My Result →' : 'Next →';
+  state.step = n;
+}
+
+function currentQ(){
+  const map = {1:'size', 2:'hours', 3:'rate', 4:'maturity', 5:'urgency'};
+  return map[state.step];
+}
+
+document.querySelectorAll('.options').forEach(grp => {
+  grp.addEventListener('click', e => {
+    const opt = e.target.closest('.opt');
+    if (!opt) return;
+    grp.querySelectorAll('.opt').forEach(o => o.classList.remove('selected'));
+    opt.classList.add('selected');
+    const q = grp.dataset.q;
+    state.answers[q] = opt.dataset.v;
+    if (opt.dataset.mult) state.mult = parseFloat(opt.dataset.mult);
+    if (opt.dataset.hours) state.hours = parseFloat(opt.dataset.hours);
+    if (opt.dataset.rate) state.rate = parseFloat(opt.dataset.rate);
+    if (opt.dataset.mat) state.mat = parseFloat(opt.dataset.mat);
+    if (opt.dataset.urg) state.urg = opt.dataset.urg;
+    nextBtn.disabled = false;
+    if (window.gtag) gtag('event','calc_answer',{question:q,value:opt.dataset.v});
+  });
+});
+
+nextBtn.addEventListener('click', () => {
+  if (state.step === state.total) return showResult();
+  showStep(state.step + 1);
+});
+backBtn.addEventListener('click', () => {
+  if (state.step > 1) showStep(state.step - 1);
+});
+
+function showResult(){
+  // Calculate leak
+  const weeklyLeak = state.hours * state.mult * state.rate * state.mat;
+  const monthlyLeak = Math.round(weeklyLeak * 4.33);
+  const annualLeak = monthlyLeak * 12;
+  const monthlyHours = Math.round(state.hours * state.mult * 4.33);
+
+  // Pick tier from urgency, but upgrade if leak is huge
+  let tier = state.urg === 'explore' ? 'map' : state.urg;
+  if (tier === 'map' && monthlyLeak > 5000) tier = 'rescue';
+  if (tier === 'rescue' && monthlyLeak > 15000) tier = 'full';
+
+  const t = TIERS[tier];
+
+  const reasonMap = {
+    map: `You're early in the AI journey, leak is moderate, and you want clarity before committing budget. The <b>Automation Map</b> is in active development — submit a request and we'll log what you want prioritized first.`,
+    rescue: `You estimated $${monthlyLeak.toLocaleString()}/mo going to manual work and a project that needs unsticking. The <b>Workflow Rescue Audit</b> is in active development — submit a request and we'll log what you want.`,
+    full: `You estimated $${monthlyLeak.toLocaleString()}/mo going to manual work. The <b>Qadir MCP Setup</b> is in active development — submit a request and we'll log what you want.`
+  };
+
+  document.getElementById('leak-amount').textContent = monthlyLeak.toLocaleString();
+  document.getElementById('leak-hours').textContent = monthlyHours.toLocaleString();
+  document.getElementById('bd-size').textContent = state.mult + '× multiplier';
+  document.getElementById('bd-hours').textContent = state.hours + ' hrs/wk';
+  document.getElementById('bd-rate').textContent = '$' + state.rate + '/hr';
+  document.getElementById('bd-mat').textContent = (state.mat * 100).toFixed(0) + '% reachable';
+  document.getElementById('bd-annual').textContent = '$' + annualLeak.toLocaleString() + '/yr';
+
+  document.getElementById('rec-name').textContent = t.name;
+  document.getElementById('rec-reason').innerHTML = reasonMap[tier];
+  document.getElementById('rec-price').textContent = t.price;
+  document.getElementById('rec-unit').textContent = t.unit;
+  const ctaEl = document.getElementById('rec-cta');
+  ctaEl.href = t.stripe;
+  ctaEl.textContent = t.cta;
+  ctaEl.onclick = () => { if (window.gtag) gtag('event','calc_request_intent',{tier:tier,leak:monthlyLeak}); };
+  document.getElementById('rec-micro').textContent = t.micro;
+
+  // Alt tiers
+  const altRow = document.getElementById('alt-row');
+  altRow.innerHTML = '';
+  Object.keys(TIERS).filter(k => k !== tier).forEach(k => {
+    const a = document.createElement('a');
+    a.className = 'alt-card';
+    a.href = TIERS[k].stripe;
+    a.innerHTML = `<div class="name">${TIERS[k].name}</div><div class="price">${TIERS[k].price}</div><div class="when">${TIERS[k].unit}</div>`;
+    a.onclick = () => { if (window.gtag) gtag('event','calc_alt_tier_click',{tier:k}); };
+    altRow.appendChild(a);
+  });
+
+  // Hide steps, show result
+  stepEls.forEach(s => s.style.display = 'none');
+  document.querySelector('.controls').style.display = 'none';
+  document.getElementById('result').classList.add('show');
+
+  if (window.gtag) gtag('event','calc_complete',{leak_monthly:monthlyLeak,leak_annual:annualLeak,recommended_tier:tier,size:state.answers.size,urgency:state.answers.urgency});
+  document.getElementById('result').scrollIntoView({behavior:'smooth'});
+}
+
+// init
+showStep(1);
+</script>
+
+<script src="/assets/js/dfy-banner.js" async></script>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+<script src="/assets/js/abuz8-ui.js" defer></script>
+<script src="/assets/js/abuz8-onboard.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>

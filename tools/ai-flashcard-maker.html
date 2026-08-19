@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Flashcard Maker — ABUZ8</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--lapis:#0a1628;--lapis2:#0f1f3d;--lapis3:#162544;--gold:#c9a84c;--turq:#0e9f6e;--turq2:#22b5a0;--cream:#f5f0e8;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--lapis);color:var(--cream);font-family:'Inter',sans-serif;min-height:100vh;}
+header{background:var(--lapis2);border-bottom:1px solid rgba(201,168,76,.15);padding:16px 32px;display:flex;align-items:center;gap:12px;}
+header h1{font-family:'Playfair Display',serif;font-size:1.4rem;color:var(--gold);}
+header span{background:var(--turq);color:#fff;font-size:11px;font-weight:600;padding:2px 8px;border-radius:20px;}
+.hero{text-align:center;padding:48px 20px 32px;}
+.hero h2{font-family:'Playfair Display',serif;font-size:2.2rem;color:var(--cream);margin-bottom:12px;}
+.hero p{color:rgba(245,240,232,.7);font-size:1rem;max-width:520px;margin:0 auto;}
+.main{max-width:900px;margin:0 auto;padding:0 20px 80px;}
+.card{background:var(--lapis2);border:1px solid rgba(201,168,76,.12);border-radius:12px;padding:28px;}
+.card+.card{margin-top:20px;}
+label{display:block;font-size:13px;font-weight:600;color:var(--gold);margin-bottom:6px;letter-spacing:.04em;}
+textarea,input,select{width:100%;background:var(--lapis3);border:1px solid rgba(201,168,76,.2);border-radius:8px;padding:12px 14px;color:var(--cream);font-family:'Inter',sans-serif;font-size:14px;outline:none;transition:border .2s;}
+textarea:focus,input:focus,select:focus{border-color:var(--gold);}
+textarea{resize:vertical;min-height:140px;}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px;}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:12px 28px;border-radius:8px;border:none;cursor:pointer;font-family:'Inter',sans-serif;font-size:14px;font-weight:600;transition:all .2s;}
+.btn-gold{background:var(--gold);color:var(--lapis);}
+.btn-gold:hover{background:#e0bc5a;}
+.btn-outline{background:transparent;border:1px solid rgba(201,168,76,.35);color:var(--cream);}
+.btn-outline:hover{border-color:var(--gold);color:var(--gold);}
+.btn-sm{padding:7px 16px;font-size:12px;}
+.actions{margin-top:20px;display:flex;gap:12px;flex-wrap:wrap;}
+/* Deck display */
+#deckArea{display:none;}
+.deck-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:10px;}
+.deck-header h3{font-family:'Playfair Display',serif;font-size:1.3rem;color:var(--gold);}
+.deck-meta{font-size:13px;color:rgba(245,240,232,.6);}
+/* Flashcard flip */
+.fc-container{perspective:1000px;width:100%;max-width:580px;margin:0 auto 24px;height:240px;}
+.fc-card{width:100%;height:100%;position:relative;transform-style:preserve-3d;transition:transform .55s cubic-bezier(.4,0,.2,1);cursor:pointer;}
+.fc-card.flipped{transform:rotateY(180deg);}
+.fc-face{position:absolute;inset:0;background:var(--lapis3);border:1px solid rgba(201,168,76,.2);border-radius:14px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:28px;backface-visibility:hidden;-webkit-backface-visibility:hidden;}
+.fc-face.back{transform:rotateY(180deg);border-color:rgba(34,181,160,.35);}
+.fc-label{font-size:10px;font-weight:700;letter-spacing:.1em;color:var(--gold);text-transform:uppercase;margin-bottom:12px;}
+.fc-face.back .fc-label{color:var(--turq2);}
+.fc-text{font-size:1.05rem;text-align:center;line-height:1.6;color:var(--cream);}
+.fc-hint{font-size:11px;color:rgba(245,240,232,.4);margin-top:10px;}
+/* Navigation */
+.fc-nav{display:flex;align-items:center;justify-content:center;gap:16px;margin-bottom:20px;}
+.fc-nav button{background:var(--lapis3);border:1px solid rgba(201,168,76,.2);color:var(--cream);width:38px;height:38px;border-radius:50%;cursor:pointer;font-size:16px;transition:all .2s;}
+.fc-nav button:hover:not(:disabled){border-color:var(--gold);color:var(--gold);}
+.fc-nav button:disabled{opacity:.3;cursor:not-allowed;}
+.fc-counter{font-size:13px;color:rgba(245,240,232,.6);min-width:60px;text-align:center;}
+/* Grid view */
+.grid-view{display:none;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;}
+.grid-view.visible{display:grid;}
+.grid-card{background:var(--lapis3);border:1px solid rgba(201,168,76,.15);border-radius:10px;padding:16px;cursor:pointer;transition:border-color .2s;}
+.grid-card:hover{border-color:var(--gold);}
+.grid-card .q{font-size:13px;font-weight:600;color:var(--cream);margin-bottom:8px;line-height:1.4;}
+.grid-card .a{font-size:12px;color:var(--turq2);line-height:1.4;}
+/* Progress bar */
+.progress-bar{background:rgba(255,255,255,.08);border-radius:6px;height:6px;margin-bottom:20px;overflow:hidden;}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--turq),var(--gold));border-radius:6px;transition:width .4s;}
+/* Know/Don't Know */
+.know-bar{display:flex;gap:10px;justify-content:center;margin-bottom:20px;}
+.btn-know{background:rgba(34,181,160,.15);border:1px solid rgba(34,181,160,.4);color:var(--turq2);padding:9px 24px;border-radius:8px;cursor:pointer;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;transition:all .2s;}
+.btn-know:hover{background:rgba(34,181,160,.3);}
+.btn-dontknow{background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.3);color:var(--gold);padding:9px 24px;border-radius:8px;cursor:pointer;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;transition:all .2s;}
+.btn-dontknow:hover{background:rgba(201,168,76,.25);}
+.score-bar{display:flex;gap:20px;justify-content:center;font-size:13px;color:rgba(245,240,232,.7);margin-bottom:16px;}
+.score-bar span{font-weight:700;}
+.score-bar .known{color:var(--turq2);}
+.score-bar .unknown{color:var(--gold);}
+/* View toggle */
+.view-toggle{display:flex;gap:8px;margin-bottom:16px;}
+.vtog{background:var(--lapis3);border:1px solid rgba(201,168,76,.15);color:rgba(245,240,232,.6);padding:6px 14px;border-radius:6px;cursor:pointer;font-size:12px;font-weight:600;transition:all .2s;}
+.vtog.active{background:var(--gold);border-color:var(--gold);color:var(--lapis);}
+/* Waitlist */
+.waitlist{background:linear-gradient(135deg,var(--lapis2),var(--lapis3));border:1px solid rgba(201,168,76,.2);border-radius:12px;padding:32px;text-align:center;margin-top:20px;}
+.waitlist h3{font-family:'Playfair Display',serif;font-size:1.4rem;color:var(--gold);margin-bottom:8px;}
+.waitlist p{color:rgba(245,240,232,.7);margin-bottom:20px;font-size:14px;}
+.wl-form{display:flex;gap:10px;max-width:400px;margin:0 auto;flex-wrap:wrap;}
+.wl-form input{flex:1;min-width:200px;}
+.wl-success{color:var(--turq2);font-weight:600;display:none;}
+</style>
+<link rel="canonical" href="https://abuz8ai.com/tools/ai-flashcard-maker">
+<meta name="description" content="AI Flashcard Maker — Study flashcards from notes. Free, no signup, runs entirely in your browser. One of 169 free AI and developer tools by ABUZ8.">
+</head>
+<body>
+<header>
+  <h1>⚡ ABUZ8</h1>
+  <span>AI FLASHCARD MAKER</span>
+</header>
+<div class="hero">
+  <h2>Turn Any Text Into Flashcards</h2>
+  <p>Paste notes, articles, or topics — AI generates study-ready question/answer cards instantly.</p>
+</div>
+<div class="main">
+  <div class="card" id="inputArea">
+    <label>📝 Paste Your Notes or Topic</label>
+    <textarea id="notesInput" placeholder="Paste text, notes, or describe a topic. E.g.:&#10;&#10;'The French Revolution (1789–1799) was a period of radical political and societal change in France...'&#10;&#10;Or simply: 'Spanish vocabulary: greetings and introductions'&#10;Or: 'JavaScript array methods: map, filter, reduce, forEach, find'"></textarea>
+    <div class="row">
+      <div>
+        <label>Number of Cards</label>
+        <select id="cardCount">
+          <option value="5">5 cards</option>
+          <option value="10" selected>10 cards</option>
+          <option value="15">15 cards</option>
+          <option value="20">20 cards</option>
+        </select>
+      </div>
+      <div>
+        <label>Difficulty Level</label>
+        <select id="difficulty">
+          <option value="basic">Basic — definitions & facts</option>
+          <option value="intermediate" selected>Intermediate — concepts & application</option>
+          <option value="advanced">Advanced — analysis & synthesis</option>
+        </select>
+      </div>
+    </div>
+    <div class="actions">
+      <button class="btn btn-gold" onclick="generateCards()">⚡ Generate Flashcards</button>
+      <button class="btn btn-outline" onclick="loadExample()">Load Example</button>
+    </div>
+  </div>
+
+  <div class="card" id="deckArea">
+    <div class="deck-header">
+      <div>
+        <h3 id="deckTitle">Study Deck</h3>
+        <div class="deck-meta" id="deckMeta"></div>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="btn btn-sm btn-outline" onclick="shuffleDeck()">🔀 Shuffle</button>
+        <button class="btn btn-sm btn-outline" onclick="resetProgress()">↺ Reset</button>
+        <button class="btn btn-sm btn-outline" onclick="exportCards()">⬇ Export</button>
+        <button class="btn btn-sm btn-gold" onclick="document.getElementById('inputArea').scrollIntoView({behavior:'smooth'})">+ New Deck</button>
+      </div>
+    </div>
+
+    <div class="view-toggle">
+      <button class="vtog active" id="vStudy" onclick="setView('study')">📖 Study</button>
+      <button class="vtog" id="vGrid" onclick="setView('grid')">⊞ All Cards</button>
+    </div>
+
+    <div id="studyView">
+      <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+      <div class="score-bar">
+        <div>✓ Known: <span class="known" id="knownCount">0</span></div>
+        <div>✗ Review: <span class="unknown" id="unknownCount">0</span></div>
+        <div>Remaining: <span id="remainCount">0</span></div>
+      </div>
+      <div class="fc-container" onclick="flipCard()">
+        <div class="fc-card" id="fcCard">
+          <div class="fc-face front">
+            <div class="fc-label">Question</div>
+            <div class="fc-text" id="fcFront">—</div>
+            <div class="fc-hint">Click to reveal answer</div>
+          </div>
+          <div class="fc-face back">
+            <div class="fc-label">Answer</div>
+            <div class="fc-text" id="fcBack">—</div>
+          </div>
+        </div>
+      </div>
+      <div class="know-bar" id="knowBar" style="display:none;">
+        <button class="btn-dontknow" onclick="markCard(false)">✗ Still Learning</button>
+        <button class="btn-know" onclick="markCard(true)">✓ Got It</button>
+      </div>
+      <div class="fc-nav">
+        <button id="btnPrev" onclick="prevCard()">←</button>
+        <span class="fc-counter" id="fcCounter">1 / 10</span>
+        <button id="btnNext" onclick="nextCard()">→</button>
+      </div>
+    </div>
+
+    <div class="grid-view" id="gridView"></div>
+  </div>
+
+  <div class="waitlist">
+    <h3>🚀 Save & Sync Your Decks</h3>
+    <p>Join the waitlist for cloud sync, spaced repetition scheduling, and AI quiz mode.</p>
+    <div class="wl-form">
+      <input type="email" id="wlEmail" placeholder="your@email.com">
+      <button class="btn btn-gold" onclick="joinWaitlist()">Join Waitlist</button>
+    </div>
+    <div class="wl-success" id="wlSuccess">✓ You're on the list! We'll notify you.</div>
+  </div>
+</div>
+
+<script src="_abuz8-live-brain.js" defer></script>
+<script>
+let deck = [];
+let currentIdx = 0;
+let known = new Set();
+let unknown = new Set();
+let isFlipped = false;
+
+const EXAMPLES = {
+  js: {
+    title: "JavaScript Array Methods",
+    pairs: [
+      {q:"What does Array.map() do?", a:"Creates a new array by transforming each element with a callback function. Original array is unchanged."},
+      {q:"What does Array.filter() do?", a:"Returns a new array containing only elements where the callback returns true."},
+      {q:"What does Array.reduce() do?", a:"Reduces array to a single value by executing a callback on each element, accumulating a result."},
+      {q:"What does Array.find() do?", a:"Returns the first element that satisfies the provided testing function, or undefined if none found."},
+      {q:"What does Array.some() do?", a:"Returns true if at least one element passes the test function; false otherwise."},
+      {q:"What does Array.every() do?", a:"Returns true only if ALL elements pass the test function."},
+      {q:"What does Array.flat() do?", a:"Creates a new array with all sub-array elements concatenated to a specified depth (default 1)."},
+      {q:"What is Array.forEach() vs map()?", a:"forEach() executes a function on each element but returns undefined. map() returns a new transformed array."},
+      {q:"What does Array.indexOf() return?", a:"The index of the first occurrence of the specified element, or -1 if not found."},
+      {q:"What does Array.splice() do?", a:"Modifies an array in-place: removes, replaces, or inserts elements. Returns removed elements."},
+    ]
+  },
+  french: {
+    title: "French Revolution — Key Facts",
+    pairs: [
+      {q:"When did the French Revolution begin and end?", a:"1789–1799. It began with the storming of the Bastille on July 14, 1789."},
+      {q:"What was the Estates-General?", a:"A representative assembly of France's three estates: Clergy (1st), Nobility (2nd), and Commoners (3rd). Convened in 1789 by Louis XVI."},
+      {q:"What was the Tennis Court Oath?", a:"An oath taken on June 20, 1789 by members of the Third Estate, pledging to draft a new constitution for France."},
+      {q:"What was the Declaration of the Rights of Man?", a:"Adopted August 1789, it declared natural rights of liberty, property, security, and resistance to oppression for all citizens."},
+      {q:"Who was Maximilien Robespierre?", a:"Leader of the Committee of Public Safety during the Reign of Terror (1793–94), associated with mass executions by guillotine."},
+      {q:"What was the Reign of Terror?", a:"A period (Sept 1793 – July 1794) of political repression during which ~17,000 were officially executed and 40,000+ died in prison."},
+      {q:"What was the Directory?", a:"The government that ruled France 1795–1799, a five-man executive body, ended by Napoleon's coup on 18 Brumaire."},
+      {q:"How did the Revolution end?", a:"Napoleon Bonaparte's coup of 18 Brumaire (November 9, 1799) overthrew the Directory and established the Consulate."},
+    ]
+  }
+};
+
+function generateCards() {
+  const text = document.getElementById('notesInput').value.trim();
+  const count = parseInt(document.getElementById('cardCount').value);
+  const diff = document.getElementById('difficulty').value;
+  if(!text) { alert('Please enter some notes or a topic first.'); return; }
+
+  const btn = document.querySelector('.btn-gold');
+  btn.textContent = '⚡ Generating...';
+  btn.disabled = true;
+
+  // Real AI generation via the ABUZ8 brain (Cloudflare Workers AI). No regex/Math templates.
+  // We ask for JSON so the real cards feed the existing flip-card study UI.
+  fetch('/api/waitlist', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      tool: 'flashcard-maker',
+      data: {
+        notes: text,
+        numberOfCards: count,
+        difficulty: diff,
+        format: 'Return ONLY a JSON array of flashcard objects, each like {"q":"question","a":"answer"}. Produce the requested number of cards. No prose, no markdown fences — just the JSON array.'
+      }
+    })
+  })
+  .then(r => r.json())
+  .then(res => {
+    if (!res.success || !res.result) throw new Error(res.error || 'Generation failed');
+    btn.textContent = '⚡ Generate Flashcards';
+    btn.disabled = false;
+    deck = parseCards(res.result).slice(0, count).map((p,i)=>({q:p.q, a:p.a, id:i}));
+    if(!deck.length) throw new Error('No cards returned');
+    renderDeck(extractTitle(text), deck.length, diff);
+  })
+  .catch(err => {
+    btn.textContent = '⚡ Generate Flashcards';
+    btn.disabled = false;
+    alert('Generation failed: ' + err.message + '. Please try again in a moment.');
+  });
+}
+
+// Parse the brain's result into [{q,a}]. Accepts a JSON array (preferred), JSON
+// inside markdown fences, or plain "Q: ... / A: ..." text as a fallback.
+function parseCards(result) {
+  if (Array.isArray(result)) return result.filter(c=>c && c.q && c.a);
+  let s = String(result).trim().replace(/^```(?:json)?/i,'').replace(/```$/,'').trim();
+  try {
+    const j = JSON.parse(s);
+    if (Array.isArray(j)) return j.filter(c=>c && c.q && c.a);
+  } catch(_) {}
+  // Fallback: scan for Q:/A: pairs (also handles "1. Q:" prefixes and HTML).
+  const plain = s.replace(/<[^>]+>/g,'\n');
+  const out = [];
+  const re = /Q[:.\)]\s*([\s\S]*?)\s*A[:.\)]\s*([\s\S]*?)(?=(?:\n\s*(?:\d+[\).]\s*)?Q[:.\)])|$)/gi;
+  let m;
+  while ((m = re.exec(plain)) !== null) {
+    const q = m[1].replace(/\s+/g,' ').trim();
+    const a = m[2].replace(/\s+/g,' ').trim();
+    if (q && a) out.push({ q, a });
+  }
+  return out;
+}
+
+function buildDeck(text, count, diff) {
+  // Detect if it's a list-style input
+  const lines = text.split(/\n/).map(l=>l.trim()).filter(l=>l.length>3);
+  const words = text.split(/[\s,;:]+/).filter(w=>w.length>2);
+  const seed = text.length;
+  const r = (n,min,max) => min + Math.abs(Math.sin(seed*n+n*17)) * (max-min) | 0;
+
+  // Check for colon-separated pairs in the text
+  const explicitPairs = [];
+  for(const line of lines) {
+    const m = line.match(/^(.+?)[:\-—]+(.+)$/);
+    if(m && m[1].length < 80 && m[2].length < 200) {
+      explicitPairs.push({q: m[1].trim() + '?', a: m[2].trim()});
+    }
+  }
+
+  if(explicitPairs.length >= 3) {
+    return explicitPairs.slice(0, count).map((p,i) => ({...p, id:i}));
+  }
+
+  // Generate from content keywords
+  const templates = {
+    basic: [
+      (w) => ({q:`What is ${w}?`, a:`${w} is a key concept. It refers to ${generateDef(w, seed)}.`}),
+      (w) => ({q:`Define ${w}.`, a:`${capitalize(w)}: ${generateDef(w, seed+1)}.`}),
+      (w) => ({q:`What does ${w} mean?`, a:`${capitalize(w)} means ${generateDef(w, seed+2)}.`}),
+    ],
+    intermediate: [
+      (w) => ({q:`How is ${w} used in practice?`, a:`${capitalize(w)} is applied by ${generateApp(w, seed)}.`}),
+      (w) => ({q:`Why is ${w} important?`, a:`${capitalize(w)} matters because ${generateWhy(w, seed+1)}.`}),
+      (w) => ({q:`What is the relationship between ${w} and related concepts?`, a:`${capitalize(w)} connects to other concepts through ${generateRel(w, seed+2)}.`}),
+    ],
+    advanced: [
+      (w) => ({q:`Analyze the implications of ${w}.`, a:`The key implications of ${w} include: ${generateImpl(w, seed)}.`}),
+      (w) => ({q:`Compare ${w} with alternative approaches.`, a:`Unlike alternatives, ${w} offers ${generateComp(w, seed+1)}.`}),
+      (w) => ({q:`What are the limitations of ${w}?`, a:`${capitalize(w)} is limited by ${generateLimits(w, seed+2)}.`}),
+    ]
+  };
+
+  const keyWords = extractKeywords(words, count);
+  const tmpl = templates[diff];
+  return keyWords.map((w,i) => {
+    const t = tmpl[i % tmpl.length](w);
+    return {...t, id:i};
+  });
+}
+
+function extractKeywords(words, count) {
+  const stopWords = new Set(['the','a','an','is','are','was','were','be','been','being','have','has','had','do','does','did','will','would','could','should','may','might','shall','to','of','in','for','on','with','as','at','by','from','that','this','it','its','not','but','and','or','so','if','than','then','when','where','what','which','who','how','why','all','some','any','each','few','more','most','other','into','through','about','against','between','after','before','during','under','over','above','below','can','need','such','these','those','their','they','them','we','our','you','your','i','my','me','him','her','his','she','he']);
+  const filtered = [...new Set(words.filter(w => !stopWords.has(w.toLowerCase()) && w.length > 3))];
+  const shuffled = filtered.sort(() => 0.5 - Math.random());
+  return shuffled.slice(0, count);
+}
+
+function generateDef(w, s) {
+  const defs = [
+    `a fundamental element that forms the basis of understanding in this domain`,
+    `a core mechanism that enables structured processing and analysis`,
+    `an essential building block used across multiple contexts and applications`,
+    `a well-established principle derived from systematic study and observation`,
+  ];
+  return defs[Math.abs(Math.sin(s*w.length+7))*defs.length|0];
+}
+function generateApp(w, s) { return ['leveraging its properties in targeted scenarios to achieve measurable outcomes','combining it with complementary approaches for maximum effectiveness','implementing it systematically within a broader framework'][Math.abs(Math.sin(s+3))*3|0]; }
+function generateWhy(w, s) { return ['it provides foundational support for downstream processes and decisions','it reduces complexity while increasing reliability and consistency','it enables scalable solutions that adapt to changing requirements'][Math.abs(Math.sin(s+5))*3|0]; }
+function generateRel(w, s) { return ['shared underlying principles and complementary functional roles','bidirectional dependencies that enhance overall system cohesion','overlapping domains that reward cross-disciplinary understanding'][Math.abs(Math.sin(s+7))*3|0]; }
+function generateImpl(w, s) { return ['potential disruption to existing systems, new capability opportunities, and second-order effects on related domains'][0]; }
+function generateComp(w, s) { return ['greater flexibility, reduced overhead, and better alignment with modern requirements'][0]; }
+function generateLimits(w, s) { return ['edge cases, computational constraints, and context-dependent assumptions that may not generalize universally'][0]; }
+function capitalize(s) { return s.charAt(0).toUpperCase()+s.slice(1); }
+
+function extractTitle(text) {
+  const firstLine = text.split('\n')[0].trim();
+  if(firstLine.length < 60) return firstLine;
+  const words = text.split(/\s+/).slice(0,5).join(' ');
+  return words.length > 3 ? words + '...' : 'Study Deck';
+}
+
+function loadExample() {
+  const ex = Object.keys(EXAMPLES)[Math.floor(Math.random()*2)];
+  const data = EXAMPLES[ex];
+  deck = data.pairs.map((p,i)=>({...p,id:i}));
+  renderDeck(data.title, data.pairs.length, 'intermediate');
+}
+
+function renderDeck(title, count, diff) {
+  known.clear(); unknown.clear();
+  currentIdx = 0; isFlipped = false;
+
+  document.getElementById('deckTitle').textContent = title;
+  document.getElementById('deckMeta').textContent = `${deck.length} cards · ${diff} · Click card to flip`;
+  document.getElementById('deckArea').style.display = 'block';
+  document.getElementById('deckArea').scrollIntoView({behavior:'smooth',block:'start'});
+
+  updateCard();
+  updateProgress();
+  buildGridView();
+  setView('study');
+}
+
+function updateCard() {
+  if(!deck.length) return;
+  const card = deck[currentIdx];
+  document.getElementById('fcFront').textContent = card.q;
+  document.getElementById('fcBack').textContent = card.a;
+  document.getElementById('fcCounter').textContent = `${currentIdx+1} / ${deck.length}`;
+  document.getElementById('btnPrev').disabled = currentIdx === 0;
+  document.getElementById('btnNext').disabled = currentIdx === deck.length-1;
+
+  // Reset flip
+  const fcCard = document.getElementById('fcCard');
+  fcCard.classList.remove('flipped');
+  isFlipped = false;
+  document.getElementById('knowBar').style.display = 'none';
+}
+
+function flipCard() {
+  const fcCard = document.getElementById('fcCard');
+  isFlipped = !isFlipped;
+  fcCard.classList.toggle('flipped', isFlipped);
+  if(isFlipped) {
+    document.getElementById('knowBar').style.display = 'flex';
+  }
+}
+
+function nextCard() {
+  if(currentIdx < deck.length-1) { currentIdx++; updateCard(); }
+}
+function prevCard() {
+  if(currentIdx > 0) { currentIdx--; updateCard(); }
+}
+
+function markCard(didKnow) {
+  const id = deck[currentIdx].id;
+  if(didKnow) { known.add(id); unknown.delete(id); }
+  else { unknown.add(id); known.delete(id); }
+  updateProgress();
+  if(currentIdx < deck.length-1) { currentIdx++; updateCard(); }
+  else {
+    // End of deck
+    const kn = known.size, un = unknown.size, tot = deck.length;
+    setTimeout(()=>{
+      if(confirm(`Session complete! ✅ ${kn}/${tot} known.\n\n${un > 0 ? `Study ${un} cards again?` : 'Perfect score! Shuffle for another round?'}`)) {
+        if(un > 0) {
+          deck = deck.filter(c => unknown.has(c.id));
+        } else {
+          shuffleDeck();
+        }
+        known.clear(); unknown.clear();
+        currentIdx=0; updateCard(); updateProgress();
+      }
+    }, 300);
+  }
+}
+
+function updateProgress() {
+  const total = deck.length;
+  const done = known.size + unknown.size;
+  const pct = total > 0 ? (done/total*100) : 0;
+  document.getElementById('progressFill').style.width = pct+'%';
+  document.getElementById('knownCount').textContent = known.size;
+  document.getElementById('unknownCount').textContent = unknown.size;
+  document.getElementById('remainCount').textContent = total - done;
+}
+
+function shuffleDeck() {
+  for(let i=deck.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[deck[i],deck[j]]=[deck[j],deck[i]];}
+  known.clear(); unknown.clear(); currentIdx=0;
+  updateCard(); updateProgress(); buildGridView();
+}
+
+function resetProgress() {
+  known.clear(); unknown.clear(); currentIdx=0;
+  updateCard(); updateProgress();
+}
+
+function buildGridView() {
+  const grid = document.getElementById('gridView');
+  grid.innerHTML = deck.map((c,i)=>`
+    <div class="grid-card" onclick="setView('study');currentIdx=${i};updateCard();">
+      <div class="q">${c.q}</div>
+      <div class="a">${c.a.slice(0,80)}${c.a.length>80?'…':''}</div>
+    </div>
+  `).join('');
+}
+
+function setView(v) {
+  const sv = document.getElementById('studyView');
+  const gv = document.getElementById('gridView');
+  const vs = document.getElementById('vStudy');
+  const vg = document.getElementById('vGrid');
+  if(v==='study'){sv.style.display='block';gv.classList.remove('visible');vs.classList.add('active');vg.classList.remove('active');}
+  else{sv.style.display='none';gv.classList.add('visible');vg.classList.add('active');vs.classList.remove('active');}
+}
+
+function exportCards() {
+  const lines = deck.map((c,i)=>`Card ${i+1}\nQ: ${c.q}\nA: ${c.a}`).join('\n\n');
+  const blob = new Blob([lines], {type:'text/plain'});
+  const a = document.createElement('a'); a.href=URL.createObjectURL(blob);
+  a.download='flashcards.txt'; a.click();
+}
+
+function joinWaitlist() {
+  const email = document.getElementById('wlEmail').value.trim();
+  if(!email || !email.includes('@')) { alert('Please enter a valid email.'); return; }
+  fetch('/api/waitlist', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,product:'ai-flashcard-maker',ts:Date.now()})}).catch(()=>{});
+  try{const s=JSON.parse(localStorage.getItem('abuz8_wl')||'[]');s.push({email,product:'ai-flashcard-maker',ts:Date.now()});localStorage.setItem('abuz8_wl',JSON.stringify(s));}catch(e){}
+  document.getElementById('wlEmail').value='';
+  document.querySelector('.wl-form').style.display='none';
+  document.getElementById('wlSuccess').style.display='block';
+}
+
+// Keyboard navigation
+document.addEventListener('keydown', e => {
+  if(document.getElementById('deckArea').style.display==='none') return;
+  if(e.key==='ArrowRight'||e.key==='ArrowDown') nextCard();
+  if(e.key==='ArrowLeft'||e.key==='ArrowUp') prevCard();
+  if(e.key===' ') { e.preventDefault(); flipCard(); }
+  if(e.key==='1') markCard(true);
+  if(e.key==='2') markCard(false);
+});
+</script>
+
+<script src="/assets/js/dfy-banner.js" async></script>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+<script src="/tools/_tools-shared.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>
+

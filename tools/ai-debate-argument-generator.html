@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Debate Argument Generator — ABUZ8</title>
+<meta name="description" content="Generate structured debate arguments with evidence, counterarguments, and rebuttals. Win any argument with AI-powered reasoning.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--lapis:#0a1628;--lapis2:#0f1f3d;--lapis3:#162544;--gold:#c9a84c;--gold2:#e2c06a;--turq:#0e9f6e;--turq2:#22b5a0;--cream:#f5f0e8;
+--text:#e8e4dc;--text2:#b8b4ac;--text3:#888480;--red:#e05555;--green:#3db87a;--orange:#e09040;--radius:12px;--radius-sm:8px;
+--border:1px solid rgba(201,168,76,0.18)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--lapis);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh}
+header{background:var(--lapis2);border-bottom:var(--border);padding:16px 32px;display:flex;align-items:center;gap:12px}
+header h1{font-family:'Playfair Display',serif;font-size:1.4rem;color:var(--gold)}
+.badge{background:rgba(26,138,122,0.15);border:1px solid rgba(26,138,122,0.3);color:var(--turq2);font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;margin-left:auto;white-space:nowrap}
+</style>
+<style>
+.hero{text-align:center;padding:48px 20px 32px}
+.hero h2{font-family:'Playfair Display',serif;font-size:2.2rem;color:var(--cream);margin-bottom:10px}
+.hero p{color:var(--text2);font-size:1rem;max-width:540px;margin:0 auto}
+.main{max-width:960px;margin:0 auto;padding:0 20px 80px}
+.card{background:var(--lapis2);border:var(--border);border-radius:var(--radius);padding:28px}
+.card+.card{margin-top:20px}
+label{display:block;font-size:13px;font-weight:600;color:var(--gold);margin-bottom:6px;letter-spacing:.04em}
+input,select,textarea{width:100%;background:var(--lapis3);border:1px solid rgba(201,168,76,0.2);border-radius:var(--radius-sm);
+padding:12px 14px;color:var(--cream);font-family:'Inter',sans-serif;font-size:14px;outline:none;transition:border .2s}
+input:focus,select:focus,textarea:focus{border-color:var(--gold)}
+select option{background:var(--lapis3)}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}
+.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-top:16px}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:12px 28px;border-radius:var(--radius-sm);border:none;cursor:pointer;
+font-family:'Inter',sans-serif;font-size:14px;font-weight:600;transition:all .2s}
+.btn-gold{background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--lapis)}
+.btn-gold:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(201,168,76,0.35)}
+.btn-outline{background:transparent;border:1px solid rgba(201,168,76,0.35);color:var(--cream)}
+.btn-outline:hover{border-color:var(--gold);color:var(--gold)}
+.btn-sm{padding:7px 16px;font-size:12px}
+.btn-devil{background:linear-gradient(135deg,var(--red),#c04040);color:#fff}
+.btn-devil:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(224,85,85,0.35)}
+.actions{margin-top:20px;display:flex;gap:12px;flex-wrap:wrap}
+</style>
+<style>
+/* Toggle switch */
+.toggle-wrap{display:flex;align-items:center;gap:14px;margin-top:8px}
+.toggle-label{font-size:14px;font-weight:600;transition:color .2s;cursor:pointer}
+.toggle-label.active{color:var(--gold)}
+.toggle-label.inactive{color:var(--text3)}
+.toggle-track{width:56px;height:28px;background:var(--turq);border-radius:14px;position:relative;cursor:pointer;transition:background .3s}
+.toggle-track.against{background:var(--red)}
+.toggle-knob{width:22px;height:22px;background:#fff;border-radius:50%;position:absolute;top:3px;left:3px;transition:left .3s}
+.toggle-track.against .toggle-knob{left:31px}
+
+/* Output sections */
+.section-block{background:var(--lapis3);border:var(--border);border-radius:var(--radius-sm);margin-bottom:14px;overflow:hidden}
+.section-header{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;cursor:pointer;user-select:none;transition:background .2s}
+.section-header:hover{background:rgba(201,168,76,0.05)}
+.section-header h4{font-size:14px;font-weight:600;color:var(--gold);display:flex;align-items:center;gap:8px}
+.section-chevron{color:var(--text3);transition:transform .3s;font-size:12px}
+.section-chevron.open{transform:rotate(180deg)}
+.section-body{padding:0 18px 18px;display:none;font-size:13px;line-height:1.8;color:var(--text2)}
+.section-body.open{display:block}
+</style>
+<style>
+/* Argument card */
+.arg-card{background:var(--lapis2);border-left:3px solid var(--turq);padding:16px 18px;border-radius:0 var(--radius-sm) var(--radius-sm) 0;margin-bottom:12px}
+.arg-card h5{font-size:13px;color:var(--turq2);margin-bottom:6px;font-weight:700}
+.arg-card .evidence{font-size:12px;color:var(--text3);margin-top:6px;padding-left:12px;border-left:2px solid rgba(26,138,122,0.3)}
+.arg-card .example{font-size:12px;color:var(--text3);margin-top:6px;font-style:italic}
+.counter-card{background:var(--lapis2);border-left:3px solid var(--orange);padding:16px 18px;border-radius:0 var(--radius-sm) var(--radius-sm) 0;margin-bottom:12px}
+.counter-card h5{font-size:13px;color:var(--orange);margin-bottom:6px;font-weight:700}
+.rebuttal{background:rgba(61,184,122,0.06);border-left:3px solid var(--green);padding:12px 16px;border-radius:0 var(--radius-sm) var(--radius-sm) 0;margin-top:8px;font-size:12px;color:var(--green)}
+.rebuttal strong{color:var(--green);font-size:11px;text-transform:uppercase;letter-spacing:.04em}
+
+/* Strength meter */
+.meter-wrap{margin:20px 0}
+.meter-label{display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px}
+.meter-label span:first-child{color:var(--gold);font-weight:600}
+.meter-label span:last-child{color:var(--text3)}
+.meter-track{height:8px;background:var(--lapis3);border-radius:4px;overflow:hidden}
+.meter-fill{height:100%;border-radius:4px;transition:width .6s ease}
+</style>
+<style>
+/* Waitlist */
+.waitlist{text-align:center;padding:40px 20px;margin-top:32px;background:var(--lapis2);border:var(--border);border-radius:var(--radius)}
+.waitlist h3{font-family:'Playfair Display',serif;font-size:1.3rem;color:var(--gold);margin-bottom:8px}
+.waitlist p{color:var(--text2);font-size:14px;margin-bottom:16px;max-width:420px;margin-left:auto;margin-right:auto}
+.wl-form{display:flex;gap:10px;max-width:400px;margin:0 auto}
+.wl-form input{flex:1}
+.wl-success{display:none;color:var(--green);font-size:14px;font-weight:600}
+
+/* Devil's advocate banner */
+.devil-banner{background:linear-gradient(135deg,rgba(224,85,85,0.08),rgba(224,85,85,0.03));border:1px solid rgba(224,85,85,0.2);
+border-radius:var(--radius);padding:18px;margin-top:20px;text-align:center}
+.devil-banner h4{color:var(--red);font-size:14px;margin-bottom:6px}
+.devil-banner p{color:var(--text3);font-size:12px;margin-bottom:12px}
+
+.placeholder{text-align:center;padding:60px 20px;color:var(--text3)}
+.placeholder-icon{font-size:48px;margin-bottom:16px;opacity:.5}
+.placeholder h3{font-size:17px;color:var(--text2);margin-bottom:8px}
+.placeholder p{font-size:13px;max-width:360px;margin:0 auto}
+
+@media(max-width:700px){.row,.row3{grid-template-columns:1fr}.wl-form{flex-direction:column}}
+</style>
+<link rel="canonical" href="https://abuz8ai.com/tools/ai-debate-argument-generator">
+</head>
+<body>
+
+<header>
+  <h1>⚡ ABUZ8</h1>
+  <span class="badge">⚔️ DEBATE ARGUMENT GENERATOR</span>
+</header>
+
+<div class="hero">
+  <h2>Win Any Argument</h2>
+  <p>Generate structured debate arguments with evidence, counterarguments, and pre-built rebuttals. Powered by AI reasoning.</p>
+</div>
+
+<div class="main">
+  <div class="card" id="inputArea">
+    <label>Debate Topic</label>
+    <input type="text" id="topic" placeholder="e.g., Universal basic income should be implemented nationwide">
+    <div class="row" style="margin-top:16px">
+      <div>
+        <label>Your Position</label>
+        <div class="toggle-wrap">
+          <span class="toggle-label active" id="lblFor" onclick="setPosition('for')">FOR</span>
+          <div class="toggle-track" id="posToggle" onclick="togglePosition()">
+            <div class="toggle-knob"></div>
+          </div>
+          <span class="toggle-label inactive" id="lblAgainst" onclick="setPosition('against')">AGAINST</span>
+        </div>
+      </div>
+      <div>
+        <label>Debate Style</label>
+        <select id="debateStyle">
+          <option value="academic">Academic — scholarly, citation-based</option>
+          <option value="professional" selected>Professional — business & policy</option>
+          <option value="casual">Casual — everyday persuasion</option>
+          <option value="legal">Legal — precedent & statute</option>
+          <option value="political">Political — public discourse</option>
+        </select>
+      </div>
+    </div>
+    <div class="row">
+      <div>
+        <label>Complexity Level</label>
+        <select id="complexity">
+          <option value="simple">Simple — clear, direct points</option>
+          <option value="intermediate" selected>Intermediate — nuanced reasoning</option>
+          <option value="advanced">Advanced — multi-layered analysis</option>
+          <option value="expert">Expert — scholarly depth</option>
+        </select>
+      </div>
+      <div>
+        <label>Number of Arguments</label>
+        <select id="argCount">
+          <option value="3">3 arguments</option>
+          <option value="5" selected>5 arguments</option>
+          <option value="7">7 arguments</option>
+        </select>
+      </div>
+    </div>
+    <div class="actions">
+      <button class="btn btn-gold" id="genBtn" onclick="generateDebate()">⚔️ Generate Arguments</button>
+      <button class="btn btn-outline" onclick="loadExample()">Load Example Topic</button>
+    </div>
+  </div>
+
+  <div id="outputArea"></div>
+
+  <div class="waitlist">
+    <h3>🚀 Unlock Advanced Debate Prep</h3>
+    <p>Join the waitlist for live AI debate coaching, source citations, and team debate prep tools.</p>
+    <div class="wl-form">
+      <input type="email" id="wlEmail" placeholder="your@email.com">
+      <button class="btn btn-gold" onclick="joinWaitlist()">Join Waitlist</button>
+    </div>
+    <div class="wl-success" id="wlSuccess">✓ You're on the list! We'll notify you when it's ready.</div>
+  </div>
+</div>
+<script src="_abuz8-live-brain.js" defer></script>
+<script>
+let position = 'for';
+
+function setPosition(pos) {
+  position = pos;
+  const track = document.getElementById('posToggle');
+  const lblF = document.getElementById('lblFor');
+  const lblA = document.getElementById('lblAgainst');
+  if (pos === 'against') {
+    track.classList.add('against');
+    lblF.classList.remove('active'); lblF.classList.add('inactive');
+    lblA.classList.add('active'); lblA.classList.remove('inactive');
+  } else {
+    track.classList.remove('against');
+    lblF.classList.add('active'); lblF.classList.remove('inactive');
+    lblA.classList.remove('active'); lblA.classList.add('inactive');
+  }
+}
+
+function togglePosition() {
+  setPosition(position === 'for' ? 'against' : 'for');
+}
+
+function loadExample() {
+  const examples = [
+    'Artificial intelligence will create more jobs than it destroys',
+    'Social media does more harm than good to society',
+    'Universal basic income should be implemented nationwide',
+    'Space exploration funding should be increased over ocean research',
+    'Remote work is more productive than office work',
+    'Nuclear energy is the best solution to climate change',
+    'College education should be free for all citizens',
+    'Cryptocurrency should replace traditional banking systems'
+  ];
+  document.getElementById('topic').value = examples[Math.floor(Math.random() * examples.length)];
+}
+// Template argument database by category patterns
+const ARG_TEMPLATES = {
+  economic: [
+    {claim:'Economic growth is stimulated through increased market participation',evidence:'Studies from multiple economies show positive GDP correlation',example:'Nordic countries implementing similar policies saw 2-3% GDP increases'},
+    {claim:'Cost-benefit analysis favors long-term investment returns',evidence:'Historical economic data supports compounding returns on structural reforms',example:'Post-WWII infrastructure investments yielded 10x returns over 30 years'},
+    {claim:'Market efficiency improves with broader access and participation',evidence:'Competitive markets with lower barriers produce better consumer outcomes',example:'Deregulated telecommunications markets saw 40% price reductions'},
+    {claim:'Tax revenue implications create sustainable funding models',evidence:'Expanded economic activity generates proportional tax base growth',example:'States with broader participation policies reported higher per-capita revenue'},
+    {claim:'Employment dynamics shift favorably under structural reform',evidence:'Labor market flexibility correlates with lower structural unemployment',example:'Countries with adaptive labor policies maintained sub-5% unemployment'},
+    {claim:'Resource allocation becomes more efficient with proper incentive structures',evidence:'Incentive-aligned systems reduce deadweight loss',example:'Performance-based funding models improved outcomes by 25% in pilot programs'},
+    {claim:'Innovation and entrepreneurship flourish under supportive frameworks',evidence:'Startup formation rates correlate with access to resources and education',example:'Silicon Valley ecosystem demonstrates how concentrated support drives innovation'}
+  ],
+  social: [
+    {claim:'Social cohesion strengthens when systemic barriers are addressed',evidence:'Community-level studies show reduced conflict in more equitable societies',example:'Gini coefficient improvements in Scandinavian nations correlate with social trust'},
+    {claim:'Public health outcomes improve with broader access to resources',evidence:'WHO data consistently links resource access to health metrics',example:'Universal healthcare nations report 2-5 year higher life expectancy'},
+    {claim:'Educational attainment rises when structural support exists',evidence:'Longitudinal studies demonstrate compounding benefits of early intervention',example:'Head Start program participants showed 15% higher college attendance'},
+    {claim:'Crime rates decline with improved social infrastructure',evidence:'Criminological research links opportunity access to reduced recidivism',example:'Cities investing in community programs saw 20-30% crime reductions'},
+    {claim:'Quality of life metrics improve across demographics',evidence:'HDI scores rise consistently in nations adopting inclusive policies',example:'Top-10 HDI countries all share strong social safety net characteristics'},
+    {claim:'Mental health and wellbeing benefit from reduced systemic stress',evidence:'Psychological research links economic security to reduced anxiety',example:'Pilot programs providing stability showed 40% reduction in stress indicators'},
+    {claim:'Intergenerational mobility increases with structural support',evidence:'Economic mobility data shows stronger outcomes in supportive environments',example:'Countries with robust support systems show 3x higher upward mobility'}
+  ],
+  ethical: [
+    {claim:'Moral obligations require action on matters of justice and equity',evidence:'Philosophical frameworks from Rawls to Sen support distributive justice',example:'International human rights declarations enshrine these principles'},
+    {claim:'Autonomy and individual dignity are preserved through informed policy',evidence:'Kantian ethics demand respect for rational agency in all persons',example:'Constitutional protections reflect the primacy of individual rights'},
+    {claim:'Utilitarian calculus favors the greatest good for the greatest number',evidence:'Aggregate welfare analysis supports maximizing overall well-being',example:'Public health measures like vaccination programs demonstrate utilitarian success'},
+    {claim:'Fairness principles demand equitable treatment across groups',evidence:'Rawlsian veil of ignorance thought experiment supports impartial policy design',example:'Anti-discrimination legislation reflects fairness-based reasoning'},
+    {claim:'Duty of care extends to vulnerable populations and future generations',evidence:'Intergenerational ethics frameworks establish obligations to posterity',example:'Environmental protections justify present costs for future benefit'},
+    {claim:'Transparency and accountability build institutional legitimacy',evidence:'Research on institutional trust shows accountability mechanisms increase compliance',example:'Freedom of information laws improved government trust ratings by 15-20%'},
+    {claim:'Precedent and consistency in principled reasoning strengthen norms',evidence:'Legal and moral philosophy emphasize stare decisis and universalizability',example:'Constitutional interpretation relies on consistent application of principles'}
+  ],
+  technological: [
+    {claim:'Technological advancement accelerates under supportive policy frameworks',evidence:'R&D spending correlations demonstrate policy-innovation linkage',example:'DARPA funding model produced the internet, GPS, and modern AI foundations'},
+    {claim:'Digital transformation creates new paradigms for efficiency',evidence:'Digitization consistently reduces transaction costs and increases throughput',example:'E-government initiatives reduced processing times by 60-80%'},
+    {claim:'Data-driven decision making improves outcomes across sectors',evidence:'Organizations using analytics outperform peers by 5-6% in productivity',example:'Evidence-based medicine reduced diagnostic errors by 30%'},
+    {claim:'Scalability of technological solutions amplifies impact',evidence:'Marginal cost reduction in digital solutions enables broader reach',example:'Mobile banking reached 1.2 billion unbanked individuals globally'},
+    {claim:'Network effects compound value as adoption increases',evidence:'Metcalfe law demonstrates exponential value growth with users',example:'Social platforms and communication tools demonstrate viral adoption curves'}
+  ]
+};
+const COUNTER_TEMPLATES = [
+  {counter:'Implementation costs may outweigh projected benefits',rebuttal:'Long-term ROI analysis shows initial costs are recovered within 5-10 years through systemic savings and productivity gains.'},
+  {counter:'Unintended consequences could undermine stated goals',rebuttal:'Phased implementation with feedback loops and pilot programs mitigates risk while preserving core benefits.'},
+  {counter:'Existing alternatives may achieve similar outcomes more efficiently',rebuttal:'Current alternatives have had decades to prove effectiveness and have fallen short, justifying new approaches.'},
+  {counter:'Individual liberty concerns arise from expanded intervention',rebuttal:'Properly designed frameworks enhance rather than restrict individual choice by expanding available options.'},
+  {counter:'Administrative complexity creates bureaucratic inefficiency',rebuttal:'Modern technology and streamlined governance models can reduce overhead to 3-5% of total program cost.'},
+  {counter:'Moral hazard may reduce personal responsibility',rebuttal:'Evidence from existing programs shows participants increase productive behavior when basic needs are secured.'},
+  {counter:'Political feasibility challenges may prevent implementation',rebuttal:'Public polling consistently shows majority support when proposals are explained with concrete details and outcomes.'},
+  {counter:'Historical precedent suggests reform efforts often fail',rebuttal:'Failed implementations typically lacked specific safeguards that modern evidence-based approaches now incorporate.'},
+  {counter:'Scalability concerns limit practical application',rebuttal:'Modular and phased rollout strategies allow calibration at each stage, proven effective in multiple national contexts.'},
+  {counter:'Opposition from entrenched interests creates structural barriers',rebuttal:'Coalition-building and stakeholder engagement strategies have overcome similar resistance in analogous reforms.'}
+];
+
+const OPENINGS = {
+  academic: (topic, pos) => `This analysis presents a rigorous examination of the proposition that ${topic}. Drawing upon empirical evidence and established theoretical frameworks, we argue ${pos} this position with substantive reasoning.`,
+  professional: (topic, pos) => `In evaluating whether ${topic}, the professional consensus and operational evidence strongly support the case ${pos} this proposition. The following arguments present a structured analysis.`,
+  casual: (topic, pos) => `Let's break down why the idea that ${topic} is something worth arguing ${pos}. Here are the strongest points, backed by real evidence and practical examples.`,
+  legal: (topic, pos) => `The question of whether ${topic} can be examined through legal precedent, statutory interpretation, and constitutional principles. The weight of authority supports the position ${pos} this proposition.`,
+  political: (topic, pos) => `The debate over whether ${topic} touches fundamental questions about governance and public interest. A careful examination of policy outcomes demonstrates the strength of the case ${pos} this position.`
+};
+
+const CLOSINGS = {
+  academic: (topic, pos) => `In conclusion, the evidence presented demonstrates a compelling case ${pos} the proposition that ${topic}. The convergence of empirical data, theoretical support, and practical outcomes strengthens this position substantially.`,
+  professional: (topic, pos) => `The analysis above makes clear that the professional and operational case ${pos} ${topic} is well-supported. Decision-makers should weigh these arguments carefully against the anticipated counterarguments addressed herein.`,
+  casual: (topic, pos) => `When you put it all together, the case ${pos} ${topic} holds up strong. The evidence is there, the reasoning is sound, and the counterarguments don't hold water under scrutiny.`,
+  legal: (topic, pos) => `The legal analysis supports the position ${pos} ${topic}. Precedent, statutory authority, and constitutional principles align to create a robust framework for this argument.`,
+  political: (topic, pos) => `The policy case ${pos} ${topic} is compelling. Public interest, practical outcomes, and democratic principles all converge to support this position as both viable and desirable.`
+};
+function pickArgs(count) {
+  const cats = Object.keys(ARG_TEMPLATES);
+  const picked = [];
+  const used = new Set();
+  while (picked.length < count) {
+    const cat = cats[Math.floor(Math.random() * cats.length)];
+    const pool = ARG_TEMPLATES[cat];
+    const idx = Math.floor(Math.random() * pool.length);
+    const key = cat + idx;
+    if (!used.has(key)) { used.add(key); picked.push({...pool[idx], category: cat}); }
+    if (used.size >= Object.values(ARG_TEMPLATES).flat().length) break;
+  }
+  return picked;
+}
+
+function pickCounters(count) {
+  const shuffled = [...COUNTER_TEMPLATES].sort(() => Math.random() - 0.5);
+  return shuffled.slice(0, count);
+}
+
+function getStrength(complexity, argCount) {
+  const base = {simple:55, intermediate:70, advanced:82, expert:90};
+  const bonus = Math.min((argCount - 3) * 4, 16);
+  return Math.min((base[complexity] || 70) + bonus + Math.floor(Math.random()*8), 98);
+}
+
+function meterColor(pct) {
+  if (pct >= 85) return 'var(--green)';
+  if (pct >= 70) return 'var(--turq2)';
+  if (pct >= 50) return 'var(--gold)';
+  return 'var(--orange)';
+}
+
+function complexityLabel(c) {
+  return {simple:'Accessible',intermediate:'Nuanced',advanced:'Rigorous',expert:'Scholarly'}[c] || c;
+}
+function generateDebate(overridePos) {
+  const topic = document.getElementById('topic').value.trim();
+  if (!topic) { alert('Please enter a debate topic.'); return; }
+  const pos = overridePos || position;
+  const style = document.getElementById('debateStyle').value;
+  const complexity = document.getElementById('complexity').value;
+  const argCount = parseInt(document.getElementById('argCount').value);
+  const out = document.getElementById('outputArea');
+
+  const args = pickArgs(argCount);
+  const counters = pickCounters(Math.min(argCount, 5));
+  const strength = getStrength(complexity, argCount);
+  const opening = OPENINGS[style](topic, pos);
+  const closing = CLOSINGS[style](topic, pos);
+  const posLabel = pos === 'for' ? 'FOR' : 'AGAINST';
+  const posColor = pos === 'for' ? 'var(--turq2)' : 'var(--red)';
+
+  let html = `
+  <div class="card" style="margin-top:20px">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:16px">
+      <div>
+        <div style="font-size:11px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--gold)">Generated Arguments</div>
+        <div style="font-size:12px;color:var(--text3);margin-top:2px">${posLabel} — ${style} style — ${complexityLabel(complexity)}</div>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn btn-sm btn-outline" id="cpBtn" onclick="copyAll()">📋 Copy All</button>
+        <button class="btn btn-sm btn-outline" onclick="downloadArgs()">⬇ Download</button>
+        <button class="btn btn-sm btn-outline" onclick="generateDebate()">↺ Regenerate</button>
+      </div>
+    </div>
+
+    <div class="meter-wrap">
+      <div class="meter-label"><span>Argument Strength</span><span>${strength}%</span></div>
+      <div class="meter-track"><div class="meter-fill" style="width:${strength}%;background:${meterColor(strength)}"></div></div>
+    </div>
+
+    <div id="debateContent">`;
+  // Opening statement
+  html += makeSection('📖 Opening Statement', opening, true);
+
+  // Main arguments
+  let argsHtml = '';
+  args.forEach((a, i) => {
+    argsHtml += `
+      <div class="arg-card">
+        <h5>Argument ${i+1}: ${a.claim}</h5>
+        <div class="evidence"><strong>Evidence:</strong> ${a.evidence}</div>
+        <div class="example"><strong>Example:</strong> ${a.example}</div>
+      </div>`;
+  });
+  html += makeSection(`💡 Main Arguments (${argCount})`, argsHtml, true);
+
+  // Counterarguments & Rebuttals
+  let counterHtml = '';
+  counters.forEach((c, i) => {
+    counterHtml += `
+      <div class="counter-card">
+        <h5>Counterargument ${i+1}: ${c.counter}</h5>
+        <div class="rebuttal"><strong>Your Rebuttal:</strong> ${c.rebuttal}</div>
+      </div>`;
+  });
+  html += makeSection('🛡️ Counterarguments & Rebuttals', counterHtml, true);
+
+  // Closing statement
+  html += makeSection('🎯 Closing Statement', closing, true);
+
+  html += `</div></div>`;
+
+  // Devil's Advocate
+  html += `
+    <div class="devil-banner">
+      <h4>😈 Devil's Advocate Mode</h4>
+      <p>See the strongest arguments from the opposing side to prepare your defense.</p>
+      <button class="btn btn-devil" onclick="generateDebate('${pos === 'for' ? 'against' : 'for'}')">
+        ⚔️ Generate ${pos === 'for' ? 'AGAINST' : 'FOR'} Arguments
+      </button>
+    </div>`;
+
+  out.innerHTML = html;
+  // Animate strength meter
+  setTimeout(() => {
+    const fill = out.querySelector('.meter-fill');
+    if (fill) { fill.style.width = '0%'; requestAnimationFrame(() => { fill.style.width = strength + '%'; }); }
+  }, 50);
+}
+function makeSection(title, content, openByDefault) {
+  const id = 'sec_' + Math.random().toString(36).slice(2,8);
+  return `
+    <div class="section-block">
+      <div class="section-header" onclick="toggleSection('${id}')">
+        <h4>${title}</h4>
+        <span class="section-chevron ${openByDefault ? 'open' : ''}" id="${id}_chev">▼</span>
+      </div>
+      <div class="section-body ${openByDefault ? 'open' : ''}" id="${id}_body">
+        ${content}
+      </div>
+    </div>`;
+}
+
+function toggleSection(id) {
+  const body = document.getElementById(id + '_body');
+  const chev = document.getElementById(id + '_chev');
+  body.classList.toggle('open');
+  chev.classList.toggle('open');
+}
+
+function copyAll() {
+  const el = document.getElementById('debateContent');
+  if (!el) return;
+  const text = el.innerText;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.getElementById('cpBtn');
+    btn.textContent = '✓ Copied'; btn.style.borderColor = 'var(--green)'; btn.style.color = 'var(--green)';
+    setTimeout(() => { btn.textContent = '📋 Copy All'; btn.style.borderColor = ''; btn.style.color = ''; }, 2000);
+  });
+}
+
+function downloadArgs() {
+  const el = document.getElementById('debateContent');
+  if (!el) return;
+  const topic = document.getElementById('topic').value.trim();
+  const text = `DEBATE ARGUMENTS: ${topic}\nPosition: ${position.toUpperCase()}\nGenerated by ABUZ8 AI Debate Argument Generator\n${'='.repeat(50)}\n\n${el.innerText}`;
+  const blob = new Blob([text], {type: 'text/plain'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'debate-arguments.txt';
+  a.click();
+}
+function joinWaitlist() {
+  const email = document.getElementById('wlEmail').value.trim();
+  if (!email || !email.includes('@')) { alert('Please enter a valid email.'); return; }
+  fetch('/api/waitlist', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({email, product: 'ai-debate-argument-generator', ts: Date.now()})
+  }).catch(() => {});
+  try {
+    const s = JSON.parse(localStorage.getItem('abuz8_wl') || '[]');
+    s.push({email, product: 'ai-debate-argument-generator', ts: Date.now()});
+    localStorage.setItem('abuz8_wl', JSON.stringify(s));
+  } catch(e) {}
+  document.getElementById('wlEmail').value = '';
+  document.querySelector('.wl-form').style.display = 'none';
+  document.getElementById('wlSuccess').style.display = 'block';
+}
+
+// Show placeholder on load
+document.getElementById('outputArea').innerHTML = `
+  <div class="card" style="margin-top:20px">
+    <div class="placeholder">
+      <div class="placeholder-icon">⚔️</div>
+      <h3>Enter a topic and generate arguments</h3>
+      <p>Pick your stance, choose a style, and let the argument engine build your case with evidence and rebuttals.</p>
+    </div>
+  </div>`;
+</script>
+
+<script src="/assets/js/dfy-banner.js" async></script>
+<script src="/tools/_abuz8-md.js"></script>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+<script src="/tools/_tools-shared.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>
+

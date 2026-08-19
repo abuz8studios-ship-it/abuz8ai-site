@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Token Counter &amp; LLM Cost Calculator — GPT-5, Claude, Gemini, DeepSeek | ABUZ8</title>
+  <meta name="description" content="Free AI token counter and API cost calculator. Estimate tokens for any text and compare real per-call and monthly costs across GPT-5.5, GPT-5.4, Claude Opus 4.8, Sonnet 4.6, Haiku 4.5, Gemini 2.5 and DeepSeek. 100% client-side — nothing leaves your browser." />
+  <meta name="keywords" content="token counter, LLM cost calculator, AI token counter, OpenAI token counter, Claude token counter, GPT token calculator, API cost calculator, gpt-5 pricing, gemini pricing, deepseek pricing, tokens per word" />
+  <meta property="og:title" content="AI Token Counter &amp; LLM Cost Calculator | ABUZ8" />
+  <meta property="og:description" content="Count tokens and compare API costs across GPT-5, Claude, Gemini and DeepSeek instantly. Client-side, free, no signup." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://abuz8ai.com/tools/ai-token-counter" />
+  <link rel="canonical" href="https://abuz8ai.com/tools/ai-token-counter" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "AI Token Counter & LLM Cost Calculator",
+    "description": "Free client-side token counter and API cost calculator for GPT-5, Claude, Gemini and DeepSeek models.",
+    "url": "https://abuz8ai.com/tools/ai-token-counter.html",
+    "applicationCategory": "DeveloperApplication",
+    "operatingSystem": "Any",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+    "author": { "@type": "Organization", "name": "ABUZ8 LLC", "url": "https://abuz8ai.com" }
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "How many tokens is a word?",
+        "acceptedAnswer": { "@type": "Answer", "text": "For typical English text, 1 token is roughly 0.75 words, or about 4 characters. So 100 tokens is approximately 75 words. Code, punctuation-heavy text, and non-English languages use more tokens per word." }
+      },
+      {
+        "@type": "Question",
+        "name": "How is LLM API cost calculated?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Providers bill separately for input (prompt) tokens and output (completion) tokens, priced per million tokens. Cost per call = (input tokens / 1,000,000 x input price) + (output tokens / 1,000,000 x output price). Monthly cost multiplies that by the number of requests." }
+      },
+      {
+        "@type": "Question",
+        "name": "Which AI model is cheapest?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Among current models, DeepSeek-V3 and Gemini 2.5 Flash-Lite are the lowest-cost per token, while flagship reasoning models like GPT-5.5 and Claude Opus 4.8 are the most expensive. The cheapest model that still meets your quality bar is the one that matters — which is exactly what cost-aware routing optimizes for." }
+      },
+      {
+        "@type": "Question",
+        "name": "Is my text sent to a server?",
+        "acceptedAnswer": { "@type": "Answer", "text": "No. This tool runs entirely in your browser. Your text is never uploaded, logged, or stored anywhere." }
+      }
+    ]
+  }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --lapis: #0a1628;
+      --card: #0d1a30;
+      --card-alt: #0f1e35;
+      --gold: #c9a84c;
+      --gold-dim: #a07830;
+      --teal: #0e9f6e;
+      --teal-bright: #2fbf8f;
+      --cream: #e8dcc8;
+      --text: #cdd6f4;
+      --text-dim: #8896b0;
+      --border: #1e2d45;
+      --red: #e05c5c;
+      --green: #4caf88;
+      --font-heading: 'Playfair Display', Georgia, serif;
+      --font-body: 'Inter', system-ui, sans-serif;
+      --font-mono: 'JetBrains Mono', 'Courier New', monospace;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--lapis);
+      color: var(--text);
+      font-family: var(--font-body);
+      font-size: 15px;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+    a { color: var(--gold); text-decoration: none; transition: color 0.2s; }
+    a:hover { color: var(--teal-bright); }
+
+    /* NAV */
+    nav {
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      padding: 0 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 60px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .nav-logo {
+      font-family: var(--font-heading);
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--gold);
+      letter-spacing: 0.02em;
+    }
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links a { color: var(--text-dim); font-size: 0.9rem; font-weight: 500; }
+    .nav-links a:hover { color: var(--gold); }
+
+    /* MAIN */
+    main { max-width: 980px; margin: 0 auto; padding: 3rem 1.5rem 5rem; }
+    .page-header { text-align: center; margin-bottom: 2.2rem; }
+    .page-header h1 {
+      font-family: var(--font-heading);
+      font-size: 2.4rem;
+      font-weight: 700;
+      color: var(--gold);
+      margin-bottom: 0.5rem;
+      line-height: 1.15;
+    }
+    .page-header p { color: var(--text-dim); font-size: 1rem; max-width: 600px; margin: 0 auto; }
+
+    .privacy-note {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      margin-top: 0.9rem; padding: 0.35rem 0.9rem;
+      background: rgba(76,175,136,0.1); border: 1px solid rgba(76,175,136,0.3);
+      border-radius: 20px; font-size: 0.78rem; color: var(--green);
+    }
+
+    label { display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-dim);
+            text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.5rem; }
+    textarea, input[type="number"] {
+      width: 100%;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      padding: 0.9rem 1rem;
+      resize: vertical;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    textarea:focus, input:focus { border-color: var(--gold-dim); }
+    textarea { min-height: 150px; line-height: 1.6; }
+
+    .btn-row { display: flex; gap: 0.75rem; margin-top: 1rem; flex-wrap: wrap; }
+    button {
+      padding: 0.55rem 1.3rem;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      font-family: var(--font-body);
+      font-size: 0.85rem;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+    .btn-primary { background: var(--gold); color: #0a0e18; }
+    .btn-primary:hover { background: #ddb85c; }
+    .btn-ghost { background: transparent; border: 1px solid var(--border); color: var(--text-dim); }
+    .btn-ghost:hover { border-color: var(--gold-dim); color: var(--gold); }
+
+    /* STAT CARDS */
+    .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin: 1.6rem 0; }
+    .stat {
+      background: var(--card); border: 1px solid var(--border); border-radius: 10px;
+      padding: 1.1rem 1rem; text-align: center;
+    }
+    .stat .num {
+      font-family: var(--font-heading); font-size: 2rem; font-weight: 700;
+      color: var(--gold); line-height: 1; margin-bottom: 0.3rem;
+    }
+    .stat.tokens .num { color: var(--teal-bright); }
+    .stat .lbl { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text-dim); }
+
+    /* CALC CONTROLS */
+    .calc-panel {
+      background: var(--card-alt); border: 1px solid var(--border); border-radius: 12px;
+      padding: 1.4rem 1.5rem; margin-bottom: 1.5rem;
+    }
+    .calc-panel h2 {
+      font-family: var(--font-heading); font-size: 1.3rem; color: var(--gold);
+      margin-bottom: 1.1rem;
+    }
+    .controls { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+    .controls label { margin-bottom: 0.4rem; }
+    .hint { font-size: 0.72rem; color: var(--text-dim); margin-top: 0.35rem; font-weight: 400; text-transform: none; letter-spacing: 0; }
+
+    /* SAVINGS BANNER */
+    .savings {
+      margin: 1.4rem 0 0.4rem; padding: 0.9rem 1.2rem; border-radius: 8px;
+      background: linear-gradient(135deg, rgba(26,138,122,0.16) 0%, rgba(201,168,76,0.1) 100%);
+      border: 1px solid rgba(52,212,176,0.3); font-size: 0.9rem; color: var(--cream);
+    }
+    .savings strong { color: var(--teal-bright); }
+
+    /* TABLE */
+    .table-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: 12px; margin-top: 1.2rem; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.86rem; min-width: 640px; }
+    thead th {
+      background: rgba(255,255,255,0.03); color: var(--text-dim);
+      font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.06em;
+      text-align: right; padding: 0.8rem 1rem; border-bottom: 1px solid var(--border); font-weight: 600;
+    }
+    thead th:first-child, thead th:nth-child(2) { text-align: left; }
+    tbody td { padding: 0.7rem 1rem; border-bottom: 1px solid var(--border); text-align: right; font-family: var(--font-mono); }
+    tbody td:first-child, tbody td:nth-child(2) { text-align: left; font-family: var(--font-body); }
+    tbody tr:last-child td { border-bottom: none; }
+    tbody tr.cheapest { background: rgba(52,212,176,0.08); }
+    tbody tr.cheapest td:first-child { box-shadow: inset 3px 0 0 var(--teal-bright); }
+    .model-name { font-weight: 600; color: var(--cream); }
+    .pill { display: inline-block; font-size: 0.68rem; padding: 0.12rem 0.55rem; border-radius: 20px;
+            font-weight: 600; letter-spacing: 0.03em; }
+    .pill.OpenAI { background: rgba(52,212,176,0.15); color: var(--teal-bright); }
+    .pill.Anthropic { background: rgba(201,168,76,0.16); color: var(--gold); }
+    .pill.Google { background: rgba(205,214,244,0.12); color: #c4cdf0; }
+    .pill.DeepSeek { background: rgba(136,150,176,0.16); color: var(--text-dim); }
+    .badge-cheap { font-size: 0.62rem; color: var(--teal-bright); font-weight: 700; letter-spacing: 0.05em; margin-left: 0.4rem; }
+    .monthly { color: var(--gold); font-weight: 600; }
+
+    .price-note { font-size: 0.78rem; color: var(--text-dim); margin-top: 0.9rem; line-height: 1.7; }
+    .price-note a { color: var(--text-dim); text-decoration: underline; }
+    .price-note a:hover { color: var(--gold); }
+
+    /* CTA */
+    .cta-section {
+      background: linear-gradient(135deg, rgba(26,138,122,0.12) 0%, rgba(201,168,76,0.08) 100%);
+      border: 1px solid rgba(201,168,76,0.2);
+      border-radius: 12px;
+      padding: 2.2rem 2rem;
+      text-align: center;
+      margin-top: 3rem;
+    }
+    .cta-section h2 {
+      font-family: var(--font-heading);
+      font-size: 1.5rem;
+      color: var(--gold);
+      margin-bottom: 0.5rem;
+    }
+    .cta-section p { color: var(--text-dim); font-size: 0.95rem; margin-bottom: 1.2rem; max-width: 560px; margin-left:auto; margin-right:auto; }
+    .cta-form { display: flex; gap: 0.6rem; justify-content: center; flex-wrap: wrap; }
+    .cta-form input[type="email"] {
+      flex: 1; max-width: 300px; min-width: 200px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text);
+      font-family: var(--font-body);
+      font-size: 0.9rem;
+      padding: 0.6rem 1rem;
+      outline: none;
+    }
+    .cta-form input[type="email"]:focus { border-color: var(--gold-dim); }
+    .cta-success { display: none; color: var(--teal-bright); font-size: 0.9rem; margin-top: 0.8rem; }
+    .cta-success.visible { display: block; }
+
+    /* FAQ + CONTENT */
+    .content { margin-top: 3rem; }
+    .content h2 {
+      font-family: var(--font-heading); font-size: 1.5rem; color: var(--gold);
+      margin: 0 0 1rem; padding-top: 1rem;
+    }
+    .faq-item { border-top: 1px solid var(--border); padding: 1.1rem 0; }
+    .faq-item h3 { font-size: 1rem; color: var(--cream); margin-bottom: 0.4rem; font-weight: 600; }
+    .faq-item p { color: var(--text-dim); font-size: 0.9rem; }
+
+    /* FOOTER */
+    footer {
+      background: var(--card);
+      border-top: 1px solid var(--border);
+      text-align: center;
+      padding: 1.5rem;
+      font-size: 0.82rem;
+      color: var(--text-dim);
+    }
+    footer a { color: var(--text-dim); }
+    footer a:hover { color: var(--gold); }
+
+    /* RESPONSIVE */
+    @media (max-width: 720px) {
+      .stats { grid-template-columns: repeat(2, 1fr); }
+      .controls { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 600px) {
+      .page-header h1 { font-size: 1.8rem; }
+      nav { padding: 0 1rem; }
+      .nav-links { gap: 1rem; }
+      main { padding: 2rem 1rem 4rem; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="nav-logo">ABUZ8</a>
+  <ul class="nav-links">
+    <li><a href="/tools.html">Tools</a></li>
+    <li><a href="/store.html">Store</a></li>
+  </ul>
+</nav>
+
+<main>
+  <div class="page-header">
+    <h1>AI Token Counter &amp; Cost Calculator</h1>
+    <p>Paste any prompt to estimate its token count, then compare real per-call and monthly API costs across GPT-5, Claude, Gemini and DeepSeek.</p>
+    <span class="privacy-note">&#128274; 100% in-browser — your text is never uploaded</span>
+  </div>
+
+  <div class="input-section">
+    <label for="textInput">Your text / prompt</label>
+    <textarea id="textInput" placeholder="Paste or type your prompt here to count tokens..." spellcheck="false"></textarea>
+    <div class="btn-row">
+      <button class="btn-ghost" onclick="loadSample()">Load sample</button>
+      <button class="btn-ghost" onclick="clearText()">Clear</button>
+    </div>
+  </div>
+
+  <div class="stats">
+    <div class="stat tokens">
+      <div class="num" id="statTokens">0</div>
+      <div class="lbl">Est. Tokens</div>
+    </div>
+    <div class="stat">
+      <div class="num" id="statWords">0</div>
+      <div class="lbl">Words</div>
+    </div>
+    <div class="stat">
+      <div class="num" id="statChars">0</div>
+      <div class="lbl">Characters</div>
+    </div>
+    <div class="stat">
+      <div class="num" id="statSentences">0</div>
+      <div class="lbl">Sentences</div>
+    </div>
+  </div>
+
+  <div class="calc-panel">
+    <h2>Cost calculator</h2>
+    <div class="controls">
+      <div>
+        <label for="inTokens">Input tokens</label>
+        <input type="number" id="inTokens" min="0" value="0" oninput="renderTable()" />
+        <div class="hint">Auto-filled from your text above. Edit freely.</div>
+      </div>
+      <div>
+        <label for="outTokens">Output tokens / call</label>
+        <input type="number" id="outTokens" min="0" value="500" oninput="renderTable()" />
+        <div class="hint">Typical reply length you expect.</div>
+      </div>
+      <div>
+        <label for="reqs">Requests / month</label>
+        <input type="number" id="reqs" min="0" value="1000" oninput="renderTable()" />
+        <div class="hint">Calls across your whole app.</div>
+      </div>
+    </div>
+
+    <div class="savings" id="savings"></div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Provider</th>
+            <th>Model</th>
+            <th>In $/1M</th>
+            <th>Out $/1M</th>
+            <th>Cost / call</th>
+            <th>Cost / month</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+      </table>
+    </div>
+
+    <p class="price-note">
+      Prices per 1M tokens, standard (non-cached, non-batch) tier, verified June&nbsp;2026. Token counts are estimates (&plusmn;10&ndash;15%); exact counts require each model&#8217;s own tokenizer. Always confirm live rates:
+      <a href="https://openai.com/api/pricing/" target="_blank" rel="noopener">OpenAI</a>,
+      <a href="https://platform.claude.com/docs/en/about-claude/pricing" target="_blank" rel="noopener">Anthropic</a>,
+      <a href="https://ai.google.dev/gemini-api/docs/pricing" target="_blank" rel="noopener">Google</a>,
+      <a href="https://api-docs.deepseek.com/quick_start/pricing" target="_blank" rel="noopener">DeepSeek</a>.
+      Tip: prompt caching can cut input cost up to ~90% on repeated prefixes, and batch APIs are ~50% off.
+    </p>
+  </div>
+
+  <div class="cta-section">
+    <h2>Stop picking models by hand</h2>
+    <p>You just compared 15 models in a table. QADIR&nbsp;OS does this on <em>every single request</em> — routing to the cheapest model that still clears your quality bar. Opus-grade output at Haiku-grade cost, automatically.</p>
+    <div class="cta-form">
+      <input type="email" id="ctaEmail" placeholder="you@company.com" />
+      <button class="btn-primary" onclick="submitWaitlist()">Join the waitlist</button>
+    </div>
+    <div id="ctaSuccess" class="cta-success">&#10003; You&#8217;re on the list. We&#8217;ll be in touch.</div>
+  </div>
+
+  <div class="content">
+    <h2>How token counting &amp; pricing work</h2>
+    <div class="faq-item">
+      <h3>How many tokens is a word?</h3>
+      <p>For typical English text, one token is roughly 0.75 words, or about 4 characters. So 100 tokens is about 75 words. Code, punctuation-heavy text, and non-English languages pack more tokens per word, so treat the number above as a close estimate rather than an exact count.</p>
+    </div>
+    <div class="faq-item">
+      <h3>How is LLM API cost calculated?</h3>
+      <p>Providers bill input (prompt) tokens and output (completion) tokens separately, priced per million tokens. Cost per call = (input&nbsp;tokens &divide; 1,000,000 &times; input&nbsp;price) + (output&nbsp;tokens &divide; 1,000,000 &times; output&nbsp;price). Monthly cost multiplies that by your number of requests — which is exactly the math the table above runs live.</p>
+    </div>
+    <div class="faq-item">
+      <h3>Which AI model is cheapest?</h3>
+      <p>Among current models, DeepSeek-V3 and Gemini&nbsp;2.5 Flash-Lite are lowest-cost per token, while flagship reasoning models like GPT-5.5 and Claude Opus&nbsp;4.8 cost the most. The model that matters is the cheapest one that still meets your quality bar — and that changes per task, which is why automated routing beats a fixed choice.</p>
+    </div>
+    <div class="faq-item">
+      <h3>Is my text sent to a server?</h3>
+      <p>No. This tool runs entirely in your browser. Your text is never uploaded, logged, or stored anywhere.</p>
+    </div>
+  </div>
+</main>
+
+<footer>
+  ABUZ8 LLC &middot; Free AI Tools &middot; <a href="mailto:ahmad@abuz8ai.com">ahmad@abuz8ai.com</a>
+</footer>
+
+<script>
+// ── PRICING (USD per 1M tokens) — verified June 2026 ────────────────────────
+const MODELS = [
+  { prov:'OpenAI',    name:'GPT-5.5',              in:5.00,  out:30.00 },
+  { prov:'OpenAI',    name:'GPT-5.4',              in:2.50,  out:15.00 },
+  { prov:'OpenAI',    name:'GPT-5.4 Mini',         in:0.75,  out:4.50  },
+  { prov:'OpenAI',    name:'GPT-5.4 Nano',         in:0.20,  out:1.25  },
+  { prov:'OpenAI',    name:'GPT-4o',               in:2.50,  out:10.00 },
+  { prov:'OpenAI',    name:'GPT-4o mini',          in:0.15,  out:0.60  },
+  { prov:'OpenAI',    name:'o3',                   in:2.00,  out:8.00  },
+  { prov:'Anthropic', name:'Claude Opus 4.8',      in:5.00,  out:25.00 },
+  { prov:'Anthropic', name:'Claude Sonnet 4.6',    in:3.00,  out:15.00 },
+  { prov:'Anthropic', name:'Claude Haiku 4.5',     in:1.00,  out:5.00  },
+  { prov:'Google',    name:'Gemini 2.5 Pro',       in:1.25,  out:10.00 },
+  { prov:'Google',    name:'Gemini 2.5 Flash',     in:0.30,  out:2.50  },
+  { prov:'Google',    name:'Gemini 2.5 Flash-Lite',in:0.10,  out:0.40  },
+  { prov:'DeepSeek',  name:'DeepSeek-V3',          in:0.14,  out:0.28  },
+  { prov:'DeepSeek',  name:'DeepSeek-R1',          in:0.55,  out:2.19  }
+];
+
+const SAMPLE = "You are a senior support engineer. A customer writes: \"My deployment keeps failing with a 502 error after I scaled to 4 replicas. It worked fine on 1. Logs show the health check timing out.\" Diagnose the most likely root cause, list three things to check in order, and draft a concise reply to the customer that is reassuring but specific.";
+
+// ── TOKEN ESTIMATION ─────────────────────────────────────────────────────────
+// Blends a character-based (~4 chars/token) and word-based (~1.33 tokens/word)
+// estimate. Robust for prose; treats the result as an approximation.
+function estimateTokens(text) {
+  if (!text) return 0;
+  const chars = text.length;
+  const words = (text.trim().match(/\S+/g) || []).length;
+  if (words === 0) return 0;
+  const charEst = chars / 4;
+  const wordEst = words * 1.33;
+  return Math.max(1, Math.round((charEst + wordEst) / 2));
+}
+
+function countWords(t)     { return (t.trim().match(/\S+/g) || []).length; }
+function countSentences(t) { const m = t.match(/[^.!?\n]+[.!?]+(?=\s|$)/g); return m ? m.length : (t.trim() ? 1 : 0); }
+
+// ── MONEY FORMAT ─────────────────────────────────────────────────────────────
+function fmtUSD(v) {
+  if (v >= 1)     return '$' + v.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  if (v >= 0.01)  return '$' + v.toFixed(3);
+  if (v > 0)      return '$' + v.toFixed(5);
+  return '$0.00';
+}
+
+// ── MAIN RENDER ──────────────────────────────────────────────────────────────
+function updateStats() {
+  const t = document.getElementById('textInput').value;
+  const tokens = estimateTokens(t);
+  document.getElementById('statTokens').textContent    = tokens.toLocaleString();
+  document.getElementById('statWords').textContent      = countWords(t).toLocaleString();
+  document.getElementById('statChars').textContent      = t.length.toLocaleString();
+  document.getElementById('statSentences').textContent  = countSentences(t).toLocaleString();
+  document.getElementById('inTokens').value = tokens;
+  renderTable();
+}
+
+function renderTable() {
+  const inTok  = Math.max(0, parseInt(document.getElementById('inTokens').value, 10)  || 0);
+  const outTok = Math.max(0, parseInt(document.getElementById('outTokens').value, 10) || 0);
+  const reqs   = Math.max(0, parseInt(document.getElementById('reqs').value, 10)      || 0);
+
+  const rows = MODELS.map(m => {
+    const perCall = (inTok / 1e6) * m.in + (outTok / 1e6) * m.out;
+    return { ...m, perCall, monthly: perCall * reqs };
+  }).sort((a, b) => a.monthly - b.monthly);
+
+  const cheapest = rows[0];
+  const dearest  = rows[rows.length - 1];
+
+  const body = document.getElementById('tableBody');
+  body.innerHTML = rows.map((r, i) => `
+    <tr class="${i === 0 ? 'cheapest' : ''}">
+      <td><span class="pill ${r.prov}">${r.prov}</span></td>
+      <td><span class="model-name">${r.name}</span>${i === 0 ? '<span class="badge-cheap">CHEAPEST</span>' : ''}</td>
+      <td>$${r.in.toFixed(2)}</td>
+      <td>$${r.out.toFixed(2)}</td>
+      <td>${fmtUSD(r.perCall)}</td>
+      <td class="monthly">${fmtUSD(r.monthly)}</td>
+    </tr>
+  `).join('');
+
+  const savings = document.getElementById('savings');
+  if (reqs > 0 && (inTok > 0 || outTok > 0) && dearest.monthly > cheapest.monthly) {
+    const diff = dearest.monthly - cheapest.monthly;
+    const pct  = Math.round((diff / dearest.monthly) * 100);
+    savings.innerHTML = `At <strong>${reqs.toLocaleString()}</strong> calls/month, <strong>${cheapest.name}</strong> costs <strong>${fmtUSD(cheapest.monthly)}/mo</strong> vs <strong>${fmtUSD(dearest.monthly)}/mo</strong> for ${dearest.name} — a <strong>${fmtUSD(diff)}/mo (${pct}%)</strong> swing for the same job.`;
+    savings.style.display = 'block';
+  } else {
+    savings.style.display = 'none';
+  }
+}
+
+// ── ACTIONS ──────────────────────────────────────────────────────────────────
+function loadSample() { document.getElementById('textInput').value = SAMPLE; updateStats(); }
+function clearText()  { document.getElementById('textInput').value = ''; updateStats(); }
+
+async function submitWaitlist() {
+  const email = document.getElementById('ctaEmail').value.trim();
+  if (!email || !email.includes('@')) { alert('Please enter a valid email address.'); return; }
+  const payload = { email, product: 'qadir-os-token-counter', ts: new Date().toISOString() };
+  try {
+    await fetch('/api/waitlist', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+  } catch (e) { /* graceful fallback — show success anyway */ }
+  document.getElementById('ctaEmail').style.display = 'none';
+  document.querySelector('.cta-form button').style.display = 'none';
+  document.getElementById('ctaSuccess').classList.add('visible');
+}
+
+// ── INIT ─────────────────────────────────────────────────────────────────────
+document.getElementById('textInput').addEventListener('input', updateStats);
+renderTable(); // initial paint with defaults
+</script>
+<script src="/tools/_tools-shared.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>

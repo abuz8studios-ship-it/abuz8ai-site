@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Frontier AI Leaderboard — Who's Leading the Race to AGI, Live | ABUZ8</title>
+<meta name="description" content="Every frontier AI model ranked — GPT, Claude, Gemini, Grok, DeepSeek, Qwen, GLM, Kimi, MiniMax, Llama, Mistral — with what each one leads on, its headline benchmark, and its real live price, context window and modalities pulled straight from OpenRouter. Aggregated, sourced, and linked — never copied.">
+<link rel="canonical" href="https://abuz8ai.com/models">
+<meta property="og:title" content="The Frontier AI Leaderboard — Who's Leading the Race to AGI">
+<meta property="og:description" content="Every frontier model ranked — what it leads on, its headline benchmark, and its real live price & context, pulled from OpenRouter. Updated continuously, sourced, never copied.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://abuz8ai.com/models">
+<meta property="og:image" content="https://abuz8ai.com/assets/images/hero.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="The Frontier AI Leaderboard — Who's Leading the Race to AGI">
+<meta name="twitter:description" content="GPT, Claude, Gemini, Grok, DeepSeek, GLM, Kimi & more — ranked by what they lead on, with real live pricing & context from OpenRouter.">
+<meta name="twitter:image" content="https://abuz8ai.com/assets/images/hero.png">
+<meta name="theme-color" content="#0a1628">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/abuz8-theme.css">
+<style>
+/* page-specific styles ONLY — theme vars, no new palette colors.
+   Legacy aliases: old turquoise/teal → theme green family, amber → gold family, purple → lapis blue accent. */
+:root{--gold-2:var(--gold-light);--turq:var(--green);--turq-2:var(--green-bright);--amber:var(--gold-light);--purple:var(--blue-bright)}
+.mono{font-family:var(--font-mono)}
+.wrap{max-width:1180px;margin:0 auto;padding:28px 24px 40px;position:relative;z-index:1}
+
+.hero{padding:44px 0 26px;text-align:left;max-width:none;margin:0}
+.hero .eyebrow{color:var(--turq-2);font-size:11px;letter-spacing:3px;text-transform:uppercase;font-weight:600;margin-bottom:14px}
+.hero h1{font-family:var(--font-display);font-size:clamp(2.2rem,5vw,3.6rem);color:var(--cream);font-weight:900;line-height:1.05;margin-bottom:16px}
+.hero h1 .g{color:var(--gold)}
+.hero p{color:var(--dim);font-size:17px;font-weight:300;max-width:720px;margin:0}
+.hero-share{display:flex;align-items:center;gap:10px;margin-top:22px;flex-wrap:wrap}
+.hero-share .hs-label{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--dim)}
+.hs-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 15px;border:1px solid var(--border);border-radius:8px;background:var(--lapis-2);color:var(--cream);font-family:inherit;font-size:12px;font-weight:600;letter-spacing:.3px;cursor:pointer;transition:border-color .3s,color .3s;text-decoration:none}
+.hs-btn:hover{border-color:var(--gold);color:var(--gold)}
+
+/* CATEGORY LEADERS */
+.cats{display:grid;grid-template-columns:repeat(auto-fit,minmax(176px,1fr));gap:12px;margin:24px 0 4px}
+.cat{background:var(--glass-soft);border:1px solid var(--border);border-radius:13px;padding:14px 16px}
+.cat .k{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--turq-2);font-weight:700}
+.cat .m{font-family:var(--font-display);font-size:16px;color:var(--cream);margin-top:5px;line-height:1.2}
+.cat .d{font-size:11.5px;color:var(--dim);margin-top:4px;line-height:1.4}
+
+/* LIVE TICKER */
+.ticker{margin:18px 0 6px;border:1px solid var(--border);border-radius:14px;background:var(--glass-soft);overflow:hidden}
+.ticker-head{display:flex;justify-content:space-between;align-items:center;padding:12px 18px;border-bottom:1px solid var(--border);font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--dim)}
+.live-dot{display:inline-flex;align-items:center;gap:7px;color:var(--green-bright);font-weight:700}
+.live-dot::before{content:'';width:8px;height:8px;border-radius:50%;background:var(--green-bright);box-shadow:0 0 0 3px rgba(47,191,143,.18);animation:pulse 6s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.55}}
+.ticker-track{display:flex;gap:26px;padding:14px 18px;overflow-x:auto;white-space:nowrap;scrollbar-width:thin}
+.tick{display:inline-flex;align-items:baseline;gap:8px;font-size:13px;flex:none}
+.tick .nm{color:var(--cream);font-weight:600}
+.tick .st{font-family:var(--font-mono);color:var(--turq-2)}
+
+.note{display:flex;gap:12px;align-items:flex-start;background:rgba(14,159,110,.07);border:1px solid var(--border);border-left:3px solid var(--turq);border-radius:12px;padding:14px 18px;margin:20px 0 8px;font-size:13px;color:var(--dim)}
+.note b{color:var(--cream)}
+.note a{color:var(--turq-2)}
+.stale{display:none;gap:12px;align-items:flex-start;background:rgba(201,168,76,.08);border:1px solid var(--border);border-left:3px solid var(--gold);border-radius:12px;padding:14px 18px;margin:14px 0 0;font-size:13px;color:var(--dim)}
+.stale b{color:var(--gold-light)}
+
+.controls{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;margin:22px 0 0}
+.toggle{display:inline-flex;gap:4px;padding:4px;background:var(--lapis-2);border:1px solid var(--border);border-radius:12px}
+.toggle button{padding:9px 18px;border:0;background:transparent;color:var(--dim);font-family:inherit;font-size:13px;font-weight:600;letter-spacing:.3px;border-radius:9px;cursor:pointer;transition:background .3s,color .3s}
+.toggle button.active{background:var(--gold);color:var(--lapis)}
+.toggle button:not(.active):hover{color:var(--cream)}
+.count{display:inline-flex;align-items:center;gap:8px;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--dim)}
+.count .seg{display:inline-flex;gap:2px;padding:3px;background:var(--lapis-2);border:1px solid var(--border);border-radius:10px}
+.count .seg button{padding:6px 12px;border:0;background:transparent;color:var(--dim);font-family:var(--font-mono);font-size:12px;font-weight:600;border-radius:7px;cursor:pointer}
+.count .seg button.active{background:var(--green-deep);color:#fff}
+
+.board{display:grid;grid-template-columns:1fr;gap:14px;margin-top:18px}
+.row{background:var(--glass-soft);border:1px solid var(--border);border-radius:16px;padding:22px;transition:border-color .3s,transform .3s}
+.row:hover{border-color:var(--gold);transform:translateY(-2px)}
+.row-top{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap}
+.rank{font-family:var(--font-display);font-size:34px;color:var(--gold);font-weight:900;line-height:1;flex:none;width:50px}
+.row-id{flex:1;min-width:240px}
+.row-id h3{font-family:var(--font-display);font-size:21px;color:var(--cream);font-weight:700;word-break:break-word}
+.row-id .org{font-family:var(--font-mono);font-size:12px;color:var(--turq-2);margin-top:2px}
+.row-id .variant{font-size:11px;color:var(--dim);margin-top:3px}
+.row-id .leads{font-size:14px;color:var(--text);margin-top:9px;max-width:640px}
+.grow{flex:none;text-align:right;min-width:120px}
+.grow .v{font-family:var(--font-mono);font-size:24px;color:var(--cream);font-weight:600;white-space:nowrap}
+.grow .l{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--dim);margin-top:2px}
+
+.tierb{display:inline-block;font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:3px 9px;border-radius:5px;margin-left:10px;vertical-align:middle;white-space:nowrap}
+.tierb.frontier{background:rgba(201,168,76,.16);color:var(--gold);border:1px solid rgba(201,168,76,.4)}
+.tierb.reasoning{background:rgba(95,168,232,.14);color:var(--blue-bright);border:1px solid rgba(95,168,232,.36)}
+.tierb.flagship{background:rgba(47,191,143,.14);color:var(--turq-2);border:1px solid rgba(47,191,143,.32)}
+.tierb.value{background:rgba(47,191,143,.14);color:var(--green-bright);border:1px solid rgba(47,191,143,.34)}
+.tierb.open{background:rgba(232,212,139,.12);color:var(--gold-light);border:1px solid rgba(232,212,139,.34)}
+.tierb.fast{background:rgba(47,191,143,.10);color:var(--turq-2);border:1px solid rgba(47,191,143,.26)}
+.tierb.challenger{background:rgba(138,154,170,.12);color:var(--dim);border:1px solid var(--border)}
+
+.bench{margin-top:14px;padding:11px 14px;background:rgba(245,240,232,.02);border:1px solid var(--border);border-left:3px solid var(--gold);border-radius:10px;font-size:13px;color:var(--text);line-height:1.5}
+.bench .lead{display:inline-block;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--dim);font-weight:700;margin-right:9px}
+
+.meta{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:14px}
+.tag{display:inline-flex;align-items:center;gap:6px;font-size:11px;letter-spacing:.4px;color:var(--dim);border:1px solid var(--border);border-radius:6px;padding:3px 9px}
+.tag .mono{color:var(--cream)}
+.tag.ctx .mono{color:var(--gold)}
+.tag.price .mono{color:var(--green-bright)}
+.tag.mod{color:var(--turq-2);border-color:rgba(47,191,143,.28);text-transform:capitalize}
+.tag.spec-live{color:var(--green-bright);border-color:rgba(47,191,143,.3)}
+.tag.spec-ed{color:var(--dim)}
+.row-cta{margin-left:auto;display:inline-flex;gap:16px;align-items:center}
+.row-cta a.src{font-size:12px;color:var(--turq-2);letter-spacing:.4px}
+.row-cta a.src:hover{color:var(--gold)}
+.skeleton{height:150px;border-radius:16px;background:linear-gradient(100deg,var(--lapis-2) 30%,var(--lapis-3) 50%,var(--lapis-2) 70%);background-size:200% 100%;animation:sk 6s linear infinite}
+@keyframes sk{to{background-position:-200% 0}}
+
+.capture{margin-top:40px;background:linear-gradient(135deg,rgba(14,159,110,.10),rgba(201,168,76,.06));border:1px solid var(--border);border-radius:16px;padding:32px 26px;text-align:center}
+.capture h3{font-family:var(--font-display);color:var(--cream);font-size:23px;font-weight:700;margin-bottom:8px}
+.capture .sub{color:var(--dim);font-size:14px;max-width:580px;margin:0 auto 20px;line-height:1.6}
+.capture form{display:flex;gap:10px;max-width:480px;margin:0 auto;flex-wrap:wrap}
+.capture input{flex:1;min-width:220px;padding:13px 16px;background:var(--lapis);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:inherit;font-size:14px}
+.capture input:focus{outline:none;border-color:var(--gold)}
+.capture button{padding:13px 26px;border:0;border-radius:10px;background:var(--gold);color:var(--lapis);font-family:inherit;font-weight:700;font-size:14px;cursor:pointer;transition:background .3s}
+.capture button:hover{background:var(--gold-2)}
+.capture button:disabled{opacity:.55;cursor:default}
+.capture .msg{margin-top:14px;font-size:13px;min-height:17px}
+.capture .msg.ok{color:var(--green-bright)}
+.capture .msg.err{color:var(--gold-light)}
+.capture .fine{margin-top:12px;font-size:11px;color:var(--dim);opacity:.85}
+.cta{margin-top:24px;background:linear-gradient(135deg,var(--lapis-2),var(--lapis-3));border:1px solid var(--border);border-radius:16px;padding:26px 24px;display:flex;justify-content:space-between;align-items:center;gap:18px;flex-wrap:wrap}
+.cta h4{font-family:var(--font-display);color:var(--cream);font-size:19px;font-weight:700}
+.cta p{color:var(--dim);font-size:13px;margin-top:4px;max-width:560px}
+.cta .btns{display:flex;gap:12px;flex-wrap:wrap}
+.btn{display:inline-block;padding:11px 20px;border-radius:10px;font-size:13px;font-weight:600;letter-spacing:.3px}
+.btn.gold{background:var(--gold);color:var(--lapis)}
+.btn.gold:hover{background:var(--gold-2)}
+.btn.ghost{border:1px solid var(--border);color:var(--cream)}
+.btn.ghost:hover{border-color:var(--gold)}
+
+.src-note{margin-top:40px;padding:18px 20px;border:1px solid var(--border);border-radius:12px;background:var(--glass-soft);font-size:12px;color:var(--dim);line-height:1.7}
+.src-note a{color:var(--turq-2)}
+.src-note a:hover{color:var(--gold)}
+@media (max-width:560px){.grow{text-align:left;min-width:0}.rank{font-size:28px;width:40px}}
+</style>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","name":"The Frontier AI Leaderboard — ABUZ8 AI","url":"https://abuz8ai.com/models","description":"Frontier AI models ranked by what each leads on, with live price, context window and modalities from OpenRouter's public API. Aggregated, sourced, and linked."}
+</script>
+</head>
+<body>
+<div class="geo-bg"></div>
+<nav class="abuz8-nav">
+<div class="nav-inner">
+  <a href="/" style="text-decoration:none;">
+    <div class="logo">ABUZ8</div>
+    <div class="logo-sub">Sovereign AI</div>
+  </a>
+  <div class="nav-links">
+    <a href="/tools.html">Tools</a>
+    <a href="/store.html">Store</a>
+    
+    <a href="/agents.html">Agents</a>
+    <a href="/models.html">Models</a>
+    <a href="/news.html">News</a>
+    <a href="/roadmap.html">Roadmap</a>
+    <a href="/store.html" class="nav-cta">Get Started</a>
+  </div>
+</div>
+</nav>
+
+<div class="wrap">
+  <header class="hero">
+    <div class="eyebrow" data-i18n="lb.eyebrow">The Frontier Leaderboard · Live from OpenRouter</div>
+    <h1 data-i18n="lb.h1">Who's actually <span class="g">leading</span> the race<br>to <span class="g">AGI</span> — ranked.</h1>
+    <p data-i18n="lb.sub">Every frontier AI system — GPT, Claude, Gemini, Grok, DeepSeek, Qwen, GLM, Kimi, MiniMax, Llama, Mistral — ranked by <em>what it actually leads on</em>, with its headline benchmark and its <em>real, live</em> price, context window and modalities pulled straight from OpenRouter. We aggregate, source, and link — never copy.</p>
+    <div class="hero-share">
+      <span class="hs-label" data-i18n="lb.shareList">Share the board</span>
+      <a class="hs-btn" id="share-x" href="#" target="_blank" rel="noopener">on X</a>
+      <a class="hs-btn" id="share-li" href="#" target="_blank" rel="noopener">on LinkedIn</a>
+      <button class="hs-btn" id="share-copy" type="button">Copy link</button>
+    </div>
+  </header>
+
+  <div class="cats" id="cats"></div>
+
+  <div class="ticker">
+    <div class="ticker-head">
+      <span class="live-dot" id="live-label">Live · models on OpenRouter</span>
+      <span class="mono" id="ticker-updated">loading…</span>
+    </div>
+    <div class="ticker-track" id="ticker"></div>
+  </div>
+
+  <div class="note">
+    <span style="color:var(--turq-2);font-size:18px;line-height:1">▲</span>
+    <div><b>Two honest layers.</b> The <b>Frontier Ranking</b> is our editorial read of who leads each capability — last reviewed <b id="reviewed">…</b>, with sources linked below. The <b>Live on OpenRouter</b> view is the raw, always-current roster — <span id="livecount">…</span> models right now — pulled from <a href="https://openrouter.ai/models" target="_blank" rel="noopener">OpenRouter</a> with each model's <b>real price, context window and modalities</b>. Specs on ranked cards are bound to each lab's newest live variant, so they refresh as new versions ship. Benchmarks move fast — treat the ranking as a sourced snapshot, not gospel.</div>
+  </div>
+
+  <div class="stale" id="stale">
+    <span style="color:var(--gold-light);font-size:18px;line-height:1">⚠</span>
+    <div><b>Showing last-known snapshot.</b> OpenRouter's API wasn't reachable just now, so specs are from our most recent capture (2026-05-27). They'll refresh automatically on the next successful pull.</div>
+  </div>
+
+  <div class="controls">
+    <div class="toggle" role="tablist" aria-label="Leaderboard view">
+      <button id="tab-rank" class="active" role="tab" aria-selected="true" data-i18n="lb.tabRank">Frontier Ranking</button>
+      <button id="tab-live" role="tab" aria-selected="false" data-i18n="lb.tabLive">Live on OpenRouter</button>
+    </div>
+    <div class="count" id="count" style="display:none">
+      <span data-i18n="lb.show">Show</span>
+      <span class="seg">
+        <button data-n="20">20</button>
+        <button data-n="30" class="active">30</button>
+        <button data-n="50">50</button>
+      </span>
+    </div>
+  </div>
+
+  <div class="board" id="board">
+    <div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div>
+  </div>
+
+  <section class="capture" id="early">
+    <h3 data-i18n="lb.capH3">Never miss a frontier shift</h3>
+    <p class="sub" data-i18n="lb.capSub">Join the early-access list for the ABUZ8 weekly frontier drop — every new model that matters, who it just dethroned, and what it changes for builders. Straight to your inbox.</p>
+    <form id="waitForm" novalidate>
+      <input id="waitEmail" type="email" inputmode="email" autocomplete="email" placeholder="you@company.com" aria-label="Email address" required>
+      <button type="submit" id="waitBtn" data-i18n="lb.capBtn">Join the list</button>
+    </form>
+    <div class="msg" id="waitMsg" role="status" aria-live="polite"></div>
+    <div class="fine">Free. No spam. Unsubscribe anytime. We aggregate &amp; credit — we never sell your email.</div>
+  </section>
+
+  <div class="cta">
+    <div>
+      <h4>Knowing who leads is step one. Putting them to work is the next.</h4>
+      <p>ABUZ8 builds sovereign, local-first AI on real hardware — 160+ free tools you can use in your browser right now, and ABUZ8 OS in early access by request.</p>
+    </div>
+    <div class="btns">
+      <a class="btn gold" href="/tools.html">Explore the free tools →</a>
+      <a class="btn ghost" href="/request.html">Request ABUZ8 OS early access</a>
+    </div>
+  </div>
+
+  <div class="src-note">
+    Live model data © OpenRouter &amp; the respective labs, pulled live from OpenRouter's public API · We aggregate, credit, and link — never copy.<br>
+    Editorial ranking &amp; benchmark sources (reviewed 2026-05-27):
+    <a href="https://artificialanalysis.ai/leaderboards/models" target="_blank" rel="noopener">Artificial Analysis</a> ·
+    <a href="https://llm-stats.com/" target="_blank" rel="noopener">LLM-Stats</a> ·
+    <a href="https://openrouter.ai/models" target="_blank" rel="noopener">OpenRouter</a> ·
+    <a href="https://lmarena.ai/leaderboard" target="_blank" rel="noopener">LMArena</a>. Live specs from OpenRouter's models API.
+  </div>
+</div>
+
+<footer class="abuz8-footer">
+<div class="foot-grid">
+  <div class="foot-brand">
+    <div class="logo">ABUZ8</div>
+    <p>Sovereign AI for everyone. Real tools, local models, no fake claims. Built on real hardware by ABUZ8 LLC, Ohio.</p>
+  </div>
+  <div class="foot-col"><h4>Platform</h4>
+    <a href="/tools.html">Free Tools</a><a href="/store.html">Store</a><a href="/models.html">Models</a><a href="/agents.html">AI Agents</a><a href="/news.html">News</a><a href="/blog/">Blog</a>
+  </div>
+  <div class="foot-col"><h4>Mission</h4>
+    <a href="/sovereign.html">Sovereign AI</a><a href="/journey.html">Journey &amp; Goals</a><a href="/roadmap.html">Roadmap</a><a href="/audit.html">Audit &amp; Transparency</a><a href="/purpose.html">Purpose</a>
+  </div>
+  <div class="foot-col"><h4>Hubs</h4>
+    <a href="/github.html">GitHub Hub</a><a href="/huggingface.html">Hugging Face Hub</a><a href="/polymarket.html">Polymarket Tester</a><a href="/community.html">Community</a><a href="/education.html">Education</a><a href="/downloads.html">Downloads</a>
+  </div>
+  <div class="foot-col"><h4>Trust</h4>
+    <a href="/security.html">Security &amp; Compliance</a><a href="/disclaimer.html">Disclaimer</a><a href="/privacy.html">Privacy</a><a href="/terms.html">Terms</a><a href="/refund.html">Refunds</a><a href="/license.html">License</a><a href="/contact.html">Contact</a><a href="/status.html">Status</a>
+  </div>
+</div>
+<div class="foot-base">
+  <div>© <span data-year>2026</span> ABUZ8 LLC. All rights reserved.</div>
+  <div>Built local-first on real hardware · No fake claims · <a href="/sovereign.html">Sovereign AI for everyone</a></div>
+</div>
+</footer>
+
+<script>
+var $ = function(s){ return document.querySelector(s); };
+function esc(s){ return (s==null?'':String(s)).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+// Use a real translation when the shared engine has one; otherwise fall back to the
+// English default. The engine returns the key itself for untranslated keys, so guard
+// against that (these lb.* keys aren't in site-i18n.js yet — English ships correctly,
+// and translations light up automatically once added).
+function T(k, fb){ try{ if(window.ABUZ8I18N && window.ABUZ8I18N.t){ var v = window.ABUZ8I18N.t(k); if(v && v !== k) return v; } }catch(_){} return fb; }
+
+function fmtCtx(n){
+  if(!n) return '—';
+  if(n >= 1e6){ var m = n/1e6; return (Math.round(m*10)/10).toString().replace(/\.0$/,'') + 'M'; }
+  if(n >= 1000){ return Math.round(n/1000) + 'K'; }
+  return String(n);
+}
+function fmtPrice(n){
+  if(n == null) return null;
+  if(n === 0) return '$0';
+  if(n >= 1) return '$' + (Math.round(n*100)/100).toString().replace(/\.0+$/,'');
+  return '$' + (Math.round(n*1000)/1000);
+}
+function modTags(mods){
+  if(!mods || !mods.length) return '';
+  return mods.map(function(m){ return '<span class="tag mod">'+esc(m)+'</span>'; }).join('');
+}
+function specTags(d){
+  var t = '';
+  t += '<span class="tag ctx">⊟ <span class="mono">'+fmtCtx(d.ctx)+'</span> '+esc(T('lb.ctx','ctx'))+'</span>';
+  var pin = fmtPrice(d['in']), pout = fmtPrice(d.out);
+  if(pin != null) t += '<span class="tag price">$ <span class="mono">'+pin+'</span> / '+(pout!=null?pout:'—')+' <span style="color:var(--dim)">/M</span></span>';
+  t += modTags(d.mod);
+  return t;
+}
+
+/* ── Category leaders strip ── */
+function renderCats(cats){
+  if(!cats || !cats.length){ $('#cats').innerHTML=''; return; }
+  $('#cats').innerHTML = cats.map(function(c){
+    return '<div class="cat"><div class="k">'+esc(c.k)+'</div><div class="m">'+esc(c.model)+'</div><div class="d">'+esc(c.detail)+'</div></div>';
+  }).join('');
+}
+
+/* ── Ticker ── */
+function renderTicker(list, mode){
+  $('#ticker').innerHTML = list.slice(0,16).map(function(r){
+    var right = mode === 'rank' ? esc(r.org) : (r.ctx ? fmtCtx(r.ctx)+' ctx' : esc(r.org));
+    return '<span class="tick"><span class="nm">'+esc(r.name)+'</span><span class="st">'+right+'</span></span>';
+  }).join('');
+}
+
+/* ── Frontier ranking board ── */
+function renderRanked(list){
+  $('#board').innerHTML = list.map(function(r){
+    var variant = (r.liveName && r.liveName !== r.name)
+      ? '<div class="variant">live on OpenRouter as <b style="color:var(--turq-2)">'+esc(r.liveName)+'</b></div>' : '';
+    var specBadge = r.specLive
+      ? '<span class="tag spec-live">● '+esc(T('lb.liveSpec','live spec'))+'</span>'
+      : '<span class="tag spec-ed">○ '+esc(T('lb.edSpec','editorial spec'))+'</span>';
+    return '<div class="row">'
+      + '<div class="row-top">'
+        + '<div class="rank">'+r.rank+'</div>'
+        + '<div class="row-id">'
+          + '<h3>'+esc(r.name)+'<span class="tierb '+esc(r.tier)+'">'+esc(r.tier)+'</span></h3>'
+          + '<div class="org">'+esc(r.org)+'</div>'
+          + variant
+          + '<div class="leads">'+esc(r.leads)+'</div>'
+        + '</div>'
+        + '<div class="grow"><div class="v">#'+r.rank+'</div><div class="l">'+esc(T('lb.frontierRank','frontier rank'))+'</div></div>'
+      + '</div>'
+      + '<div class="bench"><span class="lead">'+esc(T('lb.headline','Headline'))+'</span>'+esc(r.bench)+'</div>'
+      + '<div class="meta">'+specTags(r)+specBadge
+        + '<span class="row-cta"><a class="src" href="'+esc(r.url)+'" target="_blank" rel="noopener">'+esc(T('lb.tryOR','↗ Try on OpenRouter'))+'</a></span>'
+      + '</div>'
+      + '</div>';
+  }).join('');
+}
+
+/* ── Live OpenRouter board ── */
+function renderLive(list){
+  if(!list.length){ $('#board').innerHTML = '<p style="color:var(--dim);font-style:italic;padding:24px 0">No live models returned. Refresh in a moment.</p>'; return; }
+  $('#board').innerHTML = list.map(function(r, i){
+    var when = r.created ? new Date(r.created*1000).toLocaleDateString('en-US',{year:'numeric',month:'short',day:'numeric'}) : '';
+    var fresh = r.created && (Date.now()/1000 - r.created) < 60*86400;
+    var newBadge = fresh ? '<span class="tierb value">NEW</span>' : '';
+    return '<div class="row">'
+      + '<div class="row-top">'
+        + '<div class="rank">'+(i+1)+'</div>'
+        + '<div class="row-id">'
+          + '<h3>'+esc(r.name)+newBadge+'</h3>'
+          + '<div class="org">'+esc(r.org)+(r.id?' · '+esc(r.id):'')+'</div>'
+          + (when ? '<div class="variant">added '+esc(when)+(r.cutoff?' · knowledge cutoff '+esc(r.cutoff):'')+'</div>' : '')
+        + '</div>'
+        + '<div class="grow"><div class="v">'+fmtCtx(r.ctx)+'</div><div class="l">'+esc(T('lb.context','context'))+'</div></div>'
+      + '</div>'
+      + '<div class="meta">'+specTags(r)
+        + '<span class="row-cta"><a class="src" href="'+esc(r.url)+'" target="_blank" rel="noopener">'+esc(T('lb.tryOR','↗ Try on OpenRouter'))+'</a></span>'
+      + '</div>'
+      + '</div>';
+  }).join('');
+}
+
+var DATA = { ranked: [], live: [], categories: [] }, view = 'rank', liveLimit = 30, isLive = true;
+
+function paint(){
+  var rank = view === 'rank';
+  $('#tab-rank').classList.toggle('active', rank);
+  $('#tab-live').classList.toggle('active', !rank);
+  $('#tab-rank').setAttribute('aria-selected', rank?'true':'false');
+  $('#tab-live').setAttribute('aria-selected', rank?'false':'true');
+  $('#count').style.display = rank ? 'none' : 'inline-flex';
+  $('#live-label').textContent = (isLive ? 'Live · ' : 'Last-known · ') + (rank ? 'frontier ranking, sourced' : 'models on OpenRouter, newest first');
+  if(rank){ renderTicker(DATA.ranked, 'rank'); renderRanked(DATA.ranked); }
+  else { var slice = DATA.live.slice(0, liveLimit); renderTicker(slice, 'live'); renderLive(slice); }
+}
+$('#tab-rank').addEventListener('click', function(){ view='rank'; paint(); });
+$('#tab-live').addEventListener('click', function(){ view='live'; paint(); });
+document.querySelectorAll('#count .seg button').forEach(function(b){
+  b.addEventListener('click', function(){
+    document.querySelectorAll('#count .seg button').forEach(function(x){ x.classList.remove('active'); });
+    b.classList.add('active'); liveLimit = parseInt(b.getAttribute('data-n'),10) || 30; paint();
+  });
+});
+document.addEventListener('abuz8:i18n', function(){ renderCats(DATA.categories); paint(); });
+
+async function load(){
+  try{
+    var r = await fetch('/api/ai-models?limit=50', { cache:'no-store' });
+    var j = await r.json();
+    if(!j || !j.ranked || !j.ranked.length) throw new Error('empty');
+    isLive = j.source !== 'snapshot';
+    DATA.ranked = j.ranked;
+    DATA.live = j.live || [];
+    DATA.categories = j.categories || [];
+    renderCats(DATA.categories);
+    paint();
+    $('#reviewed').textContent = j.reviewed || '2026-05-27';
+    $('#livecount').textContent = (j.liveCount || DATA.live.length || '—');
+    $('#ticker-updated').textContent = 'updated ' + new Date(j.ts).toLocaleTimeString();
+    if(!isLive){ $('#stale').style.display = 'flex'; }
+  }catch(e){
+    $('#board').innerHTML = '<p style="color:var(--dim);font-style:italic;padding:24px 0">Couldn\'t reach the model feed right now. Refresh in a moment.</p>';
+    $('#ticker-updated').textContent = 'unavailable';
+  }
+}
+load();
+
+/* Early-access capture → existing /api/waitlist (D1), segmented product:"frontier-weekly". */
+(function(){
+  var f = $('#waitForm'); if(!f) return;
+  f.addEventListener('submit', async function(e){
+    e.preventDefault();
+    var email = ($('#waitEmail').value || '').trim();
+    var msg = $('#waitMsg'), btn = $('#waitBtn');
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ msg.className='msg err'; msg.textContent='Enter a valid email.'; return; }
+    btn.disabled = true; msg.className='msg'; msg.textContent='Adding you…';
+    try{
+      var r = await fetch('/api/waitlist', {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ email: email, product: 'frontier-weekly', ts: Date.now(), referrer: document.referrer || null })
+      });
+      if(!r.ok) throw new Error('status '+r.status);
+      msg.className='msg ok'; msg.textContent='You’re on the list. We’ll email you when the weekly frontier drop goes live.';
+      try{ gtag('event','waitlist_join',{product:'frontier-weekly'}); }catch(_){}
+      f.reset();
+    }catch(err){
+      msg.className='msg err'; msg.textContent='Something glitched — please try again in a moment.';
+    }finally{ btn.disabled = false; }
+  });
+})();
+
+/* Page-level share. */
+(function(){
+  var pageUrl = 'https://abuz8ai.com/models';
+  var pageText = 'The frontier AI leaderboard — who is actually leading the race to AGI, with real live pricing & context:';
+  var x = $('#share-x'), li = $('#share-li'), cp = $('#share-copy');
+  if(x) x.href = 'https://twitter.com/intent/tweet?text=' + encodeURIComponent(pageText) + '&url=' + encodeURIComponent(pageUrl);
+  if(li) li.href = 'https://www.linkedin.com/sharing/share-offsite/?url=' + encodeURIComponent(pageUrl);
+  if(cp) cp.addEventListener('click', async function(){
+    try{ await navigator.clipboard.writeText(pageUrl); var t = cp.textContent; cp.textContent = 'Copied!'; setTimeout(function(){ cp.textContent = t; }, 1500); }
+    catch(_){ window.prompt('Copy this link:', pageUrl); }
+  });
+})();
+</script>
+<script src="/assets/js/site-i18n.js" defer></script>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+<script src="/assets/js/abuz8-ui.js" defer></script>
+<script src="/assets/js/abuz8-onboard.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>

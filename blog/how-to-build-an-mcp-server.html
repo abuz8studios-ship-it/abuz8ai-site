@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<!-- 2026-07-09 — Weekly content: how to build an mcp server -->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How to Build an MCP Server: Connect Any Tool to Your AI Agent | ABUZ8</title>
+<meta name="description" content="A practical guide to building an MCP server from scratch. Connect any API, database, or service to your AI agent using the Model Context Protocol.">
+<meta name="keywords" content="how to build an mcp server, mcp server tutorial, model context protocol, mcp tools, ai agent tools, mcp python, mcp typescript">
+<link rel="canonical" href="https://abuz8ai.com/blog/how-to-build-an-mcp-server">
+<meta property="og:title" content="How to Build an MCP Server: Connect Any Tool to Your AI Agent">
+<meta property="og:type" content="article">
+<link rel="stylesheet" href="/blog/_blog-base.css">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@300;400;600;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
+<style>
+:root{
+  --lapis:#0a1628; --lapis-mid:#EEF3F8; --lapis-light:#E3EBF3;
+  --card:#0d1a30; --border:#D6E0EC;
+  --text:#e8e4d8; --cream:#1F2D3D; --dim:#5A6B7D;
+  --gold:#5fa8e8; --gold-light:#255F95; --gold-dim:#7DA3C8;
+  --turq:#5fa8e8; --turq-light:#5fa8e8; --turq-bright:#255F95;
+  --primary:#5fa8e8;
+}
+body{background:var(--lapis);}
+code{background:#EEF3F8;color:#255F95;}
+.callout.cta{background:linear-gradient(135deg,#EAF2FA,#0a1628);}
+</style>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","headline":"How to Build an MCP Server: Connect Any Tool to Your AI Agent","datePublished":"2026-07-09","author":{"@type":"Organization","name":"ABUZ8 AI"}}
+</script>
+</head>
+<body>
+<div class="container">
+  <a href="/blog/" class="back">&larr; ABUZ8 BLOG</a>
+  <h1>How to Build an MCP Server: Connect Any Tool to Your AI Agent</h1>
+  <div class="meta-row"><span>DEVELOPER GUIDE</span><span class="dot"></span><span>JULY 9, 2026</span><span class="dot"></span><span>8 MIN READ</span></div>
+
+  <p>If you want your AI agent to do more than talk — send emails, query databases, manage files, call APIs — it needs tools. The <strong>Model Context Protocol (MCP)</strong> is how modern AI agents connect to those tools, and building an MCP server is how you expose your own services to any agent that speaks the protocol. This guide walks you through building one from scratch.</p>
+
+  <h2>What MCP actually is (no abstraction layer)</h2>
+  <p>MCP is a standard for connecting AI models to external tools and data sources. Think of it as a contract: the agent asks "what tools do you have?" and your server responds with a list of callable functions, each with a name, description, and parameter schema. The agent picks a tool, sends the parameters, your server executes the work, and returns the result. That's it. No magic — just a well-defined JSON-RPC interface over stdio or HTTP. For the broader concept, see <a href="/blog/mcp-model-context-protocol-explained.html" class="in">MCP explained</a>.</p>
+
+  <h2>The simplest MCP server (Python, 30 lines)</h2>
+  <p>Using the <code>fastmcp</code> library, a working MCP server that exposes a single tool looks like this:</p>
+  <div class="callout">
+    <p>Install: <code>pip install fastmcp</code></p>
+    <p>Create <code>server.py</code> with a function decorated <code>@mcp.tool()</code>. The function's docstring becomes the tool description. Type hints become the parameter schema. Return value becomes the tool result. Run with <code>python server.py</code> or register it in your agent's MCP config.</p>
+  </div>
+  <p>The key insight: the AI reads your tool's description and parameter schema to decide when and how to call it. Write the description like you're explaining the tool to a smart colleague — what it does, when to use it, what the parameters mean. The better the description, the more reliably the agent uses it correctly.</p>
+
+  <h2>When to use MCP vs. direct API calls</h2>
+  <p>If your agent framework already has a function-calling mechanism and your tools are one-off scripts, you might not need MCP. MCP shines when you want portability — the same tool server works with Claude Desktop, QADIR OS, Cursor, or any MCP-compatible client without rewriting the integration. It also shines when you want to share tools across agents: build the server once, connect it to multiple agents. See <a href="/blog/mcp-vs-function-calling.html" class="in">MCP vs function calling</a> for the technical tradeoffs.</p>
+
+  <h2>Real-world MCP server patterns</h2>
+  <p><strong>Database query tool:</strong> Expose a <code>query_database</code> tool that takes a SQL string (read-only), runs it against your Postgres/SQLite/D1, and returns the results as JSON. Your agent can now answer questions about your data without you writing dashboards.</p>
+  <p><strong>File operations:</strong> Expose <code>read_file</code>, <code>write_file</code>, <code>list_directory</code>. Your agent can now manage files on disk — organize downloads, clean up directories, process documents.</p>
+  <p><strong>API wrapper:</strong> Expose your SaaS API's endpoints as MCP tools. Your agent calls <code>create_invoice</code> with the customer name and amount instead of you clicking through a UI. This is how QADIR OS connects to 100+ services — each connection is an MCP server that wraps the service's API.</p>
+  <p><strong>Hardware bridge:</strong> Expose <code>take_screenshot</code>, <code>click</code>, <code>type_text</code>. Your agent can now operate your desktop. This is the pattern behind <a href="/blog/ai-computer-use-agent.html" class="in">computer-use agents</a>.</p>
+
+  <h2>The tool description is the product</h2>
+  <p>Most MCP servers fail not because the code is wrong, but because the tool descriptions are poor. The AI model is reading your description to decide: (a) is this the right tool for the user's request, and (b) what parameters to pass. If your description says "does stuff with files" the model will guess wrong half the time. If it says "Reads the contents of a file at the given absolute path. Returns the file text. Use when the user asks to see, check, or read a specific file" the model nails it every time.</p>
+  <p>Spend 80% of your effort on descriptions and parameter docs. The code itself is usually trivial — it's a wrapper around something that already works.</p>
+
+  <h2>Security: the permission model matters</h2>
+  <p>An MCP server runs with whatever permissions your process has. If it can delete files, and you expose a <code>delete_file</code> tool, the AI can delete files. This is powerful and dangerous. Best practices: run read-only tools by default, require explicit confirmation for destructive operations, sandbox file access to specific directories, and log every tool call. QADIR OS enforces this through a permission gate (Mercury) that checks every tool call against a budget and authorization policy before execution.</p>
+
+  <h2>Building in TypeScript</h2>
+  <p>The official <code>@modelcontextprotocol/sdk</code> package gives you the same pattern in TypeScript. Define tools as objects with name, description, and an input schema (JSON Schema), plus a handler function. The SDK handles the JSON-RPC transport. TypeScript's type system helps catch schema mismatches at compile time, which matters when you're building tools that handle user data.</p>
+
+  <h2>Where ABUZ8 fits</h2>
+  <p>QADIR OS ships with 192+ MCP tools pre-wired — ComfyUI for media, Stripe for payments, Google Workspace for productivity, Cloudflare for infrastructure, and dozens more. You can add your own MCP servers to extend it. The architecture is designed so every new tool you build is immediately available to every agent persona in the system.</p>
+
+  <div class="callout cta">
+    <p><strong>ABUZ8 builds QADIR OS</strong> — 192+ tools already connected. Add your own MCP servers, or use the ones we've built. <a href="/tools/" class="in">Try 164+ free AI tools</a>, or <a href="/" class="in">join early access</a> — no card required.</p>
+  </div>
+
+  <div class="foot">Built by <a href="/">ABUZ8 LLC</a> — we're building QADIR OS, the sovereign agentic operating system.</div>
+</div>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+<script src="/blog/_blog-shared.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>

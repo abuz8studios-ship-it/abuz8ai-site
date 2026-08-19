@@ -1,0 +1,27 @@
+Wire Live Studio into ai-background-remover-pro (RemBG); verify+reject QR Art ControlNet path
+
+Extends the 2026-08-11 shared ComfyStudio layer (_comfy-studio.js) to a 5th page.
+
+- ai-background-remover-pro.html: RemBGSession+ -> ImageRemoveBackground+ ->
+  SaveImage, deterministic (hideSampler), needsImage. Live-verified 2x against
+  the running engine (127.0.0.1:8188): 3.0s-41.0s, real PNG output each run.
+
+- studio_configs_2026_08_11.py: added background-remover config; added a QR Art
+  config, then DELIBERATELY EXCLUDED it after live verification. All 4 named
+  ControlNet models on this box (OpenPoseXL2, canny_sdxl,
+  control-lora-openposeXL2, depth_sdxl) are SDXL-only; the 13 installed
+  checkpoints are SD1.5/Flux/video/audio/3D with zero SDXL base models.
+  Reproduced the failure 2/2 times: KSampler raises "y is None, did you try
+  using a controlnet for SDXL on SD1?". Left commented out in the config with
+  the exact fix (install an SDXL checkpoint) rather than shipping a live
+  studio that fails for every visitor.
+
+- ai-qr-art-pro.html: injected then reverted from its own .bak in the same run
+  once the live test failed -- byte-identical to before this run.
+
+- inject_studio_2026_08_11.py: no logic changes, reused as-is (safety rules
+  already covered redirect/canonical/Buy-Now refusal).
+
+New verify/probe scripts added under scripts/ for the node-compatibility
+check and the live 2-workflow smoke test; kept for the next shift to re-run
+once an SDXL checkpoint lands.

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How to Set Up an AI Agent (a Realistic First Afternoon) | ABUZ8</title>
+<meta name="description" content="How to set up an AI agent step by step: pick the model, give it tools and data, set permissions, test on a small task, then let it run. A practical first afternoon.">
+<meta name="keywords" content="how to set up an ai agent, set up ai agent, ai agent setup guide, get started with ai agents">
+<link rel="canonical" href="https://abuz8ai.com/blog/how-to-set-up-an-ai-agent">
+<meta property="og:title" content="How to Set Up an AI Agent (a Realistic First Afternoon)">
+<meta property="og:type" content="article">
+<link rel="stylesheet" href="/blog/_blog-base.css">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@300;400;600;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
+<style>
+:root{
+  --lapis:#F8FAFC; --lapis-mid:#EEF3F8; --lapis-light:#E3EBF3;
+  --card:#FFFFFF; --border:#D7E0EA;
+  --cream:#1F3A5F; --ivory:#16324F; --text:#2C3E50; --dim:#5A6B7C;
+  --gold:#1F5B94; --gold-light:#12866E; --gold-dim:#7DA3C8;
+  --turq:#0E7C63; --turq-light:#1F5B94; --turq-bright:#12866E;
+  --primary:#2E75B6;
+}
+code{background:#EEF3F8;color:#1F5B94;font-family:'JetBrains Mono',monospace;font-size:0.85em;padding:0.1em 0.35em;border-radius:4px;}
+.callout.cta{background:#EEF3F8;border:1px solid #2E75B6;border-radius:12px;padding:22px 24px;margin:36px 0 10px;}
+.callout.cta p{margin:0;color:#2C3E50;}
+.foot{color:#5A6B7C;font-size:13px;margin-top:40px;border-top:1px solid #D7E0EA;padding-top:18px;}
+.foot a{color:#1F5B94;}
+</style>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","headline":"How to Set Up an AI Agent (a Realistic First Afternoon)","datePublished":"2026-07-30","author":{"@type":"Organization","name":"ABUZ8 AI"}}
+</script>
+</head>
+<body>
+<div class="container">
+  <a href="/blog/" class="back">&larr; ABUZ8 BLOG</a>
+  <h1>How to Set Up an AI Agent (a Realistic First Afternoon)</h1>
+  <div class="meta-row"><span>AI AGENTS 101</span><span class="dot"></span><span>JULY 30, 2026</span><span class="dot"></span><span>7 MIN READ</span></div>
+
+  <p><strong>How to set up an AI agent</strong> is less about installation and more about five decisions, made in order: which model runs it, what tools it can use, what data it can see, what it's allowed to do without asking, and how you'll know it worked. Get those right and the setup is genuinely an afternoon, not a project. Get them backwards — turn it loose before you've tested it on one small task — and you spend a week untangling something you could have caught in ten minutes. This is the practical version: the order to do things in, and what "done" looks like at each step.</p>
+
+  <h2>Step 1: Decide where it runs before you pick anything else</h2>
+  <p>The first fork isn't which model — it's whose computer. A hosted agent lives on a vendor's servers: fastest to start, but your data leaves your machine and your automation runs on their terms. A <a href="/blog/desktop-ai-agent" class="in">local-first agent</a> runs on your own hardware: a little more setup, but your files and decisions stay put, and it keeps working if the cloud doesn't. Neither is universally right. If the task touches sensitive data or you don't want a vendor able to switch you off, start local. If it's low-stakes and you want to be running in five minutes, hosted is fine. Make this call first, because it constrains every choice after it.</p>
+
+  <h2>Step 2: Pick the model — the agent's decision-maker</h2>
+  <p>The model is the brain that reads the situation and decides the next move. You don't need the biggest one; you need one that's reliable at <em>your</em> task. For most first agents a mid-tier model is plenty, and the smart setups keep options open by routing to different models for different jobs rather than betting everything on one. If you're weighing this, we walked through it in <a href="/blog/how-to-choose-an-llm-2026" class="in">how to choose an LLM</a>. The one thing that matters most on day one: pick a model whose availability and pricing you can live with, because the agent will call it many times per task, not once.</p>
+
+  <h2>Step 3: Give it tools — the hands</h2>
+  <p>A model that can only talk is a chatbot. An agent gets <em>tools</em>: read a file, search the web, send an email, run a query, move something. Start narrow. Give it the two or three tools the task actually needs and nothing else. A common first mistake is handing an agent every capability at once — more surface area to go wrong and harder to reason about. The agent uses tools inside a loop (decide, act, observe, decide again), which is what separates it from a one-shot prompt; if that loop is new to you, <a href="/blog/agentic-loop-explained" class="in">the agentic loop explained</a> covers it plainly.</p>
+
+  <h2>Step 4: Connect its data — and keep it in place</h2>
+  <p>An agent is only as useful as what it can see. Point it at the folder, the inbox, the knowledge base it needs to do the job. The setup question that matters here is <em>where that data lives during the work</em>. Tools that read your files in place, on your machine, never copy them anywhere — versus hosted setups that ingest your data onto their servers first. For anything private, in-place beats ingest. Don't over-connect: give the agent the data for this task, not your entire drive. Scoping data access is half of scoping the agent.</p>
+
+  <h2>Step 5: Set permissions before you set it loose</h2>
+  <p>This is the step people skip and regret. Decide what the agent may do on its own and what needs a human yes. Reading and drafting: usually safe to automate. Sending, paying, deleting, posting publicly: gate those behind a confirm, at least until you trust it. A good agent setup has a permission layer built in, so "ask before anything irreversible" is a setting, not a hope. We made the case for this in <a href="/blog/mcp-server-security-checklist" class="in">the MCP server security checklist</a> — the short version is that an agent you can't rein in isn't ready for real work.</p>
+
+  <h2>Step 6: Test on one small, real task</h2>
+  <p>Before you trust it with anything that matters, run it on a single, low-stakes, real example and watch every step. Not a toy prompt — an actual instance of the job, small enough that you can check the output by hand. You're looking for two things: did it do the right thing, and did it do it the way you'd want? This is where you catch the wrong tool call, the too-eager action, the misread instruction — cheaply, before it's automated across a hundred cases. We go deeper on this in the <a href="/blog/ai-agent-testing-guide" class="in">AI agent testing guide</a>, but even an informal watch-it-once pass will save you.</p>
+
+  <h2>Step 7: Watch the cost as it scales</h2>
+  <p>An agent takes many steps per task, and on a metered model every step can cost tokens. The setup surprise isn't the first run — it's pointing a chatty agent at a high-volume job and watching the bill outrun the labor it replaced. Before you scale, know how your agent is priced and put a ceiling on it. The <a href="/blog/ai-agent-cost-control-guide" class="in">AI agent cost control guide</a> has the specifics; running a local model for the bulk work removes the meter entirely, which is one reason sovereign setups scale calmly.</p>
+
+  <h2>Your first afternoon, in order</h2>
+  <p>Put together, the setup is: decide local vs hosted, pick a workable model, give it a few tools, connect just the data it needs, set permissions with a confirm on anything irreversible, test on one real small task while you watch, then check the cost before you scale. Each step has a clear "done." None of it requires writing code if your agent platform lets you configure in plain language. If you want the checklist form to work through, the <a href="/blog/ai-agent-onboarding-checklist" class="in">AI agent onboarding checklist</a> lays out the same path as tick-boxes — and the <a href="/blog/ai-agent-common-mistakes" class="in">common mistakes</a> post is the list of what to not do while you're at it.</p>
+
+  <div class="callout cta">
+    <p><strong>QADIR OS is built to make this afternoon short.</strong> Configure your agent in plain English, point it at your files in place, set the permission gate, and test on your machine — model, loop, tools, and memory all local-first, your data staying with you. <a href="/" class="in">Join QADIR OS early access</a>.</p>
+  </div>
+  <div class="foot">Built by <a href="/">ABUZ8 LLC</a> — we're building QADIR OS, the sovereign agentic operating system.</div>
+</div>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+<script src="/blog/_blog-shared.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>

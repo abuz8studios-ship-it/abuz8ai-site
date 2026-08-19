@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en" id="html-root">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<title>ABUZ8 Workforce Configurator — Build Your Sovereign AI Stack</title>
+<meta name="description" content="Interactive 3D configurator. Toggle each specialist agent, see the workforce assemble, and get an instant price on a workforce built for your operation." />
+<link rel="canonical" href="https://abuz8ai.com/configurator" />
+<meta property="og:type" content="website" />
+<meta property="og:title" content="ABUZ8 Workforce Configurator" />
+<meta property="og:description" content="Build your sovereign AI workforce, live in 3D." />
+<meta property="og:url" content="https://abuz8ai.com/configurator" />
+<meta name="theme-color" content="#05070d" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  html,body{background:#05070d;color:#e8e6e0;font-family:'Inter',system-ui,sans-serif;-webkit-font-smoothing:antialiased;overflow:hidden;height:100vh}
+  a{color:inherit;text-decoration:none}
+  ::selection{background:#c8a55c;color:#05070d}
+  .mono{font-family:'JetBrains Mono',monospace;font-size:.7rem;letter-spacing:.22em;text-transform:uppercase;color:#8a8577}
+  .display{font-family:'Fraunces',serif;font-weight:400;letter-spacing:-.025em;line-height:.95}
+
+  /* NAV */
+  nav.top{position:fixed;top:0;left:0;right:0;z-index:30;display:flex;justify-content:space-between;align-items:center;padding:20px 32px;background:linear-gradient(180deg,rgba(5,7,13,.85),rgba(5,7,13,.2));backdrop-filter:blur(10px)}
+  nav.top .brand{font-family:'Fraunces',serif;font-size:1.15rem}
+  nav.top .brand em{font-style:italic;color:#c8a55c}
+  nav.top ul{display:flex;gap:28px;list-style:none;font-size:.75rem;letter-spacing:.18em;text-transform:uppercase}
+  nav.top ul a{opacity:.7;transition:opacity .3s} nav.top ul a:hover{opacity:1}
+  nav.top .cta{padding:9px 20px;border:1px solid #c8a55c;color:#c8a55c;border-radius:999px;font-size:.68rem;letter-spacing:.2em;text-transform:uppercase;transition:.3s}
+  nav.top .cta:hover{background:#c8a55c;color:#05070d}
+  @media (max-width:980px){nav.top ul{display:none}nav.top{padding:14px 18px}}
+
+  /* CANVAS */
+  #webgl{position:fixed;inset:0;z-index:1}
+
+  /* LEFT PANEL — agent toggles */
+  .panel.left{position:fixed;left:32px;top:50%;transform:translateY(-50%);z-index:10;width:340px;max-width:calc(100vw - 64px)}
+  .panel.left .head{margin-bottom:20px}
+  .panel.left h1{font-family:'Fraunces',serif;font-size:2.6rem;color:#f4f2ec;line-height:.95;margin:8px 0 10px;font-weight:400}
+  .panel.left h1 em{font-style:italic;color:#c8a55c}
+  .panel.left p{color:#a8a495;font-size:.9rem;line-height:1.5;max-width:320px}
+
+  .agents{margin-top:22px;display:flex;flex-direction:column;gap:8px}
+  .agent{display:flex;align-items:center;gap:14px;padding:12px 14px;border:1px solid rgba(255,255,255,.08);border-radius:14px;background:rgba(20,22,32,.65);backdrop-filter:blur(20px);cursor:pointer;transition:.3s;position:relative;overflow:hidden}
+  .agent:hover{border-color:rgba(200,165,92,.35);transform:translateX(4px)}
+  .agent.on{border-color:#c8a55c;background:linear-gradient(90deg,rgba(200,165,92,.15),rgba(20,22,32,.65))}
+  .agent .dot{width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,.15);flex:0 0 10px;transition:.3s;position:relative}
+  .agent.on .dot{background:#c8a55c;box-shadow:0 0 14px #c8a55c}
+  .agent .n{font-family:'JetBrains Mono',monospace;font-size:.62rem;letter-spacing:.2em;color:#8a8577;text-transform:uppercase}
+  .agent .t{font-family:'Fraunces',serif;font-size:1.15rem;color:#f4f2ec;margin-top:2px;line-height:1.1}
+  .agent .d{font-size:.75rem;color:#a8a495;margin-top:3px;line-height:1.35}
+  .agent .body{flex:1;min-width:0}
+  .agent .toggle{width:38px;height:22px;border-radius:999px;background:rgba(255,255,255,.08);position:relative;transition:.3s;flex:0 0 38px}
+  .agent .toggle::after{content:'';position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:#f4f2ec;transition:.3s}
+  .agent.on .toggle{background:#c8a55c}
+  .agent.on .toggle::after{transform:translateX(16px)}
+
+  /* RIGHT PANEL — pricing */
+  .panel.right{position:fixed;right:32px;top:50%;transform:translateY(-50%);z-index:10;width:340px;max-width:calc(100vw - 64px)}
+  .price-card{padding:26px 26px 24px;border:1px solid rgba(200,165,92,.35);border-radius:20px;background:linear-gradient(180deg,rgba(200,165,92,.10),rgba(18,20,30,.75));backdrop-filter:blur(20px)}
+  .price-card .lbl{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+  .price-card .lbl .k{font-family:'JetBrains Mono',monospace;font-size:.62rem;letter-spacing:.24em;color:#c8a55c;text-transform:uppercase}
+  .price-card .lbl .badge{font-family:'JetBrains Mono',monospace;font-size:.6rem;letter-spacing:.2em;color:#4dff9a;padding:3px 8px;border:1px solid rgba(77,255,154,.3);border-radius:999px;background:rgba(77,255,154,.08);text-transform:uppercase}
+  .price-card .tier{font-family:'Fraunces',serif;font-size:2.6rem;color:#f4f2ec;line-height:1;font-weight:400;margin-bottom:6px}
+  .price-card .tier em{font-style:italic;color:#c8a55c}
+  .price-card .p{font-family:'Fraunces',serif;font-size:3.6rem;color:#c8a55c;font-style:italic;line-height:1;margin:14px 0 4px;display:flex;align-items:flex-start;gap:2px}
+  .price-card .p sup{font-size:1.1rem;color:#a8a495;top:.35em;position:relative;font-family:'Inter',sans-serif;font-style:normal}
+  .price-card .p small{font-size:.85rem;color:#8a8577;align-self:flex-end;padding-bottom:9px;font-family:'Inter',sans-serif;font-style:normal;font-weight:400}
+  .price-card .why{font-size:.82rem;color:#a8a495;line-height:1.55;margin:14px 0 20px;padding:10px 12px;border-left:2px solid rgba(200,165,92,.4);background:rgba(200,165,92,.04)}
+
+  .stack{margin-bottom:22px}
+  .stack .row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px dashed rgba(255,255,255,.06);font-size:.82rem;color:#c8c4b5}
+  .stack .row:last-child{border:0}
+  .stack .row.total{padding-top:12px;border-top:1px solid rgba(200,165,92,.25);border-bottom:0;font-family:'JetBrains Mono',monospace;font-size:.72rem;letter-spacing:.16em;color:#c8a55c;text-transform:uppercase}
+  .stack .row.total .v{color:#f4f2ec;font-size:1rem;letter-spacing:0}
+
+  .price-card .btn{display:block;text-align:center;padding:15px 22px;background:#c8a55c;color:#05070d;border-radius:999px;font-family:'JetBrains Mono',monospace;font-size:.7rem;letter-spacing:.22em;text-transform:uppercase;transition:.3s;border:1px solid #c8a55c}
+  .price-card .btn:hover{background:transparent;color:#c8a55c}
+  .price-card .compare{display:block;text-align:center;margin-top:10px;font-family:'JetBrains Mono',monospace;font-size:.62rem;letter-spacing:.2em;color:#8a8577;text-transform:uppercase;transition:.3s}
+  .price-card .compare:hover{color:#c8a55c}
+
+  /* MOBILE */
+  @media (max-width:1100px){
+    html,body{overflow:auto;height:auto}
+    #webgl{position:fixed;height:60vh;bottom:auto;top:60px}
+    .panel.left{position:relative;left:auto;top:auto;transform:none;width:100%;max-width:none;padding:calc(60vh + 80px) 20px 0}
+    .panel.right{position:relative;right:auto;top:auto;transform:none;width:100%;max-width:none;padding:20px 20px 60px}
+  }
+
+  /* SPIN HINT */
+  .hint{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:5;font-family:'JetBrains Mono',monospace;font-size:.62rem;letter-spacing:.24em;color:#5f5c50;text-transform:uppercase;display:flex;align-items:center;gap:10px}
+  .hint::before{content:'⟳';color:#c8a55c;animation:spin 4s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  @media (max-width:1100px){.hint{position:relative;bottom:auto;left:auto;transform:none;justify-content:center;margin-top:12px}}
+</style>
+</head>
+<body>
+
+<nav class="top">
+  <a class="brand" href="/">ABUZ8<em>.ai</em></a>
+  <ul>
+    <li><a href="/experience">Experience</a></li>
+    <li><a href="/configurator" style="color:#c8a55c">Configurator</a></li>
+    <li><a href="/shed">The Shed</a></li>
+    <li><a href="/pricing">Pricing</a></li>
+  </ul>
+  <a class="cta" href="/pricing">See plans →</a>
+</nav>
+
+<canvas id="webgl"></canvas>
+
+<aside class="panel left">
+  <div class="head">
+    <div class="mono">Workforce configurator</div>
+    <h1 class="display">Build your <em>sovereign</em> stack.</h1>
+    <p>Toggle each specialist agent. The 3D rig assembles live. The price updates in real-time.</p>
+  </div>
+
+  <div class="agents" id="agents">
+    <div class="agent on" data-key="qadir">
+      <div class="dot"></div>
+      <div class="body">
+        <div class="n">01 · Core</div>
+        <div class="t">Qadir</div>
+        <div class="d">The operator. Files, code, deploys, audits.</div>
+      </div>
+      <div class="toggle"></div>
+    </div>
+    <div class="agent on" data-key="ornith">
+      <div class="dot"></div>
+      <div class="body">
+        <div class="n">02 · Reasoner</div>
+        <div class="t">Ornith 35B</div>
+        <div class="d">Local heavy-context planner. Runs on your GPU.</div>
+      </div>
+      <div class="toggle"></div>
+    </div>
+    <div class="agent on" data-key="zait">
+      <div class="dot"></div>
+      <div class="body">
+        <div class="n">03 · Interface</div>
+        <div class="t">Zait</div>
+        <div class="d">Desktop + CLI. Voice, text, files, screen.</div>
+      </div>
+      <div class="toggle"></div>
+    </div>
+    <div class="agent" data-key="comfy">
+      <div class="dot"></div>
+      <div class="body">
+        <div class="n">04 · Studio</div>
+        <div class="t">Comfy Media</div>
+        <div class="d">Local image, video, voice on your GPU.</div>
+      </div>
+      <div class="toggle"></div>
+    </div>
+    <div class="agent" data-key="chatter">
+      <div class="dot"></div>
+      <div class="body">
+        <div class="n">05 · Voice</div>
+        <div class="t">Chatterbox</div>
+        <div class="d">Real-time TTS + STT on-device.</div>
+      </div>
+      <div class="toggle"></div>
+    </div>
+    <div class="agent" data-key="ledger">
+      <div class="dot"></div>
+      <div class="body">
+        <div class="n">06 · Memory</div>
+        <div class="t">The Ledger</div>
+        <div class="d">SHA-256 identity. One timeline for everything.</div>
+      </div>
+      <div class="toggle"></div>
+    </div>
+  </div>
+</aside>
+
+<aside class="panel right">
+  <div class="price-card">
+    <div class="lbl"><div class="k">Recommended plan</div><div class="badge" id="badge">Live</div></div>
+    <div class="tier" id="tier"><em>Community</em></div>
+    <div class="p" id="price"><sup>$</sup><span id="pv">0</span><small id="ps">/forever</small></div>
+    <div class="why" id="why">Three core agents. Free forever, single machine. Upgrade the moment you need more.</div>
+
+    <div class="stack">
+      <div class="row"><span id="pillCount">3 agents</span><span id="scale">1 machine</span></div>
+      <div class="row"><span>Support</span><span id="support">Community</span></div>
+      <div class="row"><span>Commercial use</span><span id="lic">—</span></div>
+      <div class="row total"><span>Est. monthly</span><span class="v" id="totalM">$0</span></div>
+    </div>
+
+    <a class="btn" id="cta" href="/downloads">Download free →</a>
+    <a class="compare" href="/pricing">Compare all plans →</a>
+  </div>
+</aside>
+
+<div class="hint">Drag to rotate · click a pod</div>
+
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://unpkg.com/three@0.161.0/build/three.module.js",
+    "three/addons/": "https://unpkg.com/three@0.161.0/examples/jsm/"
+  }
+}
+</script>
+
+<script type="module">
+import * as THREE from 'three';
+import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+
+const canvas = document.getElementById('webgl');
+const renderer = new THREE.WebGLRenderer({ canvas, antialias:true, powerPreference:'high-performance' });
+renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+renderer.setSize(innerWidth, innerHeight);
+renderer.setClearColor(0x05070d, 1);
+
+const scene = new THREE.Scene();
+scene.fog = new THREE.FogExp2(0x05070d, 0.055);
+const camera = new THREE.PerspectiveCamera(42, innerWidth/innerHeight, 0.1, 100);
+camera.position.set(0, 1.4, 8.2);
+
+// lights
+scene.add(new THREE.AmbientLight(0x223344, 0.4));
+const k = new THREE.DirectionalLight(0xffcf88, 1.2); k.position.set(4,6,5); scene.add(k);
+const f = new THREE.DirectionalLight(0x88aaff, 0.6); f.position.set(-5,-2,-4); scene.add(f);
+
+// central chassis — layered rings + inner shard
+const chassis = new THREE.Group();
+scene.add(chassis);
+const shard = new THREE.Mesh(
+  new THREE.IcosahedronGeometry(0.9, 1),
+  new THREE.MeshStandardMaterial({ color:0xc8a55c, emissive:0xc8a55c, emissiveIntensity:0.55, roughness:0.25, metalness:0.9, flatShading:true })
+);
+chassis.add(shard);
+const halo = new THREE.Mesh(
+  new THREE.TorusGeometry(1.7, 0.014, 16, 200),
+  new THREE.MeshBasicMaterial({ color:0xc8a55c, transparent:true, opacity:0.4 })
+);
+halo.rotation.x = Math.PI/2; chassis.add(halo);
+const halo2 = new THREE.Mesh(
+  new THREE.TorusGeometry(2.1, 0.008, 12, 160),
+  new THREE.MeshBasicMaterial({ color:0xc8a55c, transparent:true, opacity:0.22 })
+);
+halo2.rotation.x = Math.PI/2; halo2.rotation.z = 0.4; chassis.add(halo2);
+
+// agent pods (6, orbiting)
+const AGENTS = [
+  { key:'qadir',   color:0xc8a55c, shape:'cube' },
+  { key:'ornith',  color:0xa5d8ff, shape:'oct'  },
+  { key:'zait',    color:0xffd88c, shape:'sphere' },
+  { key:'comfy',   color:0xff9ccc, shape:'cone' },
+  { key:'chatter', color:0x8affc1, shape:'tetra' },
+  { key:'ledger',  color:0xc0aaff, shape:'ring' },
+];
+const pods = {};
+const podGroup = new THREE.Group(); scene.add(podGroup);
+AGENTS.forEach((a,i)=>{
+  const g = new THREE.Group();
+  let geom;
+  switch(a.shape){
+    case 'cube':  geom = new THREE.BoxGeometry(0.55,0.55,0.55); break;
+    case 'oct':   geom = new THREE.OctahedronGeometry(0.38,0); break;
+    case 'sphere':geom = new THREE.SphereGeometry(0.36,24,16); break;
+    case 'cone':  geom = new THREE.ConeGeometry(0.32,0.58,6); break;
+    case 'tetra': geom = new THREE.TetrahedronGeometry(0.42,0); break;
+    case 'ring':  geom = new THREE.TorusKnotGeometry(0.26,0.09,64,10); break;
+  }
+  const m = new THREE.MeshStandardMaterial({
+    color:a.color, emissive:a.color, emissiveIntensity:0.4,
+    metalness:0.7, roughness:0.3, transparent:true, opacity:1
+  });
+  const mesh = new THREE.Mesh(geom, m);
+  mesh.userData.key = a.key;
+  g.add(mesh);
+  // link line from center
+  const lineG = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(0,0,0), new THREE.Vector3(0,0,0)]);
+  const line = new THREE.Line(lineG, new THREE.LineBasicMaterial({ color:a.color, transparent:true, opacity:0.5 }));
+  g.userData.line = line;
+  scene.add(line);
+  const angle = (i/AGENTS.length)*Math.PI*2;
+  g.userData.baseAngle = angle;
+  g.userData.mesh = mesh;
+  g.userData.mat = m;
+  g.userData.on = false;
+  g.userData.color = a.color;
+  podGroup.add(g);
+  pods[a.key] = g;
+});
+
+// starfield
+const sg = new THREE.BufferGeometry();
+const sc = 500; const spos = new Float32Array(sc*3);
+for(let i=0;i<sc;i++){ spos[i*3]=(Math.random()-.5)*80; spos[i*3+1]=(Math.random()-.5)*40; spos[i*3+2]=-Math.random()*40-5; }
+sg.setAttribute('position', new THREE.BufferAttribute(spos,3));
+const stars = new THREE.Points(sg, new THREE.PointsMaterial({ color:0xffffff, size:0.03, transparent:true, opacity:0.5 }));
+scene.add(stars);
+
+// post
+const composer = new EffectComposer(renderer);
+composer.setSize(innerWidth, innerHeight);
+composer.addPass(new RenderPass(scene, camera));
+composer.addPass(new UnrealBloomPass(new THREE.Vector2(innerWidth,innerHeight), 0.75, 0.55, 0.2));
+
+// raycaster
+const raycaster = new THREE.Raycaster();
+const mouseV = new THREE.Vector2();
+canvas.addEventListener('click', (e)=>{
+  const r = canvas.getBoundingClientRect();
+  mouseV.x = ((e.clientX-r.left)/r.width)*2-1;
+  mouseV.y = -((e.clientY-r.top)/r.height)*2+1;
+  raycaster.setFromCamera(mouseV, camera);
+  const hits = raycaster.intersectObjects(Object.values(pods).map(g=>g.userData.mesh));
+  if (hits.length){
+    const key = hits[0].object.userData.key;
+    document.querySelector('.agent[data-key="'+key+'"]').click();
+  }
+});
+
+// drag rotate
+let drag=false, dx=0, targetY=0, cy=0;
+canvas.addEventListener('pointerdown', e=>{ drag=true; dx=e.clientX; });
+addEventListener('pointerup',   ()=> drag=false);
+addEventListener('pointermove', e=>{
+  if (drag){ targetY += (e.clientX-dx)*0.005; dx=e.clientX; }
+});
+
+// resize
+addEventListener('resize', ()=>{
+  renderer.setSize(innerWidth, innerHeight);
+  composer.setSize(innerWidth, innerHeight);
+  camera.aspect = innerWidth/innerHeight; camera.updateProjectionMatrix();
+});
+
+// PRICING logic
+const $ = s => document.querySelector(s);
+const el = { tier:$('#tier'), pv:$('#pv'), ps:$('#ps'), why:$('#why'),
+  pillCount:$('#pillCount'), scale:$('#scale'), support:$('#support'), lic:$('#lic'),
+  totalM:$('#totalM'), cta:$('#cta'), badge:$('#badge') };
+
+function recalc(){
+  const on = Array.from(document.querySelectorAll('.agent.on')).map(e=>e.dataset.key);
+  const n = on.length;
+  // update pod visibility with animation targets
+  AGENTS.forEach(a=>{
+    const g = pods[a.key];
+    g.userData.on = on.includes(a.key);
+  });
+
+  let plan, price, ps='/mo', why, machines, support, lic, badge='Early access', href='/contact?plan=';
+  if (n <= 3 && !on.includes('comfy') && !on.includes('chatter') && !on.includes('ledger')){
+    plan='Community'; price=0; ps='/forever';
+    why='Three core agents. Free forever, single machine. Upgrade the moment you need more.';
+    machines='1 machine'; support='Community'; lic='—'; badge='Live'; href='/downloads';
+  } else if (n <= 3){
+    plan='Personal'; price=29;
+    why='A few specialists, personal use. Signed installers, auto-updates, monthly skill packs.';
+    machines='2 machines'; support='Email · 48h'; lic='Personal'; href='/contact?plan=personal';
+  } else if (n <= 5){
+    plan='Pro'; price=99;
+    why='The working stack for a solo operator running a business. Commercial license, private office hours.';
+    machines='5 machines'; support='Priority · 24h'; lic='Commercial'; href='/contact?plan=pro';
+  } else {
+    plan='Studio'; price=299;
+    why='The full workforce. White-label rights, API access, monthly consulting. Built for agencies.';
+    machines='15 machines'; support='Priority · 24h'; lic='Agency · white-label'; href='/contact?plan=studio';
+  }
+
+  el.tier.innerHTML = '<em>'+plan+'</em>';
+  el.pv.textContent = price;
+  el.ps.textContent = ps;
+  el.why.textContent = why;
+  el.pillCount.textContent = n + (n===1?' agent':' agents');
+  el.scale.textContent = machines;
+  el.support.textContent = support;
+  el.lic.textContent = lic;
+  el.totalM.textContent = '$'+price + (price?'/mo':'');
+  el.cta.href = href;
+  el.cta.textContent = price===0 ? 'Download free →' : 'Reserve seat →';
+  el.badge.textContent = badge;
+  el.badge.style.color = badge==='Live' ? '#4dff9a' : '#c8a55c';
+  el.badge.style.borderColor = badge==='Live' ? 'rgba(77,255,154,.3)' : 'rgba(200,165,92,.3)';
+  el.badge.style.background = badge==='Live' ? 'rgba(77,255,154,.08)' : 'rgba(200,165,92,.08)';
+}
+document.querySelectorAll('.agent').forEach(a=>{
+  a.addEventListener('click', ()=>{ a.classList.toggle('on'); recalc(); });
+});
+recalc();
+
+// ANIMATION
+const clock = new THREE.Clock();
+function tick(){
+  const t = clock.getElapsedTime(), dt = clock.getDelta();
+  cy += (targetY - cy)*0.08;
+  podGroup.rotation.y = cy + t*0.15;
+  chassis.rotation.y = -t*0.1;
+  shard.rotation.x = t*0.35; shard.rotation.z = t*0.2;
+  halo.rotation.z = t*0.3; halo2.rotation.z = -t*0.5;
+  stars.rotation.y = t*0.01;
+
+  // per-pod animation
+  Object.values(pods).forEach((g, i)=>{
+    const a = g.userData.baseAngle + t*0.05;
+    const target = g.userData.on ? 2.8 : 4.6;
+    const targetOp = g.userData.on ? 1 : 0.15;
+    const cur = g.position.length()||target;
+    const nr = cur + (target-cur)*0.06;
+    g.position.set(Math.cos(a)*nr, Math.sin(t*0.7 + i)*0.25, Math.sin(a)*nr);
+    g.userData.mesh.rotation.x += dt*(g.userData.on?1.2:0.3);
+    g.userData.mesh.rotation.y += dt*(g.userData.on?0.9:0.2);
+    g.userData.mat.opacity += (targetOp - g.userData.mat.opacity)*0.08;
+    g.userData.mat.emissiveIntensity = g.userData.on ? 0.55 + Math.sin(t*2+i)*0.15 : 0.05;
+    // line
+    const positions = g.userData.line.geometry.attributes.position;
+    positions.setXYZ(1, g.position.x, g.position.y, g.position.z);
+    positions.needsUpdate = true;
+    g.userData.line.material.opacity = g.userData.mat.opacity * 0.4;
+  });
+
+  composer.render();
+  requestAnimationFrame(tick);
+}
+tick();
+</script>
+
+</body>
+</html>

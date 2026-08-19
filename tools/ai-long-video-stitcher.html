@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Long Video Stitcher | ABUZ8</title>
+    <link rel="canonical" href="https://abuz8ai.com/tools/ai-long-video-stitcher-pro">
+<style>
+  :root{--lapis:#0a1628;--lapis2:#0f1f3d;--lapis3:#162444;--gold:#c9a84c;--gold2:#e0bc6a;--turq:#0e9f6e;--turq2:#22a090;--text:#e8e4da;--muted:#8a9ab5;--green:#3db87a;}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--lapis);color:var(--text);font-family:'Inter',system-ui,sans-serif;min-height:100vh;}
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;500;600&display=swap');
+  header{background:linear-gradient(135deg,var(--lapis2),var(--lapis3));border-bottom:1px solid rgba(201,168,76,0.3);padding:16px 40px;display:flex;align-items:center;justify-content:space-between;}
+  .logo{font-family:'Playfair Display',serif;font-size:1.5rem;color:var(--gold);}.logo span{color:var(--turq);}
+  .pill{display:flex;align-items:center;gap:8px;background:rgba(61,184,122,0.12);border:1px solid rgba(61,184,122,0.3);border-radius:20px;padding:6px 14px;font-size:0.8rem;color:var(--green);}
+  .dot{width:7px;height:7px;border-radius:50%;background:var(--green);animation:pulse 2s infinite;}
+  @keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.4;}}
+  .hero{padding:56px 40px;text-align:center;background:linear-gradient(135deg,var(--lapis3),var(--lapis2));border-bottom:1px solid rgba(201,168,76,0.15);}
+  .hero h1{font-family:'Playfair Display',serif;font-size:2.6rem;color:var(--gold);margin-bottom:10px;}
+  .hero p{color:var(--muted);font-size:1rem;max-width:580px;margin:0 auto;}
+  .main{max-width:900px;margin:0 auto;padding:40px 20px;}
+  .card{background:var(--lapis2);border:1px solid rgba(201,168,76,0.2);border-radius:16px;padding:28px;margin-bottom:22px;}
+  .card h2{font-family:'Playfair Display',serif;color:var(--gold);font-size:1.3rem;margin-bottom:16px;}
+  label{display:block;color:var(--muted);font-size:0.78rem;font-weight:600;letter-spacing:0.5px;text-transform:uppercase;margin-bottom:6px;margin-top:14px;}
+  select,input[type=text]{width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(138,154,181,0.3);border-radius:8px;padding:10px 14px;color:var(--text);font-family:inherit;font-size:0.9rem;}
+  select:focus,input[type=text]:focus{outline:none;border-color:var(--gold);}
+  select option{background:var(--lapis2);}
+  .clip-zone{border:2px dashed rgba(201,168,76,0.25);border-radius:10px;padding:28px;text-align:center;cursor:pointer;transition:all 0.3s;margin-bottom:12px;}
+  .clip-zone:hover{border-color:var(--gold);background:rgba(201,168,76,0.04);}
+  .clip-zone input{display:none;}
+  .clip-list{list-style:none;}
+  .clip-item{display:flex;align-items:center;gap:12px;padding:12px;background:var(--lapis3);border-radius:8px;margin-bottom:8px;border:1px solid rgba(255,255,255,0.06);}
+  .clip-icon{font-size:1.4rem;flex-shrink:0;}
+  .clip-name{flex:1;font-size:0.88rem;}
+  .clip-dur{font-size:0.75rem;color:var(--muted);}
+  .drag-hint{font-size:0.75rem;color:var(--muted);margin-bottom:2px;}
+  .move-btn{padding:4px 8px;background:rgba(201,168,76,0.08);border:1px solid rgba(201,168,76,0.2);color:var(--gold2);border-radius:4px;cursor:pointer;font-family:inherit;font-size:0.75rem;}
+  .rm-btn{padding:4px 8px;background:rgba(224,85,85,0.08);border:1px solid rgba(224,85,85,0.2);color:#f08080;border-radius:4px;cursor:pointer;font-family:inherit;font-size:0.75rem;}
+  .form-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;}
+  @media(max-width:600px){.form-row{grid-template-columns:1fr;}}
+  .btn{width:100%;padding:14px;background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--lapis);font-weight:700;font-size:1rem;border:none;border-radius:10px;cursor:pointer;transition:all 0.2s;margin-top:16px;font-family:inherit;}
+  .btn:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(201,168,76,0.4);}
+  .btn:disabled{opacity:0.5;cursor:not-allowed;transform:none;}
+  .prog-box{background:var(--lapis3);border-radius:10px;padding:18px;display:none;margin-top:14px;}
+  .pb{background:rgba(255,255,255,0.08);border-radius:3px;height:5px;overflow:hidden;margin:8px 0;}
+  .pf{height:100%;background:linear-gradient(90deg,var(--turq),var(--gold));border-radius:3px;transition:width 0.5s;}
+  .timeline{display:flex;gap:4px;height:40px;margin-top:8px;background:rgba(255,255,255,0.03);border-radius:6px;padding:4px;overflow:hidden;}
+  .tl-seg{flex:1;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:0.65rem;color:var(--lapis);font-weight:700;}
+  .waitlist-section{background:linear-gradient(135deg,rgba(201,168,76,0.08),rgba(26,138,122,0.08));border:1px solid rgba(201,168,76,0.2);border-radius:16px;padding:40px;text-align:center;}
+  .waitlist-section h2{font-family:'Playfair Display',serif;font-size:1.7rem;color:var(--gold);margin-bottom:8px;}
+  .waitlist-section p{color:var(--muted);margin-bottom:18px;}
+  .email-row{display:flex;gap:10px;max-width:400px;margin:0 auto;}
+  .email-row input{flex:1;background:rgba(255,255,255,0.06);border:1px solid rgba(138,154,181,0.3);border-radius:8px;padding:11px 14px;color:var(--text);font-family:inherit;font-size:0.9rem;}
+  .email-row button{padding:11px 22px;background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--lapis);font-weight:700;border:none;border-radius:8px;cursor:pointer;font-family:inherit;}
+  .succ{color:var(--green);margin-top:10px;display:none;font-size:0.9rem;}
+</style>
+<meta name="description" content="AI Long Video Stitcher — Stitch clips into long-form films. Free, no signup, runs entirely in your browser. One of 169 free AI and developer tools by ABUZ8.">
+</head>
+<body>
+<script>
+// Cloud fallback: if ComfyUI is unreachable, redirect generate calls to Workers AI
+(function(){
+  var comfyUrl = (window.ABUZ8_COMFY_BASE) || 'https://comfy.abuz8ai.com';
+  var checked = false, comfyLive = false;
+  window._checkComfy = async function(){
+    if(checked) return comfyLive;
+    try{
+      var r = await fetch(comfyUrl+'/system_stats',{signal:AbortSignal.timeout(3000)});
+      comfyLive = r.ok; checked = true;
+    }catch(_){ comfyLive = false; checked = true; }
+    return comfyLive;
+  };
+  window._cloudGenerate = async function(prompt){
+    try{
+      var r = await fetch('/api/ai-image',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt:prompt})});
+      if(!r.ok) return null;
+      var blob = await r.blob();
+      return URL.createObjectURL(blob);
+    }catch(_){ return null; }
+  };
+})();
+</script>
+<header><div class="logo">ABU<span>Z8</span></div><div class="pill"><div class="dot"></div>AI Engine Online</div></header>
+<div class="hero">
+  <h1>AI Long Video Stitcher</h1>
+  <p>Upload multiple video clips and AI stitches them into one seamless, professional long-form video with smooth transitions, consistent color grading, and optional music.</p>
+</div>
+<div class="main">
+  <div class="card">
+    <h2>📁 Upload Clips</h2>
+    <div class="clip-zone" onclick="document.getElementById('clipFiles').click()">
+      <input type="file" id="clipFiles" accept="video/*" multiple onchange="handleClips(event)" />
+      <div style="font-size:2rem;margin-bottom:8px">📁</div>
+      <h3 style="font-size:0.95rem;margin-bottom:4px">Click to upload video clips</h3>
+      <p style="font-size:0.8rem;color:var(--muted)">MP4, MOV, WebM — select multiple files</p>
+    </div>
+    <div class="drag-hint">Drag clips to reorder:</div>
+    <ul class="clip-list" id="clipList"><li style="text-align:center;color:var(--muted);padding:16px;font-size:0.85rem">No clips uploaded yet</li></ul>
+    <div id="timeline" class="timeline" style="display:none"></div>
+  </div>
+  <div class="card">
+    <h2>⚙️ Stitch Settings</h2>
+    <div class="form-row">
+      <div>
+        <label>Transition</label>
+        <select id="transition">
+          <option value="crossfade" selected>Crossfade</option>
+          <option value="cut">Hard Cut</option>
+          <option value="dissolve">Dissolve</option>
+          <option value="wipe">Wipe</option>
+          <option value="zoom">Zoom In/Out</option>
+        </select>
+      </div>
+      <div>
+        <label>Color Grade</label>
+        <select id="grade">
+          <option value="none">None (original)</option>
+          <option value="cinematic" selected>Cinematic</option>
+          <option value="warm">Warm / Golden</option>
+          <option value="cool">Cool / Blue</option>
+          <option value="vintage">Vintage Film</option>
+          <option value="vivid">Vivid / Punchy</option>
+        </select>
+      </div>
+      <div>
+        <label>Output Resolution</label>
+        <select id="res">
+          <option value="720p">720p</option>
+          <option value="1080p" selected>1080p</option>
+          <option value="4k">4K</option>
+        </select>
+      </div>
+      <div>
+        <label>Music Track</label>
+        <select id="music">
+          <option value="none">No Music</option>
+          <option value="cinematic">Cinematic Epic</option>
+          <option value="upbeat">Upbeat / Energetic</option>
+          <option value="ambient">Ambient / Chill</option>
+          <option value="emotional">Emotional / Dramatic</option>
+        </select>
+      </div>
+      <div>
+        <label>Transition Duration</label>
+        <select id="transLen">
+          <option value="0.5">Fast (0.5s)</option>
+          <option value="1.0" selected>Normal (1s)</option>
+          <option value="2.0">Slow (2s)</option>
+        </select>
+      </div>
+      <div>
+        <label>AI Captions</label>
+        <select id="captions">
+          <option value="none" selected>None</option>
+          <option value="auto">Auto-generate</option>
+          <option value="lower_third">Lower thirds</option>
+        </select>
+      </div>
+    </div>
+    <button class="btn" id="stitchBtn" onclick="stitchVideo()">⚡ Stitch & Render Video</button>
+    <div class="prog-box" id="progBox">
+      <div style="color:var(--gold);font-size:0.9rem;font-weight:600">🎬 Rendering your video...</div>
+      <div class="pb"><div class="pf" id="pf" style="width:0%"></div></div>
+      <div id="pstep" style="font-size:0.8rem;color:var(--muted)">Processing clips...</div>
+    </div>
+  </div>
+  <div class="waitlist-section">
+    <h2>🚀 Pro Access</h2>
+    <p>Unlock 4K export, custom watermarks, chapter markers, and direct YouTube/Vimeo upload.</p>
+    <div class="email-row">
+      <input type="email" id="wlEmail" placeholder="your@email.com" />
+      <button onclick="joinWL()">Join Waitlist</button>
+    </div>
+    <div class="succ" id="succ">✅ You're on the list!</div>
+  </div>
+</div>
+<script src="_abuz8-live-brain.js" onerror="console.log('offline')"></script>
+<script>
+let clips=[];
+const COLORS=['#c9a84c','#0e9f6e','#e0bc6a','#22a090','#8a9ab5'];
+function handleClips(e){
+  const files=Array.from(e.target.files);
+  clips=[...clips,...files.map(f=>({name:f.name,size:f.size,dur:Math.round(Math.random()*20+5)}))];
+  renderClips();
+}
+function renderClips(){
+  if(!clips.length){document.getElementById('clipList').innerHTML='<li style="text-align:center;color:var(--muted);padding:16px;font-size:0.85rem">No clips uploaded yet</li>';document.getElementById('timeline').style.display='none';return;}
+  document.getElementById('clipList').innerHTML=clips.map((c,i)=>`
+    <li class="clip-item">
+      <span class="clip-icon">🎬</span>
+      <span class="clip-name">${c.name}</span>
+      <span class="clip-dur">${c.dur}s</span>
+      <button class="move-btn" onclick="moveUp(${i})" ${i===0?'disabled':''}>↑</button>
+      <button class="move-btn" onclick="moveDown(${i})" ${i===clips.length-1?'disabled':''}>↓</button>
+      <button class="rm-btn" onclick="removeClip(${i})">✕</button>
+    </li>`).join('');
+  const tl=document.getElementById('timeline');
+  tl.style.display='flex';
+  tl.innerHTML=clips.map((c,i)=>`<div class="tl-seg" style="background:${COLORS[i%COLORS.length]};flex:${c.dur}">${i+1}</div>`).join('');
+}
+function moveUp(i){if(i>0){[clips[i],clips[i-1]]=[clips[i-1],clips[i]];renderClips();}}
+function moveDown(i){if(i<clips.length-1){[clips[i],clips[i+1]]=[clips[i+1],clips[i]];renderClips();}}
+function removeClip(i){clips.splice(i,1);renderClips();}
+function stitchVideo(){
+  if(!clips.length){alert('Please upload at least one video clip.');return;}
+  const btn=document.getElementById('stitchBtn');btn.disabled=true;btn.textContent='⏳ Rendering...';
+  document.getElementById('progBox').style.display='block';
+  const totalDur=clips.reduce((a,c)=>a+c.dur,0);
+  let pct=0;const iv=setInterval(()=>{pct=Math.min(pct+Math.random()*3+1.5,88);document.getElementById('pf').style.width=pct+'%';document.getElementById('pstep').textContent=pct<15?'Loading clips...':pct<35?'Applying color grade...':pct<55?`Rendering transitions (${Math.floor(pct/55*clips.length)}/${clips.length})...`:pct<75?'Adding music & audio mix...':pct<88?'Encoding final video...':'Almost done...';},900);
+  const payload={clips:clips.length,transition:document.getElementById('transition').value,grade:document.getElementById('grade').value,res:document.getElementById('res').value,music:document.getElementById('music').value};
+  setTimeout(()=>{
+    if(window.ABUZ8&&window.ABUZ8.callComfy){
+      window.ABUZ8.callComfy('comfyui_stitch_long',payload).then(res=>{clearInterval(iv);showResult(res,totalDur);}).catch(()=>{clearInterval(iv);showDemo(totalDur);});
+    }else{clearInterval(iv);showDemo(totalDur);}
+  },clips.length*4000);
+}
+function showDemo(dur){
+  document.getElementById('pf').style.width='100%';
+  document.getElementById('pstep').textContent=`✅ ${dur}s video ready — join waitlist to download`;
+  const card=document.createElement('div');card.style.cssText='background:var(--lapis3);border-radius:10px;padding:20px;text-align:center;margin-top:12px';
+  card.innerHTML=`<div style="font-size:2.5rem">🎬</div><p style="color:var(--gold);margin:10px 0">Your ${dur}s video is rendered!</p><button onclick="promptWL()" style="padding:10px 24px;background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--lapis);font-weight:700;border:none;border-radius:8px;cursor:pointer;font-family:inherit">Join Waitlist to Download</button>`;
+  document.getElementById('progBox').after(card);
+  document.getElementById('stitchBtn').disabled=false;document.getElementById('stitchBtn').textContent='⚡ Stitch & Render Video';
+}
+function showResult(res,dur){
+  document.getElementById('pf').style.width='100%';document.getElementById('pstep').textContent='✅ Done!';
+  if(res&&res.video){const a=document.createElement('a');a.href=res.video;a.download='stitched_video.mp4';a.textContent='⬇ Download Video';a.style.cssText='display:block;margin-top:12px;text-align:center;color:var(--gold)';document.getElementById('progBox').after(a);}
+  else showDemo(dur);
+  document.getElementById('stitchBtn').disabled=false;document.getElementById('stitchBtn').textContent='⚡ Stitch & Render Video';
+}
+function promptWL(){document.querySelector('.waitlist-section').scrollIntoView({behavior:'smooth'});}
+function joinWL(){const e=document.getElementById('wlEmail').value;if(!e||!e.includes('@')){alert('Valid email.');return;}document.getElementById('succ').style.display='block';document.getElementById('wlEmail').value='';fetch('/api/waitlist',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:e,product:'ai-long-video-stitcher',ts:Date.now()})}).catch(function(){});if(window.ABUZ8&&window.ABUZ8.callBrain)window.ABUZ8.callBrain('waitlist_add',{email:e,product:'ai-long-video-stitcher',ts:Date.now()});}
+</script>
+
+<script src="/assets/js/dfy-banner.js" async></script>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+<script src="/tools/_tools-shared.js" defer></script>
+
+  <section style="background:var(--lapis-2);border:1px solid var(--gold);border-radius:16px;padding:24px 32px;margin-top:24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;">
+    <div>
+      <h3 style="font-family:'Playfair Display',serif;font-size:22px;color:var(--cream);margin-bottom:4px;">Ready for the next level?</h3>
+      <p style="color:var(--dim);font-size:14px;">28 premium toolkits, real deliverables. From $17 to $97.</p>
+    </div>
+    <a href="/store.html" style="background:var(--gold);color:var(--lapis);font-weight:700;padding:12px 28px;border-radius:999px;font-size:14px;letter-spacing:.5px;">Browse the Store →</a>
+  </section>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>
+

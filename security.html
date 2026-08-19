@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Security &amp; Compliance — ABUZ8 AI</title>
+<meta name="description" content="How abuz8ai.com handles security: Cloudflare-hosted static site, minimal data (waitlist email only), Stripe-handled payments, honest compliance status.">
+<link rel="canonical" href="https://abuz8ai.com/security">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Security &amp; Compliance — ABUZ8 AI">
+<meta property="og:description" content="How abuz8ai.com handles security: Cloudflare-hosted static site, minimal data (waitlist email only), Stripe-handled payments, honest compliance status.">
+<meta property="og:url" content="https://abuz8ai.com/security">
+<meta name="theme-color" content="#0a1628">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/abuz8-theme.css">
+<style>
+/* page-specific styles ONLY — theme vars, no new hex colors */
+.sec-section{max-width:var(--wrap);margin:0 auto;padding:0 32px 56px}
+.fact-list{list-style:none;margin:14px 0}
+.fact-list li{padding:9px 0 9px 28px;position:relative;color:var(--dim);font-size:13.5px;line-height:1.6;border-bottom:1px solid rgba(26,46,80,.5)}
+.fact-list li:last-child{border-bottom:none}
+.fact-list li::before{content:'✓';position:absolute;left:4px;color:var(--green-bright);font-weight:700}
+.fact-list li.no::before{content:'✕';color:var(--dim)}
+.fact-list li strong{color:var(--text)}
+.mono-header{font-family:var(--font-mono);color:var(--gold-light)}
+.tab-panel h3{font-family:var(--font-body);font-size:16px;margin:22px 0 10px}
+.tab-panel h3:first-child{margin-top:0}
+.tab-panel p{color:var(--dim);font-size:13.5px;line-height:1.7;margin-bottom:12px}
+.tab-panel .card p{margin-bottom:0}
+.stats-row.sec-stats{margin-top:28px;margin-bottom:6px}
+</style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebPage",
+      "name": "Security & Compliance — ABUZ8 AI",
+      "url": "https://abuz8ai.com/security.html",
+      "description": "How abuz8ai.com handles security: Cloudflare-hosted static site, minimal data collection (waitlist email only), Stripe-handled payments, and an honest compliance status for a small company.",
+      "publisher": {
+        "@type": "Organization",
+        "name": "ABUZ8 LLC",
+        "url": "https://abuz8ai.com",
+        "email": "ahmad@abuz8ai.com",
+        "address": { "@type": "PostalAddress", "addressRegion": "Ohio", "addressCountry": "US" }
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Do you ever see my credit card number?",
+          "acceptedAnswer": { "@type": "Answer", "text": "No. Checkout happens on stripe.com via Stripe-hosted checkout links. Card entry and processing are handled under Stripe's PCI-DSS compliance; card data never touches ABUZ8 servers." }
+        },
+        {
+          "@type": "Question",
+          "name": "What personal data do you collect?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Only what you submit to the waitlist form: your email, the product you're interested in, and the page you submitted from — stored in Cloudflare D1. There are no accounts, no passwords, and no tracking cookies set by this site." }
+        },
+        {
+          "@type": "Question",
+          "name": "How do I delete my data?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Email ahmad@abuz8ai.com and your waitlist entry will be removed. Since the waitlist is the only personal data we hold, that single request covers everything." }
+        },
+        {
+          "@type": "Question",
+          "name": "Do you run ads or ad tracking?",
+          "acceptedAnswer": { "@type": "Answer", "text": "A Google AdSense script placeholder exists on some pages, but no ads are currently served — there is no active publisher ID. The site itself sets no tracking cookies." }
+        },
+        {
+          "@type": "Question",
+          "name": "Are you SOC 2 or ISO 27001 certified?",
+          "acceptedAnswer": { "@type": "Answer", "text": "No. We're a small company and we won't claim certifications we don't hold. Our actual posture: a static site, one data-collecting endpoint, Stripe-handled payments, TLS enforced by Cloudflare, and three security headers on every page." }
+        },
+        {
+          "@type": "Question",
+          "name": "Is there a bug bounty?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Not yet — honestly. Report vulnerabilities to ahmad@abuz8ai.com; our target is acknowledgement within 72 hours, plus a real fix and credit if you want it." }
+        }
+      ]
+    }
+  ]
+}
+</script>
+</head>
+<body>
+<div class="geo-bg"></div>
+<div class="glow-orb glow-orb-1"></div>
+<div class="glow-orb glow-orb-2"></div>
+<div class="glow-orb glow-orb-3"></div>
+
+<nav class="abuz8-nav">
+<div class="nav-inner">
+  <a href="/" style="text-decoration:none;">
+    <div class="logo">ABUZ8</div>
+    <div class="logo-sub">Sovereign AI</div>
+  </a>
+  <div class="nav-links">
+    <a href="/tools.html">Tools</a>
+    <a href="/store.html">Store</a>
+    
+    <a href="/agents.html">Agents</a>
+    <a href="/models.html">Models</a>
+    <a href="/news.html">News</a>
+    <a href="/roadmap.html">Roadmap</a>
+    <a href="/store.html" class="nav-cta">Get Started</a>
+  </div>
+</div>
+</nav>
+
+<div class="wrap">
+  <div class="crumbs"><a href="/">Home</a> › Security &amp; Compliance</div>
+</div>
+
+<section class="hero">
+  <div class="hero-eyebrow">Trust · Verified 2026-07-17</div>
+  <h1>Security &amp; <span class="gold">Compliance</span></h1>
+  <p>The honest version. abuz8ai.com is a static site with one data-collecting endpoint, payments handled entirely by Stripe, and no certifications we don't actually hold. Everything on this page is the real posture — nothing inflated.</p>
+  <div class="stats-row sec-stats">
+    <div class="stat"><div class="stat-num">1</div><div class="stat-label">Data-collecting endpoint</div></div>
+    <div class="stat"><div class="stat-num">0</div><div class="stat-label">Tracking cookies we set</div></div>
+    <div class="stat"><div class="stat-num">3</div><div class="stat-label">Security headers on every page</div></div>
+    <div class="stat"><div class="stat-num">100%</div><div class="stat-label">Products tested before sale</div></div>
+  </div>
+</section>
+
+<section class="sec-section">
+<div class="tabs" data-tabs>
+  <div class="tab-list" role="tablist" aria-label="Security and compliance">
+    <button class="tab-btn" role="tab" id="tab-overview" aria-controls="panel-overview" aria-selected="true">🛡️ Overview</button>
+    <button class="tab-btn" role="tab" id="tab-privacy" aria-controls="panel-privacy" aria-selected="false">🔐 Data &amp; Privacy</button>
+    <button class="tab-btn" role="tab" id="tab-payments" aria-controls="panel-payments" aria-selected="false">💳 Payments</button>
+    <button class="tab-btn" role="tab" id="tab-infra" aria-controls="panel-infra" aria-selected="false">☁️ Infrastructure</button>
+    <button class="tab-btn" role="tab" id="tab-disclosure" aria-controls="panel-disclosure" aria-selected="false">📣 Disclosure</button>
+    <button class="tab-btn" role="tab" id="tab-compliance" aria-controls="panel-compliance" aria-selected="false">📋 Compliance</button>
+  </div>
+
+  <!-- ============ TAB 1: OVERVIEW ============ -->
+  <div class="tab-panel" role="tabpanel" id="panel-overview" aria-labelledby="tab-overview">
+    <h3>Our security posture, in plain language</h3>
+    <p>abuz8ai.com is a <strong style="color:var(--text)">static website</strong> hosted on Cloudflare Pages, with a small number of Pages Functions behind <code class="inline">/api/*</code>. There are no user accounts, no passwords, and no databases of personal information beyond a single waitlist table. The less we collect, the less can go wrong — that is the core of our security model.</p>
+    <div class="grid-4" style="margin-top:20px">
+      <div class="card">
+        <div class="icon-chip">📄</div>
+        <h3>Static-first</h3>
+        <p>Pages are pre-built HTML served from Cloudflare's edge. No server-side sessions, no login surface to attack.</p>
+      </div>
+      <div class="card">
+        <div class="icon-chip">📉</div>
+        <h3>Minimal data</h3>
+        <p>The only thing a visitor can submit is the waitlist form: an email, a product interest, and the source page. Nothing else is collected.</p>
+      </div>
+      <div class="card">
+        <div class="icon-chip">💳</div>
+        <h3>Stripe-handled payments</h3>
+        <p>Checkout happens on stripe.com under Stripe's PCI-DSS compliance. Card data never touches our servers.</p>
+      </div>
+      <div class="card">
+        <div class="icon-chip">🔒</div>
+        <h3>TLS everywhere</h3>
+        <p>HTTPS is enforced by Cloudflare on every page and every API route.</p>
+      </div>
+    </div>
+    <div class="note-gold note" style="margin-top:22px">
+      <strong>Honest scope:</strong> we are a small company. We do not hold SOC 2 or ISO 27001 certifications, and we do not claim enterprise compliance programs we don't run. What we do instead is keep the attack surface tiny and tell you exactly what exists — see the Compliance tab above for the full status table.
+    </div>
+  </div>
+
+  <!-- ============ TAB 2: DATA & PRIVACY ============ -->
+  <div class="tab-panel" role="tabpanel" id="panel-privacy" aria-labelledby="tab-privacy" hidden>
+    <h3>Exactly what we collect</h3>
+    <p>One endpoint on this site collects data: <code class="inline">POST /api/waitlist</code>. When you join a waitlist, we store your <strong style="color:var(--text)">email address</strong>, the <strong style="color:var(--text)">product you're interested in</strong>, and the <strong style="color:var(--text)">page you submitted from</strong> — in a Cloudflare D1 database (<code class="inline">abuz8_waitlist</code>). That is the complete list.</p>
+    <ul class="fact-list">
+      <li><strong>Waitlist form:</strong> email + product interest + source page → Cloudflare D1. Used to tell you when the thing you asked about is ready.</li>
+      <li class="no"><strong>No accounts, no passwords.</strong> You cannot create a login on this site, so there are no credentials for us to lose.</li>
+      <li class="no"><strong>No tracking cookies from us.</strong> The site itself sets no tracking cookies.</li>
+      <li class="no"><strong>No payment data on our servers.</strong> Card details are entered on stripe.com, never here.</li>
+    </ul>
+    <h3>Third parties on this site</h3>
+    <div class="table-scroll">
+      <table class="data-table">
+        <thead><tr><th>Third party</th><th>What it does here</th><th>Honest status</th></tr></thead>
+        <tbody>
+          <tr><td>Google Fonts</td><td>Serves the site's typefaces (Playfair Display, Inter, JetBrains Mono).</td><td>Loaded on every page.</td></tr>
+          <tr><td>Google AdSense</td><td>A script placeholder exists on some pages.</td><td><strong>No ads are currently served</strong> — there is no active publisher ID.</td></tr>
+          <tr><td>Stripe</td><td>Hosted checkout for store purchases.</td><td>Only involved when you click Buy; Stripe may set its own cookies per its policies.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="margin-top:14px">Our browser-based free tools (JSON formatter, regex tester, and the rest of the pure-JS dev tools) run <strong style="color:var(--text)">100% client-side</strong> — the data you paste into them stays in your browser.</p>
+    <h3>GDPR / CCPA — deleting your data</h3>
+    <div class="note">
+      Want your waitlist email deleted? Send a request to <a href="mailto:ahmad@abuz8ai.com">ahmad@abuz8ai.com</a> and it will be removed. We do not process personal data beyond the waitlist, so that one request covers everything we hold about you. Full details: <a href="/privacy.html">Privacy Policy</a>.
+    </div>
+  </div>
+
+  <!-- ============ TAB 3: PAYMENTS ============ -->
+  <div class="tab-panel" role="tabpanel" id="panel-payments" aria-labelledby="tab-payments" hidden>
+    <h3>How payment security works here</h3>
+    <p>Every purchase on the <a href="/store.html">store</a> uses a <strong style="color:var(--text)">Stripe-hosted checkout link</strong>. When you click Buy, you leave our site and enter your card details on stripe.com.</p>
+    <ol class="steps">
+      <li><strong>You click Buy on abuz8ai.com</strong><p>The button is a link to a Stripe-hosted checkout page. No payment form ever renders on our domain.</p></li>
+      <li><strong>Stripe handles the card</strong><p>Card entry, validation, and processing happen on stripe.com under Stripe's PCI-DSS compliance program.</p></li>
+      <li><strong>We never see card data</strong><p>Card numbers are never seen or stored by ABUZ8 — not in transit, not at rest. There is nothing card-related on our servers to breach.</p></li>
+    </ol>
+    <div class="note">
+      <strong>Our promise:</strong> every store product is tested before it's sold, and we'll always be honest with you. If a product is broken, misdescribed, or your download can't be accessed, see <a href="/refund.html">Refunds</a> for how we make it right.
+    </div>
+    <p>Third-party note: Stripe may set its own cookies during checkout under its own policies — that happens on stripe.com, not here.</p>
+  </div>
+
+  <!-- ============ TAB 4: INFRASTRUCTURE ============ -->
+  <div class="tab-panel" role="tabpanel" id="panel-infra" aria-labelledby="tab-infra" hidden>
+    <h3>Where the site runs</h3>
+    <p>abuz8ai.com is hosted on <strong style="color:var(--text)">Cloudflare Pages</strong> — static pages served from Cloudflare's edge network, plus Pages Functions behind <code class="inline">/api/*</code> (public read-only feeds and the waitlist form). <strong style="color:var(--text)">TLS/HTTPS is enforced by Cloudflare</strong> on all traffic.</p>
+    <h3>Security headers served on every page</h3>
+    <p>These three headers come from the site's <code class="inline">_headers</code> file, verbatim:</p>
+    <div class="table-scroll">
+      <table class="data-table">
+        <thead><tr><th>Header</th><th>Value</th><th>What it protects against</th></tr></thead>
+        <tbody>
+          <tr><td class="mono-header">X-Content-Type-Options</td><td class="mono-header">nosniff</td><td>Stops browsers from MIME-sniffing responses into executable types.</td></tr>
+          <tr><td class="mono-header">X-Frame-Options</td><td class="mono-header">SAMEORIGIN</td><td>Blocks other sites from embedding our pages in iframes (clickjacking).</td></tr>
+          <tr><td class="mono-header">Referrer-Policy</td><td class="mono-header">strict-origin-when-cross-origin</td><td>Limits what referrer information leaks to other sites you navigate to.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <h3>API surface — the routes that matter for your data</h3>
+    <ul class="fact-list">
+      <li><strong><code class="inline">GET /api/github-trending</code></strong> — read-only feed of trending GitHub repos, parsed server-side. Collects nothing.</li>
+      <li><strong><code class="inline">GET /api/github-agents</code></strong> — read-only star counts for 20 curated open-source agent projects. Collects nothing.</li>
+      <li><strong><code class="inline">GET /api/polymarket</code></strong> — read-only proxy for public Polymarket market data (powers the paper-trading tester; no real money, no wallet connection). Collects nothing.</li>
+      <li><strong><code class="inline">POST /api/waitlist</code></strong> — the only endpoint that stores data (email + product interest + source → Cloudflare D1).</li>
+    </ul>
+  </div>
+
+  <!-- ============ TAB 5: RESPONSIBLE DISCLOSURE ============ -->
+  <div class="tab-panel" role="tabpanel" id="panel-disclosure" aria-labelledby="tab-disclosure" hidden>
+    <h3>Found a vulnerability? Tell us.</h3>
+    <p>If you find a security issue anywhere on abuz8ai.com or its <code class="inline">/api/*</code> functions, we genuinely want to hear about it.</p>
+    <ol class="steps">
+      <li><strong>Email the details</strong><p>Send a description to <a href="mailto:ahmad@abuz8ai.com">ahmad@abuz8ai.com</a>. Include the affected URL or endpoint, steps to reproduce, and what you observed. Screenshots or a proof-of-concept help.</p></li>
+      <li><strong>We acknowledge within 72 hours</strong><p>Our target is to acknowledge every report within 72 hours of receiving it.</p></li>
+      <li><strong>We fix and follow up</strong><p>We investigate, fix what's real, and let you know the outcome.</p></li>
+    </ol>
+    <div class="note-gold note">
+      <strong>Honest note on bounties:</strong> there is <strong>no bug bounty program yet</strong>. We're a small company and won't pretend otherwise. What we can offer today is a fast acknowledgement, a real fix, and credit if you want it.
+    </div>
+    <p>Please report privately by email first rather than publishing an issue publicly, so there's a chance to fix it before details circulate.</p>
+  </div>
+
+  <!-- ============ TAB 6: COMPLIANCE STATUS ============ -->
+  <div class="tab-panel" role="tabpanel" id="panel-compliance" aria-labelledby="tab-compliance" hidden>
+    <h3>What we are — and what we are not</h3>
+    <p>Most compliance pages are marketing. This one is a status table. Here is exactly where ABUZ8 LLC stands today:</p>
+    <div class="table-scroll">
+      <table class="data-table">
+        <thead><tr><th>Framework / claim</th><th>Status</th><th>The honest detail</th></tr></thead>
+        <tbody>
+          <tr><td>TLS / HTTPS</td><td><span class="badge badge-live"><span class="badge-dot"></span>LIVE</span></td><td>Enforced by Cloudflare on every page and API route.</td></tr>
+          <tr><td>Security headers</td><td><span class="badge badge-live"><span class="badge-dot"></span>LIVE</span></td><td>nosniff, SAMEORIGIN framing, strict referrer policy — served on every page (see Infrastructure tab).</td></tr>
+          <tr><td>PCI-DSS (payments)</td><td><span class="badge badge-live"><span class="badge-dot"></span>LIVE via Stripe</span></td><td>Handled entirely by Stripe's hosted checkout. We never see or store card numbers, so PCI scope stays with Stripe.</td></tr>
+          <tr><td>GDPR / CCPA deletion</td><td><span class="badge badge-live"><span class="badge-dot"></span>LIVE</span></td><td>Waitlist emails deleted on request via <a href="mailto:ahmad@abuz8ai.com">ahmad@abuz8ai.com</a>. We hold no other personal data.</td></tr>
+          <tr><td>SOC 2</td><td><span class="badge badge-roadmap">NOT CERTIFIED</span></td><td>We are a small company and do not hold a SOC 2 report. We won't claim one until an auditor issues one.</td></tr>
+          <tr><td>ISO 27001</td><td><span class="badge badge-roadmap">NOT CERTIFIED</span></td><td>Same honesty: no certification held today.</td></tr>
+          <tr><td>HIPAA</td><td><span class="badge badge-roadmap">NOT COVERED</span></td><td>We do not handle health information and are not a HIPAA-covered entity.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <h3>The Truth-Status system</h3>
+    <p>Every product and feature on this site carries one of three labels — it's our public honesty contract, and it applies to this page too:</p>
+    <div class="grid-3" style="margin-top:14px">
+      <div class="card">
+        <span class="badge badge-live" style="align-self:flex-start;margin-bottom:10px"><span class="badge-dot"></span>LIVE</span>
+        <p>Working today and verifiable. If it says LIVE, you can use it right now.</p>
+      </div>
+      <div class="card">
+        <span class="badge badge-early" style="align-self:flex-start;margin-bottom:10px">EARLY ACCESS</span>
+        <p>Exists, but gated — access via waitlist or request. Never sold as finished.</p>
+      </div>
+      <div class="card">
+        <span class="badge badge-roadmap" style="align-self:flex-start;margin-bottom:10px">ROADMAP</span>
+        <p>Planned, not built. A ROADMAP item never has a buy button. Ever.</p>
+      </div>
+    </div>
+    <p style="margin-top:14px">Why so strict? Because fake claims destroy trust — and chargebacks destroy small companies. Nothing is sold here that doesn't exist. See <a href="/audit.html">Audit &amp; Transparency</a> for how we check our own work.</p>
+  </div>
+</div>
+</section>
+
+<section class="sec-section">
+  <div class="section-head">
+    <h2>Common questions</h2>
+    <p>Short, honest answers about how this site handles your data and your money.</p>
+  </div>
+  <details class="acc">
+    <summary>Do you ever see my credit card number?</summary>
+    <div class="acc-body">No. Checkout happens on stripe.com via Stripe-hosted checkout links. Card entry and processing are handled under Stripe's PCI-DSS compliance; card data never touches ABUZ8 servers.</div>
+  </details>
+  <details class="acc">
+    <summary>What personal data do you collect?</summary>
+    <div class="acc-body">Only what you submit to the waitlist form: your email, the product you're interested in, and the page you submitted from — stored in Cloudflare D1. There are no accounts, no passwords, and no tracking cookies set by this site.</div>
+  </details>
+  <details class="acc">
+    <summary>How do I delete my data?</summary>
+    <div class="acc-body">Email <a href="mailto:ahmad@abuz8ai.com">ahmad@abuz8ai.com</a> and your waitlist entry will be removed. Since the waitlist is the only personal data we hold, that single request covers everything.</div>
+  </details>
+  <details class="acc">
+    <summary>Do you run ads or ad tracking?</summary>
+    <div class="acc-body">A Google AdSense script placeholder exists on some pages, but no ads are currently served — there is no active publisher ID. The site itself sets no tracking cookies.</div>
+  </details>
+  <details class="acc">
+    <summary>Are you SOC 2 or ISO 27001 certified?</summary>
+    <div class="acc-body">No. We're a small company and we won't claim certifications we don't hold. Our actual posture: a static site, one data-collecting endpoint, Stripe-handled payments, TLS enforced by Cloudflare, and three security headers on every page.</div>
+  </details>
+  <details class="acc">
+    <summary>Is there a bug bounty?</summary>
+    <div class="acc-body">Not yet — honestly. Report vulnerabilities to <a href="mailto:ahmad@abuz8ai.com">ahmad@abuz8ai.com</a>; our target is acknowledgement within 72 hours, plus a real fix and credit if you want it.</div>
+  </details>
+</section>
+
+<section class="sec-section">
+  <div class="panel panel-gold">
+    <h2 style="font-size:1.3rem;margin-bottom:10px">Site disclaimer — the short version</h2>
+    <p style="color:var(--dim);font-size:13.5px;line-height:1.7">Content on abuz8ai.com is provided for educational and informational purposes. We make no revenue, earnings, or results claims — none may be claimed, by policy. Every product is tested before it's sold; there is no blanket money-back guarantee, and if a product is broken or misdescribed we make it right (see <a href="/refund.html">Refunds</a>). Every feature carries a Truth-Status label (LIVE / EARLY ACCESS / ROADMAP) so you always know what exists today versus what is planned. The Polymarket tester uses read-only public market data and a paper-trading simulator only — no real money, no financial advice. Read the full version: <a href="/disclaimer.html">Disclaimer</a> · <a href="/privacy.html">Privacy</a> · <a href="/terms.html">Terms</a> · <a href="/refund.html">Refunds</a>.</p>
+  </div>
+</section>
+
+<footer class="abuz8-footer">
+<div class="foot-grid">
+  <div class="foot-brand">
+    <div class="logo">ABUZ8</div>
+    <p>Sovereign AI for everyone. Real tools, local models, no fake claims. Built on real hardware by ABUZ8 LLC, Ohio.</p>
+  </div>
+  <div class="foot-col"><h4>Platform</h4>
+    <a href="/tools.html">Free Tools</a><a href="/store.html">Store</a><a href="/models.html">Models</a><a href="/agents.html">AI Agents</a><a href="/news.html">News</a><a href="/blog/">Blog</a>
+  </div>
+  <div class="foot-col"><h4>Mission</h4>
+    <a href="/sovereign.html">Sovereign AI</a><a href="/journey.html">Journey &amp; Goals</a><a href="/roadmap.html">Roadmap</a><a href="/audit.html">Audit &amp; Transparency</a><a href="/purpose.html">Purpose</a>
+  </div>
+  <div class="foot-col"><h4>Hubs</h4>
+    <a href="/github.html">GitHub Hub</a><a href="/huggingface.html">Hugging Face Hub</a><a href="/polymarket.html">Polymarket Tester</a><a href="/community.html">Community</a><a href="/education.html">Education</a><a href="/downloads.html">Downloads</a>
+  </div>
+  <div class="foot-col"><h4>Trust</h4>
+    <a href="/security.html">Security &amp; Compliance</a><a href="/disclaimer.html">Disclaimer</a><a href="/privacy.html">Privacy</a><a href="/terms.html">Terms</a><a href="/refund.html">Refunds</a><a href="/license.html">License</a><a href="/contact.html">Contact</a><a href="/status.html">Status</a>
+  </div>
+</div>
+<div class="foot-base">
+  <div>© <span data-year>2026</span> ABUZ8 LLC. All rights reserved.</div>
+  <div>Built local-first on real hardware · No fake claims · <a href="/sovereign.html">Sovereign AI for everyone</a></div>
+</div>
+</footer>
+<script src="/assets/js/abuz8-ui.js" defer></script>
+<script src="/assets/js/abuz8-onboard.js" defer></script>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>

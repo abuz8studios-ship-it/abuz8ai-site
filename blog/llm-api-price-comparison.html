@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LLM API Price Comparison: The Per-Token Sticker Is Not the Price | ABUZ8</title>
+<meta name="description" content="Free LLM API price comparison tool — compare model costs side by side. Why per-token sticker prices mislead, how caching, batching, and retries change the real bill, and how to price a workload instead of a model.">
+<meta name="keywords" content="llm api price comparison, llm pricing, compare llm costs, ai api pricing, cheapest llm api, llm cost per token">
+<link rel="canonical" href="https://abuz8ai.com/blog/llm-api-price-comparison">
+<meta property="og:title" content="LLM API Price Comparison: The Per-Token Sticker Is Not the Price">
+<meta property="og:type" content="article">
+<link rel="stylesheet" href="/blog/_blog-base.css">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@300;400;600;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","headline":"LLM API Price Comparison: The Per-Token Sticker Is Not the Price","datePublished":"2026-07-21","author":{"@type":"Organization","name":"ABUZ8 AI"}}
+</script>
+</head>
+<body>
+<div class="container">
+  <a href="/blog/" class="back">&larr; ABUZ8 BLOG</a>
+  <h1>LLM API Price Comparison: The Per-Token Sticker Is Not the Price</h1>
+  <div class="meta-row"><span>AI COSTS</span><span class="dot"></span><span>JULY 21, 2026</span><span class="dot"></span><span>6 MIN READ</span></div>
+
+  <p>Every <strong>LLM API price comparison</strong> starts the same way: a table of dollars per million tokens, sorted ascending, decision made at the top row. That table is where cost analysis should start — and where most of it wrongly ends. Our free <a href="/tools/ai-llm-price-comparison.html" class="in">LLM price comparison tool</a> puts the models side by side; this guide covers the part the table can't show you: how your workload's <em>shape</em> decides which model is actually cheapest, and why the bargain row sometimes sends the biggest invoice.</p>
+
+  <h2>Sticker price is two numbers, and the ratio between them rules everything</h2>
+  <p>Every model has an input rate and an output rate, and output usually runs several times higher. So the first question isn't "which model is cheap?" — it's "what does my workload read versus write?" A summarizer ingesting 50-page documents and emitting three paragraphs lives on the input meter; the model with the cheapest input rate wins even if its output rate is mediocre. A copywriting engine is the mirror image. Compute a blended rate from <em>your</em> real input:output ratio — measured with the <a href="/tools/ai-token-counter.html" class="in">token counter</a>, not guessed — and the ranking in the pricing table will often reshuffle before you've considered anything else.</p>
+
+  <h2>The discounts are not footnotes — they're the price</h2>
+  <p>Two mechanisms routinely move costs more than switching providers. <a href="/blog/llm-prompt-caching-explained.html" class="in">Prompt caching</a> knocks roughly 90% off tokens you re-send — which, in agent and chat workloads that replay the whole history every turn, is most of the bill. <a href="/blog/llm-batch-api-savings.html" class="in">Batch processing</a> takes about half off everything, in exchange for results in hours instead of seconds. Now stack them against workload shape: a model at twice the sticker price with strong caching can beat the "cheap" model on a long-running agent, because the expensive model is discounting 80% of the traffic while the cheap one meters every replayed token at full rate. A comparison that ignores discount mechanics isn't comparing prices — it's comparing brochures.</p>
+
+  <h2>Price the task, not the token</h2>
+  <p>Here's the metric that actually matters: <strong>cost per completed task</strong>. A budget model that needs two retries, a longer prompt full of guardrails, and an occasional human cleanup pass is not cheaper than a stronger model that nails it once — it just books its costs in places the pricing table doesn't show. The honest comparison is empirical: run 20 representative tasks through each candidate, count total tokens consumed (including the retries), divide by tasks completed correctly. Weak models also tend to need more scaffolding — more examples in the prompt, more validation steps, more correction turns — and every gram of that scaffolding is metered input you pay for on every call, forever. Cheap per token and expensive per outcome is the most common pricing trap in production AI.</p>
+
+  <h2>The $0-marginal lane most comparisons leave off the table</h2>
+  <p>A complete price comparison includes the row where the meter reads zero: running open-weight models on hardware you own. The trade is real — you pay upfront for the GPU, you own the ops, and the biggest open models still trail the frontier APIs on the hardest tasks. But for the bulk lane — classification, extraction, drafts, embeddings, anything you do a million times — local inference turns a variable cost into a fixed one. We run this playbook ourselves: our own 35B-parameter model serves at a measured 220–256 tokens/second on two RTX 5090s in the founder's workstation, at zero marginal cost per token — which changes what "cheap" means for every batch job we run. The <a href="/blog/self-hosting-ai-costs-2026.html" class="in">self-hosting cost math</a> and the <a href="/blog/cloud-gpu-vs-local-gpu-cost.html" class="in">cloud-vs-local GPU comparison</a> walk the break-even arithmetic; the short version is that utilization decides it — a busy GPU pays for itself, an idle one is furniture.</p>
+
+  <h2>How to actually run the comparison</h2>
+  <p>Ten minutes, four steps. One: measure your workload — tokens in, tokens out, calls per day, turns per conversation. Two: shortlist models that clear your quality bar on real samples (quality first; a wrong answer at any price is overpriced). Three: apply the real rates in the <a href="/tools/ai-llm-price-comparison.html" class="in">comparison tool</a>, including caching and batch discounts your traffic qualifies for. Four: sanity-check speed against your latency budget with the <a href="/blog/llm-inference-speed-guide.html" class="in">inference speed guide</a> — the cheapest adequate model that's too slow for your UX isn't adequate. Then re-run the numbers quarterly: prices in this market move fast, and yesterday's premium tier is regularly today's mid-market.</p>
+
+  <h2>Quick answers</h2>
+  <p><strong>Which LLM API is cheapest?</strong> For your workload, the one with the lowest cost per completed task — which depends on your input:output ratio, caching hit rate, batch eligibility, and retry rate. The generic answer ("the smallest model on the list") is only right when the task is easy enough that quality differences don't bite.</p>
+  <p><strong>Are open-weight models free?</strong> The weights are; the electricity, hardware, and your time are not. Self-hosting swaps a per-token fee for fixed costs — a win at high utilization, a loss for spiky low-volume traffic. Do the break-even math before buying anything.</p>
+  <p><strong>How often do API prices change?</strong> Often enough that any static comparison rots in months. Price cuts, new tiers, and new models land constantly — re-price your stack quarterly and after any major model release.</p>
+
+  <h2>The bottom line</h2>
+  <p>The per-token table is the beginning of a price comparison, not the verdict. Measure your shape, apply the discounts, price the task, and include the own-your-hardware row. The cheapest model on the sticker is frequently the most expensive thing in your stack — and the arithmetic that proves it takes less time than reading this post did.</p>
+
+  <div class="callout cta">
+    <p><strong>Price the workload, not the hype.</strong> Run your numbers in the free <a href="/tools/ai-llm-price-comparison.html" class="in">LLM price comparison tool</a>, then <a href="/" class="in">join early access</a> for QADIR OS — the sovereign agentic operating system from ABUZ8. No card required.</p>
+  </div>
+
+  <div class="foot">Built by <a href="/">ABUZ8 LLC</a> — we're building QADIR OS, the sovereign agentic operating system.</div>
+</div>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+<script src="/blog/_blog-shared.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>

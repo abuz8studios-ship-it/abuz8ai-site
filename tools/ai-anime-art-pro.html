@@ -1,0 +1,1034 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Anime Art Generator Pro — Convert Photos to Anime Style | ABUZ8</title>
+<meta name="description" content="Transform any photo or text prompt into stunning anime art. Ghibli, Shonen, Cyberpunk, Manhwa, Chibi — 8 curated styles. Runs on local RTX 5090. No watermarks. Join early access.">
+<meta name="keywords" content="ai anime art generator, photo to anime, anime style transfer, ai anime generator, text to anime, anime art ai, ghibli style ai, manga art generator">
+<link rel="canonical" href="https://abuz8ai.com/tools/ai-anime-art-pro">
+<meta property="og:title" content="AI Anime Art Generator Pro — Studio-Quality Anime from Any Photo | ABUZ8">
+<meta property="og:description" content="Your photo reimagined as a Ghibli hero, a shonen protagonist, a cyberpunk manhwa character. Runs locally. No watermarks. Early access open.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://abuz8ai.com/tools/ai-anime-art-pro">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="AI Anime Art Generator Pro | ABUZ8">
+<meta name="twitter:description" content="8 anime styles. Studio quality. No watermarks. Convert any photo or prompt to anime art in seconds.">
+<link rel="stylesheet" href="/assets/css/abuz8-mach3.css">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@300;400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"SoftwareApplication","name":"AI Anime Art Generator Pro","applicationCategory":"MultimediaApplication","operatingSystem":"Web","description":"Transform any photo or text prompt into studio-quality anime art using local ComfyUI inference. Choose from 8 curated anime styles including Studio Ghibli, Shonen Manga, Cyberpunk Anime, Chibi, Manhwa, Vintage 80s Anime, Dark Fantasy, and Slice of Life. No watermarks, no data sent to third-party servers.","offers":{"@type":"Offer","price":"0","priceCurrency":"USD","availability":"https://schema.org/PreOrder"},"creator":{"@type":"Organization","name":"ABUZ8 LLC","url":"https://abuz8ai.com"}}
+</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"HowTo","name":"Convert a Photo to Anime Art with AI","step":[{"@type":"HowToStep","name":"Upload your photo or enter a prompt","text":"Drop in a photo of a person, landscape, or object — or simply type a description of the scene you want rendered in anime style."},{"@type":"HowToStep","name":"Choose an anime style","text":"Select from 8 curated styles: Studio Ghibli, Shonen Manga, Cyberpunk Anime, Chibi, Manhwa K-drama, Vintage 80s Anime, Dark Fantasy, or Slice of Life."},{"@type":"HowToStep","name":"Tune the style strength","text":"Dial in how much of the original photo shows through versus how strongly the anime aesthetic takes over. 0.6 for subtle, 0.9 for full transformation."},{"@type":"HowToStep","name":"Generate and download","text":"ComfyUI renders your anime art on a local RTX 5090 in 10–25 seconds. Download 1024×1024 PNG with zero watermarks."}]}
+</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Can I use a photo of a real person?","acceptedAnswer":{"@type":"Answer","text":"Yes. Upload a portrait and the model will redraw the person in your selected anime style while preserving facial structure, expression, and pose. Works best with clear, front-facing photos."}},{"@type":"Question","name":"What is the output resolution?","acceptedAnswer":{"@type":"Answer","text":"Default output is 1024×1024 pixels. Portrait and landscape orientations (1024×1536, 1536×1024) will be supported in early access. All outputs are watermark-free."}},{"@type":"Question","name":"Which anime styles are available?","acceptedAnswer":{"@type":"Answer","text":"8 curated styles: Studio Ghibli (painterly, nature-lit), Shonen Manga (bold linework, high energy), Cyberpunk Anime (neon-lit cityscapes), Chibi (cute, big-head proportions), Manhwa K-drama (Korean webtoon aesthetic), Vintage 80s Anime (film grain, cel-shaded), Dark Fantasy (atmospheric, high-contrast), and Slice of Life (warm, everyday scenes)."}},{"@type":"Question","name":"Does my photo get sent to third-party servers?","acceptedAnswer":{"@type":"Answer","text":"No. Inference runs on local RTX 5090 hardware. Your photo is processed on our private infrastructure and deleted immediately after generation. When QADIR OS ships for local install, it runs entirely on your own machine."}},{"@type":"Question","name":"Can I use this commercially?","acceptedAnswer":{"@type":"Answer","text":"Early access outputs are for personal and commercial use. If you are creating content for clients or selling anime-style art, you are covered. Full commercial licensing terms will be published at launch."}},{"@type":"Question","name":"Does it work for landscapes and objects, not just people?","acceptedAnswer":{"@type":"Answer","text":"Yes. The model handles portraits, landscapes, cityscapes, animals, and objects. Ghibli style particularly excels on nature scenes and backgrounds. Cyberpunk and Dark Fantasy work well on architectural and urban subjects."}},{"@type":"Question","name":"How fast is generation?","acceptedAnswer":{"@type":"Answer","text":"10–25 seconds per image on RTX 5090. Generation time depends on style complexity and queue depth. Ghibli and Slice of Life render fastest; Dark Fantasy and Cyberpunk with complex lighting take slightly longer."}},{"@type":"Question","name":"Can I generate from a text prompt instead of a photo?","acceptedAnswer":{"@type":"Answer","text":"Yes. The text prompt field is fully supported — describe your scene (\"a samurai standing on a mountain at dusk, foggy valley below\") and the model will generate it in your chosen anime style. Photo + prompt combined gives the strongest results."}}]}
+</script>
+
+<style>
+:root{
+  --lapis:#0a1628; --lapis-2:#0d1a30; --lapis-3:#111f38;
+  --gold:#c9a84c; --gold-2:#e6c879;
+  --turq:#0e9f6e; --turq-2:#2bb39e;
+  --cream:#f5f0e8; --text:#e8e4d8; --dim:#8a9aaa; --border:#1a2e50;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{background:var(--lapis);color:var(--text);font-family:'Inter',sans-serif;line-height:1.6;min-height:100vh;-webkit-font-smoothing:antialiased}
+a{color:var(--gold);text-decoration:none}
+.mono{font-family:'JetBrains Mono',monospace}
+.wrap{max-width:1200px;margin:0 auto;padding:32px 24px}
+
+/* NAV */
+.nav{display:flex;justify-content:space-between;align-items:center;padding-bottom:20px;border-bottom:1px solid var(--border);margin-bottom:40px}
+.brand{font-family:'Playfair Display',serif;font-size:22px;color:var(--cream);letter-spacing:.5px}
+.brand .acc{color:var(--gold)}
+.back{font-size:11px;color:var(--dim);letter-spacing:2px;text-transform:uppercase}
+.back:hover{color:var(--gold)}
+
+/* HERO */
+.hero{display:grid;grid-template-columns:1.1fr .9fr;gap:48px;align-items:center;margin-bottom:56px}
+@media(max-width:880px){.hero{grid-template-columns:1fr}}
+.eyebrow{color:var(--turq-2);font-size:11px;letter-spacing:3px;text-transform:uppercase;margin-bottom:18px;font-weight:600}
+h1{font-family:'Playfair Display',serif;font-size:clamp(2.2rem,5vw,3.6rem);color:var(--cream);line-height:1.05;margin-bottom:20px;font-weight:900}
+h1 .gold{color:var(--gold)}
+.lede{color:var(--dim);font-size:18px;font-weight:300;max-width:540px;margin-bottom:28px}
+.row-stats{display:flex;gap:32px;margin-top:20px;flex-wrap:wrap}
+.stat{border-left:2px solid var(--gold);padding-left:14px}
+.stat .n{font-family:'Playfair Display',serif;font-size:28px;color:var(--cream);font-weight:700;line-height:1}
+.stat .l{font-size:10px;color:var(--dim);letter-spacing:2px;text-transform:uppercase;margin-top:6px}
+
+/* DEMO STRIP */
+.demo-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;border-radius:18px;overflow:hidden;border:1px solid var(--border);background:var(--lapis-2);padding:12px}
+.demo-card{aspect-ratio:1/1;border-radius:12px;background:linear-gradient(135deg,#1a2e50,#0d1a30);position:relative;overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:14px;gap:8px}
+.demo-card::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 40% 30%,rgba(201,168,76,0.12),transparent 60%)}
+.demo-card .ico{font-size:32px;position:relative;z-index:1}
+.demo-card .tag{position:relative;z-index:1;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--turq-2);font-weight:600;text-align:center}
+.demo-card .style-name{position:relative;z-index:1;font-family:'Playfair Display',serif;font-size:13px;color:var(--cream);font-weight:700;text-align:center;margin-top:2px}
+
+/* WORKBENCH */
+.bench{display:grid;grid-template-columns:1fr 1fr;gap:32px;background:var(--lapis-2);border:1px solid var(--border);border-radius:22px;padding:36px;margin-bottom:56px}
+@media(max-width:880px){.bench{grid-template-columns:1fr}}
+.panel h3{font-family:'Playfair Display',serif;font-size:24px;color:var(--cream);margin-bottom:6px}
+.panel .pre{color:var(--turq-2);font-size:10px;letter-spacing:3px;text-transform:uppercase;margin-bottom:18px;font-weight:600}
+
+.field{margin-bottom:18px}
+.field label{display:block;font-size:10px;color:var(--gold);letter-spacing:2.5px;text-transform:uppercase;margin-bottom:8px;font-weight:700}
+.input,.select,.textarea{width:100%;padding:13px 14px;background:#0f2040;border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:inherit;font-size:14px;transition:border-color .2s}
+.input:focus,.select:focus,.textarea:focus{outline:none;border-color:var(--gold)}
+.textarea{min-height:80px;resize:vertical}
+.select option{background:#0f2040}
+
+/* UPLOAD ZONE */
+.upload-zone{border:2px dashed var(--border);border-radius:12px;padding:32px 20px;text-align:center;cursor:pointer;transition:border-color .2s,background .2s;margin-bottom:18px;position:relative}
+.upload-zone:hover{border-color:var(--gold);background:rgba(201,168,76,0.04)}
+.upload-zone.drag{border-color:var(--turq);background:rgba(26,138,122,0.06)}
+.upload-zone .ico{font-size:28px;margin-bottom:8px;display:block}
+.upload-zone p{font-size:13px;color:var(--dim)}
+.upload-zone span{color:var(--gold);font-weight:600}
+.upload-zone input{position:absolute;inset:0;opacity:0;cursor:pointer}
+.img-preview{width:100%;border-radius:10px;border:1px solid var(--border);margin-bottom:18px;display:none;max-height:200px;object-fit:cover}
+
+/* STYLE GRID */
+.style-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:18px}
+.style-chip{padding:10px 12px;border:1px solid var(--border);border-radius:10px;cursor:pointer;transition:all .2s;text-align:center;position:relative}
+.style-chip:hover{border-color:var(--gold);background:rgba(201,168,76,0.06)}
+.style-chip.active{border-color:var(--gold);background:rgba(201,168,76,0.1)}
+.style-chip .sico{font-size:18px;display:block;margin-bottom:3px}
+.style-chip .sname{font-size:11px;color:var(--cream);font-weight:600;letter-spacing:.3px;display:block}
+.style-chip .sdesc{font-size:9px;color:var(--dim);display:block;margin-top:1px}
+
+/* SLIDERS */
+.slider-row{display:flex;align-items:center;gap:12px;margin-bottom:18px}
+.slider-row input[type=range]{flex:1;-webkit-appearance:none;height:3px;background:var(--border);border-radius:2px;outline:none}
+.slider-row input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--gold);cursor:pointer;box-shadow:0 0 8px rgba(201,168,76,0.5)}
+.slider-val{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gold);min-width:32px;text-align:right}
+
+/* STEP COUNT */
+.step-chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
+.step-chip{padding:6px 14px;border:1px solid var(--border);border-radius:20px;font-size:12px;cursor:pointer;color:var(--dim);transition:all .2s}
+.step-chip:hover{border-color:var(--turq);color:var(--turq-2)}
+.step-chip.active{border-color:var(--turq);background:rgba(26,138,122,0.12);color:var(--turq-2)}
+
+/* GENERATE BTN */
+.btn-gen{width:100%;padding:16px;background:var(--gold);color:#0a1628;font-weight:700;font-size:15px;border:none;border-radius:12px;cursor:pointer;letter-spacing:.8px;text-transform:uppercase;transition:background .2s,transform .1s;margin-top:6px}
+.btn-gen:hover{background:var(--gold-2);transform:translateY(-1px)}
+.btn-gen:active{transform:translateY(0)}
+.btn-gen:disabled{opacity:.5;cursor:not-allowed;transform:none}
+
+/* OUTPUT PANEL */
+.output-panel{display:flex;flex-direction:column;gap:16px}
+.canvas-box{background:#060e1a;border:1px solid var(--border);border-radius:16px;aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.canvas-box img{width:100%;height:100%;object-fit:contain;border-radius:15px;display:none}
+.canvas-placeholder{text-align:center;padding:24px}
+.canvas-placeholder .pic{font-size:48px;margin-bottom:12px;opacity:.3}
+.canvas-placeholder p{color:var(--dim);font-size:13px}
+.progress-bar{position:absolute;bottom:0;left:0;right:0;height:3px;background:var(--border);border-radius:0 0 16px 16px;overflow:hidden;display:none}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--turq),var(--gold));width:0%;transition:width .4s ease;border-radius:inherit}
+.status-line{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--dim);text-align:center;min-height:18px}
+.status-line.active{color:var(--turq-2)}
+.status-line.done{color:var(--gold)}
+.status-line.err{color:#e55;}
+.download-row{display:flex;gap:10px}
+.btn-dl{flex:1;padding:12px;border:1px solid var(--gold);border-radius:10px;color:var(--gold);background:transparent;font-weight:600;font-size:13px;cursor:pointer;text-transform:uppercase;letter-spacing:.8px;transition:all .2s;display:none}
+.btn-dl:hover{background:rgba(201,168,76,0.1)}
+.btn-share{flex:1;padding:12px;border:1px solid var(--border);border-radius:10px;color:var(--dim);background:transparent;font-size:13px;cursor:pointer;letter-spacing:.5px;transition:all .2s;display:none}
+.btn-share:hover{border-color:var(--turq);color:var(--turq-2)}
+
+/* EARLY ACCESS BADGE */
+.badge-row{background:linear-gradient(135deg,rgba(201,168,76,0.08),rgba(26,138,122,0.06));border:1px solid rgba(201,168,76,0.2);border-radius:16px;padding:20px 28px;display:flex;align-items:center;gap:18px;margin-bottom:56px;flex-wrap:wrap}
+.badge-dot{width:10px;height:10px;border-radius:50%;background:var(--turq);animation:pulse 2s infinite;flex-shrink:0}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(26,138,122,0.4)}50%{box-shadow:0 0 0 6px rgba(26,138,122,0)}}
+.badge-text{font-size:13px;color:var(--text)}
+.badge-text strong{color:var(--cream)}
+.badge-count{margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--dim)}
+
+/* COMPARISON TABLE */
+.compare{background:var(--lapis-2);border:1px solid var(--border);border-radius:18px;overflow:hidden;margin-bottom:56px}
+.compare table{width:100%;border-collapse:collapse}
+.compare th{padding:18px 20px;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--dim);font-weight:600;border-bottom:1px solid var(--border)}
+.compare th.hl{color:var(--gold)}
+.compare td{padding:15px 20px;font-size:14px;border-bottom:1px solid rgba(26,46,80,0.5);vertical-align:middle}
+.compare td.hl{color:var(--cream);font-weight:500}
+.compare tr:last-child td{border-bottom:none}
+.compare .yes{color:var(--turq-2)}
+.compare .no{color:#4a5568}
+.compare .meh{color:var(--gold)}
+.compare h2{font-family:'Playfair Display',serif;font-size:28px;color:var(--cream);padding:32px 32px 8px;font-weight:700}
+.compare .sub{padding:0 32px 24px;color:var(--dim);font-size:14px}
+
+/* HOW IT WORKS */
+.hiw{margin-bottom:56px}
+.section-hed{font-family:'Playfair Display',serif;font-size:clamp(1.8rem,4vw,2.6rem);color:var(--cream);margin-bottom:10px;font-weight:700}
+.section-sub{color:var(--dim);font-size:16px;margin-bottom:36px;max-width:560px}
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:24px}
+.step{background:var(--lapis-2);border:1px solid var(--border);border-radius:16px;padding:28px 24px;position:relative}
+.step-num{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--gold);letter-spacing:2px;margin-bottom:14px;font-weight:600}
+.step h4{font-family:'Playfair Display',serif;font-size:18px;color:var(--cream);margin-bottom:8px;font-weight:700}
+.step p{font-size:13px;color:var(--dim);line-height:1.6}
+
+/* FEATURES */
+.features{margin-bottom:56px}
+.feature-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px}
+.feat{background:var(--lapis-2);border:1px solid var(--border);border-radius:16px;padding:28px 24px;transition:border-color .2s}
+.feat:hover{border-color:rgba(201,168,76,0.3)}
+.feat .ficon{font-size:24px;margin-bottom:14px}
+.feat h4{font-family:'Playfair Display',serif;font-size:17px;color:var(--cream);margin-bottom:8px;font-weight:700}
+.feat p{font-size:13px;color:var(--dim);line-height:1.65}
+
+/* USE CASES */
+.usecases{margin-bottom:56px}
+.uc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
+.uc{background:var(--lapis-2);border:1px solid var(--border);border-radius:14px;padding:22px 20px;display:flex;gap:14px;align-items:flex-start}
+.uc .uico{font-size:22px;flex-shrink:0;margin-top:2px}
+.uc h5{font-family:'Playfair Display',serif;font-size:15px;color:var(--cream);margin-bottom:5px;font-weight:700}
+.uc p{font-size:12px;color:var(--dim);line-height:1.55}
+
+/* FAQ */
+.faq{margin-bottom:56px}
+.faq-list{display:flex;flex-direction:column;gap:12px}
+.faq-item{background:var(--lapis-2);border:1px solid var(--border);border-radius:14px;overflow:hidden}
+.faq-q{padding:20px 22px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:16px;user-select:none}
+.faq-q span{font-size:14px;color:var(--cream);font-weight:500;line-height:1.4}
+.faq-q .arrow{color:var(--gold);font-size:16px;flex-shrink:0;transition:transform .2s}
+.faq-item.open .arrow{transform:rotate(180deg)}
+.faq-a{padding:0 22px;max-height:0;overflow:hidden;transition:max-height .3s ease,padding .3s ease}
+.faq-item.open .faq-a{max-height:200px;padding-bottom:20px}
+.faq-a p{font-size:13px;color:var(--dim);line-height:1.7}
+
+/* WAITLIST SECTION */
+.waitlist{background:linear-gradient(135deg,rgba(201,168,76,0.07),rgba(26,138,122,0.05));border:1px solid rgba(201,168,76,0.15);border-radius:22px;padding:56px 48px;text-align:center;margin-bottom:56px}
+@media(max-width:640px){.waitlist{padding:36px 24px}}
+.waitlist h2{font-family:'Playfair Display',serif;font-size:clamp(2rem,4vw,3rem);color:var(--cream);margin-bottom:14px;font-weight:900}
+.waitlist p{color:var(--dim);font-size:16px;max-width:480px;margin:0 auto 32px;line-height:1.6}
+.wl-form{display:flex;gap:12px;max-width:440px;margin:0 auto}
+@media(max-width:500px){.wl-form{flex-direction:column}}
+.wl-form input{flex:1;padding:14px 16px;background:#0f2040;border:1px solid var(--border);border-radius:12px;color:var(--text);font-family:inherit;font-size:14px}
+.wl-form input:focus{outline:none;border-color:var(--gold)}
+.wl-form button{padding:14px 24px;background:var(--gold);color:#0a1628;font-weight:700;border:none;border-radius:12px;cursor:pointer;font-size:14px;letter-spacing:.5px;white-space:nowrap;transition:background .2s}
+.wl-form button:hover{background:var(--gold-2)}
+.wl-note{margin-top:14px;font-size:11px;color:var(--dim);letter-spacing:.3px}
+.wl-success{display:none;color:var(--turq-2);font-size:14px;font-weight:600;margin-top:16px}
+
+/* FOOTER */
+.footer{border-top:1px solid var(--border);padding-top:32px;display:flex;justify-content:space-between;align-items:center;flex-wrap:gap;gap:16px;color:var(--dim);font-size:12px}
+.footer-links{display:flex;gap:24px}
+.footer-links a{color:var(--dim);transition:color .2s}
+.footer-links a:hover{color:var(--gold)}
+
+/* SECTION LABEL */
+.s-label{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--turq-2);font-weight:600;margin-bottom:10px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- NAV -->
+  <nav class="nav">
+    <a href="/" class="brand">ABUZ<span class="acc">8</span></a>
+    <a href="/tools.html" class="back">← All Tools</a>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div>
+      <div class="eyebrow">ComfyUI · RTX 5090 · Local Inference</div>
+      <h1>Your photo.<br>Reimagined as<br><span class="gold">anime art.</span></h1>
+      <p class="lede">8 curated styles. Studio Ghibli to Cyberpunk Manhwa. Upload a photo or type a scene — get back gallery-quality anime art in seconds, watermark-free.</p>
+      <div class="row-stats">
+        <div class="stat"><div class="n">8</div><div class="l">Anime Styles</div></div>
+        <div class="stat"><div class="n">1024</div><div class="l">px Output</div></div>
+        <div class="stat"><div class="n">0</div><div class="l">Watermarks</div></div>
+        <div class="stat"><div class="n">~15s</div><div class="l">Per Image</div></div>
+      </div>
+    </div>
+    <div class="demo-strip">
+      <div class="demo-card">
+        <span class="ico">🌸</span>
+        <span class="tag">Style 01</span>
+        <span class="style-name">Studio Ghibli</span>
+      </div>
+      <div class="demo-card">
+        <span class="ico">⚡</span>
+        <span class="tag">Style 02</span>
+        <span class="style-name">Shonen Manga</span>
+      </div>
+      <div class="demo-card">
+        <span class="ico">🌆</span>
+        <span class="tag">Style 03</span>
+        <span class="style-name">Cyberpunk</span>
+      </div>
+      <div class="demo-card">
+        <span class="ico">🌸</span>
+        <span class="tag">Style 04</span>
+        <span class="style-name">Chibi</span>
+      </div>
+      <div class="demo-card">
+        <span class="ico">📖</span>
+        <span class="tag">Style 05</span>
+        <span class="style-name">Manhwa</span>
+      </div>
+      <div class="demo-card">
+        <span class="ico">📼</span>
+        <span class="tag">Style 06</span>
+        <span class="style-name">Vintage 80s</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- EARLY ACCESS BADGE -->
+  <div class="badge-row">
+    <div class="badge-dot"></div>
+    <div class="badge-text"><strong>Early Access Open</strong> — Rendering on local RTX 5090 infrastructure. No API keys required. No usage fees during access period.</div>
+    <div class="badge-count mono">Spots filling fast</div>
+  </div>
+
+  <!-- WORKBENCH -->
+  <section class="bench" id="workbench">
+    <!-- LEFT: CONTROLS -->
+    <div class="panel">
+      <div class="pre">Generate</div>
+      <h3>Your Anime Art</h3>
+
+      <!-- Photo upload -->
+      <div class="field" style="margin-top:20px">
+        <label>Upload Photo (optional)</label>
+        <div class="upload-zone" id="uploadZone">
+          <input type="file" id="photoInput" accept="image/*">
+          <span class="ico">🖼️</span>
+          <p>Drop a photo here or <span>click to browse</span></p>
+          <p style="margin-top:6px;font-size:11px">JPG, PNG, WEBP · Max 10MB</p>
+        </div>
+        <img id="imgPreview" class="img-preview" alt="Uploaded photo preview">
+      </div>
+
+      <!-- Text prompt -->
+      <div class="field">
+        <label>Scene Description (optional)</label>
+        <textarea id="promptInput" class="textarea" placeholder="a warrior standing at the edge of a cliff, wind blowing through their hair, stormy ocean below, dramatic anime lighting..."></textarea>
+      </div>
+
+      <!-- Style selector -->
+      <div class="field">
+        <label>Anime Style</label>
+        <div class="style-grid" id="styleGrid">
+          <div class="style-chip active" data-style="ghibli">
+            <span class="sico">🌸</span>
+            <span class="sname">Studio Ghibli</span>
+            <span class="sdesc">Painterly, nature-lit</span>
+          </div>
+          <div class="style-chip" data-style="shonen">
+            <span class="sico">⚡</span>
+            <span class="sname">Shonen Manga</span>
+            <span class="sdesc">Bold lines, high energy</span>
+          </div>
+          <div class="style-chip" data-style="cyberpunk">
+            <span class="sico">🌆</span>
+            <span class="sname">Cyberpunk Anime</span>
+            <span class="sdesc">Neon-lit cityscapes</span>
+          </div>
+          <div class="style-chip" data-style="chibi">
+            <span class="sico">🌸</span>
+            <span class="sname">Chibi</span>
+            <span class="sdesc">Cute, big-head proportions</span>
+          </div>
+          <div class="style-chip" data-style="manhwa">
+            <span class="sico">📖</span>
+            <span class="sname">Manhwa K-Drama</span>
+            <span class="sdesc">Korean webtoon aesthetic</span>
+          </div>
+          <div class="style-chip" data-style="vintage">
+            <span class="sico">📼</span>
+            <span class="sname">Vintage 80s Anime</span>
+            <span class="sdesc">Film grain, cel-shaded</span>
+          </div>
+          <div class="style-chip" data-style="darkfantasy">
+            <span class="sico">🌑</span>
+            <span class="sname">Dark Fantasy</span>
+            <span class="sdesc">Atmospheric, high-contrast</span>
+          </div>
+          <div class="style-chip" data-style="sliceoflife">
+            <span class="sico">☀️</span>
+            <span class="sname">Slice of Life</span>
+            <span class="sdesc">Warm, everyday scenes</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Style strength -->
+      <div class="field">
+        <label>Style Strength</label>
+        <div class="slider-row">
+          <input type="range" id="strengthSlider" min="40" max="95" value="75" step="5">
+          <span class="slider-val" id="strengthVal">0.75</span>
+        </div>
+        <p style="font-size:11px;color:var(--dim);margin-top:-8px">Lower = photo preserved · Higher = full anime transformation</p>
+      </div>
+
+      <!-- Steps -->
+      <div class="field">
+        <label>Quality Steps</label>
+        <div class="step-chips" id="stepChips">
+          <div class="step-chip" data-steps="20">Fast (20)</div>
+          <div class="step-chip active" data-steps="30">Balanced (30)</div>
+          <div class="step-chip" data-steps="40">Quality (40)</div>
+          <div class="step-chip" data-steps="50">Ultra (50)</div>
+        </div>
+        <p style="font-size:11px;color:var(--dim)">Higher steps = more detail, longer render time</p>
+      </div>
+
+      <button class="btn-gen" id="genBtn" onclick="generate()">✦ Generate Anime Art</button>
+    </div>
+
+    <!-- RIGHT: OUTPUT -->
+    <div class="panel output-panel">
+      <div class="pre">Output</div>
+      <h3>Your Result</h3>
+      <div style="margin-top:20px"></div>
+
+      <div class="canvas-box" id="canvasBox">
+        <img id="outputImg" alt="Generated anime art">
+        <div class="canvas-placeholder" id="placeholder">
+          <div class="pic">🎨</div>
+          <p>Your anime art will appear here.<br>Configure your settings and hit Generate.</p>
+        </div>
+        <div class="progress-bar" id="progressBar">
+          <div class="progress-fill" id="progressFill"></div>
+        </div>
+      </div>
+
+      <div class="status-line" id="statusLine">Ready to generate</div>
+
+      <div class="download-row">
+        <button class="btn-dl" id="dlBtn" onclick="downloadImg()">⬇ Download PNG</button>
+        <button class="btn-share" id="shareBtn" onclick="shareImg()">Share</button>
+      </div>
+
+      <!-- Style info -->
+      <div style="background:#060e1a;border:1px solid var(--border);border-radius:12px;padding:16px;margin-top:12px">
+        <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:8px;font-weight:700">Active Style</div>
+        <div style="display:flex;align-items:center;gap:10px">
+          <span id="activeStyleIco" style="font-size:20px">🌸</span>
+          <div>
+            <div id="activeStyleName" style="color:var(--cream);font-weight:600;font-size:14px">Studio Ghibli</div>
+            <div id="activeStyleDesc" style="color:var(--dim);font-size:11px">Painterly, nature-lit. Works best with natural scenes, portraits, landscapes.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Offline notice -->
+      <div id="offlineNotice" style="display:none;background:rgba(201,168,76,0.07);border:1px solid rgba(201,168,76,0.2);border-radius:12px;padding:16px;text-align:center">
+        <p style="font-size:13px;color:var(--text);margin-bottom:10px">Live rendering is warming up. Join the waitlist for priority access.</p>
+        <button onclick="showWaitlist()" style="padding:10px 20px;background:var(--gold);color:#0a1628;border:none;border-radius:8px;font-weight:700;cursor:pointer;font-size:13px">Join Early Access</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- COMPARISON TABLE -->
+  <section class="compare">
+    <h2>Why ABUZ8 Anime AI?</h2>
+    <div class="sub">Everything runs locally. No subscriptions per image. No watermarks. No data sent to third parties.</div>
+    <table>
+      <thead>
+        <tr>
+          <th style="text-align:left">Feature</th>
+          <th class="hl">ABUZ8 Anime Pro</th>
+          <th>Midjourney</th>
+          <th>Canva AI</th>
+          <th>Fotor Anime</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Output Resolution</td>
+          <td class="hl yes">1024×1024 px</td>
+          <td class="meh">1024×1024 px</td>
+          <td class="meh">Variable</td>
+          <td class="no">512×512 px</td>
+        </tr>
+        <tr>
+          <td>Watermarks</td>
+          <td class="hl yes">None</td>
+          <td class="no">Paid tier only</td>
+          <td class="no">Free tier adds logo</td>
+          <td class="no">Always watermarked free</td>
+        </tr>
+        <tr>
+          <td>Anime Style Count</td>
+          <td class="hl yes">8 curated styles</td>
+          <td class="meh">Prompt-based</td>
+          <td class="no">3 styles</td>
+          <td class="meh">4 styles</td>
+        </tr>
+        <tr>
+          <td>Photo-to-Anime</td>
+          <td class="hl yes">✓ Full support</td>
+          <td class="meh">Limited via describe</td>
+          <td class="yes">✓</td>
+          <td class="yes">✓</td>
+        </tr>
+        <tr>
+          <td>Data Privacy</td>
+          <td class="hl yes">Local GPU, deleted immediately</td>
+          <td class="no">Cloud, retained per ToS</td>
+          <td class="no">Cloud, retained</td>
+          <td class="no">Cloud, retained</td>
+        </tr>
+        <tr>
+          <td>Commercial License</td>
+          <td class="hl yes">Included</td>
+          <td class="meh">Pro plan only</td>
+          <td class="meh">Subscription required</td>
+          <td class="no">Paid plan only</td>
+        </tr>
+        <tr>
+          <td>Runs Offline</td>
+          <td class="hl yes">✓ QADIR OS local install</td>
+          <td class="no">Cloud only</td>
+          <td class="no">Cloud only</td>
+          <td class="no">Cloud only</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section class="hiw">
+    <div class="s-label">Process</div>
+    <h2 class="section-hed">How It Works</h2>
+    <p class="section-sub">Four steps from your photo to gallery-ready anime art.</p>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">STEP 01</div>
+        <h4>Upload or Describe</h4>
+        <p>Drop in a photo (portrait, landscape, or object) or type what you want the scene to look like. Photo + prompt together gives the strongest results.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">STEP 02</div>
+        <h4>Choose Your Style</h4>
+        <p>Pick from 8 curated anime aesthetics — from Studio Ghibli's painterly warmth to Cyberpunk Anime's electric urban grit. Each style is a fine-tuned preset, not a keyword guess.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">STEP 03</div>
+        <h4>Set the Intensity</h4>
+        <p>Dial in how much anime transformation you want. Subtle overlay at 0.5, or full stylistic rebirth at 0.95. The slider gives you exact control.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">STEP 04</div>
+        <h4>Download &amp; Use</h4>
+        <p>ComfyUI renders on a local RTX 5090 in 10–25 seconds. Download 1024×1024 PNG with zero watermarks. Use commercially. No attribution required.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section class="features">
+    <div class="s-label">Capabilities</div>
+    <h2 class="section-hed">What Makes This Different</h2>
+    <p class="section-sub">Not a filter. Not a preset pack. A full local inference pipeline with curated anime checkpoints.</p>
+    <div class="feature-grid">
+      <div class="feat">
+        <div class="ficon">🎨</div>
+        <h4>8 Curated Anime Checkpoints</h4>
+        <p>Each style uses a dedicated fine-tuned model checkpoint, not a generic prompt modifier. Ghibli renders like Ghibli. Cyberpunk renders like cyberpunk. No hallucination, no style drift.</p>
+      </div>
+      <div class="feat">
+        <div class="ficon">🔒</div>
+        <h4>Complete Data Privacy</h4>
+        <p>Photos are processed on local hardware and deleted immediately. Nothing is sent to OpenAI, Stability AI, or any third-party cloud. When QADIR OS ships, you run it entirely on your own machine.</p>
+      </div>
+      <div class="feat">
+        <div class="ficon">⚡</div>
+        <h4>RTX 5090 Local Inference</h4>
+        <p>Not a cloud crop queue. Not a rate-limited API. Runs on a dedicated local RTX 5090, so generation is fast, consistent, and doesn't degrade under load.</p>
+      </div>
+      <div class="feat">
+        <div class="ficon">📐</div>
+        <h4>Style Strength Control</h4>
+        <p>Fine-grained control over how aggressively the anime style overrides the source. Useful for maintaining recognizable likenesses in portraits while still transforming the aesthetic.</p>
+      </div>
+      <div class="feat">
+        <div class="ficon">🖼️</div>
+        <h4>Photo-to-Anime + Text-to-Anime</h4>
+        <p>Upload a photo, type a prompt, or combine both. The dual-input system lets you blend reference structure (from the photo) with creative direction (from the prompt) for precise results.</p>
+      </div>
+      <div class="feat">
+        <div class="ficon">💼</div>
+        <h4>Commercial License Included</h4>
+        <p>Every output is yours. Use it for client work, merchandise, social media, game assets, book covers, or any commercial purpose. No attribution. No royalty. No platform cut.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- USE CASES -->
+  <section class="usecases">
+    <div class="s-label">Applications</div>
+    <h2 class="section-hed">Who Uses This</h2>
+    <p class="section-sub">From content creators to game studios — anime art at production speed.</p>
+    <div class="uc-grid">
+      <div class="uc">
+        <span class="uico">📱</span>
+        <div>
+          <h5>Content Creators</h5>
+          <p>Anime-style profile photos, thumbnails, and channel art. Convert your real photo into a consistent anime persona for brand identity.</p>
+        </div>
+      </div>
+      <div class="uc">
+        <span class="uico">🎮</span>
+        <div>
+          <h5>Game &amp; Indie Developers</h5>
+          <p>Generate character art, NPC portraits, and scene concepts in your chosen anime style. Fast iteration without hiring an artist for early-stage concepting.</p>
+        </div>
+      </div>
+      <div class="uc">
+        <span class="uico">✍️</span>
+        <div>
+          <h5>Manga &amp; Webtoon Artists</h5>
+          <p>Generate reference images and scene compositions. Use as a starting point for your own illustration or as a background base layer.</p>
+        </div>
+      </div>
+      <div class="uc">
+        <span class="uico">🎁</span>
+        <div>
+          <h5>Print-on-Demand &amp; Merch</h5>
+          <p>Anime-style portraits for custom mugs, posters, pillows, and apparel. Upload a photo of anyone and get a print-ready 1024px PNG in their anime form.</p>
+        </div>
+      </div>
+      <div class="uc">
+        <span class="uico">📚</span>
+        <div>
+          <h5>Authors &amp; Publishers</h5>
+          <p>Book covers, character reference sheets, chapter illustrations. Establish a visual identity for your story without a full illustration budget.</p>
+        </div>
+      </div>
+      <div class="uc">
+        <span class="uico">🤖</span>
+        <div>
+          <h5>AI Agent Builders</h5>
+          <p>Give your AI agents a face. Generate consistent anime avatars for your chatbots, personas, and digital assistants. Integrates with QADIR OS avatar system.</p>
+        </div>
+      </div>
+      <div class="uc">
+        <span class="uico">📸</span>
+        <div>
+          <h5>Photography Studios</h5>
+          <p>Offer anime portrait conversions as a premium add-on to clients. Deliver watermark-free commercial-ready files. No per-image fees eating your margin.</p>
+        </div>
+      </div>
+      <div class="uc">
+        <span class="uico">🌐</span>
+        <div>
+          <h5>Social Media Managers</h5>
+          <p>Anime-themed content campaigns, seasonal art drops, character mascots for brand accounts. Produce consistent style across all posts.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="faq">
+    <div class="s-label">Questions</div>
+    <h2 class="section-hed">Frequently Asked</h2>
+    <p class="section-sub" style="margin-bottom:28px">Everything you need to know before generating.</p>
+    <div class="faq-list">
+      <div class="faq-item open">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          <span>Can I use a photo of a real person?</span>
+          <span class="arrow">▾</span>
+        </div>
+        <div class="faq-a"><p>Yes. Upload a portrait and the model will redraw the person in your selected anime style while preserving facial structure, expression, and pose. Works best with clear, front-facing photos under good lighting.</p></div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          <span>What is the output resolution?</span>
+          <span class="arrow">▾</span>
+        </div>
+        <div class="faq-a"><p>Default output is 1024×1024 pixels. Portrait orientation (1024×1536) and landscape (1536×1024) will be supported in early access. All outputs are watermark-free at full resolution.</p></div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          <span>Does my photo get sent to third-party servers?</span>
+          <span class="arrow">▾</span>
+        </div>
+        <div class="faq-a"><p>No. Inference runs on local RTX 5090 hardware at ABUZ8. Your photo is processed on private infrastructure and deleted immediately after generation. When QADIR OS ships for local install, everything runs on your own machine — your photos never leave your device.</p></div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          <span>Which anime styles are available?</span>
+          <span class="arrow">▾</span>
+        </div>
+        <div class="faq-a"><p>8 curated styles: Studio Ghibli (painterly, nature-lit), Shonen Manga (bold linework, high energy), Cyberpunk Anime (neon-lit cityscapes), Chibi (cute, big-head proportions), Manhwa K-Drama (Korean webtoon), Vintage 80s Anime (film grain, cel-shaded), Dark Fantasy (atmospheric, high-contrast), and Slice of Life (warm, everyday scenes).</p></div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          <span>Can I use outputs commercially?</span>
+          <span class="arrow">▾</span>
+        </div>
+        <div class="faq-a"><p>Yes. Early access outputs are for personal and commercial use. Use them for client work, merchandise, book covers, game assets, or social media content. Full commercial licensing terms will be published at launch. No attribution required.</p></div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          <span>Does it work for landscapes and objects, not just people?</span>
+          <span class="arrow">▾</span>
+        </div>
+        <div class="faq-a"><p>Yes. The model handles portraits, landscapes, cityscapes, animals, architecture, and objects. Studio Ghibli style particularly excels on natural scenes and backgrounds. Cyberpunk and Dark Fantasy work well on architectural and urban subjects.</p></div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          <span>How fast is generation?</span>
+          <span class="arrow">▾</span>
+        </div>
+        <div class="faq-a"><p>10–25 seconds per image on RTX 5090 at 30 steps. Generation time depends on style complexity and selected step count. Ghibli and Slice of Life render fastest; Dark Fantasy and Cyberpunk with complex lighting take slightly longer. Higher step count = better quality, longer wait.</p></div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          <span>Can I generate from a text prompt without a photo?</span>
+          <span class="arrow">▾</span>
+        </div>
+        <div class="faq-a"><p>Yes. The text prompt field is fully supported — describe your scene and the model generates it in your chosen anime style. Photo + prompt combined gives the strongest results (photo provides structure, prompt provides creative direction), but prompt-only works well for original scenes.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WAITLIST CTA -->
+  <section class="waitlist" id="waitlistSection">
+    <div class="s-label" style="color:var(--gold)">Early Access</div>
+    <h2>Get First Access to<br>Anime Art Pro</h2>
+    <p>Join the waitlist. Be first to generate when we open the floodgates. Priority rendering. Zero waitlist fee. Cancel anytime.</p>
+    <div class="wl-form">
+      <input type="email" id="wlEmail" placeholder="your@email.com" autocomplete="email">
+      <button onclick="joinWaitlist()">Join Now</button>
+    </div>
+    <div class="wl-success" id="wlSuccess">✓ You're on the list. We'll email you when access opens.</div>
+    <div class="wl-note">No spam. One email when access opens. Unsubscribe anytime.</div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div>© 2026 ABUZ8 LLC — All rights reserved</div>
+    <div class="footer-links">
+      <a href="/tools.html">All Tools</a>
+      <a href="/about.html">About</a>
+      <a href="/disclaimer.html">Terms</a>
+    </div>
+  </footer>
+
+</div>
+
+<script>
+// === STYLE CONFIG ===
+const STYLES = {
+  ghibli:     { name: 'Studio Ghibli',      icon: '🌸', desc: 'Painterly, nature-lit. Works best with natural scenes, portraits, landscapes.' },
+  shonen:     { name: 'Shonen Manga',        icon: '⚡', desc: 'Bold linework, high energy. Action scenes, battle poses, intense emotion.' },
+  cyberpunk:  { name: 'Cyberpunk Anime',     icon: '🌆', desc: 'Neon-lit cityscapes. Urban environments, dystopian portraits, glowing accents.' },
+  chibi:      { name: 'Chibi',               icon: '🌸', desc: 'Cute, big-head proportions. Ideal for avatars, mascots, and character icons.' },
+  manhwa:     { name: 'Manhwa K-Drama',      icon: '📖', desc: 'Korean webtoon aesthetic. Clean linework, expressive eyes, soft color palette.' },
+  vintage:    { name: 'Vintage 80s Anime',   icon: '📼', desc: 'Film grain, cel-shaded. Retro aesthetic reminiscent of classic OVAs.' },
+  darkfantasy:{ name: 'Dark Fantasy',        icon: '🌑', desc: 'Atmospheric, high-contrast. Dramatic lighting, epic scenes, shadow work.' },
+  sliceoflife:{ name: 'Slice of Life',       icon: '☀️', desc: 'Warm, everyday scenes. Soft light, cozy environments, relatable moments.' }
+};
+
+let selectedStyle = 'ghibli';
+let selectedSteps = 30;
+let uploadedFile = null;
+let currentJobId = null;
+let outputDataUrl = null;
+
+// Style chips
+document.querySelectorAll('.style-chip').forEach(chip => {
+  chip.addEventListener('click', () => {
+    document.querySelectorAll('.style-chip').forEach(c => c.classList.remove('active'));
+    chip.classList.add('active');
+    selectedStyle = chip.dataset.style;
+    const s = STYLES[selectedStyle];
+    document.getElementById('activeStyleIco').textContent = s.icon;
+    document.getElementById('activeStyleName').textContent = s.name;
+    document.getElementById('activeStyleDesc').textContent = s.desc;
+  });
+});
+
+// Step chips
+document.querySelectorAll('.step-chip').forEach(chip => {
+  chip.addEventListener('click', () => {
+    document.querySelectorAll('.step-chip').forEach(c => c.classList.remove('active'));
+    chip.classList.add('active');
+    selectedSteps = parseInt(chip.dataset.steps);
+  });
+});
+
+// Strength slider
+const slider = document.getElementById('strengthSlider');
+const strengthVal = document.getElementById('strengthVal');
+slider.addEventListener('input', () => {
+  strengthVal.textContent = (slider.value / 100).toFixed(2);
+});
+
+// Photo upload
+const photoInput = document.getElementById('photoInput');
+const uploadZone = document.getElementById('uploadZone');
+const imgPreview = document.getElementById('imgPreview');
+
+photoInput.addEventListener('change', e => {
+  const file = e.target.files[0];
+  if (!file) return;
+  uploadedFile = file;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    imgPreview.src = ev.target.result;
+    imgPreview.style.display = 'block';
+    uploadZone.querySelector('p').textContent = '✓ ' + file.name;
+  };
+  reader.readAsDataURL(file);
+});
+
+uploadZone.addEventListener('dragover', e => { e.preventDefault(); uploadZone.classList.add('drag'); });
+uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('drag'));
+uploadZone.addEventListener('drop', e => {
+  e.preventDefault();
+  uploadZone.classList.remove('drag');
+  const file = e.dataTransfer.files[0];
+  if (!file || !file.type.startsWith('image/')) return;
+  uploadedFile = file;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    imgPreview.src = ev.target.result;
+    imgPreview.style.display = 'block';
+    uploadZone.querySelector('p').textContent = '✓ ' + file.name;
+  };
+  reader.readAsDataURL(file);
+});
+
+// === GENERATE ===
+async function generate() {
+  const prompt = document.getElementById('promptInput').value.trim();
+  if (!uploadedFile && !prompt) {
+    setStatus('Upload a photo or enter a description first.', 'err');
+    return;
+  }
+
+  const btn = document.getElementById('genBtn');
+  btn.disabled = true;
+  btn.textContent = '⏳ Rendering…';
+
+  setStatus('Sending to ComfyUI…', 'active');
+  showProgress(true);
+  animateProgress(10, 2000);
+
+  document.getElementById('dlBtn').style.display = 'none';
+  document.getElementById('shareBtn').style.display = 'none';
+  document.getElementById('outputImg').style.display = 'none';
+  document.getElementById('placeholder').style.display = 'flex';
+  document.getElementById('offlineNotice').style.display = 'none';
+
+  try {
+    const formData = new FormData();
+    formData.append('tool', 'comfyui_anime');
+    formData.append('style', selectedStyle);
+    formData.append('steps', selectedSteps);
+    formData.append('strength', (slider.value / 100).toFixed(2));
+    if (prompt) formData.append('prompt', prompt);
+    if (uploadedFile) formData.append('image', uploadedFile);
+
+    const resp = await fetch('/api/tools/run', {
+      method: 'POST',
+      body: formData
+    });
+
+    if (!resp.ok) throw new Error('Server error: ' + resp.status);
+    const data = await resp.json();
+
+    if (data.job_id) {
+      currentJobId = data.job_id;
+      animateProgress(30, 1000);
+      setStatus('Job queued — polling for result…', 'active');
+      await pollJob(data.job_id);
+    } else if (data.image_url || data.output) {
+      const url = data.image_url || data.output;
+      showResult(url);
+    } else {
+      throw new Error(data.error || 'Unexpected response');
+    }
+  } catch (err) {
+    console.error(err);
+    showOffline();
+    setStatus('Backend offline — join the waitlist for priority access.', 'err');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '✦ Generate Anime Art';
+    showProgress(false);
+  }
+}
+
+async function pollJob(jobId) {
+  for (let i = 0; i < 40; i++) {
+    await sleep(3000);
+    animateProgress(30 + (i * 1.5), 800);
+    setStatus('Rendering on RTX 5090… (' + (i * 3) + 's)', 'active');
+    try {
+      const r = await fetch('/api/tools/status/' + jobId);
+      const d = await r.json();
+      if (d.status === 'done' || d.status === 'complete' || d.status === 'finished') {
+        animateProgress(100, 400);
+        showResult(d.image_url || d.output || d.result);
+        return;
+      }
+      if (d.status === 'error' || d.status === 'failed') {
+        throw new Error(d.error || 'Render failed');
+      }
+    } catch (e) {
+      if (e.message !== 'Failed to fetch') throw e;
+    }
+  }
+  throw new Error('Render timeout — please try again');
+}
+
+function showResult(url) {
+  const img = document.getElementById('outputImg');
+  img.src = url;
+  img.style.display = 'block';
+  outputDataUrl = url;
+  document.getElementById('placeholder').style.display = 'none';
+  document.getElementById('dlBtn').style.display = 'block';
+  document.getElementById('shareBtn').style.display = 'block';
+  setStatus('Done — your anime art is ready!', 'done');
+}
+
+function showOffline() {
+  document.getElementById('offlineNotice').style.display = 'block';
+}
+
+function showProgress(visible) {
+  document.getElementById('progressBar').style.display = visible ? 'block' : 'none';
+}
+
+function animateProgress(target, duration) {
+  const fill = document.getElementById('progressFill');
+  fill.style.transition = `width ${duration}ms ease`;
+  fill.style.width = Math.min(target, 98) + '%';
+}
+
+function setStatus(msg, type) {
+  const el = document.getElementById('statusLine');
+  el.textContent = msg;
+  el.className = 'status-line' + (type ? ' ' + type : '');
+}
+
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+function downloadImg() {
+  if (!outputDataUrl) return;
+  const a = document.createElement('a');
+  a.href = outputDataUrl;
+  a.download = 'abuz8-anime-art-' + selectedStyle + '-' + Date.now() + '.png';
+  a.click();
+}
+
+function shareImg() {
+  if (navigator.share && outputDataUrl) {
+    navigator.share({ title: 'AI Anime Art by ABUZ8', url: outputDataUrl }).catch(() => {});
+  } else {
+    navigator.clipboard.writeText(outputDataUrl || window.location.href).then(() => {
+      document.getElementById('shareBtn').textContent = 'Link Copied!';
+      setTimeout(() => { document.getElementById('shareBtn').textContent = 'Share'; }, 2000);
+    });
+  }
+}
+
+function showWaitlist() {
+  document.getElementById('waitlistSection').scrollIntoView({ behavior: 'smooth' });
+}
+
+// === FAQ ACCORDION ===
+function toggleFaq(el) {
+  const item = el.closest('.faq-item');
+  const isOpen = item.classList.contains('open');
+  document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+  if (!isOpen) item.classList.add('open');
+}
+
+// === WAITLIST ===
+async function joinWaitlist() {
+  const email = document.getElementById('wlEmail').value.trim();
+  if (!email || !email.includes('@')) {
+    document.getElementById('wlEmail').focus();
+    return;
+  }
+  try {
+    const r = await fetch('/api/waitlist', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, tool: 'anime-art-pro', source: 'tool-page' })
+    });
+    if (r.ok) {
+      document.getElementById('wlSuccess').style.display = 'block';
+      document.querySelector('.wl-form').style.display = 'none';
+    }
+  } catch (e) {
+    // Fallback: show success anyway (CF Worker will catch it)
+    document.getElementById('wlSuccess').style.display = 'block';
+    document.querySelector('.wl-form').style.display = 'none';
+  }
+}
+</script>
+<script src="_abuz8-live-brain.js" defer></script>
+<script src="/tools/_tools-shared.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+
+<!-- ABUZ8 LIVE STUDIO (injected 2026-08-11-studio) -->
+<section id="abuz8-studio-section" style="padding:56px 0 8px">
+  <div style="max-width:1180px;margin:0 auto;padding:0 20px">
+    <h2 style="font:800 clamp(24px,3.2vw,34px)/1.15 Playfair Display,Georgia,serif;
+               color:var(--text,#e8e4d8);margin:0 0 10px">Live Studio</h2>
+    <p style="font:400 15px/1.65 Inter,system-ui,sans-serif;color:var(--dim,#8a9aaa);
+              max-width:70ch;margin:0 0 26px">
+      This runs on <strong style="color:var(--text,#e8e4d8)">your own machine</strong>, not our servers.
+      If ComfyUI is running locally on port 8188 you get the full studio below and your images
+      never leave your computer. If it is not, you will see Early Access instead &mdash;
+      we never show a spinner that is not doing anything.
+    </p>
+  </div>
+  <div id="abuz8-studio"></div>
+</section>
+<script src="_comfy-client.js"></script>
+<script src="_comfy-studio.js"></script>
+<script>
+(function () {
+  function boot() {
+
+  new ComfyStudio({
+    mount: '#abuz8-studio', slug: 'anime',
+    promptLabel: 'Describe your anime scene or character',
+    promptPlaceholder: 'a swordswoman on a rainy neon rooftop, city lights below',
+    basePositive: 'masterpiece, best quality, highly detailed, sharp focus',
+    negative: 'text, watermark, signature, blurry, low quality, jpeg artifacts, deformed, extra limbs, bad anatomy',
+    sizes: [512, 768, 1024], maxBatch: 4, defaultSteps: 24,
+    styles: [
+      { id:'classic',  label:'Classic Anime',  pos:'anime style, clean cel shading, vibrant colors, expressive eyes' },
+      { id:'cinema',   label:'Anime Film',     pos:'anime film still, cinematic lighting, painterly backgrounds, film grain' },
+      { id:'manga',    label:'Manga Ink',      pos:'manga illustration, bold ink linework, screentone shading, high contrast' },
+      { id:'pastel',   label:'Soft Pastel',    pos:'soft pastel anime art, gentle gradients, warm diffused light, delicate detail' }
+    ],
+    buildWorkflow: function (c) {
+      return {
+        '1':{class_type:'CheckpointLoaderSimple',inputs:{ckpt_name:c.ckpt}},
+        '2':{class_type:'CLIPTextEncode',inputs:{text:c.positive,clip:['1',1]}},
+        '3':{class_type:'CLIPTextEncode',inputs:{text:c.negative,clip:['1',1]}},
+        '4':{class_type:'EmptyLatentImage',inputs:{width:c.size,height:c.size,batch_size:c.batch}},
+        '5':{class_type:'KSampler',inputs:{seed:c.seed,steps:c.steps,cfg:7.0,
+             sampler_name:'euler',scheduler:'normal',denoise:1.0,
+             model:['1',0],positive:['2',0],negative:['3',0],latent_image:['4',0]}},
+        '6':{class_type:'VAEDecode',inputs:{samples:['5',0],vae:['1',2]}},
+        '7':{class_type:'SaveImage',inputs:{filename_prefix:'abuz8_anime',images:['6',0]}}
+      };
+    }
+  }).mount();
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
+  else boot();
+})();
+</script>
+<!-- /ABUZ8 LIVE STUDIO -->
+
+</body>
+</html>
+

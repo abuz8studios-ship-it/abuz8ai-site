@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Link in Bio Builder — Beautiful Bio Pages Free | ABUZ8</title>
+<meta name="description" content="Build a stunning link-in-bio page in 60 seconds. Customize, preview, and get your HTML. No account needed.">
+<link rel="canonical" href="https://abuz8ai.com/tools/ai-link-in-bio">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"AI Link in Bio Builder","url":"https://abuz8ai.com/tools/ai-link-in-bio","description":"Create a beautiful link-in-bio page with custom themes, links, and social icons.","applicationCategory":"UtilityApplication","isAccessibleForFree":true}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--lapis:#0a1628;--lapis2:#0f1f3d;--lapis3:#162544;--gold:#c9a84c;--gold2:#e8c96d;--turq:#0e9f6e;--turq2:#22b5a0;--text:#e8e4dc;--muted:#8892a4;--border:rgba(201,168,76,0.18);--rad:12px}
+body{background:var(--lapis);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh}
+a{color:var(--gold);text-decoration:none}
+.nav{display:flex;align-items:center;justify-content:space-between;padding:16px 40px;border-bottom:1px solid var(--border)}
+.nav-logo{font-family:'Playfair Display',serif;font-size:1.3rem;color:var(--gold)}
+.nav-links{display:flex;gap:20px;font-size:.83rem}.nav-links a{color:var(--muted)}.nav-links a:hover{color:var(--gold)}
+.hero{text-align:center;padding:44px 20px 28px;max-width:700px;margin:0 auto}
+.hero h1{font-family:'Playfair Display',serif;font-size:clamp(1.9rem,4.5vw,3rem);line-height:1.15;margin-bottom:12px}
+.hero h1 span{color:var(--gold)}
+.hero p{color:var(--muted);font-size:.95rem;line-height:1.7}
+.main{max-width:1100px;margin:28px auto 60px;padding:0 20px;display:grid;grid-template-columns:1fr 380px;gap:24px}
+@media(max-width:860px){.main{grid-template-columns:1fr}}
+.panel{background:var(--lapis2);border:1px solid var(--border);border-radius:var(--rad)}
+.panel-head{padding:14px 18px;border-bottom:1px solid var(--border);font-size:.95rem;font-weight:600;display:flex;align-items:center;gap:8px}
+.panel-body{padding:18px}
+label.lbl{display:block;font-size:.77rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;margin-top:14px}
+label.lbl:first-child{margin-top:0}
+input.fi,textarea.fi{width:100%;background:var(--lapis3);border:1px solid var(--border);border-radius:8px;padding:10px 13px;color:var(--text);font-size:.9rem;font-family:'Inter',sans-serif;outline:none;transition:border-color .2s}
+input.fi:focus,textarea.fi:focus{border-color:var(--gold)}
+input.fi::placeholder,textarea.fi::placeholder{color:var(--muted)}
+textarea.fi{resize:vertical;min-height:60px}
+.section-title{font-size:.85rem;font-weight:600;margin:18px 0 10px;color:var(--gold)}
+.link-item{background:var(--lapis3);border:1px solid var(--border);border-radius:8px;padding:12px;margin-bottom:8px;display:grid;grid-template-columns:1fr 1fr auto;gap:8px;align-items:center}
+.link-item input{background:var(--lapis2);border:1px solid var(--border);border-radius:6px;padding:8px 10px;color:var(--text);font-size:.83rem;font-family:'Inter',sans-serif;outline:none}
+.link-item input:focus{border-color:var(--turq)}
+.del-btn{background:rgba(232,92,42,0.15);border:1px solid rgba(232,92,42,0.3);color:#ff7a4a;border-radius:6px;padding:8px 10px;cursor:pointer;font-size:.85rem;transition:all .2s}
+.del-btn:hover{background:rgba(232,92,42,0.3)}
+.add-link-btn{width:100%;background:transparent;border:1px dashed var(--border);border-radius:8px;padding:10px;color:var(--muted);cursor:pointer;font-size:.85rem;transition:all .2s;margin-top:4px}
+.add-link-btn:hover{border-color:var(--turq);color:var(--turq2)}
+.themes-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:10px 0}
+.theme-btn{border-radius:8px;padding:22px 4px 8px;cursor:pointer;border:2px solid transparent;transition:border-color .2s;text-align:center;font-size:.72rem;color:var(--muted)}
+.theme-btn.active{border-color:var(--gold)}
+.theme-btn span{display:block;margin-top:4px}
+.gen-btn{width:100%;background:var(--gold);color:var(--lapis);border:none;border-radius:var(--rad);padding:13px;font-size:.95rem;font-weight:700;cursor:pointer;transition:all .2s;margin-top:14px}
+.gen-btn:hover{background:var(--gold2)}
+/* Preview phone */
+.phone-wrap{position:sticky;top:24px}
+.phone{background:var(--lapis3);border:1px solid var(--border);border-radius:var(--rad);overflow:hidden}
+.phone-screen{padding:0;min-height:560px;overflow:hidden;transition:all .3s}
+/* Bio page themes */
+.bio-page{min-height:560px;display:flex;flex-direction:column;align-items:center;padding:40px 24px 32px;text-align:center}
+.bio-avatar{width:80px;height:80px;border-radius:50%;margin-bottom:12px;object-fit:cover;font-size:2.5rem;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.bio-name{font-size:1.2rem;font-weight:700;margin-bottom:4px}
+.bio-desc{font-size:.83rem;line-height:1.5;margin-bottom:20px;opacity:.8;max-width:280px}
+.bio-link{display:block;width:100%;max-width:300px;padding:13px 20px;border-radius:50px;margin-bottom:10px;font-size:.9rem;font-weight:600;text-align:center;text-decoration:none;transition:opacity .2s;cursor:pointer}
+.bio-link:hover{opacity:.85}
+.bio-socials{display:flex;gap:14px;margin-top:12px;font-size:1.3rem}
+.code-area{font-size:.72rem;font-family:'Fira Code',monospace;background:#060e1a;padding:12px;border-radius:8px;overflow-x:auto;max-height:200px;overflow-y:auto;white-space:pre;line-height:1.6;color:#b8d4ff;margin-top:10px}
+.copy-btn{width:100%;background:var(--lapis3);border:1px solid var(--border);border-radius:8px;padding:10px;font-size:.85rem;color:var(--muted);cursor:pointer;margin-top:8px;transition:all .2s;font-family:'Inter',sans-serif}
+.copy-btn:hover{border-color:var(--turq);color:var(--turq2)}
+.footer{border-top:1px solid var(--border);padding:24px 40px;display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;align-items:center;font-size:.8rem;color:var(--muted)}
+.footer a{color:var(--muted)}.footer a:hover{color:var(--gold)}
+</style>
+</head>
+<body>
+<nav class="nav">
+  <div class="nav-logo">ABUZ8</div>
+  <div class="nav-links"><a href="/tools">Tools</a><a href="/free.html">Free</a><a href="/news.html">AI Daily</a></div>
+</nav>
+<section class="hero">
+  <h1>Your <span>Link in Bio</span>, Elevated</h1>
+  <p>Build a beautiful bio page in 60 seconds. Add all your links, pick a theme, copy the HTML.</p>
+</section>
+<div class="main">
+  <div>
+    <div class="panel">
+      <div class="panel-head">👤 Profile</div>
+      <div class="panel-body">
+        <label class="lbl">Display Name</label>
+        <input class="fi" id="bioName" placeholder="Jane Smith" oninput="updatePreview()">
+        <label class="lbl">Username / Handle</label>
+        <input class="fi" id="bioHandle" placeholder="@janesmith" oninput="updatePreview()">
+        <label class="lbl">Bio / Tagline</label>
+        <textarea class="fi" id="bioBio" placeholder="Designer. Creator. Builder of things." oninput="updatePreview()"></textarea>
+        <label class="lbl">Avatar Emoji or Image URL</label>
+        <input class="fi" id="bioAvatar" placeholder="🚀 or https://..." oninput="updatePreview()">
+      </div>
+    </div>
+    <div class="panel" style="margin-top:14px">
+      <div class="panel-head">🔗 Links</div>
+      <div class="panel-body">
+        <div id="linksContainer"></div>
+        <button class="add-link-btn" onclick="addLink()">+ Add Link</button>
+      </div>
+    </div>
+    <div class="panel" style="margin-top:14px">
+      <div class="panel-head">🎨 Theme</div>
+      <div class="panel-body">
+        <div class="themes-grid" id="themesGrid">
+          <div class="theme-btn active" data-theme="dark" onclick="setTheme(this)" style="background:linear-gradient(135deg,#0a1628,#162544)"><span>Dark</span></div>
+          <div class="theme-btn" data-theme="light" onclick="setTheme(this)" style="background:linear-gradient(135deg,#f9fafb,#e5e7eb)"><span style="color:#111">Light</span></div>
+          <div class="theme-btn" data-theme="purple" onclick="setTheme(this)" style="background:linear-gradient(135deg,#1e0b3e,#4c1d95)"><span>Violet</span></div>
+          <div class="theme-btn" data-theme="forest" onclick="setTheme(this)" style="background:linear-gradient(135deg,#052e16,#14532d)"><span>Forest</span></div>
+          <div class="theme-btn" data-theme="sunset" onclick="setTheme(this)" style="background:linear-gradient(135deg,#3d0000,#9a3412)"><span>Sunset</span></div>
+          <div class="theme-btn" data-theme="ocean" onclick="setTheme(this)" style="background:linear-gradient(135deg,#0c1445,#1e40af)"><span>Ocean</span></div>
+          <div class="theme-btn" data-theme="gold" onclick="setTheme(this)" style="background:linear-gradient(135deg,#1c1400,#713f12)"><span>Gold</span></div>
+          <div class="theme-btn" data-theme="mint" onclick="setTheme(this)" style="background:linear-gradient(135deg,#022c22,#065f46)"><span>Mint</span></div>
+        </div>
+      </div>
+    </div>
+    <button class="gen-btn" onclick="generatePage()">✨ Generate & Get Code</button>
+  </div>
+  <div class="phone-wrap">
+    <div class="panel">
+      <div class="panel-head">👁 Live Preview</div>
+      <div class="phone">
+        <div class="phone-screen" id="phoneScreen"></div>
+      </div>
+    </div>
+    <div id="codeSection" style="display:none;margin-top:12px">
+      <div class="panel">
+        <div class="panel-head">💻 HTML Code</div>
+        <div class="panel-body">
+          <div class="code-area" id="codeOut"></div>
+          <button class="copy-btn" onclick="copyPage()">📋 Copy HTML</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<footer class="footer">
+  <div>© 2026 ABUZ8 LLC</div>
+  <div style="display:flex;gap:16px"><a href="/tools">All Tools</a><a href="https://github.com/abuz8studios-ship-it" target="_blank">GitHub ↗</a><a href="/support.html">Support →</a></div>
+</footer>
+<script>
+const THEMES = {
+  dark:   {bg:'#0a1628',bg2:'#0f1f3d',text:'#e8e4dc',sub:'rgba(255,255,255,0.6)',btn:'rgba(255,255,255,0.1)',btnText:'#e8e4dc',btnBorder:'rgba(255,255,255,0.2)'},
+  light:  {bg:'#f9fafb',bg2:'#fff',text:'#111',sub:'#555',btn:'#fff',btnText:'#111',btnBorder:'#d1d5db'},
+  purple: {bg:'#1e0b3e',bg2:'#2d1060',text:'#f3e8ff',sub:'rgba(243,232,255,0.6)',btn:'rgba(168,85,247,0.2)',btnText:'#f3e8ff',btnBorder:'rgba(168,85,247,0.4)'},
+  forest: {bg:'#052e16',bg2:'#14532d',text:'#dcfce7',sub:'rgba(220,252,231,0.6)',btn:'rgba(34,197,94,0.15)',btnText:'#dcfce7',btnBorder:'rgba(34,197,94,0.3)'},
+  sunset: {bg:'#3d0000',bg2:'#7f1d1d',text:'#fee2e2',sub:'rgba(254,226,226,0.6)',btn:'rgba(239,68,68,0.15)',btnText:'#fee2e2',btnBorder:'rgba(239,68,68,0.3)'},
+  ocean:  {bg:'#0c1445',bg2:'#1e3a8a',text:'#dbeafe',sub:'rgba(219,234,254,0.6)',btn:'rgba(96,165,250,0.15)',btnText:'#dbeafe',btnBorder:'rgba(96,165,250,0.3)'},
+  gold:   {bg:'#1c1400',bg2:'#451a03',text:'#fef3c7',sub:'rgba(254,243,199,0.6)',btn:'rgba(217,119,6,0.2)',btnText:'#fef3c7',btnBorder:'rgba(217,119,6,0.4)'},
+  mint:   {bg:'#022c22',bg2:'#065f46',text:'#d1fae5',sub:'rgba(209,250,229,0.6)',btn:'rgba(52,211,153,0.15)',btnText:'#d1fae5',btnBorder:'rgba(52,211,153,0.3)'},
+};
+let currentTheme = 'dark';
+let links = [{label:'🌐 My Website', url:'https://'},{label:'🐦 Twitter / X', url:'https://'},{label:'💼 LinkedIn', url:'https://'}];
+let generatedHTML = '';
+
+function addLink() {
+  links.push({label:'', url:''});
+  renderLinks();
+  updatePreview();
+}
+function removeLink(idx) {
+  links.splice(idx,1);
+  renderLinks();
+  updatePreview();
+}
+function renderLinks() {
+  const c = document.getElementById('linksContainer');
+  c.innerHTML = links.map((l,i)=>`
+    <div class="link-item">
+      <input value="${l.label}" placeholder="🔗 Link Label" oninput="links[${i}].label=this.value;updatePreview()">
+      <input value="${l.url}" placeholder="https://..." oninput="links[${i}].url=this.value;updatePreview()">
+      <button class="del-btn" onclick="removeLink(${i})">✕</button>
+    </div>`).join('');
+}
+function setTheme(el) {
+  document.querySelectorAll('.theme-btn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  currentTheme = el.dataset.theme;
+  updatePreview();
+}
+function updatePreview() {
+  const t = THEMES[currentTheme];
+  const name = document.getElementById('bioName').value || 'Your Name';
+  const handle = document.getElementById('bioHandle').value || '@handle';
+  const bio = document.getElementById('bioBio').value || 'Your bio goes here.';
+  const avatar = document.getElementById('bioAvatar').value || '🙂';
+  const isEmoji = avatar.length <= 2 || !avatar.startsWith('http');
+  const avatarEl = isEmoji
+    ? `<div class="bio-avatar" style="background:${t.btn};border:1px solid ${t.btnBorder};font-size:2rem">${avatar}</div>`
+    : `<img class="bio-avatar" src="${avatar}" style="border:2px solid ${t.btnBorder}">`;
+  const linksHtml = links.filter(l=>l.label).map(l=>`
+    <a class="bio-link" href="${l.url||'#'}" style="background:${t.btn};color:${t.btnText};border:1px solid ${t.btnBorder}">${l.label}</a>`).join('');
+  document.getElementById('phoneScreen').innerHTML = `
+    <div class="bio-page" style="background:${t.bg};min-height:560px">
+      ${avatarEl}
+      <div class="bio-name" style="color:${t.text}">${name}</div>
+      <div style="font-size:.8rem;color:${t.sub};margin-bottom:6px">${handle}</div>
+      <div class="bio-desc" style="color:${t.sub}">${bio}</div>
+      ${linksHtml}
+    </div>`;
+}
+function generatePage() {
+  const t = THEMES[currentTheme];
+  const name = document.getElementById('bioName').value || 'Your Name';
+  const handle = document.getElementById('bioHandle').value || '@handle';
+  const bio = document.getElementById('bioBio').value || 'Bio goes here.';
+  const avatar = document.getElementById('bioAvatar').value || '🙂';
+  const isEmoji = avatar.length <= 2 || !avatar.startsWith('http');
+  const avatarEl = isEmoji
+    ? `<div class="avatar" style="width:80px;height:80px;border-radius:50%;background:${t.btn};border:1px solid ${t.btnBorder};display:flex;align-items:center;justify-content:center;font-size:2.2rem;margin-bottom:12px">${avatar}</div>`
+    : `<img src="${avatar}" style="width:80px;height:80px;border-radius:50%;object-fit:cover;border:2px solid ${t.btnBorder};margin-bottom:12px">`;
+  const linksHtml = links.filter(l=>l.label).map(l=>`  <a href="${l.url||'#'}" class="bio-link">${l.label}</a>`).join('\n');
+  generatedHTML = `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>${name} — Links</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:${t.bg};min-height:100vh;display:flex;justify-content:center;align-items:flex-start;padding:40px 20px;font-family:-apple-system,BlinkMacSystemFont,'Inter',sans-serif}
+.wrap{max-width:360px;width:100%;text-align:center}
+.name{font-size:1.3rem;font-weight:700;color:${t.text};margin-bottom:4px}
+.handle{font-size:.83rem;color:${t.sub};margin-bottom:8px}
+.bio{font-size:.88rem;color:${t.sub};line-height:1.5;margin-bottom:24px}
+.bio-link{display:block;width:100%;padding:13px 20px;border-radius:50px;margin-bottom:10px;font-size:.92rem;font-weight:600;text-align:center;text-decoration:none;background:${t.btn};color:${t.btnText};border:1px solid ${t.btnBorder};transition:opacity .2s}
+.bio-link:hover{opacity:.8}
+</style>
+</head>
+<body>
+<div class="wrap">
+  ${avatarEl}
+  <div class="name">${name}</div>
+  <div class="handle">${handle}</div>
+  <div class="bio">${bio}</div>
+${linksHtml}
+</div>
+
+<script src="/assets/js/dfy-banner.js" async><\/script>
+<script src="/assets/js/abuz8-intent.js" defer><\/script>
+<script>(function(){var orig=window.joinWaitlist||window.joinWL;function wlPost(){var els=['wlEmail','emailInput','email'];var v='';for(var i=0;i<els.length;i++){var el=document.getElementById(els[i]);if(el&&el.value){v=el.value.trim();break;}}if(v&&v.includes('@')){fetch('/api/waitlist',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:v,product:'ai-link-in-bio',ts:Date.now()})}).catch(function(){});}if(orig)orig();}if(typeof joinWaitlist==='function')window.joinWaitlist=wlPost;if(typeof joinWL==='function')window.joinWL=wlPost;})()<\/script>
+<script src="/tools/_tools-shared.js" defer><\/script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>`;
+  document.getElementById('codeOut').textContent = generatedHTML;
+  document.getElementById('codeSection').style.display = 'block';
+  document.getElementById('codeSection').scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+function copyPage() {
+  navigator.clipboard.writeText(generatedHTML).then(()=>{
+    const btn = document.querySelector('.copy-btn');
+    btn.textContent = '✓ Copied!';
+    setTimeout(()=>btn.textContent='📋 Copy HTML',2000);
+  });
+}
+// Init
+renderLinks();
+updatePreview();
+</script>
+<script src="_abuz8-live-brain.js" defer></script>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+<script>(function(){var orig=window.joinWaitlist||window.joinWL;function wlPost(){var els=['wlEmail','emailInput','email'];var v='';for(var i=0;i<els.length;i++){var el=document.getElementById(els[i]);if(el&&el.value){v=el.value.trim();break;}}if(v&&v.includes('@')){fetch('/api/waitlist',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:v,product:'ai-link-in-bio',ts:Date.now()})}).catch(function(){});}if(orig)orig();}if(typeof joinWaitlist==='function')window.joinWaitlist=wlPost;if(typeof joinWL==='function')window.joinWL=wlPost;})()</script>
+<script src="/tools/_tools-shared.js" defer></script>
+</body>
+</html>
+

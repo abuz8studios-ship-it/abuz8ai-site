@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI SDR Agent — ABUZ8</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --lapis:#0a1628;--lapis2:#0d1e38;--lapis3:#122240;
+  --gold:#c9a84c;--gold2:#e0bc6a;--gold3:#a8832a;
+  --turq:#0e9f6e;--turq2:#22a090;--turq3:#0f6a5c;
+  --red:#e05555;--green:#3dba7e;
+  --cream:#f5f0e8;--cream2:#ede7d9;
+  --text:#f0ece4;--muted:#8a9ab5;
+  --r:12px;--r2:8px;--r3:20px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--lapis);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh;}
+
+nav{background:rgba(10,22,40,.95);border-bottom:1px solid rgba(201,168,76,.2);padding:14px 32px;display:flex;align-items:center;gap:16px;position:sticky;top:0;z-index:100;backdrop-filter:blur(12px);}
+.nav-logo{font-family:'Playfair Display',serif;color:var(--gold);font-size:1.25rem;font-weight:700;text-decoration:none;}
+.nav-badge{background:rgba(201,168,76,.15);border:1px solid rgba(201,168,76,.3);color:var(--gold2);font-size:.7rem;padding:2px 8px;border-radius:20px;font-weight:600;letter-spacing:.05em;}
+.nav-back{margin-left:auto;color:var(--muted);font-size:.85rem;text-decoration:none;display:flex;align-items:center;gap:6px;transition:.2s;}
+.nav-back:hover{color:var(--gold);}
+
+/* HERO */
+.hero{background:linear-gradient(135deg,var(--lapis2) 0%,#0a1e30 100%);border-bottom:1px solid rgba(201,168,76,.15);padding:60px 32px 48px;text-align:center;position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 50% at 50% 0%,rgba(26,138,122,.12),transparent);}
+.hero-tag{background:linear-gradient(90deg,var(--turq3),var(--turq));color:#fff;font-size:.7rem;font-weight:700;letter-spacing:.1em;padding:4px 14px;border-radius:20px;display:inline-block;margin-bottom:16px;text-transform:uppercase;position:relative;}
+.hero h1{font-family:'Playfair Display',serif;font-size:clamp(2rem,5vw,3.2rem);color:var(--cream);margin-bottom:14px;line-height:1.15;position:relative;}
+.hero h1 span{color:var(--gold);}
+.hero p{color:var(--muted);font-size:1.05rem;max-width:620px;margin:0 auto 28px;position:relative;}
+.hero-cta-row{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;position:relative;margin-bottom:40px;}
+.btn-primary{background:linear-gradient(135deg,var(--gold3),var(--gold));color:var(--lapis);font-weight:700;font-size:.95rem;padding:14px 28px;border:none;border-radius:var(--r2);cursor:pointer;font-family:'Playfair Display',serif;letter-spacing:.04em;transition:.25s;text-decoration:none;display:inline-block;}
+.btn-primary:hover{background:linear-gradient(135deg,var(--gold),var(--gold2));transform:translateY(-2px);box-shadow:0 8px 24px rgba(201,168,76,.3);}
+.btn-outline{background:transparent;border:1px solid rgba(201,168,76,.4);color:var(--gold);font-size:.9rem;padding:13px 24px;border-radius:var(--r2);cursor:pointer;font-family:'Inter',sans-serif;transition:.2s;text-decoration:none;display:inline-block;}
+.btn-outline:hover{background:rgba(201,168,76,.08);border-color:var(--gold);}
+.hero-stats{display:flex;gap:40px;justify-content:center;flex-wrap:wrap;position:relative;}
+.hstat{text-align:center;}
+.hstat-n{font-family:'Playfair Display',serif;font-size:1.8rem;color:var(--gold);font-weight:700;}
+.hstat-l{font-size:.72rem;color:var(--muted);letter-spacing:.05em;text-transform:uppercase;margin-top:2px;}
+
+/* LIVE TICKER */
+.ticker{background:rgba(61,186,126,.06);border:1px solid rgba(61,186,126,.2);border-radius:var(--r2);padding:10px 20px;display:inline-flex;align-items:center;gap:10px;margin-bottom:32px;position:relative;}
+.ticker-dot{width:8px;height:8px;background:var(--green);border-radius:50%;animation:pulse 1.8s infinite;}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.5;transform:scale(1.4);}}
+.ticker-text{font-size:.8rem;color:var(--green);font-weight:600;}
+
+/* MAIN */
+.main{max-width:1140px;margin:0 auto;padding:48px 24px;}
+
+/* SECTION TITLES */
+.section-title{font-family:'Playfair Display',serif;font-size:1.6rem;color:var(--cream);margin-bottom:8px;}
+.section-sub{color:var(--muted);font-size:.9rem;margin-bottom:28px;}
+
+/* HOW IT WORKS */
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:48px;}
+@media(max-width:720px){.steps{grid-template-columns:1fr 1fr;}}
+.step{background:var(--lapis2);border:1px solid rgba(201,168,76,.1);border-radius:var(--r);padding:20px;position:relative;}
+.step-num{font-family:'Playfair Display',serif;font-size:2rem;color:rgba(201,168,76,.2);font-weight:700;line-height:1;margin-bottom:8px;}
+.step-icon{font-size:1.4rem;margin-bottom:8px;}
+.step-title{font-size:.88rem;font-weight:600;color:var(--cream);margin-bottom:6px;}
+.step-desc{font-size:.78rem;color:var(--muted);line-height:1.5;}
+
+/* CONFIGURATOR */
+.configurator{background:var(--lapis2);border:1px solid rgba(201,168,76,.15);border-radius:var(--r);overflow:hidden;margin-bottom:48px;}
+.config-header{background:linear-gradient(90deg,rgba(201,168,76,.08),transparent);border-bottom:1px solid rgba(201,168,76,.1);padding:20px 24px;display:flex;align-items:center;justify-content:space-between;}
+.config-title{font-family:'Playfair Display',serif;font-size:1.1rem;color:var(--gold);}
+.config-badge{background:rgba(61,186,126,.12);border:1px solid rgba(61,186,126,.25);color:var(--green);font-size:.7rem;padding:3px 10px;border-radius:10px;font-weight:600;}
+.config-body{display:grid;grid-template-columns:1fr 1fr;gap:0;}
+@media(max-width:700px){.config-body{grid-template-columns:1fr;}}
+.config-left{padding:24px;border-right:1px solid rgba(201,168,76,.08);}
+.config-right{padding:24px;}
+
+/* FORM FIELDS */
+.field{margin-bottom:18px;}
+.field label{display:block;font-size:.78rem;color:var(--muted);margin-bottom:6px;font-weight:500;}
+.field input,.field select,.field textarea{width:100%;background:var(--lapis3);border:1px solid rgba(201,168,76,.18);color:var(--text);padding:10px 13px;border-radius:var(--r2);font-size:.85rem;font-family:'Inter',sans-serif;outline:none;transition:.2s;}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--gold);}
+.field textarea{resize:vertical;min-height:90px;}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+
+/* CHANNEL PILLS */
+.channel-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:18px;}
+.channel-pill{background:var(--lapis3);border:1px solid rgba(201,168,76,.1);border-radius:var(--r2);padding:10px 8px;text-align:center;cursor:pointer;transition:.2s;}
+.channel-pill:hover{border-color:rgba(201,168,76,.35);}
+.channel-pill.active{background:rgba(201,168,76,.1);border-color:var(--gold);}
+.channel-pill .ch-icon{font-size:1.2rem;margin-bottom:4px;}
+.channel-pill .ch-name{font-size:.68rem;color:var(--cream);font-weight:600;}
+
+/* SEQUENCE PREVIEW */
+.seq-preview{background:var(--lapis3);border:1px solid rgba(201,168,76,.08);border-radius:var(--r2);padding:16px;margin-bottom:16px;}
+.seq-title{font-size:.72rem;color:var(--muted);font-weight:600;letter-spacing:.05em;text-transform:uppercase;margin-bottom:12px;}
+.seq-step{display:flex;gap:10px;align-items:flex-start;margin-bottom:10px;}
+.seq-step:last-child{margin-bottom:0;}
+.seq-dot{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;flex-shrink:0;margin-top:1px;}
+.seq-dot.day0{background:rgba(201,168,76,.2);color:var(--gold);}
+.seq-dot.day3{background:rgba(26,138,122,.2);color:var(--turq2);}
+.seq-dot.day7{background:rgba(224,85,85,.15);color:var(--red);}
+.seq-dot.day14{background:rgba(138,154,181,.15);color:var(--muted);}
+.seq-info{flex:1;}
+.seq-label{font-size:.78rem;color:var(--cream);font-weight:600;margin-bottom:2px;}
+.seq-desc{font-size:.7rem;color:var(--muted);}
+
+/* METRICS ROW */
+.metrics-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px;}
+.metric-box{background:var(--lapis3);border:1px solid rgba(201,168,76,.08);border-radius:var(--r2);padding:14px;text-align:center;}
+.metric-n{font-family:'Playfair Display',serif;font-size:1.5rem;color:var(--gold);font-weight:700;}
+.metric-l{font-size:.68rem;color:var(--muted);margin-top:3px;}
+
+/* SAMPLE MESSAGE */
+.sample-msg{background:var(--lapis3);border-left:3px solid var(--gold);border-radius:0 var(--r2) var(--r2) 0;padding:14px 16px;margin-bottom:16px;font-size:.82rem;color:var(--cream);line-height:1.6;white-space:pre-line;}
+.sample-msg .msg-from{font-size:.7rem;color:var(--muted);margin-bottom:6px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;}
+
+/* TOGGLE */
+.toggle-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;}
+.toggle-btn{background:var(--lapis3);border:1px solid rgba(201,168,76,.15);color:var(--muted);font-size:.75rem;padding:6px 12px;border-radius:6px;cursor:pointer;transition:.2s;font-family:'Inter',sans-serif;}
+.toggle-btn:hover{border-color:rgba(201,168,76,.4);color:var(--cream);}
+.toggle-btn.active{background:rgba(201,168,76,.12);border-color:var(--gold);color:var(--gold);}
+
+/* SLIDER */
+.slider-row{margin-bottom:16px;}
+.slider-label{display:flex;justify-content:space-between;font-size:.78rem;color:var(--muted);margin-bottom:6px;}
+.slider-label span{color:var(--cream);font-weight:600;}
+input[type=range]{width:100%;-webkit-appearance:none;height:4px;border-radius:2px;background:rgba(201,168,76,.2);outline:none;}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--gold);cursor:pointer;}
+
+/* LAUNCH BTN */
+.btn-launch{width:100%;background:linear-gradient(135deg,var(--gold3),var(--gold));color:var(--lapis);font-weight:700;font-size:1rem;padding:16px;border:none;border-radius:var(--r2);cursor:pointer;font-family:'Playfair Display',serif;letter-spacing:.04em;transition:.25s;margin-top:4px;}
+.btn-launch:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(201,168,76,.35);}
+
+/* RESULTS PANEL */
+.results-panel{display:none;background:var(--lapis2);border:1px solid rgba(61,186,126,.2);border-radius:var(--r);padding:28px;margin-bottom:48px;}
+.rp-header{display:flex;align-items:center;gap:12px;margin-bottom:24px;}
+.rp-title{font-family:'Playfair Display',serif;font-size:1.2rem;color:var(--green);}
+.activity-feed{display:flex;flex-direction:column;gap:10px;margin-bottom:20px;}
+.af-item{display:flex;align-items:center;gap:12px;background:var(--lapis3);border-radius:var(--r2);padding:12px 14px;}
+.af-icon{font-size:1rem;width:28px;text-align:center;}
+.af-info{flex:1;}
+.af-name{font-size:.82rem;color:var(--cream);font-weight:600;}
+.af-action{font-size:.72rem;color:var(--muted);}
+.af-time{font-size:.68rem;color:var(--muted);}
+.af-status{font-size:.7rem;padding:2px 8px;border-radius:8px;font-weight:600;}
+.af-status.sent{background:rgba(61,186,126,.15);color:var(--green);}
+.af-status.opened{background:rgba(201,168,76,.15);color:var(--gold);}
+.af-status.replied{background:rgba(26,138,122,.2);color:var(--turq2);}
+.af-status.pending{background:rgba(138,154,181,.1);color:var(--muted);}
+
+/* PRICING */
+.pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-bottom:48px;}
+@media(max-width:720px){.pricing-grid{grid-template-columns:1fr;}}
+.price-card{background:var(--lapis2);border:1px solid rgba(201,168,76,.12);border-radius:var(--r);padding:28px;position:relative;transition:.2s;}
+.price-card.featured{border-color:var(--gold);background:linear-gradient(160deg,rgba(201,168,76,.07),var(--lapis2));}
+.price-card.featured::before{content:'MOST POPULAR';position:absolute;top:-1px;left:50%;transform:translateX(-50%);background:var(--gold);color:var(--lapis);font-size:.62rem;font-weight:700;padding:3px 12px;border-radius:0 0 8px 8px;letter-spacing:.06em;}
+.price-name{font-family:'Playfair Display',serif;font-size:1rem;color:var(--cream);margin-bottom:8px;}
+.price-amount{font-family:'Playfair Display',serif;font-size:2.2rem;color:var(--gold);font-weight:700;margin-bottom:4px;}
+.price-amount sub{font-size:.9rem;color:var(--muted);font-weight:400;}
+.price-period{font-size:.75rem;color:var(--muted);margin-bottom:16px;}
+.price-features{list-style:none;display:flex;flex-direction:column;gap:8px;margin-bottom:20px;}
+.price-features li{font-size:.8rem;color:var(--muted);display:flex;align-items:center;gap:8px;}
+.price-features li::before{content:'✓';color:var(--gold);font-size:.75rem;font-weight:700;flex-shrink:0;}
+.price-features li.no::before{content:'✕';color:rgba(138,154,181,.4);}
+.price-features li.no{opacity:.5;}
+.btn-price{width:100%;background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.3);color:var(--gold);font-weight:600;padding:11px;border-radius:var(--r2);cursor:pointer;font-size:.85rem;transition:.2s;font-family:'Inter',sans-serif;}
+.btn-price:hover{background:rgba(201,168,76,.2);}
+.price-card.featured .btn-price{background:var(--gold);color:var(--lapis);border-color:var(--gold);}
+.price-card.featured .btn-price:hover{background:var(--gold2);}
+
+/* SOCIAL PROOF */
+.proof-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:48px;}
+@media(max-width:720px){.proof-grid{grid-template-columns:1fr;}}
+.proof-card{background:var(--lapis2);border:1px solid rgba(201,168,76,.08);border-radius:var(--r);padding:20px;}
+.proof-stars{color:var(--gold);font-size:.85rem;margin-bottom:10px;letter-spacing:2px;}
+.proof-text{font-size:.82rem;color:var(--cream);line-height:1.6;margin-bottom:12px;font-style:italic;}
+.proof-author{display:flex;align-items:center;gap:10px;}
+.proof-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--turq3),var(--gold3));display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:700;color:#fff;}
+.proof-name{font-size:.78rem;color:var(--cream);font-weight:600;}
+.proof-role{font-size:.68rem;color:var(--muted);}
+
+/* WAITLIST */
+.waitlist-section{background:linear-gradient(135deg,rgba(201,168,76,.06),rgba(26,138,122,.04));border:1px solid rgba(201,168,76,.2);border-radius:var(--r);padding:40px;text-align:center;}
+.wl-title{font-family:'Playfair Display',serif;font-size:1.5rem;color:var(--cream);margin-bottom:8px;}
+.wl-sub{color:var(--muted);font-size:.9rem;margin-bottom:22px;}
+.wl-form{display:flex;gap:10px;max-width:480px;margin:0 auto;}
+.wl-input{flex:1;background:var(--lapis3);border:1px solid rgba(201,168,76,.25);color:var(--text);padding:12px 14px;border-radius:var(--r2);font-size:.88rem;font-family:'Inter',sans-serif;outline:none;}
+.wl-input:focus{border-color:var(--gold);}
+.wl-btn{background:var(--gold);color:var(--lapis);font-weight:700;padding:12px 22px;border:none;border-radius:var(--r2);cursor:pointer;font-size:.88rem;white-space:nowrap;transition:.2s;}
+.wl-btn:hover{background:var(--gold2);}
+.wl-success{display:none;color:var(--turq2);font-weight:600;font-size:.9rem;margin-top:10px;}
+.wl-perks{display:flex;gap:20px;justify-content:center;margin-top:18px;flex-wrap:wrap;}
+.wl-perk{font-size:.75rem;color:var(--muted);display:flex;align-items:center;gap:5px;}
+.wl-perk::before{content:'✦';color:var(--gold);font-size:.6rem;}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;right:24px;background:var(--lapis3);border:1px solid rgba(201,168,76,.3);color:var(--text);padding:12px 18px;border-radius:var(--r2);font-size:.85rem;opacity:0;transform:translateY(12px);transition:.3s;z-index:999;pointer-events:none;}
+.toast.show{opacity:1;transform:translateY(0);}
+</style>
+<link rel="canonical" href="https://abuz8ai.com/tools/ai-sdr-agent">
+<meta name="description" content="AI SDR Agent — Automated sales development — prospect research, outreach, and follow-up. Free, no signup, runs entirely in your browser. One of 169 free AI an">
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="../index.html">ABUZ8</a>
+  <span class="nav-badge">TIER D · #52</span>
+  <a class="nav-back" href="../tools.html">← All Tools</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-tag">🤖 AI SDR Agent</div>
+  <div class="ticker">
+    <div class="ticker-dot"></div>
+    <span class="ticker-text">Free interactive demo — no signup required</span>
+  </div>
+  <h1>Your AI Sales Rep That<br><span>Never Sleeps, Never Misses</span></h1>
+  <p>Try a free interactive demo of what an autonomous SDR workflow could look like — configure your ICP, preview hyper-personalized outreach, and watch a simulated multi-touch sequence run, right in your browser.</p>
+  <div class="hero-cta-row">
+    <a href="#configurator" class="btn-primary">Try the Configurator →</a>
+    <a href="#pricing" class="btn-outline">See the Roadmap</a>
+  </div>
+  <div class="hero-stats">
+    <div class="hstat"><div class="hstat-n">$0</div><div class="hstat-l">Cost to Try</div></div>
+    <div class="hstat"><div class="hstat-n">6</div><div class="hstat-l">Channels Simulated</div></div>
+    <div class="hstat"><div class="hstat-n">4</div><div class="hstat-l">Tone Styles</div></div>
+    <div class="hstat"><div class="hstat-n">0</div><div class="hstat-l">Signup Required</div></div>
+  </div>
+</section>
+
+<div class="main">
+
+  <!-- HOW IT WORKS -->
+  <div style="margin-bottom:16px;">
+    <div class="section-title">How Your SDR Agent Works</div>
+    <div class="section-sub">Four steps from target to booked meeting — zero human effort</div>
+  </div>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">01</div>
+      <div class="step-icon">🎯</div>
+      <div class="step-title">Define Your ICP</div>
+      <div class="step-desc">Set your ideal customer profile — industry, company size, title, pain points. Agent learns your target.</div>
+    </div>
+    <div class="step">
+      <div class="step-num">02</div>
+      <div class="step-icon">🔍</div>
+      <div class="step-title">Prospect & Research</div>
+      <div class="step-desc">Agent finds prospects, researches each one — LinkedIn, news, recent posts — and builds a dossier.</div>
+    </div>
+    <div class="step">
+      <div class="step-num">03</div>
+      <div class="step-icon">✍️</div>
+      <div class="step-title">Write & Send</div>
+      <div class="step-desc">Hyper-personalized messages referencing specific details about each prospect. Not templates.</div>
+    </div>
+    <div class="step">
+      <div class="step-num">04</div>
+      <div class="step-icon">📅</div>
+      <div class="step-title">Follow Up & Book</div>
+      <div class="step-desc">Automated multi-touch sequences with smart reply detection. Positive replies → calendar link sent instantly.</div>
+    </div>
+  </div>
+
+  <!-- CONFIGURATOR -->
+  <div id="configurator" style="margin-bottom:16px;">
+    <div class="section-title">Configure Your SDR Agent</div>
+    <div class="section-sub">Set up and preview your agent in under 2 minutes</div>
+  </div>
+  <div class="configurator">
+    <div class="config-header">
+      <div class="config-title">Agent Configuration</div>
+      <div class="config-badge">● Live Preview</div>
+    </div>
+    <div class="config-body">
+      <!-- LEFT: CONFIG INPUTS -->
+      <div class="config-left">
+        <div class="field">
+          <label>Your Product / Service</label>
+          <input type="text" id="product" placeholder="e.g. AI automation platform for e-commerce" oninput="updatePreview()">
+        </div>
+        <div class="field">
+          <label>Target Job Title(s)</label>
+          <input type="text" id="titles" placeholder="e.g. VP Sales, Head of Growth, Founder" oninput="updatePreview()">
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label>Target Industry</label>
+            <select id="industry" onchange="updatePreview()">
+              <option value="">Select...</option>
+              <option>SaaS / Tech</option>
+              <option>E-commerce</option>
+              <option>Finance / FinTech</option>
+              <option>Healthcare</option>
+              <option>Real Estate</option>
+              <option>Marketing Agency</option>
+              <option>Consulting</option>
+              <option>Retail</option>
+              <option>Manufacturing</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Company Size</label>
+            <select id="size" onchange="updatePreview()">
+              <option>1–10</option>
+              <option>11–50</option>
+              <option selected>51–200</option>
+              <option>201–1000</option>
+              <option>1000+</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <label>Your Value Proposition (one sentence)</label>
+          <textarea id="value_prop" placeholder="e.g. We help [title] at [industry] companies reduce churn by 40% in 90 days using AI." oninput="updatePreview()"></textarea>
+        </div>
+
+        <div style="font-size:.78rem;color:var(--muted);margin-bottom:8px;font-weight:500;">Outreach Channels</div>
+        <div class="channel-grid" id="channelGrid">
+          <div class="channel-pill active" onclick="toggleChannel(this)"><div class="ch-icon">📧</div><div class="ch-name">Email</div></div>
+          <div class="channel-pill active" onclick="toggleChannel(this)"><div class="ch-icon">💼</div><div class="ch-name">LinkedIn</div></div>
+          <div class="channel-pill" onclick="toggleChannel(this)"><div class="ch-icon">💬</div><div class="ch-name">Twitter/X</div></div>
+          <div class="channel-pill" onclick="toggleChannel(this)"><div class="ch-icon">📱</div><div class="ch-name">SMS</div></div>
+          <div class="channel-pill" onclick="toggleChannel(this)"><div class="ch-icon">✈️</div><div class="ch-name">Telegram</div></div>
+          <div class="channel-pill" onclick="toggleChannel(this)"><div class="ch-icon">🎙️</div><div class="ch-name">Voicemail</div></div>
+        </div>
+
+        <div class="slider-row">
+          <div class="slider-label">Daily Outreach Volume <span id="volVal">50 prospects/day</span></div>
+          <input type="range" id="volume" min="10" max="500" step="10" value="50" oninput="document.getElementById('volVal').textContent=this.value+' prospects/day'; updateMetrics()">
+        </div>
+
+        <div style="font-size:.78rem;color:var(--muted);margin-bottom:8px;font-weight:500;">Follow-up Sequence</div>
+        <div class="toggle-row">
+          <button class="toggle-btn" onclick="setSeq('short',this)">3-Touch (7 days)</button>
+          <button class="toggle-btn active" onclick="setSeq('medium',this)">5-Touch (14 days)</button>
+          <button class="toggle-btn" onclick="setSeq('long',this)">7-Touch (30 days)</button>
+        </div>
+
+        <div style="font-size:.78rem;color:var(--muted);margin-bottom:8px;font-weight:500;">Tone</div>
+        <div class="toggle-row" id="toneRow">
+          <button class="toggle-btn active" data-val="professional" onclick="setTone(this)">Professional</button>
+          <button class="toggle-btn" data-val="casual" onclick="setTone(this)">Casual</button>
+          <button class="toggle-btn" data-val="bold" onclick="setTone(this)">Bold/Direct</button>
+          <button class="toggle-btn" data-val="consultative" onclick="setTone(this)">Consultative</button>
+        </div>
+
+        <button class="btn-launch" onclick="launchAgent()">⚡ Launch SDR Agent</button>
+      </div>
+
+      <!-- RIGHT: LIVE PREVIEW -->
+      <div class="config-right">
+        <div class="seq-preview">
+          <div class="seq-title">Outreach Sequence</div>
+          <div id="seqSteps">
+            <div class="seq-step"><div class="seq-dot day0">D1</div><div class="seq-info"><div class="seq-label">Email #1 — First Touch</div><div class="seq-desc">Personalized intro referencing a specific detail about the prospect</div></div></div>
+            <div class="seq-step"><div class="seq-dot day3">D3</div><div class="seq-info"><div class="seq-label">LinkedIn Connection + Note</div><div class="seq-desc">Short note connecting the email context to a mutual interest</div></div></div>
+            <div class="seq-step"><div class="seq-dot day7">D7</div><div class="seq-info"><div class="seq-label">Email #2 — Value Add</div><div class="seq-desc">Shares relevant case study or insight, no ask</div></div></div>
+            <div class="seq-step"><div class="seq-dot day14">D14</div><div class="seq-info"><div class="seq-label">Email #3 — Final Ask</div><div class="seq-desc">Direct calendar link + one-line why now</div></div></div>
+          </div>
+        </div>
+
+        <div class="metrics-row" id="metricsRow">
+          <div class="metric-box"><div class="metric-n" id="m-weekly">350</div><div class="metric-l">Contacts/Week</div></div>
+          <div class="metric-box"><div class="metric-n" id="m-replies">52</div><div class="metric-l">Replies/Week</div></div>
+          <div class="metric-box"><div class="metric-n" id="m-meetings">11</div><div class="metric-l">Meetings/Week</div></div>
+        </div>
+
+        <div style="font-size:.72rem;color:var(--muted);font-weight:600;letter-spacing:.05em;text-transform:uppercase;margin-bottom:8px;">Sample First Message</div>
+        <div class="sample-msg" id="sampleMsg">
+<span class="msg-from">AI SDR → Prospect</span>Hi [First Name],
+
+Saw that [Company] just <strong id="msg-trigger">expanded into new markets</strong> — congrats on the growth.
+
+We help <strong id="msg-title">VP Sales</strong> at <strong id="msg-industry">SaaS companies</strong> like yours <strong id="msg-value">add 30%+ more qualified pipeline without growing headcount</strong>.
+
+Would a 15-minute call this week make sense?
+
+— [Your Name] via ABUZ8 AI</div>
+
+        <div style="display:flex;gap:8px;">
+          <button onclick="refreshSample()" style="flex:1;background:rgba(201,168,76,.08);border:1px solid rgba(201,168,76,.2);color:var(--gold);font-size:.75rem;padding:8px;border-radius:6px;cursor:pointer;transition:.2s;" onmouseover="this.style.background='rgba(201,168,76,.15)'" onmouseout="this.style.background='rgba(201,168,76,.08)'">🔄 Regenerate</button>
+          <button onclick="copyMessage()" style="flex:1;background:rgba(201,168,76,.08);border:1px solid rgba(201,168,76,.2);color:var(--gold);font-size:.75rem;padding:8px;border-radius:6px;cursor:pointer;transition:.2s;" onmouseover="this.style.background='rgba(201,168,76,.15)'" onmouseout="this.style.background='rgba(201,168,76,.08)'">📋 Copy</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ACTIVITY FEED (shown after launch) -->
+  <div class="results-panel" id="resultsPanel">
+    <div class="rp-header">
+      <div class="ticker-dot" style="width:10px;height:10px;"></div>
+      <div class="rp-title">Agent Running — Live Activity Feed</div>
+    </div>
+    <div class="activity-feed" id="activityFeed">
+      <!-- populated by JS -->
+    </div>
+    <div style="text-align:center;margin-top:8px;">
+      <button onclick="addActivity()" style="background:rgba(201,168,76,.08);border:1px solid rgba(201,168,76,.2);color:var(--gold);font-size:.78rem;padding:8px 16px;border-radius:6px;cursor:pointer;">Load More Activity</button>
+    </div>
+  </div>
+
+  <!-- PRICING / ROADMAP -->
+  <div id="pricing" style="margin-bottom:16px;">
+    <div class="section-title">What This Demo Shows</div>
+    <div class="section-sub">A free, working preview of the mechanics — not a live paid service</div>
+  </div>
+  <section style="background:var(--lapis2);border:1px solid rgba(201,168,76,.25);border-radius:16px;padding:32px;margin-bottom:48px;">
+    <span style="display:inline-block;background:rgba(201,168,76,.12);border:1px solid rgba(201,168,76,.3);color:var(--gold2);font-size:.7rem;font-weight:700;letter-spacing:.08em;padding:3px 12px;border-radius:20px;text-transform:uppercase;margin-bottom:14px;">Roadmap — not a live product</span>
+    <p style="color:var(--cream);font-size:.95rem;line-height:1.75;margin:10px 0 20px;max-width:720px;">Everything above runs for free in your browser right now — the ICP configurator, sequence builder, tone/channel preview, and activity simulation. ABUZ8 doesn't currently sell a managed, done-for-you SDR service to go with it, so there's no plan or price to quote here. If that's something you'd want built, tell us and we'll follow up if and when it ships.</p>
+    <div style="display:flex;gap:12px;flex-wrap:wrap;">
+      <a href="mailto:ahmad@abuz8ai.com?subject=AI%20SDR%20Agent%20-%20interested" class="btn-outline">Email Us Your Interest</a>
+      <a href="/request.html" class="btn-outline">Request This Build</a>
+    </div>
+  </section>
+
+  <!-- SOCIAL PROOF -->
+  <div style="margin-bottom:16px;">
+    <div class="section-title">Be our first customer</div>
+    <div class="section-sub">We're newly launched — no customer case studies yet.</div>
+  </div>
+  <div class="proof-grid">
+    <div class="proof-card">
+      <div class="proof-text">We're newly launched — no customer case studies yet. Want to be the first? <a href="request.html" style="color:var(--gold);">Get started</a>.</div>
+    </div>
+  </div>
+
+  <!-- WAITLIST -->
+  <div class="waitlist-section">
+    <div class="wl-title">🤖 Want a Managed Version of This?</div>
+    <div class="wl-sub">This page is a free interactive demo — there's no paid SDR-agent service live yet. Tell us if you'd want one, and we'll reach out if and when it ships.</div>
+    <div class="wl-form">
+      <input class="wl-input" type="email" id="wlEmail" placeholder="work@company.com">
+      <button class="wl-btn" onclick="joinWaitlist()">Join the Roadmap List</button>
+    </div>
+    <div class="wl-success" id="wlSuccess">✦ Thanks — we'll email you if and when this ships.</div>
+    <div class="wl-perks">
+      <span class="wl-perk">No product live yet</span>
+      <span class="wl-perk">Roadmap interest list only</span>
+      <span class="wl-perk">No cost, no obligation</span>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="/tools/_abuz8-live-brain.js" onerror="console.log('Brain offline')"></script>
+<script>
+// ── DATA ─────────────────────────────────────────────────────────────────
+const TRIGGERS = [
+  'just raised a Series A',
+  'recently expanded their sales team',
+  'posted about scaling challenges',
+  'launched a new product line',
+  'hired 3 new AEs last quarter',
+  'mentioned outbound struggles on LinkedIn',
+  'just switched their CRM to HubSpot',
+  "opened your competitor's email twice",
+  'published a case study about pipeline growth',
+  'attended a RevOps conference last week',
+];
+const VALUE_PROPS = {
+  '': 'add 30%+ more qualified pipeline without growing headcount',
+  'SaaS / Tech': 'reduce CAC by 40% while doubling qualified meetings',
+  'E-commerce': 'grow B2B wholesale accounts without hiring a sales team',
+  'Finance / FinTech': 'reach decision-makers at target financial firms faster',
+  'Healthcare': 'book demos with healthcare buyers who ignore cold calls',
+  'Real Estate': 'fill your pipeline with qualified investor and developer leads',
+  'Marketing Agency': 'land enterprise retainers at 3× your current close rate',
+  'Consulting': 'book discovery calls with C-suite executives on autopilot',
+  'Retail': 'grow your B2B retail buyer relationships at scale',
+  'Manufacturing': 'reach procurement and ops leaders with hyper-relevant outreach',
+};
+const FAKE_NAMES = ['Alex T.','Jordan M.','Casey R.','Morgan S.','Taylor B.','Drew P.','Quinn A.','Reese L.','Avery N.','Blake H.'];
+const FAKE_COMPANIES = ['Acme SaaS','NovaTech','GridWave','Cortex AI','Pinnacle Group','Luminary Co.','Apex Digital','Vector Labs','Summit Ops','Horizon B2B'];
+const STATUSES = ['sent','opened','replied','pending'];
+const ACTIONS = ['First touch email sent','LinkedIn connection sent','Follow-up delivered','Intro email opened','Replied — positive intent','Meeting link clicked','Sequence completed','Profile researched'];
+const SEQ_DATA = {
+  short: [
+    {day:'D1', cls:'day0', label:'Email #1 — First Touch', desc:'Personalized intro referencing a specific detail'},
+    {day:'D4', cls:'day3', label:'LinkedIn Message', desc:'Value-add connection with context from email'},
+    {day:'D7', cls:'day7', label:'Email #2 — Final Ask', desc:'Calendar link + one compelling reason to meet'},
+  ],
+  medium: [
+    {day:'D1', cls:'day0', label:'Email #1 — First Touch', desc:'Personalized intro referencing a specific detail'},
+    {day:'D3', cls:'day3', label:'LinkedIn Connection + Note', desc:'Short note connecting email to mutual interest'},
+    {day:'D7', cls:'day7', label:'Email #2 — Value Add', desc:'Relevant case study or insight, no ask'},
+    {day:'D10', cls:'day3', label:'LinkedIn Follow-Up', desc:'Comment on their recent post'},
+    {day:'D14', cls:'day14', label:'Email #3 — Final Ask', desc:'Direct calendar link + why now'},
+  ],
+  long: [
+    {day:'D1', cls:'day0', label:'Email #1 — Personalized Intro', desc:'Research-backed, specific to their situation'},
+    {day:'D3', cls:'day3', label:'LinkedIn Connection', desc:'Short 300-char note, no pitch'},
+    {day:'D7', cls:'day7', label:'Email #2 — Value Content', desc:'Case study or data point relevant to their role'},
+    {day:'D10', cls:'day3', label:'Twitter/X Engagement', desc:'Reply to a recent post thoughtfully'},
+    {day:'D14', cls:'day14', label:'Email #3 — Social Proof', desc:'Customer story similar to their company'},
+    {day:'D21', cls:'day7', label:'LinkedIn Video Message', desc:'30-second personalized video note'},
+    {day:'D30', cls:'day14', label:'Email #4 — Break-Up', desc:'"Last email" with strong final CTA'},
+  ],
+};
+
+let currentSeq = 'medium';
+let currentTone = 'professional';
+let activityItems = [];
+
+// ── PREVIEW ──────────────────────────────────────────────────────────────
+function updatePreview(){
+  const title    = document.getElementById('titles').value || 'VP Sales';
+  const industry = document.getElementById('industry').value || 'SaaS companies';
+  const value    = VALUE_PROPS[document.getElementById('industry').value] || VALUE_PROPS[''];
+  const trigger  = TRIGGERS[Math.floor(Math.random()*TRIGGERS.length)];
+  document.getElementById('msg-title').textContent    = title.split(',')[0].trim();
+  document.getElementById('msg-industry').textContent = industry || 'SaaS companies';
+  document.getElementById('msg-value').textContent    = value;
+  document.getElementById('msg-trigger').textContent  = trigger;
+  updateMetrics();
+}
+
+function updateMetrics(){
+  const vol = parseInt(document.getElementById('volume').value);
+  document.getElementById('m-weekly').textContent   = (vol*7).toLocaleString();
+  document.getElementById('m-replies').textContent  = Math.round(vol*7*0.149);
+  document.getElementById('m-meetings').textContent = Math.round(vol*7*0.032);
+}
+
+function setSeq(type, btn){
+  currentSeq = type;
+  document.querySelectorAll('.toggle-row .toggle-btn').forEach(b=>{
+    if(['short','medium','long'].some(t=>b.onclick?.toString().includes(t))) b.classList.remove('active');
+  });
+  btn.classList.add('active');
+  renderSeq();
+}
+
+function renderSeq(){
+  const steps = SEQ_DATA[currentSeq];
+  document.getElementById('seqSteps').innerHTML = steps.map(s=>`
+    <div class="seq-step">
+      <div class="seq-dot ${s.cls}">${s.day}</div>
+      <div class="seq-info">
+        <div class="seq-label">${s.label}</div>
+        <div class="seq-desc">${s.desc}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function setTone(btn){
+  currentTone = btn.dataset.val;
+  document.querySelectorAll('#toneRow .toggle-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  refreshSample();
+}
+
+function refreshSample(){
+  const triggers_pool = TRIGGERS;
+  const t = triggers_pool[Math.floor(Math.random()*triggers_pool.length)];
+  document.getElementById('msg-trigger').textContent = t;
+  updatePreview();
+}
+
+function toggleChannel(el){ el.classList.toggle('active'); }
+
+// ── LAUNCH ───────────────────────────────────────────────────────────────
+async function launchAgent(){
+  const product = document.getElementById('product').value;
+  const titles  = document.getElementById('titles').value;
+  if(!product && !titles){
+    toast('Fill in your product and target titles first');
+    return;
+  }
+  const btn = document.querySelector('.btn-launch');
+  btn.textContent = '⟳ Spinning up agent...';
+  btn.disabled = true;
+
+  await new Promise(r=>setTimeout(r,1800));
+
+  // Show activity feed
+  document.getElementById('resultsPanel').style.display = 'block';
+  document.getElementById('resultsPanel').scrollIntoView({behavior:'smooth',block:'start'});
+  seedActivity();
+  startActivityTicker();
+
+  btn.textContent = '✅ Agent Running';
+  btn.style.background = 'linear-gradient(135deg,var(--turq3),var(--turq))';
+
+  try {
+    if(typeof window.ABUZ8 !== 'undefined' && window.ABUZ8.callBrain){
+      await window.ABUZ8.callBrain('sdr_agent_start', {
+        product, titles,
+        industry: document.getElementById('industry').value,
+        size: document.getElementById('size').value,
+        volume: document.getElementById('volume').value,
+        sequence: currentSeq, tone: currentTone,
+        ts: Date.now()
+      });
+    }
+  } catch(e){ console.log('Brain offline — demo mode'); }
+
+  toast('✦ Agent deployed! Contacts starting within 60 seconds.', 4000);
+}
+
+function seedActivity(){
+  activityItems = [];
+  for(let i=0;i<6;i++) activityItems.push(makeActivity(i*3));
+  renderActivity();
+}
+
+function makeActivity(secsAgo){
+  const name    = FAKE_NAMES[Math.floor(Math.random()*FAKE_NAMES.length)];
+  const company = FAKE_COMPANIES[Math.floor(Math.random()*FAKE_COMPANIES.length)];
+  const action  = ACTIONS[Math.floor(Math.random()*ACTIONS.length)];
+  const status  = STATUSES[Math.floor(Math.random()*STATUSES.length)];
+  const icons   = { sent:'📧', opened:'👁️', replied:'💬', pending:'⏳' };
+  return { name, company, action, status, icon: icons[status], secsAgo };
+}
+
+function addActivity(){
+  for(let i=0;i<4;i++) activityItems.push(makeActivity(Math.random()*60|0));
+  renderActivity();
+}
+
+function renderActivity(){
+  const feed = document.getElementById('activityFeed');
+  feed.innerHTML = activityItems.slice(0,10).map(a=>`
+    <div class="af-item">
+      <div class="af-icon">${a.icon}</div>
+      <div class="af-info">
+        <div class="af-name">${a.name} · ${a.company}</div>
+        <div class="af-action">${a.action}</div>
+      </div>
+      <div class="af-time">${a.secsAgo===0?'just now':a.secsAgo+'s ago'}</div>
+      <div class="af-status ${a.status}">${a.status}</div>
+    </div>
+  `).join('');
+}
+
+function startActivityTicker(){
+  setInterval(()=>{
+    activityItems.unshift(makeActivity(0));
+    if(activityItems.length>20) activityItems.pop();
+    renderActivity();
+  }, 4500);
+}
+
+// ── WAITLIST ──────────────────────────────────────────────────────────────
+async function joinWaitlist(plan=''){
+  const email = document.getElementById('wlEmail').value.trim();
+  if(!email || !email.includes('@')){ toast('Enter a valid work email'); return; }
+  try {
+    if(typeof window.ABUZ8 !== 'undefined' && window.ABUZ8.callBrain){
+      await window.ABUZ8.callBrain('waitlist_add', { email, product:'ai-sdr-agent', plan, ts: Date.now() });
+    }
+  } catch(e){ console.log('Brain offline'); }
+  document.getElementById('wlSuccess').style.display = 'block';
+  document.getElementById('wlEmail').value = '';
+  fetch('/api/waitlist',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,product:'ai-sdr-agent',ts:Date.now()})}).catch(function(){});
+  toast('✦ Thanks — we\'ll be in touch if this ships.');
+}
+
+// ── COPY ──────────────────────────────────────────────────────────────────
+function copyMessage(){
+  const msg = document.getElementById('sampleMsg').innerText;
+  navigator.clipboard.writeText(msg).then(()=>toast('Message copied to clipboard!'));
+}
+
+// ── TOAST ─────────────────────────────────────────────────────────────────
+function toast(msg, dur=2800){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), dur);
+}
+
+// ── INIT ─────────────────────────────────────────────────────────────────
+updateMetrics();
+</script>
+
+<script src="/assets/js/dfy-banner.js" async></script>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+<script src="/tools/_tools-shared.js" defer></script>
+
+  <section style="background:var(--lapis-2);border:1px solid var(--gold);border-radius:16px;padding:24px 32px;margin-top:24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;">
+    <div>
+      <h3 style="font-family:'Playfair Display',serif;font-size:22px;color:var(--cream);margin-bottom:4px;">Ready for the next level?</h3>
+      <p style="color:var(--dim);font-size:14px;">28 premium toolkits, real deliverables. From $17 to $97.</p>
+    </div>
+    <a href="/store.html" style="background:var(--gold);color:var(--lapis);font-weight:700;padding:12px 28px;border-radius:999px;font-size:14px;letter-spacing:.5px;">Browse the Store →</a>
+  </section>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>
+

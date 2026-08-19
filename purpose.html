@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<link rel="stylesheet" href="/assets/css/abuz8-mach3.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Your Purpose — ABUZ8 AI</title>
+<meta name="description" content="60 deep questions to uncover your unique purpose. We are not measured by our ability to climb trees if we are meant to swim. Find out what you were meant to do.">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --lapis:#0a1628;--lapis-mid:#0f2040;--lapis-light:#163060;
+  --gold:#c9a84c;--gold-light:#e8d48b;--gold-dim:#8a7030;--gold-glow:rgba(201,168,76,0.4);
+  --turquoise:#0e9f6e;--turquoise-light:#2fbf8f;--turquoise-bright:#2fbf8f;
+  --teal:#14605a;--teal-dark:#0a3a35;
+  --blue:#1e6bb8;--blue-bright:#3a9bf5;
+  --cream:#f5f0e8;--ivory:#faf8f2;
+  --text:#e8e4d8;--dim:#8a9aaa;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--lapis);color:var(--text);font-family:'Inter',sans-serif;overflow-x:hidden;min-height:100vh;}
+a{color:var(--gold);text-decoration:none;}
+
+.geo-pattern{position:fixed;inset:0;pointer-events:none;z-index:0;opacity:0.04;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cg fill='none' stroke='%23c9a84c' stroke-width='0.8'%3E%3Crect x='30' y='30' width='60' height='60'/%3E%3Crect x='30' y='30' width='60' height='60' transform='rotate(45 60 60)'/%3E%3Ccircle cx='60' cy='60' r='8'/%3E%3C/g%3E%3C/svg%3E");
+  background-size:120px 120px;}
+
+@keyframes float{0%,100%{transform:translateY(0) scale(1);}50%{transform:translateY(-30px) scale(1.1);}}
+@keyframes shimmer{0%{background-position:200% center;}100%{background-position:-200% center;}}
+@keyframes fadeInUp{from{opacity:0;transform:translateY(40px);}to{opacity:1;transform:translateY(0);}}
+@keyframes pulse{0%,100%{opacity:0.7;}50%{opacity:1;}}
+
+.glow-orb{position:fixed;border-radius:50%;filter:blur(100px);pointer-events:none;z-index:0;}
+.glow-orb-1{width:500px;height:500px;background:radial-gradient(circle,rgba(26,138,122,0.2),transparent 70%);top:-100px;right:-100px;animation:float 8s ease-in-out infinite;}
+.glow-orb-2{width:400px;height:400px;background:radial-gradient(circle,var(--gold-glow),transparent 70%);bottom:-50px;left:-100px;animation:float 10s ease-in-out infinite 2s;}
+
+nav{position:relative;z-index:10;max-width:1400px;margin:0 auto;padding:24px 32px;display:flex;justify-content:space-between;align-items:center;}
+.logo{font-family:'Playfair Display',serif;font-size:24px;font-weight:700;letter-spacing:3px;
+  background:linear-gradient(135deg,var(--gold),var(--gold-light),var(--turquoise-light),var(--gold));
+  background-size:300% 100%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  animation:shimmer 6s ease-in-out infinite;}
+.logo-sub{font-family:'Inter',sans-serif;font-size:9px;color:var(--turquoise-light);letter-spacing:5px;text-transform:uppercase;margin-top:2px;}
+.nav-links{display:flex;gap:28px;flex-wrap:wrap;}
+.nav-links a{color:var(--dim);font-size:11px;font-weight:500;letter-spacing:1px;text-transform:uppercase;transition:all 0.3s;position:relative;}
+.nav-links a::after{content:'';position:absolute;bottom:-4px;left:0;width:0;height:1px;background:linear-gradient(90deg,var(--gold),var(--turquoise));transition:width 0.3s;}
+.nav-links a:hover{color:var(--gold-light);}
+.nav-links a:hover::after{width:100%;}
+.nav-links .active{color:var(--gold);}
+
+.hero{position:relative;z-index:1;text-align:center;padding:80px 32px 60px;max-width:900px;margin:0 auto;}
+.hero-art{position:relative;max-width:900px;margin:0 auto 50px;border-radius:20px;overflow:hidden;
+  box-shadow:0 30px 80px rgba(0,0,0,0.5),0 0 60px rgba(201,168,76,0.15);
+  border:1px solid rgba(201,168,76,0.2);}
+.hero-art img{width:100%;display:block;filter:brightness(0.85) contrast(1.1);}
+.hero-art::before{content:'';position:absolute;inset:0;background:linear-gradient(180deg,transparent 40%,rgba(10,22,40,0.8));pointer-events:none;}
+.hero-art-caption{position:absolute;bottom:24px;left:0;right:0;text-align:center;color:var(--cream);
+  font-family:'Playfair Display',serif;font-style:italic;font-size:20px;text-shadow:0 2px 20px rgba(0,0,0,0.8);padding:0 24px;}
+.hero-pre{font-size:12px;color:var(--turquoise-bright);letter-spacing:3px;text-transform:uppercase;margin-bottom:20px;}
+.hero h1{font-family:'Playfair Display',serif;font-size:clamp(38px,6vw,64px);font-weight:700;line-height:1.1;
+  background:linear-gradient(135deg,var(--gold-light),var(--gold),var(--turquoise-light));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:24px;}
+.hero h2{font-family:'Playfair Display',serif;font-size:24px;color:var(--cream);font-weight:400;font-style:italic;margin-bottom:20px;line-height:1.4;}
+.hero p{font-size:16px;color:var(--dim);line-height:1.8;max-width:700px;margin:0 auto;}
+.hero .emphasis{color:var(--gold-light);font-style:italic;}
+
+.parable{max-width:800px;margin:50px auto;padding:40px;background:linear-gradient(135deg,rgba(15,32,64,0.8),rgba(10,58,53,0.4));
+  border:1px solid var(--gold-dim);border-radius:16px;position:relative;z-index:1;}
+.parable::before{content:'❝';position:absolute;top:-10px;left:30px;font-size:80px;color:var(--gold);font-family:'Playfair Display',serif;opacity:0.5;}
+.parable p{font-family:'Playfair Display',serif;font-size:20px;color:var(--cream);line-height:1.7;font-style:italic;}
+.parable .attr{display:block;margin-top:16px;font-size:14px;color:var(--gold);font-style:normal;text-align:right;}
+
+.instructions{max-width:900px;margin:40px auto;padding:32px;background:rgba(15,32,64,0.6);border:1px solid rgba(201,168,76,0.15);border-radius:12px;position:relative;z-index:1;}
+.instructions h3{font-family:'Playfair Display',serif;color:var(--gold);margin-bottom:16px;font-size:20px;}
+.instructions ol{padding-left:24px;color:var(--text);line-height:1.8;}
+.instructions li{margin-bottom:10px;}
+.instructions strong{color:var(--turquoise-bright);}
+
+.quiz{max-width:900px;margin:40px auto;padding:0 20px;position:relative;z-index:1;}
+.section-title{font-family:'Playfair Display',serif;color:var(--gold);font-size:28px;margin:40px 0 20px;border-bottom:2px solid var(--gold-dim);padding-bottom:10px;}
+.section-intro{color:var(--dim);font-size:14px;font-style:italic;margin-bottom:24px;}
+.question{background:rgba(15,32,64,0.5);border:1px solid rgba(201,168,76,0.1);border-radius:8px;padding:20px;margin-bottom:16px;transition:all 0.3s;}
+.question:hover{border-color:var(--gold-dim);background:rgba(15,32,64,0.7);}
+.question-num{font-family:'Playfair Display',serif;color:var(--gold);font-size:14px;font-weight:700;margin-bottom:8px;}
+.question-text{color:var(--cream);font-size:16px;line-height:1.5;margin-bottom:12px;}
+.question-input{width:100%;padding:12px;background:rgba(10,22,40,0.6);border:1px solid rgba(201,168,76,0.2);
+  border-radius:6px;color:var(--text);font-family:inherit;font-size:14px;resize:vertical;min-height:80px;}
+.question-input:focus{outline:none;border-color:var(--gold);background:rgba(10,22,40,0.9);}
+
+.submit-section{max-width:900px;margin:60px auto;padding:40px;background:linear-gradient(135deg,rgba(26,138,122,0.15),rgba(201,168,76,0.1));border:1px solid var(--gold);border-radius:16px;text-align:center;position:relative;z-index:1;}
+.submit-section h2{font-family:'Playfair Display',serif;color:var(--cream);font-size:28px;margin-bottom:16px;}
+.submit-section p{color:var(--text);line-height:1.7;margin-bottom:24px;}
+.submit-btn{display:inline-block;padding:16px 48px;background:linear-gradient(135deg,var(--gold),var(--gold-light));
+  color:var(--lapis);font-weight:700;letter-spacing:2px;text-transform:uppercase;font-size:13px;
+  border:none;border-radius:8px;cursor:pointer;transition:all 0.3s;text-decoration:none;}
+.submit-btn:hover{transform:translateY(-3px);box-shadow:0 10px 30px var(--gold-glow);}
+.free-tag{display:inline-block;padding:6px 16px;background:var(--turquoise);color:var(--lapis);font-size:11px;letter-spacing:2px;font-weight:700;border-radius:20px;margin-bottom:20px;}
+
+footer{padding:60px 32px 40px;text-align:center;border-top:1px solid rgba(201,168,76,0.1);position:relative;z-index:1;margin-top:60px;background:rgba(10,22,40,0.8);}
+footer .company{font-family:'Playfair Display',serif;color:var(--gold);font-size:14px;letter-spacing:3px;margin-bottom:8px;}
+footer .tagline{color:var(--dim);font-size:11px;letter-spacing:1px;}
+
+@media(max-width:768px){
+  .nav-links{display:none;}
+  .hero h1{font-size:36px;}
+}
+</style>
+</head>
+<body>
+<div class="geo-pattern"></div>
+<div class="glow-orb glow-orb-1"></div>
+<div class="glow-orb glow-orb-2"></div>
+
+<nav>
+  <div>
+    <div class="logo">ABUZ8</div>
+    <div class="logo-sub">SOVEREIGN AI</div>
+  </div>
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="about.html">About</a>
+    <a href="products.html">Products</a>
+    <a href="free.html">Free</a>
+    <a href="purpose.html" class="active">Purpose</a>
+    <a href="https://ai-news-feed-284.pages.dev" target="_blank" rel="noopener" style="color:var(--turquoise-bright);font-weight:600;">AI Daily &#8599;</a>
+    <a href="scanner.html" style="color:var(--gold-light);font-weight:600;">Scanner &#9670;</a>
+    <a href="enterprise.html">Enterprise</a>
+    <a href="zait.html">Zait</a>
+    <a href="qadir.html">Qadir</a>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="hero-pre">Free &middot; Confidential &middot; Takes 30-60 minutes</div>
+  <h1>Discover Your Purpose</h1>
+  <h2>If you measure a fish by its ability to climb a tree, it will live its whole life believing it is stupid.</h2>
+  <p>You are not broken. You may simply have been measuring yourself by the wrong standard. This is 60 carefully-crafted questions to help you see yourself clearly — what you were built for, what drains you, what you were meant to build. Answer honestly. Take your time. There are no wrong answers.</p>
+</section>
+
+<div class="hero-art">
+  <img src="assets/images/scenes/12_waterfall.webp" alt="Where purpose flows — a vision of the restored oasis">
+  <div class="hero-art-caption">"Every soul is a river searching for its ocean."</div>
+</div>
+
+<div class="parable">
+  <p>Everybody is a genius. But if you judge a fish by its ability to climb a tree, it will live its whole life believing that it is stupid.
+  <span class="attr">— attributed to Einstein (author unconfirmed, truth unchanged)</span></p>
+</div>
+
+<div class="instructions">
+  <h3>How This Works</h3>
+  <ol>
+    <li><strong>Answer all 60 questions</strong> as honestly as you can. Write as much or as little as feels right.</li>
+    <li><strong>When you finish, click "Send to ABUZ8"</strong> — your answers are emailed to our team directly.</li>
+    <li><strong>Within 48 hours</strong>, we personally review every answer and respond with a detailed personal assessment of your unique purpose profile — what you were built for, your hidden strengths, and concrete next steps.</li>
+    <li><strong>This service is 100% free.</strong> No upsell. No credit card. Just honest help.</li>
+    <li><strong>Why?</strong> Because we believe every soul has a purpose, and sometimes people need someone to reflect it back clearly. That's our contribution.</li>
+  </ol>
+</div>
+
+<form class="quiz" id="quiz" method="post" action="mailto:purpose@abuz8ai.com" enctype="text/plain">
+
+<h2 class="section-title">I. Identity — Who You Actually Are</h2>
+<p class="section-intro">Forget who you're supposed to be. Who are you when no one's watching?</p>
+<div id="section-1"></div>
+
+<h2 class="section-title">II. Energy — What Drains and Fills You</h2>
+<p class="section-intro">Your body doesn't lie. Follow what gives you energy.</p>
+<div id="section-2"></div>
+
+<h2 class="section-title">III. Childhood — Before the World Told You Who to Be</h2>
+<p class="section-intro">What you loved at age 10 matters.</p>
+<div id="section-3"></div>
+
+<h2 class="section-title">IV. Pain — Where You've Suffered Most</h2>
+<p class="section-intro">Your deepest pain often points to your highest purpose. You were sent to heal it for others.</p>
+<div id="section-4"></div>
+
+<h2 class="section-title">V. Values — What You'll Never Betray</h2>
+<p class="section-intro">Without clear values, you'll drift forever.</p>
+<div id="section-5"></div>
+
+<h2 class="section-title">VI. Vision — What You Want to Build</h2>
+<p class="section-intro">Be honest. What future are you trying to create?</p>
+<div id="section-6"></div>
+
+<div class="submit-section">
+  <div class="free-tag">100% FREE &middot; NO CREDIT CARD</div>
+  <h2>Ready to Send?</h2>
+  <p>Your answers will be sent to our team at <strong style="color:var(--gold)">purpose@abuz8ai.com</strong>. You'll receive a personal response within 48 hours — a detailed reflection on your answers, your strengths, your purpose profile, and concrete next steps. No algorithms. Real humans reading and responding.</p>
+  <button type="submit" class="submit-btn">Send My Answers →</button>
+  <p style="margin-top:20px;font-size:12px;color:var(--dim);">Your answers are confidential. We never share, sell, or publish them. Ever.</p>
+</div>
+
+</form>
+
+<footer>
+  <div class="company">ABUZ8 LLC</div>
+  <div class="tagline">Every soul has a purpose &middot; We're here to help you find yours</div>
+  <div style="margin-top:16px;font-size:10px;color:var(--dim);">
+    <a href="terms.html">Terms</a> &middot;
+    <a href="privacy.html">Privacy</a> &middot;
+    <a href="mailto:hello@abuz8ai.com">hello@abuz8ai.com</a>
+  </div>
+</footer>
+
+<script>
+const questions = {
+  'section-1': [
+    "When you're alone with no one to impress, what do you think about most?",
+    "If money, family, and society's expectations disappeared tomorrow — what would you do with your life?",
+    "What's a belief about yourself you've carried since childhood that you now suspect isn't true?",
+    "What role do you play in groups — the leader, the thinker, the peacemaker, the challenger, the observer?",
+    "What do people thank you for most often, even if it feels effortless to you?",
+    "Describe yourself in 3 words. Now describe who you wish you were in 3 words. What's the gap?",
+    "What's a compliment you've received multiple times that you struggle to believe?",
+    "When do you feel most like yourself?",
+    "What's a 'should' that's been weighing on you? (I should be doing X...)",
+    "What part of yourself have you hidden to fit in?"
+  ],
+  'section-2': [
+    "What activity makes you lose track of time in a good way?",
+    "What kind of work leaves you feeling energized rather than exhausted?",
+    "What kind of people drain you within minutes? What kind recharge you?",
+    "What environment makes you feel most alive — city, nature, solitude, chaos, silence?",
+    "What topic can you talk about for hours without getting tired?",
+    "When was the last time you felt 'flow' — complete absorption in something? What were you doing?",
+    "What's a task you'd do for free, forever, if you could?",
+    "What's a task you'd refuse to do even for $1,000/hour?",
+    "What drains your spirit — not your body, your spirit?",
+    "What time of day does your brain work best?"
+  ],
+  'section-3': [
+    "What did you obsessively love as a child (before age 12)?",
+    "What did you build, draw, write, imagine, or pretend to be when no one was looking?",
+    "What was your favorite subject in school and why — not the grade, the actual experience?",
+    "What was a recurring daydream from your childhood?",
+    "What did teachers, parents, or adults say you were 'too much' of? (Too curious, too loud, too sensitive, too quiet...)",
+    "What was your childhood nickname or identity among peers?",
+    "What did you want to be when you grew up — and what did you change it to, and why?",
+    "When did you first feel 'different'? What was that about?",
+    "What's a childhood memory where you felt completely fulfilled?",
+    "If 10-year-old you met you today, would they be proud? Why or why not?"
+  ],
+  'section-4': [
+    "What's the hardest thing you've survived?",
+    "What pain or loss keeps coming up in your life in different forms?",
+    "What do you understand about suffering that most people don't?",
+    "What wound, if healed in others, would make you feel your life had meaning?",
+    "What do you wish someone had told you during your darkest moment?",
+    "What's a mistake you made that taught you something you now want to share with the world?",
+    "What did you lose that changed you forever?",
+    "What injustice makes you physically angry when you see it?",
+    "Who do you want to protect from the pain you've experienced?",
+    "What shame have you carried that you now suspect wasn't really yours?"
+  ],
+  'section-5': [
+    "What are 3 things you will never compromise on, no matter how much money is offered?",
+    "What 'success' would you refuse to accept because of the person you'd have to become to get it?",
+    "What's a principle you hold that most people around you don't?",
+    "What lie do you see everyone telling that you refuse to tell?",
+    "What are you willing to lose everything to protect?",
+    "What do you believe about how people should treat each other?",
+    "What does a 'good life' mean to you — specifically, not vaguely?",
+    "What role does faith, spirituality, or higher meaning play in your life?",
+    "Who are the people whose respect matters most to you, and why?",
+    "What would you still do if no one ever knew about it or rewarded you for it?"
+  ],
+  'section-6': [
+    "If you had unlimited resources, what would you build first?",
+    "What problem in the world keeps you up at night?",
+    "Who specifically do you want to serve with your life's work?",
+    "What does your ideal day 10 years from now look like — hour by hour?",
+    "What legacy would you want written on your tombstone (besides your name)?",
+    "What's a crazy, ambitious dream you've been afraid to say out loud?",
+    "If you knew you couldn't fail, what would you start tomorrow?",
+    "What is your definition of wealth? (It may not be money.)",
+    "What community, family, or tribe do you want to build around you?",
+    "At your funeral, what would you want people to say you did for them?"
+  ]
+};
+
+Object.entries(questions).forEach(([sectionId, qs]) => {
+  const container = document.getElementById(sectionId);
+  let startNum = 1;
+  if (sectionId === 'section-2') startNum = 11;
+  if (sectionId === 'section-3') startNum = 21;
+  if (sectionId === 'section-4') startNum = 31;
+  if (sectionId === 'section-5') startNum = 41;
+  if (sectionId === 'section-6') startNum = 51;
+
+  qs.forEach((q, i) => {
+    const num = startNum + i;
+    const div = document.createElement('div');
+    div.className = 'question';
+    div.innerHTML = `
+      <div class="question-num">Question ${num}</div>
+      <div class="question-text">${q}</div>
+      <textarea class="question-input" name="q${num}" placeholder="Take your time. No word limit. No wrong answer."></textarea>
+    `;
+    container.appendChild(div);
+  });
+});
+
+// Simple form handler — opens mail client with answers
+document.getElementById('quiz').addEventListener('submit', function(e) {
+  e.preventDefault();
+  const formData = new FormData(this);
+  let body = "ABUZ8 PURPOSE QUIZ RESPONSES\n\n";
+  body += "Date: " + new Date().toISOString() + "\n\n";
+  body += "="*60 + "\n\n";
+
+  let num = 1;
+  for (const [key, value] of formData.entries()) {
+    body += `Q${num}: ${value || '[no answer]'}\n\n`;
+    num++;
+  }
+
+  body += "\n--- Please respond to the email address this was sent from ---";
+
+  const subject = "My Purpose Quiz — from " + (prompt("What's your name?") || "Anonymous");
+  const userEmail = prompt("What email should we respond to?");
+
+  const mailto = `mailto:purpose@abuz8ai.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body + '\n\nReply to: ' + userEmail)}`;
+
+  if (mailto.length > 2000) {
+    alert("Your answers are too long for direct email. We'll open your email client with a summary; please paste your full answers into the body when it opens.");
+  }
+
+  window.location.href = mailto;
+});
+</script>
+
+<link rel="stylesheet" href="/assets/css/zait-chat.css">
+<script src="/assets/js/zait-chat.js"></script>
+
+<script src="/assets/js/dfy-banner.js" async></script>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>
+

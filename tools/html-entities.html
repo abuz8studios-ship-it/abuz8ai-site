@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HTML Entity Encoder / Decoder — Free Online Tool (Escape &amp; Unescape HTML) | ABUZ8</title>
+  <meta name="description" content="Free online HTML entity encoder and decoder. Escape text to HTML entities or decode entities back to plain text instantly. Named and numeric entities, one-click copy. 100% client-side — your text never leaves your browser. No signup." />
+  <meta name="keywords" content="html entity encoder, html entity decoder, escape html, unescape html, html entities, encode html, decode html entities, html special characters, ampersand encoder, html escape online" />
+  <meta property="og:title" content="HTML Entity Encoder / Decoder — Free Online Tool | ABUZ8" />
+  <meta property="og:description" content="Escape text to HTML entities or decode entities back to plain text instantly, both directions. One-click copy, runs 100% in your browser — safe for private text and snippets." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://abuz8ai.com/tools/html-entities" />
+  <link rel="canonical" href="https://abuz8ai.com/tools/html-entities" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebApplication",
+        "name": "HTML Entity Encoder / Decoder",
+        "description": "Free online bidirectional HTML entity encoder and decoder. Escape plain text into HTML entities or decode named and numeric entities back to text instantly. One-click copy. Runs 100% in your browser.",
+        "url": "https://abuz8ai.com/tools/html-entities",
+        "applicationCategory": "DeveloperApplication",
+        "operatingSystem": "Any",
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+        "author": { "@type": "Organization", "name": "ABUZ8 LLC", "url": "https://abuz8ai.com" }
+      },
+      {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          { "@type": "ListItem", "position": 1, "name": "ABUZ8", "item": "https://abuz8ai.com/" },
+          { "@type": "ListItem", "position": 2, "name": "Free Tools", "item": "https://abuz8ai.com/tools/" },
+          { "@type": "ListItem", "position": 3, "name": "HTML Entity Encoder / Decoder", "item": "https://abuz8ai.com/tools/html-entities" }
+        ]
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "What does it mean to encode HTML entities?",
+            "acceptedAnswer": { "@type": "Answer", "text": "Encoding replaces characters that have special meaning in HTML — like the less-than sign, greater-than sign, ampersand and quotes — with safe escape codes such as &lt;, &gt;, &amp; and &quot;. The browser then displays the literal character instead of interpreting it as markup. This is what lets you show a code snippet or a tag on a web page without the browser trying to render it." }
+          },
+          {
+            "@type": "Question",
+            "name": "How do I decode HTML entities back to text?",
+            "acceptedAnswer": { "@type": "Answer", "text": "Switch the direction toggle to Decode, paste text that contains entities like &amp;, &#169; or &#x2764;, and the tool converts every named and numeric entity back to its real character. It handles decimal (&#169;) and hexadecimal (&#xA9;) numeric references as well as the standard named entities." }
+          },
+          {
+            "@type": "Question",
+            "name": "Which characters actually need to be escaped in HTML?",
+            "acceptedAnswer": { "@type": "Answer", "text": "In page content the critical ones are the ampersand (&) and the angle brackets (< and >). Inside an attribute value you also escape the quote characters (\" and '). Escaping just these prevents your text from being read as markup and is enough to stop the most common cross-site-scripting mistakes. This tool escapes all five by default." }
+          },
+          {
+            "@type": "Question",
+            "name": "What is the difference between named and numeric entities?",
+            "acceptedAnswer": { "@type": "Answer", "text": "A named entity uses a readable label, like &copy; for the copyright sign. A numeric entity uses the character's code point, either in decimal (&#169;) or hexadecimal (&#xA9;). Both produce the same character. Named entities are easier to read; numeric entities always work even for symbols that have no name, which is why the encoder can output either style." }
+          },
+          {
+            "@type": "Question",
+            "name": "Is it safe to paste private text or code here?",
+            "acceptedAnswer": { "@type": "Answer", "text": "Yes. All encoding and decoding happen in JavaScript inside your browser. Your text is never sent to a server, logged or stored anywhere. Close or refresh the tab and it is gone — safe for private snippets, internal code and confidential content." }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      /* LIGHT vision-safe palette (site mandate) — matches json-to-yaml.html / case-converter.html gold standard.
+         Variable NAMES kept so rules convert in one place. All text pairings >= 4.5:1. */
+      --lapis: #F8FAFC;      /* page background */
+      --card: #FFFFFF;       /* panels / nav */
+      --card-alt: #EEF3F8;   /* tinted surfaces */
+      --gold: #2E75B6;       /* primary accent */
+      --gold-dim: #1F5B94;   /* darker primary for borders/hover */
+      --teal: #0E7C63;
+      --teal-bright: #12866E;
+      --cream: #1F3A5F;      /* headings (dark navy on light) */
+      --text: #2C3E50;       /* body text */
+      --text-dim: #5A6B7C;   /* muted text */
+      --border: #D7E0EA;
+      --red: #C0392B;
+      --green: #197A4B;
+      --font-heading: 'Playfair Display', Georgia, serif;
+      --font-body: 'Inter', system-ui, sans-serif;
+      --font-mono: 'JetBrains Mono', 'Courier New', monospace;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { background: var(--lapis); color: var(--text); font-family: var(--font-body); font-size: 15px; line-height: 1.6; min-height: 100vh; }
+    a { color: var(--gold); text-decoration: none; transition: color 0.2s; }
+    a:hover { color: var(--teal-bright); }
+
+    /* ── NAV ── */
+    nav { background: var(--card); border-bottom: 1px solid var(--border); padding: 0 2rem; display: flex; align-items: center; justify-content: space-between; height: 60px; position: sticky; top: 0; z-index: 100; }
+    .nav-logo { font-family: var(--font-heading); font-size: 1.3rem; font-weight: 700; color: var(--gold); }
+    .nav-links { display: flex; gap: 1.5rem; align-items: center; }
+    .nav-links a { color: var(--text-dim); font-size: 0.85rem; font-weight: 500; }
+    .nav-links a:hover { color: var(--gold); }
+    .nav-cta { background: var(--gold); color: var(--lapis) !important; padding: 0.45rem 1.1rem; border-radius: 6px; font-weight: 600; }
+    .nav-cta:hover { background: var(--teal-bright); }
+
+    /* ── HERO ── */
+    .hero { text-align: center; padding: 3rem 1.5rem 1.5rem; max-width: 820px; margin: 0 auto; }
+    .hero h1 { font-family: var(--font-heading); font-size: 2.3rem; color: var(--cream); line-height: 1.2; margin-bottom: 0.8rem; }
+    .hero h1 span { color: var(--gold); }
+    .hero p { color: var(--text-dim); font-size: 1.02rem; max-width: 640px; margin: 0 auto; }
+    .hero .badges { display: flex; gap: 0.6rem; justify-content: center; margin-top: 1.1rem; flex-wrap: wrap; }
+    .badge { border: 1px solid var(--border); background: var(--card); color: var(--text-dim); font-size: 0.72rem; padding: 0.28rem 0.7rem; border-radius: 999px; letter-spacing: 0.03em; }
+    .badge b { color: var(--teal-bright); font-weight: 600; }
+
+    /* ── DIRECTION TOGGLE ── */
+    .direction { display: flex; justify-content: center; align-items: center; gap: 0.75rem; margin: 0.5rem auto 0; }
+    .dir-switch { display: inline-flex; background: var(--card); border: 1px solid var(--border); border-radius: 999px; padding: 0.25rem; }
+    .dir-btn { border: none; background: transparent; color: var(--text-dim); font-family: var(--font-body); font-size: 0.82rem; font-weight: 600; padding: 0.4rem 1.1rem; border-radius: 999px; cursor: pointer; transition: all 0.2s; }
+    .dir-btn.active { background: var(--gold); color: var(--lapis); }
+
+    /* ── LAYOUT ── */
+    .wrap { max-width: 1180px; margin: 0 auto; padding: 1rem 1.5rem 2rem; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 1.4rem; align-items: start; }
+    @media (max-width: 920px) { .wrap { grid-template-columns: 1fr; } }
+    .panel { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 1.3rem; }
+    .panel-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.9rem; }
+    .panel h2 { font-family: var(--font-heading); font-size: 1.15rem; color: var(--cream); }
+    textarea { width: 100%; background: var(--lapis); border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-family: var(--font-mono); font-size: 0.9rem; padding: 0.7rem 0.8rem; outline: none; transition: border-color 0.2s; min-height: 300px; resize: vertical; line-height: 1.65; white-space: pre-wrap; overflow-wrap: break-word; tab-size: 2; }
+    textarea:focus { border-color: var(--gold-dim); }
+    textarea.output { background: var(--card-alt); color: var(--teal-bright); }
+    .hint { font-size: 0.74rem; color: var(--text-dim); margin-top: 0.4rem; }
+    .hint code { color: var(--teal-bright); font-family: var(--font-mono); font-size: 0.72rem; }
+
+    /* option row */
+    .opts { display: flex; gap: 1.2rem; flex-wrap: wrap; margin-top: 0.9rem; }
+    .opt { display: flex; align-items: center; gap: 0.5rem; font-size: 0.82rem; color: var(--text); cursor: pointer; }
+    .opt input { accent-color: var(--gold); }
+    .opt select { background: var(--lapis); border: 1px solid var(--border); border-radius: 6px; color: var(--text); font-family: var(--font-body); font-size: 0.8rem; padding: 0.25rem 0.5rem; }
+
+    /* status line */
+    .status { margin-top: 0.85rem; font-size: 0.78rem; font-family: var(--font-mono); min-height: 1.2em; }
+    .status.ok { color: var(--green); }
+    .status.err { color: var(--red); }
+
+    .panel-actions { display: flex; gap: 0.5rem; margin-top: 1rem; flex-wrap: wrap; }
+    .act-btn { background: var(--card-alt); border: 1px solid var(--border); color: var(--text); font-family: var(--font-body); font-size: 0.8rem; font-weight: 600; padding: 0.5rem 1rem; border-radius: 7px; cursor: pointer; transition: all 0.2s; }
+    .act-btn:hover { border-color: var(--gold-dim); color: var(--gold); }
+    .act-btn.primary { background: var(--gold); border-color: var(--gold); color: var(--lapis); }
+    .act-btn.primary:hover { background: var(--teal-bright); border-color: var(--teal-bright); }
+    .act-btn.copied { background: var(--green); border-color: var(--green); color: var(--lapis); }
+
+    /* CTA */
+    .cta-box { max-width: 1180px; margin: 0.5rem auto 0; background: linear-gradient(135deg, var(--card-alt), var(--card)); border: 1px solid var(--gold-dim); border-radius: 12px; padding: 1.3rem; text-align: center; }
+    .cta-box h3 { font-family: var(--font-heading); color: var(--cream); font-size: 1.15rem; margin-bottom: 0.4rem; }
+    .cta-box p { color: var(--text-dim); font-size: 0.85rem; max-width: 520px; margin: 0 auto 0.9rem; }
+    .cta-btn { display: inline-block; background: var(--gold); color: var(--lapis); font-weight: 600; font-size: 0.88rem; padding: 0.6rem 1.5rem; border-radius: 8px; }
+    .cta-btn:hover { background: var(--teal-bright); color: var(--lapis); }
+
+    /* ── INFO ── */
+    .info { max-width: 820px; margin: 0 auto; padding: 1.5rem 1.5rem 2rem; }
+    .info h2 { font-family: var(--font-heading); font-size: 1.5rem; color: var(--cream); margin: 1.6rem 0 0.7rem; }
+    .info h3 { font-family: var(--font-heading); font-size: 1.12rem; color: var(--gold); margin: 1.3rem 0 0.5rem; }
+    .info p { color: var(--text-dim); margin-bottom: 0.8rem; }
+    .info strong { color: var(--text); }
+    .info code { font-family: var(--font-mono); font-size: 0.82rem; color: var(--teal-bright); background: var(--card); padding: 0.1rem 0.35rem; border-radius: 4px; }
+    .cmp { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 0.8rem 0; }
+    @media (max-width: 700px) { .cmp { grid-template-columns: 1fr; } }
+    .cmp pre { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 0.9rem 1rem; font-family: var(--font-mono); font-size: 0.8rem; color: var(--text); overflow-x: auto; line-height: 1.6; white-space: pre-wrap; overflow-wrap: break-word; }
+    .cmp .cmp-label { font-size: 0.72rem; font-weight: 600; color: var(--gold); letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 0.35rem; }
+    .conv-table { width: 100%; border-collapse: collapse; margin: 0.6rem 0 0.4rem; font-size: 0.82rem; }
+    .conv-table th, .conv-table td { text-align: left; padding: 0.5rem 0.6rem; border-bottom: 1px solid var(--border); }
+    .conv-table th { color: var(--gold); font-weight: 600; }
+    .conv-table td { color: var(--text-dim); }
+    .conv-table code { font-size: 0.78rem; }
+    .related { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.8rem; margin-top: 1rem; }
+    @media (max-width: 700px) { .related { grid-template-columns: 1fr; } }
+    .rel-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 0.9rem 1rem; font-size: 0.8rem; }
+    .rel-card a { font-weight: 600; }
+    .rel-card p { font-size: 0.74rem; margin: 0.25rem 0 0; }
+
+    footer { text-align: center; padding: 2rem; border-top: 1px solid var(--border); color: var(--text-dim); font-size: 0.8rem; margin-top: 3rem; }
+    footer a { color: var(--gold); }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="/" class="nav-logo">ABUZ8</a>
+    <div class="nav-links">
+      <a href="/tools/">Tools</a>
+      <a href="/blog/">Blog</a>
+      <a href="/pricing.html">Pricing</a>
+      <a href="/tools/ai-waiting-list-page.html" class="nav-cta">Join Early Access</a>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <header class="hero">
+    <h1>HTML Entity <span>&#8644;</span> Text</h1>
+    <p>Paste text to <strong>escape</strong> the characters HTML treats as markup, or <strong>decode</strong> named and numeric entities back to plain text — instantly, in either direction. One-click copy on the result.</p>
+    <div class="badges">
+      <span class="badge"><b>100%</b> client-side — text never leaves your browser</span>
+      <span class="badge"><b>Both</b> directions</span>
+      <span class="badge"><b>Free</b> · no signup</span>
+    </div>
+  </header>
+
+  <!-- DIRECTION TOGGLE -->
+  <div class="direction">
+    <div class="dir-switch" role="tablist" aria-label="Conversion direction">
+      <button class="dir-btn active" id="dir-enc" role="tab" aria-selected="true">Encode &#8594; Entities</button>
+      <button class="dir-btn" id="dir-dec" role="tab" aria-selected="false">Decode &#8594; Text</button>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <!-- LEFT: INPUT -->
+    <div class="panel">
+      <div class="panel-head">
+        <h2 id="in-title">Text input</h2>
+      </div>
+      <textarea id="input" spellcheck="false" placeholder="Type or paste text to escape…"></textarea>
+      <p class="hint" id="in-hint">Every character HTML treats as markup — <code>&amp;</code> <code>&lt;</code> <code>&gt;</code> <code>&quot;</code> <code>&#39;</code> — is escaped so it displays literally.</p>
+
+      <div class="opts" id="opts">
+        <label class="opt"><span>Entity style</span>
+          <select id="opt-style">
+            <option value="named" selected>Named (&amp;copy;)</option>
+            <option value="decimal">Numeric decimal (&amp;#169;)</option>
+            <option value="hex">Numeric hex (&amp;#xA9;)</option>
+          </select>
+        </label>
+        <label class="opt"><input type="checkbox" id="opt-all" /> <span>Encode all non-ASCII</span></label>
+      </div>
+
+      <div class="panel-actions">
+        <button class="act-btn" onclick="loadSample()">Load sample</button>
+        <button class="act-btn" onclick="clearInput()">Clear</button>
+        <button class="act-btn" onclick="swapSides()">&#8646; Use output as input</button>
+      </div>
+    </div>
+
+    <!-- RIGHT: OUTPUT -->
+    <div class="panel">
+      <div class="panel-head">
+        <h2 id="out-title">Encoded output</h2>
+        <button class="act-btn primary" id="copyBtn" onclick="copyOutput()">Copy</button>
+      </div>
+      <textarea id="output" class="output" spellcheck="false" readonly placeholder="Result appears here…"></textarea>
+      <div class="status" id="status"></div>
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <div class="cta-box">
+    <h3>Wrangling markup and snippets all day?</h3>
+    <p>QADIR OS agents escape, sanitise and format the text, code and config flowing through your site and docs — automatically, on your own machine.</p>
+    <a href="/tools/ai-waiting-list-page.html" class="cta-btn">Join Early Access</a>
+  </div>
+
+  <!-- INFO / SEO COPY -->
+  <section class="info">
+    <h2>Escape and unescape HTML, both ways</h2>
+    <p>A handful of characters carry special meaning in HTML: the <strong>ampersand</strong> starts an entity, the <strong>angle brackets</strong> open and close tags, and <strong>quotes</strong> delimit attribute values. If you want to show those characters as themselves — a code snippet, a literal tag, a stray <code>&amp;</code> in a headline — you have to replace them with escape codes called <strong>entities</strong>. This tool does that in one paste, and reverses it just as fast, turning <code>&amp;lt;div&amp;gt;</code> back into a real <code>&lt;div&gt;</code>.</p>
+
+    <div class="cmp">
+      <div>
+        <div class="cmp-label">Plain text</div>
+        <pre>&lt;a href="x?a=1&amp;b=2"&gt;Tom &amp; Jerry&lt;/a&gt;</pre>
+      </div>
+      <div>
+        <div class="cmp-label">Encoded</div>
+        <pre>&amp;lt;a href=&amp;quot;x?a=1&amp;amp;b=2&amp;quot;&amp;gt;Tom &amp;amp; Jerry&amp;lt;/a&amp;gt;</pre>
+      </div>
+    </div>
+
+    <h3>Which characters get escaped</h3>
+    <p>By default the tool escapes the five characters that can break markup or open a security hole. Turn on <strong>Encode all non-ASCII</strong> to also convert accented letters, emoji and symbols into numeric entities — useful when a target system is limited to plain ASCII.</p>
+    <table class="conv-table">
+      <thead><tr><th>Character</th><th>Named entity</th><th>Numeric</th><th>Why escape it</th></tr></thead>
+      <tbody>
+        <tr><td><code>&amp;</code></td><td><code>&amp;amp;</code></td><td><code>&amp;#38;</code></td><td>Starts every entity — escape first</td></tr>
+        <tr><td><code>&lt;</code></td><td><code>&amp;lt;</code></td><td><code>&amp;#60;</code></td><td>Opens an HTML tag</td></tr>
+        <tr><td><code>&gt;</code></td><td><code>&amp;gt;</code></td><td><code>&amp;#62;</code></td><td>Closes an HTML tag</td></tr>
+        <tr><td><code>"</code></td><td><code>&amp;quot;</code></td><td><code>&amp;#34;</code></td><td>Ends a double-quoted attribute</td></tr>
+        <tr><td><code>'</code></td><td><code>&amp;#39;</code></td><td><code>&amp;#39;</code></td><td>Ends a single-quoted attribute</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Named vs numeric entities</h3>
+    <p>The <strong>copyright</strong> sign can be written three ways that all render identically: <code>&amp;copy;</code> (named), <code>&amp;#169;</code> (decimal) or <code>&amp;#xA9;</code> (hexadecimal). Named entities read better; numeric entities always work, even for characters with no name. Pick the style with the <em>Entity style</em> dropdown — the decoder understands all three regardless of which you chose.</p>
+
+    <h3>When do I actually need this?</h3>
+    <p>Any time text becomes part of a web page. Displaying <strong>code samples</strong> in a blog post, dropping <strong>user input</strong> into HTML without letting it run as markup (the root of many cross-site-scripting bugs), cleaning up entity-mangled text pasted out of a CMS, or debugging why <code>&amp;amp;</code> keeps showing up on your page — all of these are one paste away here.</p>
+
+    <h3>Does encoding change my text?</h3>
+    <p>No. Encoding and decoding are exact inverses of each other, so a round trip returns your original text character-for-character. Entities are just a different <em>spelling</em> of the same characters — the meaning and the visible result never change.</p>
+
+    <h3>Privacy</h3>
+    <p>Everything runs in your browser as plain JavaScript. Your text is never uploaded, logged or stored on any server — refresh the page and it is gone. That makes it safe to paste private snippets, internal code, and confidential content.</p>
+
+    <h2>More developer tools</h2>
+    <div class="related">
+      <div class="rel-card">
+        <a href="/tools/url-encoder">URL Encoder / Decoder</a>
+        <p>Percent-encode and decode URLs and query strings safely.</p>
+      </div>
+      <div class="rel-card">
+        <a href="/tools/json-formatter">JSON Formatter</a>
+        <p>Beautify, minify and validate JSON with clear errors.</p>
+      </div>
+      <div class="rel-card">
+        <a href="/tools/json-to-yaml">JSON &#8644; YAML</a>
+        <p>Convert JSON to YAML and back, type-safe, in one paste.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <p>&copy; 2026 <a href="/">ABUZ8 LLC</a> &middot; All tools run 100% client-side &middot; <a href="/tools/">More Free Tools</a> &middot; <a href="/blog/">ABUZ8 Blog</a></p>
+  </footer>
+
+  <script>
+    // ══════════════════════════════════════════════════════════════
+    // HTML entity encode / decode — self-contained, zero-dependency.
+    // Encoding is done by hand (never via innerHTML) so output is
+    // deterministic and independent of the DOM. Decoding of numeric
+    // references is done by hand; named-entity decoding uses a curated
+    // table plus a safe DOM fallback for the long tail, guarded so it
+    // can never execute markup.
+    // Pure functions first (unit-testable), DOM wiring second.
+    // ══════════════════════════════════════════════════════════════
+
+    // [PURE-BEGIN] — DOM-free, unit-testable core
+
+    // The five always-escaped characters -> named entity.
+    var BASE_NAMED = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
+
+    // Curated named-entity table for the common symbols people actually paste.
+    // (Decode direction uses the inverse; the DOM fallback covers the rest.)
+    var NAMED = {
+      'quot': 34, 'amp': 38, 'apos': 39, 'lt': 60, 'gt': 62, 'nbsp': 160,
+      'iexcl': 161, 'cent': 162, 'pound': 163, 'curren': 164, 'yen': 165,
+      'brvbar': 166, 'sect': 167, 'uml': 168, 'copy': 169, 'ordf': 170,
+      'laquo': 171, 'not': 172, 'shy': 173, 'reg': 174, 'macr': 175,
+      'deg': 176, 'plusmn': 177, 'sup2': 178, 'sup3': 179, 'acute': 180,
+      'micro': 181, 'para': 182, 'middot': 183, 'cedil': 184, 'sup1': 185,
+      'ordm': 186, 'raquo': 187, 'frac14': 188, 'frac12': 189, 'frac34': 190,
+      'iquest': 191, 'times': 215, 'divide': 247, 'euro': 8364, 'trade': 8482,
+      'hellip': 8230, 'mdash': 8212, 'ndash': 8211, 'lsquo': 8216, 'rsquo': 8217,
+      'ldquo': 8220, 'rdquo': 8221, 'bull': 8226, 'dagger': 8224, 'Dagger': 8225,
+      'permil': 8240, 'prime': 8242, 'Prime': 8243, 'larr': 8592, 'uarr': 8593,
+      'rarr': 8594, 'darr': 8595, 'harr': 8596, 'spades': 9824, 'clubs': 9827,
+      'hearts': 9829, 'diams': 9830, 'loz': 9674, 'infin': 8734, 'ne': 8800,
+      'le': 8804, 'ge': 8805, 'radic': 8730, 'sum': 8721, 'prod': 8719,
+      'part': 8706, 'int': 8747, 'alpha': 945, 'beta': 946, 'gamma': 947,
+      'delta': 948, 'pi': 960, 'sigma': 963, 'omega': 969, 'Omega': 937,
+      'lambda': 955, 'mu': 956, 'theta': 952, 'phi': 966
+    };
+
+    // Build the numeric->name inverse once, preferring the shortest name.
+    var CODE_TO_NAME = (function () {
+      var m = {};
+      for (var name in NAMED) {
+        if (!Object.prototype.hasOwnProperty.call(NAMED, name)) continue;
+        var code = NAMED[name];
+        if (!(code in m) || name.length < m[code].length) m[code] = name;
+      }
+      return m;
+    })();
+
+    function codePointsOf(str) {
+      // Iterate by code point so astral characters (emoji) are handled whole.
+      var pts = [];
+      for (var i = 0; i < str.length; i++) {
+        var c = str.codePointAt(i);
+        pts.push(c);
+        if (c > 0xFFFF) i++; // skip the low surrogate
+      }
+      return pts;
+    }
+
+    function encodeChar(code, style) {
+      // style: 'named' | 'decimal' | 'hex'
+      if (style === 'named' && CODE_TO_NAME[code]) return '&' + CODE_TO_NAME[code] + ';';
+      if (style === 'hex') return '&#x' + code.toString(16).toUpperCase() + ';';
+      return '&#' + code + ';'; // decimal (also the named-style fallback)
+    }
+
+    function encodeEntities(text, opts) {
+      opts = opts || {};
+      var style = opts.style || 'named';
+      var all = !!opts.all;
+      var out = [];
+      var pts = codePointsOf(String(text));
+      for (var i = 0; i < pts.length; i++) {
+        var code = pts[i];
+        var ch = String.fromCodePoint(code);
+        if (Object.prototype.hasOwnProperty.call(BASE_NAMED, ch)) {
+          // Always escape the structural five. Honour the chosen style for them
+          // too, except '&' and "'" whose named forms are the safe canonical.
+          if (style === 'named') { out.push(BASE_NAMED[ch]); }
+          else { out.push(encodeChar(code, style)); }
+        } else if (all && code > 127) {
+          out.push(encodeChar(code, style));
+        } else {
+          out.push(ch);
+        }
+      }
+      return out.join('');
+    }
+
+    // ---------- decode ----------
+    function decodeNumeric(body) {
+      // body is the part after '&#': e.g. '169' or 'x2764' / 'X2764'
+      var code;
+      if (body[0] === 'x' || body[0] === 'X') {
+        if (!/^[0-9a-fA-F]+$/.test(body.slice(1))) return null;
+        code = parseInt(body.slice(1), 16);
+      } else {
+        if (!/^[0-9]+$/.test(body)) return null;
+        code = parseInt(body, 10);
+      }
+      if (!isFinite(code) || code < 0 || code > 0x10FFFF) return null;
+      try { return String.fromCodePoint(code); } catch (e) { return null; }
+    }
+
+    // Optional DOM-assisted named decode for entities outside the curated table.
+    // Guarded: we only ever read .textContent of a detached element, so nothing
+    // can execute. Returns null when unavailable (e.g. node unit tests).
+    function decodeNamedViaDom(name) {
+      if (typeof document === 'undefined') return null;
+      var el = decodeNamedViaDom._el || (decodeNamedViaDom._el = document.createElement('textarea'));
+      el.innerHTML = '&' + name + ';';
+      var out = el.textContent;
+      el.textContent = '';
+      return (out === '&' + name + ';') ? null : out;
+    }
+
+    function decodeEntities(text) {
+      return String(text).replace(/&(#[0-9]+|#[xX][0-9a-fA-F]+|[a-zA-Z][a-zA-Z0-9]*);/g,
+        function (whole, inner) {
+          if (inner[0] === '#') {
+            var r = decodeNumeric(inner.slice(1));
+            return r === null ? whole : r;
+          }
+          if (Object.prototype.hasOwnProperty.call(NAMED, inner)) {
+            return String.fromCodePoint(NAMED[inner]);
+          }
+          var dom = decodeNamedViaDom(inner);
+          return dom === null ? whole : dom;
+        });
+    }
+
+    // [PURE-END]
+
+    // Expose for node unit tests without touching the DOM.
+    if (typeof module !== 'undefined' && module.exports) {
+      module.exports = { encodeEntities: encodeEntities, decodeEntities: decodeEntities };
+    }
+
+    // ── DOM WIRING ──
+    if (typeof document !== 'undefined') (function () {
+      var $ = function (id) { return document.getElementById(id); };
+      var mode = 'enc'; // 'enc' (text->entities) or 'dec' (entities->text)
+
+      var SAMPLE_TEXT = '<a href="index.html?x=1&y=2">Tom & Jerry’s "diner" — 50% off © 2026 🍿</a>';
+      var SAMPLE_ENC  = '&lt;p class=&quot;price&quot;&gt;Save 50&#37; &amp;mdash; only &#163;9 &amp; free P&amp;amp;P &#128512;&lt;/p&gt;';
+
+      function opts() {
+        return { style: $('opt-style').value || 'named', all: $('opt-all').checked };
+      }
+
+      function setStatus(msg, kind) {
+        var el = $('status');
+        el.textContent = msg;
+        el.className = 'status ' + (kind || '');
+      }
+
+      function applyModeLabels() {
+        var enc = mode === 'enc';
+        $('dir-enc').classList.toggle('active', enc);
+        $('dir-dec').classList.toggle('active', !enc);
+        $('dir-enc').setAttribute('aria-selected', enc ? 'true' : 'false');
+        $('dir-dec').setAttribute('aria-selected', enc ? 'false' : 'true');
+        $('in-title').textContent = enc ? 'Text input' : 'Entities input';
+        $('out-title').textContent = enc ? 'Encoded output' : 'Decoded text';
+        $('input').setAttribute('placeholder', enc ? 'Type or paste text to escape…' : 'Paste text containing entities…');
+        $('output').setAttribute('placeholder', enc ? 'Encoded entities appear here…' : 'Decoded text appears here…');
+        // Encoding-only options are meaningless when decoding — dim them.
+        $('opts').style.opacity = enc ? '1' : '0.45';
+        $('opt-style').disabled = !enc;
+        $('opt-all').disabled = !enc;
+        $('in-hint').innerHTML = enc
+          ? 'Every character HTML treats as markup — <code>&amp;</code> <code>&lt;</code> <code>&gt;</code> <code>&quot;</code> <code>&#39;</code> — is escaped so it displays literally.'
+          : 'Named (<code>&amp;copy;</code>), decimal (<code>&amp;#169;</code>) and hex (<code>&amp;#xA9;</code>) entities are all decoded back to characters.';
+      }
+
+      function convert() {
+        var src = $('input').value;
+        if (src === '') { $('output').value = ''; setStatus('', ''); return; }
+        try {
+          if (mode === 'enc') {
+            $('output').value = encodeEntities(src, opts());
+            setStatus('✓ Encoded to HTML entities', 'ok');
+          } else {
+            $('output').value = decodeEntities(src);
+            setStatus('✓ Decoded entities to text', 'ok');
+          }
+        } catch (err) {
+          $('output').value = '';
+          setStatus('✗ ' + (err && err.message ? err.message : err), 'err');
+        }
+      }
+
+      window.loadSample = function () {
+        $('input').value = mode === 'enc' ? SAMPLE_TEXT : SAMPLE_ENC;
+        convert();
+      };
+      window.clearInput = function () { $('input').value = ''; convert(); $('input').focus(); };
+      window.swapSides = function () {
+        var out = $('output').value;
+        if (out === '') return;
+        mode = (mode === 'enc') ? 'dec' : 'enc';
+        applyModeLabels();
+        $('input').value = out;
+        convert();
+      };
+      window.copyOutput = function () {
+        var out = $('output').value;
+        if (!out) return;
+        navigator.clipboard.writeText(out).then(function () {
+          var b = $('copyBtn');
+          b.textContent = 'Copied!'; b.classList.add('copied');
+          setTimeout(function () { b.textContent = 'Copy'; b.classList.remove('copied'); }, 1500);
+        });
+      };
+
+      $('dir-enc').addEventListener('click', function () { if (mode !== 'enc') { mode = 'enc'; applyModeLabels(); convert(); } });
+      $('dir-dec').addEventListener('click', function () { if (mode !== 'dec') { mode = 'dec'; applyModeLabels(); convert(); } });
+      $('input').addEventListener('input', convert);
+      $('opt-style').addEventListener('change', convert);
+      $('opt-all').addEventListener('change', convert);
+
+      // INIT — seed with a sample so nothing is blank
+      applyModeLabels();
+      $('input').value = SAMPLE_TEXT;
+      convert();
+    })();
+  </script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LLM Quantization Explained: How Big Models Run on Small Hardware | ABUZ8</title>
+<meta name="description" content="LLM quantization explained in plain English — what precision means, why lowering it shrinks a model, the quality trade-off, and how to pick a level.">
+<meta name="keywords" content="llm quantization explained, what is quantization in ai, model quantization, quantization levels, run llm locally, int4 int8">
+<link rel="canonical" href="https://abuz8ai.com/blog/llm-quantization-explained">
+<meta property="og:title" content="LLM Quantization Explained: How Big Models Run on Small Hardware">
+<meta property="og:type" content="article">
+<link rel="stylesheet" href="/blog/_blog-base.css">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@300;400;600;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
+<script type="application/ld+json">
+{"@context": "https://schema.org", "@type": "BlogPosting", "headline": "LLM Quantization Explained: How Big Models Run on Small Hardware", "datePublished": "2026-07-05", "author": {"@type": "Organization", "name": "ABUZ8 AI"}}
+</script>
+</head>
+<body>
+<div class="container">
+  <a href="/blog/" class="back">&larr; ABUZ8 BLOG</a>
+  <h1>LLM Quantization Explained: How Big Models Run on Small Hardware</h1>
+  <div class="meta-row"><span>LOCAL AI</span><span class="dot"></span><span>JUL 5, 2026</span><span class="dot"></span><span>7 MIN READ</span></div>
+
+  <p>You&rsquo;ve seen the tags &mdash; <code>Q4</code>, <code>Q8</code>, <code>INT4</code>, <code>FP16</code> &mdash; and the word &ldquo;quantized&rdquo; slapped on every other model you download. Here&rsquo;s <strong>LLM quantization explained</strong> without the math degree. It&rsquo;s the single trick that lets a model built for a data center run on the machine sitting under your desk, and once you get it, half the cryptic filenames in local AI suddenly make sense.</p>
+
+  <h2>The short answer</h2>
+  <p>Quantization stores a model&rsquo;s numbers &mdash; its <strong>weights</strong> &mdash; at lower precision so the model takes less memory and runs faster, at a small cost to quality. That&rsquo;s the whole idea. It&rsquo;s the same model, just packed into a smaller container. Nothing about what the model &ldquo;knows&rdquo; is deleted; the numbers that encode that knowledge are simply written down less precisely. Smaller file, less memory, quicker responses &mdash; and for most everyday work, you can&rsquo;t tell the difference.</p>
+
+  <h2>Precision, in plain terms</h2>
+  <p>A model is just a giant pile of numbers. Every weight is a value the model learned during training, and full precision (formats called <code>FP16</code> or <code>BF16</code>) stores each of those values very precisely &mdash; which is accurate but eats a lot of space. Quantizing rounds those numbers to fewer bits: <code>INT8</code> uses eight bits per weight, <code>INT4</code> uses four. Fewer bits per number, millions of numbers, and the savings add up fast.</p>
+  <p>Here&rsquo;s the analogy that makes it click. Full precision is like recording every price to the exact cent &mdash; $4.99, $12.37, $0.03. Quantizing is like rounding to the nearest dollar &mdash; $5, $12, $0. Faster to write down, takes far less room, and for most decisions still perfectly useful. You lose a little detail, but the shape of the information survives.</p>
+
+  <h2>Why it matters</h2>
+  <p>This is <em>the</em> reason capable local AI exists on hardware you own. At full precision, a strong open model can demand more memory than any consumer machine has &mdash; the kind of footprint that only fits in a server rack. Quantize it and the same model drops to a size that fits on a single consumer GPU, or even in ordinary system RAM to run on your CPU. No quantization, no local AI on normal hardware. It really is that direct. If you&rsquo;re trying to actually stand this up, our guides on <a href="/blog/how-to-run-ai-agents-locally.html" class="in">how to run AI agents locally</a> and the <a href="/blog/best-gpu-for-local-ai-2026.html" class="in">best GPU for local AI in 2026</a> pick up where this leaves off.</p>
+
+  <h2>The trade-off (the honest version)</h2>
+  <p>Lower precision means smaller and faster, but also rougher. Round too aggressively &mdash; down to 2-bit, say &mdash; and the model starts making mistakes you&rsquo;ll actually notice: weaker reasoning, more slips, a general fuzziness. There&rsquo;s a sweet spot, and going past it to save a bit of disk is a bad trade. The usual quality proxy people cite is <strong>perplexity</strong> &mdash; loosely, a measure of how &ldquo;surprised&rdquo; the model is by text, where lower is better. Heavy quantization nudges perplexity up. You don&rsquo;t need to chase the exact numbers; just know that quality degrades gradually as you cut precision, then falls off a cliff if you cut too far.</p>
+
+  <div class="callout">
+    <p><strong>Reading the level:</strong> a tag like <code>Q4_K_M</code> tells you how aggressively the weights were rounded. Lower numbers (<code>Q2</code>, <code>Q3</code>) = smaller and faster but rougher. Higher (<code>Q6</code>, <code>Q8</code>) = closer to the original but bigger and slower. The number is roughly the bits per weight &mdash; and <code>Q4_K_M</code> is where most people land because it&rsquo;s small enough to run comfortably and good enough that the loss barely shows.</p>
+  </div>
+
+  <h2>Common levels and how to choose</h2>
+  <p>You&rsquo;ll meet a handful of levels over and over. <strong>8-bit</strong> is near-lossless &mdash; hard to distinguish from the original &mdash; but the file stays large. <strong>4-bit</strong> (like <code>Q4_K_M</code>) is the popular sweet spot: a big drop in size for a small, mostly invisible drop in quality. <strong>Below 4-bit</strong> (3-bit, 2-bit) is for when you&rsquo;re genuinely tight on memory and willing to accept a rougher model to get anything running at all.</p>
+  <p>The rule is simple: use the highest precision that fits your VRAM or RAM. A model has to load into memory to run, so the right choice is the best quant that fits with room to spare. And here&rsquo;s the counterintuitive part &mdash; a well-fit 4-bit model usually beats a giant one that barely loads and crawls. Bigger isn&rsquo;t better if your hardware is choking on it. Start with a mid-size model at 4-bit, see how it feels, then move up or down from there.</p>
+
+  <h2>Quantization vs distillation vs pruning</h2>
+  <p>Quantization isn&rsquo;t the only way to shrink a model, and it&rsquo;s worth not confusing them. <strong>Quantization</strong> lowers the precision of the weights &mdash; same model, smaller numbers. <strong>Distillation</strong> trains a smaller &ldquo;student&rdquo; model to imitate a bigger &ldquo;teacher,&rdquo; producing a genuinely smaller model from scratch. <strong>Pruning</strong> removes weights the model barely uses, cutting the pile down rather than rounding it. All three make models smaller; they just do it in different places. Quantization is the one you&rsquo;ll touch most as a local user, because it happens after training and needs nothing from you but picking a level.</p>
+
+  <h2>The bottom line</h2>
+  <p>Quantization is precision reduction: store the weights with fewer bits, get a smaller and faster model, pay a small and usually unnoticeable price in quality. The tags tell you the level, the sweet spot for most people is 4-bit, and the guiding rule is to run the highest precision that comfortably fits your hardware. It&rsquo;s the reason real AI runs on machines you own instead of someone else&rsquo;s cloud. If you want to see how these quantized models get packaged into a single portable file, read the companion piece on <a href="/blog/what-is-a-gguf-model.html" class="in">what a GGUF model is</a>, then check <a href="/blog/best-local-ai-models-2026.html" class="in">the best local AI models for 2026</a> to pick one worth running.</p>
+
+  <div class="callout cta">
+    <p><strong>ABUZ8 OS runs quantized local models as its default brain, so you get useful AI on your own hardware with no per-token bill.</strong> Plug in an open model at the quant that fits your rig, or route to the cloud only when you choose. <a href="/qadir.html" class="in">See how ABUZ8 OS works</a> or <a href="/tools/" class="in">try the free tools</a>. <a href="/" class="in">Join early access</a> &mdash; no card.</p>
+  </div>
+
+  <div class="foot">Built by <a href="/">ABUZ8 LLC</a> &mdash; we&rsquo;re building ABUZ8 OS, the sovereign agentic operating system.</div>
+</div>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+<script src="/blog/_blog-shared.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>

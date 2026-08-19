@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Hero Reel Preview — QADIR OS demo (local, not deployed)</title>
+<style>
+  :root{ --bg:#F8FAFC; --primary:#2E75B6; --text:#2C3E50; --line:#dbe3ec; --muted:#5b6b7a; }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);
+       font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,Roboto,sans-serif;
+       line-height:1.6;-webkit-font-smoothing:antialiased;}
+  .wrap{max-width:880px;margin:0 auto;padding:40px 24px 64px;}
+  .eyebrow{color:var(--primary);font-size:12px;letter-spacing:3px;text-transform:uppercase;font-weight:700;margin:0 0 8px;}
+  h1{font-size:clamp(1.5rem,4vw,2.1rem);margin:0 0 6px;color:var(--text);}
+  .sub{color:var(--muted);margin:0 0 28px;font-size:.98rem;}
+  .videocard{background:#fff;border:1px solid var(--line);border-radius:14px;
+             padding:14px;box-shadow:0 6px 24px rgba(46,117,182,.08);}
+  video{width:100%;height:auto;display:block;border-radius:10px;background:#000;}
+  .note{margin-top:14px;font-size:.85rem;color:var(--muted);}
+  .stat-row{display:flex;flex-wrap:wrap;gap:10px;margin:24px 0 8px;}
+  .chip{background:#fff;border:1px solid var(--line);border-radius:9px;padding:10px 14px;font-size:.85rem;}
+  .chip b{color:var(--primary);}
+  .ok{color:#1a7a4a;font-weight:700;}
+  .box{margin-top:30px;background:#fff;border:1px solid var(--line);border-left:4px solid var(--primary);
+       border-radius:10px;padding:16px 18px;font-size:.9rem;}
+  code{background:#eef3f8;padding:2px 6px;border-radius:5px;font-size:.85em;}
+  h2{font-size:1rem;margin:0 0 8px;color:var(--text);}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="eyebrow">Internal preview · not a public page</p>
+  <h1>QADIR OS demo reel — hero candidate</h1>
+  <p class="sub">Click play to review the motion before it goes on the homepage. Autoplay is intentionally OFF (photosensitivity-safe). Nothing here is deployed yet.</p>
+
+  <div class="videocard">
+    <video controls preload="metadata" playsinline poster="qadir-os-demo-poster.jpg">
+      <source src="qadir-os-demo-hero.mp4" type="video/mp4">
+      Your browser can’t play this clip. The file is at assets/video/qadir-os-demo-hero.mp4.
+    </video>
+    <div class="note">Source: <code>assets/video/qadir-os-demo-hero.mp4</code> · 1280×720 · 56s · H.264 + AAC · web-optimized (faststart).</div>
+  </div>
+
+  <div class="stat-row">
+    <div class="chip">Original: <b>26.7 MiB</b> (1080p)</div>
+    <div class="chip">Web hero: <b>7.06 MiB</b> (720p)</div>
+    <div class="chip">Cloudflare cap: 25 MiB/file → <span class="ok">now deployable ✓</span></div>
+  </div>
+
+  <div class="box">
+    <h2>Why this exists</h2>
+    The original 60s reel was <b>28,048,569 bytes (26.7 MiB)</b> — over Cloudflare Pages’ hard
+    <b>25 MiB per-file limit</b>, and it had never been copied into the site. So the “hero-swap + deploy”
+    move recommended for ~2 weeks would have failed at upload. This compressed 7.06 MiB version fits the cap
+    and is sitting in <code>assets/video/</code>, ready. Exact paste-in snippet + deploy command are in
+    <code>MASTER_BUILD_2026/HERO_SWAP_READY_2026-06-19.md</code>.
+  </div>
+</div>
+</body>
+</html>

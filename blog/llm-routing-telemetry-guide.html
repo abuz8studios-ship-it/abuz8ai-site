@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<!-- Published 2026-08-15. ABUZ8 LLC. -->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LLM Routing Telemetry — The Schema That Makes Cost Claims Provable | ABUZ8</title>
+<meta name="description" content="LLM routing telemetry done right: the exact columns to log per model call, why a local database beats a vendor dashboard, and the four queries that answer every cost question.">
+<meta name="keywords" content="llm routing telemetry, log llm api calls, model call logging schema, llm cost tracking database, ai routing analytics">
+<link rel="canonical" href="https://abuz8ai.com/blog/llm-routing-telemetry-guide">
+<meta property="og:title" content="LLM Routing Telemetry — The Schema That Makes Cost Claims Provable">
+<meta property="og:type" content="article">
+<link rel="stylesheet" href="/blog/_blog-base.css">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@300;400;600;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
+<script type="application/ld+json">
+{"@context": "https://schema.org", "@type": "BlogPosting", "headline": "LLM Routing Telemetry — The Schema That Makes Cost Claims Provable", "datePublished": "2026-08-15", "author": {"@type": "Organization", "name": "ABUZ8 AI"}}
+</script>
+</head>
+<body>
+<div class="container">
+  <a href="/blog/" class="back">&larr; ABUZ8 BLOG</a>
+  <h1>LLM Routing Telemetry — The Schema That Makes Cost Claims Provable</h1>
+  <div class="meta-row"><span>ENGINEERING</span><span class="dot"></span><span>AUGUST 15, 2026</span><span class="dot"></span><span>5 MIN READ</span></div>
+
+  <p>You cannot audit what you did not log, and most teams running multiple model providers log almost nothing useful — a request ID, a duration, maybe a token count scraped from an SDK response. Good <strong>LLM routing telemetry</strong> is not complicated, but it has to be decided before the traffic happens, because a column you did not write is a question you can never answer retroactively.</p>
+
+  <h2>The row: one per model call, written by the runtime</h2>
+  <p>Not by a log parser afterwards. The thing making the call knows facts that never reach a log line, and reconstructing them later produces numbers that are approximately right, which is the worst kind. Log these:</p>
+  <p><strong>Identity and timing:</strong> call ID, parent task ID (so a multi-step agent's calls group into one workflow), UTC timestamp, and duration split into time-to-first-token and total. The parent ID is the one people forget, and without it you can never compute cost per completed task — only cost per call, which nobody actually cares about.</p>
+  <p><strong>The decision:</strong> the lane chosen, the task domain, the lanes that were eligible, and why this one won. Recording the alternatives is what lets you ask later whether the router was right, rather than only what it did. Without it, every routing question becomes unanswerable archaeology.</p>
+  <p><strong>Economics:</strong> input tokens, output tokens, cached tokens if the provider distinguishes them, unit price at call time, and computed cost. Store the price you paid, not a reference to a price table — tables change and your history becomes retroactively wrong. This single decision is what makes a historical cost claim defensible a year later.</p>
+  <p><strong>Outcome:</strong> a success flag, an HTTP status, and — the column that earns its keep — an explicit <em>error class</em>. Auth, rate limit, timeout, provider 5xx, malformed output, refusal, tool error. Never let an error land as null. And a retry-of pointer when the call is a retry, so retry cost is attributable rather than invisible.</p>
+
+  <div class="callout">
+    <p><strong>The column that changes everything:</strong> error class. Without it, a failure rate is a number you can only stare at. With it, the same number becomes a ranked list of things to fix — and usually shows that one configuration issue accounts for the bulk of it.</p>
+  </div>
+
+  <h2>Why local SQLite beats a hosted dashboard</h2>
+  <p>Three reasons, none of them ideological. First, auditability: a claim you cannot recompute is a claim you are trusting, and a file on your disk can be queried by anyone you hand it to — including a customer's diligence team. Second, no sampling: hosted observability platforms sample at volume and bill by event, so the first thing teams do at scale is turn down the fidelity of exactly the data they later need. Third, latency and privacy: writing a row locally costs microseconds and ships nothing off the machine, which matters when the prompt itself is the sensitive object.</p>
+  <p>Ours is a single SQLite file with a <code>routing_log</code> table and a <code>lane_posterior</code> table, written on every call. That is the whole apparatus. Its value is that one script reading it can reproduce every performance and cost claim we make — which is a different property from having a nice chart, and a much more useful one. The broader instrumentation picture is in the <a href="/blog/ai-agent-observability-guide.html" class="in">agent observability guide</a>.</p>
+
+  <h2>The four queries worth having on day one</h2>
+  <p><strong>Traffic by tier.</strong> How much work went local, cheap, and premium. This is the claim most vendors make and least often evidence. Ours, over the 89.9 days to 9 August 2026 and 1,469 logged calls: 95 local, 1,322 cheap, 21 premium — premium at <strong>1.4%</strong> of traffic.</p>
+  <p><strong>Actual versus counterfactual spend.</strong> Sum your real cost, then re-price the identical call log at flagship rates. Ours: <strong>$0.14 actual against $65.28</strong> all-flagship. The comparison is only honest because it re-prices the same rows — same prompts, same volume, same window — rather than comparing against a hypothetical workload.</p>
+  <p><strong>Failure distribution by class and lane.</strong> The unflattering one. Ours shows an overall 19.9% success rate, dominated by 345 HTTP 403 responses from one provider and 756 failures with no class attached. That query turned a vague sense that "things fail sometimes" into two named defects with a scoped fix — a transport-layer classifier and an auth circuit breaker so configuration errors stop being recorded as quality evidence.</p>
+  <p><strong>Cost per completed task.</strong> Group by parent task ID, include retries, divide by tasks that met the success definition. This is the only cost number that maps to business value, and it is impossible without the parent ID you decided to log at the start.</p>
+
+  <h2>Retention, size and the pragmatics</h2>
+  <p>Rows are small — a few hundred bytes without payloads. Do not store full prompts and completions in the same table by default; store hashes plus a pointer, and keep the bodies in a separate store with a shorter retention window and tighter access. That keeps the analytical table fast, keeps sensitive text out of the thing you hand to a diligence team, and lets you retain economics for years while retaining content for weeks.</p>
+  <p>Index on timestamp, lane, and task ID. Roll up to daily aggregates once the raw table gets large, keeping raw rows for the recent window where debugging happens. The whole thing is a few hundred lines of code and it is the difference between having evidence and having opinions — which is exactly the standard we argue buyers should apply, including to us, in <a href="/blog/how-to-verify-ai-cost-savings-claims.html" class="in">how to verify AI cost savings claims</a>.</p>
+
+  <h2>Frequently asked questions</h2>
+  <p><strong>Should I log full prompts and responses?</strong> Sometimes, separately, with a shorter retention window. Keep the analytical table to metadata and economics; keep bodies in a store with tighter access control. Mixing them makes the fast table slow and the sensitive data hard to govern.</p>
+  <p><strong>Is SQLite really enough at volume?</strong> For per-call routing telemetry on a single node, comfortably — these are small append-mostly rows. If you outgrow it, the schema ports directly to Postgres or a columnar store; the decision that matters is which columns you captured, not which engine holds them.</p>
+  <p><strong>How do I compute a counterfactual cost honestly?</strong> Re-price your actual logged calls — same prompts, same token counts, same window — at the alternative model's published rate. Anything else is comparing your workload against an imagined one, which is how savings figures get inflated without anyone lying.</p>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Should I log full prompts and responses in routing telemetry?","acceptedAnswer":{"@type":"Answer","text":"Keep the analytical table to metadata and economics; store bodies separately with tighter access and shorter retention. Mixing them slows the fast table and complicates governance."}},{"@type":"Question","name":"Is SQLite enough for LLM call telemetry?","acceptedAnswer":{"@type":"Answer","text":"For per-call telemetry on a single node, comfortably — the rows are small and append-mostly. The schema ports to Postgres or a columnar store if you outgrow it."}},{"@type":"Question","name":"How do I compute a counterfactual LLM cost honestly?","acceptedAnswer":{"@type":"Answer","text":"Re-price your actual logged calls — same prompts, token counts and window — at the alternative model's published rate. Comparing against an imagined workload inflates savings."}}]}
+  </script>
+
+  <div class="callout cta">
+    <p><strong>Add the error-class column today.</strong> It is one field and it converts your failure rate into a fix list. QADIR OS writes this telemetry to a local database you own and can query yourself — <a href="/" class="in">join the early-access list</a>.</p>
+  </div>
+
+  <div class="foot">Built by <a href="/">ABUZ8 LLC</a> — we're building QADIR OS, the sovereign agentic operating system. This article is general information, not legal advice.</div>
+</div>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+<script src="/blog/_blog-shared.js" defer></script>
+<script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>

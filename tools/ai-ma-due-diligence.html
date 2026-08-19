@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AI M&A Due Diligence — ABUZ8</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--lapis:#0a1628;--lapis2:#0f1f3d;--lapis3:#162544;--gold:#c9a84c;--turq:#0e9f6e;--turq2:#22b5a0;--cream:#f5f0e8;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--lapis);color:var(--cream);font-family:'Inter',sans-serif;min-height:100vh;}
+header{background:var(--lapis2);border-bottom:1px solid var(--gold);padding:18px 32px;display:flex;align-items:center;gap:16px;}
+.logo{font-family:'Playfair Display',serif;color:var(--gold);font-size:1.4rem;}
+.badge{background:var(--gold);color:var(--lapis);font-size:.65rem;font-weight:700;padding:2px 8px;border-radius:10px;}
+h1{font-family:'Playfair Display',serif;font-size:1.8rem;color:var(--gold);margin-bottom:6px;}
+.sub{color:#8899aa;font-size:.9rem;}
+main{max-width:1100px;margin:0 auto;padding:32px 24px;}
+.two-col{display:grid;grid-template-columns:320px 1fr;gap:24px;margin-top:24px;}
+.panel{background:var(--lapis2);border:1px solid #1e3a5f;border-radius:12px;padding:24px;}
+.panel h2{font-family:'Playfair Display',serif;color:var(--gold);font-size:1.1rem;margin-bottom:18px;}
+label{display:block;font-size:.8rem;color:#8899aa;margin-bottom:4px;margin-top:14px;}
+label:first-of-type{margin-top:0;}
+input,textarea,select{width:100%;background:var(--lapis3);border:1px solid #1e3a5f;border-radius:6px;color:var(--cream);padding:8px 12px;font-size:.85rem;font-family:'Inter',sans-serif;}
+textarea{resize:vertical;min-height:70px;}
+input:focus,textarea:focus,select:focus{outline:none;border-color:var(--gold);}
+.btn{background:var(--gold);color:var(--lapis);border:none;border-radius:8px;padding:12px 24px;font-weight:700;font-size:.95rem;cursor:pointer;width:100%;margin-top:18px;}
+.btn:hover{opacity:.85;}
+.btn-sm{background:transparent;border:1px solid var(--turq2);color:var(--turq2);border-radius:6px;padding:6px 14px;font-size:.78rem;cursor:pointer;}
+.btn-sm:hover{background:var(--turq2);color:var(--lapis);}
+#output{display:none;}
+.section-tabs{display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap;}
+.tab{background:var(--lapis3);border:1px solid #1e3a5f;border-radius:6px;padding:8px 16px;font-size:.8rem;cursor:pointer;}
+.tab.active{border-color:var(--gold);color:var(--gold);}
+.dd-section{display:none;}
+.dd-section.active{display:block;}
+.finding{background:var(--lapis3);border-left:3px solid;border-radius:0 8px 8px 0;padding:14px 16px;margin-bottom:10px;}
+.finding.red{border-color:#f87171;}
+.finding.yellow{border-color:var(--gold);}
+.finding.green{border-color:var(--turq2);}
+.finding-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;}
+.finding-title{font-weight:600;font-size:.9rem;}
+.sev{font-size:.7rem;padding:2px 8px;border-radius:4px;font-weight:700;}
+.sev.critical{background:rgba(248,113,113,.15);color:#f87171;}
+.sev.high{background:rgba(251,146,60,.15);color:#fb923c;}
+.sev.medium{background:rgba(201,168,76,.15);color:var(--gold);}
+.sev.low{background:rgba(34,181,160,.15);color:var(--turq2);}
+.finding-body{font-size:.83rem;color:#aabbcc;line-height:1.6;}
+.score-ring{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin-bottom:20px;}
+.score-box{background:var(--lapis3);border:1px solid #1e3a5f;border-radius:10px;padding:16px 20px;text-align:center;min-width:100px;}
+.score-val{font-family:'Playfair Display',serif;font-size:1.6rem;}
+.score-val.good{color:var(--turq2);}
+.score-val.warn{color:var(--gold);}
+.score-val.bad{color:#f87171;}
+.score-lbl{font-size:.7rem;color:#8899aa;margin-top:4px;}
+.checklist-item{display:flex;gap:10px;padding:8px 0;border-bottom:1px solid #1e3a5f;font-size:.85rem;}
+.checklist-item:last-child{border:none;}
+.check-icon{width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.7rem;flex-shrink:0;margin-top:1px;}
+.check-icon.done{background:rgba(34,181,160,.2);color:var(--turq2);}
+.check-icon.warn{background:rgba(201,168,76,.2);color:var(--gold);}
+.check-icon.fail{background:rgba(248,113,113,.2);color:#f87171;}
+.summary-verdict{background:var(--lapis3);border:2px solid var(--gold);border-radius:12px;padding:20px;margin-bottom:20px;text-align:center;}
+.verdict-label{font-family:'Playfair Display',serif;font-size:1.3rem;color:var(--gold);margin-bottom:6px;}
+.verdict-sub{font-size:.85rem;color:#8899aa;}
+.waitlist{background:linear-gradient(135deg,var(--lapis2),var(--lapis3));border:1px solid var(--gold);border-radius:12px;padding:24px;text-align:center;margin-top:20px;}
+.waitlist h3{font-family:'Playfair Display',serif;color:var(--gold);margin-bottom:8px;}
+.wl-form{display:flex;gap:8px;max-width:360px;margin:0 auto;}
+.wl-form input{border-radius:6px;padding:9px 12px;}
+.wl-form button{background:var(--gold);color:var(--lapis);border:none;border-radius:6px;padding:9px 18px;font-weight:700;cursor:pointer;white-space:nowrap;}
+</style>
+<link rel="canonical" href="https://abuz8ai.com/tools/ai-ma-due-diligence">
+<meta name="description" content="AI M&amp;A Due Diligence — Six-dimension diligence scan with scoring and red flags. Free, no signup, runs entirely in your browser. One of 169 free AI and develop">
+</head>
+<body>
+<header>
+  <div class="logo">ABUZ8</div>
+  <div style="flex:1">
+    <div style="font-size:.85rem;color:var(--cream);font-weight:600;">AI M&A Due Diligence</div>
+    <div style="font-size:.72rem;color:#8899aa;">Identify risks before you close the deal</div>
+  </div>
+  <span class="badge">TIER H</span>
+</header>
+<main>
+  <h1>AI M&A Due Diligence</h1>
+  <p class="sub">Get a structured due diligence report with risk flags, scoring, and recommended actions before signing.</p>
+
+  <div class="two-col">
+    <div class="panel">
+      <h2>🏢 Target Company</h2>
+      <label>Company Name</label>
+      <input id="targetName" value="TargetCo Inc." placeholder="Company being acquired">
+      <label>Industry</label>
+      <select id="industry">
+        <option>SaaS / Software</option><option>Fintech</option><option>Healthtech</option>
+        <option>E-commerce</option><option>Manufacturing</option><option>Services</option>
+      </select>
+      <label>Deal Size ($)</label>
+      <input id="dealSize" value="45,000,000" placeholder="45,000,000">
+      <label>Revenue (TTM $)</label>
+      <input id="revenue" value="8,200,000" placeholder="8,200,000">
+      <label>EBITDA Margin (%)</label>
+      <input id="ebitda" value="22" placeholder="22">
+      <label>Employee Count</label>
+      <input id="employees" value="87" placeholder="87">
+      <label>Year Founded</label>
+      <input id="founded" value="2019" placeholder="2019">
+      <label>Known Risks / Red Flags</label>
+      <textarea id="redFlags" placeholder="E.g.: Customer concentration, pending litigation...">High customer concentration (top 3 = 58% revenue). No SOC 2. Key person dependency on founder-CTO.</textarea>
+      <label>Strategic Rationale</label>
+      <textarea id="rationale" placeholder="Why are you acquiring this company?">Access to enterprise healthcare customer base. Technology integration with our AI platform. Talent acquisition.</textarea>
+      <label>Deal Type</label>
+      <select id="dealType">
+        <option>Full Acquisition</option><option>Acqui-hire</option><option>Asset Purchase</option>
+        <option>Merger of Equals</option>
+      </select>
+      <button class="btn" onclick="runDiligence()">🔍 Run Due Diligence</button>
+    </div>
+
+    <div>
+      <div id="inputPrompt" class="panel" style="text-align:center;padding:48px 24px;">
+        <div style="font-size:3rem;margin-bottom:16px;">🔎</div>
+        <div style="font-family:'Playfair Display',serif;color:var(--gold);font-size:1.2rem;margin-bottom:8px;">M&A Due Diligence Engine</div>
+        <div style="font-size:.85rem;color:#8899aa;max-width:340px;margin:0 auto;">Enter target company details to generate a comprehensive diligence report covering financial, legal, operational, and strategic risks.</div>
+      </div>
+
+      <div id="output">
+        <div class="summary-verdict" id="verdict"></div>
+        <div class="score-ring" id="scoreRing"></div>
+
+        <div class="section-tabs" id="ddTabs"></div>
+        <div id="ddContent"></div>
+
+        <div style="margin-top:16px;display:flex;gap:8px;">
+          <button class="btn-sm" onclick="exportReport()">⬇ Export Report</button>
+          <button class="btn-sm" onclick="copyReport()">📋 Copy Summary</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="waitlist">
+    <h3>🚀 Pro: Upload Data Room Docs for AI Analysis</h3>
+    <p>Connect your VDR, upload P&L files, contracts, and cap table. AI reads and flags risks automatically.</p>
+    <div class="wl-form">
+      <input type="email" id="wlEmail" placeholder="you@firm.com">
+      <button onclick="joinWL()">Get Pro Access</button>
+    </div>
+  </div>
+</main>
+<script src="_abuz8-live-brain.js" defer></script>
+<script>
+const DD_SECTIONS = ['Financial','Legal','Operational','Technology','Market','Talent'];
+let activeSection = 'Financial';
+let reportData = {};
+
+function runDiligence(){
+  const target = document.getElementById('targetName').value||'TargetCo';
+  const industry = document.getElementById('industry').value;
+  const dealSize = document.getElementById('dealSize').value;
+  const revenue = document.getElementById('revenue').value;
+  const ebitda = document.getElementById('ebitda').value;
+  const employees = document.getElementById('employees').value;
+  const founded = document.getElementById('founded').value;
+  const redFlags = document.getElementById('redFlags').value.trim();
+  const rationale = document.getElementById('rationale').value.trim();
+  const dealType = document.getElementById('dealType').value;
+
+  const btn = document.querySelector('.btn');
+  if (btn) { btn.disabled = true; btn.dataset.label = btn.dataset.label || btn.textContent; btn.textContent = '⏳ Running diligence…'; }
+
+  document.getElementById('inputPrompt').style.display='none';
+  document.getElementById('output').style.display='block';
+  // Hide the heuristic verdict/score widgets + section tabs — replaced by real AI output.
+  document.getElementById('verdict').style.display='none';
+  document.getElementById('scoreRing').style.display='none';
+  document.getElementById('ddTabs').style.display='none';
+  document.getElementById('ddContent').innerHTML = `
+    <div style="text-align:center;padding:48px 24px">
+      <div style="font-size:40px;margin-bottom:14px">🔎</div>
+      <div style="color:var(--gold);font-family:'Playfair Display',Georgia,serif;font-size:1.1rem;margin-bottom:8px">Running due diligence on ${target}…</div>
+      <div style="font-size:13px;color:#8899aa;max-width:340px;margin:0 auto">Live AI on an RTX 5090. The first call cold-loads the model, so this can take 20–90s.</div>
+    </div>`;
+
+  // Real AI diligence via the ABUZ8 brain (Cloudflare Workers AI). No heuristic scores, no templates.
+  fetch('/api/waitlist', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      tool: 'ma-due-diligence',
+      data: { target, industry, dealSize, revenue, ebitdaMargin: ebitda, employees, founded, knownRedFlags: redFlags, rationale, dealType }
+    })
+  })
+  .then(r => r.json())
+  .then(res => {
+    if (!res.success || !res.result) throw new Error(res.error || 'Generation failed');
+    reportData = { target, industry, dealSize, revenue, dealType, rationale, result: res.result };
+    document.getElementById('ddContent').innerHTML = `<div style="line-height:1.8;color:#c0cfe0">${ABUZ8.formatResult(res.result)}</div>`;
+    if (btn) { btn.disabled = false; btn.textContent = btn.dataset.label; }
+  })
+  .catch(err => {
+    if (btn) { btn.disabled = false; btn.textContent = btn.dataset.label; }
+    document.getElementById('ddContent').innerHTML = `
+      <div style="text-align:center;padding:48px 24px">
+        <div style="font-size:40px;margin-bottom:14px">⚠️</div>
+        <div style="color:#f87171;font-family:'Playfair Display',Georgia,serif;font-size:1.1rem;margin-bottom:8px">Diligence failed</div>
+        <div style="font-size:13px;color:#8899aa;max-width:360px;margin:0 auto 14px">${err.message}. The live AI may be cold-starting — please try again in a moment.</div>
+        <button class="btn" style="max-width:220px;margin:0 auto" onclick="runDiligence()">↺ Try Again</button>
+      </div>`;
+    alert('Generation failed: ' + err.message + '. Please try again in a moment.');
+  });
+}
+
+function switchSection(s){
+  activeSection = s;
+  document.querySelectorAll('.tab').forEach(t=>{
+    t.classList.toggle('active', t.textContent===s);
+  });
+  renderSection(s);
+}
+
+function renderSection(s){
+  const findings = reportData.sections[s]||[];
+  document.getElementById('ddContent').innerHTML = findings.map(f=>`
+    <div class="finding ${f.sev==='critical'||f.sev==='high'?'red':f.sev==='medium'?'yellow':'green'}">
+      <div class="finding-header">
+        <div class="finding-title">${f.title}</div>
+        <span class="sev ${f.sev}">${f.sev.toUpperCase()}</span>
+      </div>
+      <div class="finding-body">${f.body}</div>
+    </div>`).join('');
+}
+
+function ddPlainText(){
+  const el = document.getElementById('ddContent');
+  return el ? el.innerText.trim() : '';
+}
+
+function exportReport(){
+  if(!reportData.result){alert('Generate a report first.');return;}
+  const target = reportData.target || 'TargetCo';
+  const text = `M&A Due Diligence Report: ${target}\nDeal: $${reportData.dealSize} | ${reportData.industry}\nGenerated: ${new Date().toLocaleDateString()}\n\n${ddPlainText()}`;
+  const blob = new Blob([text],{type:'text/plain'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=target.replace(/\s+/g,'-')+'-dd-report.txt';a.click();
+}
+
+function copyReport(){
+  if(!reportData.result){alert('Generate a report first.');return;}
+  navigator.clipboard.writeText(`M&A DD Report: ${reportData.target}\n\n${ddPlainText()}`);
+  alert('Report copied!');
+}
+
+function joinWL(){
+  const email=document.getElementById('wlEmail').value.trim();
+  if(!email||!email.includes('@')){alert('Valid email required.');return;}
+  fetch('/api/waitlist',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,tool:'ai-ma-due-diligence',ts:Date.now()})}).catch(()=>{});
+  localStorage.setItem('wl_ma_dd',email);
+  document.querySelector('.waitlist').innerHTML='<h3 style="color:var(--gold);font-family:Playfair Display,serif">✅ You\'re on the list!</h3><p style="color:#8899aa;margin-top:8px;">Pro access notification incoming within 24h.</p>';
+}
+</script>
+
+<script src="/assets/js/dfy-banner.js" async></script>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+<script src="/tools/_tools-shared.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>
+

@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ABUZ8 AI — Welcome to the World of Pure Imagination</title>
+<meta name="description" content="Step inside the imagination palace. Build anything with AI.">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Inter:wght@300;400;600;700;900&family=JetBrains+Mono:wght@400;600&display=swap');
+
+/* === GLOBAL RESET === */
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;overflow:hidden}
+body{font-family:'Inter',sans-serif;background:#000;color:#fff;overflow-x:hidden;cursor:default}
+a{text-decoration:none;color:inherit}
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:#0a0a1a}
+::-webkit-scrollbar-thumb{background:radial-gradient,#c9a84c 20168,76,0.4);border-radius:3px}
+
+/* === LOADING / DOOR SCREEN === */
+#door-screen{
+  position:fixed;inset:0;z-index:9999;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  background:radial-gradient(ellipse at center,#1a0a3e 0%,#0a0a1a 50%,#000 100%);
+  transition:opacity 1.5s ease,transform 1s ease;
+}
+#door-screen.opened{opacity:0;transform:scale(1.2);pointer-events:none}
+#door-screen h1{
+  font-family:'Playfair Display',serif;font-size:clamp(2rem,6vw,5rem);
+  background:linear-gradient(135deg,#c9a84c,#f4e4a0,#c9a84c,#e8d48b);
+  background-size:300%/300%;
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  animation:gold-shift 4s ease infinite;font-weight:900;
+  text-align:center;opacity:0;
+}
+#door-gate{
+  position:absolute;width:100%;height:100%;top:0;left:0;
+  display:flex;
+}
+.door-left,.door-right{
+  flex:1;height:100%;position:relative;
+  background:linear-gradient(135deg,#2a1a4a,#1a0a3a);
+  border:3px solid #c9a84c;
+  transition:transform 2.5s cubic-bezier(.77,0,.18,1);
+  display:flex;align-items:center;justify-content:center;
+}
+.door-left::after,.door-right::after{
+  content:'';position:absolute;width:24px;height:24px;
+  background:radial-gradient(circle,#f4e4a0,#c9a84c);
+  border-radius:50%;top:50%;
+  box-shadow:0 0 30px rgba(201,168,76,0.6);
+}
+.door-left::after{right:30px}
+.door-right::after{left:30px}
+#door-screen.opened .door-left{transform:translateX(-105%) perspective(800px) rotateY(-40deg)}
+#door-screen.opened .door-right{transform:translateX(105%) perspective(800px) rotateY(40deg)}
+#door-screen h1{opacity:1;animation:gold-shift 4s ease infinite;text-align:center}
+#enter-btn{
+  margin-top:3rem;padding:1.2rem 3.5rem;font-size:1.1rem;font-weight:700;
+  border:2px solid #c9a84c;border-radius:50px;cursor:pointer;
+  background:transparent;color:#c9a84c;font-family:'Inter',sans-serif;
+  opacity:0;transition:all .5s ease;letter-spacing:2px;text-transform:uppercase;
+}
+#enter-btn:hover{background:#c9a84c;color:#0a0a1a;box-shadow:0 0 40px rgba(201,168,76,0.5);transform:scale(1.05)}
+#enter-btn.show{opacity:1}
+#door-screen p{
+  font-size:clamp(.8rem,2vw,1.2rem);color:rgba(201,168,76,.6);
+  margin-top:1.5rem;opacity:0;animation:fadeIn 2s ease 1s forwards;
+  font-style:italic;
+}
+
+/* === MAIN SCROLLABLE EXPERIENCE === */
+#main{
+  display:none;opacity:0;
+}
+#main.show{display:block;opacity:1}
+.scroll-section{
+  min-height:100vh;position:relative;overflow:hidden;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:4rem 2rem;
+}
+
+/* === SECTION 1: THE GATEWAY === */
+#section-gate{
+  background:radial-gradient(ellipse at 50% 80%,#1a0a3e 0%,#0a0a1a 60%,#000 100%);
+}
+#gate-text h1{
+  font-family:'Playfair Display',serif;font-size:clamp(2.5rem,7vw,6rem);
+  background:linear-gradient(135deg,#c9a84c 0%,#f4e4a0 25%,#c9a84c 50%,#e8d48b 75%,#c9a84c 100%);
+  background-size:400% 100%;
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  animation:shimmer 6s linear infinite;text-align:center;
+  font-weight:900;
+}
+#gate-text .subtitle{
+  font-size:clamp(1rem,2.5vw,1.6rem);color:rgba(244,228,160,.5);
+  margin-top:1.5rem;text-align:center;font-weight:300;letter-spacing:4px;
+}
+#gate-canvas{position:absolute;inset:0;z-index:0;pointer-events:none}
+#gate-text{z-index:1;text-align:center}
+#gate-text p{
+  max-width:600px;margin:2.5rem auto 0;color:rgba(255,255,255,.6);
+  font-size:clamp(.9rem,1.8vw,1.2rem);line-height:1.8;text-align:center;
+}
+#gate-text .cta-group{
+  display:flex;gap:1.5rem;justify-content:center;margin-top:3rem;flex-wrap:wrap;
+}
+.win-btn{
+  padding:1rem 2.5rem;border-radius:50px;border:2px solid;font-weight:700;
+  font-size:1rem;cursor:pointer;transition:all .4s ease;font-family:'Inter',sans-serif;
+  letter-spacing:1px;text-transform:uppercase;display:inline-flex;align-items:center;gap:.5rem;
+}
+.win-gold{background:transparent;border-color:#c9a84c;color:#c9a84c}
+.win-gold:hover{background:#c9a84c;color:#0a0a1a;box-shadow:0 0 50px rgba(201,168,76,.4);transform:translateY(-3px)}
+.win-purple{background:transparent;border-color:#8a5fbf;color:#b794e8}
+.win-purple:hover{background:#8a5fbf;color:#fff;box-shadow:0 0 50px rgba(138,95,191,.4);transform:translateY(-3px)}
+.win-turq{background:transparent;border-color:#1a8a7a;color:#34d4b0}
+.win-turq:hover{background:#1a8a7a;color:#fff;box-shadow:0 0 50px rgba(26,138,122,.4);transform:translateY(-3px)}
+
+/* === SECTION 2: WONDER GALLERY === */
+#section-wonder{
+  background:radial-gradient(ellipse at 30% 50%,#0a1a3e 0%,#0a0a1a 50%,#000 100%);
+  flex-direction:row;gap:3rem;
+}
+.wonder-item{
+  flex:1;min-width:280px;max-width:350px;
+  padding:2.5rem;border-radius:20px;text-align:center;
+  background:rgba(255,255,255,.03);border:1px solid rgba(201,168,76,.1);
+  backdrop-filter:blur(10px);transition:all .6s ease;cursor:default;
+}
+.wonder-item:hover{
+  transform:translateY(-10px);border-color:rgba(201,168,76,.4);
+  box-shadow:0 20px 60px rgba(201,168,76,.1);
+  background:rgba(201,168,76,.05);
+}
+.wonder-icon{font-size:4rem;margin-bottom:1.5rem;display:block;animation:float 4s ease-in-out infinite}
+.wonder-item h3{font-family:'Playfair Display',serif;font-size:1.6rem;color:#e8d48b;margin-bottom:1rem}
+.wonder-item p{color:rgba(255,255,255,.6);line-height:1.7;font-size:.95rem}
+.section-label{
+  position:absolute;top:3rem;left:50%;transform:translateX(-50%);
+  font-size:.75rem;letter-spacing:6px;text-transform:uppercase;
+  color:rgba(201,168,76,.4);font-weight:600;
+}
+
+/* === SECTION 3: TOOLS PORTAL === */
+#section-portal{
+  background:radial-gradient(ellipse at 70% 30%,#1a0a3e 0%,#0a0a1a 50%,#000 100%);
+}
+.portal-grid{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+  gap:1.5rem;max-width:900px;width:100%;padding:2rem;
+}
+.portal-card{
+  padding:2rem 1.5rem;border-radius:16px;text-align:center;
+  background:rgba(255,255,255,.03);border:1px solid rgba(201,168,76,.08);
+  transition:all .5s ease;cursor:pointer;position:relative;overflow:hidden;
+}
+.portal-card::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(circle at 50% 50%,rgba(201,168,76,.08) 0%,transparent 70%);
+  opacity:0;transition:opacity .5s;
+}
+.portal-card:hover{
+  transform:translateY(-8px) scale(1.02);border-color:rgba(201,168,76,.3);
+  box-shadow:0 15px 40px rgba(201,168,76,.12);
+}
+.portal-card:hover::before{opacity:1}
+.portal-card .p-icon{font-size:2.5rem;margin-bottom:1rem;display:block;position:relative;z-index:1}
+.portal-card h4{font-weight:700;color:#e8d48b;font-size:1rem;position:relative;z-index:1}
+.portal-card span{font-size:.8rem;color:rgba(255,255,255,.4);display:block;margin-top:.5rem;position:relative;z-index:1}
+
+/* === SECTION 4: COUNTERS (LIVE STATS) === */
+#section-stats{
+  background:radial-gradient(ellipse at center,#0a1a3e 0%,#0a0a1a 50%,#000 100%);
+}
+.stat-row{display:flex;gap:4rem;justify-content:center;flex-wrap:wrap;margin-top:3rem}
+.stat-box{text-align:center}
+.stat-num{
+  font-family:'Playfair Display',serif;font-size:clamp(3rem,6vw,5rem);
+  background:linear-gradient(135deg,#c9a84c,#f4e4a0);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:900;
+}
+.stat-label{font-size:.9rem;color:rgba(255,255,255,.5);margin-top:.5rem;letter-spacing:2px;text-transform:uppercase}
+
+/* === SECTION 5: FINAL CTA === */
+#section-final{
+  background:radial-gradient(ellipse at center,rgba(26,10,62,.6) 0%,#0a0a1a 50%,#000 100%);
+}
+#section-final h2{
+  font-family:'Playfair Display',serif;font-size:clamp(2rem,5vw,4rem);
+  text-align:center;background:linear-gradient(135deg,#c9a84c,#f4e4a0,#c9a84c);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:900;
+  animation:gold-shift 5s ease infinite;
+}
+#section-final p{color:rgba(255,255,255,.6);text-align:center;max-width:600px;margin:2rem auto;font-size:1.1rem;line-height:1.8}
+.final-btns{display:flex;gap:2rem;justify-content:center;margin-top:3rem;flex-wrap:wrap}
+.gold-big{
+  padding:1.3rem 3.5rem;font-size:1.1rem;font-weight:800;border:2px solid #c9a84c;
+  border-radius:50px;background:transparent;color:#c9a84c;cursor:pointer;
+  font-family:'Inter',sans-serif;letter-spacing:3px;text-transform:uppercase;
+  transition:all .4s ease;position:relative;overflow:hidden;
+}
+.gold-big::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(90deg,transparent,rgba(201,168,76,.1),transparent);
+  transform:translateX(-100%);transition:transform .6s;
+}
+.gold-big:hover::before{transform:translateX(100%)}
+.gold-big:hover{background:rgba(201,168,76,.1);box-shadow:0 0 60px rgba(201,168,76,.3);transform:translateY(-4px)}
+
+/* === FLOATING PARTICLES === */
+.particle-layer{position:absolute;inset:0;overflow:hidden;z-index:0;pointer-events:none}
+.particle{
+  position:absolute;border-radius:50%;
+  background:radial-gradient(circle,rgba(201,168,76,.6) 0%,rgba(201,168,76,0) 70%);
+  animation:float-up linear infinite;
+}
+@keyframes float-up{
+  0%{transform:translateY(100vh) rotate(0deg) scale(0);opacity:0}
+  10%{opacity:1;transform:translateY(90vh) rotate(36deg) scale(1)}
+  90%{opacity:.3}
+  100%{transform:translateY(-20vh) rotate(360deg) scale(.5);opacity:0}
+}
+
+/* === SCROLL HINT === */
+.scroll-hint{
+  position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);
+  display:flex;flex-direction:column;align-items:center;gap:.5rem;
+  animation:bounce 2s ease infinite;z-index:2;
+}
+.scroll-hint span{font-size:.7rem;color:rgba(201,168,76,.4);letter-spacing:3px;text-transform:uppercase}
+.scroll-hint .arrow{
+  width:20px;height:20px;border-right:2px solid rgba(201,168,76,.4);
+  border-bottom:2px solid rgba(201,168,76,.4);transform:rotate(45deg);
+}
+@keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(15px)}}
+
+/* === NAV DOTS === */
+.nav-dots{
+  position:fixed;right:2rem;top:50%;transform:translateY(-50%);z-index:100;
+  display:flex;flex-direction:column;gap:1rem;
+}
+.nav-dot{
+  width:10px;height:10px;border-radius:50%;border:1px solid rgba(201,168,76,.3);
+  background:transparent;cursor:pointer;transition:all .3s;
+}
+.nav-dot.active{background:#c9a84c;border-color:#c9a84c;box-shadow:0 0 10px rgba(201,168,76,.5)}
+
+/* === REVEAL ANIMATIONS === */
+.reveal-anim{opacity:0;transform:translateY(40px);transition:opacity .8s ease,transform .8s cubic-bezier(.23,1,.32,1)}
+.reveal-anim.visible{opacity:1;transform:translateY(0)}
+.reveal-scale-anim{opacity:0;transform:scale(.85);transition:opacity .8s ease,transform .8s ease}
+.reveal-scale-anim.visible{opacity:1;transform:scale(1)}
+
+/* === KEYFRAMES === */
+@keyframes gold-shift{
+  0%{background-position:0% 50%}
+  50%{background-position:100% 50%}
+  100%{background-position:0% 50%}
+}
+@keyframes shimmer{
+  0%{background-position:-200% center}
+  100%{background-position:200% center}
+}
+@keyframes float{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-20px) scale(1.05)}}
+@keyframes fadeIn{0%{opacity:0}100%{opacity:1}}
+@keyframes pulse-glow{0%,100%{box-shadow:0 0 20px rgba(201,168,76,.2)}50%{box-shadow:0 0 40px rgba(201,168,76,.5)}}
+@keyframes rotate-slow{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+
+/* === STARS BACKGROUND === */
+.stars{position:fixed;inset:0;z-index:0;pointer-events:none}
+.star{
+  position:absolute;width:2px;height:2px;background:#fff;border-radius:50%;
+  animation:twinkle var(--dur) ease-in-out infinite;opacity:0;
+}
+@keyframes twinkle{0%,100%{opacity:0}50%{opacity:var(--bright)}}
+
+/* === RESPONSIVE === */
+@media(max-width:768px){
+  #section-wonder{flex-direction:column;align-items:center}
+  .stat-row{gap:2rem}
+  .nav-dots{right:.75rem}
+  .nav-dot{width:8px;height:8px}
+  .portal-grid{grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1rem;padding:1rem}
+}
+</style>
+</head>
+<body>
+
+<!-- === STARS === -->
+<div class="stars" id="stars"></div>
+
+<!-- === DOOR SCREEN === -->
+<div id="door-screen">
+  <div id="door-gate">
+    <div class="door-left"></div>
+    <div class="door-right"></div>
+  </div>
+  <h1>The World of Pure<br>Imagination</h1>
+  <p>A place you'll never see — except when you ask me to tell you, son.</p>
+  <button id="enter-btn">Step Inside ↓</button>
+</div>
+
+<!-- === MAIN SCROLL EXPERIENCE === -->
+<div id="main">
+
+  <!-- NAV DOTS -->
+  <div class="nav-dots" id="nav-dots"></div>
+
+  <!-- SECTION 1: THE GATEWAY -->
+  <section class="scroll-section" id="section-gate">
+    <canvas id="gate-canvas"></canvas>
+    <div id="gate-text">
+      <span class="section-label">WELCOME, BUILDER</span>
+      <h1 id="hero-title">Everything You<br>Can Imagine<br>Is Real</h1>
+      <div class="subtitle">ABUZ8 AI · Sovereign Imagination Factory</div>
+      <p>You dreamed it. The world said it's too hard.<br><br>
+         <strong style="color:#e8d48b" class="reveal-anim">We proved them wrong.</strong><br><br>
+         Step through 40+ AI tools. Build empires. Own your time.<br>
+         Everything runs on dual RTX 5090s. Everything is sovereign.<br>
+         This is your imagination palace — pure and untamed.</p>
+      <div class="cta-group reveal-anim">
+        <a href="tools.html" class="win-btn win-gold">🚀 Enter the Tool Palace</a>
+        <a href="store.html" class="win-btn win-purple">🛒 Buy Blueprints</a>
+        <a href="services.html" class="win-btn win-turq">⚡ Hire Agents</a>
+      </div>
+      <div class="scroll-hint">
+        <span>Scroll to explore</span>
+        <div class="arrow"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 2: WONDERS -->
+  <section class="scroll-section" id="section-wonder">
+    <div class="particle-layer" id="wonder-particles"></div>
+    <div class="section-label reveal-anim">WHAT AWAITS INSIDE</div>
+    <h2 style="font-family:'Playfair Display',serif;font-size:clamp(2rem,4vw,3rem);color:#e8d48b;margin-bottom:3rem;z-index:1;text-align:center">Four Rooms of Your Imagination Palace</h2>
+    <div style="display:flex;gap:3rem;flex-wrap:wrap;justify-content:center;max-width:1100px;z-index:1">
+      <div class="wonder-item reveal-anim">
+        <span class="wonder-icon">🏭</span>
+        <h3>AI Tool Factory</h3>
+        <p>40+ tools that turn ideas into reality. Headshots, logos, video, music, copy, design — all powered by sovereign GPU infrastructure.</p>
+      </div>
+      <div class="wonder-item reveal-anim">
+        <span class="wonder-icon">🤖</span>
+        <h3>Agent Battalion</h3>
+        <p>Autonomous AI workers that never clock out. Customer service, sales, content, lead generation — deployed in 5 days.</p>
+      </div>
+      <div class="wonder-item reveal-anim">
+        <span class="wonder-icon">🎬</span>
+        <h3>Video Empire</h3>
+        <p>Studio-grade video from text. WAN 2.2, LTX-Video, talking heads, lip-sync — all running on your own hardware, not the cloud.</p>
+      </div>
+      <div class="wonder-item reveal-anim">
+        <span class="wonder-icon">🧠</span>
+        <h3>QADIR OS</h3>
+        <p>The sovereign operating system that routes between local and cloud AI, learns your workflows, and executes autonomously.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 3: TOOLS PORTAL -->
+  <section class="scroll-section" id="section-portal">
+    <div class="particle-layer" id="portal-particles"></div>
+    <div class="section-label reveal-anim">THE IMAGINATION LAB</div>
+    <h2 style="font-family:'Playfair Display',serif;font-size:clamp(2rem,4vw,3rem);color:#e8d48b;margin-bottom:1rem;z-index:1;text-align:center;position:relative">Step Into Our Labs</h2>
+    <p style="color:rgba(255,255,255,.5);margin-bottom:3rem;z-index:1;text-align:center;position:relative;max-width:500px">Every door leads to something real. Click and experience the future.</p>
+    <div class="portal-grid" style="z-index:1">
+      <a href="tools/ai-headshot.html" class="portal-card reveal-scale-anim"><span class="p-icon">📸</span><h4>AI Headshots</h4><span>LIVE · GPU</span></a>
+      <a href="tools/ai-logo-generator.html" class="portal-card reveal-scale-anim"><span class="p-icon">🎨</span><h4>Logo Generator</h4><span>LIVE · GPU</span></a>
+      <a href="tools/ai-video-generator.html" class="portal-card reveal-scale-anim"><span class="p-icon">🎬</span><h4>AI Video</h4><span>LIVE · GPU</span></a>
+      <a href="tools/ai-music-generator.html" class="portal-card reveal-scale-anim"><span class="p-icon">🎵</span><h4>AI Music</h4><span>LIVE · GPU</span></a>
+      <a href="tools/ai-image-upscaler.html" class="portal-card reveal-scale-anim"><span class="p-icon">🔍</span><h4>Image Upscaler</h4><span>LIVE · GPU</span></a>
+      <a href="tools/ai-face-swap.html" class="portal-card reveal-scale-anim"><span class="p-icon">🎭</span><h4>Face Swap</h4><span>LIVE · GPU</span></a>
+      <a href="tools/ai-blog-writer.html" class="portal-card reveal-scale-anim"><span class="p-icon">✍️</span><h4>Blog Writer</h4><span>LIVE · BRAIN</span></a>
+      <a href="tools/ai-resume-builder.html" class="portal-card reveal-scale-anim"><span class="p-icon">📄</span><h4>Resume Builder</h4><span>LIVE · BRAIN</span></a>
+      <a href="tools/ai-thumbnail-maker.html" class="portal-card reveal-scale-anim"><span class="p-icon">🎯</span><h4>Thumbnail Maker</h4><span>LIVE · CPU</span></a>
+      <a href="tools/ai-qr-art-generator.html" class="portal-card reveal-scale-anim"><span class="p-icon">🔳</span><h4>QR Art</h4><span>LIVE · CPU</span></a>
+      <a href="tools/ai-room-redesign.html" class="portal-card reveal-scale-anim"><span class="p-icon">🏠</span><h4>Room Redesign</h4><span>LIVE · GPU</span></a>
+      <a href="tools/ai-cartoon.html" class="portal-card reveal-scale-anim"><span class="p-icon">👤</span><h4>Cartoon Maker</h4><span>BETA · GPU</span></a>
+    </div>
+    <div style="text-align:center;margin-top:3rem;z-index:1">
+      <a href="tools.html" class="win-btn win-gold reveal-anim">View All 40+ Tools →</a>
+    </div>
+  </section>
+
+  <!-- SECTION 4: LIVE STATS -->
+  <section class="scroll-section" id="section-stats">
+    <div class="section-label reveal-anim">THE NUMBERS SPEAK</div>
+    <h2 style="font-family:'Playfair Display',serif;font-size:clamp(2rem,4vw,3rem);color:#e8d48b;text-align:center" class="reveal-anim">Built on Sovereign Infrastructure</h2>
+    <div class="stat-row">
+      <!-- 2026-05-13 11:55 EDT Cohort B truth-pass — counters reconciled. "AI Agents Deployed" was 3 (lie; 0 stranger-bootable). "Tools Per Hour" was 15 (unverifiable). Replaced with audited numbers. -->
+      <div class="stat-box reveal-anim"><div class="stat-num" data-target="33">0</div><div class="stat-label">Tools Live Today</div></div>
+      <div class="stat-box reveal-anim"><div class="stat-num" data-target="73">0</div><div class="stat-label">Tools Early Access</div></div>
+      <div class="stat-box reveal-anim"><div class="stat-num" data-target="2">0</div><div class="stat-label">RTX 5090 GPUs</div></div>
+      <div class="stat-box reveal-anim"><div class="stat-num" data-target="1285">0</div><div class="stat-label">GB Local Models</div></div>
+    </div>
+  </section>
+
+  <!-- SECTION 5: FINAL CTA -->
+  <section class="scroll-section" id="section-final">
+    <div class="particle-layer" id="final-particles"></div>
+    <h2 class="reveal-anim">Your Imagination Is the Only Limit</h2>
+    <p class="reveal-anim">No subscriptions. No cloud dependencies. No one else owns your infrastructure.<br><br>
+       <strong style="color:#e8d48b">You dream it. We build it. You own everything.</strong></p>
+    <div class="final-btns">
+      <a href="tools.html" class="gold-big reveal-anim">🚀 Explore All Tools</a>
+      <a href="store.html" class="win-btn win-purple reveal-anim">🛒 Get Blueprints</a>
+      <a href="services.html" class="win-btn win-turq reveal-anim">⚡ Hire Agents</a>
+    </div>
+  </section>
+
+</div>
+
+<script>
+// === STARS ===
+(function(){
+  const s=document.getElementById('stars');
+  for(let i=0;i<150;i++){
+    const d=document.createElement('div');
+    d.className='star';
+    d.style.left=Math.random()*100+'%';
+    d.style.top=Math.random()*100+'%';
+    d.style.setProperty('--dur',(2+Math.random()*4)+'s');
+    d.style.setProperty('--bright',(0.3+Math.random()*0.7));
+    d.style.animationDelay=Math.random()*5+'s';
+    d.style.width=d.style.height=(1+Math.random()*2)+'px';
+    s.appendChild(d);
+  }
+})();
+
+// === DOOR OPENING ===
+(function(){
+  const btn=document.getElementById('enter-btn');
+  let opened=false;
+  // show button after delay
+  setTimeout(()=>btn.classList.add('show'),2500);
+  btn.addEventListener('click',()=>{
+    if(opened)return;opened=true;
+    document.getElementById('door-screen').classList.add('opened');
+    const main=document.getElementById('main');
+    setTimeout(()=>{main.classList.add('show');document.body.style.overflow='auto';},600);
+    // open doors immediately on click
+    document.querySelector('.door-left').style.transform='translateX(-105%) perspective(800px) rotateY(-40deg)';
+    document.querySelector('.door-right').style.transform='translateX(105%) perspective(800px) rotateY(40deg)';
+    setTimeout(()=>document.getElementById('door-screen').style.display='none',2000);
+  });
+})();
+
+// === GATE CANVAS - MAGICAL WIRES ===
+(function(){
+  const c=document.getElementById('gate-canvas');
+  if(!c)return;
+  const ctx=c.getContext('2d');
+  let w,h;
+  function resize(){w=c.width=c.offsetWidth;h=c.height=c.offsetHeight}
+  resize();window.addEventListener('resize',resize);
+  
+  // particles
+  const particles=[];
+  for(let i=0;i<80;i++){
+    particles.push({
+      x:Math.random()*w,y:Math.random()*h,
+      vx:(Math.random()-.5)*.5,vy:(Math.random()-.5)*.5,
+      r:1+Math.random()*2,
+      color:['rgba(201,168,76,','rgba(138,95,191,','rgba(26,138,122,'][Math.floor(Math.random()*3)]
+    });
+  }
+  
+  // lines to attractor (center)
+  const cx=w/2,cy=h/2;
+  
+  function draw(){
+    ctx.clearRect(0,0,w,h);
+    // attractor
+    const ag=ctx.createRadialGradient(cx,cy,0,cx,cy,80);
+    ag.addColorStop(0,'rgba(201,168,76,0.05)');
+    ag.addColorStop(1,'transparent');
+    ctx.fillStyle=ag;
+    ctx.fillRect(0,0,w,h);
+    
+    // update and draw particles
+    for(let p of particles){
+      // move toward center slightly
+      const dx=cx-p.x,dy=cy-p.y;
+      const dist=Math.sqrt(dx*dx+dy*dy);
+      if(dist>50){
+        p.vx+=dx*.00005;
+        p.vy+=dy*.00005;
+      }
+      p.x+=p.vx;p.y+=p.vy;
+      if(p.x<0)p.x=w;if(p.x>w)p.x=0;
+      if(p.y<0)p.y=h;if(p.y>h)p.y=0;
+      
+      // draw particle
+      const g=ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,p.r*3);
+      g.addColorStop(0,p.color+'0.8)');
+      g.addColorStop(1,p.color+'0)');
+      ctx.fillStyle=g;
+      ctx.beginPath();ctx.arc(p.x,p.y,p.r*3,0,Math.PI*2);ctx.fill();
+      
+      // draw line to center
+      if(dist<300){
+        ctx.strokeStyle=p.color+(0.1*(1-dist/300))+')';
+        ctx.lineWidth=.5;
+        ctx.beginPath();ctx.moveTo(p.x,p.y);ctx.lineTo(cx,cy);ctx.stroke();
+      }
+    }
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// === REVEAL ON SCROLL ===
+(function(){
+  const reveals=document.querySelectorAll('.reveal-anim,.reveal-scale-anim');
+  const observer=new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){
+        e.target.classList.add('visible');
+        observer.unobserve(e.target);
+      }
+    });
+  },{threshold:0.15});
+  reveals.forEach(r=>observer.observe(r));
+})();
+
+// === COUNTER ANIMATION ===
+(function(){
+  const counters=document.querySelectorAll('.stat-num[data-target]');
+  const observer=new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){
+        const target=parseInt(e.target.dataset.target);
+        let current=0;
+        const increment=target/60;
+        const timer=setInterval(()=>{
+          current+=increment;
+          if(current>=target){current=target;clearInterval(timer)}
+          e.target.textContent=Math.round(current)+'+';
+        },30);
+        observer.unobserve(e.target);
+      }
+    });
+  },{threshold:0.5});
+  counters.forEach(c=>observer.observe(c));
+})();
+
+// === NAV DOTS ===
+(function(){
+  const sections=['section-gate','section-wonder','section-portal','section-stats','section-final'];
+  const dotsContainer=document.getElementById('nav-dots');
+  sections.forEach((s,i)=>{
+    const dot=document.createElement('div');
+    dot.className='nav-dot';
+    dot.onclick=()=>{
+      document.getElementById(s).scrollIntoView({behavior:'smooth'});
+    };
+    dotsContainer.appendChild(dot);
+    dotsContainer.lastChild.classList.add('active');
+  });
+  // update active dot on scroll
+  const dots=dotsContainer.querySelectorAll('.nav-dot');
+  const secEls=sections.map(s=>document.getElementById(s));
+  
+  // scroll listener on document (since body is scrollable)
+  document.addEventListener('scroll',()=>{
+    let closest=0,minDist=Infinity;
+    const scrollY=window.scrollY+window.innerHeight/2;
+    secEls.forEach((s,i)=>{
+      const dist=Math.abs((s.offsetTop+s.offsetHeight/2)-scrollY);
+      if(dist<minDist){minDist=dist;closest=i}
+    });
+    dots.forEach((d,i)=>{d.classList.toggle('active',i===closest)});
+  });
+})();
+
+// === CURSOR GLOW ===
+(function(){
+  const glow=document.createElement('div');
+  glow.style.cssText='position:fixed;width:300px;height:300px;border-radius:50%;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);background:radial-gradient(circle,rgba(201,168,76,.03) 0%,transparent 70%);transition:left .1s ease,top .1s ease ease;left:50%;top:50%';
+  document.body.appendChild(glow);
+  document.addEventListener('mousemove',(e)=>{
+    glow.style.left=e.clientX+'px';
+    glow.style.top=e.clientY+'px';
+  });
+})();
+
+// === PARALLAX for wonder items ===
+(function(){
+  const wonders=document.querySelectorAll('.wonder-item');
+  window.addEventListener('scroll',()=>{
+    const scrollY=window.scrollY;
+    wonders.forEach((w,i)=>{
+      const rect=w.getBoundingClientRect();
+      if(rect.top<window.innerHeight&&rect.bottom>0){
+        const offset=(rect.top-window.innerHeight/2)*.03;
+        w.style.transform=`translateY(${offset}px)`;
+      }
+    });
+  });
+})();
+
+// === SMOOTH SCROLL HINT CLICK ===
+document.querySelector('.scroll-hint')?.addEventListener('click',()=>{
+  document.getElementById('section-wonder').scrollIntoView({behavior:'smooth'});
+});
+</script>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>
+

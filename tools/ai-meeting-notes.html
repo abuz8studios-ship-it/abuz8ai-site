@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Meeting Notes | ABUZ8</title>
+<style>
+  :root{--lapis:#0a1628;--lapis2:#0f1f3d;--lapis3:#162444;--gold:#c9a84c;--gold2:#e0bc6a;--turq:#0e9f6e;--turq2:#22a090;--cream:#f5f0e8;--cream2:#ede8df;--red:#e05555;--green:#3db87a;--text:#e8e4da;--muted:#8a9ab5;}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--lapis);color:var(--text);font-family:'Inter',system-ui,sans-serif;min-height:100vh;}
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;500;600&display=swap');
+  header{background:linear-gradient(135deg,var(--lapis2),var(--lapis3));border-bottom:1px solid rgba(201,168,76,0.3);padding:20px 40px;display:flex;align-items:center;gap:16px;}
+  .logo{font-family:'Playfair Display',serif;font-size:1.6rem;color:var(--gold);letter-spacing:1px;}
+  .logo span{color:var(--turq);}
+  header p{color:var(--muted);font-size:0.9rem;}
+  .hero{background:linear-gradient(135deg,var(--lapis3),var(--lapis2));padding:40px;text-align:center;border-bottom:1px solid rgba(201,168,76,0.15);}
+  .hero h1{font-family:'Playfair Display',serif;font-size:2.2rem;color:var(--gold);margin-bottom:8px;}
+  .hero p{color:var(--muted);max-width:640px;margin:0 auto;}
+  .main{max-width:1100px;margin:0 auto;padding:40px 20px;}
+  .top-bar{display:flex;gap:16px;margin-bottom:28px;flex-wrap:wrap;}
+  .top-bar input,.top-bar select{flex:1;min-width:160px;background:rgba(255,255,255,0.05);border:1px solid rgba(138,154,181,0.3);border-radius:8px;padding:10px 14px;color:var(--text);font-family:inherit;font-size:0.9rem;}
+  .top-bar input:focus,.top-bar select:focus{outline:none;border-color:var(--gold);}
+  select option{background:var(--lapis2);}
+  .card{background:var(--lapis2);border:1px solid rgba(201,168,76,0.2);border-radius:12px;padding:28px;margin-bottom:24px;}
+  .card h2{font-family:'Playfair Display',serif;color:var(--gold);font-size:1.3rem;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid rgba(201,168,76,0.2);}
+  .two-col{display:grid;grid-template-columns:1fr 1fr;gap:24px;}
+  @media(max-width:700px){.two-col{grid-template-columns:1fr;}}
+  .form-group{margin-bottom:16px;}
+  label{display:block;color:var(--muted);font-size:0.8rem;font-weight:600;letter-spacing:0.5px;text-transform:uppercase;margin-bottom:6px;}
+  textarea{width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(138,154,181,0.3);border-radius:8px;padding:12px 14px;color:var(--text);font-family:inherit;font-size:0.9rem;resize:vertical;transition:border 0.2s;line-height:1.6;}
+  textarea:focus{outline:none;border-color:var(--gold);}
+  input[type=text]{width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(138,154,181,0.3);border-radius:8px;padding:10px 14px;color:var(--text);font-family:inherit;font-size:0.9rem;}
+  input[type=text]:focus{outline:none;border-color:var(--gold);}
+  .btn-row{display:flex;gap:12px;flex-wrap:wrap;}
+  .btn{padding:12px 24px;background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--lapis);font-weight:700;font-size:0.95rem;border:none;border-radius:8px;cursor:pointer;transition:all 0.2s;font-family:inherit;}
+  .btn:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(201,168,76,0.4);}
+  .btn-sec{background:transparent;border:1px solid var(--turq);color:var(--turq);}
+  .btn-sec:hover{background:rgba(26,138,122,0.1);box-shadow:none;transform:none;}
+  .btn-sm{padding:7px 16px;font-size:0.8rem;}
+  .output-area{display:none;}
+  .output-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:12px;}
+  .output-header h2{font-family:'Playfair Display',serif;color:var(--gold);font-size:1.6rem;}
+  .meta-row{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:20px;}
+  .meta-tag{background:rgba(201,168,76,0.12);border:1px solid rgba(201,168,76,0.25);color:var(--gold2);padding:5px 14px;border-radius:20px;font-size:0.8rem;font-weight:500;}
+  .section-title{font-size:0.8rem;font-weight:700;color:var(--turq2);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+  .section-title::after{content:'';flex:1;height:1px;background:rgba(26,138,122,0.2);}
+  .ai-card{background:var(--lapis3);border:1px solid rgba(255,255,255,0.07);border-radius:10px;padding:20px;margin-bottom:16px;}
+  .summary-text{color:var(--text);line-height:1.7;font-size:0.95rem;}
+  .action-list{list-style:none;}
+  .action-item{display:flex;align-items:flex-start;gap:12px;padding:12px 0;border-bottom:1px solid rgba(255,255,255,0.06);}
+  .action-item:last-child{border:none;}
+  .action-check{width:20px;height:20px;border:2px solid var(--turq);border-radius:4px;flex-shrink:0;cursor:pointer;transition:all 0.2s;margin-top:2px;}
+  .action-check.done{background:var(--turq);border-color:var(--turq);}
+  .action-check.done::after{content:'✓';display:flex;align-items:center;justify-content:center;color:white;font-size:12px;height:100%;}
+  .action-body{flex:1;}
+  .action-text{color:var(--text);font-size:0.9rem;line-height:1.5;}
+  .action-meta{display:flex;gap:10px;margin-top:5px;flex-wrap:wrap;}
+  .action-owner{background:rgba(201,168,76,0.1);color:var(--gold2);padding:2px 10px;border-radius:10px;font-size:0.75rem;}
+  .action-due{background:rgba(224,85,85,0.1);color:#f08080;padding:2px 10px;border-radius:10px;font-size:0.75rem;}
+  .action-prio{padding:2px 10px;border-radius:10px;font-size:0.75rem;}
+  .action-prio.p1{background:rgba(224,85,85,0.15);color:#f08080;}
+  .action-prio.p2{background:rgba(201,168,76,0.15);color:var(--gold2);}
+  .action-prio.p3{background:rgba(26,138,122,0.15);color:var(--turq2);}
+  .decision-item{padding:10px 14px;background:rgba(26,138,122,0.08);border-left:3px solid var(--turq);border-radius:0 8px 8px 0;margin-bottom:8px;font-size:0.9rem;color:var(--text);line-height:1.5;}
+  .risk-item{padding:10px 14px;background:rgba(224,85,85,0.08);border-left:3px solid var(--red);border-radius:0 8px 8px 0;margin-bottom:8px;font-size:0.9rem;color:var(--text);line-height:1.5;}
+  .question-item{padding:10px 14px;background:rgba(201,168,76,0.08);border-left:3px solid var(--gold);border-radius:0 8px 8px 0;margin-bottom:8px;font-size:0.9rem;color:var(--text);line-height:1.5;}
+  .attendee-chip{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,0.06);border:1px solid rgba(138,154,181,0.2);border-radius:20px;padding:5px 14px;font-size:0.85rem;margin:4px;}
+  .attendee-dot{width:8px;height:8px;border-radius:50%;background:var(--turq);}
+  .email-box{background:var(--lapis3);border:1px solid rgba(201,168,76,0.2);border-radius:10px;padding:20px;}
+  .email-box pre{white-space:pre-wrap;font-family:inherit;font-size:0.9rem;color:var(--text);line-height:1.7;}
+  .copy-btn{float:right;padding:5px 14px;font-size:0.78rem;background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.3);color:var(--gold2);border-radius:6px;cursor:pointer;transition:all 0.2s;font-family:inherit;}
+  .copy-btn:hover{background:rgba(201,168,76,0.2);}
+  .progress-row{display:flex;align-items:center;gap:12px;margin-bottom:16px;}
+  .progress-label{font-size:0.85rem;color:var(--muted);min-width:120px;}
+  .progress-track{flex:1;background:rgba(255,255,255,0.07);border-radius:4px;height:8px;}
+  .progress-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--turq),var(--gold));}
+  .stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px;}
+  @media(max-width:600px){.stat-grid{grid-template-columns:repeat(2,1fr);}}
+  .stat-box{background:var(--lapis3);border:1px solid rgba(255,255,255,0.07);border-radius:10px;padding:16px;text-align:center;}
+  .stat-num{font-family:'Playfair Display',serif;font-size:1.8rem;color:var(--gold);}
+  .stat-lbl{font-size:0.75rem;color:var(--muted);margin-top:4px;}
+</style>
+<script src="_abuz8-live-brain.js" defer></script>
+
+<script src="_abuz8-config.js" defer></script>
+<link rel="canonical" href="https://abuz8ai.com/tools/ai-meeting-notes">
+<meta name="description" content="AI Meeting Notes — Action items from raw notes. Free, no signup, runs entirely in your browser. One of 169 free AI and developer tools by ABUZ8.">
+</head>
+<body>
+<header>
+  <div>
+    <div class="logo">ABU<span>Z8</span></div>
+    <p>Sovereign AI Infrastructure</p>
+  </div>
+</header>
+<div class="hero">
+  <h1>AI Meeting Notes</h1>
+  <p>Paste your raw notes or transcript. Get a structured summary, action items with owners and deadlines, decisions, open questions, and a follow-up email — in seconds.</p>
+</div>
+<div class="main">
+  <!-- Input Section -->
+  <div id="inputSection">
+    <div class="top-bar">
+      <input type="text" id="meetingTitle" placeholder="Meeting title (e.g. Q2 Sales Sync)" style="flex:2" />
+      <input type="text" id="meetingDate" placeholder="Date (e.g. May 8, 2026)" />
+      <input type="text" id="attendees" placeholder="Attendees (comma-separated)" />
+      <select id="meetingType">
+        <option value="standup">Standup</option>
+        <option value="planning">Planning</option>
+        <option value="review" selected>Review</option>
+        <option value="sales">Sales Call</option>
+        <option value="strategy">Strategy</option>
+        <option value="1on1">1-on-1</option>
+        <option value="allhands">All Hands</option>
+        <option value="retrospective">Retrospective</option>
+        <option value="interview">Interview</option>
+      </select>
+    </div>
+    <div class="card">
+      <h2>📝 Raw Notes / Transcript</h2>
+      <div class="form-group">
+        <label>Paste your raw meeting notes, bullet points, or transcript below</label>
+        <textarea id="rawNotes" rows="14" placeholder="Example:
+- John opened discussing Q2 pipeline
+- Sarah: we need to follow up with Acme Corp by Friday
+- Decided to move product launch to June 15
+- Mike will send the revised pricing deck by EOD tomorrow
+- Concern raised about AWS cost spike — needs investigation
+- Open question: who owns the enterprise onboarding process?
+- Next meeting: May 15 at 10am
+- Action: everyone to review the new brand deck before Thursday"></textarea>
+      </div>
+      <div class="form-group">
+        <label>Additional Context (optional)</label>
+        <input type="text" id="context" placeholder="e.g. This is a weekly product review for the growth team at ABUZ8" />
+      </div>
+      <div class="btn-row">
+        <button class="btn" onclick="processMeeting()">⚡ Process Meeting Notes</button>
+        <button class="btn btn-sec" onclick="loadExample()">📋 Load Example</button>
+        <button class="btn btn-sec" onclick="clearAll()">🗑 Clear</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Output Section -->
+  <div id="outputArea" class="output-area">
+    <div class="output-header">
+      <h2 id="outTitle">Meeting Notes</h2>
+      <div class="btn-row">
+        <button class="btn btn-sec btn-sm" onclick="backToInput()">← Edit</button>
+        <button class="btn btn-sec btn-sm" onclick="copyAll()">📋 Copy All</button>
+        <button class="btn btn-sm" onclick="downloadNotes()">⬇ Download</button>
+      </div>
+    </div>
+
+    <div class="meta-row" id="metaRow"></div>
+
+    <div class="stat-grid" id="statGrid"></div>
+
+    <div class="card">
+      <div class="section-title">📋 Summary</div>
+      <div class="ai-card">
+        <p class="summary-text" id="summaryText"></p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-title">✅ Action Items</div>
+      <ul class="action-list" id="actionList"></ul>
+    </div>
+
+    <div class="two-col">
+      <div class="card">
+        <div class="section-title">🟢 Decisions Made</div>
+        <div id="decisionList"></div>
+      </div>
+      <div class="card">
+        <div class="section-title">⚠️ Risks & Blockers</div>
+        <div id="riskList"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-title">❓ Open Questions</div>
+      <div id="questionList"></div>
+    </div>
+
+    <div class="card">
+      <div class="section-title">👥 Attendees</div>
+      <div id="attendeeList"></div>
+    </div>
+
+    <div class="card">
+      <div class="section-title">📧 Follow-up Email Draft</div>
+      <div class="email-box">
+        <button class="copy-btn" onclick="copyEmail()">Copy Email</button>
+        <pre id="emailDraft"></pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const EXAMPLE_NOTES = `Meeting: Q2 Growth Review
+Date: May 8, 2026
+Attendees: Ahmad (CEO), Sarah (Sales Lead), Mike (Product), Diana (Marketing), James (Eng Lead)
+
+- Ahmad opened: Q2 pipeline is at $1.2M, 20% below target
+- Sarah: Acme Corp deal is at risk — they want a custom integration. Need to decide by Friday
+- Mike confirmed: the enterprise onboarding feature will ship May 15
+- Decided: lower pricing tier from $299 to $249 to improve conversion
+- James raised concern: AWS costs spiked 40% in April due to video processing jobs. Need to investigate and optimize
+- Diana: LinkedIn ads are performing 3x better than Facebook — shift budget accordingly
+- Action: Sarah to follow up with Acme Corp with revised proposal by Thursday EOD
+- Action: Mike to send updated product roadmap to all stakeholders by Monday
+- Action: James to audit AWS costs and provide optimization report by next Friday
+- Action: Diana to reallocate $10K from Facebook to LinkedIn ads this week
+- Open question: Should we pursue the Series A this quarter or wait for stronger ARR?
+- Open question: Who owns the enterprise customer success process going forward?
+- Risk: If Acme deal falls through, Q2 target becomes nearly impossible to hit
+- Next meeting: May 15, same time
+- Ahmad: everyone to review the investor one-pager before the board meeting on May 20`;
+
+function loadExample(){
+  document.getElementById('meetingTitle').value = 'Q2 Growth Review';
+  document.getElementById('meetingDate').value = 'May 8, 2026';
+  document.getElementById('attendees').value = 'Ahmad, Sarah, Mike, Diana, James';
+  document.getElementById('meetingType').value = 'review';
+  document.getElementById('rawNotes').value = EXAMPLE_NOTES;
+}
+
+function clearAll(){
+  document.getElementById('rawNotes').value='';
+  document.getElementById('meetingTitle').value='';
+  document.getElementById('meetingDate').value='';
+  document.getElementById('attendees').value='';
+  document.getElementById('context').value='';
+}
+
+function backToInput(){
+  document.getElementById('inputSection').style.display='block';
+  document.getElementById('outputArea').style.display='none';
+}
+
+function extractActions(text){
+  const lines = text.split('\n');
+  const actions = [];
+  const actionPatterns = [
+    /^[\-\*•]?\s*(action|todo|task|follow[\s-]?up|ai:?)[:.]?\s+(.+)/i,
+    /\b(will|needs to|to|should|must|has to)\s+(send|review|audit|follow|update|prepare|write|create|submit|schedule|complete|investigate|provide|reallocate|move|fix|check|confirm|finalize|share|present)\b(.+)/i,
+    /\b(by\s+(eod|end of day|monday|tuesday|wednesday|thursday|friday|next week|tomorrow|friday|this week))\b/i,
+  ];
+  const ownerPattern = /\b(john|sarah|mike|diana|james|ahmad|alex|chris|pat|sam|taylor|lee|morgan|jordan|casey|avery|riley|natalie|marcus|priya|ethan|maya|felix)\b/i;
+  const duePattern = /\bby\s+(eod|end of day|monday|tuesday|wednesday|thursday|friday|saturday|sunday|next week|tomorrow|this week|\w+ \d+|may \d+|june \d+|july \d+)/i;
+
+  for(const line of lines){
+    const clean = line.trim().replace(/^[\-\*•]\s*/,'');
+    if(!clean) continue;
+    let isAction = false;
+    let actionText = clean;
+
+    if(/^(action|todo|task|ai):?\s+/i.test(clean)){
+      isAction = true;
+      actionText = clean.replace(/^(action|todo|task|ai):?\s+/i,'').trim();
+    } else if(/\b(will send|will review|to send|to review|to follow|to prepare|to write|to create|to submit|to schedule|to investigate|to provide|to audit|to reallocate|to move|to fix)\b/i.test(clean)){
+      isAction = true;
+      actionText = clean;
+    }
+
+    if(isAction){
+      const ownerMatch = actionText.match(ownerPattern);
+      const dueMatch = actionText.match(duePattern);
+      const prio = /\b(urgent|critical|asap|blocker|high priority|p1)\b/i.test(actionText)?'p1':
+                   /\b(important|p2|this week|by friday|by thursday)\b/i.test(actionText)?'p2':'p3';
+      actions.push({
+        text: actionText,
+        owner: ownerMatch?ownerMatch[1].charAt(0).toUpperCase()+ownerMatch[1].slice(1):'Unassigned',
+        due: dueMatch?dueMatch[1]:'TBD',
+        prio,
+        done: false,
+      });
+    }
+  }
+  return actions;
+}
+
+function extractDecisions(text){
+  const decisions = [];
+  const lines = text.split('\n');
+  for(const line of lines){
+    const clean = line.trim().replace(/^[\-\*•]\s*/,'');
+    if(/\b(decided|decision|agreed|agreed to|will go with|approved|confirmed|resolved|we will|the plan is|going with|moved to)\b/i.test(clean) && !decisions.includes(clean)){
+      decisions.push(clean.replace(/^(decided|decision|agreed):?\s*/i,'').trim());
+    }
+  }
+  return decisions.slice(0,6);
+}
+
+function extractRisks(text){
+  const risks = [];
+  const lines = text.split('\n');
+  for(const line of lines){
+    const clean = line.trim().replace(/^[\-\*•]\s*/,'');
+    if(/\b(risk|concern|blocker|issue|problem|spike|failure|miss|delay|falling|at risk|could|might fail|won't|can't)\b/i.test(clean)){
+      risks.push(clean);
+    }
+  }
+  return risks.slice(0,5);
+}
+
+function extractQuestions(text){
+  const questions = [];
+  const lines = text.split('\n');
+  for(const line of lines){
+    const clean = line.trim().replace(/^[\-\*•]\s*/,'');
+    if(/\b(open question|question:|who owns|should we|when will|what is|how do|TBD|to be decided|unclear|unknown)\b/i.test(clean) || clean.includes('?')){
+      questions.push(clean.replace(/^(open question|question):?\s*/i,'').trim());
+    }
+  }
+  return questions.filter(q=>q.length>10).slice(0,6);
+}
+
+function extractAttendees(attendeeField, text){
+  let names = [];
+  if(attendeeField.trim()){
+    names = attendeeField.split(',').map(n=>n.trim()).filter(Boolean);
+  } else {
+    const matches = text.match(/\b(Attendees?|Present|Participants?)\s*:?\s*([^\n]+)/i);
+    if(matches) names = matches[2].split(/[,;]/).map(n=>n.trim()).filter(Boolean);
+    else {
+      const namePattern = /\b([A-Z][a-z]+)\s*(?:\([^)]+\))?\s*[:–]/g;
+      let m;
+      while((m=namePattern.exec(text))!==null){ if(!names.includes(m[1])) names.push(m[1]); }
+    }
+  }
+  return [...new Set(names)].slice(0,10);
+}
+
+function generateSummary(text, type, title){
+  const lines = text.split('\n').filter(l=>l.trim());
+  const wordCount = text.split(/\s+/).length;
+  const topicWords = text.match(/\b(pipeline|ARR|revenue|product|launch|roadmap|hiring|budget|investor|sales|marketing|engineering|design|customer|retention|churn|cost|pricing|feature|sprint|release|milestone|strategy|Q[1234])\b/gi)||[];
+  const uniqueTopics = [...new Set(topicWords.map(t=>t.toLowerCase()))].slice(0,5);
+  const typeLabels = {standup:'standup',planning:'planning session',review:'review meeting',sales:'sales call',strategy:'strategy session','1on1':'1-on-1',allhands:'all-hands meeting',retrospective:'retrospective',interview:'interview'};
+  const label = typeLabels[type]||'meeting';
+  
+  let summary = `This ${label} covered ${uniqueTopics.length>0?uniqueTopics.slice(0,3).join(', '):'key team updates'} among other topics. `;
+  
+  const actionCount = (text.match(/\b(action|will send|will review|to send|to follow|will prepare|to create|to submit|to investigate|to audit|to reallocate)\b/gi)||[]).length;
+  const decisionCount = (text.match(/\b(decided|agreed|approved|resolved|confirmed)\b/gi)||[]).length;
+  const riskCount = (text.match(/\b(risk|concern|blocker|issue|problem|spike)\b/gi)||[]).length;
+  
+  if(actionCount>0) summary += `${actionCount} action item${actionCount>1?'s were':' was'} identified. `;
+  if(decisionCount>0) summary += `${decisionCount} key decision${decisionCount>1?'s were':' was'} made. `;
+  if(riskCount>0) summary += `${riskCount} risk or concern${riskCount>1?'s were':' was'} raised that require follow-up. `;
+  
+  const nextMeeting = text.match(/next meeting[:\s]+([^\n.]+)/i);
+  if(nextMeeting) summary += `Next meeting: ${nextMeeting[1].trim()}.`;
+  
+  return summary;
+}
+
+function generateEmail(title, date, type, attendees, actions, decisions, questions, summary){
+  const typeContext = {standup:'Standup Notes',planning:'Planning Session Summary',review:'Meeting Summary',sales:'Sales Call Follow-up',strategy:'Strategy Session Summary','1on1':'1-on-1 Notes',allhands:'All Hands Summary',retrospective:'Retro Summary',interview:'Interview Follow-up'}[type]||'Meeting Summary';
+  const names = attendees.slice(0,3).join(', ')||(attendees[0]||'Team');
+  const firstNames = attendees.map(a=>a.split(' ')[0]);
+  const toLine = firstNames.length>0?firstNames.join(', '):'All';
+  
+  let body = `Hi ${toLine},\n\nThanks for joining today's ${title||'meeting'}${date?' on '+date:''}. Here's a quick summary.\n\n`;
+  
+  if(decisions.length>0){
+    body += `DECISIONS MADE\n${decisions.map((d,i)=>`${i+1}. ${d}`).join('\n')}\n\n`;
+  }
+  
+  if(actions.length>0){
+    body += `ACTION ITEMS\n${actions.map((a,i)=>`${i+1}. [${a.owner}] ${a.text}${a.due&&a.due!=='TBD'?' — due '+a.due:''}`).join('\n')}\n\n`;
+  }
+  
+  if(questions.length>0){
+    body += `OPEN QUESTIONS\n${questions.map((q,i)=>`${i+1}. ${q}`).join('\n')}\n\n`;
+  }
+  
+  const nextMeeting = document.getElementById('rawNotes').value.match(/next meeting[:\s]+([^\n.]+)/i);
+  if(nextMeeting) body += `NEXT MEETING\n${nextMeeting[1].trim()}\n\n`;
+  
+  body += `Let me know if I missed anything.\n\nBest,\n[Your Name]`;
+  
+  return `Subject: ${typeContext} — ${title||'Meeting'}${date?' ('+date+')':''}\n\nTo: ${attendees.join(', ')||'[Attendees]'}\n\n${body}`;
+}
+
+let processedData = {};
+
+function processMeeting(){
+  const text = document.getElementById('rawNotes').value.trim();
+  if(!text){ alert('Please paste your meeting notes first.'); return; }
+
+  const title = document.getElementById('meetingTitle').value || 'Meeting Notes';
+  const date = document.getElementById('meetingDate').value || new Date().toLocaleDateString();
+  const attendeeInput = document.getElementById('attendees').value;
+  const type = document.getElementById('meetingType').value;
+  const context = document.getElementById('context').value.trim();
+
+  const btn = document.querySelector('#inputSection .btn');
+  const btnLabel = btn ? btn.innerHTML : '';
+  if(btn){ btn.disabled = true; btn.innerHTML = '⚙ Processing…'; }
+
+  // Render
+  document.getElementById('outTitle').textContent = title;
+
+  // Meta tags
+  const typeLabels = {standup:'Standup',planning:'Planning',review:'Review',sales:'Sales Call',strategy:'Strategy','1on1':'1-on-1',allhands:'All Hands',retrospective:'Retrospective',interview:'Interview'};
+  document.getElementById('metaRow').innerHTML = [
+    date?`<span class="meta-tag">📅 ${date}</span>`:'',
+    `<span class="meta-tag">🏷 ${typeLabels[type]||type}</span>`,
+    `<span class="meta-tag">⏱ ~${Math.round(text.split(/\s+/).length/150)} min read</span>`,
+  ].join('');
+
+  // Hide the legacy fixed-structure sub-cards (stats, actions, decisions, risks,
+  // questions, attendees, email) — the AI returns one structured summary which we
+  // render into the Summary card. We keep the header + copy/download actions.
+  ['statGrid','actionList','decisionList','riskList','questionList','attendeeList'].forEach(id=>{
+    const el = document.getElementById(id); if(el){ const card = el.closest('.card'); if(card) card.style.display='none'; }
+  });
+  const emailCard = document.getElementById('emailDraft'); if(emailCard){ const c = emailCard.closest('.card'); if(c) c.style.display='none'; }
+  const twoCol = document.querySelector('.two-col'); if(twoCol) twoCol.style.display='none';
+
+  // Summary card holds the full AI output. Show output area + loading state.
+  document.getElementById('summaryText').innerHTML = '<span style="color:var(--muted)">⚙ Analyzing your notes with AI…</span>';
+  document.getElementById('inputSection').style.display = 'none';
+  document.getElementById('outputArea').style.display = 'block';
+  window.scrollTo(0,0);
+
+  const resetBtn = () => { if(btn){ btn.disabled = false; btn.innerHTML = btnLabel; } };
+
+  // Real AI generation via the ABUZ8 brain (Cloudflare Workers AI). No regex extraction.
+  fetch('/api/waitlist', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      tool: 'meeting-notes',
+      data: {
+        meetingTitle: title,
+        date: date,
+        attendees: attendeeInput,
+        meetingType: type,
+        context: context,
+        rawNotes: text,
+        format: 'Return clean HTML. Include a concise summary paragraph, then sections for Action Items (with owners and due dates), Decisions Made, Risks & Blockers, Open Questions, and a ready-to-send follow-up email draft. Use <h3> for section headings, <p> for text, and <ul>/<li> for lists.'
+      }
+    })
+  })
+  .then(r => r.json())
+  .then(res => {
+    if (!res.success || !res.result) throw new Error(res.error || 'Processing failed');
+    document.getElementById('summaryText').innerHTML = ABUZ8md(res.result);
+    processedData = { title, date, type, rawText: text };
+    resetBtn();
+  })
+  .catch(err => {
+    resetBtn();
+    document.getElementById('summaryText').innerHTML = '<span style="color:var(--red)">Processing failed. Please try again in a moment.</span>';
+    alert('Generation failed: ' + err.message + '. Please try again in a moment.');
+  });
+}
+
+function toggleCheck(i){
+  const chk = document.getElementById('chk_'+i);
+  const txt = document.getElementById('at_'+i);
+  chk.classList.toggle('done');
+  txt.style.textDecoration = chk.classList.contains('done')?'line-through':'none';
+  txt.style.opacity = chk.classList.contains('done')?'0.5':'1';
+  processedData.actions[i].done = chk.classList.contains('done');
+}
+
+function copyEmail(){
+  const email = document.getElementById('emailDraft').textContent;
+  navigator.clipboard.writeText(email).then(()=>{
+    const btn = event.target;
+    btn.textContent = '✅ Copied!';
+    setTimeout(()=>btn.textContent='Copy Email',2000);
+  });
+}
+
+function copyAll(){
+  const d = processedData;
+  const body = document.getElementById('summaryText').innerText;
+  let out = `${d.title||'Meeting Notes'}\n${d.date||''} | ${d.type||''}\n${'='.repeat(60)}\n\n${body}`;
+  navigator.clipboard.writeText(out).then(()=>{
+    const btn = event.target;
+    btn.textContent = '✅ Copied!';
+    setTimeout(()=>btn.textContent='📋 Copy All',2000);
+  });
+}
+
+function downloadNotes(){
+  const d = processedData;
+  const body = document.getElementById('summaryText').innerText;
+  let out = `${d.title||'Meeting Notes'}\n${d.date||''} | ${d.type||''}\n${'='.repeat(60)}\n\n${body}\n\nGenerated by ABUZ8 AI Meeting Notes`;
+  const blob = new Blob([out],{type:'text/plain'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `meeting_${(d.title||'notes').replace(/\s+/g,'_')}_${Date.now()}.txt`;
+  a.click();
+}
+</script>
+
+<script src="/assets/js/dfy-banner.js" async></script>
+<script src="/tools/_abuz8-md.js"></script>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+<script src="/tools/_tools-shared.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>
+

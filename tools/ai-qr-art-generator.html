@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI QR Art Generator — Beautiful Scannable QR Codes | ABUZ8</title>
+<meta name="description" content="Free AI QR art generator. Turn any URL into a scannable artwork using ControlNet — landscapes, characters, abstract designs that still scan. Perfect for menus, posters, packaging.">
+<meta name="keywords" content="ai qr art, qr code art generator, controlnet qr, beautiful qr code, scannable qr art, ai qr code, designer qr code">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://abuz8ai.com/tools/ai-qr-art-generator">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://abuz8ai.com/tools/ai-qr-art-generator">
+<meta property="og:title" content="AI QR Art Generator — Scannable Artwork">
+<meta property="og:description" content="Turn any URL into a beautiful, scannable QR artwork. Free preview + ComfyUI render queue.">
+<meta property="og:image" content="https://abuz8ai.com/og/ai-qr-art-generator.png">
+<meta property="og:site_name" content="ABUZ8">
+<meta name="twitter:card" content="summary_large_image">
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebApplication","name":"AI QR Art Generator","url":"https://abuz8ai.com/tools/ai-qr-art-generator.html","description":"Free AI QR art generator using ControlNet to turn any URL into scannable artwork.","applicationCategory":"MultimediaApplication","operatingSystem":"Web","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"publisher":{"@type":"Organization","name":"ABUZ8 AI","url":"https://abuz8ai.com"}}
+</script>
+
+<style>
+  :root{--lapis:#0a1628;--lapis2:#0f2040;--lapis3:#163060;--gold:#c9a84c;--gold2:#e8d48b;--turq:#0e9f6e;--turq2:#2fbf8f;--turq3:#2fbf8f;--ivory:#faf8f2;--text:#e8e4d8;--dim:#8a9aaa;--dim2:#6a7a8a;--card:#0d1a30;--border:#1a2e50;--border2:rgba(201,168,76,0.18);--r:12px;--r-sm:8px;}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--lapis);color:var(--text);font-family:'Inter',system-ui,sans-serif;min-height:100vh;line-height:1.55;}
+  header{background:linear-gradient(135deg,var(--lapis2),var(--lapis3));border-bottom:1px solid var(--border2);padding:24px 40px;display:flex;align-items:center;gap:20px;}
+  .logo{width:44px;height:44px;background:linear-gradient(135deg,var(--gold),var(--turq));border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:18px;color:var(--lapis);}
+  header h1{font-family:'Playfair Display',serif;font-size:26px;color:var(--gold);font-weight:700;}
+  header p{font-size:13px;color:var(--dim);margin-top:2px;}
+  header a.home-link{color:var(--dim);text-decoration:none;font-size:13px;}
+  header a.home-link:hover{color:var(--gold);}
+  .badge{margin-left:auto;background:rgba(201,168,76,0.12);border:1px solid var(--border2);padding:6px 14px;border-radius:20px;font-size:12px;color:var(--gold);}
+  .hero{max-width:1200px;margin:0 auto;padding:40px 24px 24px;}
+  .hero h2{font-family:'Playfair Display',serif;font-size:40px;line-height:1.15;color:var(--ivory);margin-bottom:14px;font-weight:700;}
+  .hero h2 .accent{color:var(--gold);}
+  .hero p.lede{color:var(--dim);font-size:16px;max-width:720px;}
+  .hero .meta-strip{display:flex;gap:16px;flex-wrap:wrap;margin-top:18px;font-size:12px;color:var(--dim2);}
+  .hero .meta-strip .dot{color:var(--turq2);}
+  .container{max-width:1200px;margin:0 auto;padding:24px;}
+  .two-col{display:grid;grid-template-columns:400px 1fr;gap:24px;align-items:start;}
+  @media(max-width:880px){.two-col{grid-template-columns:1fr;}}
+  .panel{background:var(--card);border:1px solid var(--border2);border-radius:var(--r);padding:24px;}
+  .panel-title{font-size:11px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--gold);margin-bottom:18px;}
+  label{display:block;font-size:12px;font-weight:600;color:var(--text);text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px;margin-top:14px;}
+  label.first{margin-top:0;}
+  input,textarea,select{width:100%;background:var(--lapis2);border:1px solid var(--border);border-radius:var(--r-sm);padding:11px 13px;font-size:14px;color:var(--text);font-family:'Inter',sans-serif;outline:none;transition:border-color .2s;}
+  textarea{resize:vertical;min-height:80px;}
+  input:focus,textarea:focus,select:focus{border-color:var(--gold);}
+  .pill-row{display:flex;flex-wrap:wrap;gap:6px;}
+  .pill{background:var(--lapis2);border:1px solid var(--border);color:var(--dim);border-radius:16px;padding:5px 12px;font-size:11px;font-weight:500;cursor:pointer;transition:all .2s;}
+  .pill.active{background:rgba(201,168,76,0.12);border-color:var(--gold);color:var(--gold);}
+  .pill:hover:not(.active){color:var(--text);border-color:var(--dim2);}
+  .gen-btn{width:100%;margin-top:22px;background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--lapis);font-size:15px;font-weight:800;border:none;border-radius:var(--r-sm);padding:14px;cursor:pointer;}
+  .preview-card{background:var(--card);border:1px solid var(--border2);border-radius:var(--r);padding:24px;text-align:center;}
+  .qr-display{background:#fff;display:inline-block;padding:20px;border-radius:8px;margin:18px 0;}
+  .qr-display canvas, .qr-display img{display:block;}
+  .preview-actions{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:14px;}
+  .action-btn{background:var(--lapis2);border:1px solid var(--border2);color:var(--text);font-size:13px;font-weight:500;padding:9px 16px;border-radius:var(--r-sm);cursor:pointer;}
+  .action-btn:hover{border-color:var(--gold);color:var(--gold);}
+  .action-btn.primary{background:var(--gold);color:var(--lapis);border-color:var(--gold);font-weight:700;}
+  .style-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:6px;}
+  .style-card{background:var(--lapis2);border:1px solid var(--border);border-radius:var(--r-sm);padding:14px 12px;cursor:pointer;text-align:left;transition:all .2s;}
+  .style-card.active{border-color:var(--gold);background:rgba(201,168,76,0.06);}
+  .style-card .name{font-size:13px;font-weight:600;color:var(--text);}
+  .style-card .desc{font-size:11px;color:var(--dim2);margin-top:3px;line-height:1.4;}
+  .info-card{background:linear-gradient(135deg,rgba(232,164,76,0.06),rgba(232,164,76,0.02));border:1px solid var(--border2);border-radius:var(--r);padding:18px 22px;margin-top:18px;font-size:13px;color:var(--dim);}
+  .info-card b{color:var(--gold);}
+  .waitlist{background:linear-gradient(135deg,var(--lapis2),var(--lapis3));border:1px solid var(--gold);border-radius:var(--r);padding:32px;margin-top:32px;position:relative;overflow:hidden;}
+  .waitlist::before{content:'';position:absolute;top:-50%;right:-20%;width:400px;height:400px;background:radial-gradient(circle,rgba(201,168,76,0.08),transparent 70%);pointer-events:none;}
+  .wl-tag{display:inline-block;background:rgba(201,168,76,0.15);color:var(--gold);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;padding:5px 12px;border-radius:20px;margin-bottom:14px;border:1px solid var(--border2);}
+  .waitlist h3{font-family:'Playfair Display',serif;font-size:28px;color:var(--ivory);margin-bottom:10px;}
+  .waitlist h3 span{color:var(--gold);}
+  .waitlist p{color:var(--dim);font-size:14px;line-height:1.6;margin-bottom:18px;max-width:580px;}
+  .wl-form{display:flex;gap:10px;flex-wrap:wrap;position:relative;z-index:1;}
+  .wl-form input{flex:1;min-width:240px;background:var(--lapis);border:1px solid var(--border2);color:var(--ivory);padding:13px 16px;font-size:14px;border-radius:var(--r-sm);outline:none;}
+  .wl-form input:focus{border-color:var(--gold);}
+  .wl-form button{background:var(--gold);color:var(--lapis);border:none;padding:13px 24px;font-size:14px;font-weight:700;border-radius:var(--r-sm);cursor:pointer;}
+  .wl-msg{margin-top:14px;font-size:13px;color:var(--turq3);display:none;}
+  .wl-perks{display:flex;gap:18px;flex-wrap:wrap;margin-top:18px;font-size:12px;color:var(--dim);}
+  .wl-perks span::before{content:'✓ ';color:var(--turq3);font-weight:700;}
+  footer{border-top:1px solid var(--border2);padding:28px 40px;margin-top:60px;color:var(--dim2);font-size:12px;text-align:center;}
+  footer a{color:var(--dim);text-decoration:none;margin:0 10px;}
+  footer a:hover{color:var(--gold);}
+</style>
+<script src="_abuz8-live-brain.js" defer></script>
+
+<script src="_abuz8-config.js" defer></script>
+</head>
+<body>
+<script>
+// Cloud fallback: if ComfyUI is unreachable, redirect generate calls to Workers AI
+(function(){
+  var comfyUrl = (window.ABUZ8_COMFY_BASE) || 'https://comfy.abuz8ai.com';
+  var checked = false, comfyLive = false;
+  window._checkComfy = async function(){
+    if(checked) return comfyLive;
+    try{
+      var r = await fetch(comfyUrl+'/system_stats',{signal:AbortSignal.timeout(3000)});
+      comfyLive = r.ok; checked = true;
+    }catch(_){ comfyLive = false; checked = true; }
+    return comfyLive;
+  };
+  window._cloudGenerate = async function(prompt){
+    try{
+      var r = await fetch('/api/ai-image',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt:prompt})});
+      if(!r.ok) return null;
+      var blob = await r.blob();
+      return URL.createObjectURL(blob);
+    }catch(_){ return null; }
+  };
+})();
+</script>
+
+<header>
+  <div class="logo">A8</div>
+  <div><h1>AI QR Art Generator</h1><p>ControlNet-powered scannable artwork</p></div>
+  <a href="/tools.html" class="home-link">← All Tools</a>
+  <span class="badge">Free · No login</span>
+</header>
+
+<section class="hero">
+  <h2>QR codes that <span class="accent">people actually scan.</span></h2>
+  <p class="lede">Boring black-and-white grids get ignored. ControlNet QR art turns your URL into a beautiful image — landscape, character, abstract design — that still scans. Perfect for menus, packaging, posters, business cards.</p>
+  <div class="meta-strip">
+    <span><span class="dot">●</span> Standard QR preview now</span>
+    <span><span class="dot">●</span> ControlNet artwork (waiting list)</span>
+    <span><span class="dot">●</span> 50+ style presets</span>
+    <span><span class="dot">●</span> Bulk export coming</span>
+  </div>
+</section>
+
+<div class="container">
+  <div class="two-col">
+
+    <div class="panel">
+      <div class="panel-title">⚙ QR Inputs</div>
+
+      <label class="first">URL or Text</label>
+      <input type="text" id="qrText" placeholder="https://abuz8ai.com" value="https://abuz8ai.com">
+
+      <label>Error Correction (more = denser, more art-tolerant)</label>
+      <div class="pill-row" id="ecPills">
+        <button class="pill" data-v="L">L · 7%</button>
+        <button class="pill" data-v="M">M · 15%</button>
+        <button class="pill" data-v="Q">Q · 25%</button>
+        <button class="pill active" data-v="H">H · 30% (recommended)</button>
+      </div>
+
+      <label>Art Style (queues for ComfyUI render)</label>
+      <div class="style-grid" id="styleGrid">
+        <div class="style-card active" data-v="japanese"><div class="name">Japanese Landscape</div><div class="desc">Mt Fuji, cherry blossom, woodblock</div></div>
+        <div class="style-card" data-v="cyberpunk"><div class="name">Cyberpunk City</div><div class="desc">Neon, rain, blade-runner</div></div>
+        <div class="style-card" data-v="renaissance"><div class="name">Renaissance Painting</div><div class="desc">Classical oil, da Vinci style</div></div>
+        <div class="style-card" data-v="abstract"><div class="name">Abstract Geometric</div><div class="desc">Bauhaus, Mondrian-inspired</div></div>
+        <div class="style-card" data-v="character"><div class="name">Character Portrait</div><div class="desc">Stylized avatar / mascot</div></div>
+        <div class="style-card" data-v="nature"><div class="name">Forest / Nature</div><div class="desc">Ghibli forest, mossy stones</div></div>
+        <div class="style-card" data-v="cafe"><div class="name">Coffee / Café</div><div class="desc">Latte art, warm brunch tones</div></div>
+        <div class="style-card" data-v="minimal"><div class="name">Minimal Modern</div><div class="desc">Clean, brand-safe, professional</div></div>
+      </div>
+
+      <label>Custom Prompt (optional)</label>
+      <textarea id="customPrompt" rows="2" placeholder="Override the preset — describe your vision."></textarea>
+
+      <button class="gen-btn" onclick="renderQR()">✦ Generate Standard QR Preview</button>
+
+      <div class="info-card" style="margin-top:18px">
+        <b>Now:</b> standard QR you can use immediately.<br>
+        <b>Coming:</b> the same URL re-rendered as ControlNet artwork. Join the waitlist for early access.
+      </div>
+    </div>
+
+    <div>
+      <div class="preview-card">
+        <h3 style="font-family:'Playfair Display',serif;color:var(--gold);font-size:18px;margin-bottom:6px">Preview</h3>
+        <p style="font-size:12px;color:var(--dim2);margin-bottom:14px">Standard QR · scan to test before queuing the artwork render</p>
+        <div class="qr-display" id="qrDisplay"></div>
+        <div class="preview-actions">
+          <button class="action-btn primary" onclick="downloadQR('png')">⬇ PNG</button>
+          <button class="action-btn" onclick="downloadQR('svg')">⬇ SVG</button>
+          <button class="action-btn" id="gpuArtBtn" onclick="renderArtWithGPU()" style="background:linear-gradient(135deg,#0e9f6e,#2fbf8f);color:#0a1628;border:1px solid #0e9f6e;font-weight:700">⚡ Render Art (GPU)</button>
+        </div>
+        <div id="gpuStatus" style="display:none;margin-top:12px;padding:12px;background:rgba(26,138,122,0.08);border:1px solid rgba(26,138,122,0.3);border-radius:8px;font-size:13px;color:var(--turq3)"></div>
+        <p style="font-size:11px;color:var(--dim2);margin-top:14px">Tip: scan from 1 ft away. If your phone struggles, bump error correction to <b>H</b>.</p>
+      </div>
+
+      <div class="info-card" style="margin-top:18px">
+        <b>Use cases:</b> restaurant menu QR, package insert, conference badge, business card back, poster CTA, event check-in, product authenticity links, NFC-QR fallback.
+      </div>
+    </div>
+
+  </div>
+
+  <div class="waitlist">
+    <span class="wl-tag">Early Access</span>
+    <h3>The <span>ControlNet artwork render</span> opens soon.</h3>
+    <p>Standard QR is for testing. The real product takes the same URL and renders it AS the artwork — Mt. Fuji that scans, a cyberpunk city that scans, your brand mascot that scans. Built on our trained ComfyUI ControlNet pipeline. Early access: 70% off life + bulk export.</p>
+    <form class="wl-form" id="wlForm" onsubmit="joinWaitlist(event)">
+      <input type="email" id="wlEmail" placeholder="design@yourcompany.com" required>
+      <button type="submit">Join Waiting List →</button>
+    </form>
+    <div class="wl-msg" id="wlMsg">✓ You're on the list.</div>
+    <div class="wl-perks"><span>Unlimited art renders</span><span>Bulk URL upload</span><span>50+ style presets</span></div>
+  </div>
+
+</div>
+
+<footer>
+  <div><a href="/">Home</a>·<a href="/tools.html">Tools</a>·<a href="/products.html">Products</a>·<a href="/about.html">About</a>·<a href="/disclaimer.html">Disclaimer</a></div>
+  <div style="margin-top:10px">© 2026 ABUZ8 LLC · QADIR OS · ComfyUI native.</div>
+</footer>
+
+<script>
+let ec='H', style='japanese';
+document.querySelectorAll('#ecPills .pill').forEach(p=>p.addEventListener('click',()=>{document.querySelectorAll('#ecPills .pill').forEach(x=>x.classList.remove('active'));p.classList.add('active');ec=p.dataset.v;renderQR();}));
+document.querySelectorAll('#styleGrid .style-card').forEach(p=>p.addEventListener('click',()=>{document.querySelectorAll('#styleGrid .style-card').forEach(x=>x.classList.remove('active'));p.classList.add('active');style=p.dataset.v;}));
+
+let lastSVG='', lastDataURL='';
+
+function renderQR(){
+  const text=document.getElementById('qrText').value.trim() || 'https://abuz8ai.com';
+  const display=document.getElementById('qrDisplay');
+  display.innerHTML='';
+  // qrcodejs supports Q and H reliably
+  const levelMap={L:0,M:1,Q:2,H:3};
+  new QRCode(display,{text:text,width:240,height:240,correctLevel:levelMap[ec],colorDark:'#0a1628',colorLight:'#ffffff'});
+  setTimeout(()=>{
+    const img=display.querySelector('img');
+    if (img) lastDataURL=img.src;
+    const cv=display.querySelector('canvas');
+    if (cv) lastDataURL=cv.toDataURL('image/png');
+  },80);
+}
+
+function downloadQR(fmt){
+  if (fmt==='png'){
+    if (!lastDataURL) renderQR();
+    setTimeout(()=>{
+      const a=document.createElement('a');
+      a.href=lastDataURL; a.download='qr-code.png'; a.click();
+    },150);
+  } else {
+    // SVG fallback: render simple SVG-encoded QR using same lib via canvas trace
+    if (!lastDataURL) renderQR();
+    setTimeout(()=>{
+      const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="240" height="240"><image href="${lastDataURL}" width="240" height="240"/></svg>`;
+      const a=document.createElement('a');
+      a.href='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg);
+      a.download='qr-code.svg'; a.click();
+    },150);
+  }
+}
+
+function joinWaitlist(e){
+  e.preventDefault();
+  const email=document.getElementById('wlEmail').value.trim();
+  if (!email) return;
+  fetch('/api/waitlist',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,product_id:'ai-qr-art-generator',source:'tool-page'})}).catch(function(){});
+  document.getElementById('wlForm').style.display='none';
+  document.getElementById('wlMsg').style.display='block';
+}
+
+async function renderArtWithGPU(){
+  const status=document.getElementById('gpuStatus');
+  const btn=document.getElementById('gpuArtBtn');
+  status.style.display='block';
+  if (!window.ABUZ8 || !window.ABUZ8.runTool){
+    status.style.background='rgba(224,85,85,0.08)'; status.style.borderColor='rgba(224,85,85,0.3)'; status.style.color='#e05555';
+    status.textContent='Live brain unavailable. Use the standard QR above or join the waitlist.';
+    return;
+  }
+  const text=document.getElementById('qrText').value.trim()||'https://abuz8ai.com';
+  const customP=document.getElementById('customPrompt').value.trim();
+  const STYLE_PROMPTS={
+    japanese:'Mt Fuji at sunrise, cherry blossoms, woodblock print style, ukiyo-e',
+    cyberpunk:'cyberpunk city at night, neon lights, rain-slick streets, blade runner style',
+    renaissance:'classical renaissance oil painting, dramatic chiaroscuro, da Vinci style',
+    abstract:'abstract geometric composition, Bauhaus, Mondrian-inspired, bold primary colors',
+    character:'stylized character portrait, mascot illustration, vibrant colors',
+    nature:'mossy forest, ancient trees, sun rays through canopy, Studio Ghibli style',
+    cafe:'cozy coffee shop, latte art, warm brunch lighting, soft focus',
+    minimal:'minimal modern design, clean lines, professional brand aesthetic'
+  };
+  const finalPrompt=customP||STYLE_PROMPTS[style]||STYLE_PROMPTS.japanese;
+  status.textContent='⚡ Generating QR-art on RTX 5090… ControlNet QR composition takes 20-60s for first render.';
+  btn.disabled=true; btn.textContent='Rendering…';
+  const result=await window.ABUZ8.runTool('comfyui_fun_control', {
+    prompt: finalPrompt,
+    negative: 'blurry, low quality, ugly, deformed, distorted',
+    qr_url: text,
+    error_correction: ec,
+    controlnet_strength: 1.4,
+    width: 768, height: 768
+  }, { timeoutMs: 180000 });
+  btn.disabled=false; btn.textContent='⚡ Render Art (GPU)';
+  if (!result || !result.ok){
+    status.style.background='rgba(224,85,85,0.08)'; status.style.borderColor='rgba(224,85,85,0.3)'; status.style.color='#e05555';
+    status.textContent='GPU render didn\'t complete — the ControlNet QR pipeline may still be loading. Try again in 60s, or use the standard QR above.';
+    return;
+  }
+  if (result.image_b64 || result.image_url){
+    const src = result.image_url || ('data:image/png;base64,'+result.image_b64);
+    document.getElementById('qrDisplay').innerHTML=`<img src="${src}" style="width:240px;height:240px;display:block;border-radius:6px">`;
+    lastDataURL=src;
+    status.style.color='#3dc887';
+    status.textContent='✓ QR-art rendered on RTX 5090. Test scan it before printing — ControlNet sometimes needs a regen for max scannability.';
+  } else {
+    status.style.color='#e8a44c';
+    status.textContent='Backend responded but didn\'t return an image. Try again or use the standard QR.';
+  }
+}
+
+// Render on load
+renderQR();
+</script>
+
+
+<script src="/assets/js/dfy-banner.js" async></script>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+<script src="/tools/_tools-shared.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>
+

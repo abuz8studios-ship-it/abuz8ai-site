@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Dockerfile Generator — Production-Ready Dockerfiles for Any Stack in Seconds | ABUZ8</title>
+  <meta name="description" content="Free AI Dockerfile generator. Select your language, framework, and options — get a production-ready Dockerfile with multi-stage builds, non-root user, health checks, and a matching .dockerignore. 100% client-side, no data sent anywhere." />
+  <meta name="keywords" content="dockerfile generator, docker file generator, create dockerfile, generate dockerfile, dockerfile builder, dockerfile template, multi-stage docker build, docker best practices, containerize app, docker node, docker python, docker go, docker java, dockerfile creator, production dockerfile" />
+  <meta property="og:title" content="AI Dockerfile Generator — Production-Ready Dockerfiles for Any Stack | ABUZ8" />
+  <meta property="og:description" content="Select your stack, toggle options, get a production-ready Dockerfile with multi-stage builds, non-root user, health checks, and .dockerignore. Client-side, free." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://abuz8ai.com/tools/ai-dockerfile-generator" />
+  <link rel="canonical" href="https://abuz8ai.com/tools/ai-dockerfile-generator" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "AI Dockerfile Generator",
+    "description": "Free client-side tool that generates production-ready Dockerfiles for Node.js, Python, Go, Rust, Java, Ruby, PHP, and .NET projects. Includes multi-stage builds, non-root users, health checks, layer caching, and a matching .dockerignore.",
+    "url": "https://abuz8ai.com/tools/ai-dockerfile-generator.html",
+    "applicationCategory": "DeveloperApplication",
+    "operatingSystem": "Any",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+    "author": { "@type": "Organization", "name": "ABUZ8 LLC", "url": "https://abuz8ai.com" }
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "What is a multi-stage Docker build?",
+        "acceptedAnswer": { "@type": "Answer", "text": "A multi-stage build uses multiple FROM statements in a single Dockerfile. The first stage installs dependencies and compiles your code. The second stage copies only the final artifacts into a minimal base image. This dramatically reduces the final image size — often 5-10x smaller — because build tools, dev dependencies, and intermediate files are left behind in the discarded build stage." }
+      },
+      {
+        "@type": "Question",
+        "name": "Why should I run containers as a non-root user?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Running as root inside a container is a security risk. If an attacker exploits a vulnerability in your app, they gain root access to the container — and potentially the host through container escapes. Creating a dedicated non-root user with minimal permissions limits the blast radius. Most orchestrators (Kubernetes, ECS) also enforce or recommend non-root by default." }
+      },
+      {
+        "@type": "Question",
+        "name": "What should go in a .dockerignore file?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Your .dockerignore should exclude everything that is not needed to build or run the app: node_modules, __pycache__, .git, .env files, test directories, documentation, IDE configs, and local build artifacts. This speeds up the build context transfer, prevents secrets from leaking into the image, and avoids cache-busting when unrelated files change." }
+      },
+      {
+        "@type": "Question",
+        "name": "How do Docker health checks work?",
+        "acceptedAnswer": { "@type": "Answer", "text": "A HEALTHCHECK instruction tells Docker how to test whether your container is still working. Docker runs the specified command at a set interval. If the command returns a non-zero exit code, the container is marked unhealthy. Orchestrators like Docker Swarm and Kubernetes use this signal to restart failed containers or stop routing traffic to them." }
+      },
+      {
+        "@type": "Question",
+        "name": "Is my data sent to a server?",
+        "acceptedAnswer": { "@type": "Answer", "text": "No. This generator runs entirely in your browser. Nothing you configure or generate is uploaded, logged, or stored anywhere." }
+      }
+    ]
+  }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0a1628;
+      --card: #0d1a30;
+      --card-alt: #111f38;
+      --primary: #5fa8e8;
+      --primary-dim: #2e75b6;
+      --teal: #0e9f6e;
+      --text: #e8e4d8;
+      --text-dim: #5b6b7c;
+      --border: #d8e0e8;
+      --good: #0e9f6e;
+      --good-bg: #e7f3f0;
+      --warn: #c9a84c;
+      --warn-bg: #fbf1e3;
+      --danger: #c0392b;
+      --danger-bg: #fce4e4;
+      --font-heading: 'Playfair Display', Georgia, serif;
+      --font-body: 'Inter', system-ui, sans-serif;
+      --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-body); background: var(--bg); color: var(--text); line-height: 1.6; }
+    .container { max-width: 960px; margin: 0 auto; padding: 2rem 1.25rem 3rem; }
+
+    /* ── HEADER ──────────────────────────────────────────────────────────────── */
+    .hero { text-align: center; margin-bottom: 2.5rem; }
+    .hero h1 { font-family: var(--font-heading); font-size: clamp(1.6rem, 4vw, 2.4rem); font-weight: 700; color: var(--text); margin-bottom: .5rem; }
+    .hero p  { font-size: 1.05rem; color: var(--text-dim); max-width: 640px; margin: 0 auto; }
+    .badge-row { display: flex; gap: .5rem; justify-content: center; flex-wrap: wrap; margin-top: .75rem; }
+    .badge { font-size: .72rem; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; padding: .25rem .65rem; border-radius: 999px; }
+    .badge-privacy { background: var(--good-bg); color: var(--good); }
+    .badge-free    { background: #152237; color: var(--primary); }
+
+    /* ── CARDS ────────────────────────────────────────────────────────────────── */
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; margin-bottom: 1.25rem; }
+    .card h2 { font-family: var(--font-heading); font-size: 1.15rem; margin-bottom: 1rem; }
+    .card-label { font-size: .82rem; font-weight: 600; color: var(--text-dim); text-transform: uppercase; letter-spacing: .03em; margin-bottom: .35rem; }
+
+    /* ── FORM ─────────────────────────────────────────────────────────────────── */
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    @media (max-width: 560px) { .form-grid { grid-template-columns: 1fr; } }
+    label.field { display: flex; flex-direction: column; gap: .3rem; }
+    label.field span { font-size: .82rem; font-weight: 500; color: var(--text-dim); }
+    select, input[type="text"], input[type="number"] {
+      font-family: var(--font-body); font-size: .95rem; padding: .55rem .75rem;
+      border: 1px solid var(--border); border-radius: 8px; background: var(--card-alt);
+      color: var(--text); outline: none; transition: border .15s;
+    }
+    select:focus, input:focus { border-color: var(--primary); }
+
+    .toggle-row { display: flex; flex-wrap: wrap; gap: .75rem 1.25rem; margin-top: 1rem; }
+    .toggle-row label { display: flex; align-items: center; gap: .4rem; font-size: .9rem; cursor: pointer; user-select: none; }
+    .toggle-row input[type="checkbox"] { accent-color: var(--primary); width: 16px; height: 16px; }
+
+    .option-row { display: flex; flex-wrap: wrap; gap: .75rem; margin-top: .75rem; }
+    label.field.small { flex: 1; min-width: 140px; }
+    label.field.small input { width: 100%; }
+
+    /* ── OUTPUT ───────────────────────────────────────────────────────────────── */
+    .output-block { position: relative; margin-top: .75rem; }
+    .output-block pre {
+      background: #d8e2f0; color: #1a2e50; font-family: var(--font-mono); font-size: .82rem;
+      padding: 1.25rem 1rem; border-radius: 10px; overflow-x: auto; line-height: 1.55;
+      white-space: pre; tab-size: 2; max-height: 520px;
+    }
+    .copy-btn {
+      position: absolute; top: .6rem; right: .6rem;
+      background: var(--primary); color: #0d1a30; border: none; border-radius: 6px;
+      font-family: var(--font-body); font-size: .75rem; font-weight: 600;
+      padding: .35rem .7rem; cursor: pointer; opacity: .85; transition: opacity .15s;
+    }
+    .copy-btn:hover { opacity: 1; }
+    .output-label { font-size: .8rem; font-weight: 600; color: var(--text-dim); text-transform: uppercase; letter-spacing: .03em; margin-bottom: .25rem; }
+    .tab-row { display: flex; gap: 0; margin-bottom: -1px; position: relative; z-index: 1; }
+    .tab-btn {
+      font-family: var(--font-body); font-size: .82rem; font-weight: 600;
+      padding: .5rem 1.1rem; border: 1px solid var(--border); border-bottom: none;
+      border-radius: 8px 8px 0 0; background: var(--card-alt); color: var(--text-dim);
+      cursor: pointer; transition: background .15s, color .15s;
+    }
+    .tab-btn.active { background: #d8e2f0; color: #1a2e50; border-color: #d8e2f0; }
+
+    /* ── STATS ROW ────────────────────────────────────────────────────────────── */
+    .stats-row { display: flex; flex-wrap: wrap; gap: .75rem; margin-top: 1rem; }
+    .stat-chip {
+      background: var(--card-alt); border: 1px solid var(--border); border-radius: 8px;
+      padding: .45rem .85rem; font-size: .82rem; font-weight: 500; color: var(--text-dim);
+    }
+    .stat-chip strong { color: var(--text); font-weight: 600; }
+
+    /* ── TIPS ─────────────────────────────────────────────────────────────────── */
+    .tips-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: .75rem; margin-top: .75rem; }
+    .tip { background: var(--card-alt); border-radius: 8px; padding: .85rem 1rem; font-size: .85rem; line-height: 1.5; }
+    .tip strong { color: var(--primary); }
+
+    /* ── FAQ ──────────────────────────────────────────────────────────────────── */
+    details { border-bottom: 1px solid var(--border); }
+    details:last-child { border-bottom: none; }
+    summary { font-weight: 600; font-size: .92rem; padding: .85rem 0; cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; }
+    summary::after { content: '+'; font-size: 1.1rem; color: var(--text-dim); transition: transform .2s; }
+    details[open] summary::after { content: '\2212'; }
+    details p { font-size: .88rem; color: var(--text-dim); padding: 0 0 1rem; line-height: 1.6; }
+
+    /* ── CTA ──────────────────────────────────────────────────────────────────── */
+    .cta-card { background: linear-gradient(135deg, var(--primary), var(--teal)); border: none; color: #0d1a30; text-align: center; padding: 2rem 1.5rem; }
+    .cta-card h2 { color: #0d1a30; margin-bottom: .4rem; }
+    .cta-card p  { color: rgba(255,255,255,.85); font-size: .95rem; margin-bottom: 1rem; }
+    .cta-form { display: flex; gap: .5rem; max-width: 420px; margin: 0 auto; }
+    .cta-form input {
+      flex: 1; padding: .6rem .85rem; border: none; border-radius: 8px;
+      font-family: var(--font-body); font-size: .95rem; background: rgba(255,255,255,.95); color: var(--text);
+    }
+    .cta-form button {
+      background: #0d1a30; color: var(--primary); border: none; border-radius: 8px;
+      font-family: var(--font-body); font-size: .9rem; font-weight: 700;
+      padding: .6rem 1.25rem; cursor: pointer; white-space: nowrap; transition: background .15s;
+    }
+    .cta-form button:hover { background: #182634; }
+    .cta-success { font-weight: 600; display: none; margin-top: .5rem; }
+    .cta-success.visible { display: block; }
+
+    /* ── SOVEREIGN ────────────────────────────────────────────────────────────── */
+    .sovereign { text-align: center; margin-top: 1.5rem; font-size: .8rem; color: var(--text-dim); }
+    .sovereign a { color: var(--primary); text-decoration: none; font-weight: 600; }
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <!-- HERO -->
+  <div class="hero">
+    <h1>AI Dockerfile Generator</h1>
+    <p>Select your language and framework, toggle best-practice options, get a production-ready Dockerfile and .dockerignore instantly. Zero AI calls — pure logic, runs in your browser.</p>
+    <div class="badge-row">
+      <span class="badge badge-privacy">No Data Sent</span>
+      <span class="badge badge-free">100% Free</span>
+    </div>
+  </div>
+
+  <!-- CONFIG -->
+  <div class="card">
+    <h2>Configure Your Stack</h2>
+    <div class="form-grid">
+      <label class="field">
+        <span>Language / Runtime</span>
+        <select id="lang" onchange="onLangChange(); generate();">
+          <option value="node">Node.js</option>
+          <option value="python">Python</option>
+          <option value="go">Go</option>
+          <option value="rust">Rust</option>
+          <option value="java">Java (Maven)</option>
+          <option value="java-gradle">Java (Gradle)</option>
+          <option value="ruby">Ruby</option>
+          <option value="php">PHP</option>
+          <option value="dotnet">.NET</option>
+        </select>
+      </label>
+      <label class="field">
+        <span>Framework (optional)</span>
+        <select id="framework" onchange="generate();">
+          <option value="">— None —</option>
+        </select>
+      </label>
+    </div>
+
+    <div class="option-row">
+      <label class="field small">
+        <span>App Port</span>
+        <input type="number" id="port" value="3000" min="1" max="65535" onchange="generate();" />
+      </label>
+      <label class="field small">
+        <span>Node / Runtime Version</span>
+        <input type="text" id="rtVersion" value="22" onchange="generate();" />
+      </label>
+      <label class="field small">
+        <span>App Entrypoint</span>
+        <input type="text" id="entrypoint" value="server.js" onchange="generate();" />
+      </label>
+    </div>
+
+    <div class="toggle-row">
+      <label><input type="checkbox" id="optMultistage" checked onchange="generate();" /> Multi-stage build</label>
+      <label><input type="checkbox" id="optNonroot" checked onchange="generate();" /> Non-root user</label>
+      <label><input type="checkbox" id="optHealthcheck" checked onchange="generate();" /> Health check</label>
+      <label><input type="checkbox" id="optLabels" checked onchange="generate();" /> OCI labels</label>
+      <label><input type="checkbox" id="optSlim" onchange="generate();" /> Slim / Alpine base</label>
+    </div>
+  </div>
+
+  <!-- OUTPUT -->
+  <div class="card">
+    <h2>Generated Output</h2>
+    <div class="tab-row">
+      <button class="tab-btn active" onclick="showTab('dockerfile')">Dockerfile</button>
+      <button class="tab-btn" onclick="showTab('dockerignore')">.dockerignore</button>
+    </div>
+    <div class="output-block" id="out-dockerfile">
+      <button class="copy-btn" onclick="copyBlock('dockerfile')">Copy</button>
+      <pre id="dockerfile"></pre>
+    </div>
+    <div class="output-block" id="out-dockerignore" style="display:none;">
+      <button class="copy-btn" onclick="copyBlock('dockerignore')">Copy</button>
+      <pre id="dockerignore"></pre>
+    </div>
+    <div class="stats-row" id="statsRow"></div>
+  </div>
+
+  <!-- TIPS -->
+  <div class="card">
+    <h2>Docker Best Practices</h2>
+    <div class="tips-grid">
+      <div class="tip"><strong>Layer caching:</strong> Copy dependency files (package.json, requirements.txt) before source code so installs are cached when only code changes.</div>
+      <div class="tip"><strong>Multi-stage builds:</strong> Compile in a builder stage, copy only the binary/bundle to a minimal runtime image. Final images shrink 5-10x.</div>
+      <div class="tip"><strong>Non-root user:</strong> Never run as root in production. Create a dedicated user with minimal permissions to limit the blast radius of a compromise.</div>
+      <div class="tip"><strong>.dockerignore:</strong> Exclude .git, node_modules, __pycache__, .env, and test dirs. Smaller build context = faster builds + no leaked secrets.</div>
+      <div class="tip"><strong>Pin versions:</strong> Use specific base image tags (node:22-slim, not node:latest) so builds are reproducible and not broken by upstream changes.</div>
+      <div class="tip"><strong>Health checks:</strong> Add HEALTHCHECK so orchestrators can detect when your app is down and auto-restart or stop routing traffic to it.</div>
+    </div>
+  </div>
+
+  <!-- FAQ -->
+  <div class="card">
+    <h2>FAQ</h2>
+    <details><summary>What is a multi-stage Docker build?</summary><p>A multi-stage build uses multiple FROM statements in a single Dockerfile. The first stage installs dependencies and compiles your code. The second stage copies only the final artifacts into a minimal base image. This dramatically reduces the final image size — often 5-10x smaller — because build tools, dev dependencies, and intermediate files are left behind in the discarded build stage.</p></details>
+    <details><summary>Why should I run containers as a non-root user?</summary><p>Running as root inside a container is a security risk. If an attacker exploits a vulnerability in your app, they gain root access to the container — and potentially the host through container escapes. Creating a dedicated non-root user with minimal permissions limits the blast radius. Most orchestrators (Kubernetes, ECS) also enforce or recommend non-root by default.</p></details>
+    <details><summary>What should go in a .dockerignore file?</summary><p>Exclude everything not needed to build or run the app: node_modules, __pycache__, .git, .env files, test directories, documentation, IDE configs, and local build artifacts. This speeds up context transfer, prevents secrets from leaking into the image, and avoids cache-busting when unrelated files change.</p></details>
+    <details><summary>How do Docker health checks work?</summary><p>A HEALTHCHECK instruction tells Docker how to test whether your container is still working. Docker runs the specified command at a set interval. If the command returns a non-zero exit code, the container is marked unhealthy. Orchestrators like Docker Swarm and Kubernetes use this signal to restart failed containers or stop routing traffic to them.</p></details>
+    <details><summary>Is my data sent to a server?</summary><p>No. This generator runs entirely in your browser. Nothing you configure or generate is uploaded, logged, or stored anywhere.</p></details>
+  </div>
+
+  <!-- CTA -->
+  <div class="card cta-card">
+    <h2>ABUZ8 OS — Your Sovereign AI Engine</h2>
+    <p>Run 100+ AI tools locally. No cloud lock-in. Own your data and your infrastructure.</p>
+    <div class="cta-form">
+      <input type="email" id="ctaEmail" placeholder="you@company.com" />
+      <button onclick="submitWaitlist()">Join Early Access</button>
+    </div>
+    <div class="cta-success" id="ctaSuccess">You're on the list. We'll be in touch.</div>
+  </div>
+
+  <div class="sovereign">Built by <a href="https://abuz8ai.com">ABUZ8</a> — Sovereign AI, no rental.</div>
+</div>
+
+<script>
+// ── STACK DEFINITIONS ────────────────────────────────────────────────────────
+const STACKS = {
+  node: {
+    name: 'Node.js', base: 'node', defaultVer: '22', slim: '-slim', alpine: '-alpine',
+    frameworks: [
+      { v: '', l: '— None —' },
+      { v: 'express', l: 'Express' },
+      { v: 'fastify', l: 'Fastify' },
+      { v: 'nestjs', l: 'NestJS' },
+      { v: 'next', l: 'Next.js' },
+      { v: 'hono', l: 'Hono' },
+    ],
+    port: 3000, entry: 'server.js',
+    depFile: 'package*.json', installCmd: 'npm ci --omit=dev', startCmd: 'node',
+    healthCmd: 'node -e "require(\'http\').get(\'http://localhost:${PORT}/\',r=>{process.exit(r.statusCode===200?0:1)}).on(\'error\',()=>process.exit(1))"',
+    ignore: ['node_modules', 'npm-debug.log*', '.npm', 'dist', 'build', 'coverage', '.nyc_output', '*.tsbuildinfo'],
+  },
+  python: {
+    name: 'Python', base: 'python', defaultVer: '3.12', slim: '-slim', alpine: '-alpine',
+    frameworks: [
+      { v: '', l: '— None —' },
+      { v: 'fastapi', l: 'FastAPI' },
+      { v: 'flask', l: 'Flask' },
+      { v: 'django', l: 'Django' },
+      { v: 'starlette', l: 'Starlette' },
+    ],
+    port: 8000, entry: 'main.py',
+    depFile: 'requirements.txt', installCmd: 'pip install --no-cache-dir -r requirements.txt',
+    startCmd: 'python', healthCmd: 'python -c "import urllib.request; urllib.request.urlopen(\'http://localhost:${PORT}/\')"',
+    ignore: ['__pycache__', '*.pyc', '*.pyo', '.venv', 'venv', 'env', '.pytest_cache', '.mypy_cache', 'dist', '*.egg-info'],
+  },
+  go: {
+    name: 'Go', base: 'golang', defaultVer: '1.23', slim: '', alpine: '-alpine',
+    frameworks: [
+      { v: '', l: '— None —' },
+      { v: 'gin', l: 'Gin' },
+      { v: 'fiber', l: 'Fiber' },
+      { v: 'echo', l: 'Echo' },
+      { v: 'chi', l: 'Chi' },
+    ],
+    port: 8080, entry: './cmd/server',
+    depFile: 'go.mod go.sum', installCmd: 'go mod download', startCmd: '',
+    compiled: true, binaryName: 'app',
+    healthCmd: 'wget -qO- http://localhost:${PORT}/ || exit 1',
+    ignore: ['vendor/', '*.exe', '*.test', '*.out', 'tmp/', '.air.toml'],
+  },
+  rust: {
+    name: 'Rust', base: 'rust', defaultVer: '1.80', slim: '-slim', alpine: '',
+    frameworks: [
+      { v: '', l: '— None —' },
+      { v: 'actix', l: 'Actix Web' },
+      { v: 'axum', l: 'Axum' },
+      { v: 'rocket', l: 'Rocket' },
+    ],
+    port: 8080, entry: '',
+    depFile: 'Cargo.toml Cargo.lock', installCmd: 'cargo build --release', startCmd: '',
+    compiled: true, binaryName: 'app',
+    healthCmd: 'curl -f http://localhost:${PORT}/ || exit 1',
+    ignore: ['target/', '*.rs.bk', '.cargo/'],
+  },
+  java: {
+    name: 'Java (Maven)', base: 'eclipse-temurin', defaultVer: '21', slim: '', alpine: '-alpine',
+    frameworks: [
+      { v: '', l: '— None —' },
+      { v: 'spring', l: 'Spring Boot' },
+      { v: 'quarkus', l: 'Quarkus' },
+      { v: 'micronaut', l: 'Micronaut' },
+    ],
+    port: 8080, entry: 'app.jar',
+    depFile: 'pom.xml', installCmd: './mvnw package -DskipTests', startCmd: 'java -jar',
+    compiled: true, binaryName: 'app.jar',
+    healthCmd: 'curl -f http://localhost:${PORT}/actuator/health || exit 1',
+    ignore: ['target/', '.mvn/wrapper/', '*.class', '*.jar', '!app.jar', '.idea/', '*.iml'],
+  },
+  'java-gradle': {
+    name: 'Java (Gradle)', base: 'eclipse-temurin', defaultVer: '21', slim: '', alpine: '-alpine',
+    frameworks: [
+      { v: '', l: '— None —' },
+      { v: 'spring', l: 'Spring Boot' },
+      { v: 'quarkus', l: 'Quarkus' },
+    ],
+    port: 8080, entry: 'app.jar',
+    depFile: 'build.gradle* settings.gradle*', installCmd: './gradlew build -x test', startCmd: 'java -jar',
+    compiled: true, binaryName: 'app.jar',
+    healthCmd: 'curl -f http://localhost:${PORT}/actuator/health || exit 1',
+    ignore: ['build/', '.gradle/', '*.class', '*.jar', '!app.jar', '.idea/', '*.iml'],
+  },
+  ruby: {
+    name: 'Ruby', base: 'ruby', defaultVer: '3.3', slim: '-slim', alpine: '-alpine',
+    frameworks: [
+      { v: '', l: '— None —' },
+      { v: 'rails', l: 'Rails' },
+      { v: 'sinatra', l: 'Sinatra' },
+    ],
+    port: 3000, entry: 'config.ru',
+    depFile: 'Gemfile Gemfile.lock', installCmd: 'bundle install --without development test',
+    startCmd: 'bundle exec',
+    healthCmd: 'curl -f http://localhost:${PORT}/ || exit 1',
+    ignore: ['vendor/bundle', '.bundle', 'tmp/', 'log/', 'coverage/', 'spec/', 'test/'],
+  },
+  php: {
+    name: 'PHP', base: 'php', defaultVer: '8.3', slim: '', alpine: '-alpine',
+    frameworks: [
+      { v: '', l: '— None —' },
+      { v: 'laravel', l: 'Laravel' },
+      { v: 'symfony', l: 'Symfony' },
+      { v: 'slim', l: 'Slim' },
+    ],
+    port: 8080, entry: 'public/index.php',
+    depFile: 'composer.json composer.lock', installCmd: 'composer install --no-dev --optimize-autoloader',
+    startCmd: 'php -S 0.0.0.0:',
+    healthCmd: 'curl -f http://localhost:${PORT}/ || exit 1',
+    ignore: ['vendor/', 'node_modules/', '.env', 'storage/logs/', 'bootstrap/cache/', 'tests/'],
+  },
+  dotnet: {
+    name: '.NET', base: 'mcr.microsoft.com/dotnet/sdk', runtimeBase: 'mcr.microsoft.com/dotnet/aspnet',
+    defaultVer: '8.0', slim: '', alpine: '-alpine',
+    frameworks: [
+      { v: '', l: '— None —' },
+      { v: 'aspnet', l: 'ASP.NET Core' },
+      { v: 'blazor', l: 'Blazor Server' },
+    ],
+    port: 8080, entry: 'MyApp.dll',
+    depFile: '*.csproj', installCmd: 'dotnet publish -c Release -o /app/publish',
+    startCmd: 'dotnet', compiled: true, binaryName: 'MyApp.dll',
+    healthCmd: 'curl -f http://localhost:${PORT}/health || exit 1',
+    ignore: ['bin/', 'obj/', '*.user', '*.suo', '.vs/', 'TestResults/', 'packages/'],
+  },
+};
+
+// ── FRAMEWORK → ENTRYPOINT / START CMD OVERRIDES ─────────────────────────────
+const FW_OVERRIDES = {
+  'node:next':    { entry: '.next', startCmd: 'npx next start -p' },
+  'node:nestjs':  { entry: 'dist/main.js' },
+  'python:fastapi': { startCmd: 'uvicorn main:app --host 0.0.0.0 --port' },
+  'python:flask': { startCmd: 'gunicorn -b 0.0.0.0:' },
+  'python:django': { entry: 'manage.py', startCmd: 'gunicorn myproject.wsgi:application -b 0.0.0.0:' },
+  'ruby:rails':   { entry: 'config.ru', startCmd: 'bundle exec rails server -b 0.0.0.0 -p' },
+  'ruby:sinatra': { startCmd: 'bundle exec ruby' },
+  'php:laravel':  { startCmd: 'php artisan serve --host=0.0.0.0 --port=' },
+};
+
+// ── UI WIRING ────────────────────────────────────────────────────────────────
+function onLangChange() {
+  const lang = document.getElementById('lang').value;
+  const s = STACKS[lang];
+  const fwSel = document.getElementById('framework');
+  fwSel.innerHTML = s.frameworks.map(f => '<option value="' + f.v + '">' + f.l + '</option>').join('');
+  document.getElementById('port').value = s.port;
+  document.getElementById('rtVersion').value = s.defaultVer;
+  document.getElementById('entrypoint').value = s.entry;
+}
+
+function showTab(which) {
+  document.querySelectorAll('.tab-btn').forEach((b, i) => b.classList.toggle('active', (which === 'dockerfile' ? i === 0 : i === 1)));
+  document.getElementById('out-dockerfile').style.display = which === 'dockerfile' ? '' : 'none';
+  document.getElementById('out-dockerignore').style.display = which === 'dockerignore' ? '' : 'none';
+}
+
+function copyBlock(which) {
+  const text = document.getElementById(which).textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.querySelector('#out-' + which + ' .copy-btn');
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = 'Copy', 1500);
+  });
+}
+
+// ── GENERATOR ────────────────────────────────────────────────────────────────
+function generate() {
+  const lang = document.getElementById('lang').value;
+  const fw   = document.getElementById('framework').value;
+  const port = parseInt(document.getElementById('port').value) || 3000;
+  const ver  = document.getElementById('rtVersion').value.trim() || STACKS[lang].defaultVer;
+  const entry = document.getElementById('entrypoint').value.trim() || STACKS[lang].entry;
+
+  const multistage = document.getElementById('optMultistage').checked;
+  const nonroot    = document.getElementById('optNonroot').checked;
+  const healthcheck = document.getElementById('optHealthcheck').checked;
+  const labels     = document.getElementById('optLabels').checked;
+  const slim       = document.getElementById('optSlim').checked;
+
+  const s = STACKS[lang];
+  const ov = FW_OVERRIDES[lang + ':' + fw] || {};
+  const finalEntry = ov.entry || entry;
+  const finalStart = ov.startCmd || s.startCmd;
+
+  const suffix = slim ? (s.alpine || s.slim || '') : (s.slim || '');
+  const baseImg = s.base + ':' + ver + suffix;
+
+  const lines = [];
+  let stages = 1;
+
+  // ── LABELS ────
+  function addLabels() {
+    if (!labels) return;
+    lines.push('');
+    lines.push('LABEL org.opencontainers.image.source="https://github.com/you/your-repo" \\');
+    lines.push('      org.opencontainers.image.description="Production image" \\');
+    lines.push('      org.opencontainers.image.licenses="MIT"');
+  }
+
+  // ── COMPILED LANGUAGES (Go, Rust, Java, .NET) ─────────────────────────────
+  if (s.compiled && multistage) {
+    stages = 2;
+    // builder
+    lines.push('# ── Stage 1: Build ──────────────────────────────────────');
+    lines.push('FROM ' + baseImg + ' AS builder');
+    lines.push('WORKDIR /build');
+    lines.push('');
+    lines.push('# Copy dependency manifests first (layer cache)');
+    s.depFile.split(' ').forEach(f => lines.push('COPY ' + f + ' ./'));
+    if (s.installCmd.startsWith('go ')) {
+      lines.push('RUN ' + s.installCmd);
+      lines.push('');
+      lines.push('COPY . .');
+      lines.push('RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-s -w" -o /app ' + finalEntry);
+    } else if (lang === 'rust') {
+      lines.push('COPY . .');
+      lines.push('RUN ' + s.installCmd);
+    } else if (lang === 'dotnet') {
+      lines.push('COPY . .');
+      lines.push('RUN ' + s.installCmd);
+    } else {
+      // Java
+      lines.push('COPY . .');
+      lines.push('RUN ' + s.installCmd);
+    }
+
+    // runtime
+    lines.push('');
+    lines.push('# ── Stage 2: Runtime ────────────────────────────────────');
+    let runtimeImg;
+    if (lang === 'go') {
+      runtimeImg = slim ? 'alpine:3.20' : 'gcr.io/distroless/static-debian12';
+    } else if (lang === 'rust') {
+      runtimeImg = 'debian:bookworm-slim';
+    } else if (lang === 'dotnet') {
+      runtimeImg = (s.runtimeBase || 'mcr.microsoft.com/dotnet/aspnet') + ':' + ver + (slim ? '-alpine' : '');
+    } else {
+      // Java
+      runtimeImg = s.base + ':' + ver + '-jre' + (slim ? '-alpine' : '');
+    }
+    lines.push('FROM ' + runtimeImg);
+    lines.push('WORKDIR /app');
+    addLabels();
+
+    if (nonroot) {
+      if (runtimeImg.includes('distroless')) {
+        lines.push('USER nonroot:nonroot');
+      } else {
+        lines.push('');
+        lines.push('RUN addgroup --system appgroup && adduser --system --ingroup appgroup appuser');
+      }
+    }
+
+    lines.push('');
+    if (lang === 'go') {
+      lines.push('COPY --from=builder /app /app');
+    } else if (lang === 'rust') {
+      lines.push('COPY --from=builder /build/target/release/' + (s.binaryName || 'app') + ' /app/app');
+    } else if (lang === 'dotnet') {
+      lines.push('COPY --from=builder /app/publish .');
+    } else {
+      // Java
+      lines.push('COPY --from=builder /build/target/*.jar /app/app.jar');
+    }
+
+    if (nonroot && !runtimeImg.includes('distroless')) {
+      lines.push('USER appuser');
+    }
+
+    lines.push('');
+    lines.push('EXPOSE ' + port);
+
+    if (healthcheck) {
+      const hc = s.healthCmd.replace('${PORT}', port);
+      lines.push('HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \\');
+      lines.push('  CMD ' + hc);
+    }
+
+    lines.push('');
+    if (lang === 'go') {
+      lines.push('ENTRYPOINT ["/app"]');
+    } else if (lang === 'rust') {
+      lines.push('ENTRYPOINT ["/app/app"]');
+    } else if (lang === 'dotnet') {
+      lines.push('ENTRYPOINT ["dotnet", "' + finalEntry + '"]');
+    } else {
+      // Java
+      lines.push('ENTRYPOINT ["java", "-jar", "/app/app.jar"]');
+    }
+
+  // ── INTERPRETED LANGUAGES (Node, Python, Ruby, PHP) ───────────────────────
+  } else if (multistage && !s.compiled) {
+    stages = 2;
+    // builder
+    lines.push('# ── Stage 1: Install dependencies ──────────────────────');
+    lines.push('FROM ' + baseImg + ' AS deps');
+    lines.push('WORKDIR /app');
+    lines.push('');
+    s.depFile.split(' ').forEach(f => lines.push('COPY ' + f + ' ./'));
+    lines.push('RUN ' + s.installCmd);
+
+    // runtime
+    lines.push('');
+    lines.push('# ── Stage 2: Runtime ────────────────────────────────────');
+    lines.push('FROM ' + baseImg);
+    lines.push('WORKDIR /app');
+    addLabels();
+
+    if (nonroot) {
+      lines.push('');
+      if (lang === 'node') {
+        lines.push('# Node images ship with a "node" user');
+        lines.push('USER node');
+      } else {
+        lines.push('RUN addgroup --system appgroup && adduser --system --ingroup appgroup appuser');
+      }
+    }
+
+    lines.push('');
+    if (lang === 'node') {
+      lines.push('COPY --from=deps /app/node_modules ./node_modules');
+    } else if (lang === 'python') {
+      lines.push('COPY --from=deps /usr/local/lib/python' + ver + '/site-packages /usr/local/lib/python' + ver + '/site-packages');
+      lines.push('COPY --from=deps /usr/local/bin /usr/local/bin');
+    } else if (lang === 'ruby') {
+      lines.push('COPY --from=deps /usr/local/bundle /usr/local/bundle');
+    } else if (lang === 'php') {
+      lines.push('COPY --from=deps /app/vendor ./vendor');
+    }
+    lines.push('COPY . .');
+
+    if (nonroot && lang !== 'node') {
+      lines.push('USER appuser');
+    }
+
+    lines.push('');
+    lines.push('EXPOSE ' + port);
+
+    if (healthcheck) {
+      const hc = s.healthCmd.replace('${PORT}', port);
+      lines.push('HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \\');
+      lines.push('  CMD ' + hc);
+    }
+
+    lines.push('');
+    if (lang === 'node') {
+      lines.push('CMD ["' + s.startCmd + '", "' + finalEntry + '"]');
+    } else if (lang === 'python') {
+      if (finalStart.includes(' ')) {
+        lines.push('CMD ' + finalStart + port);
+      } else {
+        lines.push('CMD ["' + finalStart + '", "' + finalEntry + '"]');
+      }
+    } else {
+      lines.push('CMD ' + finalStart + port);
+    }
+
+  // ── SINGLE-STAGE ──────────────────────────────────────────────────────────
+  } else {
+    lines.push('FROM ' + baseImg);
+    lines.push('WORKDIR /app');
+    addLabels();
+
+    if (nonroot && !s.compiled) {
+      lines.push('');
+      if (lang === 'node') {
+        lines.push('USER node');
+      } else {
+        lines.push('RUN addgroup --system appgroup && adduser --system --ingroup appgroup appuser');
+      }
+    }
+
+    lines.push('');
+    lines.push('# Copy dependency manifests first (layer cache)');
+    s.depFile.split(' ').forEach(f => lines.push('COPY ' + f + ' ./'));
+    lines.push('RUN ' + (s.compiled ? s.installCmd : s.installCmd));
+
+    if (!s.compiled) {
+      lines.push('');
+      lines.push('COPY . .');
+    }
+
+    if (nonroot && !s.compiled && lang !== 'node') {
+      lines.push('USER appuser');
+    }
+
+    lines.push('');
+    lines.push('EXPOSE ' + port);
+
+    if (healthcheck) {
+      const hc = s.healthCmd.replace('${PORT}', port);
+      lines.push('HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \\');
+      lines.push('  CMD ' + hc);
+    }
+
+    lines.push('');
+    if (s.compiled) {
+      lines.push('ENTRYPOINT ["./' + (s.binaryName || 'app') + '"]');
+    } else if (lang === 'node') {
+      lines.push('CMD ["' + s.startCmd + '", "' + finalEntry + '"]');
+    } else {
+      lines.push('CMD ' + finalStart + port);
+    }
+  }
+
+  document.getElementById('dockerfile').textContent = lines.join('\n');
+
+  // ── .dockerignore ─────────────────────────────────────────────────────────
+  const ign = [
+    '# ── .dockerignore ──────────────────────────────────────',
+    '# Generated by ABUZ8 AI Dockerfile Generator',
+    '',
+    '# Version control',
+    '.git',
+    '.gitignore',
+    '',
+    '# Docker',
+    'Dockerfile*',
+    'docker-compose*',
+    '.dockerignore',
+    '',
+    '# IDE / Editor',
+    '.vscode/',
+    '.idea/',
+    '*.swp',
+    '*.swo',
+    '*~',
+    '',
+    '# Environment',
+    '.env',
+    '.env.*',
+    '!.env.example',
+    '',
+    '# Documentation',
+    'README*',
+    'LICENSE',
+    'CHANGELOG*',
+    'docs/',
+    '',
+    '# Tests',
+    'test/',
+    'tests/',
+    '__tests__/',
+    '*.test.*',
+    '*.spec.*',
+    '',
+    '# Language-specific',
+    ...s.ignore,
+  ];
+  document.getElementById('dockerignore').textContent = ign.join('\n');
+
+  // ── STATS ─────────────────────────────────────────────────────────────────
+  const lineCount = lines.length;
+  const statsHtml = [
+    '<div class="stat-chip"><strong>' + lineCount + '</strong> lines</div>',
+    '<div class="stat-chip"><strong>' + stages + '</strong> stage' + (stages > 1 ? 's' : '') + '</div>',
+    '<div class="stat-chip">Base: <strong>' + baseImg + '</strong></div>',
+    '<div class="stat-chip">Port: <strong>' + port + '</strong></div>',
+  ];
+  if (nonroot) statsHtml.push('<div class="stat-chip" style="color:var(--good)">Non-root</div>');
+  if (healthcheck) statsHtml.push('<div class="stat-chip" style="color:var(--good)">Health check</div>');
+  document.getElementById('statsRow').innerHTML = statsHtml.join('');
+}
+
+// ── WAITLIST ─────────────────────────────────────────────────────────────────
+async function submitWaitlist() {
+  const email = document.getElementById('ctaEmail').value.trim();
+  if (!email || !email.includes('@')) { alert('Please enter a valid email address.'); return; }
+  const payload = { email, product: 'qadir-os-dockerfile-generator', ts: new Date().toISOString() };
+  try {
+    await fetch('/api/waitlist', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+  } catch (e) { /* graceful fallback */ }
+  document.getElementById('ctaEmail').style.display = 'none';
+  document.querySelector('.cta-form button').style.display = 'none';
+  document.getElementById('ctaSuccess').classList.add('visible');
+}
+
+// ── INIT ─────────────────────────────────────────────────────────────────────
+onLangChange();
+generate();
+</script>
+<script src="/tools/_tools-shared.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>

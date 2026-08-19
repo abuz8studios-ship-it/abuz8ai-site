@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Travel Planner — ABUZ8</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--lapis:#0a1628;--lapis2:#0f1f3d;--lapis3:#162544;--gold:#c9a84c;--turq:#0e9f6e;--turq2:#22b5a0;--cream:#f5f0e8;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--lapis);color:var(--cream);font-family:'Inter',sans-serif;min-height:100vh;}
+header{background:var(--lapis2);border-bottom:1px solid rgba(201,168,76,.15);padding:16px 32px;display:flex;align-items:center;gap:12px;}
+header h1{font-family:'Playfair Display',serif;font-size:1.4rem;color:var(--gold);}
+header span{background:var(--turq);color:#fff;font-size:11px;font-weight:600;padding:2px 8px;border-radius:20px;}
+.hero{text-align:center;padding:44px 20px 28px;}
+.hero h2{font-family:'Playfair Display',serif;font-size:2rem;color:var(--cream);margin-bottom:10px;}
+.hero p{color:rgba(245,240,232,.7);font-size:.95rem;max-width:480px;margin:0 auto;}
+.main{max-width:960px;margin:0 auto;padding:0 20px 80px;}
+.card{background:var(--lapis2);border:1px solid rgba(201,168,76,.12);border-radius:12px;padding:26px;}
+.card+.card{margin-top:16px;}
+label{display:block;font-size:12px;font-weight:700;color:var(--gold);margin-bottom:6px;letter-spacing:.05em;text-transform:uppercase;}
+input,select{width:100%;background:var(--lapis3);border:1px solid rgba(201,168,76,.2);border-radius:8px;padding:11px 14px;color:var(--cream);font-family:'Inter',sans-serif;font-size:14px;outline:none;transition:border .2s;}
+input:focus,select:focus{border-color:var(--gold);}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px;}
+.tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;}
+.tag{padding:6px 14px;border-radius:20px;border:1px solid rgba(201,168,76,.2);cursor:pointer;font-size:12px;color:rgba(245,240,232,.7);transition:all .2s;user-select:none;}
+.tag.active{background:var(--gold);border-color:var(--gold);color:var(--lapis);font-weight:700;}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:12px 24px;border-radius:8px;border:none;cursor:pointer;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;transition:all .2s;}
+.btn-gold{background:var(--gold);color:var(--lapis);}
+.btn-gold:hover{background:#e0bc5a;}
+.btn-outline{background:transparent;border:1px solid rgba(201,168,76,.3);color:var(--cream);}
+.btn-outline:hover{border-color:var(--gold);color:var(--gold);}
+.actions{margin-top:18px;display:flex;gap:12px;flex-wrap:wrap;}
+/* Itinerary */
+#itinArea{display:none;}
+.itin-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px;flex-wrap:wrap;gap:10px;}
+.itin-header h3{font-family:'Playfair Display',serif;font-size:1.4rem;color:var(--gold);}
+.trip-stats{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:20px;}
+.stat{background:var(--lapis3);border:1px solid rgba(201,168,76,.12);border-radius:20px;padding:5px 14px;font-size:12px;color:rgba(245,240,232,.7);}
+/* Tabs */
+.tabs{display:flex;gap:0;border-bottom:1px solid rgba(201,168,76,.12);margin-bottom:20px;}
+.tab{padding:10px 18px;cursor:pointer;font-size:13px;font-weight:600;color:rgba(245,240,232,.45);border-bottom:2px solid transparent;transition:all .2s;}
+.tab.active{color:var(--gold);border-bottom-color:var(--gold);}
+.pane{display:none;}
+.pane.active{display:block;}
+/* Day itinerary */
+.day-block{margin-bottom:20px;}
+.day-label{font-size:11px;font-weight:700;letter-spacing:.1em;color:var(--turq2);text-transform:uppercase;margin-bottom:10px;}
+.itin-item{display:flex;gap:12px;margin-bottom:8px;}
+.itin-time{min-width:60px;font-size:12px;color:rgba(245,240,232,.4);padding-top:3px;font-weight:600;}
+.itin-dot{position:relative;display:flex;flex-direction:column;align-items:center;min-width:16px;}
+.itin-dot::before{content:'';width:10px;height:10px;border-radius:50%;background:var(--gold);margin-top:4px;flex-shrink:0;}
+.itin-dot::after{content:'';width:1px;flex:1;background:rgba(201,168,76,.15);margin-top:4px;}
+.itin-content{flex:1;background:var(--lapis3);border-radius:8px;padding:12px;border:1px solid rgba(201,168,76,.08);}
+.itin-title{font-size:13px;font-weight:600;color:var(--cream);}
+.itin-desc{font-size:12px;color:rgba(245,240,232,.55);margin-top:3px;line-height:1.5;}
+.itin-tags{display:flex;gap:6px;margin-top:6px;flex-wrap:wrap;}
+.itin-badge{font-size:10px;padding:2px 8px;border-radius:20px;background:rgba(201,168,76,.1);color:var(--gold);}
+/* Budget table */
+.budget-table{width:100%;border-collapse:collapse;}
+.budget-table th{font-size:11px;font-weight:700;letter-spacing:.06em;color:var(--gold);text-transform:uppercase;padding:8px 12px;text-align:left;border-bottom:1px solid rgba(201,168,76,.15);}
+.budget-table td{padding:10px 12px;font-size:13px;border-bottom:1px solid rgba(255,255,255,.05);}
+.budget-table tr:last-child td{border-bottom:none;font-weight:700;color:var(--gold);}
+.budget-bar{height:6px;border-radius:3px;background:rgba(201,168,76,.2);margin-top:4px;overflow:hidden;}
+.budget-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--turq),var(--gold));}
+/* Packing list */
+.pack-section{margin-bottom:16px;}
+.pack-section h4{font-size:12px;font-weight:700;color:var(--gold);letter-spacing:.06em;text-transform:uppercase;margin-bottom:8px;}
+.pack-items{display:flex;flex-wrap:wrap;gap:8px;}
+.pack-item{background:var(--lapis3);border:1px solid rgba(201,168,76,.12);border-radius:20px;padding:5px 12px;font-size:12px;cursor:pointer;transition:all .2s;user-select:none;}
+.pack-item.packed{background:rgba(34,181,160,.12);border-color:var(--turq2);color:var(--turq2);text-decoration:line-through;opacity:.65;}
+/* Tips */
+.tip-box{background:var(--lapis3);border-left:3px solid var(--gold);border-radius:0 8px 8px 0;padding:12px 16px;margin-bottom:10px;}
+.tip-box .tip-cat{font-size:11px;font-weight:700;color:var(--gold);letter-spacing:.06em;text-transform:uppercase;margin-bottom:4px;}
+.tip-box .tip-text{font-size:13px;color:rgba(245,240,232,.8);line-height:1.6;}
+/* Waitlist */
+.waitlist{background:linear-gradient(135deg,var(--lapis2),var(--lapis3));border:1px solid rgba(201,168,76,.2);border-radius:12px;padding:28px;text-align:center;margin-top:16px;}
+.waitlist h3{font-family:'Playfair Display',serif;font-size:1.3rem;color:var(--gold);margin-bottom:8px;}
+.waitlist p{color:rgba(245,240,232,.7);margin-bottom:16px;font-size:14px;}
+.wl-form{display:flex;gap:10px;max-width:380px;margin:0 auto;flex-wrap:wrap;}
+.wl-form input{flex:1;min-width:180px;}
+.wl-success{color:var(--turq2);font-weight:600;display:none;}
+</style>
+<link rel="canonical" href="https://abuz8ai.com/tools/ai-travel-planner">
+<meta name="description" content="AI Travel Planner — Day-by-day itineraries. Free, no signup, runs entirely in your browser. One of 169 free AI and developer tools by ABUZ8.">
+</head>
+<body>
+<header>
+  <h1>⚡ ABUZ8</h1>
+  <span>AI TRAVEL PLANNER</span>
+</header>
+<div class="hero">
+  <h2>Plan Your Dream Trip in 30 Seconds</h2>
+  <p>Enter your destination and preferences — get a complete day-by-day itinerary, budget breakdown, and packing list.</p>
+</div>
+<div class="main">
+  <div class="card" id="inputArea">
+    <div class="grid-3">
+      <div>
+        <label>Destination</label>
+        <input type="text" id="dest" placeholder="e.g. Tokyo, Japan" value="">
+      </div>
+      <div>
+        <label>Trip Duration</label>
+        <select id="days">
+          <option value="3">3 days</option>
+          <option value="5">5 days</option>
+          <option value="7" selected>7 days</option>
+          <option value="10">10 days</option>
+          <option value="14">2 weeks</option>
+        </select>
+      </div>
+      <div>
+        <label>Budget Level</label>
+        <select id="budget">
+          <option value="budget">💰 Budget / Backpacker</option>
+          <option value="mid" selected>⚖️ Mid-Range</option>
+          <option value="luxury">💎 Luxury</option>
+        </select>
+      </div>
+    </div>
+    <div class="grid-2">
+      <div>
+        <label>Travel Style</label>
+        <div class="tags" id="styleTags">
+          <span class="tag active" data-v="cultural">🏛 Cultural</span>
+          <span class="tag" data-v="adventure">🧗 Adventure</span>
+          <span class="tag" data-v="relaxation">🏖 Relaxation</span>
+          <span class="tag" data-v="food">🍜 Food & Nightlife</span>
+          <span class="tag" data-v="nature">🌿 Nature</span>
+          <span class="tag" data-v="family">👨‍👩‍👧 Family</span>
+          <span class="tag" data-v="romance">💕 Romance</span>
+          <span class="tag" data-v="business">💼 Business + Leisure</span>
+        </div>
+      </div>
+      <div>
+        <label>Group Type</label>
+        <div class="tags" id="groupTags">
+          <span class="tag active" data-v="solo">🧍 Solo</span>
+          <span class="tag" data-v="couple">👫 Couple</span>
+          <span class="tag" data-v="friends">👥 Friends</span>
+          <span class="tag" data-v="family">👨‍👩‍👧 Family</span>
+        </div>
+      </div>
+    </div>
+    <div class="actions">
+      <button class="btn btn-gold" onclick="planTrip()">✈️ Plan My Trip</button>
+      <button class="btn btn-outline" onclick="loadExample()">Try: Tokyo 7 Days</button>
+    </div>
+  </div>
+
+  <div class="card" id="itinArea">
+    <div class="itin-header">
+      <div>
+        <h3 id="itinTitle">Trip Itinerary</h3>
+        <div style="font-size:13px;color:rgba(245,240,232,.5);margin-top:4px;" id="itinSubtitle"></div>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="btn btn-outline" onclick="planTrip()" style="padding:7px 14px;font-size:12px;">🔀 Regenerate</button>
+        <button class="btn btn-gold" onclick="exportTrip()" style="padding:7px 14px;font-size:12px;">⬇ Export PDF</button>
+      </div>
+    </div>
+
+    <div class="trip-stats" id="tripStats"></div>
+
+    <div class="tabs">
+      <div class="tab active" onclick="setTab('itin',this)">📅 Itinerary</div>
+      <div class="tab" onclick="setTab('budget',this)">💰 Budget</div>
+      <div class="tab" onclick="setTab('packing',this)">🧳 Packing</div>
+      <div class="tab" onclick="setTab('tips',this)">💡 Tips</div>
+    </div>
+
+    <div class="pane active" id="pane-itin" ></div>
+    <div class="pane" id="pane-budget"></div>
+    <div class="pane" id="pane-packing"></div>
+    <div class="pane" id="pane-tips"></div>
+  </div>
+
+  <div class="waitlist">
+    <h3>✈️ AI Travel Concierge</h3>
+    <p>Join for real-time flight & hotel pricing, booking integration, and a personal travel AI that remembers your preferences.</p>
+    <div class="wl-form">
+      <input type="email" id="wlEmail" placeholder="your@email.com">
+      <button class="btn btn-gold" onclick="joinWaitlist()">Join Waitlist</button>
+    </div>
+    <div class="wl-success" id="wlSuccess">✓ You're on the list!</div>
+  </div>
+</div>
+
+<script src="_abuz8-live-brain.js" defer></script>
+<script>
+// Single-select tags
+['#styleTags','#groupTags'].forEach(sel => {
+  document.querySelectorAll(sel+' .tag').forEach(t => {
+    t.addEventListener('click', () => {
+      document.querySelectorAll(sel+' .tag').forEach(x=>x.classList.remove('active'));
+      t.classList.add('active');
+    });
+  });
+});
+
+const DESTINATIONS = {
+  'tokyo': {
+    activities: {
+      cultural:['Visit Senso-ji Temple in Asakusa','Explore the Tokyo National Museum','Meiji Shrine morning walk','Imperial Palace East Gardens','TeamLab Borderless digital art museum','Harajuku Takeshita Street culture walk','Yanaka old town exploration'],
+      food:['Tsukiji outer market breakfast','Ramen tour in Ikebukuro','Izakaya evening in Shinjuku','Sushi making class','Depachika (department store basement food halls)','Shibuya food crawl'],
+      adventure:['Day trip to Mt. Fuji (Fuji-Q Highland)','Shinjuku nightlife tour','Akihabara gaming marathon','Shibuya Scramble Crossing at peak hour','Tokyo skytree sky deck'],
+      nature:['Shinjuku Gyoen National Garden','Yoyogi Park morning walk','Nikko National Park day trip','Hamarikyu Gardens tea ceremony'],
+      relaxation:['Onsen at Oedo-Onsen Monogatari','Shinjuku department store rooftop','Quiet morning at Yanaka Ginza'],
+      romance:['Observation deck at Tokyo Tower at night','Cruise on Sumida River','Roppongi art walk','Dinner at Andaz hotel rooftop'],
+    },
+    budget: { budget:{hotel:80,food:30,transport:15,activities:20}, mid:{hotel:200,food:70,transport:20,activities:50}, luxury:{hotel:600,food:200,transport:50,activities:150} },
+    tips: [
+      {cat:'Transport', text:'Get a Suica card at Narita/Haneda airport — it works on all trains, buses, and even at convenience stores.'},
+      {cat:'Etiquette', text:'No eating while walking, no loud phone calls on trains, and always queue in orderly lines. Tipping is considered rude.'},
+      {cat:'Money', text:'Tokyo is largely cash-based. 7-Eleven ATMs accept foreign cards. Exchange at banks for better rates than airports.'},
+      {cat:'Best Time', text:'March–May (cherry blossom) and October–November (autumn foliage) are peak seasons. Book accommodation 3+ months ahead.'},
+      {cat:'Language', text:'Google Translate camera mode works well for Japanese menus. Most train station signs are bilingual.'},
+    ],
+    packing: {
+      'Clothing':['Comfortable walking shoes','Slip-on shoes (many temples require removal)','Light layers (weather varies)','Rain jacket','Modest clothing for temples'],
+      'Tech & Travel':['Pocket WiFi or SIM card','Universal adapter (Type A/B)','Portable power bank','Download offline Google Maps'],
+      'Health & Misc':['Cash (JPY)','IC card (Suica)','Pocket tissues (needed for toilets)','Small backpack for day trips','Basic Japanese phrasebook'],
+    }
+  },
+  'paris': {
+    activities: {
+      cultural:['Louvre Museum morning visit','Musée d\'Orsay Impressionist collection','Notre-Dame Cathedral exterior','Sainte-Chapelle stained glass','Père Lachaise Cemetery walk','Centre Pompidou modern art'],
+      food:['Montmartre food market','French pastry class','Wine tasting in Le Marais','Michelin-star dinner','Cheese & wine picnic at the Seine'],
+      relaxation:['Tuileries Garden morning stroll','Jardin du Palais Royal','Afternoon at Café de Flore','Luxembourg Gardens'],
+      romance:['Eiffel Tower sunset visit','Seine dinner cruise','Montmartre evening walk','Champagne at rooftop bar'],
+    },
+    budget: { budget:{hotel:90,food:40,transport:15,activities:25}, mid:{hotel:220,food:80,transport:20,activities:60}, luxury:{hotel:700,food:250,transport:60,activities:200} },
+    tips: [
+      {cat:'Transport', text:'Get a Paris Visite travel pass or use the Navigo weekly card — covers all metro, RER, and bus lines.'},
+      {cat:'Etiquette', text:'Greet shopkeepers with "Bonjour" — it\'s considered rude not to. Tipping is appreciated but not mandatory.'},
+      {cat:'Timing', text:'Most major museums are closed on Mondays or Tuesdays. Check schedules and book skip-the-line tickets in advance.'},
+      {cat:'Safety', text:'Watch for pickpockets near the Eiffel Tower and Sacré-Cœur. Use a crossbody bag and keep valuables secured.'},
+    ],
+    packing: {
+      'Clothing':['Comfortable walking shoes (cobblestones!)','Smart casual outfits (Paris is stylish)','Light scarf','Rain jacket'],
+      'Tech & Travel':['European adapter (Type C/E)','Offline maps','Museum pass (Paris Museum Pass saves time & money)'],
+      'Misc':['Euros in cash','Small padlock for lockers','Reusable water bottle (fountains everywhere)'],
+    }
+  }
+};
+
+const GENERIC_ACTIVITIES = {
+  cultural:['Morning visit to the main historical museum','Guided old city walking tour','Visit the central cathedral or temple','Traditional craft workshop','Local history neighborhood walk','Evening cultural show or performance'],
+  adventure:['Day hiking to nearby natural landmark','Water sports at local beach/lake','Cycling tour around the city','Zip-line or canopy tour','Night market exploration'],
+  food:['Street food tour with local guide','Cooking class featuring local cuisine','Food market morning visit','Farm-to-table dinner experience','Local brewery or winery tour'],
+  relaxation:['Sunrise yoga at scenic viewpoint','Spa day at local wellness center','Lazy afternoon at the best beach/park','Sunset boat cruise','Hammock hour at botanical garden'],
+  nature:['National park day hike','Sunrise trek to viewpoint','Wildlife safari or bird watching','Kayaking through natural reserve','Waterfalls day trip'],
+  family:['Interactive science museum','Amusement park or theme park','Wildlife sanctuary visit','Cooking class for kids & parents','Beach day with water activities'],
+  romance:['Sunset dinner at rooftop restaurant','Private boat tour at sunset','Wine & cheese picnic at scenic spot','Couples spa day','Stargazing outside the city'],
+  business:['Morning at co-working space','Networking event in financial district','Business dinner at top restaurant','City overview tour (half day)','Visit local tech hub or startup scene'],
+};
+
+const TIME_SLOTS = ['8:00 AM','10:30 AM','1:00 PM','3:30 PM','6:00 PM','8:30 PM'];
+const TYPES = ['Sightseeing','Culture','Food','Experience','Leisure','Nightlife'];
+
+let currentTrip = null;
+
+function planTrip() {
+  const dest = document.getElementById('dest').value.trim() || 'Tokyo, Japan';
+  const days = parseInt(document.getElementById('days').value);
+  const budget = document.getElementById('budget').value;
+  const style = document.querySelector('#styleTags .tag.active')?.dataset.v || 'cultural';
+  const group = document.querySelector('#groupTags .tag.active')?.dataset.v || 'solo';
+
+  const btn = document.querySelector('.btn-gold');
+  btn.textContent = '✈️ Planning...'; btn.disabled = true;
+
+  document.getElementById('itinTitle').textContent = `${dest} — ${days}-Day Itinerary`;
+  document.getElementById('itinSubtitle').textContent = `${style.charAt(0).toUpperCase()+style.slice(1)} trip · ${group} · ${budget.charAt(0).toUpperCase()+budget.slice(1)} budget`;
+  document.getElementById('tripStats').innerHTML = '';
+  // The AI returns one combined plan; hide the legacy tabs and render into the itinerary pane.
+  const tabs = document.querySelector('.tabs'); if(tabs) tabs.style.display='none';
+  ['pane-budget','pane-packing','pane-tips'].forEach(id=>{ const p=document.getElementById(id); if(p) p.style.display='none'; });
+  const pane = document.getElementById('pane-itin');
+  pane.classList.add('active');
+  pane.innerHTML = '<div style="color:rgba(245,240,232,.5);font-size:13px;padding:32px;text-align:center;">✈️ Planning your trip with AI…</div>';
+  document.getElementById('itinArea').style.display = 'block';
+  document.getElementById('itinArea').scrollIntoView({behavior:'smooth',block:'start'});
+
+  // Real AI generation via the ABUZ8 brain (Cloudflare Workers AI). No templates.
+  fetch('/api/waitlist', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      tool: 'travel-planner',
+      data: {
+        destination: dest,
+        days: days,
+        budgetLevel: budget,
+        travelStyle: style,
+        groupType: group,
+        format: 'Return a complete trip plan as clean HTML. Include a day-by-day itinerary (each day an <h3> with a timed <ul> of activities), then <h3>Budget Estimate</h3>, <h3>Packing List</h3>, and <h3>Travel Tips</h3> sections using <ul>/<li> lists.'
+      }
+    })
+  })
+  .then(r => r.json())
+  .then(res => {
+    if (!res.success || !res.result) throw new Error(res.error || 'Generation failed');
+    btn.textContent = '✈️ Plan My Trip'; btn.disabled = false;
+    currentTrip = res.result;
+    pane.innerHTML = ABUZ8md(res.result);
+  })
+  .catch(err => {
+    btn.textContent = '✈️ Plan My Trip'; btn.disabled = false;
+    pane.innerHTML = '<div style="color:#e05555;font-size:13px;padding:32px;text-align:center;">Generation failed. Please try again in a moment.</div>';
+    alert('Generation failed: ' + err.message + '. Please try again in a moment.');
+  });
+}
+
+function buildTrip(dest, days, budget, style, group) {
+  const destKey = dest.toLowerCase().split(',')[0].trim();
+  const data = DESTINATIONS[destKey];
+  const acts = data?.activities?.[style] || GENERIC_ACTIVITIES[style] || GENERIC_ACTIVITIES.cultural;
+  const budgetData = data?.budget?.[budget] || {hotel:150,food:60,transport:20,activities:40};
+  const tips = data?.tips || [{cat:'Local Tip',text:`Research local customs and basic phrases before visiting ${dest}. Locals always appreciate the effort.`},{cat:'Transport',text:'Use local public transport where possible — it\'s cheaper and a more authentic experience.'},{cat:'Safety',text:'Keep copies of your documents in cloud storage and share your itinerary with someone at home.'}];
+  const packing = data?.packing || {'Clothing':['Comfortable shoes','Weather-appropriate layers','Rain jacket'],'Documents':['Passport','Travel insurance','Hotel confirmations','Offline maps'],'Health':['First aid kit','Sunscreen','Insect repellent','Hand sanitiser']};
+
+  // Build daily schedule
+  const itinerary = [];
+  let actIdx = 0;
+  for(let d=0;d<days;d++) {
+    const dayActs = [];
+    const slotCount = d===0||d===days-1 ? 3 : 4; // lighter first/last day
+    for(let s=0;s<slotCount;s++) {
+      const act = acts[actIdx % acts.length];
+      actIdx++;
+      dayActs.push({ time:TIME_SLOTS[s], title:act, badge:TYPES[s%TYPES.length] });
+    }
+    itinerary.push({ day:d+1, label:d===0?'Arrival Day':d===days-1?'Departure Day':`Day ${d+1}`, activities:dayActs });
+  }
+
+  const totalPerDay = budgetData.hotel + budgetData.food + budgetData.transport + budgetData.activities;
+  return { dest, days, budget, style, group, itinerary, budgetPerDay:budgetData, totalPerDay, total:totalPerDay*days, tips, packing };
+}
+
+function renderTrip(t) {
+  document.getElementById('itinTitle').textContent = `${t.dest} — ${t.days}-Day Itinerary`;
+  document.getElementById('itinSubtitle').textContent = `${t.style.charAt(0).toUpperCase()+t.style.slice(1)} trip · ${t.group} · ${t.budget.charAt(0).toUpperCase()+t.budget.slice(1)} budget`;
+
+  document.getElementById('tripStats').innerHTML = [
+    `📅 ${t.days} days`,
+    `🏨 ~$${t.budgetPerDay.hotel}/night`,
+    `💰 ~$${t.totalPerDay}/day`,
+    `💵 Total: ~$${t.total.toLocaleString()}`,
+    `✈️ ${t.group.charAt(0).toUpperCase()+t.group.slice(1)} travel`,
+  ].map(s=>`<span class="stat">${s}</span>`).join('');
+
+  // Itinerary pane
+  document.getElementById('pane-itin').innerHTML = t.itinerary.map(day=>`
+    <div class="day-block">
+      <div class="day-label">${day.label}</div>
+      ${day.activities.map(act=>`
+        <div class="itin-item">
+          <div class="itin-time">${act.time}</div>
+          <div class="itin-dot"></div>
+          <div class="itin-content">
+            <div class="itin-title">${act.title}</div>
+            <div class="itin-tags"><span class="itin-badge">${act.badge}</span></div>
+          </div>
+        </div>`).join('')}
+    </div>`).join('');
+
+  // Budget pane
+  const b = t.budgetPerDay;
+  const cats = [['🏨','Accommodation',b.hotel],['🍽','Food & Drinks',b.food],['🚌','Transport',b.transport],['🎟','Activities & Entry',b.activities]];
+  const max = Math.max(...cats.map(c=>c[2]));
+  document.getElementById('pane-budget').innerHTML = `
+    <table class="budget-table">
+      <thead><tr><th>Category</th><th>Per Day</th><th>Total (${t.days} days)</th><th>Breakdown</th></tr></thead>
+      <tbody>
+        ${cats.map(([icon,name,amt])=>`
+          <tr>
+            <td>${icon} ${name}</td>
+            <td>$${amt}</td>
+            <td>$${(amt*t.days).toLocaleString()}</td>
+            <td><div class="budget-bar"><div class="budget-fill" style="width:${Math.round(amt/max*100)}%"></div></div></td>
+          </tr>`).join('')}
+        <tr><td>📊 TOTAL</td><td>$${t.totalPerDay}</td><td>$${t.total.toLocaleString()}</td><td></td></tr>
+      </tbody>
+    </table>
+    <div style="font-size:12px;color:rgba(245,240,232,.4);margin-top:12px;">Estimates based on ${t.budget} budget tier. Prices in USD. Actual costs may vary.</div>`;
+
+  // Packing pane
+  document.getElementById('pane-packing').innerHTML = Object.entries(t.packing).map(([cat,items])=>`
+    <div class="pack-section">
+      <h4>${cat}</h4>
+      <div class="pack-items">
+        ${items.map(item=>`<span class="pack-item" onclick="this.classList.toggle('packed')">${item}</span>`).join('')}
+      </div>
+    </div>`).join('');
+
+  // Tips pane
+  document.getElementById('pane-tips').innerHTML = t.tips.map(tip=>`
+    <div class="tip-box">
+      <div class="tip-cat">${tip.cat}</div>
+      <div class="tip-text">${tip.text}</div>
+    </div>`).join('');
+
+  document.getElementById('itinArea').style.display = 'block';
+  document.getElementById('itinArea').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function setTab(id, el) {
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.pane').forEach(p=>p.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('pane-'+id).classList.add('active');
+}
+
+function loadExample() {
+  document.getElementById('dest').value = 'Tokyo, Japan';
+  document.getElementById('days').value = '7';
+  document.getElementById('budget').value = 'mid';
+  planTrip();
+}
+
+function exportTrip() {
+  const title = document.getElementById('itinTitle').textContent || 'Trip Itinerary';
+  const body = document.getElementById('pane-itin').innerText.trim();
+  if(!body) { alert('Plan a trip first.'); return; }
+  const out = `${title}\n${'='.repeat(50)}\n\n${body}`;
+  const blob = new Blob([out],{type:'text/plain'});
+  const a = document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=`${title.replace(/[,—]/g,'').replace(/\s+/g,'-').toLowerCase()}.txt`; a.click();
+}
+
+function joinWaitlist() {
+  const email = document.getElementById('wlEmail').value.trim();
+  if(!email||!email.includes('@')) { alert('Please enter a valid email.'); return; }
+  fetch('/api/waitlist',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,product:'ai-travel-planner',ts:Date.now()})}).catch(()=>{});
+  document.getElementById('wlEmail').value='';
+  document.querySelector('.wl-form').style.display='none';
+  document.getElementById('wlSuccess').style.display='block';
+}
+</script>
+
+<script src="/assets/js/dfy-banner.js" async></script>
+<script src="/tools/_abuz8-md.js"></script>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+<script src="/tools/_tools-shared.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>
+

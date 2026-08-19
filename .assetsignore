@@ -1,0 +1,106 @@
+# ABUZ8 — files/folders EXCLUDED from the public Cloudflare Pages deploy.
+# These contain internal IP, customer data, or are dead backups. They stay on
+# disk locally but are never uploaded to abuz8ai.com. Added 2026-05-20.
+
+# Internal command center, agent CRM, war board (real customer names, E:\ paths, agent triggers)
+abuz8-mission-control
+LIVE_CRM
+
+# Internal investor materials (reference internal source tree + valuation/strategy — not for public URLs)
+investor.html
+investor-deck.html
+investor-one-pager.html
+investors.html
+
+# Internal email drafts (signed personal, not public pages)
+email-templates
+
+# Internal demos / routing demo (exposes personal gmail, internal routing)
+demos
+share
+
+# Outreach + playbooks (internal sales material)
+outreach
+playbooks
+social-content
+
+# Dead backup stubs (0.2KB empties / superseded)
+index-original.html
+index-new.html
+index-pre-z8.html
+store-backup.html
+qadir-legacy.html
+SEO_AUDIT_ABUZ8AI_2026-05-06.html
+
+# Truthstrip + wrangler working dirs
+.truthstrip-backup-20260520-0100
+.wrangler
+.claude
+
+# Reversible trash (dead backups moved 2026-05-20)
+_trash
+
+# === HARDENING 2026-05-26 — never publish internal IP / backups (wildcards) ===
+# Any editor/session backup or internal markdown must never reach the public site.
+*.gmail-bak
+*.bak
+*.bak-*
+CLAUDE.md
+MEMORY.md
+ERRORS.md
+REBUILD_PLAN_2026-05-13.md
+outreach-drafts.md
+_deploy_prod.ps1
+_build_tools_hub.js
+index-dark-backup-20260605.html
+PAGE_INVENTORY.md
+ADSENSE_REBUILD_AUDIT_2026-06-03.md
+SESSION_AUDIT_2026-05-25.md
+AUDIT_LEDGER.json
+
+# === 2026-05-31 — Oversized files (>25MB Cloudflare Pages limit) ===
+downloads/ABUZ8-Cinematic-PDF-Vault.zip
+
+# === 2026-06-10 — PDF library must NOT be public (copyrighted 3rd-party books +
+# personal docs mixed in; intent was already in .cfignore but Pages only reads
+# THIS file). Paid PDFs are served from R2 via the fulfillment worker instead.
+downloads/pdfs
+
+# === 2026-06-11 — internal deploy scripts + Stripe wiring report (never public) ===
+*.bat
+STRIPE_WIRING_REPORT_2026-06-10.md
+STRIPE_LINK_QADIR.txt
+
+# Oversized for Pages (25MiB cap) — serve from R2 instead
+downloads/ABUZ8-Cinematic-PDF-Vault.zip
+
+# 2026-07-17 — dead superseded homepage, never publish
+index-old.html
+
+# === 2026-07-17 FREE/PAID INTEGRITY — paid product artifacts must NEVER be
+# publicly fetchable. They are fulfillment payloads, served only through the
+# signed-link function (/api/download, 48h HMAC links) from R2.
+# Only genuinely-free giveaways stay public. MANIFEST.json leaked local paths.
+downloads/*
+!downloads/abuz8-agentic-system-starter.zip
+
+# 2026-07-17 — orphaned data file, unreferenced by any page, contains
+# phantom recurring ($499/mo) pricing that contradicts the real one-time
+# store. Never publish as a bare static file.
+flagship_links.json
+
+# === 2026-07-23 — agent scratch instruments must never be served (queued by 07-22 evening shift; *.bak* wildcards already present above) ===
+scratchpad/
+
+# === 2026-08-12 morning — untracked internal artifacts that were NOT excluded ===
+# Found by the build-metadata scrub pass: scratchpad/ and scripts were already
+# listed, but dated agent scratch DIRECTORIES and loose audit/query files were
+# not, so they were eligible to be served as static files by a bare
+# `wrangler pages deploy .`. Same leak class as the agent build comments.
+scratch_*
+_bak_*
+_scrub_commit_list.txt
+_q.sql
+LINK_AUDIT_2026-08-10.md
+LINK_AUDIT_2026-08-10.txt
+send-broadcast.mjs

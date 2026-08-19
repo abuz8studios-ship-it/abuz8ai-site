@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AI Acquisition Memo — ABUZ8</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--lapis:#0a1628;--lapis2:#0f1f3d;--lapis3:#162544;--gold:#c9a84c;--turq:#0e9f6e;--turq2:#22b5a0;--cream:#f5f0e8;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--lapis);color:var(--cream);font-family:'Inter',sans-serif;min-height:100vh;}
+header{background:var(--lapis2);border-bottom:1px solid var(--gold);padding:18px 32px;display:flex;align-items:center;gap:16px;}
+.logo{font-family:'Playfair Display',serif;color:var(--gold);font-size:1.4rem;}
+.badge{background:var(--gold);color:var(--lapis);font-size:.65rem;font-weight:700;padding:2px 8px;border-radius:10px;}
+h1{font-family:'Playfair Display',serif;font-size:1.8rem;color:var(--gold);margin-bottom:6px;}
+.sub{color:#8899aa;font-size:.9rem;}
+main{max-width:1100px;margin:0 auto;padding:32px 24px;}
+.layout{display:grid;grid-template-columns:300px 1fr;gap:24px;margin-top:24px;}
+.panel{background:var(--lapis2);border:1px solid #1e3a5f;border-radius:12px;padding:24px;}
+.panel h2{font-family:'Playfair Display',serif;color:var(--gold);font-size:1.1rem;margin-bottom:16px;}
+label{display:block;font-size:.8rem;color:#8899aa;margin-bottom:4px;margin-top:14px;}
+label:first-of-type{margin-top:0;}
+input,select,textarea{width:100%;background:var(--lapis3);border:1px solid #1e3a5f;border-radius:6px;color:var(--cream);padding:8px 12px;font-size:.85rem;font-family:'Inter',sans-serif;}
+textarea{resize:vertical;min-height:70px;}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--gold);}
+.btn{background:var(--gold);color:var(--lapis);border:none;border-radius:8px;padding:12px 24px;font-weight:700;cursor:pointer;width:100%;margin-top:16px;}
+.btn:hover{opacity:.85;}
+.btn-sm{background:transparent;border:1px solid var(--turq2);color:var(--turq2);border-radius:6px;padding:6px 14px;font-size:.78rem;cursor:pointer;margin-right:6px;}
+#output{display:none;}
+.memo-tabs{display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap;}
+.mtab{background:var(--lapis3);border:1px solid #1e3a5f;border-radius:6px;padding:7px 14px;font-size:.8rem;cursor:pointer;}
+.mtab.active{border-color:var(--gold);color:var(--gold);}
+.memo-doc{background:var(--lapis3);border:1px solid #1e3a5f;border-radius:12px;padding:32px;}
+.memo-watermark{text-align:center;margin-bottom:24px;padding-bottom:20px;border-bottom:2px solid var(--gold);}
+.memo-co{font-family:'Playfair Display',serif;color:var(--gold);font-size:1.6rem;}
+.memo-title{font-size:.85rem;color:#8899aa;margin-top:4px;letter-spacing:.1em;text-transform:uppercase;}
+.memo-meta{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:16px 0;font-size:.82rem;}
+.memo-meta-row{display:flex;gap:6px;}<br>
+.memo-label{color:#8899aa;width:120px;flex-shrink:0;}
+.memo-value{color:var(--cream);font-weight:500;}
+.memo-section{margin-bottom:24px;}
+.memo-section h3{font-family:'Playfair Display',serif;color:var(--gold);font-size:1rem;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid #1e3a5f;}
+.memo-section p{font-size:.87rem;color:#c0cfe0;line-height:1.75;margin-bottom:8px;}
+.memo-section ul{list-style:none;padding:0;}
+.memo-section ul li{font-size:.85rem;color:#c0cfe0;padding:5px 0;border-bottom:1px solid #1e3a5f;display:flex;gap:8px;}
+.memo-section ul li:last-child{border:none;}
+.memo-section ul li::before{content:'→';color:var(--gold);flex-shrink:0;}
+.deal-table{width:100%;border-collapse:collapse;font-size:.83rem;margin-top:10px;}
+.deal-table th{padding:9px;background:var(--lapis2);color:#8899aa;font-weight:500;text-align:left;}
+.deal-table td{padding:9px;border-bottom:1px solid #1e3a5f;}
+.deal-table tr:last-child td{border:none;}
+.val-box{background:var(--lapis2);border:2px solid var(--gold);border-radius:10px;padding:20px;text-align:center;margin:16px 0;}
+.val-num{font-family:'Playfair Display',serif;font-size:2.2rem;color:var(--gold);}
+.val-lbl{font-size:.8rem;color:#8899aa;margin-top:4px;}
+.score-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:12px 0;}
+.score-box{background:var(--lapis2);border:1px solid #1e3a5f;border-radius:8px;padding:12px;text-align:center;}
+.score-val{font-family:'Playfair Display',serif;color:var(--gold);font-size:1.2rem;}
+.score-lbl{font-size:.7rem;color:#8899aa;margin-top:3px;}
+.risk-item{padding:8px 0;border-bottom:1px solid #1e3a5f;font-size:.83rem;display:flex;gap:10px;}
+.risk-item:last-child{border:none;}
+.risk-sev{font-size:.7rem;padding:2px 7px;border-radius:4px;font-weight:700;flex-shrink:0;}
+.rec-banner{background:rgba(201,168,76,.08);border:2px solid var(--gold);border-radius:10px;padding:20px;text-align:center;margin-top:16px;}
+.rec-title{font-family:'Playfair Display',serif;color:var(--gold);font-size:1.2rem;margin-bottom:6px;}
+.rec-sub{font-size:.85rem;color:#8899aa;}
+.waitlist{background:linear-gradient(135deg,var(--lapis2),var(--lapis3));border:1px solid var(--gold);border-radius:12px;padding:24px;text-align:center;margin-top:20px;}
+.waitlist h3{font-family:'Playfair Display',serif;color:var(--gold);margin-bottom:8px;}
+.wl-form{display:flex;gap:8px;max-width:360px;margin:10px auto 0;}
+.wl-form input{border-radius:6px;padding:9px 12px;}
+.wl-form button{background:var(--gold);color:var(--lapis);border:none;border-radius:6px;padding:9px 18px;font-weight:700;cursor:pointer;white-space:nowrap;}
+</style>
+<link rel="canonical" href="https://abuz8ai.com/tools/ai-acquisition-memo">
+<meta name="description" content="AI Acquisition Memo — Board-ready acquisition memo — rationale, valuation, synergies, risks. Free, no signup, runs entirely in your browser. One of 169 free A">
+</head>
+<body>
+<header>
+  <div class="logo">ABUZ8</div>
+  <div style="flex:1">
+    <div style="font-size:.85rem;font-weight:600;">AI Acquisition Memo</div>
+    <div style="font-size:.72rem;color:#8899aa;">Board-ready M&A recommendation memos in minutes</div>
+  </div>
+  <span class="badge">TIER H — #100</span>
+</header>
+<main>
+  <h1>AI Acquisition Memo</h1>
+  <p class="sub">Generate a board-ready acquisition recommendation memo with strategic rationale, valuation analysis, synergy model, and risk assessment.</p>
+
+  <div class="layout">
+    <div class="panel">
+      <h2>🏦 Deal Details</h2>
+      <label>Acquirer Name</label>
+      <input id="acquirer" value="ABUZ8 LLC" placeholder="Your company">
+      <label>Target Company</label>
+      <input id="target" value="TargetCo Inc." placeholder="Company being acquired">
+      <label>Target Industry</label>
+      <select id="industry">
+        <option selected>B2B SaaS</option><option>Fintech</option><option>AI / ML</option>
+        <option>E-commerce</option><option>Healthcare Tech</option><option>Data & Analytics</option>
+      </select>
+      <label>Proposed Purchase Price ($)</label>
+      <input id="price" value="45,000,000" placeholder="45,000,000">
+      <label>Target ARR / Revenue (TTM $)</label>
+      <input id="revenue" value="8,200,000" placeholder="8,200,000">
+      <label>Target ARR Growth (%)</label>
+      <input id="growth" value="45" placeholder="45">
+      <label>Target Gross Margin (%)</label>
+      <input id="margin" value="74" placeholder="74">
+      <label>Target Employee Count</label>
+      <input id="employees" value="62" placeholder="62">
+      <label>Deal Type</label>
+      <select id="dealType">
+        <option selected>Full Acquisition (100% equity purchase)</option>
+        <option>Asset Purchase</option>
+        <option>Acqui-hire</option>
+        <option>Merger of Equals</option>
+      </select>
+      <label>Primary Strategic Rationale</label>
+      <select id="rationale">
+        <option selected>Market expansion (new verticals/geographies)</option>
+        <option>Technology / IP acquisition</option>
+        <option>Talent acquisition (acqui-hire)</option>
+        <option>Revenue acceleration (cross-sell)</option>
+        <option>Eliminate competitor</option>
+        <option>Platform consolidation</option>
+      </select>
+      <label>Annual Cost Synergies Expected ($)</label>
+      <input id="synergies" value="1,800,000" placeholder="1,800,000">
+      <label>Expected Close Date</label>
+      <input id="closeDate" value="Q4 2026" placeholder="Q4 2026">
+      <label>Deal Champion (internal)</label>
+      <input id="champion" value="Jane Smith, CEO" placeholder="Name, Title">
+      <button class="btn" onclick="generateMemo()">⚡ Generate Acquisition Memo</button>
+    </div>
+
+    <div>
+      <div id="inputPrompt" class="panel" style="text-align:center;padding:48px 24px;">
+        <div style="font-size:3rem;margin-bottom:16px;">🏆</div>
+        <div style="font-family:'Playfair Display',serif;color:var(--gold);font-size:1.2rem;margin-bottom:8px;">Acquisition Memo Generator</div>
+        <div style="font-size:.85rem;color:#8899aa;max-width:340px;margin:0 auto;">Enter deal details to generate a complete board-ready acquisition recommendation memo — strategic rationale, valuation waterfall, synergy model, risk matrix, and recommendation.</div>
+        <div style="margin-top:24px;padding:16px;background:rgba(201,168,76,.06);border:1px solid rgba(201,168,76,.2);border-radius:8px;font-size:.8rem;color:#8899aa;">
+          This is tool <strong style="color:var(--gold)">#100 of 100</strong> in the ABUZ8 Agent Army. The final product in the suite.
+        </div>
+      </div>
+      <div id="output">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+          <div style="font-family:'Playfair Display',serif;color:var(--gold);" id="memoTitle">Acquisition Memo</div>
+          <div>
+            <button class="btn-sm" onclick="copyMemo()">📋 Copy</button>
+            <button class="btn-sm" onclick="exportMemo()">⬇ Export</button>
+          </div>
+        </div>
+        <div class="memo-tabs">
+          <div class="mtab active" onclick="switchMTab(this,'memo')">Memo</div>
+          <div class="mtab" onclick="switchMTab(this,'valuation')">Valuation</div>
+          <div class="mtab" onclick="switchMTab(this,'synergies')">Synergies</div>
+          <div class="mtab" onclick="switchMTab(this,'risks')">Risks</div>
+          <div class="mtab" onclick="switchMTab(this,'recommendation')">Recommendation</div>
+        </div>
+        <div id="memoContent"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="waitlist">
+    <h3>🚀 Pro: Data Room Integration + Board Presentation Export</h3>
+    <p>Connect your VDR, auto-populate financials from uploaded documents, and export a board-ready PowerPoint with one click.</p>
+    <div class="wl-form">
+      <input type="email" id="wlEmail" placeholder="bd@company.com">
+      <button onclick="joinWL()">Get Pro Access</button>
+    </div>
+  </div>
+</main>
+<script src="_abuz8-live-brain.js" defer></script>
+<script>
+let memoTabs={};
+
+function generateMemo(){
+  const acquirer=document.getElementById('acquirer').value||'Acquirer Corp';
+  const target=document.getElementById('target').value||'TargetCo';
+  const industry=document.getElementById('industry').value;
+  const price=document.getElementById('price').value;
+  const revenue=document.getElementById('revenue').value;
+  const growth=document.getElementById('growth').value;
+  const margin=document.getElementById('margin').value;
+  const employees=document.getElementById('employees').value;
+  const dealType=document.getElementById('dealType').value;
+  const rationale=document.getElementById('rationale').value;
+  const synergies=document.getElementById('synergies').value;
+  const closeDate=document.getElementById('closeDate').value||'Q4 2026';
+  const champion=document.getElementById('champion').value||'CEO';
+
+  const btn=document.querySelector('.btn');
+  if(btn){btn.disabled=true;btn.dataset.label=btn.dataset.label||btn.textContent;btn.textContent='⏳ Generating…';}
+
+  document.getElementById('inputPrompt').style.display='none';
+  document.getElementById('output').style.display='block';
+  document.getElementById('memoTitle').textContent=`${acquirer} × ${target} — Acquisition Memo`;
+  document.getElementById('memoContent').innerHTML=`
+    <div class="memo-doc" style="text-align:center;padding:40px 24px">
+      <div style="font-size:2.4rem;margin-bottom:12px">🏦</div>
+      <div style="color:var(--gold);font-family:'Playfair Display',serif;font-size:1.1rem;margin-bottom:8px">Drafting the acquisition memo…</div>
+      <div style="font-size:.85rem;color:#8899aa;max-width:340px;margin:0 auto">Live AI on an RTX 5090. The first call cold-loads the model, so this can take 20–90s.</div>
+    </div>`;
+
+  // Real AI acquisition memo via the ABUZ8 brain (Cloudflare Workers AI). No fabricated comparables.
+  fetch('/api/waitlist',{
+    method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({tool:'acquisition-memo',data:{acquirer,target,industry,purchasePrice:price,targetRevenue:revenue,revenueGrowth:growth,grossMargin:margin,employees,dealType,strategicRationale:rationale,annualSynergies:synergies,closeDate,dealChampion:champion}})
+  })
+  .then(r=>r.json())
+  .then(res=>{
+    if(btn){btn.disabled=false;btn.textContent=btn.dataset.label;}
+    if(!res.success||!res.result) throw new Error(res.error||'Generation failed');
+    const out=`<div class="memo-doc" style="line-height:1.75">${ABUZ8.formatResult(res.result)}</div>`;
+    // Every tab shows the full real memo — no fabricated valuation/synergy tables behind any tab.
+    memoTabs={memo:out,valuation:out,synergies:out,risks:out,recommendation:out};
+    document.getElementById('memoContent').innerHTML=out;
+  })
+  .catch(err=>{
+    if(btn){btn.disabled=false;btn.textContent=btn.dataset.label;}
+    memoTabs={};
+    document.getElementById('memoContent').innerHTML=`
+      <div class="memo-doc" style="text-align:center;padding:40px 24px">
+        <div style="font-size:2.4rem;margin-bottom:12px">⚠️</div>
+        <div style="color:#f87171;font-family:'Playfair Display',serif;font-size:1.1rem;margin-bottom:8px">Generation failed</div>
+        <div style="font-size:.85rem;color:#8899aa;max-width:360px;margin:0 auto 14px">${err.message}. The live AI may be cold-starting — please try again in a moment.</div>
+        <button class="btn" style="max-width:220px;margin:0 auto" onclick="generateMemo()">↺ Try Again</button>
+      </div>`;
+    alert('Generation failed: '+err.message+'. Please try again in a moment.');
+  });
+}
+
+function generateMemoTemplatesUNUSED(){
+  const acquirer=document.getElementById('acquirer').value||'Acquirer Corp';
+  const target=document.getElementById('target').value||'TargetCo';
+  const industry=document.getElementById('industry').value;
+  const priceRaw=document.getElementById('price').value.replace(/[^0-9]/g,'')||'45000000';
+  const price=parseInt(priceRaw);
+  const revenueRaw=document.getElementById('revenue').value.replace(/[^0-9]/g,'')||'8200000';
+  const revenue=parseInt(revenueRaw);
+  const growth=parseInt(document.getElementById('growth').value)||45;
+  const margin=parseInt(document.getElementById('margin').value)||74;
+  const employees=parseInt(document.getElementById('employees').value)||62;
+  const dealType=document.getElementById('dealType').value;
+  const rationale=document.getElementById('rationale').value;
+  const synergiesRaw=document.getElementById('synergies').value.replace(/[^0-9]/g,'')||'1800000';
+  const synergies=parseInt(synergiesRaw);
+  const closeDate=document.getElementById('closeDate').value||'Q4 2026';
+  const champion=document.getElementById('champion').value||'CEO';
+  const date=new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
+
+  const revMultiple=(price/revenue).toFixed(1);
+  const synAdj=(price-synergies*3).toLocaleString();
+  const irr=Math.round(18+growth*0.15);
+  const payback=Math.round(price/((revenue*margin/100)+synergies));
+
+  const fmt=n=>('$'+n.toLocaleString());
+  const fmtM=n=>'$'+Math.round(n/1e6*10)/10+'M';
+
+  memoTabs = {
+    memo:`<div class="memo-doc">
+      <div class="memo-watermark">
+        <div class="memo-co">${acquirer}</div>
+        <div class="memo-title">Confidential — Acquisition Recommendation Memo</div>
+      </div>
+      <div class="memo-meta">
+        <div><div class="memo-meta-row"><span class="memo-label">TO:</span><span class="memo-value">Board of Directors, ${acquirer}</span></div></div>
+        <div><div class="memo-meta-row"><span class="memo-label">FROM:</span><span class="memo-value">${champion}</span></div></div>
+        <div><div class="memo-meta-row"><span class="memo-label">DATE:</span><span class="memo-value">${date}</span></div></div>
+        <div><div class="memo-meta-row"><span class="memo-label">RE:</span><span class="memo-value">Proposed Acquisition of ${target}</span></div></div>
+        <div><div class="memo-meta-row"><span class="memo-label">DEAL SIZE:</span><span class="memo-value">${fmtM(price)} — ${dealType.split(' ')[0]}</span></div></div>
+        <div><div class="memo-meta-row"><span class="memo-label">TARGET CLOSE:</span><span class="memo-value">${closeDate}</span></div></div>
+      </div>
+
+      <div class="memo-section">
+        <h3>Executive Summary</h3>
+        <p>We recommend that ${acquirer} acquire ${target}, a ${industry} company, for a total consideration of ${fmtM(price)} (${dealType.toLowerCase()}). This acquisition supports our strategic objective of ${rationale.toLowerCase()} and is expected to generate ${fmtM(synergies)} in annual cost synergies by Year 2.</p>
+        <p>${target} generated ${fmtM(revenue)} in trailing twelve-month ARR, growing at ${growth}% year-over-year with a ${margin}% gross margin. At ${revMultiple}× ARR, the proposed valuation is ${revMultiple<5?'attractive relative to comparable transactions in the '+industry+' market.':revMultiple<8?'in line with market comparables.':'at a premium — justified by the strategic value of market access and technology.'}</p>
+      </div>
+
+      <div class="memo-section">
+        <h3>Strategic Rationale</h3>
+        <p>${rationale.includes('Market expansion')?`${target} provides immediate access to ${industry} customers that would take ${acquirer} 18–24 months and an estimated ${fmtM(price*0.4)} in GTM investment to reach organically. The acquisition compresses our market entry timeline by over 80%.`:
+          rationale.includes('Technology')?`${target}'s proprietary technology and IP provides a 2–3 year competitive advantage that would cost an estimated ${fmtM(price*0.6)} and 24+ months to replicate internally. Acquiring vs. building is the clear value-maximizing path.`:
+          rationale.includes('Talent')?`${target}'s ${employees}-person team includes exceptional talent in areas critical to ${acquirer}'s roadmap. Acqui-hire cost per engineer: ${fmtM(Math.round(price/employees/1e6*10)/10)} — competitive vs. recruiting cost + ramp time.`:
+          rationale.includes('Revenue')?`${target}'s customer base of [X accounts] represents a significant cross-sell opportunity. Applying ${acquirer}'s product suite to ${target}'s installed base is projected to generate ${fmtM(synergies)} in incremental revenue within 12 months of close.`:
+          `${target} represents a strategic fit with ${acquirer}'s long-term platform vision.`}</p>
+        <ul>
+          <li>Accelerates ${rationale.split(' ')[0]} objective by estimated 18–24 months</li>
+          <li>${employees} employees with deep domain expertise in ${industry}</li>
+          <li>${growth}% ARR growth demonstrates strong product-market fit</li>
+          <li>${margin}% gross margin provides attractive unit economics post-integration</li>
+          <li>Technology integration estimated at 6–9 months — low execution risk</li>
+        </ul>
+      </div>
+
+      <div class="memo-section">
+        <h3>Target Overview</h3>
+        <p>${target} is a ${industry} company founded in [Year], headquartered in [City]. The company serves [X] customers across [Y] industries with a ${employees}-person team.</p>
+        <table class="deal-table">
+          <tr><th>Metric</th><th>Value</th><th>vs. Benchmark</th></tr>
+          <tr><td>ARR (TTM)</td><td style="color:var(--turq2)">${fmtM(revenue)}</td><td style="color:#8899aa">—</td></tr>
+          <tr><td>YoY Growth</td><td style="color:var(--turq2)">${growth}%</td><td style="color:${growth>40?'var(--turq2)':growth>20?'var(--gold)':'#f87171'}">${growth>40?'Top quartile':growth>20?'Above median':'Below median'} for ${industry}</td></tr>
+          <tr><td>Gross Margin</td><td style="color:var(--turq2)">${margin}%</td><td style="color:${margin>70?'var(--turq2)':margin>60?'var(--gold)':'#f87171'}">${margin>70?'Excellent':'Good'} for ${industry}</td></tr>
+          <tr><td>Headcount</td><td>${employees}</td><td style="color:#8899aa">${fmtM(Math.round(price/employees/1e6*10)/10)}/employee implied</td></tr>
+          <tr><td>Purchase Price</td><td style="color:var(--gold)">${fmtM(price)}</td><td style="color:#8899aa">${revMultiple}× ARR</td></tr>
+        </table>
+      </div>
+
+      <div class="memo-section">
+        <h3>Deal Structure</h3>
+        <ul>
+          <li>${dealType} — 100% of outstanding shares/assets of ${target}</li>
+          <li>Consideration: ${fmtM(price*0.7)} cash at close + ${fmtM(price*0.3)} earnout over 24 months</li>
+          <li>Key management retention: 24-month employment agreements with equity vest</li>
+          <li>Exclusivity period: 30 days from LOI execution</li>
+          <li>Target close: ${closeDate} — subject to regulatory clearance</li>
+          <li>Representation & warranty insurance: recommended for ${price>20000000?'this deal size':''}</li>
+        </ul>
+      </div>
+    </div>`,
+
+    valuation:`<div class="memo-doc">
+      <div class="memo-section">
+        <h3>Valuation Analysis</h3>
+        <p>We evaluated ${target} using three primary methodologies: comparable transactions, DCF analysis, and revenue multiple benchmarking. The proposed price of ${fmtM(price)} falls within a reasonable range under all three approaches.</p>
+      </div>
+      <div class="val-box">
+        <div class="val-num">${fmtM(price)}</div>
+        <div class="val-lbl">Proposed Purchase Price · ${revMultiple}× TTM ARR · ${(price/(revenue*margin/100)).toFixed(1)}× Gross Profit</div>
+      </div>
+      <div class="score-grid">
+        <div class="score-box"><div class="score-val">${revMultiple}×</div><div class="score-lbl">ARR Multiple</div></div>
+        <div class="score-box"><div class="score-val">${irr}%</div><div class="score-lbl">Est. IRR (5yr)</div></div>
+        <div class="score-box"><div class="score-val">${payback}yr</div><div class="score-lbl">Cash Payback</div></div>
+      </div>
+      <div class="memo-section">
+        <h3>Comparable Transactions (${industry}, Last 24 Months)</h3>
+        <table class="deal-table">
+          <tr><th>Transaction</th><th>Revenue Multiple</th><th>Growth at Close</th></tr>
+          <tr><td>Comparable A (similar ${industry})</td><td>${(parseFloat(revMultiple)*0.85).toFixed(1)}×</td><td>${Math.round(growth*0.8)}%</td></tr>
+          <tr><td>Comparable B (adjacent market)</td><td>${(parseFloat(revMultiple)*1.1).toFixed(1)}×</td><td>${Math.round(growth*1.15)}%</td></tr>
+          <tr><td>Comparable C (lower growth)</td><td>${(parseFloat(revMultiple)*0.7).toFixed(1)}×</td><td>${Math.round(growth*0.6)}%</td></tr>
+          <tr style="background:rgba(201,168,76,.05);"><td><strong>Median Comparable</strong></td><td><strong>${revMultiple}×</strong></td><td><strong>${growth}%</strong></td></tr>
+          <tr style="background:rgba(34,181,160,.05);"><td><strong style="color:var(--turq2)">Proposed: ${target}</strong></td><td><strong style="color:var(--turq2)">${revMultiple}×</strong></td><td><strong style="color:var(--turq2)">${growth}%</strong></td></tr>
+        </table>
+      </div>
+      <div class="memo-section">
+        <h3>Valuation Scenarios</h3>
+        <table class="deal-table">
+          <tr><th>Scenario</th><th>Price</th><th>Multiple</th><th>Rationale</th></tr>
+          <tr><td>Floor (distressed)</td><td style="color:#8899aa">${fmtM(price*0.7)}</td><td style="color:#8899aa">${(parseFloat(revMultiple)*0.7).toFixed(1)}×</td><td style="color:#8899aa">If seller forced sale</td></tr>
+          <tr><td>Base (proposed)</td><td style="color:var(--gold)">${fmtM(price)}</td><td style="color:var(--gold)">${revMultiple}×</td><td style="color:var(--gold)">Current LOI</td></tr>
+          <tr><td>Walk-Away (max)</td><td style="color:#f87171">${fmtM(price*1.2)}</td><td style="color:#f87171">${(parseFloat(revMultiple)*1.2).toFixed(1)}×</td><td style="color:#f87171">Board-authorized ceiling</td></tr>
+        </table>
+      </div>
+    </div>`,
+
+    synergies:`<div class="memo-doc">
+      <div class="memo-section">
+        <h3>Synergy Analysis</h3>
+        <p>We have identified ${fmtM(synergies)} in annual run-rate synergies expected to be fully realized by end of Year 2 post-close. Present value of synergies (discounted at 12%): ${fmtM(synergies*3.5)}. Synergy-adjusted effective price: ${fmtM(price-synergies*3.5)} (${((price-synergies*3.5)/revenue).toFixed(1)}× ARR).</p>
+      </div>
+      <div class="score-grid">
+        <div class="score-box"><div class="score-val">${fmtM(synergies)}</div><div class="score-lbl">Annual Synergies</div></div>
+        <div class="score-box"><div class="score-val">${fmtM(synergies*3.5)}</div><div class="score-lbl">PV of Synergies</div></div>
+        <div class="score-box"><div class="score-val">${fmtM(price-synergies*3.5)}</div><div class="score-lbl">Synergy-Adj. Price</div></div>
+      </div>
+      <div class="memo-section">
+        <h3>Cost Synergy Breakdown</h3>
+        <table class="deal-table">
+          <tr><th>Category</th><th>Annual Amount</th><th>Timing</th><th>Confidence</th></tr>
+          <tr><td>Infrastructure & Hosting (consolidation)</td><td style="color:var(--turq2)">${fmtM(Math.round(synergies*0.35))}</td><td>Year 1</td><td style="color:var(--turq2)">High</td></tr>
+          <tr><td>Duplicate G&A functions (Finance, Legal, HR)</td><td style="color:var(--turq2)">${fmtM(Math.round(synergies*0.3))}</td><td>Year 1–2</td><td style="color:var(--gold)">Medium-High</td></tr>
+          <tr><td>Sales & Marketing efficiency</td><td style="color:var(--turq2)">${fmtM(Math.round(synergies*0.2))}</td><td>Year 2</td><td style="color:var(--gold)">Medium</td></tr>
+          <tr><td>Vendor contract renegotiation</td><td style="color:var(--turq2)">${fmtM(Math.round(synergies*0.15))}</td><td>Year 1</td><td style="color:var(--turq2)">High</td></tr>
+          <tr style="background:rgba(201,168,76,.05);font-weight:600;"><td>Total Run-Rate Synergies</td><td style="color:var(--gold)">${fmtM(synergies)}</td><td>Full Year 2</td><td style="color:var(--gold)">Committed</td></tr>
+        </table>
+      </div>
+      <div class="memo-section">
+        <h3>Revenue Synergies (Upside — Not in Base Case)</h3>
+        <ul>
+          <li>Cross-sell ${acquirer} products to ${target}'s ${employees > 50 ? '200+' : '100+'} existing customers: estimated ${fmtM(revenue*0.3)} incremental ARR by Year 2</li>
+          <li>Access to ${target}'s ${industry} vertical unlocks a TAM currently inaccessible to ${acquirer}</li>
+          <li>Combined go-to-market team enables joint enterprise deals previously too large for either company</li>
+        </ul>
+        <p style="color:#8899aa;font-size:.8rem;margin-top:8px;">Note: Revenue synergies are excluded from the base valuation model per conservative accounting standards. Realization would further improve deal economics.</p>
+      </div>
+    </div>`,
+
+    risks:`<div class="memo-doc">
+      <div class="memo-section">
+        <h3>Risk Matrix</h3>
+        <p>We have identified and assessed the following material risks associated with this transaction. All risks have mitigation strategies in place prior to board approval.</p>
+      </div>
+      ${[
+        {sev:'HIGH',sevColor:'#f87171',title:'Integration Execution Risk',body:`Merging two ${industry} engineering teams with different tech stacks creates integration latency. Mitigation: Hire dedicated integration PM at close. Set 6-month timeline with weekly board updates. Appoint CTO of ${acquirer} as integration executive sponsor.`},
+        {sev:'HIGH',sevColor:'#f87171',title:'Key Person Retention',body:`${target}'s founder and 2–3 senior engineers are critical to short-term value retention. Mitigation: Structure 25% of purchase price as 24-month earnout tied to retention. Offer meaningful equity refresh + accelerated vesting upon change of control.`},
+        {sev:'MED',sevColor:'var(--gold)',title:'Customer Concentration',body:`If top 3 customers represent >40% of ${target}'s ARR, churn risk post-acquisition is material. Mitigation: Require seller reps on customer retention. Implement customer success outreach program within 30 days of close. Consider holdback tied to retention milestones.`},
+        {sev:'MED',sevColor:'var(--gold)',title:'Valuation / Market Risk',body:`At ${revMultiple}× ARR, the deal assumes continued ${growth}%+ growth. If growth decelerates to <20% post-acquisition, effective multiple rises to ${(price/(revenue*1.2)).toFixed(1)}× — above market. Mitigation: Structure earnout with revenue milestones. Conservative IRR model assumes growth of ${Math.round(growth*0.6)}% post-close.`},
+        {sev:'LOW',sevColor:'var(--turq2)',title:'Regulatory / Antitrust',body:`Transaction size of ${fmtM(price)} is below HSR filing thresholds in most jurisdictions. Legal counsel to confirm no regulatory filing required. Standard diligence on export controls and data privacy compliance.`},
+        {sev:'LOW',sevColor:'var(--turq2)',title:'Technology / IP Risk',body:`Standard IP diligence in progress: open-source license scan, contractor IP assignment verification, patent freedom-to-operate analysis. No material issues identified in initial review. Full report due before close.`}
+      ].map(r=>`<div class="risk-item">
+        <span class="risk-sev" style="background:${r.sevColor}22;color:${r.sevColor};">${r.sev}</span>
+        <div><div style="font-weight:600;font-size:.85rem;margin-bottom:4px;">${r.title}</div><div style="font-size:.8rem;color:#8899aa;line-height:1.5;">${r.body}</div></div>
+      </div>`).join('')}
+    </div>`,
+
+    recommendation:`<div class="memo-doc">
+      <div class="memo-section">
+        <h3>Investment Thesis Summary</h3>
+        <p>The acquisition of ${target} at ${fmtM(price)} (${revMultiple}× ARR) represents a compelling strategic and financial opportunity for ${acquirer}. The deal satisfies our primary objective of ${rationale.toLowerCase()} and creates a platform for accelerated growth in the ${industry} market.</p>
+      </div>
+      <div class="score-grid">
+        <div class="score-box"><div class="score-val" style="color:${irr>20?'var(--turq2)':'var(--gold)'}">${irr}%</div><div class="score-lbl">Projected IRR</div></div>
+        <div class="score-box"><div class="score-val">${revMultiple}×</div><div class="score-lbl">ARR Multiple</div></div>
+        <div class="score-box"><div class="score-val">${payback}yr</div><div class="score-lbl">Payback Period</div></div>
+      </div>
+      <div class="memo-section">
+        <h3>Why Now</h3>
+        <ul>
+          <li>${target} is at an inflection point — growth of ${growth}% is accelerating and a competitive process may begin within 60–90 days</li>
+          <li>Current market conditions favor acquirers: ${industry} multiples are ${revMultiple<6?'at 5-year lows':'near historical averages'}</li>
+          <li>The window to acquire before ${target} raises a Series ${parseInt(revenue/1e6)>10?'C':'B'} (which would reset valuation 50–80% higher) is narrow</li>
+          <li>${acquirer} has the balance sheet capacity and integration bandwidth to execute now</li>
+        </ul>
+      </div>
+      <div class="memo-section">
+        <h3>Board Approvals Required</h3>
+        <ul>
+          <li>Authorization to execute LOI and enter 30-day exclusivity</li>
+          <li>Approval of purchase price up to ${fmtM(price*1.2)} (walk-away ceiling)</li>
+          <li>Authorization of legal, financial, and technical due diligence budget: ~$${Math.round(price*0.015/1000)}K</li>
+          <li>Designation of integration executive sponsor</li>
+        </ul>
+      </div>
+      <div class="rec-banner">
+        <div class="rec-title">✅ RECOMMENDATION: APPROVE</div>
+        <div class="rec-sub">Management recommends the Board approve the acquisition of ${target} at a purchase price of ${fmtM(price)}, with the deal champion ${champion} authorized to execute LOI and proceed with full due diligence.</div>
+      </div>
+      <div style="margin-top:16px;padding:12px;background:var(--lapis2);border:1px solid #1e3a5f;border-radius:8px;font-size:.78rem;color:#8899aa;text-align:center;">
+        This memo was generated by ABUZ8 AI. All financial projections are estimates requiring verification with actual financial statements and legal counsel prior to any binding commitment.
+      </div>
+    </div>`
+  };
+
+  document.getElementById('inputPrompt').style.display='none';
+  document.getElementById('output').style.display='block';
+  document.getElementById('memoTitle').textContent=`${acquirer} × ${target} — Acquisition Memo`;
+  switchMTab(document.querySelector('.mtab.active'),'memo');
+}
+
+function switchMTab(el,tab){
+  document.querySelectorAll('.mtab').forEach(t=>t.classList.remove('active'));
+  if(el) el.classList.add('active');
+  document.getElementById('memoContent').innerHTML=memoTabs[tab]||'';
+}
+
+function copyMemo(){
+  const text=Object.values(memoTabs).map(t=>t.replace(/<[^>]+>/g,'').replace(/\s{2,}/g,' ')).join('\n\n---\n\n');
+  navigator.clipboard.writeText(text).then(()=>alert('Memo copied to clipboard!'));
+}
+
+function exportMemo(){
+  const a=document.getElementById('acquirer').value||'Acq';
+  const t=document.getElementById('target').value||'Target';
+  const html=`<html><body style="font-family:Georgia,serif;background:#fff;padding:48px;max-width:800px;margin:0 auto;">${['memo','valuation','synergies','risks','recommendation'].map(tab=>`<div style="margin-bottom:48px">${memoTabs[tab]||''}</div>`).join('')}
+<script src="/assets/js/dfy-banner.js" async><\/script>
+<\/body><\/html>`;
+  const blob=new Blob([html],{type:'text/html'});
+  const anchor=document.createElement('a');anchor.href=URL.createObjectURL(blob);anchor.download=a.replace(/\s+/g,'-')+'-'+t.replace(/\s+/g,'-')+'-acquisition-memo.html';anchor.click();
+}
+
+function joinWL(){
+  const e=document.getElementById('wlEmail').value.trim();
+  if(!e||!e.includes('@')){alert('Valid email required');return;}
+  fetch('/api/waitlist',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:e,tool:'ai-acquisition-memo',ts:Date.now()})}).catch(()=>{});
+  localStorage.setItem('wl_acquisition_memo',e);
+  document.querySelector('.waitlist').innerHTML='<h3 style="color:var(--gold);font-family:Playfair Display,serif">✅ On the list!</h3><p style="color:#8899aa;margin-top:8px;">Pro access within 24h.</p>';
+}
+</script>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+<script src="/tools/_tools-shared.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>
+

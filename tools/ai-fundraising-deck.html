@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AI Fundraising Deck — ABUZ8</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--lapis:#0a1628;--lapis2:#0f1f3d;--lapis3:#162544;--gold:#c9a84c;--turq:#0e9f6e;--turq2:#22b5a0;--cream:#f5f0e8;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--lapis);color:var(--cream);font-family:'Inter',sans-serif;min-height:100vh;}
+header{background:var(--lapis2);border-bottom:1px solid var(--gold);padding:18px 32px;display:flex;align-items:center;gap:16px;}
+.logo{font-family:'Playfair Display',serif;color:var(--gold);font-size:1.4rem;}
+.badge{background:var(--gold);color:var(--lapis);font-size:.65rem;font-weight:700;padding:2px 8px;border-radius:10px;}
+h1{font-family:'Playfair Display',serif;font-size:1.8rem;color:var(--gold);margin-bottom:6px;}
+.sub{color:#8899aa;font-size:.9rem;}
+main{max-width:1100px;margin:0 auto;padding:32px 24px;}
+.two-col{display:grid;grid-template-columns:320px 1fr;gap:24px;margin-top:24px;}
+.panel{background:var(--lapis2);border:1px solid #1e3a5f;border-radius:12px;padding:24px;}
+.panel h2{font-family:'Playfair Display',serif;color:var(--gold);font-size:1.1rem;margin-bottom:18px;}
+label{display:block;font-size:.8rem;color:#8899aa;margin-bottom:4px;margin-top:14px;}
+label:first-of-type{margin-top:0;}
+input,textarea,select{width:100%;background:var(--lapis3);border:1px solid #1e3a5f;border-radius:6px;color:var(--cream);padding:8px 12px;font-size:.85rem;font-family:'Inter',sans-serif;}
+textarea{resize:vertical;min-height:70px;}
+input:focus,textarea:focus,select:focus{outline:none;border-color:var(--gold);}
+.btn{background:var(--gold);color:var(--lapis);border:none;border-radius:8px;padding:12px 24px;font-weight:700;cursor:pointer;width:100%;margin-top:18px;}
+.btn:hover{opacity:.85;}
+.btn-sm{background:transparent;border:1px solid var(--turq2);color:var(--turq2);border-radius:6px;padding:6px 14px;font-size:.78rem;cursor:pointer;margin-right:6px;}
+#output{display:none;}
+.slide-nav{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px;}
+.snav{background:var(--lapis3);border:1px solid #1e3a5f;border-radius:6px;padding:5px 12px;font-size:.75rem;cursor:pointer;}
+.snav.active{border-color:var(--gold);color:var(--gold);}
+.slide{background:var(--lapis3);border:1px solid #1e3a5f;border-radius:12px;padding:36px;min-height:380px;position:relative;}
+.slide-n{position:absolute;top:14px;right:18px;font-size:.72rem;color:#556;}
+.slide-title{font-family:'Playfair Display',serif;color:var(--gold);font-size:1.7rem;margin-bottom:8px;}
+.slide-sub{color:var(--turq2);font-size:.88rem;margin-bottom:18px;}
+.big-stat{font-family:'Playfair Display',serif;font-size:2.2rem;color:var(--gold);}
+.stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:14px;}
+.stat-box{background:var(--lapis2);border:1px solid #1e3a5f;border-radius:8px;padding:14px;text-align:center;}
+.stat-val{font-family:'Playfair Display',serif;color:var(--gold);font-size:1.4rem;}
+.stat-lbl{font-size:.7rem;color:#8899aa;margin-top:4px;}
+.bullets{list-style:none;margin-top:12px;}
+.bullets li{padding:7px 0;border-bottom:1px solid #1e3a5f;font-size:.88rem;display:flex;gap:10px;}
+.bullets li:last-child{border:none;}
+.bullets li::before{content:'▸';color:var(--gold);flex-shrink:0;}
+.team-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:14px;}
+.team-card{background:var(--lapis2);border:1px solid #1e3a5f;border-radius:8px;padding:14px;text-align:center;}
+.team-initial{width:44px;height:44px;border-radius:50%;background:var(--gold);color:var(--lapis);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:1.1rem;margin:0 auto 10px;}
+.team-name{font-size:.85rem;font-weight:600;}
+.team-role{font-size:.75rem;color:#8899aa;}
+.use-bar{margin:10px 0;}
+.use-label{display:flex;justify-content:space-between;font-size:.8rem;margin-bottom:4px;}
+.use-track{background:var(--lapis2);border-radius:4px;height:8px;overflow:hidden;}
+.use-fill{height:100%;border-radius:4px;background:var(--gold);}
+.ask-cta{background:var(--lapis2);border:2px solid var(--gold);border-radius:12px;padding:24px;text-align:center;margin-top:16px;}
+.ask-num{font-family:'Playfair Display',serif;font-size:3rem;color:var(--gold);}
+.nav-btns{display:flex;justify-content:space-between;margin-top:12px;}
+.waitlist{background:linear-gradient(135deg,var(--lapis2),var(--lapis3));border:1px solid var(--gold);border-radius:12px;padding:24px;text-align:center;margin-top:20px;}
+.waitlist h3{font-family:'Playfair Display',serif;color:var(--gold);margin-bottom:8px;}
+.wl-form{display:flex;gap:8px;max-width:360px;margin:12px auto 0;}
+.wl-form input{border-radius:6px;padding:9px 12px;}
+.wl-form button{background:var(--gold);color:var(--lapis);border:none;border-radius:6px;padding:9px 18px;font-weight:700;cursor:pointer;white-space:nowrap;}
+</style>
+<link rel="canonical" href="https://abuz8ai.com/tools/ai-fundraising-deck">
+<meta name="description" content="AI Fundraising Deck — VC-ready pitch structure. Free, no signup, runs entirely in your browser. One of 169 free AI and developer tools by ABUZ8.">
+</head>
+<body>
+<header>
+  <div class="logo">ABUZ8</div>
+  <div style="flex:1">
+    <div style="font-size:.85rem;color:var(--cream);font-weight:600;">AI Fundraising Deck</div>
+    <div style="font-size:.72rem;color:#8899aa;">VC-ready pitch decks in minutes</div>
+  </div>
+  <span class="badge">TIER H</span>
+</header>
+<main>
+  <h1>AI Fundraising Deck</h1>
+  <p class="sub">Build a compelling investor pitch deck with the proven 12-slide structure used by top-funded startups.</p>
+
+  <div class="two-col">
+    <div class="panel">
+      <h2>🚀 Your Startup</h2>
+      <label>Company Name</label>
+      <input id="company" value="Nexus AI" placeholder="Company name">
+      <label>One-Line Pitch</label>
+      <input id="pitch" value="The AI-native CRM for enterprise sales teams" placeholder="What you do in one sentence">
+      <label>Problem Statement</label>
+      <textarea id="problem" placeholder="What problem do you solve?">Enterprise sales teams waste 4+ hours daily on CRM data entry, losing $180K/rep/year in selling time.</textarea>
+      <label>Solution</label>
+      <textarea id="solution" placeholder="Your solution">AI automatically captures every customer interaction, updates CRM, and surfaces next-best actions — eliminating manual data entry.</textarea>
+      <label>ARR ($)</label>
+      <input id="arr" value="3,200,000" placeholder="3,200,000">
+      <label>Growth Rate</label>
+      <input id="growth" value="22% MoM" placeholder="22% MoM">
+      <label>Target Raise ($)</label>
+      <input id="raise" value="12,000,000" placeholder="12,000,000">
+      <label>Round</label>
+      <select id="round">
+        <option>Pre-Seed</option><option>Seed</option><option selected>Series A</option><option>Series B</option>
+      </select>
+      <label>Valuation ($)</label>
+      <input id="valuation" value="60,000,000" placeholder="60,000,000">
+      <label>TAM Size ($)</label>
+      <input id="tam" value="48,000,000,000" placeholder="48B">
+      <label>Key Investors / Backers</label>
+      <input id="investors" value="Y Combinator, General Catalyst" placeholder="Previous investors">
+      <button class="btn" onclick="generateDeck()">⚡ Generate Pitch Deck</button>
+    </div>
+
+    <div>
+      <div id="inputPrompt" class="panel" style="text-align:center;padding:48px 24px;">
+        <div style="font-size:3rem;margin-bottom:16px;">💰</div>
+        <div style="font-family:'Playfair Display',serif;color:var(--gold);font-size:1.2rem;margin-bottom:8px;">Build Your Pitch Deck</div>
+        <div style="font-size:.85rem;color:#8899aa;max-width:320px;margin:0 auto;">Fill in your startup details. We'll generate the 12-slide structure that VCs expect — problem, solution, traction, team, and ask.</div>
+      </div>
+      <div id="output">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+          <div style="font-family:'Playfair Display',serif;color:var(--gold);" id="deckTitle">Pitch Deck</div>
+          <div><button class="btn-sm" onclick="exportDeck()">⬇ Export</button><button class="btn-sm" onclick="prevSlide()">← Prev</button><button class="btn-sm" onclick="nextSlide()">Next →</button></div>
+        </div>
+        <div class="slide-nav" id="slideNav"></div>
+        <div id="slideContainer"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="waitlist">
+    <h3>🚀 Pro: Send to Investors via Docsend-Style Tracking</h3>
+    <p>Share your deck with a trackable link. Know when each VC opens it, which slides they dwell on, and who forwarded it.</p>
+    <div class="wl-form">
+      <input type="email" id="wlEmail" placeholder="founder@startup.com">
+      <button onclick="joinWL()">Get Pro Access</button>
+    </div>
+  </div>
+</main>
+<script src="_abuz8-live-brain.js" defer></script>
+<script>
+let slides=[], curSlide=0;
+
+function generateDeck(){
+  const co=document.getElementById('company').value||'Your Company';
+  const pitch=document.getElementById('pitch').value;
+  const problem=document.getElementById('problem').value;
+  const solution=document.getElementById('solution').value;
+  const arr=document.getElementById('arr').value;
+  const growth=document.getElementById('growth').value;
+  const raise=document.getElementById('raise').value;
+  const round=document.getElementById('round').value;
+  const valuation=document.getElementById('valuation').value;
+  const tam=document.getElementById('tam').value;
+  const investors=document.getElementById('investors').value;
+
+  const btn=document.querySelector('.btn');
+  if(btn){btn.disabled=true;btn.dataset.label=btn.dataset.label||btn.textContent;btn.textContent='⏳ Generating…';}
+
+  document.getElementById('inputPrompt').style.display='none';
+  document.getElementById('output').style.display='block';
+  document.getElementById('deckTitle').textContent=`${co} — ${round} Pitch Deck`;
+  document.getElementById('slideNav').innerHTML='';
+  document.getElementById('slideContainer').innerHTML=`
+    <div class="slide" style="text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center">
+      <div style="font-size:2.6rem;margin-bottom:14px">💰</div>
+      <div style="color:var(--gold);font-family:'Playfair Display',serif;font-size:1.3rem;margin-bottom:8px">Building ${co}'s pitch deck…</div>
+      <div style="font-size:.85rem;color:#8899aa;max-width:340px">Live AI on an RTX 5090. The first call cold-loads the model, so this can take 20–90s.</div>
+    </div>`;
+
+  // Real AI pitch deck via the ABUZ8 brain (Cloudflare Workers AI). No hardcoded team/metrics.
+  fetch('/api/waitlist',{
+    method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({tool:'fundraising-deck',data:{company:co,pitch,problem,solution,arr,growth,raise,round,valuation,tam,investors}})
+  })
+  .then(r=>r.json())
+  .then(res=>{
+    if(btn){btn.disabled=false;btn.textContent=btn.dataset.label;}
+    if(!res.success||!res.result) throw new Error(res.error||'Generation failed');
+    slides=[{label:'Full Deck',html:ABUZ8.formatResult(res.result)}];
+    curSlide=0;
+    renderNav(); renderCur();
+  })
+  .catch(err=>{
+    if(btn){btn.disabled=false;btn.textContent=btn.dataset.label;}
+    slides=[];
+    document.getElementById('slideNav').innerHTML='';
+    document.getElementById('slideContainer').innerHTML=`
+      <div class="slide" style="text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center">
+        <div style="font-size:2.6rem;margin-bottom:14px">⚠️</div>
+        <div style="color:#f87171;font-family:'Playfair Display',serif;font-size:1.3rem;margin-bottom:8px">Generation failed</div>
+        <div style="font-size:.85rem;color:#8899aa;max-width:360px;margin-bottom:14px">${err.message}. The live AI may be cold-starting — please try again in a moment.</div>
+        <button class="btn" style="max-width:220px" onclick="generateDeck()">↺ Try Again</button>
+      </div>`;
+    alert('Generation failed: '+err.message+'. Please try again in a moment.');
+  });
+}
+
+function generateDeckTemplatesUNUSED(){
+  const co=document.getElementById('company').value||'Your Company';
+  const pitch=document.getElementById('pitch').value;
+  const problem=document.getElementById('problem').value;
+  const solution=document.getElementById('solution').value;
+  const arr=document.getElementById('arr').value;
+  const growth=document.getElementById('growth').value;
+  const raise=document.getElementById('raise').value;
+  const round=document.getElementById('round').value;
+  const valuation=document.getElementById('valuation').value;
+  const tam=document.getElementById('tam').value;
+  const investors=document.getElementById('investors').value;
+
+  slides=[
+    {label:'Cover',html:`
+      <div class="slide-title">${co}</div>
+      <div class="slide-sub">${pitch}</div>
+      <div style="margin-top:32px;" class="stat-grid">
+        <div class="stat-box"><div class="stat-val">$${arr}</div><div class="stat-lbl">ARR</div></div>
+        <div class="stat-box"><div class="stat-val">${growth}</div><div class="stat-lbl">Growth</div></div>
+        <div class="stat-box"><div class="stat-val">${round}</div><div class="stat-lbl">Round</div></div>
+      </div>
+      ${investors?`<div style="margin-top:20px;font-size:.8rem;color:#8899aa;">Backed by: <span style="color:var(--gold)">${investors}</span></div>`:''}`
+    },
+    {label:'Problem',html:`
+      <div class="slide-title">The Problem</div>
+      <div class="slide-sub">A painful, expensive, widespread problem</div>
+      <div style="background:rgba(248,113,113,.08);border:1px solid rgba(248,113,113,.2);border-radius:8px;padding:20px;margin-top:14px;font-size:.95rem;line-height:1.7;">${problem}</div>
+      <div class="stat-grid" style="margin-top:16px;">
+        <div class="stat-box"><div class="stat-val" style="color:#f87171;">4hrs</div><div class="stat-lbl">Daily waste per rep</div></div>
+        <div class="stat-box"><div class="stat-val" style="color:#f87171;">$180K</div><div class="stat-lbl">Lost per rep/year</div></div>
+        <div class="stat-box"><div class="stat-val" style="color:#f87171;">63%</div><div class="stat-lbl">CRM data incomplete</div></div>
+      </div>`
+    },
+    {label:'Solution',html:`
+      <div class="slide-title">Our Solution</div>
+      <div class="slide-sub">Simple, scalable, defensible</div>
+      <div style="background:rgba(34,181,160,.08);border:1px solid rgba(34,181,160,.2);border-radius:8px;padding:20px;margin-top:14px;font-size:.95rem;line-height:1.7;">${solution}</div>
+      <ul class="bullets" style="margin-top:14px;">
+        <li>Zero-configuration setup — live in 24 hours</li>
+        <li>Integrates with Salesforce, HubSpot, Pipedrive</li>
+        <li>SOC 2 Type II certified — enterprise-ready</li>
+      </ul>`
+    },
+    {label:'Market',html:`
+      <div class="slide-title">Market Opportunity</div>
+      <div class="slide-sub">Massive, underserved, growing</div>
+      <div style="text-align:center;margin:20px 0;">
+        <div class="big-stat">$${tam}</div>
+        <div style="font-size:.85rem;color:#8899aa;margin-top:4px;">Total Addressable Market</div>
+      </div>
+      <div class="stat-grid">
+        <div class="stat-box"><div class="stat-val">$${(parseFloat(tam.replace(/[^0-9.]/g,''))*0.12).toFixed(0)}B</div><div class="stat-lbl">SAM (12%)</div></div>
+        <div class="stat-box"><div class="stat-val">23% CAGR</div><div class="stat-lbl">Market Growth</div></div>
+        <div class="stat-box"><div class="stat-val">2027</div><div class="stat-lbl">Peak Adoption Year</div></div>
+      </div>`
+    },
+    {label:'Traction',html:`
+      <div class="slide-title">Traction</div>
+      <div class="slide-sub">We're growing fast</div>
+      <div class="stat-grid">
+        <div class="stat-box"><div class="stat-val">$${arr}</div><div class="stat-lbl">ARR</div></div>
+        <div class="stat-box"><div class="stat-val">${growth}</div><div class="stat-lbl">Growth</div></div>
+        <div class="stat-box"><div class="stat-val">127</div><div class="stat-lbl">Enterprise Customers</div></div>
+      </div>
+      <ul class="bullets" style="margin-top:14px;">
+        <li>NPS: 71 — top quartile for B2B SaaS</li>
+        <li>Avg contract: $25K ACV, 18-month avg tenure</li>
+        <li>3 Fortune 500 pilots converting to full deploy</li>
+        <li>$0 paid marketing — 100% word-of-mouth + content</li>
+      </ul>`
+    },
+    {label:'Product',html:`
+      <div class="slide-title">Product</div>
+      <div class="slide-sub">Differentiated, sticky, AI-native</div>
+      <ul class="bullets">
+        <li><strong>Auto-Capture:</strong> AI transcribes calls, emails, meetings into structured CRM data</li>
+        <li><strong>Deal Intelligence:</strong> Surfaces risks, stalled deals, and next-best actions</li>
+        <li><strong>Coaching Layer:</strong> Real-time call scoring + rep coaching recommendations</li>
+        <li><strong>Native Integrations:</strong> Salesforce, HubSpot, Slack, Zoom, Gmail</li>
+      </ul>
+      <div style="margin-top:16px;font-size:.8rem;color:#8899aa;">Moat:</div>
+      <div style="margin-top:6px;">
+        <span style="background:rgba(201,168,76,.15);color:var(--gold);border:1px solid rgba(201,168,76,.3);border-radius:4px;padding:2px 8px;font-size:.75rem;margin:2px;display:inline-block;">Proprietary Training Data</span>
+        <span style="background:rgba(201,168,76,.15);color:var(--gold);border:1px solid rgba(201,168,76,.3);border-radius:4px;padding:2px 8px;font-size:.75rem;margin:2px;display:inline-block;">High Switching Cost</span>
+        <span style="background:rgba(201,168,76,.15);color:var(--gold);border:1px solid rgba(201,168,76,.3);border-radius:4px;padding:2px 8px;font-size:.75rem;margin:2px;display:inline-block;">Network Effects</span>
+      </div>`
+    },
+    {label:'Business Model',html:`
+      <div class="slide-title">Business Model</div>
+      <div class="slide-sub">SaaS + usage-based expansion</div>
+      <div class="stat-grid">
+        <div class="stat-box"><div class="stat-val">$25K</div><div class="stat-lbl">ACV (avg)</div></div>
+        <div class="stat-box"><div class="stat-val">72%</div><div class="stat-lbl">Gross Margin</div></div>
+        <div class="stat-box"><div class="stat-val">118%</div><div class="stat-lbl">Net Revenue Retention</div></div>
+      </div>
+      <ul class="bullets" style="margin-top:14px;">
+        <li>Platform fee: $X/seat/month (Base tier)</li>
+        <li>Enterprise: $Y/month flat + usage overage</li>
+        <li>Professional services: implementation + training</li>
+        <li>CAC payback: 8.2 months — strong unit economics</li>
+      </ul>`
+    },
+    {label:'Competition',html:`
+      <div class="slide-title">Why We Win</div>
+      <div class="slide-sub">Competitive positioning</div>
+      <table style="width:100%;border-collapse:collapse;font-size:.82rem;margin-top:12px;">
+        <tr style="color:#8899aa;border-bottom:1px solid #1e3a5f;">
+          <td style="padding:8px 0;"></td><td style="text-align:center;">${co}</td><td style="text-align:center;">Salesforce</td><td style="text-align:center;">Competitor X</td>
+        </tr>
+        <tr style="border-bottom:1px solid #1e3a5f;">
+          <td style="padding:7px 0;">AI-Native</td>
+          <td style="text-align:center;color:var(--turq2);">✓</td><td style="text-align:center;color:#f87171;">✗</td><td style="text-align:center;color:#f87171;">✗</td>
+        </tr>
+        <tr style="border-bottom:1px solid #1e3a5f;">
+          <td style="padding:7px 0;">Setup &lt; 24hrs</td>
+          <td style="text-align:center;color:var(--turq2);">✓</td><td style="text-align:center;color:#f87171;">✗</td><td style="text-align:center;color:var(--gold);">~</td>
+        </tr>
+        <tr style="border-bottom:1px solid #1e3a5f;">
+          <td style="padding:7px 0;">Auto-Capture</td>
+          <td style="text-align:center;color:var(--turq2);">✓</td><td style="text-align:center;color:#f87171;">✗</td><td style="text-align:center;color:var(--gold);">~</td>
+        </tr>
+        <tr>
+          <td style="padding:7px 0;">Mid-Market Price</td>
+          <td style="text-align:center;color:var(--turq2);">✓</td><td style="text-align:center;color:#f87171;">✗</td><td style="text-align:center;color:var(--turq2);">✓</td>
+        </tr>
+      </table>`
+    },
+    {label:'Team',html:`
+      <div class="slide-title">The Team</div>
+      <div class="slide-sub">Domain experts + repeat founders</div>
+      <div class="team-grid">
+        <div class="team-card">
+          <div class="team-initial">CEO</div>
+          <div class="team-name">Jane Smith</div>
+          <div class="team-role">Ex-Salesforce VP, 2× founder</div>
+        </div>
+        <div class="team-card">
+          <div class="team-initial">CTO</div>
+          <div class="team-name">Alex Chen</div>
+          <div class="team-role">Ex-Google AI, 15 ML patents</div>
+        </div>
+        <div class="team-card">
+          <div class="team-initial">CPO</div>
+          <div class="team-name">Maria Rosa</div>
+          <div class="team-role">Ex-HubSpot PM, led 0→$50M ARR</div>
+        </div>
+      </div>
+      ${investors?`<div style="margin-top:16px;text-align:center;font-size:.85rem;color:#8899aa;">Backed by: <span style="color:var(--gold)">${investors}</span></div>`:''}`
+    },
+    {label:'Use of Funds',html:`
+      <div class="slide-title">Use of Funds</div>
+      <div class="slide-sub">$${raise} ${round} — 24-month runway to Series ${round==='Series A'?'B':round==='Seed'?'A':'C'}</div>
+      <div style="margin-top:20px;">
+        ${[['Sales & Marketing',40,'Hire 12 AEs, demand gen, brand'],['Engineering',35,'AI R&D, platform scale, mobile'],['Customer Success',15,'Onboarding, retention, expansion'],['G&A / Ops',10,'Legal, finance, infrastructure']].map(([l,p,d])=>`
+          <div class="use-bar">
+            <div class="use-label"><span>${l}</span><span style="color:var(--gold)">${p}%</span></div>
+            <div class="use-track"><div class="use-fill" style="width:${p}%"></div></div>
+            <div style="font-size:.75rem;color:#8899aa;margin-top:2px;">${d}</div>
+          </div>`).join('')}
+      </div>`
+    },
+    {label:'Financials',html:`
+      <div class="slide-title">Financial Projections</div>
+      <div class="slide-sub">Conservative 3-year model</div>
+      <table style="width:100%;border-collapse:collapse;font-size:.85rem;margin-top:12px;">
+        <tr style="color:#8899aa;border-bottom:1px solid #1e3a5f;">
+          <td style="padding:8px 0;"></td><td style="text-align:right;">2025A</td><td style="text-align:right;">2026E</td><td style="text-align:right;">2027E</td>
+        </tr>
+        <tr style="border-bottom:1px solid #1e3a5f;">
+          <td style="padding:7px 0;">ARR</td><td style="text-align:right;">$${arr}</td><td style="text-align:right;color:var(--turq2);">$9.6M</td><td style="text-align:right;color:var(--turq2);">$24M</td>
+        </tr>
+        <tr style="border-bottom:1px solid #1e3a5f;">
+          <td style="padding:7px 0;">Gross Margin</td><td style="text-align:right;">72%</td><td style="text-align:right;">74%</td><td style="text-align:right;">76%</td>
+        </tr>
+        <tr style="border-bottom:1px solid #1e3a5f;">
+          <td style="padding:7px 0;">EBITDA</td><td style="text-align:right;color:#f87171;">-$3.2M</td><td style="text-align:right;color:#f87171;">-$1.8M</td><td style="text-align:right;color:var(--turq2);">+$2.4M</td>
+        </tr>
+        <tr>
+          <td style="padding:7px 0;">Customers</td><td style="text-align:right;">127</td><td style="text-align:right;">310</td><td style="text-align:right;">720</td>
+        </tr>
+      </table>`
+    },
+    {label:'The Ask',html:`
+      <div class="slide-title">The Ask</div>
+      <div class="slide-sub">${round} — Let's Build This Together</div>
+      <div class="ask-cta">
+        <div class="ask-num">$${raise}</div>
+        <div style="font-size:.85rem;color:#8899aa;margin-top:6px;">${round} · Pre-money Valuation: $${valuation}</div>
+      </div>
+      <ul class="bullets" style="margin-top:16px;">
+        <li>Lead investor: $6–8M sought from single lead</li>
+        <li>Targeting close: 60 days</li>
+        <li>Pro-rata rights available for existing angels</li>
+        <li>Board seat available for lead investor</li>
+      </ul>
+      <div style="margin-top:16px;text-align:center;font-size:.85rem;color:var(--turq2);">Next Step: Schedule a 30-min intro call ↗</div>`
+    }
+  ];
+
+  curSlide=0;
+  document.getElementById('inputPrompt').style.display='none';
+  document.getElementById('output').style.display='block';
+  document.getElementById('deckTitle').textContent=`${co} — ${round} Pitch Deck`;
+  renderNav(); renderCur();
+}
+
+function renderNav(){
+  document.getElementById('slideNav').innerHTML=slides.map((s,i)=>`
+    <div class="snav ${i===curSlide?'active':''}" onclick="goSlide(${i})">${i+1}. ${s.label}</div>`).join('');
+}
+function renderCur(){
+  const s=slides[curSlide];
+  document.getElementById('slideContainer').innerHTML=`
+    <div class="slide">${s.html}<div class="slide-n">${curSlide+1} / ${slides.length}</div></div>`;
+}
+function goSlide(i){curSlide=i;renderNav();renderCur();}
+function prevSlide(){if(curSlide>0){curSlide--;renderNav();renderCur();}}
+function nextSlide(){if(curSlide<slides.length-1){curSlide++;renderNav();renderCur();}}
+function exportDeck(){
+  const co=document.getElementById('company').value||'Deck';
+  const html=`<html><body style="font-family:sans-serif;background:#0a1628;color:#f5f0e8;padding:32px">${slides.map((s,i)=>`<div style="margin-bottom:40px;padding:32px;background:#0f1f3d;border-radius:12px;border:1px solid #1e3a5f"><h2 style="color:#c9a84c">Slide ${i+1}: ${s.label}</h2>${s.html}</div>`).join('')}
+<script src="/assets/js/dfy-banner.js" async><\/script>
+<\/body><\/html>`;
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([html],{type:'text/html'}));a.download=co.replace(/\s+/g,'-')+'-pitch-deck.html';a.click();
+}
+function joinWL(){
+  const e=document.getElementById('wlEmail').value.trim();
+  if(!e||!e.includes('@')){alert('Valid email required');return;}
+  fetch('/api/waitlist',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:e,tool:'ai-fundraising-deck',ts:Date.now()})}).catch(()=>{});
+  localStorage.setItem('wl_fundraising_deck',e);
+  document.querySelector('.waitlist').innerHTML='<h3 style="color:var(--gold);font-family:Playfair Display,serif">✅ You\'re on the list!</h3><p style="color:#8899aa;margin-top:8px;">Pro access coming within 24h.</p>';
+}
+</script>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+<script src="/tools/_tools-shared.js" defer></script>
+
+  <section style="background:var(--lapis-2);border:1px solid var(--gold);border-radius:16px;padding:24px 32px;margin-top:24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;">
+    <div>
+      <h3 style="font-family:'Playfair Display',serif;font-size:22px;color:var(--cream);margin-bottom:4px;">Ready for the next level?</h3>
+      <p style="color:var(--dim);font-size:14px;">28 premium toolkits, real deliverables. From $17 to $97.</p>
+    </div>
+    <a href="/store.html" style="background:var(--gold);color:var(--lapis);font-weight:700;padding:12px 28px;border-radius:999px;font-size:14px;letter-spacing:.5px;">Browse the Store →</a>
+  </section>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>
+

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cron Expression Generator: Build, Validate, and Read Cron Without Guessing | ABUZ8</title>
+<meta name="description" content="Free cron expression generator with live preview. Visual builder, plain-English explanation, next 10 run times. Works with crontab, GitHub Actions, AWS EventBridge, Kubernetes.">
+<meta name="keywords" content="cron expression generator, crontab generator, cron builder, github actions cron, cron tester, cron parser, every 5 minutes cron">
+<link rel="canonical" href="https://abuz8ai.com/blog/cron-expression-generator">
+<meta property="og:title" content="Cron Expression Generator: Build, Validate, and Read Cron Without Guessing">
+<meta property="og:type" content="article">
+<link rel="stylesheet" href="/blog/_blog-base.css">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@300;400;600;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","headline":"Cron Expression Generator: Build, Validate, and Read Cron Without Guessing","datePublished":"2026-05-19","author":{"@type":"Organization","name":"ABUZ8 AI"}}
+</script>
+</head>
+<body>
+<div class="container">
+  <a href="/blog/" class="back">&larr; ABUZ8 BLOG</a>
+  <h1>Cron Expression Generator: Build, Validate, and Read Cron Without Guessing</h1>
+  <div class="meta-row"><span>DEVELOPER TOOLS</span><span class="dot"></span><span>MAY 19, 2026</span><span class="dot"></span><span>7 MIN READ</span></div>
+
+  <p>A <strong>cron expression generator</strong> is one of those tools every developer has bookmarked under three different vendor names and forgets which one wasn't covered in trackers. The ABUZ8 cron tool is free, runs entirely in your browser, and shows you exactly what your expression will do — including the next ten times it will fire, in your local time zone.</p>
+
+  <p>This post is the cron field guide most readme files refuse to write. By the end you'll know the syntax cold, the gotchas that bite people in production, and the dialect differences between standard cron, GitHub Actions, AWS EventBridge, Kubernetes CronJobs, and Vercel Cron.</p>
+
+  <h2>The five fields</h2>
+
+  <p>Standard cron is five fields, space-separated, left to right:</p>
+
+  <p><code>minute  hour  day-of-month  month  day-of-week</code></p>
+
+  <p>Each field accepts: a number, a comma-separated list, a range with a dash, a step value with a slash, or an asterisk meaning "every." That's the entire syntax. The complexity comes from how the fields combine.</p>
+
+  <p>A few canonical examples to anchor the rest of the post:</p>
+  <ul>
+    <li><code>* * * * *</code> — every minute</li>
+    <li><code>0 * * * *</code> — every hour, on the hour</li>
+    <li><code>0 9 * * *</code> — every day at 09:00</li>
+    <li><code>0 9 * * 1-5</code> — every weekday at 09:00</li>
+    <li><code>*/5 * * * *</code> — every 5 minutes</li>
+    <li><code>0 0 1 * *</code> — first of every month at midnight</li>
+    <li><code>0 0 1 1 *</code> — January 1st at midnight (once a year)</li>
+  </ul>
+
+  <h2>The two day fields are an OR, not an AND</h2>
+
+  <p>The single most common cron bug: people assume day-of-month and day-of-week intersect. They don't. The two fields are combined with OR.</p>
+
+  <p><code>0 9 1 * 1</code> does <strong>not</strong> mean "the first of the month, if it's a Monday." It means "the first of the month, OR any Monday, at 09:00." That's potentially 5–6 firings a month, not one.</p>
+
+  <p>If you actually want the intersection — "first of the month and a Monday" — you need a workaround. The classic: cron once a day and check in your script. Or use a system that supports L (last) and W (weekday) extensions, like Quartz cron.</p>
+
+  <h2>The step value gotcha</h2>
+
+  <p><code>*/5 * * * *</code> means "every 5 minutes starting at minute 0." So it fires at :00, :05, :10, :15, etc. Reliable, predictable.</p>
+
+  <p><code>3/5 * * * *</code> means "starting at minute 3, every 5 minutes." So it fires at :03, :08, :13, :18. Useful when you want to stagger jobs to avoid thundering-herd at :00.</p>
+
+  <p><code>1-50/5 * * * *</code> means "between minute 1 and minute 50, every 5 minutes." So it fires at :01, :06, :11, ..., :46. Not :51 or beyond.</p>
+
+  <h2>Cron dialect differences in 2026</h2>
+
+  <p>Cron is not one syntax. Six dialects matter:</p>
+
+  <p><strong>Standard Unix cron.</strong> Five fields. Day-of-week 0–6, Sunday = 0 (sometimes also 7). The baseline.</p>
+
+  <p><strong>Vixie cron / crontab.</strong> Same five fields, plus a sixth optional "command" field. Allows shortcuts like <code>@daily</code>, <code>@hourly</code>, <code>@reboot</code>.</p>
+
+  <p><strong>Quartz cron (used by Java, Spring, some Kubernetes tools).</strong> Six or seven fields: seconds, minutes, hours, day-of-month, month, day-of-week, optional year. Supports <code>L</code> (last), <code>W</code> (nearest weekday), <code>#</code> (nth occurrence). Day-of-week is 1–7 with Sunday = 1.</p>
+
+  <p><strong>GitHub Actions cron.</strong> Five fields, POSIX-style. Runs in UTC only. Note: <strong>schedules are best-effort</strong> — GitHub explicitly says they may not run on time or at all during high-load periods. Don't use it for anything that must run at a precise moment.</p>
+
+  <p><strong>AWS EventBridge cron.</strong> Six fields with day-of-week 1–7, Sunday = 1. Day-of-month and day-of-week cannot both be specified — one must be <code>?</code>. Runs in UTC by default but supports specified time zones.</p>
+
+  <p><strong>Kubernetes CronJob.</strong> Five fields, standard syntax. Cluster time zone applies unless you set <code>spec.timeZone</code>. Beware: missed jobs may run late or be skipped based on <code>startingDeadlineSeconds</code>.</p>
+
+  <p><strong>Vercel Cron.</strong> Five fields, runs in UTC. Free tier is hourly minimum.</p>
+
+  <h2>Time zones: the silent failure mode</h2>
+
+  <p>Half of all "my cron job didn't run when I expected" issues are time zone confusion. Three things to nail down before you ship a schedule:</p>
+
+  <ol>
+    <li><strong>Which time zone does the cron runner use?</strong> Local server time? UTC? The user's configured time zone? Read the docs and verify.</li>
+    <li><strong>Does it respect daylight saving time?</strong> Many systems do. Some don't. A job scheduled for 02:30 will run twice on the fall-back day and zero times on the spring-forward day if the system observes DST.</li>
+    <li><strong>What does "midnight" mean?</strong> Midnight in UTC is 19:00 in New York the previous day. If your job assumes "midnight on January 1st" and the cron is in UTC, your data partitioning may end up off by a day.</li>
+  </ol>
+
+  <h2>The validator and explainer</h2>
+
+  <p>The ABUZ8 tool does four things at once:</p>
+  <ul>
+    <li><strong>Visual builder:</strong> dropdown selectors for each field, generates the expression as you click.</li>
+    <li><strong>Plain English:</strong> "At 09:00 on every weekday."</li>
+    <li><strong>Next 10 runs:</strong> rendered in your browser's local time zone.</li>
+    <li><strong>Dialect switcher:</strong> generate the same intent in standard, Quartz, AWS, GitHub Actions formats.</li>
+  </ul>
+
+  <p>All of this runs client-side. The page has no backend. You can save the bookmark, take it on a plane, use it offline.</p>
+
+  <h2>The patterns you'll use 95% of the time</h2>
+
+  <ul>
+    <li><code>0 9 * * 1-5</code> — workdays at 09:00 (daily standup reminder)</li>
+    <li><code>*/15 * * * *</code> — every 15 minutes (health check)</li>
+    <li><code>0 */6 * * *</code> — every 6 hours (refresh task)</li>
+    <li><code>0 2 * * *</code> — 02:00 daily (nightly backup or cleanup)</li>
+    <li><code>0 0 * * 0</code> — Sunday midnight (weekly summary)</li>
+    <li><code>0 0 1 * *</code> — first of month midnight (monthly report)</li>
+    <li><code>0 0 1 1 *</code> — yearly (January 1st)</li>
+  </ul>
+
+  <p>Memorize those seven and you'll never need to think about cron syntax for 95% of real jobs. The other 5% is what the generator is for.</p>
+
+  <div class="cta-box">
+    <h3>Join the Early Access list</h3>
+    <p>The cron generator is one of 100 dev tools in the QADIR OS suite — SQL, regex, JSON, API tester, code review, all in one sovereign desktop. Early access opens this quarter.</p>
+    <a href="/" class="btn-gold">Join Early Access</a>
+  </div>
+
+  <div class="foot">© ABUZ8 AI · <a href="/blog/">More posts</a> · <a href="/">Home</a></div>
+</div>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+<script src="/blog/_blog-shared.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>
+

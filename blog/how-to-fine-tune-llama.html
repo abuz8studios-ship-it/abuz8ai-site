@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<!-- 2026-07-10 — Weekly content: how to fine-tune llama -->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How to Fine-Tune LLaMA: A Practical Guide to QLoRA on Consumer Hardware | ABUZ8</title>
+<meta name="description" content="Fine-tune LLaMA 4 on your own data using QLoRA — on a single RTX 4090 or 5080. Step-by-step guide covering dataset preparation, training, evaluation, and deployment.">
+<meta name="keywords" content="how to fine-tune llama, llama fine tuning guide, qlora fine tuning, llama 4 fine tune, fine tune local llm, custom llm training">
+<link rel="canonical" href="https://abuz8ai.com/blog/how-to-fine-tune-llama">
+<meta property="og:title" content="How to Fine-Tune LLaMA: A Practical Guide to QLoRA on Consumer Hardware">
+<meta property="og:type" content="article">
+<link rel="stylesheet" href="/blog/_blog-base.css">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@300;400;600;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
+<style>
+:root{
+  --lapis:#0a1628; --lapis-mid:#EEF3F8; --lapis-light:#E3EBF3;
+  --card:#0d1a30; --border:#D6E0EC;
+  --text:#e8e4d8; --cream:#1F2D3D; --dim:#5A6B7D;
+  --gold:#5fa8e8; --gold-light:#255F95; --gold-dim:#7DA3C8;
+  --turq:#5fa8e8; --turq-light:#5fa8e8; --turq-bright:#255F95;
+  --primary:#5fa8e8;
+}
+body{background:var(--lapis);}
+code{background:#EEF3F8;color:#255F95;}
+.callout.cta{background:linear-gradient(135deg,#EAF2FA,#0a1628);}
+</style>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","headline":"How to Fine-Tune LLaMA: A Practical Guide to QLoRA on Consumer Hardware","datePublished":"2026-07-10","author":{"@type":"Organization","name":"ABUZ8 AI"}}
+</script>
+</head>
+<body>
+<div class="container">
+  <a href="/blog/" class="back">&larr; ABUZ8 BLOG</a>
+  <h1>How to Fine-Tune LLaMA: A Practical Guide to QLoRA on Consumer Hardware</h1>
+  <div class="meta-row"><span>DEVELOPER GUIDE</span><span class="dot"></span><span>JULY 10, 2026</span><span class="dot"></span><span>9 MIN READ</span></div>
+
+  <p>You can fine-tune a 7B or 8B parameter LLaMA model on a single consumer GPU in under 2 hours. No cloud cluster, no $10K compute bill, no ML PhD. QLoRA (Quantized Low-Rank Adaptation) makes this possible by freezing the base model weights at 4-bit precision and training only a small set of adapter weights — typically 0.1–1% of the total parameters. The result: a model that knows your domain, speaks your brand voice, and handles your specific tasks better than any prompt-engineered base model. Here's how to do it, start to finish.</p>
+
+  <h2>When fine-tuning makes sense (and when it doesn't)</h2>
+  <p>Fine-tune when: your task requires a specific output format that prompt engineering can't reliably produce, your domain has specialized vocabulary the base model doesn't handle well, you need consistent brand voice across thousands of outputs, or you want to reduce inference costs by training a small model to do what previously required a large one.</p>
+  <p>Don't fine-tune when: you can solve the problem with a good system prompt (try that first — it's faster), your dataset is under 100 examples (you'll overfit), your task changes frequently (fine-tuned models are static — you'd need to retrain), or you need the model to cite real-time information (fine-tuning teaches patterns, not facts).</p>
+  <p>The decision tree: Can you solve it with a prompt? → Do that. Can you solve it with few-shot examples in the prompt? → Do that. Does it need consistent behavior across 10,000+ inputs at low cost? → Fine-tune.</p>
+
+  <h2>Step 1: Prepare your dataset</h2>
+  <p>Fine-tuning data is a JSONL file where each line contains an input-output pair in the model's chat format. For LLaMA, this means structured conversations with <code>system</code>, <code>user</code>, and <code>assistant</code> roles. Minimum viable dataset: 200–500 high-quality examples. Sweet spot: 1,000–5,000. Beyond 10,000, you get diminishing returns for most tasks.</p>
+  <p>Quality matters more than quantity. 500 expertly crafted examples beat 5,000 mediocre ones. Each example should represent the exact behavior you want: if you're training a customer support bot, your examples should be real support conversations (anonymized) with the responses written the way you want the model to respond — not the way it currently responds.</p>
+  <p>Common data sources: your existing chat logs (filtered for quality), manually written examples of ideal responses, outputs from a stronger model (Claude Opus) that you've edited and approved (distillation), or synthetic data generated from templates with human review. Avoid scraping random internet text — that's what pretraining already did. Your fine-tune data needs to be domain-specific and high-signal.</p>
+
+  <h2>Step 2: Set up the environment</h2>
+  <p>You need: Python 3.10+, PyTorch 2.x with CUDA support, the <code>transformers</code>, <code>peft</code>, <code>bitsandbytes</code>, <code>trl</code>, and <code>datasets</code> libraries from Hugging Face. Install everything with <code>pip install torch transformers peft bitsandbytes trl datasets accelerate</code>. Hardware: an NVIDIA GPU with 16GB+ VRAM (RTX 4080, 4090, 5080, or 5090). An 8B model with QLoRA fits comfortably in 12GB; a 13B model needs 16–20GB.</p>
+  <p>If you're on a Mac with Apple Silicon: use MLX instead of PyTorch. The <code>mlx-lm</code> library supports LoRA fine-tuning natively on M-series chips. Performance is 60–70% of an equivalent NVIDIA GPU, but it works without the CUDA dependency. For M4 Pro with 24GB unified memory, you can fine-tune models up to 13B parameters.</p>
+
+  <h2>Step 3: Configure QLoRA</h2>
+  <p>The key QLoRA parameters: <code>r</code> (rank) — typically 16, 32, or 64. Higher rank = more trainable parameters = more capacity to learn new behaviors, but more VRAM and slower training. Start with <code>r=32</code>. <code>lora_alpha</code> — scaling factor, usually set to 2x the rank (so 64 if r=32). <code>target_modules</code> — which layers to adapt. For LLaMA: <code>q_proj, k_proj, v_proj, o_proj, gate_proj, up_proj, down_proj</code>. Training all attention and MLP projections gives the best results. <code>lora_dropout</code> — set to 0.05–0.1 to prevent overfitting on small datasets.</p>
+  <p>Training hyperparameters: learning rate <code>2e-4</code> (the most forgiving default), batch size 4–8 with gradient accumulation to simulate larger batches, 3 epochs (2 if your dataset is large, 5 if it's tiny), and cosine learning rate schedule with 10% warmup. These defaults work for 90% of use cases. Don't over-tune hyperparameters until you've confirmed the approach works at all.</p>
+
+  <h2>Step 4: Train</h2>
+  <p>With the Hugging Face <code>SFTTrainer</code> from the <code>trl</code> library, the training script is about 50 lines of Python. Load the base model in 4-bit (NF4 quantization), attach the LoRA adapter, point at your dataset, set the training arguments, and call <code>trainer.train()</code>. On an RTX 4090, a 1,000-example dataset against an 8B model completes in 30–45 minutes. A 5,000-example dataset takes 2–3 hours.</p>
+  <p>Monitor the training loss. It should decrease steadily through epoch 1, flatten in epoch 2, and stabilize in epoch 3. If it's still decreasing sharply at the end of epoch 3, you might benefit from more epochs. If it hits near-zero by mid-epoch 2, you're overfitting — reduce epochs or add more diverse training data.</p>
+
+  <h2>Step 5: Evaluate and merge</h2>
+  <p>Test your fine-tuned model on a held-out set of 50–100 examples that weren't in the training data. Compare outputs against the base model on the same inputs. If the fine-tuned model consistently matches your desired output format and quality, you're done. If specific failure modes persist, add 50–100 examples targeting those failures and retrain.</p>
+  <p>Once satisfied, merge the LoRA adapter into the base model weights. This produces a single model file that runs without the adapter overhead — slightly faster inference and simpler deployment. Export to GGUF format for use with <a href="/blog/self-hosted-ai-agent.html" class="in">Ollama or llama.cpp</a> for production deployment.</p>
+
+  <h2>What QADIR OS does with fine-tuning</h2>
+  <p>QADIR OS ships with 8 custom LoRA adapters — purpose-trained for personality, tool use, memory handling, and humility (yes, we fine-tuned a model to be less sycophantic). The <a href="/blog/agentic-loop-explained.html" class="in">agentic loop</a> selects the right adapter at runtime based on the task type. The same fine-tuning pipeline is available to QADIR OS users: feed it your data, it trains on your local GPU, and your agent learns your domain. No cloud training required.</p>
+
+  <div class="callout cta">
+    <p><strong>Train a model that knows your business — on your own GPU.</strong> QADIR OS includes a built-in fine-tuning pipeline for domain-specific AI. <a href="/tools/" class="in">Try 164+ free AI tools</a>, or <a href="/" class="in">join early access</a> — no card required.</p>
+  </div>
+
+  <div class="foot">Built by <a href="/">ABUZ8 LLC</a> — we're building QADIR OS, the sovereign agentic operating system.</div>
+</div>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+<script src="/blog/_blog-shared.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>

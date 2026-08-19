@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Free Schema Markup Generator — JSON-LD Structured Data for 11 Types | ABUZ8</title>
+  <meta name="description" content="Free JSON-LD schema markup generator. Create structured data for Article, Product, FAQ, HowTo, LocalBusiness, Event, Video, Breadcrumb + more with required-field checks and one-click copy. No signup." />
+  <meta name="keywords" content="schema markup generator, json-ld generator, structured data generator, faq schema generator, product schema generator, local business schema, article schema, rich results, seo schema tool, free schema generator" />
+  <meta property="og:title" content="Free Schema Markup Generator — JSON-LD Structured Data | ABUZ8" />
+  <meta property="og:description" content="Generate valid JSON-LD structured data for 11 schema types with required-field validation and live preview. Free, client-side, no signup." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://abuz8ai.com/tools/schema-markup-generator" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Free Schema Markup Generator — JSON-LD | ABUZ8" />
+  <meta name="twitter:description" content="11 schema types. Required-field checks. Live JSON-LD output. Free." />
+  <link rel="canonical" href="https://abuz8ai.com/tools/schema-markup-generator" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Schema Markup Generator",
+    "description": "Free online JSON-LD structured data generator covering Article, Product, FAQPage, HowTo, LocalBusiness, Organization, Person, Event, VideoObject, WebSite and BreadcrumbList with required-field validation.",
+    "url": "https://abuz8ai.com/tools/schema-markup-generator.html",
+    "applicationCategory": "DeveloperApplication",
+    "operatingSystem": "Any",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+    "author": { "@type": "Organization", "name": "ABUZ8 LLC", "url": "https://abuz8ai.com" }
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://abuz8ai.com/" },
+      { "@type": "ListItem", "position": 2, "name": "Free Tools", "item": "https://abuz8ai.com/tools/" },
+      { "@type": "ListItem", "position": 3, "name": "Schema Markup Generator", "item": "https://abuz8ai.com/tools/schema-markup-generator.html" }
+    ]
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "What is schema markup?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Schema markup is structured data added to a web page that describes its content in a machine-readable vocabulary (schema.org). Search engines and AI assistants use it to understand what a page is about and to display rich results like star ratings, FAQ dropdowns, event details, and product prices." }
+      },
+      {
+        "@type": "Question",
+        "name": "Does schema markup improve SEO rankings?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Schema markup is not a direct ranking factor, but it makes pages eligible for rich results, which typically earn higher click-through rates than plain listings. It also helps AI search engines cite your content accurately. More qualified clicks and better understanding generally compound into stronger organic performance." }
+      },
+      {
+        "@type": "Question",
+        "name": "Should I use JSON-LD or microdata?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Use JSON-LD. It is Google's recommended format because it lives in a single script tag instead of being woven through your HTML attributes, which makes it easier to add, maintain, and debug. This generator outputs JSON-LD only." }
+      },
+      {
+        "@type": "Question",
+        "name": "Where do I put the JSON-LD code on my page?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Paste the generated script tag anywhere inside the head or body of the page it describes — head is conventional. The markup must describe content actually visible on that page; do not mark up content that is not there." }
+      },
+      {
+        "@type": "Question",
+        "name": "How do I test my structured data?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Use Google's Rich Results Test to check rich-result eligibility and the Schema.org validator for general syntax. After deploying, monitor Search Console's enhancement reports for errors and impressions." }
+      }
+    ]
+  }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --lapis: #0a1628;
+      --card: #0d1a30;
+      --card-alt: #0f1e35;
+      --gold: #c9a84c;
+      --gold-dim: #a07830;
+      --teal: #0e9f6e;
+      --teal-bright: #2fbf8f;
+      --cream: #e8dcc8;
+      --text: #cdd6f4;
+      --text-dim: #8896b0;
+      --border: #1e2d45;
+      --red: #e05c5c;
+      --green: #4caf88;
+      --blue: #5b8def;
+      --orange: #e0944c;
+      --font-heading: 'Playfair Display', Georgia, serif;
+      --font-body: 'Inter', system-ui, sans-serif;
+      --font-mono: 'JetBrains Mono', 'Courier New', monospace;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { background: var(--lapis); color: var(--text); font-family: var(--font-body); font-size: 15px; line-height: 1.6; min-height: 100vh; }
+    a { color: var(--gold); text-decoration: none; transition: color 0.2s; }
+    a:hover { color: var(--teal-bright); }
+
+    /* ── NAV ── */
+    nav { background: var(--card); border-bottom: 1px solid var(--border); padding: 0 2rem; display: flex; align-items: center; justify-content: space-between; height: 60px; position: sticky; top: 0; z-index: 100; }
+    .nav-logo { font-family: var(--font-heading); font-size: 1.3rem; font-weight: 700; color: var(--gold); }
+    .nav-links { display: flex; gap: 1.5rem; align-items: center; }
+    .nav-links a { color: var(--text-dim); font-size: 0.85rem; font-weight: 500; }
+    .nav-links a:hover { color: var(--gold); }
+    .nav-cta { background: var(--gold); color: var(--lapis); padding: 0.45rem 1.1rem; border-radius: 6px; font-weight: 600; font-size: 0.82rem; }
+    .nav-cta:hover { background: var(--teal-bright); color: var(--lapis); }
+
+    /* ── HERO ── */
+    .hero { text-align: center; padding: 3rem 2rem 2rem; border-bottom: 1px solid var(--border); }
+    .hero h1 { font-family: var(--font-heading); font-size: 2.2rem; color: var(--cream); margin-bottom: 0.6rem; }
+    .hero h1 span { color: var(--gold); }
+    .hero p { color: var(--text-dim); max-width: 640px; margin: 0 auto; font-size: 0.95rem; }
+
+    /* ── MAIN LAYOUT ── */
+    .app { max-width: 1200px; margin: 0 auto; padding: 2rem; display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: start; }
+    @media (max-width: 820px) { .app { grid-template-columns: 1fr; } }
+
+    .panel { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 1.5rem; }
+    .panel h2 { font-family: var(--font-heading); font-size: 1.2rem; color: var(--cream); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; }
+    .panel h2 .icon { color: var(--gold); }
+
+    /* ── TYPE PICKER ── */
+    .types { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 0.5rem; margin-bottom: 1.25rem; }
+    .type-btn { background: var(--lapis); border: 1px solid var(--border); border-radius: 8px; padding: 0.55rem 0.5rem; color: var(--text-dim); font-size: 0.78rem; font-weight: 600; cursor: pointer; text-align: center; transition: border-color 0.2s, color 0.2s; font-family: var(--font-body); }
+    .type-btn:hover { border-color: var(--gold-dim); color: var(--text); }
+    .type-btn.active { border-color: var(--gold); color: var(--gold); background: var(--card-alt); }
+    .type-note { font-size: 0.78rem; color: var(--text-dim); background: var(--card-alt); border-left: 3px solid var(--teal); border-radius: 0 6px 6px 0; padding: 0.5rem 0.8rem; margin-bottom: 1.1rem; }
+    .type-note b { color: var(--teal-bright); font-weight: 600; }
+
+    /* ── FORM ── */
+    .field { margin-bottom: 0.9rem; }
+    .field label { display: block; font-size: 0.75rem; font-weight: 600; color: var(--text-dim); margin-bottom: 0.3rem; text-transform: uppercase; letter-spacing: 0.05em; }
+    .field label .req { color: var(--gold); }
+    .field input, .field textarea, .field select { width: 100%; background: var(--lapis); border: 1px solid var(--border); border-radius: 6px; padding: 0.55rem 0.75rem; color: var(--text); font-family: var(--font-body); font-size: 0.88rem; transition: border-color 0.2s; }
+    .field input:focus, .field textarea:focus, .field select:focus { outline: none; border-color: var(--gold); }
+    .field textarea { resize: vertical; min-height: 56px; }
+    .field .hint { font-size: 0.72rem; color: var(--text-dim); margin-top: 0.2rem; }
+    .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+    @media (max-width: 500px) { .row2 { grid-template-columns: 1fr; } }
+    .chk { display: flex; align-items: center; gap: 0.5rem; font-size: 0.85rem; color: var(--text); margin-bottom: 0.9rem; cursor: pointer; }
+    .chk input { width: auto; accent-color: var(--gold); }
+
+    /* ── REPEAT GROUPS (FAQ items, steps, crumbs) ── */
+    .rep-item { border: 1px solid var(--border); border-radius: 8px; padding: 0.9rem; margin-bottom: 0.75rem; background: var(--card-alt); position: relative; }
+    .rep-item .rep-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.6rem; }
+    .rep-item .rep-title { font-size: 0.75rem; font-weight: 600; color: var(--gold); text-transform: uppercase; letter-spacing: 0.05em; }
+    .rep-del { background: none; border: 1px solid var(--border); color: var(--text-dim); border-radius: 5px; padding: 0.15rem 0.55rem; font-size: 0.72rem; cursor: pointer; font-family: var(--font-body); }
+    .rep-del:hover { border-color: var(--red); color: var(--red); }
+    .rep-add { background: var(--lapis); border: 1px dashed var(--gold-dim); color: var(--gold); border-radius: 8px; padding: 0.5rem 1rem; font-size: 0.82rem; font-weight: 600; cursor: pointer; width: 100%; font-family: var(--font-body); margin-bottom: 0.4rem; }
+    .rep-add:hover { border-color: var(--gold); background: var(--card-alt); }
+
+    /* ── OUTPUT PANEL ── */
+    .status-strip { display: flex; gap: 0.6rem; align-items: center; flex-wrap: wrap; margin-bottom: 1rem; }
+    .pill { font-size: 0.75rem; font-weight: 600; padding: 0.25rem 0.8rem; border-radius: 999px; border: 1px solid; }
+    .pill.ok { color: var(--green); border-color: var(--green); background: rgba(76,175,136,0.08); }
+    .pill.miss { color: var(--orange); border-color: var(--orange); background: rgba(224,148,76,0.08); }
+    .req-list { font-size: 0.78rem; color: var(--text-dim); margin-bottom: 1rem; display: flex; flex-wrap: wrap; gap: 0.4rem 1rem; }
+    .req-list .got { color: var(--green); }
+    .req-list .not { color: var(--orange); }
+    .out-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; }
+    .out-file { font-family: var(--font-mono); font-size: 0.8rem; color: var(--teal-bright); }
+    .out-actions { display: flex; gap: 0.5rem; }
+    .act-btn { background: var(--lapis); border: 1px solid var(--border); color: var(--text); border-radius: 6px; padding: 0.4rem 1rem; font-size: 0.8rem; font-weight: 600; cursor: pointer; font-family: var(--font-body); transition: border-color 0.2s; }
+    .act-btn:hover { border-color: var(--gold); color: var(--gold); }
+    .act-btn.primary { background: var(--gold); color: var(--lapis); border-color: var(--gold); }
+    .act-btn.primary:hover { background: var(--teal-bright); border-color: var(--teal-bright); }
+    .act-btn.copied { border-color: var(--green); color: var(--green); }
+    .output { background: #081020; border: 1px solid var(--border); border-radius: 8px; padding: 1rem; font-family: var(--font-mono); font-size: 0.78rem; line-height: 1.55; overflow-x: auto; white-space: pre; max-height: 480px; overflow-y: auto; }
+    .output .k { color: var(--gold); }
+    .output .s { color: var(--teal-bright); }
+    .output .n { color: var(--blue); }
+    .output .p { color: var(--text-dim); }
+    .test-link { display: block; text-align: center; font-size: 0.8rem; margin-top: 0.8rem; color: var(--text-dim); }
+    .test-link a { color: var(--teal-bright); }
+
+    /* ── CTA ── */
+    .cta-box { background: linear-gradient(135deg, rgba(201,168,76,0.08) 0%, rgba(26,138,122,0.08) 100%); border: 1px solid var(--gold-dim); border-radius: 10px; padding: 1.5rem; text-align: center; margin-top: 2rem; }
+    .cta-box h3 { font-family: var(--font-heading); color: var(--cream); margin-bottom: 0.5rem; }
+    .cta-box p { color: var(--text-dim); font-size: 0.9rem; margin-bottom: 1rem; }
+    .cta-btn { display: inline-block; background: var(--gold); color: var(--lapis); padding: 0.7rem 2rem; border-radius: 8px; font-weight: 600; font-size: 0.95rem; border: none; cursor: pointer; transition: background 0.2s; }
+    .cta-btn:hover { background: var(--teal-bright); color: var(--lapis); }
+
+    /* ── INFO / FAQ ── */
+    .info { max-width: 860px; margin: 0 auto; padding: 2rem; }
+    .info h2 { font-family: var(--font-heading); font-size: 1.5rem; color: var(--cream); margin: 2rem 0 0.8rem; }
+    .info p { color: var(--text-dim); margin-bottom: 0.9rem; font-size: 0.92rem; }
+    .info strong { color: var(--text); }
+    .info code { font-family: var(--font-mono); font-size: 0.82rem; background: var(--card); border: 1px solid var(--border); border-radius: 4px; padding: 0.1rem 0.4rem; color: var(--teal-bright); }
+    .info ul { color: var(--text-dim); font-size: 0.92rem; margin: 0 0 0.9rem 1.2rem; }
+    .info li { margin-bottom: 0.35rem; }
+    .faq-item { border: 1px solid var(--border); border-radius: 8px; margin-bottom: 0.75rem; background: var(--card); }
+    .faq-item h3 { font-family: var(--font-body); font-size: 0.95rem; color: var(--cream); padding: 0.9rem 1.1rem; cursor: default; }
+    .faq-item p { padding: 0 1.1rem 0.9rem; margin: 0; }
+    footer { text-align: center; padding: 2rem; border-top: 1px solid var(--border); color: var(--text-dim); font-size: 0.8rem; margin-top: 3rem; }
+    footer a { color: var(--gold); }
+  </style>
+</head>
+<body>
+  <!-- NAV -->
+  <nav>
+    <a href="/" class="nav-logo">ABUZ8</a>
+    <div class="nav-links">
+      <a href="/tools/">Tools</a>
+      <a href="/tools/meta-tag-generator.html">Meta Tags</a>
+      <a href="/tools/ai-robots-txt-generator.html">Robots.txt</a>
+      <a href="/tools/ai-waiting-list-page.html" class="nav-cta">Join Waitlist</a>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <header class="hero">
+    <h1>Schema Markup <span>Generator</span></h1>
+    <p>Generate valid JSON-LD structured data for 11 schema types — with required-field checks for Google rich results. 100% client-side. Nothing leaves your browser.</p>
+  </header>
+
+  <!-- APP -->
+  <div class="app">
+    <!-- LEFT: TYPE + FORM -->
+    <div class="panel">
+      <h2><span class="icon">&#9998;</span> 1. Pick a type, fill the fields</h2>
+      <div class="types" id="types"></div>
+      <div class="type-note" id="type-note"></div>
+      <div id="form"></div>
+    </div>
+
+    <!-- RIGHT: OUTPUT -->
+    <div class="panel">
+      <h2><span class="icon">&#123;&#125;</span> 2. Copy your JSON-LD</h2>
+      <div class="status-strip">
+        <span class="pill ok" id="status-pill">All required fields set</span>
+      </div>
+      <div class="req-list" id="req-list"></div>
+      <label class="chk"><input type="checkbox" id="wrap-toggle" checked onchange="generate()" /> Wrap in <span style="font-family:var(--font-mono);font-size:0.8rem;">&lt;script type="application/ld+json"&gt;</span> tag</label>
+      <div class="out-head">
+        <span class="out-file" id="out-filename">schema.html</span>
+        <div class="out-actions">
+          <button class="act-btn" id="copy-btn" onclick="copyOutput()">Copy</button>
+          <button class="act-btn primary" onclick="downloadOutput()">Download</button>
+        </div>
+      </div>
+      <pre class="output" id="output"></pre>
+      <div class="test-link">Validate with <a href="https://search.google.com/test/rich-results" target="_blank" rel="noopener">Google's Rich Results Test</a> or the <a href="https://validator.schema.org/" target="_blank" rel="noopener">Schema.org validator</a></div>
+
+      <!-- CTA -->
+      <div class="cta-box">
+        <h3>Want your whole site's SEO run by an agent?</h3>
+        <p>QADIR OS agents audit pages, write schema, meta tags and robots policies, and keep them current — automatically.</p>
+        <a href="/tools/ai-waiting-list-page.html" class="cta-btn">Join the Waitlist</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- INFO / SEO COPY -->
+  <section class="info">
+    <h2>What is schema markup and why it matters in 2026</h2>
+    <p><strong>Schema markup</strong> is structured data — a machine-readable description of your page using the <a href="https://schema.org" target="_blank" rel="noopener">schema.org</a> vocabulary. Search engines use it to power <strong>rich results</strong>: star ratings, FAQ dropdowns, product prices, event dates, recipe cards, video thumbnails. AI answer engines lean on it even harder, because structured data is the cheapest way for a model to be certain about facts like price, availability, dates and authorship.</p>
+    <p>Pages with rich results consistently earn <strong>higher click-through rates</strong> than plain blue links at the same position. Schema is not a magic ranking switch — it is an eligibility switch. Without it, Google will not even consider your page for most rich result types.</p>
+
+    <h2>Why JSON-LD (and not microdata)</h2>
+    <p>Google's documentation recommends <strong>JSON-LD</strong>: a single <code>&lt;script&gt;</code> block, separate from your visible HTML, that you can add, template, and debug without touching your markup. Microdata scatters attributes across dozens of tags and breaks the moment a designer moves a div. Every output from this tool is clean, pretty-printed JSON-LD.</p>
+
+    <h2>How to use the generated code</h2>
+    <ul>
+      <li><strong>1.</strong> Pick a schema type above and fill in the fields — required ones are marked in gold.</li>
+      <li><strong>2.</strong> Copy the generated script tag (or download it).</li>
+      <li><strong>3.</strong> Paste it into the <code>&lt;head&gt;</code> of the page it describes.</li>
+      <li><strong>4.</strong> Test with the Rich Results Test, then watch Search Console's enhancement reports.</li>
+    </ul>
+    <p><strong>Golden rule:</strong> the markup must describe content actually visible on the page. Marking up reviews, FAQs, or prices that visitors cannot see violates Google's guidelines and can earn a manual action.</p>
+
+    <h2>The 11 types this tool covers</h2>
+    <p><strong>Article</strong> for posts and news, <strong>Product</strong> with offers and ratings, <strong>FAQPage</strong> for question dropdowns, <strong>HowTo</strong> for step-by-step guides, <strong>LocalBusiness</strong> for map-pack visibility, <strong>Organization</strong> and <strong>Person</strong> for entity SEO, <strong>Event</strong> with dates and tickets, <strong>VideoObject</strong> for video snippets, <strong>WebSite</strong> with sitelinks search box, and <strong>BreadcrumbList</strong> for breadcrumb trails in results.</p>
+    <p>Pair this with our free <a href="/tools/meta-tag-generator.html">Meta Tag Generator</a> and <a href="/tools/ai-robots-txt-generator.html">AI Robots.txt Generator</a> to cover on-page SEO end to end, or browse all <a href="/tools/">160+ free tools</a>.</p>
+
+    <h2>Frequently asked questions</h2>
+    <div class="faq-item"><h3>What is schema markup?</h3><p>Schema markup is structured data added to a web page that describes its content in a machine-readable vocabulary (schema.org). Search engines and AI assistants use it to understand what a page is about and to display rich results like star ratings, FAQ dropdowns, event details, and product prices.</p></div>
+    <div class="faq-item"><h3>Does schema markup improve SEO rankings?</h3><p>Schema markup is not a direct ranking factor, but it makes pages eligible for rich results, which typically earn higher click-through rates than plain listings. It also helps AI search engines cite your content accurately. More qualified clicks and better understanding generally compound into stronger organic performance.</p></div>
+    <div class="faq-item"><h3>Should I use JSON-LD or microdata?</h3><p>Use JSON-LD. It is Google's recommended format because it lives in a single script tag instead of being woven through your HTML attributes, which makes it easier to add, maintain, and debug. This generator outputs JSON-LD only.</p></div>
+    <div class="faq-item"><h3>Where do I put the JSON-LD code on my page?</h3><p>Paste the generated script tag anywhere inside the head or body of the page it describes — head is conventional. The markup must describe content actually visible on that page; do not mark up content that is not there.</p></div>
+    <div class="faq-item"><h3>How do I test my structured data?</h3><p>Use Google's Rich Results Test to check rich-result eligibility and the Schema.org validator for general syntax. After deploying, monitor Search Console's enhancement reports for errors and impressions.</p></div>
+  </section>
+
+  <footer>
+    <p>Built by <a href="/">ABUZ8</a> — free forever, runs entirely in your browser. <a href="/tools/">Explore 160+ free AI &amp; dev tools</a></p>
+  </footer>
+
+  <script>
+    'use strict';
+    /* ═══════════════════════════════════════════════════════════════
+       SCHEMA MARKUP GENERATOR — data-driven single chassis.
+       Mental model: the registry below is a Mercedes platform — one
+       render engine + one clean() pipeline; each schema type is just
+       a trim level (config + a pure build() function). Adding type
+       #12 later = append one object, zero engine changes.
+       ═══════════════════════════════════════════════════════════════ */
+
+    // ── FIELD HELPERS (terse constructors keep the registry readable) ──
+    const T  = (k, label, ph, req, hint) => ({ k, label, ph, kind: 'text', req, hint });
+    const U  = (k, label, ph, req, hint) => ({ k, label, ph, kind: 'url', req, hint });
+    const A  = (k, label, ph, req, hint) => ({ k, label, ph, kind: 'area', req, hint });
+    const D  = (k, label, req, hint)     => ({ k, label, kind: 'date', req, hint });
+    const N  = (k, label, ph, req, hint) => ({ k, label, ph, kind: 'number', req, hint });
+    const SEL = (k, label, opts, req)    => ({ k, label, kind: 'select', opts, req });
+    const REP = (k, label, addLabel, sub, min) => ({ k, label, kind: 'repeat', addLabel, sub, min: min || 1 });
+
+    // ── VALUE CLEANER: drop empty strings/objects so output stays lean ──
+    function clean(o) {
+      if (Array.isArray(o)) { const a = o.map(clean).filter(v => v !== undefined && v !== null); return a.length ? a : undefined; }
+      if (o && typeof o === 'object') {
+        const r = {};
+        for (const [k, v] of Object.entries(o)) { const c = clean(v); if (c !== undefined && c !== null && c !== '') r[k] = c; }
+        // an object that only carries @type but no data is noise — drop it
+        const keys = Object.keys(r).filter(k => k !== '@type');
+        return keys.length ? r : undefined;
+      }
+      return o === '' ? undefined : o;
+    }
+    const iso8601min = m => { const n = parseInt(m, 10); return n > 0 ? 'PT' + n + 'M' : undefined; };
+    const lines = s => (s || '').split('\n').map(x => x.trim()).filter(Boolean);
+
+    // ── THE REGISTRY ──
+    const TYPES = [
+      {
+        id: 'article', label: 'Article', file: 'article',
+        note: '<b>Rich result:</b> headline + image in Top Stories & article carousels. Google wants headline, image, dates, author.',
+        fields: [
+          SEL('sub', 'Article Type', ['Article', 'BlogPosting', 'NewsArticle']),
+          T('headline', 'Headline', 'How to Ship Faster with AI Agents', true, 'Keep under 110 characters'),
+          A('description', 'Description', 'One-paragraph summary of the article'),
+          U('image', 'Image URL', 'https://example.com/cover.jpg', true, '1200px+ wide recommended'),
+          T('authorName', 'Author Name', 'Jane Smith', true),
+          SEL('authorType', 'Author Type', ['Person', 'Organization']),
+          T('publisher', 'Publisher Name', 'ABUZ8'),
+          U('publisherLogo', 'Publisher Logo URL', 'https://example.com/logo.png'),
+          D('datePublished', 'Date Published', true),
+          D('dateModified', 'Date Modified'),
+          U('url', 'Article URL', 'https://example.com/post')
+        ],
+        build: v => ({
+          '@context': 'https://schema.org', '@type': v.sub || 'Article',
+          headline: v.headline, description: v.description, image: v.image, url: v.url,
+          author: { '@type': v.authorType || 'Person', name: v.authorName },
+          publisher: v.publisher ? { '@type': 'Organization', name: v.publisher, logo: v.publisherLogo ? { '@type': 'ImageObject', url: v.publisherLogo } : undefined } : undefined,
+          datePublished: v.datePublished, dateModified: v.dateModified
+        }),
+        required: ['headline', 'image', 'authorName', 'datePublished']
+      },
+      {
+        id: 'product', label: 'Product', file: 'product',
+        note: '<b>Rich result:</b> price, availability & stars in search. Needs name, image, and an offer (price + currency).',
+        fields: [
+          T('name', 'Product Name', 'QADIR OS Founder License', true),
+          A('description', 'Description', 'What the product is and why it matters'),
+          U('image', 'Image URL', 'https://example.com/product.jpg', true),
+          T('brand', 'Brand', 'ABUZ8'),
+          T('sku', 'SKU', 'QOS-001'),
+          N('price', 'Price', '99.00', true),
+          SEL('currency', 'Currency', ['USD', 'EUR', 'GBP', 'CAD', 'AUD', 'JPY', 'INR', 'AED', 'SAR'], true),
+          SEL('availability', 'Availability', ['InStock', 'OutOfStock', 'PreOrder', 'BackOrder', 'Discontinued']),
+          U('offerUrl', 'Offer URL', 'https://example.com/buy'),
+          N('ratingValue', 'Rating Value (1-5)', '4.8', false, 'Only if ratings are shown on the page'),
+          N('ratingCount', 'Rating Count', '132')
+        ],
+        build: v => ({
+          '@context': 'https://schema.org', '@type': 'Product',
+          name: v.name, description: v.description, image: v.image, sku: v.sku,
+          brand: v.brand ? { '@type': 'Brand', name: v.brand } : undefined,
+          offers: { '@type': 'Offer', price: v.price, priceCurrency: v.currency || 'USD', availability: v.availability ? 'https://schema.org/' + v.availability : undefined, url: v.offerUrl },
+          aggregateRating: (v.ratingValue && v.ratingCount) ? { '@type': 'AggregateRating', ratingValue: v.ratingValue, ratingCount: v.ratingCount } : undefined
+        }),
+        required: ['name', 'image', 'price']
+      },
+      {
+        id: 'faq', label: 'FAQ', file: 'faq',
+        note: '<b>Rich result:</b> expandable Q&amp;A dropdowns under your listing. Every question must be visible on the page.',
+        fields: [ REP('items', 'Questions', '+ Add question', [
+          T('q', 'Question', 'What is QADIR OS?', true),
+          A('a', 'Answer', 'Plain-text answer shown in the dropdown', true)
+        ], 1) ],
+        build: v => ({
+          '@context': 'https://schema.org', '@type': 'FAQPage',
+          mainEntity: (v.items || []).map(it => ({ '@type': 'Question', name: it.q, acceptedAnswer: { '@type': 'Answer', text: it.a } }))
+        }),
+        required: [],
+        validRepeat: v => (v.items || []).filter(it => it.q && it.a).length >= 1 ? [] : ['at least 1 complete Q&A']
+      },
+      {
+        id: 'howto', label: 'HowTo', file: 'howto',
+        note: '<b>Rich result:</b> numbered step carousel. Each step needs text; images strengthen eligibility.',
+        fields: [
+          T('name', 'Guide Title', 'How to Install a Local AI Model', true),
+          A('description', 'Description', 'What this guide teaches'),
+          N('totalTime', 'Total Time (minutes)', '30'),
+          N('cost', 'Estimated Cost', '0'),
+          SEL('currency', 'Cost Currency', ['USD', 'EUR', 'GBP', 'CAD', 'AUD']),
+          U('image', 'Image URL', 'https://example.com/guide.jpg'),
+          REP('steps', 'Steps', '+ Add step', [
+            T('name', 'Step Title', 'Download the model', true),
+            A('text', 'Step Instructions', 'Exactly what to do in this step', true),
+            U('image', 'Step Image URL (optional)', 'https://example.com/step1.jpg')
+          ], 1)
+        ],
+        build: v => ({
+          '@context': 'https://schema.org', '@type': 'HowTo',
+          name: v.name, description: v.description, image: v.image,
+          totalTime: iso8601min(v.totalTime),
+          estimatedCost: v.cost ? { '@type': 'MonetaryAmount', currency: v.currency || 'USD', value: v.cost } : undefined,
+          step: (v.steps || []).map((s, i) => ({ '@type': 'HowToStep', position: i + 1, name: s.name, text: s.text, image: s.image }))
+        }),
+        required: ['name'],
+        validRepeat: v => (v.steps || []).filter(s => s.name && s.text).length >= 1 ? [] : ['at least 1 complete step']
+      },
+      {
+        id: 'local', label: 'Local Business', file: 'local-business',
+        note: '<b>Rich result:</b> knowledge panel + map pack data. Address is the backbone — match your Google Business Profile exactly.',
+        fields: [
+          SEL('sub', 'Business Type', ['LocalBusiness', 'Restaurant', 'Store', 'CafeOrCoffeeShop', 'BeautySalon', 'AutoRepair', 'Dentist', 'Physician', 'LegalService', 'Plumber', 'Electrician', 'RealEstateAgent', 'GeneralContractor', 'FinancialService']),
+          T('name', 'Business Name', 'Zait Coffee House', true),
+          U('image', 'Image URL', 'https://example.com/storefront.jpg'),
+          T('phone', 'Phone', '+1-614-555-0100'),
+          T('priceRange', 'Price Range', '$$'),
+          U('url', 'Website URL', 'https://example.com'),
+          T('street', 'Street Address', '123 High St', true),
+          T('city', 'City', 'Columbus', true),
+          T('region', 'State / Region', 'OH'),
+          T('postal', 'Postal Code', '43215', true),
+          T('country', 'Country Code', 'US', true, 'Two-letter ISO code'),
+          N('lat', 'Latitude', '39.9612'),
+          N('lng', 'Longitude', '-82.9988'),
+          A('hours', 'Opening Hours (one per line)', 'Mo-Fr 09:00-17:00\nSa 10:00-14:00', false, 'Format: Mo-Fr 09:00-17:00')
+        ],
+        build: v => ({
+          '@context': 'https://schema.org', '@type': v.sub || 'LocalBusiness',
+          name: v.name, image: v.image, telephone: v.phone, priceRange: v.priceRange, url: v.url,
+          address: { '@type': 'PostalAddress', streetAddress: v.street, addressLocality: v.city, addressRegion: v.region, postalCode: v.postal, addressCountry: v.country },
+          geo: (v.lat && v.lng) ? { '@type': 'GeoCoordinates', latitude: v.lat, longitude: v.lng } : undefined,
+          openingHours: lines(v.hours)
+        }),
+        required: ['name', 'street', 'city', 'postal', 'country']
+      },
+      {
+        id: 'org', label: 'Organization', file: 'organization',
+        note: '<b>Entity SEO:</b> feeds Google\'s knowledge graph — logo in results, brand panel, AI-engine grounding. Put it on your homepage.',
+        fields: [
+          T('name', 'Organization Name', 'ABUZ8 LLC', true),
+          U('url', 'Website URL', 'https://abuz8ai.com', true),
+          U('logo', 'Logo URL', 'https://example.com/logo.png', true, '112x112px minimum, square'),
+          A('description', 'Description', 'What the organization does'),
+          T('email', 'Contact Email', 'hello@example.com'),
+          T('phone', 'Contact Phone', '+1-614-555-0100'),
+          A('sameAs', 'Social Profiles (one URL per line)', 'https://x.com/yourbrand\nhttps://linkedin.com/company/yourbrand')
+        ],
+        build: v => ({
+          '@context': 'https://schema.org', '@type': 'Organization',
+          name: v.name, url: v.url, description: v.description, email: v.email, telephone: v.phone,
+          logo: v.logo ? { '@type': 'ImageObject', url: v.logo } : undefined,
+          sameAs: lines(v.sameAs)
+        }),
+        required: ['name', 'url', 'logo']
+      },
+      {
+        id: 'person', label: 'Person', file: 'person',
+        note: '<b>Entity SEO:</b> author pages, personal brands, E-E-A-T. Link your profiles with sameAs so engines merge your identity.',
+        fields: [
+          T('name', 'Full Name', 'Ahmad Abu Zait', true),
+          T('jobTitle', 'Job Title', 'Founder & CEO'),
+          T('worksFor', 'Works For', 'ABUZ8 LLC'),
+          U('url', 'Personal URL', 'https://example.com/about'),
+          U('image', 'Photo URL', 'https://example.com/headshot.jpg'),
+          T('email', 'Email', 'name@example.com'),
+          A('sameAs', 'Profiles (one URL per line)', 'https://x.com/you\nhttps://github.com/you\nhttps://linkedin.com/in/you')
+        ],
+        build: v => ({
+          '@context': 'https://schema.org', '@type': 'Person',
+          name: v.name, jobTitle: v.jobTitle, url: v.url, image: v.image, email: v.email,
+          worksFor: v.worksFor ? { '@type': 'Organization', name: v.worksFor } : undefined,
+          sameAs: lines(v.sameAs)
+        }),
+        required: ['name']
+      },
+      {
+        id: 'event', label: 'Event', file: 'event',
+        note: '<b>Rich result:</b> date, venue & ticket info in search + event surfaces. Needs name, start date, and a location.',
+        fields: [
+          T('name', 'Event Name', 'QADIR OS Launch Livestream', true),
+          D('startDate', 'Start Date & Time', true),
+          D('endDate', 'End Date & Time'),
+          SEL('mode', 'Attendance Mode', ['OfflineEventAttendanceMode', 'OnlineEventAttendanceMode', 'MixedEventAttendanceMode']),
+          SEL('status', 'Event Status', ['EventScheduled', 'EventPostponed', 'EventRescheduled', 'EventMovedOnline', 'EventCancelled']),
+          T('venue', 'Venue Name', 'Columbus Convention Center', false, 'For offline / mixed events'),
+          T('street', 'Venue Street', '400 N High St'),
+          T('city', 'Venue City', 'Columbus'),
+          U('onlineUrl', 'Online Event URL', 'https://example.com/live', false, 'For online / mixed events'),
+          A('description', 'Description', 'What happens at the event'),
+          U('image', 'Image URL', 'https://example.com/event.jpg'),
+          N('price', 'Ticket Price', '0'),
+          SEL('currency', 'Currency', ['USD', 'EUR', 'GBP', 'CAD', 'AUD']),
+          U('ticketUrl', 'Ticket URL', 'https://example.com/tickets'),
+          T('organizer', 'Organizer Name', 'ABUZ8'),
+          U('organizerUrl', 'Organizer URL', 'https://abuz8ai.com')
+        ],
+        build: v => {
+          const places = [];
+          if (v.onlineUrl) places.push({ '@type': 'VirtualLocation', url: v.onlineUrl });
+          if (v.venue || v.street || v.city) places.push({ '@type': 'Place', name: v.venue, address: { '@type': 'PostalAddress', streetAddress: v.street, addressLocality: v.city } });
+          return {
+            '@context': 'https://schema.org', '@type': 'Event',
+            name: v.name, startDate: v.startDate, endDate: v.endDate,
+            eventAttendanceMode: v.mode ? 'https://schema.org/' + v.mode : undefined,
+            eventStatus: v.status ? 'https://schema.org/' + v.status : undefined,
+            location: places.length === 1 ? places[0] : (places.length ? places : undefined),
+            description: v.description, image: v.image,
+            offers: (v.price || v.ticketUrl) ? { '@type': 'Offer', price: v.price, priceCurrency: v.currency || 'USD', url: v.ticketUrl, availability: 'https://schema.org/InStock' } : undefined,
+            organizer: v.organizer ? { '@type': 'Organization', name: v.organizer, url: v.organizerUrl } : undefined
+          };
+        },
+        required: ['name', 'startDate']
+      },
+      {
+        id: 'video', label: 'Video', file: 'video',
+        note: '<b>Rich result:</b> video thumbnail, duration & key moments. Needs name, description, thumbnail, upload date.',
+        fields: [
+          T('name', 'Video Title', 'QADIR OS in 60 Seconds', true),
+          A('description', 'Description', 'What the video shows', true),
+          U('thumb', 'Thumbnail URL', 'https://example.com/thumb.jpg', true),
+          D('uploadDate', 'Upload Date', true),
+          N('durMin', 'Duration — Minutes', '1'),
+          N('durSec', 'Duration — Seconds', '0'),
+          U('contentUrl', 'Video File URL', 'https://example.com/video.mp4'),
+          U('embedUrl', 'Embed URL', 'https://youtube.com/embed/xyz')
+        ],
+        build: v => ({
+          '@context': 'https://schema.org', '@type': 'VideoObject',
+          name: v.name, description: v.description, thumbnailUrl: v.thumb, uploadDate: v.uploadDate,
+          duration: (v.durMin || v.durSec) ? 'PT' + (parseInt(v.durMin || 0, 10)) + 'M' + (parseInt(v.durSec || 0, 10)) + 'S' : undefined,
+          contentUrl: v.contentUrl, embedUrl: v.embedUrl
+        }),
+        required: ['name', 'description', 'thumb', 'uploadDate']
+      },
+      {
+        id: 'website', label: 'WebSite', file: 'website',
+        note: '<b>Rich result:</b> site name in results + sitelinks search box. Put it on the homepage only.',
+        fields: [
+          T('name', 'Site Name', 'ABUZ8', true),
+          U('url', 'Site URL', 'https://abuz8ai.com', true),
+          T('alt', 'Alternate Name', 'ABUZ8 AI'),
+          { k: 'search', label: 'Include Sitelinks Search Box', kind: 'check' },
+          U('searchUrl', 'Search URL Pattern', 'https://example.com/search?q={search_term_string}', false, 'Must contain {search_term_string}')
+        ],
+        build: v => ({
+          '@context': 'https://schema.org', '@type': 'WebSite',
+          name: v.name, url: v.url, alternateName: v.alt,
+          potentialAction: (v.search && v.searchUrl) ? { '@type': 'SearchAction', target: { '@type': 'EntryPoint', urlTemplate: v.searchUrl }, 'query-input': 'required name=search_term_string' } : undefined
+        }),
+        required: ['name', 'url']
+      },
+      {
+        id: 'breadcrumb', label: 'Breadcrumb', file: 'breadcrumb',
+        note: '<b>Rich result:</b> replaces the raw URL in search listings with a readable trail. Order matters — top level first.',
+        fields: [ REP('items', 'Trail Items', '+ Add level', [
+          T('name', 'Page Name', 'Free Tools', true),
+          U('url', 'Page URL', 'https://example.com/tools/', true)
+        ], 2) ],
+        build: v => ({
+          '@context': 'https://schema.org', '@type': 'BreadcrumbList',
+          itemListElement: (v.items || []).map((it, i) => ({ '@type': 'ListItem', position: i + 1, name: it.name, item: it.url }))
+        }),
+        required: [],
+        validRepeat: v => (v.items || []).filter(it => it.name && it.url).length >= 2 ? [] : ['at least 2 complete trail items']
+      }
+    ];
+
+    // ── STATE ──
+    let activeType = TYPES[0];
+    const repCounts = {};   // typeId -> current number of repeat rows
+
+    // ── RENDER: type picker ──
+    function renderTypes() {
+      document.getElementById('types').innerHTML = TYPES.map(t =>
+        '<button class="type-btn' + (t.id === activeType.id ? ' active' : '') + '" onclick="setType(\'' + t.id + '\')">' + t.label + '</button>'
+      ).join('');
+      document.getElementById('type-note').innerHTML = activeType.note;
+    }
+    function setType(id) {
+      activeType = TYPES.find(t => t.id === id);
+      renderTypes(); renderForm(); generate();
+    }
+
+    // ── RENDER: one field (the chassis knows 7 field kinds, that's all) ──
+    function fieldHtml(f, prefix) {
+      const id = prefix + f.k;
+      const req = f.req ? ' <span class="req">*</span>' : '';
+      const hint = f.hint ? '<div class="hint">' + f.hint + '</div>' : '';
+      if (f.kind === 'select') {
+        return '<div class="field"><label for="' + id + '">' + f.label + req + '</label><select id="' + id + '" oninput="generate()">' +
+          f.opts.map(o => '<option value="' + o + '">' + o + '</option>').join('') + '</select>' + hint + '</div>';
+      }
+      if (f.kind === 'area') return '<div class="field"><label for="' + id + '">' + f.label + req + '</label><textarea id="' + id + '" placeholder="' + (f.ph || '') + '" oninput="generate()"></textarea>' + hint + '</div>';
+      if (f.kind === 'date') return '<div class="field"><label for="' + id + '">' + f.label + req + '</label><input type="datetime-local" id="' + id + '" oninput="generate()" />' + hint + '</div>';
+      if (f.kind === 'check') return '<label class="chk"><input type="checkbox" id="' + id + '" onchange="generate()" /> ' + f.label + '</label>';
+      const typ = f.kind === 'number' ? 'number' : (f.kind === 'url' ? 'url' : 'text');
+      return '<div class="field"><label for="' + id + '">' + f.label + req + '</label><input type="' + typ + '" id="' + id + '" placeholder="' + (f.ph || '') + '" oninput="generate()" step="any" />' + hint + '</div>';
+    }
+
+    // ── RENDER: form for the active type (repeat groups included) ──
+    function renderForm() {
+      const p = 'f-' + activeType.id + '-';
+      let html = '';
+      for (const f of activeType.fields) {
+        if (f.kind !== 'repeat') { html += fieldHtml(f, p); continue; }
+        if (!repCounts[activeType.id + f.k]) repCounts[activeType.id + f.k] = f.min;
+        const n = repCounts[activeType.id + f.k];
+        for (let i = 0; i < n; i++) {
+          html += '<div class="rep-item"><div class="rep-head"><span class="rep-title">' + f.label.replace(/s$/, '') + ' ' + (i + 1) + '</span>' +
+            (n > f.min ? '<button class="rep-del" onclick="delRep(\'' + f.k + '\',' + i + ')">Remove</button>' : '') + '</div>' +
+            f.sub.map(sf => fieldHtml(sf, p + f.k + '-' + i + '-')).join('') + '</div>';
+        }
+        html += '<button class="rep-add" onclick="addRep(\'' + f.k + '\')">' + f.addLabel + '</button>';
+      }
+      document.getElementById('form').innerHTML = html;
+    }
+    function addRep(k) { repCounts[activeType.id + k]++; const vals = snapshot(); renderForm(); restore(vals); generate(); }
+    function delRep(k, idx) {
+      // capture values, drop row idx, shift the rest down, re-render
+      const p = 'f-' + activeType.id + '-' + k + '-';
+      const f = activeType.fields.find(x => x.k === k);
+      const n = repCounts[activeType.id + k];
+      const rows = [];
+      for (let i = 0; i < n; i++) { if (i === idx) continue; const row = {}; f.sub.forEach(sf => { const el = document.getElementById(p + i + '-' + sf.k); row[sf.k] = el ? el.value : ''; }); rows.push(row); }
+      repCounts[activeType.id + k] = n - 1;
+      const vals = snapshot(); renderForm(); restore(vals);
+      rows.forEach((row, i) => f.sub.forEach(sf => { const el = document.getElementById(p + i + '-' + sf.k); if (el) el.value = row[sf.k] || ''; }));
+      generate();
+    }
+    // snapshot/restore simple (non-repeat) fields across re-renders
+    function snapshot() {
+      const p = 'f-' + activeType.id + '-'; const out = {};
+      activeType.fields.filter(f => f.kind !== 'repeat').forEach(f => { const el = document.getElementById(p + f.k); if (el) out[f.k] = f.kind === 'check' ? el.checked : el.value; });
+      return out;
+    }
+    function restore(vals) {
+      const p = 'f-' + activeType.id + '-';
+      activeType.fields.filter(f => f.kind !== 'repeat').forEach(f => { const el = document.getElementById(p + f.k); if (el && vals[f.k] !== undefined) { if (f.kind === 'check') el.checked = vals[f.k]; else el.value = vals[f.k]; } });
+    }
+
+    // ── COLLECT values from DOM into a plain object ──
+    function collect() {
+      const p = 'f-' + activeType.id + '-'; const v = {};
+      for (const f of activeType.fields) {
+        if (f.kind === 'repeat') {
+          const n = repCounts[activeType.id + f.k] || f.min; const arr = [];
+          for (let i = 0; i < n; i++) { const row = {}; f.sub.forEach(sf => { const el = document.getElementById(p + f.k + '-' + i + '-' + sf.k); row[sf.k] = el ? el.value.trim() : ''; }); arr.push(row); }
+          v[f.k] = arr;
+        } else {
+          const el = document.getElementById(p + f.k);
+          v[f.k] = el ? (f.kind === 'check' ? el.checked : el.value.trim()) : '';
+        }
+      }
+      return v;
+    }
+
+    // ── VALIDATE required fields → checklist + pill ──
+    function validate(v) {
+      const missing = [];
+      const labelOf = k => { const f = activeType.fields.find(x => x.k === k); return f ? f.label : k; };
+      activeType.required.forEach(k => { if (!v[k]) missing.push(labelOf(k)); });
+      if (activeType.validRepeat) missing.push(...activeType.validRepeat(v));
+      const listEl = document.getElementById('req-list');
+      const parts = activeType.required.map(k => (v[k] ? '<span class="got">&#10003; ' : '<span class="not">&#9675; ') + labelOf(k) + '</span>');
+      if (activeType.validRepeat) { const repMiss = activeType.validRepeat(v); parts.push(repMiss.length ? '<span class="not">&#9675; ' + repMiss[0] + '</span>' : '<span class="got">&#10003; items complete</span>'); }
+      listEl.innerHTML = parts.join('');
+      const pill = document.getElementById('status-pill');
+      if (missing.length) { pill.className = 'pill miss'; pill.textContent = missing.length + ' required field' + (missing.length > 1 ? 's' : '') + ' missing'; }
+      else { pill.className = 'pill ok'; pill.textContent = 'All required fields set — eligible markup'; }
+    }
+
+    // ── OUTPUT: build → clean → pretty-print → highlight ──
+    const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    function highlight(json) {
+      return esc(json).replace(/("(?:[^"\\]|\\.)*")(\s*:)?|\b(-?\d+\.?\d*)\b|([{}\[\],])/g, function (m, str, colon, num, punc) {
+        if (str) return colon ? '<span class="k">' + str + '</span>' + colon : '<span class="s">' + str + '</span>';
+        if (num !== undefined) return '<span class="n">' + num + '</span>';
+        return '<span class="p">' + punc + '</span>';
+      });
+    }
+    function currentJson() {
+      const v = collect();
+      const obj = clean(activeType.build(v)) || { '@context': 'https://schema.org', '@type': activeType.build({})['@type'] || 'Thing' };
+      return JSON.stringify(obj, null, 2);
+    }
+    // NOTE: script-tag string is split so the browser's HTML parser never
+    // sees a literal closing tag inside this JS block.
+    const OPEN_TAG = '<scr' + 'ipt type="application/ld+json">';
+    const CLOSE_TAG = '</scr' + 'ipt>';
+    function currentText() {
+      const json = currentJson();
+      return document.getElementById('wrap-toggle').checked ? OPEN_TAG + '\n' + json + '\n' + CLOSE_TAG : json;
+    }
+    function generate() {
+      const v = collect();
+      validate(v);
+      const wrapped = document.getElementById('wrap-toggle').checked;
+      document.getElementById('out-filename').textContent = wrapped ? 'schema-snippet.html' : activeType.file + '-schema.json';
+      const json = currentJson();
+      const body = highlight(json);
+      document.getElementById('output').innerHTML = wrapped ? '<span class="p">' + esc(OPEN_TAG) + '</span>\n' + body + '\n<span class="p">' + esc(CLOSE_TAG) + '</span>' : body;
+    }
+
+    // ── COPY / DOWNLOAD ──
+    function copyOutput() {
+      navigator.clipboard.writeText(currentText()).then(function () {
+        const btn = document.getElementById('copy-btn');
+        btn.textContent = 'Copied!'; btn.classList.add('copied');
+        setTimeout(function () { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+      });
+    }
+    function downloadOutput() {
+      const wrapped = document.getElementById('wrap-toggle').checked;
+      const blob = new Blob([currentText()], { type: wrapped ? 'text/html' : 'application/json' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = wrapped ? 'schema-snippet.html' : activeType.file + '-schema.json';
+      a.click();
+      URL.revokeObjectURL(a.href);
+    }
+
+    // ── INIT ──
+    renderTypes();
+    renderForm();
+    generate();
+  </script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+
+<!-- ABUZ8 EARLY ACCESS — injected 2026-08-09-earlyaccess -->
+<section class="waitlist-wrap" id="abuz8-early-access" aria-labelledby="abuz8-ea-h">
+  <div class="abuz8-ea-card">
+    <p class="abuz8-ea-kicker">ABUZ8 AI</p>
+    <h2 id="abuz8-ea-h">Stop losing rich results to missing schema &mdash; let an agent own it.</h2>
+    <p class="abuz8-ea-sub">
+      This tool is free and always will be. What we are building next is the layer above it:
+      an agent that runs this step for you on every repo, every deploy, every page &mdash;
+      without you opening a tab. Early Access opens in waves.
+    </p>
+    <div class="abuz8-ea-row">
+      <label class="abuz8-ea-sr" for="wl-email">Email address</label>
+      <input id="wl-email" type="email" inputmode="email" autocomplete="email"
+             placeholder="you@company.com" aria-describedby="wl-msg">
+      <button id="wl-submit" type="button">Join Early Access</button>
+    </div>
+    <p id="wl-msg" class="abuz8-ea-msg" role="status" aria-live="polite"></p>
+    <p class="abuz8-ea-fine">No spam. No card. Leave any time.</p>
+  </div>
+</section>
+
+<style>
+  #abuz8-early-access{
+    --ea-lapis:#0a1628; --ea-lapis2:#0f2040; --ea-lapis3:#163060;
+    --ea-gold:#c9a84c; --ea-gold2:#e8d48b;
+    --ea-turq:#0e9f6e; --ea-turq2:#2fbf8f;
+    --ea-text:#e8e4d8; --ea-dim:#8a9aaa; --ea-border:rgba(201,168,76,0.18);
+    display:block; padding:56px 20px 64px; background:var(--ea-lapis);
+    font-family:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;
+  }
+  #abuz8-early-access *{box-sizing:border-box;}
+  .abuz8-ea-card{
+    max-width:720px; margin:0 auto; padding:36px 32px;
+    background:linear-gradient(135deg,var(--ea-lapis2),var(--ea-lapis3));
+    border:1px solid var(--ea-border); border-radius:18px;
+    box-shadow:0 8px 32px rgba(0,0,0,0.4);
+  }
+  .abuz8-ea-kicker{
+    margin:0 0 10px; font-size:11px; letter-spacing:.18em; text-transform:uppercase;
+    color:var(--ea-gold); font-family:'JetBrains Mono',ui-monospace,Menlo,Consolas,monospace;
+  }
+  #abuz8-early-access h2{
+    margin:0 0 14px; font-family:'Playfair Display',Georgia,serif;
+    font-size:clamp(22px,3.4vw,32px); line-height:1.22; font-weight:600; color:var(--ea-text);
+  }
+  .abuz8-ea-sub{margin:0 0 22px; color:var(--ea-dim); font-size:15px; line-height:1.6;}
+  .abuz8-ea-row{display:flex; gap:10px; flex-wrap:wrap;}
+  .abuz8-ea-sr{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap;}
+  #abuz8-early-access input#wl-email{
+    flex:1 1 260px; min-width:0; padding:13px 15px; font-size:15px;
+    color:var(--ea-text); background:rgba(10,22,40,0.72);
+    border:1px solid var(--ea-border); border-radius:10px; font-family:inherit;
+  }
+  #abuz8-early-access input#wl-email::placeholder{color:#6a7a8a;}
+  #abuz8-early-access input#wl-email:focus{
+    outline:none; border-color:var(--ea-gold); box-shadow:0 0 0 3px rgba(201,168,76,0.16);
+  }
+  #abuz8-early-access button#wl-submit{
+    flex:0 0 auto; padding:13px 26px; font-size:15px; font-weight:600; cursor:pointer;
+    color:#06121f; background:linear-gradient(135deg,var(--ea-gold2),var(--ea-gold));
+    border:none; border-radius:10px; font-family:inherit;
+    transition:transform .16s ease, filter .16s ease;
+  }
+  #abuz8-early-access button#wl-submit:hover{transform:translateY(-1px); filter:brightness(1.06);}
+  #abuz8-early-access button#wl-submit:focus-visible{outline:2px solid var(--ea-turq2); outline-offset:2px;}
+  #abuz8-early-access button#wl-submit[disabled]{opacity:.6; cursor:default; transform:none;}
+  .abuz8-ea-msg{margin:14px 0 0; min-height:20px; font-size:14px; color:var(--ea-dim);}
+  .abuz8-ea-fine{margin:10px 0 0; font-size:12.5px; color:#6a7a8a;}
+  @media (prefers-reduced-motion:reduce){
+    #abuz8-early-access button#wl-submit{transition:none;}
+  }
+  @media (max-width:520px){
+    .abuz8-ea-card{padding:28px 20px;}
+    #abuz8-early-access button#wl-submit{flex:1 1 100%;}
+  }
+</style>
+
+<script>
+(function(){
+  var TOOL = 'schema-markup-generator';
+  var input = document.getElementById('wl-email');
+  var btn   = document.getElementById('wl-submit');
+  var msg   = document.getElementById('wl-msg');
+  if (!input || !btn || !msg) return;
+
+  function say(text, ok){
+    msg.style.color = ok === true ? '#2fbf8f' : (ok === false ? '#e05555' : '#8a9aaa');
+    msg.textContent = text;
+  }
+
+  async function join(){
+    var email = (input.value || '').trim();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      say('Please enter a valid email address.', false);
+      input.focus();
+      return;
+    }
+    btn.disabled = true;
+    say('Saving your spot\u2026');
+
+    var payload = { email: email, tool: TOOL, ts: new Date().toISOString() };
+    var saved = false;
+    try {
+      var r = await fetch('/api/waitlist', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      if (r.ok) saved = true;
+    } catch (_) {}
+
+    try {
+      var list = JSON.parse(localStorage.getItem('abuz8_waitlist') || '[]');
+      list.push(payload);
+      localStorage.setItem('abuz8_waitlist', JSON.stringify(list));
+    } catch (_) {}
+
+    try { if (typeof gtag === 'function') gtag('event', 'waitlist_join', { tool: TOOL }); } catch (_) {}
+
+    say(saved
+      ? '\u2713 You\u2019re in. Watch your inbox for the Early Access invite.'
+      : '\u2713 Saved locally. We\u2019ll confirm by email once you reconnect.', true);
+    input.value = '';
+    btn.disabled = false;
+  }
+
+  btn.addEventListener('click', join);
+  input.addEventListener('keydown', function(e){ if (e.key === 'Enter') join(); });
+})();
+</script>
+<!-- /ABUZ8 EARLY ACCESS -->
+
+</body>
+</html>

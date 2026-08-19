@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<link rel="stylesheet" href="/assets/css/abuz8-mach3.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Video With Sound — ABUZ8</title>
+<meta name="description" content="Generate short films with synchronized audio from a single text prompt. Picture and sound rendered together by LTX-2 audio-video. No editing, no syncing.">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@300;400;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --lapis: #0a1628;
+  --gold: #c9a84c;
+  --turq: #0e9f6e;
+  --text: #e8e4d8;
+  --dim: #8a9aaa;
+  --border: #1a2e50;
+  --card: #0d1a30;
+  --cream: #f5f0e8;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: var(--lapis); color: var(--text); font-family: 'Inter', sans-serif; line-height: 1.6; min-height: 100vh; }
+.container { max-width: 1000px; margin: 0 auto; padding: 40px 20px; }
+h1 { font-family: 'Playfair Display', serif; font-size: clamp(2.2rem, 5vw, 4rem); color: var(--cream); margin-bottom: 10px; }
+.sub { color: var(--dim); margin-bottom: 40px; font-size: 18px; font-weight: 300; }
+
+.tool-panel { background: var(--card); border: 1px solid var(--border); border-radius: 24px; padding: 40px; position: relative; overflow: hidden; }
+.tool-panel::after { content: 'AUDIO-VIDEO ENGINE'; position: absolute; top: 20px; right: -38px; background: var(--turq); color: white; padding: 5px 48px; font-size: 10px; font-weight: 900; transform: rotate(45deg); letter-spacing: 1px; }
+
+label { display: block; font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--gold); margin-bottom: 8px; }
+.field-hint { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--dim); margin: -2px 0 18px; }
+textarea { width: 100%; background: #0f2040; border: 1px solid var(--border); border-radius: 12px; color: white; padding: 18px; font-size: 16px; font-family: 'Inter', sans-serif; resize: none; }
+textarea:focus { border-color: var(--gold); outline: none; }
+#prompt { height: 110px; margin-bottom: 22px; }
+#audio { height: 70px; margin-bottom: 28px; }
+
+.video-options { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; margin-bottom: 30px; }
+.opt-box { background: var(--lapis); border: 1px solid var(--border); padding: 15px; border-radius: 10px; text-align: center; cursor: pointer; transition: border-color 0.2s, background 0.2s; }
+.opt-box:hover { border-color: var(--turq); }
+.opt-box.active { border-color: var(--gold); background: rgba(201, 168, 76, 0.05); }
+
+.btn { width: 100%; padding: 18px; border-radius: 12px; font-weight: 800; cursor: pointer; border: none; font-size: 18px; text-transform: uppercase; letter-spacing: 2px; }
+.btn-gold { background: var(--gold); color: var(--lapis); }
+.btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.how-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 50px; }
+.how-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 24px; }
+.how-card .n { font-family: 'JetBrains Mono', monospace; color: var(--turq); font-size: 13px; font-weight: 700; }
+.how-card h3 { font-family: 'Playfair Display', serif; color: var(--cream); font-size: 19px; margin: 8px 0 6px; }
+.how-card p { color: var(--dim); font-size: 14px; font-weight: 300; }
+
+.modal { display: none; position: fixed; inset: 0; background: rgba(10,22,40,0.95); backdrop-filter: blur(15px); z-index: 1000; align-items: center; justify-content: center; }
+.modal-content { background: #111f38; border: 1px solid var(--turq); border-radius: 24px; padding: 45px; max-width: 500px; width: 90%; text-align: center; }
+</style>
+<script src="_abuz8-live-brain.js" defer></script>
+<script src="_abuz8-config.js" defer></script>
+<link rel="canonical" href="https://abuz8ai.com/tools/ai-video-with-sound">
+</head>
+<body>
+<div class="container">
+  <header>
+    <a href="../tools.html" style="color:var(--gold); text-decoration:none; font-size:12px;">&larr; BACK TO SPACEPORT</a>
+    <h1 style="margin-top:20px;">AI Video<br>With Sound</h1>
+    <p class="sub">Describe a scene once. Picture and audio are rendered together by LTX-2 audio-video — ambient sound, foley, and a music bed baked in. No editing timeline, no manual sync.</p>
+  </header>
+
+  <div class="tool-panel">
+    <label for="prompt">The Scene</label>
+    <div class="field-hint">// what the camera sees and how it moves</div>
+    <textarea id="prompt" placeholder="A rainy Tokyo alley at night, neon reflections on wet asphalt, a slow dolly toward a ramen stall, steam rising, cinematic, 4k..."></textarea>
+
+    <label for="audio">The Soundscape <span style="color:var(--dim);font-weight:400;text-transform:none;letter-spacing:0;">(optional)</span></label>
+    <div class="field-hint">// what it should sound like — leave blank to auto-score from the scene</div>
+    <textarea id="audio" placeholder="Soft rain, distant city hum, sizzling broth, a low melancholic synth pad..."></textarea>
+
+    <div class="video-options">
+      <div class="opt-box active" data-mode="AMBIENT">
+        <strong style="display:block; font-size:12px; color:var(--gold);">AMBIENT</strong>
+        <span style="font-size:10px; color:var(--dim);">Foley + environment</span>
+      </div>
+      <div class="opt-box" data-mode="MUSICBED">
+        <strong style="display:block; font-size:12px; color:var(--turq);">MUSIC BED</strong>
+        <span style="font-size:10px; color:var(--dim);">Scored underscore</span>
+      </div>
+      <div class="opt-box" data-mode="DIALOGUE">
+        <strong style="display:block; font-size:12px; color:white;">DIALOGUE-READY</strong>
+        <span style="font-size:10px; color:var(--dim);">Clean bed for VO</span>
+      </div>
+    </div>
+
+    <button class="btn btn-gold" data-gpu-required onclick="generateAV()">Render Film With Sound</button>
+  </div>
+
+  <div id="result-display" style="display:none;margin-top:30px;"></div>
+
+  <div class="how-row">
+    <div class="how-card"><div class="n">01</div><h3>One Prompt</h3><p>Write the scene. Optionally describe the soundscape, or let the engine score it from the visuals.</p></div>
+    <div class="how-card"><div class="n">02</div><h3>Joint Render</h3><p>LTX-2 generates frames and audio in the same pass, so the sound actually matches the motion.</p></div>
+    <div class="how-card"><div class="n">03</div><h3>Download</h3><p>Get a single MP4 with audio already muxed in — drop it straight into a reel or post.</p></div>
+  </div>
+</div>
+
+<div id="wl-modal" class="modal">
+  <div class="modal-content">
+    <h2 style="font-family:'Playfair Display'; color:white; margin-bottom:15px;">Join Early Access</h2>
+    <p style="color:var(--dim); margin-bottom:25px;">Audio-video rendering runs on our highest-tier GPUs and is rolling out to Early Access members first. Add your email to claim a spot in the queue.</p>
+    <form onsubmit="submitWaitingList(event)" style="display:flex; flex-direction:column; gap:15px;">
+      <input type="email" id="wl-email" placeholder="Enter your email" required style="padding:15px; border-radius:10px; border:1px solid var(--border); background:var(--lapis); color:white; font-size:16px;">
+      <button type="submit" class="btn btn-gold">Join Early Access</button>
+    </form>
+    <div id="wl-status" style="margin-top:15px; font-size:13px;"></div>
+    <button class="btn" style="background:transparent; color:var(--dim); margin-top:15px; font-size:12px;" onclick="closeModal()">Maybe later</button>
+  </div>
+</div>
+
+<script src="/assets/js/gpu-tools.js"></script>
+<script>
+document.querySelectorAll('.opt-box').forEach(el=>{el.addEventListener('click',()=>{document.querySelectorAll('.opt-box').forEach(x=>x.classList.remove('active'));el.classList.add('active');});});
+function closeModal() { document.getElementById('wl-modal').style.display = 'none'; }
+
+async function generateAV() {
+  const prompt = document.getElementById('prompt').value.trim();
+  if (!prompt) { document.getElementById('prompt').style.borderColor = '#ef4444'; return; }
+  const audio = document.getElementById('audio').value.trim();
+  const mode = document.querySelector('.opt-box.active')?.dataset.mode || 'AMBIENT';
+  const audioStyle = { AMBIENT: 'natural ambient foley and environmental sound', MUSICBED: 'a cinematic scored music underscore', DIALOGUE: 'a clean quiet bed suitable for voiceover' }[mode];
+  const btn = document.querySelector('[data-gpu-required]');
+  const orig = btn.textContent;
+  btn.textContent = 'RENDERING PICTURE + SOUND...'; btn.disabled = true;
+  try {
+    const result = await submitToComfyUI('comfyui_ltx_av_t2v', {
+      prompt: prompt + ', cinematic, high quality, 4k',
+      audio_prompt: (audio || prompt) + ', ' + audioStyle
+    });
+    if (result && result.video) {
+      const rd = document.getElementById('result-display');
+      rd.style.display = 'block';
+      rd.innerHTML = '<video controls autoplay style="width:100%;border-radius:12px;border:1px solid var(--border);" src="' + result.video + '"></video><p style="text-align:center;margin-top:12px;"><a href="' + result.video + '" download style="color:var(--gold);font-weight:700;">Download Film (MP4 + Audio)</a></p>';
+    } else if (result && result.output) {
+      const rd = document.getElementById('result-display');
+      rd.style.display = 'block';
+      rd.innerHTML = '<video controls autoplay style="width:100%;border-radius:12px;border:1px solid var(--border);" src="' + result.output + '"></video>';
+    }
+    gtag('event','tool_generate',{tool:'ai-video-with-sound', mode: mode});
+  } catch(e) { alert('Audio-video render error: ' + e.message); }
+  finally { btn.textContent = orig; btn.disabled = false; }
+}
+
+async function submitWaitingList(e) {
+  e.preventDefault();
+  const email = document.getElementById('wl-email').value;
+  const status = document.getElementById('wl-status');
+  status.textContent = 'Securing your spot...';
+  try {
+    const response = await fetch('/api/waitlist', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, product_id: 'ai-video-with-sound', source: 'comfyui-tool' })
+    });
+    const data = await response.json();
+    if (data.success) { status.textContent = 'You are on the list!'; status.style.color = '#0e9f6e'; setTimeout(closeModal, 2000); }
+    else { status.textContent = 'Could not save — try again.'; status.style.color = '#ef4444'; }
+  } catch (err) { status.textContent = 'Error occurred.'; status.style.color = '#ef4444'; }
+}
+</script>
+
+<link rel="stylesheet" href="/assets/css/zait-chat.css">
+<script src="/assets/js/zait-chat.js"></script>
+<script src="/assets/js/dfy-banner.js" async></script>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+<script src="/tools/_tools-shared.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>
+

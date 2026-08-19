@@ -1,0 +1,258 @@
+=== Qr Code (mtb) ===
+input: {
+  "required": {
+    "url": [
+      "STRING",
+      {
+        "default": "https://www.github.com"
+      }
+    ],
+    "width": [
+      "INT",
+      {
+        "default": 256,
+        "max": 8096,
+        "min": 0,
+        "step": 1
+      }
+    ],
+    "height": [
+      "INT",
+      {
+        "default": 256,
+        "max": 8096,
+        "min": 0,
+        "step": 1
+      }
+    ],
+    "error_correct": [
+      [
+        "L",
+        "M",
+        "Q",
+        "H"
+      ],
+      {
+        "default": "L"
+      }
+    ],
+    "box_size": [
+      "INT",
+      {
+        "default": 10,
+        "max": 8096,
+        "min": 0,
+        "step": 1
+      }
+    ],
+    "border": [
+      "INT",
+      {
+        "default": 4,
+        "max": 8096,
+        "min": 0,
+        "step": 1
+      }
+    ],
+    "invert": [
+      [
+        "BOOLEAN"
+      ],
+      {
+        "default": false
+      }
+    ]
+  }
+}
+output: ['IMAGE']
+
+=== ControlNetLoader ===
+input: {
+  "required": {
+    "control_net_name": [
+      [
+        "OpenPoseXL2.safetensors",
+        "canny_sdxl.safetensors",
+        "control-lora-openposeXL2-rank256.safetensors",
+        "depth_sdxl.safetensors",
+        "diffusion_pytorch_model.bin"
+      ]
+    ]
+  }
+}
+output: ['CONTROL_NET']
+
+=== ControlNetApply ===
+input: {
+  "required": {
+    "conditioning": [
+      "CONDITIONING"
+    ],
+    "control_net": [
+      "CONTROL_NET"
+    ],
+    "image": [
+      "IMAGE"
+    ],
+    "strength": [
+      "FLOAT",
+      {
+        "default": 1.0,
+        "min": 0.0,
+        "max": 10.0,
+        "step": 0.01
+      }
+    ]
+  }
+}
+output: ['CONDITIONING']
+
+=== RemBGSession+ ===
+input: {
+  "required": {
+    "model": [
+      [
+        "u2net: general purpose",
+        "u2netp: lightweight general purpose",
+        "u2net_human_seg: human segmentation",
+        "u2net_cloth_seg: cloths Parsing",
+        "silueta: very small u2net",
+        "isnet-general-use: general purpose",
+        "isnet-anime: anime illustrations",
+        "sam: general purpose"
+      ]
+    ],
+    "providers": [
+      [
+        "CPU",
+        "CUDA",
+        "ROCM",
+        "DirectML",
+        "OpenVINO",
+        "CoreML",
+        "Tensorrt",
+        "Azure"
+      ]
+    ]
+  }
+}
+output: ['REMBG_SESSION']
+
+=== ImageRemoveBackground+ ===
+input: {
+  "required": {
+    "rembg_session": [
+      "REMBG_SESSION"
+    ],
+    "image": [
+      "IMAGE"
+    ]
+  }
+}
+output: ['IMAGE', 'MASK']
+
+=== RemoveBackground ===
+input: {
+  "required": {
+    "image": [
+      "IMAGE",
+      {
+        "tooltip": "Input image to remove the background from"
+      }
+    ],
+    "bg_removal_model": [
+      "BACKGROUND_REMOVAL",
+      {
+        "tooltip": "Background removal model used to generate the mask"
+      }
+    ]
+  }
+}
+output: ['MASK']
+
+=== LoadImage ===
+input: {
+  "required": {
+    "image": [
+      [
+        "2020-acura-tlx-3-5-w-technology-pkg-a-spec-pkg-sedan-4d (1).jpg",
+        "2020-acura-tlx-3-5-w-technology-pkg-a-spec-pkg-sedan-4d (4).jpg",
+        "2C0086FE-AA1D-4883-B775-9EBB157D8AF6.png",
+        "7AC26EDF-8118-446C-9F60-08989E41E4E9.png",
+        "825B93FE-44E6-40CD-AB6C-A4FF53BC3318.png",
+        "CD03285E-A802-416C-BB13-3266BE2848AC.png",
+        "ChatGPT Image Mar 6, 2026, 01_07_26 PM.png",
+        "ChatGPT Image Mar 6, 2026, 01_09_11 PM.png",
+        "ChatGPT Image Mar 6, 2026, 01_16_55 PM.png",
+        "F068060F-2468-47D3-B6C0-89189826DDBA.png",
+        "F0A1B27E-3011-4AC4-A5FA-F297DCF3638A.png",
+        "FRAME_anime_00002_.png",
+        "FRAME_realistic_00001_.png",
+        "IMG_7192.PNG",
+        "IMG_7997.JPG",
+        "Q3_FLUX_1780501615_00001_.png",
+        "Qadir_Mach3_00037_.png",
+        "Qadir_Mach3_00038_.png",
+        "Qadir_Mach3_00039_.png",
+        "Qadir_Mach3_00040_.png",
+        "Qadir_Mach3_00042_.png",
+        "Qwen-Image_00001_.png",
+        "abu_smoke_ref.png",
+        "arch_720x480.jpg",
+        "builder_ref_01.png",
+        "cat_belly_dancer.png",
+        "comfy_1777140097_Qadir_Mach3_00021_.png",
+ 
+output: ['IMAGE', 'MASK']
+
+=== SaveImage ===
+input: {
+  "required": {
+    "images": [
+      "IMAGE",
+      {
+        "tooltip": "The images to save."
+      }
+    ],
+    "filename_prefix": [
+      "STRING",
+      {
+        "default": "ComfyUI",
+        "tooltip": "The prefix for the file to save. This may include formatting information such as %date:yyyy-MM-dd% or %Empty Latent Image.width% to include values from nodes."
+      }
+    ]
+  },
+  "hidden": {
+    "prompt": "PROMPT",
+    "extra_pnginfo": "EXTRA_PNGINFO"
+  }
+}
+output: []
+
+=== CheckpointLoaderSimple ===
+input: {
+  "required": {
+    "ckpt_name": [
+      [
+        "NetaYumev35_pretrained_all_in_one.safetensors",
+        "Realistic_Insta_InfluencerV1.0.safetensors",
+        "V2_flux_klein_4.safetensors",
+        "absolutereality_v181.safetensors",
+        "ace_step_v1_3.5b.safetensors",
+        "anythingV3_fp16.safetensors",
+        "flux1-dev-fp8.safetensors",
+        "fluxtraitFLUX2KleinFLUXZ_flux2Klein9bV1.safetensors",
+        "hunyuan3d-dit-v2-mv-turbo_fp16.safetensors",
+        "hybridexa.safetensors",
+        "ltx-2.3-22b-dev-fp8.safetensors",
+        "ltx-2.3-22b-distilled-fp8.safetensors",
+        "sundea.safetensors"
+      ],
+      {
+        "tooltip": "The name of the checkpoint (model) to load."
+      }
+    ]
+  }
+}
+output: ['MODEL', 'CLIP', 'VAE']
+

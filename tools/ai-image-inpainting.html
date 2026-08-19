@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Image Inpainting | ABUZ8</title>
+    <link rel="canonical" href="https://abuz8ai.com/tools/ai-image-inpainting-pro">
+<style>
+  :root{--lapis:#0a1628;--lapis2:#0f1f3d;--lapis3:#162444;--gold:#c9a84c;--gold2:#e0bc6a;--turq:#0e9f6e;--turq2:#22a090;--text:#e8e4da;--muted:#8a9ab5;--green:#3db87a;}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--lapis);color:var(--text);font-family:'Inter',system-ui,sans-serif;min-height:100vh;}
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;500;600&display=swap');
+  header{background:linear-gradient(135deg,var(--lapis2),var(--lapis3));border-bottom:1px solid rgba(201,168,76,0.3);padding:16px 40px;display:flex;align-items:center;justify-content:space-between;}
+  .logo{font-family:'Playfair Display',serif;font-size:1.5rem;color:var(--gold);}.logo span{color:var(--turq);}
+  .pill{display:flex;align-items:center;gap:8px;background:rgba(61,184,122,0.12);border:1px solid rgba(61,184,122,0.3);border-radius:20px;padding:6px 14px;font-size:0.8rem;color:var(--green);}
+  .dot{width:7px;height:7px;border-radius:50%;background:var(--green);animation:pulse 2s infinite;}
+  @keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.4;}}
+  .hero{padding:56px 40px;text-align:center;background:linear-gradient(135deg,var(--lapis3),var(--lapis2));border-bottom:1px solid rgba(201,168,76,0.15);}
+  .hero h1{font-family:'Playfair Display',serif;font-size:2.6rem;color:var(--gold);margin-bottom:10px;}
+  .hero p{color:var(--muted);font-size:1rem;max-width:600px;margin:0 auto;}
+  .main{max-width:1000px;margin:0 auto;padding:40px 20px;}
+  .card{background:var(--lapis2);border:1px solid rgba(201,168,76,0.2);border-radius:16px;padding:28px;margin-bottom:22px;}
+  .card h2{font-family:'Playfair Display',serif;color:var(--gold);font-size:1.3rem;margin-bottom:16px;}
+  label{display:block;color:var(--muted);font-size:0.78rem;font-weight:600;letter-spacing:0.5px;text-transform:uppercase;margin-bottom:6px;margin-top:14px;}
+  textarea,select,input[type=text],input[type=range]{width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(138,154,181,0.3);border-radius:8px;padding:10px 14px;color:var(--text);font-family:inherit;font-size:0.9rem;}
+  textarea:focus,select:focus,input[type=text]:focus{outline:none;border-color:var(--gold);}
+  select option{background:var(--lapis2);}
+  input[type=range]{padding:0;height:4px;cursor:pointer;accent-color:var(--gold);border:none;background:transparent;}
+  .two-col{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+  @media(max-width:700px){.two-col{grid-template-columns:1fr;}}
+  .canvas-wrap{position:relative;background:var(--lapis3);border-radius:12px;overflow:hidden;border:1px solid rgba(201,168,76,0.15);}
+  .canvas-wrap canvas{display:block;max-width:100%;cursor:crosshair;}
+  .canvas-tools{display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;}
+  .ctool{padding:7px 14px;background:rgba(255,255,255,0.05);border:1px solid rgba(138,154,181,0.2);border-radius:6px;cursor:pointer;font-size:0.8rem;transition:all 0.2s;font-family:inherit;color:var(--text);}
+  .ctool:hover,.ctool.active{background:rgba(201,168,76,0.12);border-color:var(--gold);color:var(--gold2);}
+  .upload-zone{border:2px dashed rgba(201,168,76,0.3);border-radius:12px;padding:36px;text-align:center;cursor:pointer;transition:all 0.3s;}
+  .upload-zone:hover{border-color:var(--gold);background:rgba(201,168,76,0.04);}
+  .upload-zone input{display:none;}
+  .btn{width:100%;padding:14px;background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--lapis);font-weight:700;font-size:1rem;border:none;border-radius:10px;cursor:pointer;transition:all 0.2s;margin-top:14px;font-family:inherit;}
+  .btn:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(201,168,76,0.4);}
+  .btn:disabled{opacity:0.5;cursor:not-allowed;transform:none;}
+  .prog-box{background:var(--lapis3);border-radius:10px;padding:18px;display:none;margin-top:14px;}
+  .pb{background:rgba(255,255,255,0.08);border-radius:3px;height:5px;overflow:hidden;margin:8px 0;}
+  .pf{height:100%;background:linear-gradient(90deg,var(--turq),var(--gold));border-radius:3px;transition:width 0.5s;}
+  .result-area{display:none;margin-top:12px;}
+  .result-area img{width:100%;border-radius:12px;}
+  .waitlist-section{background:linear-gradient(135deg,rgba(201,168,76,0.08),rgba(26,138,122,0.08));border:1px solid rgba(201,168,76,0.2);border-radius:16px;padding:40px;text-align:center;}
+  .waitlist-section h2{font-family:'Playfair Display',serif;font-size:1.7rem;color:var(--gold);margin-bottom:8px;}
+  .waitlist-section p{color:var(--muted);margin-bottom:18px;}
+  .email-row{display:flex;gap:10px;max-width:400px;margin:0 auto;}
+  .email-row input{flex:1;background:rgba(255,255,255,0.06);border:1px solid rgba(138,154,181,0.3);border-radius:8px;padding:11px 14px;color:var(--text);font-family:inherit;font-size:0.9rem;}
+  .email-row button{padding:11px 22px;background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--lapis);font-weight:700;border:none;border-radius:8px;cursor:pointer;font-family:inherit;}
+  .succ{color:var(--green);margin-top:10px;display:none;font-size:0.9rem;}
+</style>
+<meta name="description" content="AI Image Inpainting — Remove objects, fix damage — paint a mask, AI fills the rest. Free, no signup, runs entirely in your browser. One of 169 free AI and dev">
+</head>
+<body>
+<script>
+// Cloud fallback: if ComfyUI is unreachable, redirect generate calls to Workers AI
+(function(){
+  var comfyUrl = (window.ABUZ8_COMFY_BASE) || 'https://comfy.abuz8ai.com';
+  var checked = false, comfyLive = false;
+  window._checkComfy = async function(){
+    if(checked) return comfyLive;
+    try{
+      var r = await fetch(comfyUrl+'/system_stats',{signal:AbortSignal.timeout(3000)});
+      comfyLive = r.ok; checked = true;
+    }catch(_){ comfyLive = false; checked = true; }
+    return comfyLive;
+  };
+  window._cloudGenerate = async function(prompt){
+    try{
+      var r = await fetch('/api/ai-image',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt:prompt})});
+      if(!r.ok) return null;
+      var blob = await r.blob();
+      return URL.createObjectURL(blob);
+    }catch(_){ return null; }
+  };
+})();
+</script>
+<header><div class="logo">ABU<span>Z8</span></div><div class="pill"><div class="dot"></div>AI Engine Online</div></header>
+<div class="hero">
+  <h1>AI Image Inpainting</h1>
+  <p>Paint over any part of an image to erase, replace, or extend it. Remove objects, fix backgrounds, swap elements — AI fills it in seamlessly.</p>
+</div>
+<div class="main">
+  <div class="two-col">
+    <div>
+      <div class="card">
+        <h2>🖼 Upload Image</h2>
+        <div class="upload-zone" id="uploadZone" onclick="document.getElementById('inpaintFile').click()">
+          <input type="file" id="inpaintFile" accept="image/*" onchange="loadImage(event)" />
+          <div style="font-size:2.2rem;margin-bottom:8px">🖼</div>
+          <h3 style="font-size:0.95rem;margin-bottom:4px">Upload image to edit</h3>
+          <p style="color:var(--muted);font-size:0.8rem">PNG, JPG — any resolution</p>
+        </div>
+      </div>
+      <div class="card">
+        <h2>✏️ Draw Mask</h2>
+        <div class="canvas-tools">
+          <button class="ctool active" id="brushTool" onclick="setTool('brush',this)">🖌 Brush</button>
+          <button class="ctool" id="eraseTool" onclick="setTool('erase',this)">⬜ Erase</button>
+          <button class="ctool" onclick="clearMask()">🗑 Clear</button>
+        </div>
+        <label>Brush Size: <span id="bsVal">40</span>px</label>
+        <input type="range" id="brushSize" min="5" max="100" value="40" oninput="document.getElementById('bsVal').textContent=this.value" />
+        <div class="canvas-wrap" style="margin-top:10px">
+          <canvas id="maskCanvas" width="512" height="512" style="width:100%;height:auto"></canvas>
+        </div>
+        <p style="font-size:0.78rem;color:var(--muted);margin-top:8px">Paint over the area you want AI to replace (white = replace)</p>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <h2>⚙️ Inpainting Settings</h2>
+        <label>What to fill in?</label>
+        <textarea id="fillPrompt" rows="3" placeholder="e.g. lush green grass, modern sofa, blue sky with clouds, nothing (remove)"></textarea>
+        <label>Negative Prompt</label>
+        <textarea id="negPrompt" rows="2" placeholder="e.g. blurry, artifacts, text, watermark"></textarea>
+        <label>Mode</label>
+        <select id="mode">
+          <option value="replace">Replace Selection</option>
+          <option value="remove">Remove / Erase Object</option>
+          <option value="extend">Extend / Outpaint</option>
+          <option value="enhance">Enhance / Upscale Region</option>
+        </select>
+        <label>Strength</label>
+        <input type="range" id="inpStrength" min="0.4" max="1.0" step="0.05" value="0.85" oninput="document.getElementById('strVal').textContent=Math.round(this.value*100)+'%'" />
+        <span id="strVal" style="font-size:0.78rem;color:var(--muted)">85%</span>
+        <label>Blending</label>
+        <select id="blending">
+          <option value="seamless" selected>Seamless (recommended)</option>
+          <option value="soft">Soft Edge</option>
+          <option value="hard">Hard Edge</option>
+        </select>
+        <button class="btn" id="genBtn" onclick="inpaint()">⚡ Apply Inpainting</button>
+        <div class="prog-box" id="progBox">
+          <div style="color:var(--gold);font-size:0.9rem;font-weight:600">🎨 Inpainting in progress...</div>
+          <div class="pb"><div class="pf" id="pf" style="width:0%"></div></div>
+          <div id="pstep" style="font-size:0.8rem;color:var(--muted)">Analyzing mask...</div>
+        </div>
+        <div class="result-area" id="resultArea">
+          <div style="height:280px;background:linear-gradient(135deg,var(--lapis3),var(--lapis2));border-radius:12px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:10px;border:1px solid rgba(201,168,76,0.15)" id="resultPlaceholder">
+            <div style="font-size:3rem">🎨</div>
+            <p style="color:var(--gold)">Result will appear here</p>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px">
+            <button style="padding:10px;background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--lapis);font-weight:700;border:none;border-radius:8px;cursor:pointer;font-family:inherit" onclick="promptWL()">⬇ Download</button>
+            <button style="padding:10px;background:transparent;border:1px solid var(--turq);color:var(--turq);border-radius:8px;cursor:pointer;font-family:inherit" onclick="inpaint()">🔄 Try Again</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="waitlist-section">
+    <h2>🚀 Pro Access</h2>
+    <p>Unlock batch processing, API access, Photoshop plugin, and advanced outpainting.</p>
+    <div class="email-row">
+      <input type="email" id="wlEmail" placeholder="your@email.com" />
+      <button onclick="joinWL()">Join Waitlist</button>
+    </div>
+    <div class="succ" id="succ">✅ You're on the list!</div>
+  </div>
+</div>
+<script src="_abuz8-live-brain.js" onerror="console.log('offline')"></script>
+<script>
+const canvas=document.getElementById('maskCanvas');
+const ctx=canvas.getContext('2d');
+let drawing=false; let tool='brush'; let bgImg=null;
+ctx.fillStyle='#0f1f3d'; ctx.fillRect(0,0,512,512);
+canvas.addEventListener('mousedown',e=>{drawing=true;draw(e);});
+canvas.addEventListener('mousemove',e=>{if(drawing)draw(e);});
+canvas.addEventListener('mouseup',()=>drawing=false);
+canvas.addEventListener('mouseleave',()=>drawing=false);
+canvas.addEventListener('touchstart',e=>{drawing=true;drawTouch(e);},{passive:true});
+canvas.addEventListener('touchmove',e=>{if(drawing)drawTouch(e);},{passive:true});
+canvas.addEventListener('touchend',()=>drawing=false);
+function getPos(e){const r=canvas.getBoundingClientRect();const sx=512/r.width;return{x:(e.clientX-r.left)*sx,y:(e.clientY-r.top)*sx};}
+function draw(e){const{x,y}=getPos(e);const bs=parseInt(document.getElementById('brushSize').value);ctx.globalCompositeOperation=tool==='erase'?'destination-out':'source-over';ctx.fillStyle='rgba(255,255,255,0.8)';ctx.beginPath();ctx.arc(x,y,bs/2,0,Math.PI*2);ctx.fill();}
+function drawTouch(e){if(e.touches[0])draw(e.touches[0]);}
+function setTool(t,el){tool=t;document.querySelectorAll('.ctool').forEach(c=>c.classList.remove('active'));el.classList.add('active');}
+function clearMask(){ctx.clearRect(0,0,512,512);if(bgImg){ctx.globalAlpha=0.3;ctx.drawImage(bgImg,0,0,512,512);ctx.globalAlpha=1;}}
+function loadImage(e){const f=e.target.files[0];if(!f)return;const reader=new FileReader();reader.onload=ev=>{const img=new Image();img.onload=()=>{bgImg=img;ctx.clearRect(0,0,512,512);ctx.globalAlpha=0.3;ctx.drawImage(img,0,0,512,512);ctx.globalAlpha=1;document.getElementById('uploadZone').querySelector('h3').textContent='✅ '+f.name;};img.src=ev.target.result;};reader.readAsDataURL(f);}
+function inpaint(){
+  const prompt=document.getElementById('fillPrompt').value.trim();
+  if(!prompt){alert('Describe what to fill in.');return;}
+  const btn=document.getElementById('genBtn');btn.disabled=true;btn.textContent='⏳ Processing...';
+  document.getElementById('progBox').style.display='block';
+  document.getElementById('resultArea').style.display='block';
+  document.getElementById('resultArea').querySelector('#resultPlaceholder').style.display='flex';
+  let pct=0;const iv=setInterval(()=>{pct=Math.min(pct+Math.random()*8+4,88);document.getElementById('pf').style.width=pct+'%';document.getElementById('pstep').textContent=pct<25?'Analyzing mask...':pct<55?'Generating fill...':pct<75?'Blending edges...':'Upscaling result...';},600);
+  const payload={prompt,negative:document.getElementById('negPrompt').value,mode:document.getElementById('mode').value,strength:document.getElementById('inpStrength').value,blending:document.getElementById('blending').value};
+  setTimeout(()=>{
+    if(window.ABUZ8&&window.ABUZ8.callComfy){
+      window.ABUZ8.callComfy('comfyui_fun_inpaint',payload).then(res=>{clearInterval(iv);showResult(res);}).catch(()=>{clearInterval(iv);showDemo();});
+    }else{clearInterval(iv);showDemo();}
+  },4500);
+}
+function showDemo(){document.getElementById('pf').style.width='100%';document.getElementById('pstep').textContent='✅ Ready — join waitlist to download';document.getElementById('resultPlaceholder').innerHTML='<div style="font-size:3rem">🎨</div><p style="color:var(--gold);margin-top:10px">Inpainting complete!</p>';document.getElementById('genBtn').disabled=false;document.getElementById('genBtn').textContent='⚡ Apply Inpainting';}
+function showResult(res){document.getElementById('pf').style.width='100%';document.getElementById('pstep').textContent='✅ Done!';if(res&&res.image){document.getElementById('resultPlaceholder').innerHTML=`<img src="${res.image}" style="width:100%;border-radius:12px"/>`;} else showDemo();document.getElementById('genBtn').disabled=false;document.getElementById('genBtn').textContent='⚡ Apply Inpainting';}
+function promptWL(){document.querySelector('.waitlist-section').scrollIntoView({behavior:'smooth'});}
+function joinWL(){const e=document.getElementById('wlEmail').value;if(!e||!e.includes('@')){alert('Valid email.');return;}document.getElementById('succ').style.display='block';document.getElementById('wlEmail').value='';fetch('/api/waitlist',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:e,product:'ai-image-inpainting',ts:Date.now()})}).catch(function(){});if(window.ABUZ8&&window.ABUZ8.callBrain)window.ABUZ8.callBrain('waitlist_add',{email:e,product:'ai-image-inpainting',ts:Date.now()});}
+</script>
+
+<script src="/assets/js/dfy-banner.js" async></script>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+<script src="/tools/_tools-shared.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>
+

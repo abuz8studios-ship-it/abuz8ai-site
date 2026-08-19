@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<!-- Published 2026-08-15. ABUZ8 LLC. -->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Agent Reliability Metrics — The Six Numbers That Matter | ABUZ8</title>
+<meta name="description" content="The AI agent reliability metrics worth tracking: task success rate, failure class breakdown, retry cost, time-to-first-token, silent-failure rate and blast radius.">
+<meta name="keywords" content="ai agent reliability metrics, agent success rate, llm failure rate, ai agent monitoring metrics, agent sla">
+<link rel="canonical" href="https://abuz8ai.com/blog/ai-agent-reliability-metrics">
+<meta property="og:title" content="AI Agent Reliability Metrics — The Six Numbers That Matter">
+<meta property="og:type" content="article">
+<link rel="stylesheet" href="/blog/_blog-base.css">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@300;400;600;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
+<script type="application/ld+json">
+{"@context": "https://schema.org", "@type": "BlogPosting", "headline": "AI Agent Reliability Metrics — The Six Numbers That Matter", "datePublished": "2026-08-15", "author": {"@type": "Organization", "name": "ABUZ8 AI"}}
+</script>
+</head>
+<body>
+<div class="container">
+  <a href="/blog/" class="back">&larr; ABUZ8 BLOG</a>
+  <h1>AI Agent Reliability Metrics — The Six Numbers That Matter</h1>
+  <div class="meta-row"><span>DILIGENCE</span><span class="dot"></span><span>AUGUST 15, 2026</span><span class="dot"></span><span>5 MIN READ</span></div>
+
+  <p>Most teams measure their agents the way they measure a web service: uptime, latency, error rate. Those are necessary and nowhere near sufficient, because an agent can be up, fast, and returning HTTP 200 while producing output that is completely useless. The <strong>AI agent reliability metrics</strong> that predict whether a system survives contact with real users are a different six numbers, and four of them are almost never instrumented.</p>
+
+  <h2>1. Task success rate, defined before you measure it</h2>
+  <p>Not "did the call return." Did the agent accomplish the thing. This requires you to write down, in advance and in plain language, what completion means for each task class — the invoice was extracted with correct totals, the ticket was routed to a team that did not bounce it back, the summary contained no claim absent from the source. Teams skip this because it is tedious and because a vague definition always scores higher. A success rate without a written definition is a vibe with a percent sign attached.</p>
+  <p>Measure it per task class, never as a single blended figure. Blended rates hide the one workflow that is failing 60% of the time behind nine that are fine.</p>
+
+  <h2>2. Failure class breakdown</h2>
+  <p>This is the metric that turns an outage into an engineering ticket. Every failure should land in a labelled bucket: authentication (401/403), rate limiting (429), transport and timeout, provider-side 5xx, malformed or unparseable output, tool-call error, and refusal. The distribution tells you what to fix; the total tells you nothing.</p>
+  <p>The failure mode to fear here is the unlabelled bucket. In our own routing telemetry — 1,469 calls logged across an 89.9-day window ending 9 August 2026 — the overall success rate sits at 19.9%, and the single largest contributor is 345 HTTP 403 responses from one provider, with a further <strong>756 failures carrying no error class at all</strong>. Those 756 are worse than the 403s. A 403 is diagnosable in a minute; an unlabelled failure is a number you can only stare at. Making error capture mandatory is not a nice-to-have, it is what converts a metric into a lead.</p>
+
+  <div class="callout">
+    <p><strong>The compounding trap:</strong> a five-step agent where each step succeeds 95% of the time completes end-to-end about 77% of the time. At ten steps it is 60%. Per-step reliability that sounds excellent produces a workflow that feels broken, which is why step count is a reliability decision and not just a design one.</p>
+  </div>
+
+  <h2>3. Retry cost, in money and in latency</h2>
+  <p>Retries are where cost claims go to die. If a cheap lane fails and the work silently re-runs on an expensive one, your dashboard shows a cheap call and your invoice shows something else. Track retries as a first-class event with the lane, the reason, and the marginal cost attached. A system with a 3x retry multiplier on 30% of traffic is not cheap, whatever the per-call price says — a point we develop in the buyer's guide to <a href="/blog/how-to-verify-ai-cost-savings-claims.html" class="in">verifying AI cost savings claims</a>.</p>
+
+  <h2>4. Silent-failure rate</h2>
+  <p>The most dangerous number in the set, and the hardest to get. A silent failure is a confident, well-formed, plausible answer that is wrong — the model invents a policy clause, transposes two figures, or summarises a document it could not actually read. No error is raised. No alert fires. The user acts on it.</p>
+  <p>You cannot instrument this from logs alone; it requires sampling. Pull a fixed percentage of outputs each week and have a human grade them against ground truth. Ten samples a week beats zero, and the trend matters more than the absolute. Teams that skip this are not measuring reliability, they are measuring whether their HTTP client works. Reducing the underlying rate is a separate discipline covered in <a href="/blog/how-to-reduce-ai-hallucinations.html" class="in">how to reduce AI hallucinations</a>.</p>
+
+  <h2>5. Time-to-first-token and time-to-done</h2>
+  <p>Two different numbers with two different owners. Time-to-first-token is a perception metric — it governs whether the interface feels alive. Time-to-done is a throughput metric — it governs how many tasks clear per hour and whether an agentic loop finishes inside a user's patience. Report both as p50 and p95, never as a mean. Means hide the tail, and the tail is what people remember and complain about.</p>
+
+  <h2>6. Blast radius</h2>
+  <p>When the agent is wrong, how far does the damage travel before a human sees it? An agent that drafts a reply for review has a blast radius of zero. An agent that sends the reply, updates the CRM, and triggers a downstream workflow has a blast radius measured in customer relationships. This is not a number your monitoring stack produces — it comes from an architecture review — but it belongs on the same page as the others, because it determines how much reliability you are obliged to buy before you ship.</p>
+
+  <h2>Where these numbers should live</h2>
+  <p>In a database you own, written by the runtime itself rather than reconstructed from log scraping later. Ours is a local SQLite file that every model call writes to, which is why a single script can reproduce the whole picture — good numbers and bad — in one command. That property matters more than any individual figure: metrics that live only in a vendor's dashboard are metrics you cannot audit, and metrics you cannot audit are claims. The instrumentation patterns are covered in our <a href="/blog/ai-agent-observability-guide.html" class="in">agent observability guide</a>, and the pre-production version in the <a href="/blog/ai-agent-testing-guide.html" class="in">agent testing guide</a>.</p>
+
+  <h2>A reasonable starting point</h2>
+  <p>If you instrument nothing today, add two things this week: a labelled failure class on every error path, and a written definition of success for your top task. Those two unlock four of the six metrics above and cost an afternoon. Everything else — sampling for silent failures, retry accounting, percentile latency — builds on having a labelled event stream in the first place. Start there and the rest becomes queries rather than projects.</p>
+
+  <h2>Frequently asked questions</h2>
+  <p><strong>What success rate should I expect from a production agent?</strong> It depends entirely on task class and how strictly you defined success, which is why cross-vendor comparisons of a single blended number are close to meaningless. What is comparable is the trend on your own workload, measured the same way each week. A rate that improves as failure classes get fixed is the signal; the absolute value on day one is not.</p>
+  <p><strong>Is uptime a useless metric for agents?</strong> No, just insufficient. Uptime tells you the service answered. It cannot distinguish a correct answer from a confident fabrication, and for agent workloads that distinction is the entire product. Keep uptime, add task success rate beside it.</p>
+  <p><strong>How do I measure silent failures without a big QA team?</strong> Sample small and sample consistently. A fixed weekly sample of ten to twenty outputs, graded by whoever owns the workflow, produces a usable trend within a month. The discipline of doing it every week matters far more than the sample size.</p>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What success rate should I expect from a production AI agent?","acceptedAnswer":{"@type":"Answer","text":"It depends on task class and how strictly success was defined, so cross-vendor comparisons of a blended number are near-meaningless. Track the trend on your own workload measured consistently."}},{"@type":"Question","name":"Is uptime a useless metric for AI agents?","acceptedAnswer":{"@type":"Answer","text":"Not useless, just insufficient. Uptime shows the service answered; it cannot distinguish a correct answer from a confident fabrication. Pair it with task success rate."}},{"@type":"Question","name":"How do I measure silent failures without a QA team?","acceptedAnswer":{"@type":"Answer","text":"Sample small and consistently — ten to twenty outputs a week graded by the workflow owner produces a usable trend within a month."}}]}
+  </script>
+
+  <div class="callout cta">
+    <p><strong>Instrument the six:</strong> start with labelled failure classes and a written success definition this week. If you would rather the runtime did it for you, <a href="/" class="in">join the QADIR OS early-access list</a> — every model call writes to a database you own and can query yourself.</p>
+  </div>
+
+  <div class="foot">Built by <a href="/">ABUZ8 LLC</a> — we're building QADIR OS, the sovereign agentic operating system. This article is general information, not legal advice.</div>
+</div>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+<script src="/blog/_blog-shared.js" defer></script>
+<script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>

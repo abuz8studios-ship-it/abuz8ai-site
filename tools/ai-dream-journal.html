@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Dream Journal — ABUZ8</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;400i&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--lapis:#0a1628;--lapis2:#0f1f3d;--lapis3:#162544;--gold:#c9a84c;--turq:#0e9f6e;--turq2:#22b5a0;--cream:#f5f0e8;--purple:#6b4fa8;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--lapis);color:var(--cream);font-family:'Inter',sans-serif;min-height:100vh;}
+header{background:var(--lapis2);border-bottom:1px solid rgba(107,79,168,.3);padding:16px 32px;display:flex;align-items:center;gap:12px;}
+header h1{font-family:'Playfair Display',serif;font-size:1.4rem;color:var(--gold);}
+header span{background:var(--purple);color:#fff;font-size:11px;font-weight:600;padding:2px 8px;border-radius:20px;}
+.hero{text-align:center;padding:44px 20px 28px;background:radial-gradient(ellipse at 50% 0%, rgba(107,79,168,.15) 0%, transparent 70%);}
+.hero h2{font-family:'Playfair Display',serif;font-size:2rem;color:var(--cream);margin-bottom:10px;}
+.hero p{color:rgba(245,240,232,.6);font-size:.95rem;max-width:480px;margin:0 auto;}
+.main{max-width:860px;margin:0 auto;padding:0 20px 80px;}
+.card{background:var(--lapis2);border:1px solid rgba(107,79,168,.2);border-radius:12px;padding:24px;}
+.card+.card{margin-top:16px;}
+label{display:block;font-size:12px;font-weight:700;color:var(--gold);margin-bottom:6px;letter-spacing:.05em;text-transform:uppercase;}
+textarea,input,select{width:100%;background:var(--lapis3);border:1px solid rgba(107,79,168,.25);border-radius:8px;padding:11px 14px;color:var(--cream);font-family:'Inter',sans-serif;font-size:14px;outline:none;transition:border .2s;}
+textarea:focus,input:focus,select:focus{border-color:var(--purple);}
+textarea{resize:vertical;min-height:120px;line-height:1.7;}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px;}
+.tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;}
+.tag{padding:6px 14px;border-radius:20px;border:1px solid rgba(107,79,168,.3);cursor:pointer;font-size:12px;color:rgba(245,240,232,.6);transition:all .2s;user-select:none;}
+.tag.active{background:var(--purple);border-color:var(--purple);color:#fff;}
+.mood-row{display:flex;gap:12px;margin-top:8px;flex-wrap:wrap;}
+.mood{font-size:24px;cursor:pointer;padding:6px;border-radius:8px;border:2px solid transparent;transition:all .2s;}
+.mood.active{border-color:var(--gold);background:rgba(201,168,76,.1);}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:12px 24px;border-radius:8px;border:none;cursor:pointer;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;transition:all .2s;}
+.btn-purple{background:var(--purple);color:#fff;}
+.btn-purple:hover{background:#7d5fc4;}
+.btn-gold{background:var(--gold);color:var(--lapis);}
+.btn-gold:hover{background:#e0bc5a;}
+.btn-outline{background:transparent;border:1px solid rgba(107,79,168,.3);color:var(--cream);}
+.btn-outline:hover{border-color:var(--purple);color:#c4a8f0;}
+.actions{margin-top:18px;display:flex;gap:12px;flex-wrap:wrap;}
+/* Analysis */
+#analysisArea{display:none;}
+.analysis-header{font-family:'Playfair Display',serif;font-size:1.2rem;color:var(--gold);margin-bottom:16px;}
+.interp-box{background:var(--lapis3);border-left:3px solid var(--purple);border-radius:0 8px 8px 0;padding:16px;margin-bottom:14px;}
+.interp-box .title{font-size:11px;font-weight:700;letter-spacing:.08em;color:var(--purple);text-transform:uppercase;margin-bottom:6px;}
+.interp-box .text{font-size:14px;line-height:1.7;color:rgba(245,240,232,.85);}
+.symbol-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;margin-top:12px;}
+.sym-card{background:var(--lapis3);border:1px solid rgba(107,79,168,.2);border-radius:8px;padding:12px;text-align:center;}
+.sym-emoji{font-size:24px;margin-bottom:6px;}
+.sym-name{font-size:11px;font-weight:700;color:var(--purple);text-transform:uppercase;letter-spacing:.05em;}
+.sym-meaning{font-size:12px;color:rgba(245,240,232,.6);margin-top:4px;line-height:1.4;}
+.theme-tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;}
+.theme-tag{padding:5px 14px;border-radius:20px;background:rgba(107,79,168,.2);border:1px solid rgba(107,79,168,.3);font-size:12px;color:#c4a8f0;}
+/* Journal log */
+.log-entry{background:var(--lapis3);border:1px solid rgba(107,79,168,.15);border-radius:10px;padding:16px;margin-bottom:10px;cursor:pointer;transition:border-color .2s;}
+.log-entry:hover{border-color:rgba(107,79,168,.4);}
+.log-date{font-size:11px;color:rgba(245,240,232,.4);margin-bottom:4px;}
+.log-title{font-size:14px;font-weight:600;color:var(--cream);margin-bottom:6px;}
+.log-preview{font-size:13px;color:rgba(245,240,232,.55);line-height:1.5;}
+.log-tags{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;}
+.log-tag{font-size:11px;padding:2px 10px;border-radius:20px;background:rgba(107,79,168,.15);color:#c4a8f0;}
+.empty{text-align:center;padding:32px;color:rgba(245,240,232,.35);}
+/* Waitlist */
+.waitlist{background:linear-gradient(135deg,rgba(107,79,168,.15),var(--lapis3));border:1px solid rgba(107,79,168,.25);border-radius:12px;padding:28px;text-align:center;margin-top:16px;}
+.waitlist h3{font-family:'Playfair Display',serif;font-size:1.3rem;color:var(--gold);margin-bottom:8px;}
+.waitlist p{color:rgba(245,240,232,.7);margin-bottom:16px;font-size:14px;}
+.wl-form{display:flex;gap:10px;max-width:380px;margin:0 auto;flex-wrap:wrap;}
+.wl-form input{flex:1;min-width:180px;}
+.wl-success{color:var(--turq2);font-weight:600;display:none;}
+</style>
+<link rel="canonical" href="https://abuz8ai.com/tools/ai-dream-journal">
+<meta name="description" content="AI Dream Journal — Log and reflect on dreams. Free, no signup, runs entirely in your browser. One of 169 free AI and developer tools by ABUZ8.">
+</head>
+<body>
+<header>
+  <h1>⚡ ABUZ8</h1>
+  <span>🌙 AI DREAM JOURNAL</span>
+</header>
+<div class="hero">
+  <h2>Decode Your Dreams with AI</h2>
+  <p>Log your dreams and get deep symbolic interpretations, recurring pattern analysis, and psychological insights.</p>
+</div>
+<div class="main">
+  <!-- New dream entry -->
+  <div class="card">
+    <label>🌙 Describe Your Dream</label>
+    <textarea id="dreamText" placeholder="Write what you remember — no detail is too small. The more you write, the deeper the interpretation.&#10;&#10;'I was flying over a city I didn't recognize, then fell into water. There was a figure watching me from a bridge...'"></textarea>
+
+    <div class="grid-2">
+      <div>
+        <label>Mood When You Woke Up</label>
+        <div class="mood-row" id="moodRow">
+          <span class="mood active" data-v="peaceful" title="Peaceful">😌</span>
+          <span class="mood" data-v="anxious" title="Anxious">😰</span>
+          <span class="mood" data-v="excited" title="Excited">😄</span>
+          <span class="mood" data-v="confused" title="Confused">😕</span>
+          <span class="mood" data-v="sad" title="Sad">😢</span>
+          <span class="mood" data-v="scared" title="Scared">😨</span>
+          <span class="mood" data-v="happy" title="Happy">😊</span>
+          <span class="mood" data-v="weird" title="Weird">🤔</span>
+        </div>
+      </div>
+      <div>
+        <label>Dream Type</label>
+        <div class="tags" id="typeTags">
+          <span class="tag active" data-v="normal">Normal</span>
+          <span class="tag" data-v="lucid">Lucid</span>
+          <span class="tag" data-v="nightmare">Nightmare</span>
+          <span class="tag" data-v="recurring">Recurring</span>
+          <span class="tag" data-v="prophetic">Prophetic</span>
+          <span class="tag" data-v="vivid">Vivid</span>
+        </div>
+      </div>
+    </div>
+    <div class="actions">
+      <button class="btn btn-purple" onclick="analyzeDream()">🔮 Analyze Dream</button>
+      <button class="btn btn-outline" onclick="loadExample()">Load Example</button>
+    </div>
+  </div>
+
+  <!-- Analysis output -->
+  <div class="card" id="analysisArea">
+    <div class="analysis-header">🔮 Dream Analysis</div>
+
+    <div class="interp-box" id="overallInterp">
+      <div class="title">Overall Interpretation</div>
+      <div class="text" id="interpText"></div>
+    </div>
+
+    <div style="font-size:12px;font-weight:700;color:var(--gold);letter-spacing:.06em;text-transform:uppercase;margin-bottom:10px;">Key Symbols Detected</div>
+    <div class="symbol-grid" id="symbolGrid"></div>
+
+    <div style="font-size:12px;font-weight:700;color:var(--gold);letter-spacing:.06em;text-transform:uppercase;margin-top:18px;margin-bottom:8px;">Dream Themes</div>
+    <div class="theme-tags" id="themeTags"></div>
+
+    <div class="interp-box" style="margin-top:16px;border-color:var(--turq);">
+      <div class="title" style="color:var(--turq2);">Psychological Perspective</div>
+      <div class="text" id="psychText"></div>
+    </div>
+
+    <div class="interp-box" style="margin-top:10px;border-color:var(--gold);">
+      <div class="title" style="color:var(--gold);">Actionable Insight</div>
+      <div class="text" id="actionText"></div>
+    </div>
+
+    <div class="actions" style="margin-top:16px;">
+      <button class="btn btn-gold" onclick="saveEntry()">💾 Save to Journal</button>
+    </div>
+  </div>
+
+  <!-- Journal log -->
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+      <div style="font-size:13px;font-weight:700;color:var(--gold);letter-spacing:.05em;">📖 DREAM JOURNAL</div>
+      <button class="btn btn-outline" onclick="exportJournal()" style="padding:6px 14px;font-size:11px;">⬇ Export</button>
+    </div>
+    <div id="journalLog"><div class="empty">Your dream journal is empty. Log your first dream above.</div></div>
+  </div>
+
+  <div class="waitlist">
+    <h3>🌙 Unlock Deep Pattern Analysis</h3>
+    <p>Join for recurring symbol tracking, sleep quality correlation, and monthly dream pattern reports.</p>
+    <div class="wl-form">
+      <input type="email" id="wlEmail" placeholder="your@email.com">
+      <button class="btn btn-gold" onclick="joinWaitlist()">Join Waitlist</button>
+    </div>
+    <div class="wl-success" id="wlSuccess">✓ You're on the list!</div>
+  </div>
+</div>
+
+<script src="_abuz8-live-brain.js" defer></script>
+<script>
+// Mood selection
+document.querySelectorAll('.mood').forEach(m => {
+  m.addEventListener('click', () => {
+    document.querySelectorAll('.mood').forEach(x=>x.classList.remove('active'));
+    m.classList.add('active');
+  });
+});
+// Type tags
+document.querySelectorAll('#typeTags .tag').forEach(t => {
+  t.addEventListener('click', () => {
+    document.querySelectorAll('#typeTags .tag').forEach(x=>x.classList.remove('active'));
+    t.classList.add('active');
+  });
+});
+
+const SYMBOLS = {
+  water:{emoji:'💧',name:'Water',meaning:'Emotions, unconscious mind, or cleansing'},
+  flying:{emoji:'🦅',name:'Flying',meaning:'Freedom, ambition, or escape from constraints'},
+  falling:{emoji:'⬇️',name:'Falling',meaning:'Loss of control, anxiety, or major life change'},
+  house:{emoji:'🏠',name:'House',meaning:'The self, mind, or personal identity'},
+  chase:{emoji:'🏃',name:'Being Chased',meaning:'Avoiding a problem or confronting fear'},
+  teeth:{emoji:'😁',name:'Teeth',meaning:'Confidence, communication, or anxiety about appearance'},
+  death:{emoji:'💀',name:'Death',meaning:'Transformation, endings, or new beginnings'},
+  snake:{emoji:'🐍',name:'Snake',meaning:'Hidden fears, temptation, or primal energy'},
+  dark:{emoji:'🌑',name:'Darkness',meaning:'The unknown, fear, or unconscious shadow self'},
+  light:{emoji:'☀️',name:'Light',meaning:'Clarity, truth, or spiritual awakening'},
+  bridge:{emoji:'🌉',name:'Bridge',meaning:'Transition, change, or connection between states'},
+  storm:{emoji:'⛈️',name:'Storm',meaning:'Inner turmoil, emotional conflict, or release'},
+  car:{emoji:'🚗',name:'Vehicle',meaning:'Life direction, drive, or personal control'},
+  door:{emoji:'🚪',name:'Door/Entrance',meaning:'Opportunity, new chapter, or hidden truth'},
+  fire:{emoji:'🔥',name:'Fire',meaning:'Passion, transformation, or destructive energy'},
+  mountain:{emoji:'⛰️',name:'Mountain',meaning:'Challenge, achievement goal, or obstacle ahead'},
+  city:{emoji:'🏙️',name:'City/Building',meaning:'Social world, ambition, or the collective'},
+  ocean:{emoji:'🌊',name:'Ocean',meaning:'Deep unconscious, vastness, or overwhelming emotion'},
+  mirror:{emoji:'🪞',name:'Mirror',meaning:'Self-reflection, identity, or confronting truth'},
+  animal:{emoji:'🐺',name:'Animal',meaning:'Instincts, primal energy, or a specific trait'},
+};
+
+const THEMES = {
+  control:['control','fall','chase','run','trapped','stuck','late','lost'],
+  transformation:['death','dying','new','born','change','transform','old'],
+  relationships:['friend','family','love','kiss','mother','father','partner','stranger'],
+  anxiety:['fail','test','exam','naked','embarrass','crowd','judge','miss'],
+  freedom:['fly','fly','free','escape','open','sky','vast','soar'],
+  exploration:['door','room','city','unknown','explore','discover','secret','map'],
+  spirituality:['light','god','angel','dream','sacred','vision','symbol','divine'],
+};
+
+const INTERPRETATIONS = [
+  ['Processing subconscious emotions', 'Your dream reflects unresolved feelings seeking expression. The imagery suggests your mind is working through emotional material — possibly related to recent stress, relationships, or significant life decisions.'],
+  ['Navigating a life transition', 'The symbols in your dream are classic markers of transition and change. Your subconscious may be processing a shift in identity, role, or direction — preparing you for what lies ahead.'],
+  ['Confronting hidden fears', 'Your dream contains elements commonly associated with avoidance. This may reflect a situation in waking life where you feel pressure to face something you\'ve been putting off.'],
+  ['Integration of opposite forces', 'There\'s a tension in this dream between two competing aspects of your psyche. Your unconscious mind appears to be seeking balance between conflicting desires or values.'],
+  ['Creative energy seeking expression', 'This dream has the quality of creative activation. Your unconscious may be signaling untapped potential, a new idea, or an unexplored path that deserves conscious attention.'],
+];
+
+const PSYCH = [
+  'From a Jungian perspective, this dream engages the Shadow — the unconscious aspects of self we deny or project outward. The figures and environments reflect internalized conflicts seeking integration.',
+  'Freudian analysis would point to wish fulfillment and repressed desires. The symbolic displacement and condensation of imagery suggests emotional content that cannot be expressed directly in waking life.',
+  'Cognitive science suggests this dream is your brain\'s consolidation process — replaying emotional memories to extract patterns, reduce their emotional charge, and update your internal world model.',
+  'From an Adlerian view, this dream reflects striving for significance and compensating for perceived inadequacies. The central tension points toward a core life goal or fear of failure in an important domain.',
+];
+
+const ACTIONS = [
+  'Consider journaling about any relationship or situation that feels unresolved. The symbolic content suggests there may be a conversation you\'ve been avoiding that could bring clarity.',
+  'This dream may be signaling readiness for a decision you\'ve been postponing. Trust that you have more resources than you realize — your unconscious is preparing you.',
+  'Pay attention to recurring elements across your dreams. Patterns that appear more than once typically point to persistent emotional needs or unresolved tensions worth exploring.',
+  'The dream suggests your creative or intuitive faculties are active. Carve out quiet time in the next 24 hours for reflection — an insight may be close to the surface.',
+  'Notice how the emotional tone of this dream relates to your current life. The feelings upon waking (rather than the content) are often the most direct message from your unconscious.',
+];
+
+function detectSymbols(text) {
+  const lower = text.toLowerCase();
+  const found = [];
+  Object.entries(SYMBOLS).forEach(([key, sym]) => {
+    if(lower.includes(key) || lower.includes(sym.name.toLowerCase().split('/')[0].toLowerCase())) {
+      found.push(sym);
+    }
+  });
+  // Generic symbol detection
+  const pairs = [['water','water'],['fly','flying'],['fall','falling'],['house','house'],['chase','chase'],['dark','dark'],['light','light'],['bridge','bridge'],['fire','fire'],['car','car'],['door','door'],['snake','snake'],['teeth','teeth']];
+  pairs.forEach(([kw, key]) => {
+    if(lower.includes(kw) && SYMBOLS[key] && !found.find(f=>f.name===SYMBOLS[key].name)) found.push(SYMBOLS[key]);
+  });
+  return found.slice(0,6);
+}
+
+function detectThemes(text) {
+  const lower = text.toLowerCase();
+  const found = [];
+  Object.entries(THEMES).forEach(([theme, keywords]) => {
+    if(keywords.some(kw => lower.includes(kw))) found.push(theme.charAt(0).toUpperCase()+theme.slice(1));
+  });
+  if(!found.length) found.push('Personal Journey','Inner World');
+  return found.slice(0,5);
+}
+
+let currentDream = null;
+
+function analyzeDream() {
+  const text = document.getElementById('dreamText').value.trim();
+  if(!text || text.length < 20) { alert('Please describe your dream in more detail.'); return; }
+
+  const mood = document.querySelector('.mood.active')?.dataset.v || 'neutral';
+  const type = document.querySelector('#typeTags .tag.active')?.dataset.v || 'normal';
+
+  const btn = document.querySelector('.btn-purple');
+  const btnLabel = btn ? btn.innerHTML : '';
+  if(btn){ btn.disabled = true; btn.innerHTML = '🔮 Analyzing…'; }
+
+  // The AI returns one combined analysis; hide the legacy fixed sub-sections
+  // (symbol grid, theme tags, psychological + actionable boxes) and render into
+  // the Overall Interpretation box.
+  ['symbolGrid','themeTags'].forEach(id=>{ const el=document.getElementById(id); if(el){ el.style.display='none'; const prev=el.previousElementSibling; if(prev) prev.style.display='none'; } });
+  const psychBox = document.getElementById('psychText'); if(psychBox){ const c = psychBox.closest('.interp-box'); if(c) c.style.display='none'; }
+  const actionBox = document.getElementById('actionText'); if(actionBox){ const c = actionBox.closest('.interp-box'); if(c) c.style.display='none'; }
+
+  document.getElementById('interpText').innerHTML = '<span style="color:rgba(245,240,232,.5)">🔮 Interpreting your dream with AI…</span>';
+  document.getElementById('analysisArea').style.display = 'block';
+  document.getElementById('analysisArea').scrollIntoView({behavior:'smooth',block:'start'});
+
+  const resetBtn = () => { if(btn){ btn.disabled = false; btn.innerHTML = btnLabel; } };
+
+  // Real AI generation via the ABUZ8 brain (Cloudflare Workers AI). No seed/regex templates.
+  fetch('/api/waitlist', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      tool: 'dream-journal',
+      data: {
+        dream: text,
+        moodOnWaking: mood,
+        dreamType: type,
+        format: 'Return a thoughtful dream interpretation as clean HTML: an overall interpretation paragraph, an <h3>Key Symbols</h3> list, an <h3>Themes</h3> list, an <h3>Psychological Perspective</h3> paragraph, and an <h3>Actionable Insight</h3> paragraph.'
+      }
+    })
+  })
+  .then(r => r.json())
+  .then(res => {
+    if (!res.success || !res.result) throw new Error(res.error || 'Analysis failed');
+    document.getElementById('interpText').innerHTML = ABUZ8md(res.result);
+    const plain = document.getElementById('interpText').innerText.trim();
+    currentDream = { text, mood, type, symbols: [], themes: [], interp: plain.slice(0,80), date: new Date().toISOString(), ts: Date.now() };
+    resetBtn();
+  })
+  .catch(err => {
+    resetBtn();
+    document.getElementById('interpText').innerHTML = '<span style="color:#e05555">Analysis failed. Please try again in a moment.</span>';
+    alert('Generation failed: ' + err.message + '. Please try again in a moment.');
+  });
+}
+
+function loadExample() {
+  document.getElementById('dreamText').value = "I was in a city I'd never seen before, walking through narrow streets. The buildings were huge and dark, almost alive. Suddenly I realized I was late for something important but couldn't remember what. I started running but my legs felt heavy. Then I found a door — it glowed with warm light. When I opened it, I was flying over the ocean. I felt free but also scared of falling. A figure below was watching me from a bridge.";
+}
+
+let journal = [];
+
+function saveEntry() {
+  if(!currentDream) return;
+  try {
+    journal = JSON.parse(localStorage.getItem('abuz8_dreams') || '[]');
+  } catch(e) { journal=[]; }
+  journal.unshift(currentDream);
+  try { localStorage.setItem('abuz8_dreams', JSON.stringify(journal.slice(0,50))); } catch(e){}
+  renderJournal();
+  document.getElementById('dreamText').value = '';
+  document.getElementById('analysisArea').style.display = 'none';
+  alert('Dream saved to your journal! ✓');
+}
+
+function renderJournal() {
+  try { journal = JSON.parse(localStorage.getItem('abuz8_dreams') || '[]'); } catch(e){ journal=[]; }
+  const log = document.getElementById('journalLog');
+  if(!journal.length) {
+    log.innerHTML = '<div class="empty">Your dream journal is empty. Log your first dream above.</div>';
+    return;
+  }
+  log.innerHTML = journal.map(d => {
+    const date = new Date(d.ts).toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});
+    return `<div class="log-entry">
+      <div class="log-date">${date} · ${d.type} · ${d.mood}</div>
+      <div class="log-title">${d.interp}</div>
+      <div class="log-preview">${d.text.slice(0,120)}${d.text.length>120?'…':''}</div>
+      <div class="log-tags">${d.themes.map(t=>`<span class="log-tag">${t}</span>`).join('')}</div>
+    </div>`;
+  }).join('');
+}
+
+function exportJournal() {
+  try { journal = JSON.parse(localStorage.getItem('abuz8_dreams') || '[]'); } catch(e){ journal=[]; }
+  if(!journal.length) { alert('No dreams logged yet.'); return; }
+  const lines = journal.map(d => {
+    const date = new Date(d.ts).toLocaleDateString();
+    return `${date} | ${d.type} | Mood: ${d.mood}\n${d.interp}\n${d.text}\nThemes: ${d.themes.join(', ')}\n`;
+  }).join('\n---\n\n');
+  const blob = new Blob([lines],{type:'text/plain'});
+  const a = document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='dream-journal.txt'; a.click();
+}
+
+function joinWaitlist() {
+  const email = document.getElementById('wlEmail').value.trim();
+  if(!email||!email.includes('@')) { alert('Please enter a valid email.'); return; }
+  fetch('/api/waitlist',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,product:'ai-dream-journal',ts:Date.now()})}).catch(()=>{});
+  document.getElementById('wlEmail').value='';
+  document.querySelector('.wl-form').style.display='none';
+  document.getElementById('wlSuccess').style.display='block';
+}
+
+// Init
+renderJournal();
+</script>
+
+<script src="/assets/js/dfy-banner.js" async></script>
+<script src="/tools/_abuz8-md.js"></script>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+<script src="/tools/_tools-shared.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>
+

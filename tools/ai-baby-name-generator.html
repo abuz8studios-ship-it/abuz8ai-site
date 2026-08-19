@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Baby Name Generator — ABUZ8</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;400i&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--lapis:#0a1628;--lapis2:#0f1f3d;--lapis3:#162544;--gold:#c9a84c;--turq:#0e9f6e;--turq2:#22b5a0;--cream:#f5f0e8;--rose:#e8a0b0;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--lapis);color:var(--cream);font-family:'Inter',sans-serif;min-height:100vh;}
+header{background:var(--lapis2);border-bottom:1px solid rgba(201,168,76,.15);padding:16px 32px;display:flex;align-items:center;gap:12px;}
+header h1{font-family:'Playfair Display',serif;font-size:1.4rem;color:var(--gold);}
+header span{background:var(--rose);color:var(--lapis);font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px;}
+.hero{text-align:center;padding:44px 20px 28px;}
+.hero h2{font-family:'Playfair Display',serif;font-size:2rem;color:var(--cream);margin-bottom:10px;}
+.hero p{color:rgba(245,240,232,.7);font-size:.95rem;max-width:480px;margin:0 auto;}
+.main{max-width:900px;margin:0 auto;padding:0 20px 80px;}
+.card{background:var(--lapis2);border:1px solid rgba(201,168,76,.12);border-radius:12px;padding:26px;}
+.card+.card{margin-top:16px;}
+label{display:block;font-size:12px;font-weight:700;color:var(--gold);margin-bottom:6px;letter-spacing:.05em;text-transform:uppercase;}
+input,select{width:100%;background:var(--lapis3);border:1px solid rgba(201,168,76,.2);border-radius:8px;padding:11px 14px;color:var(--cream);font-family:'Inter',sans-serif;font-size:14px;outline:none;transition:border .2s;}
+input:focus,select:focus{border-color:var(--gold);}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px;}
+.tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;}
+.tag{padding:6px 14px;border-radius:20px;border:1px solid rgba(201,168,76,.2);cursor:pointer;font-size:12px;color:rgba(245,240,232,.7);transition:all .2s;user-select:none;}
+.tag.active{background:var(--gold);border-color:var(--gold);color:var(--lapis);font-weight:700;}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:12px 24px;border-radius:8px;border:none;cursor:pointer;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;transition:all .2s;}
+.btn-gold{background:var(--gold);color:var(--lapis);}
+.btn-gold:hover{background:#e0bc5a;}
+.btn-outline{background:transparent;border:1px solid rgba(201,168,76,.3);color:var(--cream);}
+.btn-outline:hover{border-color:var(--gold);color:var(--gold);}
+.actions{margin-top:18px;display:flex;gap:12px;flex-wrap:wrap;}
+/* Name cards */
+#namesArea{display:none;}
+.names-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:10px;}
+.names-header h3{font-family:'Playfair Display',serif;font-size:1.3rem;color:var(--gold);}
+.names-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;}
+.name-card{background:var(--lapis3);border:1px solid rgba(201,168,76,.12);border-radius:12px;padding:18px;text-align:center;transition:all .2s;cursor:pointer;position:relative;}
+.name-card:hover{border-color:rgba(201,168,76,.4);transform:translateY(-2px);}
+.name-card.saved{border-color:var(--rose);background:rgba(232,160,176,.06);}
+.name-text{font-family:'Playfair Display',serif;font-size:1.4rem;color:var(--cream);margin-bottom:4px;}
+.name-meaning{font-size:12px;color:rgba(245,240,232,.55);line-height:1.5;margin-bottom:8px;}
+.name-origin{font-size:11px;font-weight:700;color:var(--turq2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;}
+.name-badges{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;}
+.name-badge{font-size:10px;padding:2px 8px;border-radius:20px;background:rgba(201,168,76,.1);color:var(--gold);}
+.heart-btn{position:absolute;top:10px;right:10px;background:none;border:none;cursor:pointer;font-size:18px;transition:transform .2s;}
+.heart-btn:hover{transform:scale(1.3);}
+/* Saved list */
+.saved-list{display:flex;flex-wrap:wrap;gap:10px;margin-top:4px;}
+.saved-name{background:var(--lapis3);border:1px solid rgba(232,160,176,.35);border-radius:20px;padding:8px 16px;font-size:14px;font-weight:600;color:var(--cream);display:flex;align-items:center;gap:8px;}
+.saved-name button{background:none;border:none;cursor:pointer;color:rgba(245,240,232,.4);font-size:16px;line-height:1;}
+.saved-name button:hover{color:var(--rose);}
+/* Filters tab bar */
+.filter-bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;}
+.filt{padding:6px 14px;border-radius:20px;border:1px solid rgba(201,168,76,.15);cursor:pointer;font-size:12px;color:rgba(245,240,232,.55);transition:all .2s;}
+.filt.active{background:rgba(201,168,76,.15);border-color:rgba(201,168,76,.35);color:var(--gold);}
+/* Waitlist */
+.waitlist{background:linear-gradient(135deg,var(--lapis2),var(--lapis3));border:1px solid rgba(201,168,76,.2);border-radius:12px;padding:28px;text-align:center;margin-top:16px;}
+.waitlist h3{font-family:'Playfair Display',serif;font-size:1.3rem;color:var(--gold);margin-bottom:8px;}
+.waitlist p{color:rgba(245,240,232,.7);margin-bottom:16px;font-size:14px;}
+.wl-form{display:flex;gap:10px;max-width:380px;margin:0 auto;flex-wrap:wrap;}
+.wl-form input{flex:1;min-width:180px;}
+.wl-success{color:var(--turq2);font-weight:600;display:none;}
+</style>
+<link rel="canonical" href="https://abuz8ai.com/tools/ai-baby-name-generator">
+<meta name="description" content="AI Baby Name Generator — Name ideas with meanings. Free, no signup, runs entirely in your browser. One of 169 free AI and developer tools by ABUZ8.">
+</head>
+<body>
+<header>
+  <h1>⚡ ABUZ8</h1>
+  <span>👶 BABY NAME GENERATOR</span>
+</header>
+<div class="hero">
+  <h2>Find the Perfect Name</h2>
+  <p>Filter by origin, style, meaning, and syllables — save your favorites and compare with your partner.</p>
+</div>
+<div class="main">
+  <div class="card" id="inputArea">
+    <div class="grid-3">
+      <div>
+        <label>Gender</label>
+        <select id="genderSel">
+          <option value="all">All Names</option>
+          <option value="girl">👧 Girl Names</option>
+          <option value="boy">👦 Boy Names</option>
+          <option value="neutral">⚖️ Gender Neutral</option>
+        </select>
+      </div>
+      <div>
+        <label>Name Style</label>
+        <select id="styleSel">
+          <option value="any" selected>Any Style</option>
+          <option value="classic">Classic / Timeless</option>
+          <option value="modern">Modern / Trendy</option>
+          <option value="unique">Unique / Rare</option>
+          <option value="short">Short (1–2 syllables)</option>
+          <option value="royal">Royal / Elegant</option>
+          <option value="nature">Nature-Inspired</option>
+          <option value="literary">Literary / Artistic</option>
+        </select>
+      </div>
+      <div>
+        <label>How Many Names</label>
+        <select id="countSel">
+          <option value="12">12 names</option>
+          <option value="20" selected>20 names</option>
+          <option value="30">30 names</option>
+          <option value="50">50 names</option>
+        </select>
+      </div>
+    </div>
+    <div class="grid-2">
+      <div>
+        <label>Cultural Origin</label>
+        <div class="tags" id="originTags">
+          <span class="tag active" data-v="any">Any Origin</span>
+          <span class="tag" data-v="english">English</span>
+          <span class="tag" data-v="latin">Latin</span>
+          <span class="tag" data-v="hebrew">Hebrew</span>
+          <span class="tag" data-v="greek">Greek</span>
+          <span class="tag" data-v="arabic">Arabic</span>
+          <span class="tag" data-v="celtic">Celtic</span>
+          <span class="tag" data-v="scandinavian">Scandinavian</span>
+          <span class="tag" data-v="japanese">Japanese</span>
+          <span class="tag" data-v="indian">Indian/Sanskrit</span>
+          <span class="tag" data-v="french">French</span>
+          <span class="tag" data-v="italian">Italian</span>
+          <span class="tag" data-v="african">African</span>
+        </div>
+      </div>
+      <div>
+        <label>Name Meaning / Theme</label>
+        <div class="tags" id="themeTags">
+          <span class="tag active" data-v="any">Any</span>
+          <span class="tag" data-v="strength">Strength</span>
+          <span class="tag" data-v="light">Light / Bright</span>
+          <span class="tag" data-v="nature">Nature</span>
+          <span class="tag" data-v="wisdom">Wisdom</span>
+          <span class="tag" data-v="love">Love / Grace</span>
+          <span class="tag" data-v="victory">Victory</span>
+          <span class="tag" data-v="royalty">Royalty</span>
+          <span class="tag" data-v="peace">Peace</span>
+        </div>
+      </div>
+    </div>
+    <div style="margin-top:14px;">
+      <label>Last Name (for flow check)</label>
+      <input type="text" id="lastName" placeholder="e.g. Johnson, Chen, Al-Rashid (optional)">
+    </div>
+    <div class="actions">
+      <button class="btn btn-gold" onclick="generateNames()">👶 Generate Names</button>
+    </div>
+  </div>
+
+  <!-- Results -->
+  <div class="card" id="namesArea">
+    <div class="names-header">
+      <h3 id="namesTitle">Name Suggestions</h3>
+      <div style="display:flex;gap:8px;">
+        <button class="btn btn-outline" onclick="generateNames()" style="padding:7px 14px;font-size:12px;">🔀 More Names</button>
+        <button class="btn btn-gold" onclick="exportNames()" style="padding:7px 14px;font-size:12px;">⬇ Export List</button>
+      </div>
+    </div>
+    <div class="filter-bar" id="filterBar">
+      <span class="filt active" data-v="all" onclick="filterNames('all',this)">All</span>
+      <span class="filt" data-v="saved" onclick="filterNames('saved',this)">❤️ Saved</span>
+    </div>
+    <div class="names-grid" id="namesGrid"></div>
+  </div>
+
+  <!-- Shortlist -->
+  <div class="card" id="shortlistCard" style="display:none;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+      <div style="font-size:13px;font-weight:700;color:var(--rose);letter-spacing:.05em;">❤️ YOUR SHORTLIST</div>
+      <button class="btn btn-outline" onclick="clearShortlist()" style="padding:5px 12px;font-size:11px;">Clear</button>
+    </div>
+    <div class="saved-list" id="savedList"></div>
+  </div>
+
+  <div class="waitlist">
+    <h3>👶 Name Compatibility Score</h3>
+    <p>Join for AI name compatibility analysis, sibling matching, monogram preview, and partner collaboration mode.</p>
+    <div class="wl-form">
+      <input type="email" id="wlEmail" placeholder="your@email.com">
+      <button class="btn btn-gold" onclick="joinWaitlist()">Join Waitlist</button>
+    </div>
+    <div class="wl-success" id="wlSuccess">✓ You're on the list!</div>
+  </div>
+</div>
+
+<script src="_abuz8-live-brain.js" defer></script>
+<script>
+document.querySelectorAll('#originTags .tag').forEach(t=>{t.addEventListener('click',()=>{document.querySelectorAll('#originTags .tag').forEach(x=>x.classList.remove('active'));t.classList.add('active');});});
+document.querySelectorAll('#themeTags .tag').forEach(t=>{t.addEventListener('click',()=>{document.querySelectorAll('#themeTags .tag').forEach(x=>x.classList.remove('active'));t.classList.add('active');});});
+
+const NAMES_DB = {
+  girl:{
+    english:[{n:'Charlotte',m:'Free woman, strength',o:'English/French',t:['classic','royalty']},{n:'Eleanor',m:'Bright, shining one',o:'English',t:['classic','light','literary']},{n:'Violet',m:'Purple flower',o:'English',t:['nature','unique']},{n:'Aurora',m:'Dawn, goddess of the sunrise',o:'Latin',t:['light','modern','royalty']},{n:'Stella',m:'Star, celestial',o:'Latin',t:['modern','light']},{n:'Hazel',m:'The hazel tree',o:'English',t:['nature','short']},{n:'Iris',m:'Rainbow, messenger goddess',o:'Greek',t:['nature','short','unique']},{n:'Wren',m:'Small bird',o:'English',t:['nature','short','unique']},{n:'Eliza',m:'Pledged to God',o:'Hebrew',t:['classic','short']},{n:'Nora',m:'Light, honor',o:'Irish/Celtic',t:['short','classic']},{n:'Luna',m:'Moon, light',o:'Latin',t:['nature','modern','light']},{n:'Ivy',m:'The climbing plant',o:'English',t:['nature','short','modern']},{n:'Serena',m:'Tranquil, serene',o:'Latin',t:['peace','classic']},{n:'Maya',m:'Water, illusion, great',o:'Sanskrit/Hebrew',t:['short','modern']},{n:'Clara',m:'Clear, bright, famous',o:'Latin',t:['classic','light','short']},{n:'Beatrice',m:'She who brings happiness',o:'Latin/Italian',t:['literary','classic','love']},{n:'Sage',m:'Wise, healing herb',o:'English',t:['nature','wisdom','short']},{n:'Fiona',m:'White, fair',o:'Celtic',t:['classic','light']},{n:'Cleo',m:'Glory, acclaim',o:'Greek',t:['short','unique','victory']},{n:'Juniper',m:'Evergreen tree',o:'Latin',t:['nature','unique']},{n:'Adelaide',m:'Noble, of noble kind',o:'German',t:['royalty','classic']},{n:'Rosalind',m:'Gentle horse, pretty rose',o:'English',t:['literary','nature','classic']},{n:'Oriana',m:'Dawn, gold',o:'Latin',t:['light','unique','royalty']},{n:'Matilda',m:'Battle-mighty',o:'German',t:['strength','classic']},{n:'Valentina',m:'Strong, healthy',o:'Latin',t:['strength','love','classic']}],
+    boy:[{n:'Theodore',m:'Gift of God',o:'Greek',t:['classic','wisdom']},{n:'Sebastian',m:'Venerable, revered',o:'Latin',t:['classic','royalty']},{n:'Atticus',m:'Man of Attica',o:'Greek/Latin',t:['literary','classic','wisdom']},{n:'Jasper',m:'Treasurer',o:'Persian',t:['unique','nature']},{n:'Felix',m:'Happy, fortunate',o:'Latin',t:['short','classic']},{n:'Luca',m:'Light, bringer of light',o:'Italian/Latin',t:['short','light','modern']},{n:'Ezra',m:'Help, helper',o:'Hebrew',t:['short','classic']},{n:'Orion',m:'Rising in the sky, hunter',o:'Greek',t:['strength','nature']},{n:'Callum',m:'Dove',o:'Celtic',t:['peace','nature']},{n:'Silas',m:'Forest, man of the forest',o:'Latin',t:['nature','classic']},{n:'Arlo',m:'Fortified hill',o:'English',t:['modern','short']},{n:'Caspian',m:'From the Caspian Sea',o:'Literary',t:['unique','literary']},{n:'Milo',m:'Soldier, merciful',o:'German/Latin',t:['short','modern']},{n:'Hugo',m:'Heart, mind, spirit',o:'German',t:['short','classic','wisdom']},{n:'Soren',m:'Stern, strict',o:'Scandinavian',t:['unique','strength']},{n:'Phineas',m:'Oracle, bold',o:'Hebrew',t:['literary','unique']},{n:'Dashiell',m:'Page boy, officer',o:'French',t:['literary','unique']},{n:'Theron',m:'Hunter, wild animal',o:'Greek',t:['strength','unique']},{n:'Caden',m:'Fighter, spirit of battle',o:'Welsh',t:['strength','modern']},{n:'Augustin',m:'Majestic, the great',o:'Latin',t:['royalty','classic']},{n:'Emeric',m:'Power, work',o:'German',t:['strength','unique']},{n:'Leontine',m:'Lion strength',o:'Latin',t:['strength','unique']},{n:'Rafferty',m:'Flood tide, abundance',o:'Celtic',t:['unique']},{n:'Quillan',m:'Cub, young',o:'Celtic',t:['nature','unique']},{n:'Barnaby',m:'Son of consolation',o:'Hebrew',t:['literary','classic']}],
+    neutral:[{n:'Rowan',m:'Little red one, rowan tree',o:'Celtic',t:['nature','short']},{n:'Quinn',m:'Wisdom, intelligence',o:'Celtic',t:['wisdom','short']},{n:'River',m:'A flowing body of water',o:'English',t:['nature','modern']},{n:'Sage',m:'Wise herb',o:'English',t:['wisdom','nature','short']},{n:'Avery',m:'Ruler of elves',o:'English',t:['modern','royalty']},{n:'Indigo',m:'Deep blue dye',o:'English',t:['nature','unique']},{n:'Emerson',m:'Son of Emery, brave',o:'English',t:['modern','strength']},{n:'Finley',m:'Fair warrior',o:'Celtic',t:['strength','classic']},{n:'Remy',m:'Oarsman, remedy',o:'French',t:['short','modern']},{n:'Sasha',m:'Defender of the people',o:'Slavic',t:['short','strength']},{n:'Zephyr',m:'West wind',o:'Greek',t:['nature','unique']},{n:'Marlowe',m:'From the hill near the lake',o:'English',t:['literary','unique']},{n:'Reeve',m:'Steward',o:'English',t:['short','unique']},{n:'Wren',m:'Small songbird',o:'English',t:['nature','short']},{n:'Lennox',m:'From the elm grove',o:'Celtic',t:['nature','modern']},{n:'Arden',m:'Great forest, eagle valley',o:'Celtic',t:['nature','literary']},{n:'Briar',m:'A thorny plant',o:'English',t:['nature','modern']},{n:'Cove',m:'Small coastal bay',o:'English',t:['nature','short','unique']},{n:'Larkin',m:'Rough, fierce',o:'Celtic',t:['unique','strength']},{n:'Vesper',m:'Evening star',o:'Latin',t:['light','unique']}]
+  }
+};
+
+let savedNames = new Set();
+let currentNames = [];
+let showFilter = 'all';
+
+function generateNames() {
+  const gender = document.getElementById('genderSel').value;
+  const style = document.getElementById('styleSel').value;
+  const count = parseInt(document.getElementById('countSel').value);
+  const origin = document.querySelector('#originTags .tag.active')?.dataset.v || 'any';
+  const theme = document.querySelector('#themeTags .tag.active')?.dataset.v || 'any';
+  const lastName = document.getElementById('lastName').value.trim();
+
+  const btn = document.querySelector('.btn-gold');
+  btn.textContent = '👶 Generating...'; btn.disabled=true;
+
+  const gLabel = {girl:'Girl Names',boy:'Boy Names',neutral:'Gender-Neutral Names',all:'Baby Names'}[gender]||'Names';
+  document.getElementById('namesTitle').textContent = gLabel;
+  // The filter bar (All / Saved) depended on the legacy per-card save model; hide it.
+  const fb = document.getElementById('filterBar'); if(fb) fb.style.display='none';
+  const grid = document.getElementById('namesGrid');
+  grid.style.display = 'block';
+  grid.innerHTML = '<div style="color:rgba(245,240,232,.5);font-size:13px;padding:24px;">👶 Generating names with AI…</div>';
+  document.getElementById('namesArea').style.display = 'block';
+  document.getElementById('namesArea').scrollIntoView({behavior:'smooth',block:'start'});
+
+  // Real AI generation via the ABUZ8 brain (Cloudflare Workers AI). No NAMES_DB / Math.random.
+  fetch('/api/waitlist', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      tool: 'baby-name-generator',
+      data: {
+        gender: gender,
+        style: style,
+        count: count,
+        culturalOrigin: origin,
+        meaningTheme: theme,
+        lastName: lastName,
+        format: 'Return clean HTML: for each suggested name use a small block with the name in bold, its cultural origin, and its meaning. Provide the requested number of names.'
+      }
+    })
+  })
+  .then(r => r.json())
+  .then(res => {
+    if (!res.success || !res.result) throw new Error(res.error || 'Generation failed');
+    btn.textContent='👶 Generate Names'; btn.disabled=false;
+    grid.innerHTML = ABUZ8md(res.result);
+  })
+  .catch(err => {
+    btn.textContent='👶 Generate Names'; btn.disabled=false;
+    grid.innerHTML = '<div style="color:#e8a0b0;font-size:13px;padding:24px;">Generation failed. Please try again in a moment.</div>';
+    alert('Generation failed: ' + err.message + '. Please try again in a moment.');
+  });
+}
+
+function selectNames(gender, style, count, origin, theme) {
+  let pool = [];
+  const db = NAMES_DB.girl;
+  if(gender==='girl' || gender==='all') pool = pool.concat(db.girl);
+  if(gender==='boy' || gender==='all') pool = pool.concat(db.boy);
+  if(gender==='neutral') pool = db.neutral;
+  if(gender==='all') pool = pool.concat(db.neutral);
+
+  // Filter by origin
+  if(origin !== 'any') {
+    const filtered = pool.filter(n => n.o.toLowerCase().includes(origin));
+    if(filtered.length >= 5) pool = filtered;
+  }
+
+  // Filter by theme
+  if(theme !== 'any') {
+    const filtered = pool.filter(n => n.t && n.t.includes(theme));
+    if(filtered.length >= 3) pool = filtered;
+  }
+
+  // Filter by style
+  if(style !== 'any' && style !== 'short') {
+    const styleMap = {classic:'classic',modern:'modern',unique:'unique',royal:'royalty',nature:'nature',literary:'literary'};
+    const themeKey = styleMap[style];
+    if(themeKey) {
+      const filtered = pool.filter(n => n.t && n.t.includes(themeKey));
+      if(filtered.length >= 3) pool = filtered;
+    }
+  }
+  if(style==='short') {
+    const filtered = pool.filter(n => n.n.length <= 5 || n.t.includes('short'));
+    if(filtered.length >= 3) pool = filtered;
+  }
+
+  // Shuffle and return
+  const shuffled = [...pool].sort(()=>0.5-Math.random());
+  return shuffled.slice(0, Math.min(count, shuffled.length));
+}
+
+function renderNames(names, gender) {
+  const gLabel = {girl:'Girl Names',boy:'Boy Names',neutral:'Gender-Neutral Names',all:'Baby Names'}[gender]||'Names';
+  document.getElementById('namesTitle').textContent = `${names.length} ${gLabel}`;
+
+  const toShow = showFilter==='saved' ? names.filter(n=>savedNames.has(n.n)) : names;
+
+  document.getElementById('namesGrid').innerHTML = toShow.map(n=>`
+    <div class="name-card${savedNames.has(n.n)?' saved':''}" id="nc_${n.n.replace(/\s/g,'_')}">
+      <button class="heart-btn" onclick="toggleSave('${n.n}')" title="${savedNames.has(n.n)?'Remove from shortlist':'Save to shortlist'}">${savedNames.has(n.n)?'❤️':'🤍'}</button>
+      <div class="name-text">${n.n}</div>
+      <div class="name-origin">${n.o}</div>
+      <div class="name-meaning">${n.m}</div>
+      <div class="name-badges">${(n.t||[]).slice(0,2).map(t=>`<span class="name-badge">${t}</span>`).join('')}</div>
+    </div>`).join('');
+
+  document.getElementById('namesArea').style.display = 'block';
+  document.getElementById('namesArea').scrollIntoView({behavior:'smooth',block:'start'});
+  updateShortlist();
+}
+
+function toggleSave(name) {
+  if(savedNames.has(name)) savedNames.delete(name);
+  else savedNames.add(name);
+  const card = document.getElementById('nc_'+name.replace(/\s/g,'_'));
+  if(card) {
+    card.classList.toggle('saved', savedNames.has(name));
+    card.querySelector('.heart-btn').textContent = savedNames.has(name)?'❤️':'🤍';
+  }
+  updateShortlist();
+}
+
+function updateShortlist() {
+  const sc = document.getElementById('shortlistCard');
+  const sl = document.getElementById('savedList');
+  if(!savedNames.size) { sc.style.display='none'; return; }
+  sc.style.display='block';
+  sl.innerHTML = [...savedNames].map(n=>`
+    <div class="saved-name">${n}<button onclick="toggleSave('${n}')">×</button></div>`).join('');
+}
+
+function clearShortlist() {
+  savedNames.clear();
+  updateShortlist();
+  // Refresh displayed cards
+  document.querySelectorAll('.name-card').forEach(c=>{c.classList.remove('saved');const h=c.querySelector('.heart-btn');if(h)h.textContent='🤍';});
+}
+
+function filterNames(v, el) {
+  showFilter = v;
+  document.querySelectorAll('.filt').forEach(f=>f.classList.remove('active'));
+  el.classList.add('active');
+  if(currentNames.length) renderNames(currentNames, document.getElementById('genderSel').value);
+}
+
+function exportNames() {
+  const text = document.getElementById('namesGrid').innerText.trim();
+  if(!text) { alert('Generate some names first.'); return; }
+  const blob = new Blob([text],{type:'text/plain'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='baby-names.txt';a.click();
+}
+
+function joinWaitlist() {
+  const email = document.getElementById('wlEmail').value.trim();
+  if(!email||!email.includes('@')) { alert('Please enter a valid email.'); return; }
+  fetch('/api/waitlist',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,product:'ai-baby-name-generator',ts:Date.now()})}).catch(()=>{});
+  document.getElementById('wlEmail').value='';
+  document.querySelector('.wl-form').style.display='none';
+  document.getElementById('wlSuccess').style.display='block';
+}
+</script>
+
+<script src="/assets/js/dfy-banner.js" async></script>
+<script src="/tools/_abuz8-md.js"></script>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+<script src="/tools/_tools-shared.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>
+

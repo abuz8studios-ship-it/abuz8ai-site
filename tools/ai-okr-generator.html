@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AI OKR Generator — ABUZ8</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--lapis:#0a1628;--lapis2:#0f1f3d;--lapis3:#162544;--gold:#c9a84c;--turq:#0e9f6e;--turq2:#22b5a0;--cream:#f5f0e8;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--lapis);color:var(--cream);font-family:'Inter',sans-serif;min-height:100vh;}
+header{background:var(--lapis2);border-bottom:1px solid var(--gold);padding:18px 32px;display:flex;align-items:center;gap:16px;}
+.logo{font-family:'Playfair Display',serif;color:var(--gold);font-size:1.4rem;}
+.badge{background:var(--gold);color:var(--lapis);font-size:.65rem;font-weight:700;padding:2px 8px;border-radius:10px;}
+h1{font-family:'Playfair Display',serif;font-size:1.8rem;color:var(--gold);margin-bottom:6px;}
+.sub{color:#8899aa;font-size:.9rem;}
+main{max-width:1100px;margin:0 auto;padding:32px 24px;}
+.layout{display:grid;grid-template-columns:300px 1fr;gap:24px;margin-top:24px;}
+.panel{background:var(--lapis2);border:1px solid #1e3a5f;border-radius:12px;padding:24px;}
+.panel h2{font-family:'Playfair Display',serif;color:var(--gold);font-size:1.1rem;margin-bottom:16px;}
+label{display:block;font-size:.8rem;color:#8899aa;margin-bottom:4px;margin-top:14px;}
+label:first-of-type{margin-top:0;}
+input,select,textarea{width:100%;background:var(--lapis3);border:1px solid #1e3a5f;border-radius:6px;color:var(--cream);padding:8px 12px;font-size:.85rem;font-family:'Inter',sans-serif;}
+textarea{resize:vertical;min-height:70px;}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--gold);}
+.btn{background:var(--gold);color:var(--lapis);border:none;border-radius:8px;padding:12px 24px;font-weight:700;cursor:pointer;width:100%;margin-top:16px;}
+.btn:hover{opacity:.85;}
+.btn-sm{background:transparent;border:1px solid var(--turq2);color:var(--turq2);border-radius:6px;padding:6px 14px;font-size:.78rem;cursor:pointer;margin-right:6px;}
+#output{display:none;}
+.dept-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px;}
+.dtab{background:var(--lapis3);border:1px solid #1e3a5f;border-radius:6px;padding:7px 14px;font-size:.8rem;cursor:pointer;}
+.dtab.active{border-color:var(--gold);color:var(--gold);}
+.objective{background:var(--lapis3);border:1px solid #1e3a5f;border-radius:10px;padding:18px;margin-bottom:14px;}
+.obj-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px;}
+.obj-title{font-family:'Playfair Display',serif;color:var(--gold);font-size:1rem;}
+.obj-type{font-size:.7rem;padding:2px 8px;border-radius:4px;background:rgba(201,168,76,.15);color:var(--gold);border:1px solid rgba(201,168,76,.3);}
+.kr{display:flex;align-items:flex-start;gap:12px;padding:10px 0;border-bottom:1px solid #1e3a5f;}
+.kr:last-child{border:none;}
+.kr-num{width:22px;height:22px;border-radius:50%;background:rgba(34,181,160,.2);color:var(--turq2);font-size:.72rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;}
+.kr-body{flex:1;}
+.kr-text{font-size:.88rem;font-weight:500;margin-bottom:4px;}
+.kr-meta{font-size:.75rem;color:#8899aa;display:flex;gap:12px;flex-wrap:wrap;}
+.kr-tag{background:var(--lapis2);border:1px solid #1e3a5f;border-radius:4px;padding:1px 7px;font-size:.72rem;}
+.progress-bar{height:4px;background:var(--lapis2);border-radius:4px;margin-top:8px;overflow:hidden;}
+.progress-fill{height:100%;background:var(--turq2);border-radius:4px;}
+.company-okr{background:rgba(201,168,76,.05);border:1px solid rgba(201,168,76,.2);border-radius:10px;padding:18px;margin-bottom:16px;}
+.company-okr .obj-title{font-size:1.1rem;}
+.tips{background:var(--lapis3);border:1px solid #1e3a5f;border-radius:10px;padding:18px;}
+.tips h3{color:var(--gold);font-family:'Playfair Display',serif;font-size:.95rem;margin-bottom:12px;}
+.tip{padding:8px 0;border-bottom:1px solid #1e3a5f;font-size:.82rem;color:#aabbcc;display:flex;gap:8px;}
+.tip:last-child{border:none;}
+.waitlist{background:linear-gradient(135deg,var(--lapis2),var(--lapis3));border:1px solid var(--gold);border-radius:12px;padding:24px;text-align:center;margin-top:20px;}
+.waitlist h3{font-family:'Playfair Display',serif;color:var(--gold);margin-bottom:8px;}
+.wl-form{display:flex;gap:8px;max-width:360px;margin:10px auto 0;}
+.wl-form input{border-radius:6px;padding:9px 12px;}
+.wl-form button{background:var(--gold);color:var(--lapis);border:none;border-radius:6px;padding:9px 18px;font-weight:700;cursor:pointer;white-space:nowrap;}
+</style>
+<link rel="canonical" href="https://abuz8ai.com/tools/ai-okr-generator">
+<meta name="description" content="AI OKR Generator — Company and team OKR cascade. Free, no signup, runs entirely in your browser. One of 169 free AI and developer tools by ABUZ8.">
+</head>
+<body>
+<header>
+  <div class="logo">ABUZ8</div>
+  <div style="flex:1">
+    <div style="font-size:.85rem;font-weight:600;">AI OKR Generator</div>
+    <div style="font-size:.72rem;color:#8899aa;">Cascade aligned OKRs across your organization</div>
+  </div>
+  <span class="badge">TIER H</span>
+</header>
+<main>
+  <h1>AI OKR Generator</h1>
+  <p class="sub">Generate company, department, and team OKRs that cascade from your top-level goals.</p>
+
+  <div class="layout">
+    <div class="panel">
+      <h2>🎯 Company Context</h2>
+      <label>Company Name</label>
+      <input id="company" value="Nexus AI" placeholder="Company name">
+      <label>Quarter</label>
+      <input id="quarter" value="Q3 2026" placeholder="Q3 2026">
+      <label>#1 Company Goal This Quarter</label>
+      <textarea id="goal1" placeholder="Top priority...">Hit $5M ARR and raise Series A</textarea>
+      <label>#2 Company Goal</label>
+      <textarea id="goal2" placeholder="Second priority...">Launch enterprise product tier with 10 design partners</textarea>
+      <label>#3 Company Goal</label>
+      <textarea id="goal2b" placeholder="Third priority...">Reduce churn below 2% monthly</textarea>
+      <label>Industry / Sector</label>
+      <select id="industry">
+        <option selected>B2B SaaS</option><option>E-commerce</option><option>Fintech</option>
+        <option>Healthcare</option><option>Agency / Services</option>
+      </select>
+      <label>Stage</label>
+      <select id="stage">
+        <option>Pre-revenue</option><option>Early Traction</option><option selected>Growth (Series A)</option><option>Scale (Series B+)</option>
+      </select>
+      <label>Departments to Include</label>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px;" id="deptChecks"></div>
+      <button class="btn" onclick="generateOKRs()">⚡ Generate OKRs</button>
+    </div>
+
+    <div>
+      <div id="inputPrompt" class="panel" style="text-align:center;padding:48px 24px;">
+        <div style="font-size:3rem;margin-bottom:16px;">🎯</div>
+        <div style="font-family:'Playfair Display',serif;color:var(--gold);font-size:1.2rem;margin-bottom:8px;">OKR Cascade Engine</div>
+        <div style="font-size:.85rem;color:#8899aa;max-width:340px;margin:0 auto;">Enter your company goals and we'll generate a full OKR cascade — company level down to department, with key results, owners, and cadence recommendations.</div>
+      </div>
+      <div id="output">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+          <div style="font-family:'Playfair Display',serif;color:var(--gold);" id="okrTitle">OKRs</div>
+          <div><button class="btn-sm" onclick="copyOKRs()">📋 Copy All</button><button class="btn-sm" onclick="exportOKRs()">⬇ Export</button></div>
+        </div>
+        <div class="dept-tabs" id="deptTabs"></div>
+        <div id="okrContent"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="waitlist">
+    <h3>🚀 Pro: OKR Tracker with Check-in Reminders</h3>
+    <p>Weekly check-in prompts, progress tracking, and team alignment scores. Integrates with Notion, Linear, and Asana.</p>
+    <div class="wl-form">
+      <input type="email" id="wlEmail" placeholder="ceo@company.com">
+      <button onclick="joinWL()">Get Pro Access</button>
+    </div>
+  </div>
+</main>
+<script src="_abuz8-live-brain.js" defer></script>
+<script>
+const DEPTS=['Company','Sales','Marketing','Engineering','Product','Customer Success','Finance','People'];
+let selectedDepts=['Company','Sales','Engineering','Product'];
+let okrData={};
+let curDept='Company';
+
+function initDeptChecks(){
+  const c=document.getElementById('deptChecks');
+  c.innerHTML=DEPTS.filter(d=>d!=='Company').map(d=>`
+    <label style="display:flex;align-items:center;gap:6px;background:var(--lapis3);border:1px solid #1e3a5f;border-radius:6px;padding:7px 10px;cursor:pointer;font-size:.78rem;${selectedDepts.includes(d)?'border-color:var(--gold)':''}" id="dck_${d}">
+      <input type="checkbox" ${selectedDepts.includes(d)?'checked':''} onchange="toggleDept('${d}',this.checked)" style="width:auto;cursor:pointer">
+      ${d}
+    </label>`).join('');
+}
+function toggleDept(d,v){
+  if(v&&!selectedDepts.includes(d)) selectedDepts.push(d);
+  else if(!v) selectedDepts=selectedDepts.filter(x=>x!==d);
+  document.getElementById('dck_'+d).style.borderColor=v?'var(--gold)':'#1e3a5f';
+}
+
+function kr(num,text,metric,owner,cadence,progress=0){
+  return `<div class="kr">
+    <div class="kr-num">${num}</div>
+    <div class="kr-body">
+      <div class="kr-text">${text}</div>
+      <div class="kr-meta">
+        <span class="kr-tag">📊 ${metric}</span>
+        <span class="kr-tag">👤 ${owner}</span>
+        <span class="kr-tag">🔄 ${cadence}</span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" style="width:${progress}%"></div></div>
+    </div>
+  </div>`;
+}
+
+function objective(title,type,krs){
+  return `<div class="objective">
+    <div class="obj-header"><div class="obj-title">${title}</div><span class="obj-type">${type}</span></div>
+    ${krs.join('')}
+  </div>`;
+}
+
+function generateOKRs(){
+  const company=document.getElementById('company').value||'Your Company';
+  const quarter=document.getElementById('quarter').value||'Q3 2026';
+  const goal1=document.getElementById('goal1').value;
+  const goal2=document.getElementById('goal2').value;
+  const goal3=document.getElementById('goal2b').value;
+  const industry=document.getElementById('industry').value;
+  const stage=document.getElementById('stage').value;
+  const depts=['Company',...selectedDepts.filter(d=>d!=='Company')];
+
+  const btn=document.querySelector('.btn');
+  if(btn){btn.disabled=true;btn.dataset.label=btn.dataset.label||btn.textContent;btn.textContent='⏳ Generating…';}
+
+  document.getElementById('inputPrompt').style.display='none';
+  document.getElementById('output').style.display='block';
+  document.getElementById('okrTitle').textContent=`${company} — ${quarter} OKRs`;
+  document.getElementById('deptTabs').innerHTML=depts.map(d=>`
+    <div class="dtab ${d===curDept?'active':''}" onclick="switchDept('${d}')">${d}</div>`).join('');
+  document.getElementById('okrContent').innerHTML=`
+    <div class="objective" style="text-align:center;padding:40px 24px">
+      <div style="font-size:2.4rem;margin-bottom:12px">🎯</div>
+      <div style="color:var(--gold);font-family:'Playfair Display',serif;font-size:1.1rem;margin-bottom:8px">Generating ${company}'s OKR cascade…</div>
+      <div style="font-size:.85rem;color:#8899aa;max-width:340px;margin:0 auto">Live AI on an RTX 5090. The first call cold-loads the model, so this can take 20–90s.</div>
+    </div>`;
+
+  // Real AI OKR cascade via the ABUZ8 brain (Cloudflare Workers AI). No templates.
+  fetch('/api/waitlist',{
+    method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({tool:'okr-generator',data:{company,quarter,goal1,goal2,goal3,industry,stage,departments:depts}})
+  })
+  .then(r=>r.json())
+  .then(res=>{
+    if(btn){btn.disabled=false;btn.textContent=btn.dataset.label;}
+    if(!res.success||!res.result) throw new Error(res.error||'Generation failed');
+    const out=`<div class="objective" style="line-height:1.7">${ABUZ8.formatResult(res.result)}</div>`;
+    // Every department tab shows the full real cascade — no fake template OKRs.
+    okrData={}; depts.forEach(d=>okrData[d]=out);
+    renderOKRContent(out);
+  })
+  .catch(err=>{
+    if(btn){btn.disabled=false;btn.textContent=btn.dataset.label;}
+    okrData={};
+    document.getElementById('okrContent').innerHTML=`
+      <div class="objective" style="text-align:center;padding:40px 24px">
+        <div style="font-size:2.4rem;margin-bottom:12px">⚠️</div>
+        <div style="color:#f87171;font-family:'Playfair Display',serif;font-size:1.1rem;margin-bottom:8px">Generation failed</div>
+        <div style="font-size:.85rem;color:#8899aa;max-width:360px;margin:0 auto 14px">${err.message}. The live AI may be cold-starting — please try again in a moment.</div>
+        <button class="btn" style="max-width:220px;margin:0 auto" onclick="generateOKRs()">↺ Try Again</button>
+      </div>`;
+    alert('Generation failed: '+err.message+'. Please try again in a moment.');
+  });
+}
+
+function renderOKRContent(content){
+  document.getElementById('okrContent').innerHTML=content+`
+    <div class="tips">
+      <h3>💡 OKR Best Practices</h3>
+      <div class="tip"><span>✓</span>Objectives should be inspiring and qualitative. KRs should be specific and measurable.</div>
+      <div class="tip"><span>✓</span>Target 70% achievement — if hitting 100% every quarter, your OKRs are too easy.</div>
+      <div class="tip"><span>✓</span>Max 3 objectives per team. More = dilution of focus.</div>
+      <div class="tip"><span>✓</span>Weekly check-ins on KRs; monthly objective reviews; quarterly retrospectives.</div>
+      <div class="tip"><span>✓</span>Every KR needs a single owner (not a committee). Ownership = accountability.</div>
+    </div>`;
+}
+
+function switchDept(d){
+  curDept=d;
+  document.querySelectorAll('.dtab').forEach(t=>t.classList.toggle('active',t.textContent===d));
+  if(okrData[d]) renderOKRContent(okrData[d]);
+}
+
+function copyOKRs(){
+  const allDepts=['Company',...selectedDepts.filter(d=>d!=='Company')];
+  const text=allDepts.map(d=>`=== ${d} ===\n${(okrData[d]||'').replace(/<[^>]+>/g,'').replace(/\s+/g,' ')}`).join('\n\n');
+  navigator.clipboard.writeText(text).then(()=>alert('OKRs copied to clipboard!'));
+}
+
+function exportOKRs(){
+  const co=document.getElementById('company').value||'OKRs';
+  const q=document.getElementById('quarter').value||'Q3';
+  const allDepts=['Company',...selectedDepts.filter(d=>d!=='Company')];
+  const html=`<html><body style="font-family:sans-serif;padding:32px;background:#0a1628;color:#f5f0e8">${allDepts.map(d=>`<h2 style="color:#c9a84c">${d} OKRs</h2>${okrData[d]||''}<hr>`).join('')}
+<script src="/assets/js/dfy-banner.js" async><\/script>
+<\/body><\/html>`;
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([html],{type:'text/html'}));a.download=co.replace(/\s+/g,'-')+'-'+q+'-okrs.html';a.click();
+}
+
+function joinWL(){
+  const e=document.getElementById('wlEmail').value.trim();
+  if(!e||!e.includes('@')){alert('Valid email required');return;}
+  fetch('/api/waitlist',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:e,tool:'ai-okr-generator',ts:Date.now()})}).catch(()=>{});
+  localStorage.setItem('wl_okr',e);
+  document.querySelector('.waitlist').innerHTML='<h3 style="color:var(--gold);font-family:Playfair Display,serif">✅ On the list!</h3><p style="color:#8899aa;margin-top:8px;">Pro access within 24h.</p>';
+}
+
+initDeptChecks();
+</script>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+<script src="/tools/_tools-shared.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>
+

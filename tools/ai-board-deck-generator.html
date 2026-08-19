@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AI Board Deck Generator — ABUZ8</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--lapis:#0a1628;--lapis2:#0f1f3d;--lapis3:#162544;--gold:#c9a84c;--turq:#0e9f6e;--turq2:#22b5a0;--cream:#f5f0e8;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--lapis);color:var(--cream);font-family:'Inter',sans-serif;min-height:100vh;}
+header{background:var(--lapis2);border-bottom:1px solid var(--gold);padding:18px 32px;display:flex;align-items:center;gap:16px;}
+.logo{font-family:'Playfair Display',serif;color:var(--gold);font-size:1.4rem;}
+.badge{background:var(--gold);color:var(--lapis);font-size:.65rem;font-weight:700;padding:2px 8px;border-radius:10px;letter-spacing:.05em;}
+h1{font-family:'Playfair Display',serif;font-size:1.8rem;color:var(--gold);margin-bottom:6px;}
+.sub{color:#8899aa;font-size:.9rem;}
+main{max-width:1100px;margin:0 auto;padding:32px 24px;}
+.two-col{display:grid;grid-template-columns:340px 1fr;gap:24px;margin-top:24px;}
+.panel{background:var(--lapis2);border:1px solid #1e3a5f;border-radius:12px;padding:24px;}
+.panel h2{font-family:'Playfair Display',serif;color:var(--gold);font-size:1.1rem;margin-bottom:18px;}
+label{display:block;font-size:.8rem;color:#8899aa;margin-bottom:4px;margin-top:14px;}
+label:first-of-type{margin-top:0;}
+input,textarea,select{width:100%;background:var(--lapis3);border:1px solid #1e3a5f;border-radius:6px;color:var(--cream);padding:8px 12px;font-size:.85rem;font-family:'Inter',sans-serif;}
+input:focus,textarea:focus,select:focus{outline:none;border-color:var(--gold);}
+textarea{resize:vertical;min-height:70px;}
+.slide-checks{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px;}
+.slide-check{display:flex;align-items:center;gap:8px;background:var(--lapis3);border:1px solid #1e3a5f;border-radius:6px;padding:8px 10px;cursor:pointer;font-size:.8rem;}
+.slide-check input{width:auto;cursor:pointer;}
+.slide-check.selected{border-color:var(--gold);background:#0f1f3d;}
+.btn{background:var(--gold);color:var(--lapis);border:none;border-radius:8px;padding:12px 24px;font-weight:700;font-size:.95rem;cursor:pointer;width:100%;margin-top:18px;transition:opacity .2s;}
+.btn:hover{opacity:.85;}
+.btn-outline{background:transparent;border:1px solid var(--turq2);color:var(--turq2);border-radius:8px;padding:8px 16px;font-size:.8rem;cursor:pointer;margin-right:8px;}
+.btn-outline:hover{background:var(--turq2);color:var(--lapis);}
+#output{display:none;}
+.deck-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;}
+.deck-nav{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:20px;}
+.slide-btn{background:var(--lapis3);border:1px solid #1e3a5f;border-radius:6px;padding:6px 12px;font-size:.75rem;cursor:pointer;color:var(--cream);}
+.slide-btn.active{border-color:var(--gold);color:var(--gold);}
+.slide-card{background:var(--lapis3);border:1px solid #1e3a5f;border-radius:12px;padding:32px;min-height:380px;position:relative;}
+.slide-num{position:absolute;top:16px;right:20px;font-size:.75rem;color:#556;}
+.slide-title{font-family:'Playfair Display',serif;color:var(--gold);font-size:1.6rem;margin-bottom:6px;}
+.slide-subtitle{color:var(--turq2);font-size:.9rem;margin-bottom:20px;}
+.slide-body{font-size:.9rem;line-height:1.7;color:#ccd;}
+.metric-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:16px;}
+.metric-box{background:var(--lapis2);border:1px solid #1e3a5f;border-radius:8px;padding:14px;text-align:center;}
+.metric-val{font-family:'Playfair Display',serif;color:var(--gold);font-size:1.4rem;}
+.metric-lbl{font-size:.7rem;color:#8899aa;margin-top:4px;}
+.bullet-list{list-style:none;margin-top:12px;}
+.bullet-list li{padding:6px 0;border-bottom:1px solid #1e3a5f;font-size:.88rem;display:flex;gap:10px;}
+.bullet-list li:last-child{border:none;}
+.bullet-list li::before{content:'▸';color:var(--gold);flex-shrink:0;}
+.ask-box{background:var(--lapis2);border:2px solid var(--gold);border-radius:10px;padding:20px;text-align:center;margin-top:16px;}
+.ask-num{font-family:'Playfair Display',serif;color:var(--gold);font-size:2.5rem;}
+.ask-lbl{font-size:.85rem;color:#8899aa;margin-top:4px;}
+.tag{display:inline-block;background:rgba(201,168,76,.15);color:var(--gold);border:1px solid rgba(201,168,76,.3);border-radius:4px;padding:2px 8px;font-size:.72rem;margin:2px;}
+.waitlist{background:linear-gradient(135deg,var(--lapis2),var(--lapis3));border:1px solid var(--gold);border-radius:12px;padding:24px;text-align:center;margin-top:20px;}
+.waitlist h3{font-family:'Playfair Display',serif;color:var(--gold);margin-bottom:8px;}
+.waitlist p{font-size:.85rem;color:#8899aa;margin-bottom:14px;}
+.waitlist-form{display:flex;gap:8px;max-width:360px;margin:0 auto;}
+.waitlist-form input{border-radius:6px;padding:9px 12px;}
+.waitlist-form button{background:var(--gold);color:var(--lapis);border:none;border-radius:6px;padding:9px 18px;font-weight:700;cursor:pointer;white-space:nowrap;}
+</style>
+<link rel="canonical" href="https://abuz8ai.com/tools/ai-board-deck-generator">
+<meta name="description" content="AI Board Deck Generator — Clean board update decks. Free, no signup, runs entirely in your browser. One of 169 free AI and developer tools by ABUZ8.">
+</head>
+<body>
+<header>
+  <div class="logo">ABUZ8</div>
+  <div style="flex:1">
+    <div style="font-size:.85rem;color:var(--cream);font-weight:600;">AI Board Deck Generator</div>
+    <div style="font-size:.72rem;color:#8899aa;">Investor-grade board decks in minutes</div>
+  </div>
+  <span class="badge">TIER H</span>
+</header>
+<main>
+  <h1>AI Board Deck Generator</h1>
+  <p class="sub">Generate professional board meeting decks with financials, KPIs, and strategic narrative.</p>
+
+  <div class="two-col">
+    <div class="panel">
+      <h2>📋 Company Info</h2>
+      <label>Company Name</label>
+      <input type="text" id="companyName" value="Acme Corp" placeholder="Your company name">
+      <label>Quarter / Period</label>
+      <input type="text" id="period" value="Q2 2026" placeholder="Q2 2026">
+      <label>Stage</label>
+      <select id="stage">
+        <option>Seed</option><option selected>Series A</option><option>Series B</option>
+        <option>Series C+</option><option>Public</option>
+      </select>
+      <label>ARR / Revenue ($)</label>
+      <input type="text" id="arr" value="2,400,000" placeholder="2,400,000">
+      <label>MoM / YoY Growth (%)</label>
+      <input type="text" id="growth" value="18% MoM" placeholder="18% MoM">
+      <label>Burn Rate ($/mo)</label>
+      <input type="text" id="burn" value="280,000" placeholder="280,000">
+      <label>Runway (months)</label>
+      <input type="text" id="runway" value="18" placeholder="18">
+      <label>Top Priority This Quarter</label>
+      <textarea id="priority" placeholder="Enterprise expansion into healthcare vertical...">Enterprise expansion + Series B fundraise preparation</textarea>
+      <label>Key Wins This Quarter</label>
+      <textarea id="wins" placeholder="Closed 3 enterprise deals...">Closed 3 enterprise deals. Launched v2.0. Hired VP Sales.</textarea>
+      <label>Fundraising Ask (leave blank if none)</label>
+      <input type="text" id="ask" value="$8,000,000" placeholder="$8,000,000 Series B">
+
+      <div style="margin-top:16px;font-size:.8rem;color:#8899aa;margin-bottom:8px;">Include Slides:</div>
+      <div class="slide-checks" id="slideChecks"></div>
+
+      <button class="btn" onclick="generateDeck()">⚡ Generate Board Deck</button>
+    </div>
+
+    <div>
+      <div id="inputPrompt" class="panel" style="text-align:center;padding:48px 24px;">
+        <div style="font-size:3rem;margin-bottom:16px;">📊</div>
+        <div style="font-family:'Playfair Display',serif;color:var(--gold);font-size:1.2rem;margin-bottom:8px;">Ready to Build Your Board Deck</div>
+        <div style="font-size:.85rem;color:#8899aa;max-width:320px;margin:0 auto;">Fill in your company details and click Generate. Your deck will appear slide by slide — ready to present or export.</div>
+      </div>
+
+      <div id="output">
+        <div class="deck-header">
+          <div>
+            <div style="font-family:'Playfair Display',serif;color:var(--gold);font-size:1.1rem;" id="deckTitle">Board Deck</div>
+            <div style="font-size:.75rem;color:#8899aa;" id="deckMeta"></div>
+          </div>
+          <div>
+            <button class="btn-outline" onclick="copyAll()">📋 Copy All</button>
+            <button class="btn-outline" onclick="exportHTML()">⬇ Export</button>
+          </div>
+        </div>
+        <div class="deck-nav" id="deckNav"></div>
+        <div id="slideContainer"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="waitlist">
+    <h3>🚀 Pro: PowerPoint Export + Custom Branding</h3>
+    <p>Export as .pptx, add your logo, custom colors, and multi-board distribution. Used by 200+ startups.</p>
+    <div class="waitlist-form">
+      <input type="email" id="wlEmail" placeholder="you@company.com">
+      <button onclick="joinWaitlist()">Get Pro Access</button>
+    </div>
+  </div>
+</main>
+
+<script src="_abuz8-live-brain.js" defer></script>
+<script>
+const SLIDE_OPTIONS = [
+  {id:'cover',label:'Cover Slide',checked:true},
+  {id:'agenda',label:'Agenda',checked:false},
+  {id:'highlights',label:'Quarter Highlights',checked:true},
+  {id:'metrics',label:'Key Metrics',checked:true},
+  {id:'financial',label:'Financials',checked:true},
+  {id:'product',label:'Product Update',checked:true},
+  {id:'gtm',label:'GTM & Sales',checked:true},
+  {id:'team',label:'Team Update',checked:false},
+  {id:'risks',label:'Risks & Mitigations',checked:true},
+  {id:'ask',label:'The Ask',checked:true},
+  {id:'appendix',label:'Appendix',checked:false},
+];
+
+let slides = [];
+let currentSlide = 0;
+
+function initChecks(){
+  const c = document.getElementById('slideChecks');
+  c.innerHTML = SLIDE_OPTIONS.map((o,i)=>`
+    <label class="slide-check ${o.checked?'selected':''}" id="sc_${o.id}">
+      <input type="checkbox" ${o.checked?'checked':''} onchange="toggleCheck('${o.id}',this.checked)">
+      ${o.label}
+    </label>`).join('');
+}
+function toggleCheck(id,val){
+  const el = document.getElementById('sc_'+id);
+  if(val) el.classList.add('selected'); else el.classList.remove('selected');
+}
+function getChecked(){
+  return SLIDE_OPTIONS.filter(o=>document.querySelector(`#sc_${o.id} input`).checked).map(o=>o.id);
+}
+
+function fmt(n){return n||'—';}
+
+function generateDeck(){
+  const co = document.getElementById('companyName').value||'Your Company';
+  const period = document.getElementById('period').value||'Q2 2026';
+  const stage = document.getElementById('stage').value;
+  const arr = document.getElementById('arr').value;
+  const growth = document.getElementById('growth').value;
+  const burn = document.getElementById('burn').value;
+  const runway = document.getElementById('runway').value;
+  const priority = document.getElementById('priority').value;
+  const wins = document.getElementById('wins').value;
+  const ask = document.getElementById('ask').value;
+  const checked = getChecked();
+
+  const btn=document.querySelector('.btn');
+  if(btn){btn.disabled=true;btn.dataset.label=btn.dataset.label||btn.textContent;btn.textContent='⏳ Generating…';}
+
+  document.getElementById('inputPrompt').style.display='none';
+  document.getElementById('output').style.display='block';
+  document.getElementById('deckTitle').textContent = `${co} — ${period} Board Deck`;
+  document.getElementById('deckMeta').textContent = `${stage} · Generated ${new Date().toLocaleDateString()}`;
+  document.getElementById('deckNav').innerHTML='';
+  document.getElementById('slideContainer').innerHTML=`
+    <div class="slide-card" style="text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center">
+      <div style="font-size:2.6rem;margin-bottom:14px">📊</div>
+      <div style="color:var(--gold);font-family:'Playfair Display',serif;font-size:1.3rem;margin-bottom:8px">Building ${co}'s board deck…</div>
+      <div style="font-size:.85rem;color:#8899aa;max-width:340px">Live AI on an RTX 5090. The first call cold-loads the model, so this can take 20–90s.</div>
+    </div>`;
+
+  // Real AI board deck via the ABUZ8 brain (Cloudflare Workers AI). No hardcoded metrics.
+  fetch('/api/waitlist',{
+    method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({tool:'board-deck-generator',data:{company:co,period,stage,arr,growth,burnRate:burn,runwayMonths:runway,topPriority:priority,keyWins:wins,fundraisingAsk:ask,includeSlides:checked}})
+  })
+  .then(r=>r.json())
+  .then(res=>{
+    if(btn){btn.disabled=false;btn.textContent=btn.dataset.label;}
+    if(!res.success||!res.result) throw new Error(res.error||'Generation failed');
+    const resultHTML=ABUZ8.formatResult(res.result);
+    slides=[{title:'Full Board Deck',render:()=>resultHTML}];
+    currentSlide=0;
+    document.getElementById('deckMeta').textContent = `${slides.length} slides · ${stage} · Generated ${new Date().toLocaleDateString()}`;
+    renderNav(); renderSlide(0);
+  })
+  .catch(err=>{
+    if(btn){btn.disabled=false;btn.textContent=btn.dataset.label;}
+    slides=[];
+    document.getElementById('deckNav').innerHTML='';
+    document.getElementById('slideContainer').innerHTML=`
+      <div class="slide-card" style="text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center">
+        <div style="font-size:2.6rem;margin-bottom:14px">⚠️</div>
+        <div style="color:#f87171;font-family:'Playfair Display',serif;font-size:1.3rem;margin-bottom:8px">Generation failed</div>
+        <div style="font-size:.85rem;color:#8899aa;max-width:360px;margin-bottom:14px">${err.message}. The live AI may be cold-starting — please try again in a moment.</div>
+        <button class="btn" style="max-width:220px" onclick="generateDeck()">↺ Try Again</button>
+      </div>`;
+    alert('Generation failed: '+err.message+'. Please try again in a moment.');
+  });
+}
+
+function generateDeckTemplatesUNUSED(){
+  const co = document.getElementById('companyName').value||'Your Company';
+  const period = document.getElementById('period').value||'Q2 2026';
+  const stage = document.getElementById('stage').value;
+  const arr = document.getElementById('arr').value;
+  const growth = document.getElementById('growth').value;
+  const burn = document.getElementById('burn').value;
+  const runway = document.getElementById('runway').value;
+  const priority = document.getElementById('priority').value;
+  const wins = document.getElementById('wins').value;
+  const ask = document.getElementById('ask').value;
+  const checked = getChecked();
+
+  const allSlides = {
+    cover: {
+      title: co,
+      subtitle: `${period} Board Meeting`,
+      render: ()=>`
+        <div class="slide-title">${co}</div>
+        <div class="slide-subtitle">${period} Board Meeting — ${stage}</div>
+        <div class="slide-body" style="margin-top:32px;">
+          <div class="metric-row">
+            <div class="metric-box"><div class="metric-val">$${arr}</div><div class="metric-lbl">ARR</div></div>
+            <div class="metric-box"><div class="metric-val">${growth}</div><div class="metric-lbl">Growth</div></div>
+            <div class="metric-box"><div class="metric-val">${runway}mo</div><div class="metric-lbl">Runway</div></div>
+          </div>
+        </div>`
+    },
+    agenda: {
+      title:'Agenda',subtitle:'Today\'s Discussion',
+      render:()=>`
+        <div class="slide-title">Agenda</div>
+        <div class="slide-subtitle">Today's Discussion</div>
+        <ul class="bullet-list">
+          <li>Quarter Highlights & KPIs</li>
+          <li>Financial Performance</li>
+          <li>Product & Engineering Update</li>
+          <li>GTM & Sales Pipeline</li>
+          <li>Risks & Mitigations</li>
+          ${ask?'<li>Fundraising Discussion</li>':''}
+          <li>Board Discussion & Next Steps</li>
+        </ul>`
+    },
+    highlights: {
+      title:'Quarter Highlights',subtitle:`${period} Key Wins`,
+      render:()=>{
+        const winList = wins.split(/[.\n]+/).filter(w=>w.trim()).slice(0,5);
+        return `<div class="slide-title">Quarter Highlights</div>
+          <div class="slide-subtitle">${period} Key Wins</div>
+          <ul class="bullet-list">
+            ${winList.map(w=>`<li>${w.trim()}</li>`).join('')}
+          </ul>
+          <div style="margin-top:16px;font-size:.8rem;color:#8899aa;">Priority for Next Quarter:</div>
+          <div style="margin-top:6px;font-size:.9rem;color:var(--turq2);">${priority}</div>`;
+      }
+    },
+    metrics: {
+      title:'Key Metrics',subtitle:'North Star Numbers',
+      render:()=>`
+        <div class="slide-title">Key Metrics</div>
+        <div class="slide-subtitle">North Star Numbers — ${period}</div>
+        <div class="metric-row">
+          <div class="metric-box"><div class="metric-val">$${arr}</div><div class="metric-lbl">ARR</div></div>
+          <div class="metric-box"><div class="metric-val">${growth}</div><div class="metric-lbl">Growth Rate</div></div>
+          <div class="metric-box"><div class="metric-val">${runway}mo</div><div class="metric-lbl">Runway</div></div>
+        </div>
+        <div class="metric-row" style="margin-top:12px;">
+          <div class="metric-box"><div class="metric-val">$${burn}/mo</div><div class="metric-lbl">Burn Rate</div></div>
+          <div class="metric-box"><div class="metric-val">TBD</div><div class="metric-lbl">NPS Score</div></div>
+          <div class="metric-box"><div class="metric-val">TBD</div><div class="metric-lbl">CAC Payback</div></div>
+        </div>`
+    },
+    financial: {
+      title:'Financial Performance',subtitle:'P&L Summary',
+      render:()=>`
+        <div class="slide-title">Financial Performance</div>
+        <div class="slide-subtitle">P&L Summary — ${period}</div>
+        <table style="width:100%;border-collapse:collapse;font-size:.85rem;margin-top:16px;">
+          <tr style="border-bottom:1px solid #1e3a5f;color:#8899aa;">
+            <td style="padding:8px 0;">Metric</td><td style="text-align:right;">This Period</td><td style="text-align:right;">vs Prior</td>
+          </tr>
+          <tr style="border-bottom:1px solid #1e3a5f;">
+            <td style="padding:8px 0;">ARR</td><td style="text-align:right;color:var(--turq2);">$${arr}</td><td style="text-align:right;color:var(--turq2);">↑ ${growth}</td>
+          </tr>
+          <tr style="border-bottom:1px solid #1e3a5f;">
+            <td style="padding:8px 0;">Monthly Burn</td><td style="text-align:right;">$${burn}</td><td style="text-align:right;color:#8899aa;">—</td>
+          </tr>
+          <tr style="border-bottom:1px solid #1e3a5f;">
+            <td style="padding:8px 0;">Cash Runway</td><td style="text-align:right;color:var(--gold);">${runway} months</td><td style="text-align:right;color:#8899aa;">—</td>
+          </tr>
+          <tr>
+            <td style="padding:8px 0;">Gross Margin</td><td style="text-align:right;">~72%</td><td style="text-align:right;color:#8899aa;">—</td>
+          </tr>
+        </table>`
+    },
+    product: {
+      title:'Product Update',subtitle:'What We Shipped',
+      render:()=>`
+        <div class="slide-title">Product Update</div>
+        <div class="slide-subtitle">What We Shipped — ${period}</div>
+        <ul class="bullet-list">
+          <li>v2.0 launched — 40% faster core workflow</li>
+          <li>New enterprise SSO + RBAC permissions</li>
+          <li>API v2 with webhook support</li>
+          <li>Mobile app beta — 850 signups in week 1</li>
+        </ul>
+        <div style="margin-top:14px;font-size:.8rem;color:#8899aa;">Next Quarter Roadmap:</div>
+        <div style="margin-top:6px;">
+          <span class="tag">AI Copilot</span>
+          <span class="tag">Bulk Import</span>
+          <span class="tag">Audit Logs</span>
+          <span class="tag">SOC 2 Type II</span>
+        </div>`
+    },
+    gtm: {
+      title:'GTM & Sales',subtitle:'Pipeline & Revenue',
+      render:()=>`
+        <div class="slide-title">GTM & Sales</div>
+        <div class="slide-subtitle">Pipeline & Revenue — ${period}</div>
+        <div class="metric-row">
+          <div class="metric-box"><div class="metric-val">$1.2M</div><div class="metric-lbl">Pipeline Value</div></div>
+          <div class="metric-box"><div class="metric-val">4.2mo</div><div class="metric-lbl">Sales Cycle</div></div>
+          <div class="metric-box"><div class="metric-val">28%</div><div class="metric-lbl">Win Rate</div></div>
+        </div>
+        <ul class="bullet-list" style="margin-top:16px;">
+          <li>VP Sales hired — starts June 1</li>
+          <li>Healthcare vertical: 5 active enterprise pilots</li>
+          <li>Inbound up 3× from content strategy</li>
+          <li>Partner channel: 2 reseller agreements signed</li>
+        </ul>`
+    },
+    team: {
+      title:'Team Update',subtitle:'People & Culture',
+      render:()=>`
+        <div class="slide-title">Team Update</div>
+        <div class="slide-subtitle">People & Culture — ${period}</div>
+        <div class="metric-row">
+          <div class="metric-box"><div class="metric-val">34</div><div class="metric-lbl">Total Headcount</div></div>
+          <div class="metric-box"><div class="metric-val">+6</div><div class="metric-lbl">New Hires (QoQ)</div></div>
+          <div class="metric-box"><div class="metric-val">94%</div><div class="metric-lbl">Retention Rate</div></div>
+        </div>
+        <ul class="bullet-list" style="margin-top:16px;">
+          <li>VP Sales + 2 AEs hired this quarter</li>
+          <li>Engineering team at 16 — target 20 by EOY</li>
+          <li>Open roles: Senior ML Eng, Product Designer</li>
+        </ul>`
+    },
+    risks: {
+      title:'Risks & Mitigations',subtitle:'Known Risks This Quarter',
+      render:()=>`
+        <div class="slide-title">Risks & Mitigations</div>
+        <div class="slide-subtitle">Known Risks — ${period}</div>
+        <table style="width:100%;border-collapse:collapse;font-size:.82rem;margin-top:12px;">
+          <tr style="color:#8899aa;border-bottom:1px solid #1e3a5f;">
+            <td style="padding:6px 0;">Risk</td><td style="text-align:center;">Severity</td><td>Mitigation</td>
+          </tr>
+          <tr style="border-bottom:1px solid #1e3a5f;">
+            <td style="padding:8px 0;">Runway &lt; 18mo if growth slows</td>
+            <td style="text-align:center;"><span style="color:#f87171;">HIGH</span></td>
+            <td style="padding-left:12px;">Series B target Q3. Bridge option lined up.</td>
+          </tr>
+          <tr style="border-bottom:1px solid #1e3a5f;">
+            <td style="padding:8px 0;">Enterprise sales cycle 4–6mo</td>
+            <td style="text-align:center;"><span style="color:var(--gold);">MED</span></td>
+            <td style="padding-left:12px;">PLG motion + self-serve trial reducing cycle.</td>
+          </tr>
+          <tr>
+            <td style="padding:8px 0;">Key engineer retention</td>
+            <td style="text-align:center;"><span style="color:var(--turq2);">LOW</span></td>
+            <td style="padding-left:12px;">Equity refresh program approved by board.</td>
+          </tr>
+        </table>`
+    },
+    ask: {
+      title:'The Ask',subtitle:'Fundraising Round',
+      render:()=>`
+        <div class="slide-title">The Ask</div>
+        <div class="slide-subtitle">Series ${stage.includes('A')?'B':'C'} Fundraising Round</div>
+        ${ask?`<div class="ask-box">
+          <div class="ask-num">${ask}</div>
+          <div class="ask-lbl">Target Raise — ${stage.includes('A')?'Series B':'Series C'}</div>
+        </div>
+        <ul class="bullet-list" style="margin-top:16px;">
+          <li>40% — Sales & Marketing (team + demand gen)</li>
+          <li>35% — Engineering (AI, platform, mobile)</li>
+          <li>15% — Geographic expansion (EU launch)</li>
+          <li>10% — Working capital & ops</li>
+        </ul>`:'<div style="text-align:center;padding:32px;color:#8899aa;">No fundraising ask this quarter.</div>'}`
+    },
+    appendix: {
+      title:'Appendix',subtitle:'Supporting Data',
+      render:()=>`
+        <div class="slide-title">Appendix</div>
+        <div class="slide-subtitle">Supporting Data</div>
+        <ul class="bullet-list">
+          <li>Cohort retention curves (see data room)</li>
+          <li>Unit economics by segment</li>
+          <li>Full cap table</li>
+          <li>Customer reference list</li>
+          <li>Competitive analysis</li>
+        </ul>`
+    }
+  };
+
+  slides = checked.filter(id=>allSlides[id]).map(id=>allSlides[id]);
+  currentSlide = 0;
+
+  document.getElementById('inputPrompt').style.display='none';
+  document.getElementById('output').style.display='block';
+  document.getElementById('deckTitle').textContent = `${co} — ${period} Board Deck`;
+  document.getElementById('deckMeta').textContent = `${slides.length} slides · ${stage} · Generated ${new Date().toLocaleDateString()}`;
+
+  renderNav();
+  renderSlide(0);
+}
+
+function renderNav(){
+  const nav = document.getElementById('deckNav');
+  nav.innerHTML = slides.map((s,i)=>`<button class="slide-btn ${i===currentSlide?'active':''}" onclick="renderSlide(${i})">${i+1}. ${s.title}</button>`).join('');
+}
+
+function renderSlide(idx){
+  currentSlide = idx;
+  renderNav();
+  const s = slides[idx];
+  const container = document.getElementById('slideContainer');
+  container.innerHTML = `<div class="slide-card">${s.render()}<div class="slide-num">${idx+1} / ${slides.length}</div></div>
+    <div style="display:flex;justify-content:space-between;margin-top:12px;">
+      <button class="btn-outline" onclick="renderSlide(Math.max(0,${idx}-1))" ${idx===0?'disabled':''}>← Prev</button>
+      <button class="btn-outline" onclick="renderSlide(Math.min(${slides.length-1},${idx}+1))" ${idx===slides.length-1?'disabled':''}>Next →</button>
+    </div>`;
+}
+
+function copyAll(){
+  const text = slides.map((s,i)=>`--- SLIDE ${i+1}: ${s.title} ---\n`).join('\n');
+  navigator.clipboard.writeText(text).then(()=>alert('Deck outline copied!'));
+}
+
+function exportHTML(){
+  const co = document.getElementById('companyName').value||'Board-Deck';
+  const blob = new Blob([`<html><body style="font-family:sans-serif;padding:32px">${slides.map((s,i)=>`<h2>${i+1}. ${s.title}</h2>${s.render()}<hr>`).join('')}
+<script src="/assets/js/dfy-banner.js" async><\/script>
+<\/body><\/html>`],{type:'text/html'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = co.replace(/\s+/g,'-')+'-board-deck.html';
+  a.click();
+}
+
+function joinWaitlist(){
+  const email = document.getElementById('wlEmail').value.trim();
+  if(!email||!email.includes('@')){alert('Please enter a valid email.');return;}
+  fetch('/api/waitlist',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,tool:'ai-board-deck-generator',ts:Date.now()})}).catch(()=>{});
+  localStorage.setItem('wl_board_deck',email);
+  document.querySelector('.waitlist').innerHTML='<h3 style="color:var(--gold);font-family:Playfair Display,serif">✅ You\'re on the list!</h3><p style="color:#8899aa;margin-top:8px;">We\'ll reach out within 24 hours with Pro access.</p>';
+}
+
+initChecks();
+</script>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+<script src="/tools/_tools-shared.js" defer></script>
+
+  <section style="background:var(--lapis-2);border:1px solid var(--gold);border-radius:16px;padding:24px 32px;margin-top:24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;">
+    <div>
+      <h3 style="font-family:'Playfair Display',serif;font-size:22px;color:var(--cream);margin-bottom:4px;">Ready for the next level?</h3>
+      <p style="color:var(--dim);font-size:14px;">28 premium toolkits, real deliverables. From $17 to $97.</p>
+    </div>
+    <a href="/store.html" style="background:var(--gold);color:var(--lapis);font-weight:700;padding:12px 28px;border-radius:999px;font-size:14px;letter-spacing:.5px;">Browse the Store →</a>
+  </section>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>
+

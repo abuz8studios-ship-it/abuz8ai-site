@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<link rel="stylesheet" href="/assets/css/abuz8-mach3.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Free AI SQL Generator: Plain English to Working Queries | ABUZ8</title>
+<meta name="description" content="A free AI SQL generator that turns plain English into working SQL — joins, CTEs, window functions — across Postgres, MySQL, and more. No card. Join early access.">
+<link rel="canonical" href="https://abuz8ai.com/blog/ai-sql-generator-free/">
+<meta property="og:title" content="Free AI SQL Generator | ABUZ8">
+<meta property="og:description" content="Describe the query in English, get working SQL back. Free, any dialect.">
+<meta property="og:type" content="article">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0a1628; --primary:#5fa8e8; --primary-dk:#245a8d; --text:#e8e4d8;
+  --muted:#5b6b7a; --card:#0d1a30; --border:#1a2e50; --soft:#eef4fa;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;line-height:1.75;min-height:100vh}
+.container{max-width:780px;margin:0 auto;padding:60px 24px}
+.crumb{color:var(--primary);font-size:12px;text-decoration:none;letter-spacing:2px;text-transform:uppercase;margin-bottom:24px;display:inline-block}
+.crumb:hover{color:var(--primary-dk)}
+.badge{display:inline-block;padding:6px 14px;background:var(--soft);border:1px solid var(--primary);color:var(--primary-dk);border-radius:999px;font-size:10px;font-weight:800;letter-spacing:2px;margin-bottom:20px}
+h1{font-family:'Playfair Display',serif;font-size:clamp(2rem,5vw,3.1rem);color:var(--text);line-height:1.15;margin-bottom:20px}
+h2{font-family:'Playfair Display',serif;font-size:1.7rem;color:var(--text);margin:46px 0 16px;line-height:1.25}
+h3{font-family:'Inter',sans-serif;font-weight:700;color:var(--primary-dk);font-size:1.12rem;margin:30px 0 12px}
+p{margin-bottom:18px;color:var(--text);font-size:17px}
+.meta{color:var(--muted);font-size:13px;margin-bottom:34px;letter-spacing:1px;text-transform:uppercase}
+a{color:var(--primary);text-decoration:none;border-bottom:1px solid rgba(46,117,182,0.3)}
+a:hover{color:var(--primary-dk);border-bottom-color:var(--primary)}
+ul{margin:0 0 24px 24px}
+li{margin-bottom:10px}
+strong{color:var(--text)}
+code{background:var(--soft);padding:2px 7px;border-radius:5px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:14px;color:var(--primary-dk)}
+.callout{background:var(--card);border:1px solid var(--border);border-left:3px solid var(--primary);padding:24px 28px;border-radius:8px;margin:32px 0;box-shadow:0 1px 3px rgba(44,62,80,0.05)}
+.callout p:last-child{margin-bottom:0}
+.cta-box{background:var(--card);border:1px solid var(--primary);border-radius:18px;padding:40px;margin:54px 0 24px;text-align:center;box-shadow:0 6px 20px rgba(46,117,182,0.08)}
+.cta-box h3{color:var(--text);font-family:'Playfair Display',serif;font-size:1.5rem;margin-bottom:12px}
+.cta-box p{color:var(--muted);margin-bottom:24px}
+.btn{display:inline-block;padding:15px 32px;background:var(--primary);color:#0d1a30;font-weight:700;letter-spacing:1px;text-transform:uppercase;border-radius:10px;font-size:14px;text-decoration:none;border-bottom:none;transition:background 0.3s,transform 0.3s}
+.btn:hover{background:var(--primary-dk);transform:translateY(-2px);color:#0d1a30;border-bottom:none}
+.footer-nav{border-top:1px solid var(--border);padding-top:32px;margin-top:48px;color:var(--muted);font-size:13px;text-align:center}
+</style>
+</head>
+<body>
+<div class="container">
+  <a href="/blog/" class="crumb">&larr; ABUZ8 BLOG</a>
+  <div class="badge">EARLY ACCESS LIVE</div>
+  <h1>The Free AI SQL Generator That Turns Plain English Into Working Queries</h1>
+  <p class="meta">Published June 14, 2026 · 6 min read</p>
+
+  <p>A <strong>free AI SQL generator</strong> takes a sentence like "monthly active users by signup cohort for the last six months" and hands you back working SQL — the joins, the date math, the <code>GROUP BY</code>, the window function — in the dialect you actually use. It's for the moment you know exactly what you want but can't remember whether your database spells it <code>DATE_TRUNC</code> or <code>STRFTIME</code>. Ours is free, no card.</p>
+
+  <p>This post is about where an AI SQL generator genuinely saves time, where it will quietly hand you a wrong-but-plausible query, and how to use it without shipping a bad number to your dashboard.</p>
+
+  <h2>What it's actually good at</h2>
+  <p>The real cost of SQL usually isn't logic — it's syntax recall and boilerplate. You know you need a self-join or a running total; you just don't want to hand-write the <code>OVER (PARTITION BY ... ORDER BY ...)</code> clause from memory for the hundredth time. That's the sweet spot. Describe the shape of the answer, get a clean first draft, and spend your attention on whether the <em>logic</em> is right instead of whether the <em>syntax</em> is right.</p>
+
+  <p>It's also a fast way to translate between dialects. The same request, rendered for Postgres, then MySQL, then BigQuery, without you holding three sets of function names in your head. And it's a quiet teaching tool — read the generated window function and you'll understand the pattern next time.</p>
+
+  <h2>Who this is for</h2>
+  <ul>
+    <li><strong>Analysts and PMs</strong> who think in questions and want the SQL without the syntax tax</li>
+    <li><strong>Backend devs</strong> who know SQL but want to skip boilerplate for complex aggregations</li>
+    <li><strong>Founders</strong> pulling their own numbers out of a production database</li>
+    <li><strong>Anyone learning SQL</strong> who wants worked examples for joins, CTEs, and window functions</li>
+  </ul>
+
+  <div class="callout">
+    <p><strong>What you give:</strong> a plain-English question, your dialect (and optionally your table names), an email.<br><strong>What you get:</strong> a working query you can copy straight into your editor — no card, no watermark on your code.</p>
+  </div>
+
+  <h2>Why it's free</h2>
+  <p>Because the SQL generator is a free showcase of the reasoning engine inside <a href="/qadir.html">QADIR OS</a> — a local-first agent system that runs its own models on hardware you own, so your schema and queries don't have to leave your machine. We don't want your card. We want your email so we can tell you when the desktop app ships.</p>
+
+  <h2>How to use it without shipping a bad number</h2>
+  <h3>Give it your real column names</h3>
+  <p>The single biggest quality jump comes from telling it your actual tables and columns. "Users table has <code>id, created_at, plan</code>; events table has <code>user_id, event_name, ts</code>" turns a generic guess into a query that runs on the first try.</p>
+
+  <h3>Read the query before you run it</h3>
+  <p>An AI SQL generator can produce a query that is syntactically perfect and semantically wrong — it might count rows where you meant distinct users, or use an inner join where a left join was the point. Read it. If you can't tell whether it's right, you're not ready to ship its output.</p>
+
+  <h3>Sanity-check against a number you already know</h3>
+  <p>Run it on a small, known slice first. If "total users last month" comes back as 4 and you know it's thousands, the logic is off. Trust queries that reproduce a number you can already verify.</p>
+
+  <h2>The honesty pass</h2>
+  <p>What it does well: eliminates syntax recall, drafts complex aggregations fast, and translates cleanly across dialects. What it doesn't do: know your data's quirks — soft-deletes, duplicate rows, that one column that's a string when it should be a date. It will write confident SQL over assumptions that may not hold. Treat its output as a strong first draft from a fast junior, not a verified answer from your senior analyst.</p>
+
+  <h2>Where it fits with the rest of the engine</h2>
+  <p>The SQL tool sits alongside the other developer tools — pair it with the <a href="/tools/ai-load-tester.html">AI load tester</a> for checking query-backed endpoints under traffic, and browse the rest in the <a href="/tools.html">tools spaceport</a>.</p>
+
+  <div class="cta-box">
+    <h3>Join Early Access</h3>
+    <p>Free SQL generation now. Local models, the full dev toolkit, and the agent army when QADIR OS ships.</p>
+    <a href="/tools/ai-sql-generator.html" class="btn">Try the SQL Generator</a>
+  </div>
+
+  <div class="footer-nav">
+    ABUZ8 AI · <a href="/blog/">More posts</a> · <a href="/tools.html">All tools</a> · <a href="/qadir.html">QADIR OS</a>
+  </div>
+</div>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+<script src="/blog/_blog-shared.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>

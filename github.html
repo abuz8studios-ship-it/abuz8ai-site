@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GitHub Intelligence Hub — ABUZ8 AI</title>
+<meta name="description" content="Live GitHub trending boards, a 20-project agent-system star tracker, and practical open-source guides. Every repo credited and linked — we aggregate, never copy.">
+<link rel="canonical" href="https://abuz8ai.com/github">
+<meta property="og:type" content="website">
+<meta property="og:title" content="GitHub Intelligence Hub — ABUZ8 AI">
+<meta property="og:description" content="Live GitHub trending boards, a 20-project agent-system star tracker, and practical open-source guides. Every repo credited and linked — we aggregate, never copy.">
+<meta property="og:url" content="https://abuz8ai.com/github">
+<meta name="theme-color" content="#0a1628">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/abuz8-theme.css">
+<style>
+/* page-specific styles ONLY — theme vars, no new hex colors */
+.gh-section{max-width:var(--wrap);margin:0 auto;padding:0 32px 24px}
+.repo-meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.repo-chip{font-size:11px;color:var(--dim);border:1px solid var(--border);border-radius:20px;
+  padding:3px 10px;display:inline-flex;align-items:center;gap:6px;font-family:var(--font-mono)}
+.repo-gained{color:var(--green-bright);border-color:var(--green-deep)}
+.lang-dot{width:8px;height:8px;border-radius:50%;background:var(--blue-bright);display:inline-block}
+.board-status{font-family:var(--font-mono);font-size:11px;color:var(--dim);letter-spacing:.5px;
+  margin:0 0 18px;display:block}
+.oss-plans h2{margin:12px 0 10px;font-size:1.4rem}
+.oss-plans p{color:var(--dim);font-size:14px;line-height:1.7;max-width:760px}
+.oss-plans p+p{margin-top:10px}
+.credit-line{font-size:12px;color:var(--muted);margin-top:14px}
+.arch-pill{font-size:10px;color:var(--dim);border:1px solid var(--border);border-radius:20px;
+  padding:2px 8px;margin-left:8px;letter-spacing:1px;text-transform:uppercase}
+.tab-panel h3{margin:0 0 8px;font-size:1.05rem}
+.tab-panel .lead{color:var(--dim);font-size:14px;line-height:1.7;margin-bottom:20px;max-width:760px}
+.guide-card h3{display:flex;align-items:center;gap:10px}
+</style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebPage",
+      "name": "GitHub Intelligence Hub",
+      "url": "https://abuz8ai.com/github.html",
+      "description": "Live GitHub trending boards, a 20-project agent-system star tracker, and practical open-source guides. Every repo credited and linked — we aggregate, never copy.",
+      "isPartOf": { "@type": "WebSite", "name": "ABUZ8 AI", "url": "https://abuz8ai.com" }
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://abuz8ai.com/" },
+        { "@type": "ListItem", "position": 2, "name": "GitHub Hub", "item": "https://abuz8ai.com/github.html" }
+      ]
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Is ABUZ8's own code on GitHub?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Not yet. There is no public ABUZ8 GitHub organization today. Open-sourcing components of our stack is on the roadmap — planned, not shipped — so we do not link repositories that do not exist. ABUZ8 OS is in early access; interest goes through our request page." }
+        },
+        {
+          "@type": "Question",
+          "name": "Where does the trending data come from?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Our server parses GitHub's public Trending pages (weekly and monthly windows) and caches the result for about an hour. If GitHub is unreachable or its markup changes, the board falls back to a frozen real snapshot captured 2026-05-24 and labels itself as a cached snapshot." }
+        },
+        {
+          "@type": "Question",
+          "name": "Are the projects on these boards yours?",
+          "acceptedAnswer": { "@type": "Answer", "text": "No. Every repository belongs to its authors and is linked directly to its GitHub page. We aggregate public data and credit the source — we never copy code or claim it as ours." }
+        },
+        {
+          "@type": "Question",
+          "name": "How fresh are the agent-board star counts?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Star counts come live from the public GitHub API, edge-cached for about 30 minutes. If GitHub rate-limits us, the board shows last-known fallback values and says so — it never invents numbers." }
+        },
+        {
+          "@type": "Question",
+          "name": "Which open-source license should I pick?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Short version: MIT is the simplest permissive license; Apache-2.0 is permissive with an explicit patent grant; GPL-3.0 is copyleft, meaning derivatives must stay open under the same license. Always read the actual LICENSE file, and note this is general information, not legal advice." }
+        },
+        {
+          "@type": "Question",
+          "name": "Can I suggest a project for the agent board?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Yes — email ahmad@abuz8ai.com with the repository link and a sentence on why it belongs. The board is a curated list of open-source agent systems, so suggestions should be open source and agent-related." }
+        }
+      ]
+    }
+  ]
+}
+</script>
+</head>
+<body>
+<div class="geo-bg"></div>
+<div class="glow-orb glow-orb-1"></div>
+<div class="glow-orb glow-orb-2"></div>
+<div class="glow-orb glow-orb-3"></div>
+
+<nav class="abuz8-nav">
+<div class="nav-inner">
+  <a href="/" style="text-decoration:none;">
+    <div class="logo">ABUZ8</div>
+    <div class="logo-sub">Sovereign AI</div>
+  </a>
+  <div class="nav-links">
+    <a href="/tools.html">Tools</a>
+    <a href="/store.html">Store</a>
+    
+    <a href="/agents.html">Agents</a>
+    <a href="/models.html">Models</a>
+    <a href="/news.html">News</a>
+    <a href="/roadmap.html">Roadmap</a>
+    <a href="/store.html" class="nav-cta">Get Started</a>
+  </div>
+</div>
+</nav>
+
+<div class="gh-section">
+  <nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a> › <span>GitHub Hub</span></nav>
+</div>
+
+<section class="hero">
+  <div class="hero-eyebrow">GitHub Intelligence</div>
+  <h1>The GitHub <span class="gold">Intelligence</span> Hub</h1>
+  <p>Live trending boards, a curated star tracker for the top open-source agent systems, and practical guides for evaluating and contributing to open source. Every repository is credited and linked to its authors — we aggregate, we never copy.</p>
+  <div class="hero-btns">
+    <a class="btn btn-gold" href="#tab=panel-week">🔥 See what's trending</a>
+    <a class="btn btn-outline" href="#tab=panel-agents">🤖 Agent Systems Board</a>
+  </div>
+  <div class="stats-row">
+    <div class="stat"><div class="stat-num" data-count="20">20</div><div class="stat-label">Agent projects tracked</div></div>
+    <div class="stat"><div class="stat-num" data-count="2">2</div><div class="stat-label">Trending windows</div></div>
+    <div class="stat"><div class="stat-num" data-count="60" data-suffix="m">0</div><div class="stat-label">Trending cache</div></div>
+    <div class="stat"><div class="stat-num" data-count="30" data-suffix="m">0</div><div class="stat-label">Star-count cache</div></div>
+  </div>
+</section>
+
+<section class="gh-section">
+  <div class="panel panel-gold oss-plans">
+    <span class="badge badge-roadmap"><span class="badge-dot"></span>ROADMAP</span>
+    <h2>Our open-source plans</h2>
+    <p>Straight answer: <strong>there is no public ABUZ8 GitHub organization today.</strong> Open-sourcing components of our stack is on the roadmap — planned, not shipped — so we won't link you to a repo that doesn't exist. When something of ours goes public, it will be announced here and on the roadmap first.</p>
+    <p>Until then, this hub does one honest job: track the open-source ecosystem we build on and learn from, fully credited to its authors. ABUZ8 OS itself is in early access — <a href="/request.html">request access here</a>.</p>
+    <p><a href="/roadmap.html">See the roadmap →</a> &nbsp;·&nbsp; <a href="/open-source.html">Our open-source page →</a></p>
+  </div>
+</section>
+
+<section class="gh-section">
+<div class="tabs" data-tabs>
+  <div class="tab-list" role="tablist" aria-label="GitHub hub sections">
+    <button class="tab-btn" role="tab" id="tab-week" aria-controls="panel-week" aria-selected="true">🔥 Trending This Week</button>
+    <button class="tab-btn" role="tab" id="tab-month" aria-controls="panel-month" aria-selected="false">📈 Trending This Month</button>
+    <button class="tab-btn" role="tab" id="tab-agents" aria-controls="panel-agents" aria-selected="false">🤖 Agent Systems Board</button>
+    <button class="tab-btn" role="tab" id="tab-guide" aria-controls="panel-guide" aria-selected="false">🧭 Open-Source Guide</button>
+    <button class="tab-btn" role="tab" id="tab-git" aria-controls="panel-git" aria-selected="false">🚀 Ship With Git</button>
+    <button class="tab-btn" role="tab" id="tab-faq" aria-controls="panel-faq" aria-selected="false">❓ FAQ</button>
+  </div>
+
+  <div class="tab-panel" role="tabpanel" id="panel-week" aria-labelledby="tab-week">
+    <h3>Fastest-growing repos this week</h3>
+    <p class="lead">GitHub's own Trending ranking measures star <em>velocity</em> — who is gaining stars right now, not who accumulated the most over a decade. Our server parses the public weekly Trending page and tops it up with 30-day risers when the weekly list runs short; each card is tagged with the window its number measures.</p>
+    <span class="board-status" id="week-status">Loading the live board…</span>
+    <div id="week-board">
+      <div class="note-blue note">Loading live trending data. If the feed is unreachable you'll see a labeled snapshot or an honest offline notice — never fake numbers.</div>
+    </div>
+    <p class="credit-line">Data credit: parsed from GitHub's public Trending pages. Every card links straight to its repository and its authors.</p>
+  </div>
+
+  <div class="tab-panel" role="tabpanel" id="panel-month" aria-labelledby="tab-month" hidden>
+    <h3>Fastest-growing repos this month</h3>
+    <p class="lead">The 30-day window smooths out one-week spikes. A repo that holds a spot on the monthly board usually has real adoption behind it, not a single viral post. Compare it against the weekly tab: on both boards = sustained momentum; weekly only = breaking; monthly only = cooling but still compounding.</p>
+    <span class="board-status" id="month-status">Loading the live board…</span>
+    <div id="month-board">
+      <div class="note-blue note">Loading live trending data. If the feed is unreachable you'll see a labeled snapshot or an honest offline notice — never fake numbers.</div>
+    </div>
+    <p class="credit-line">Data credit: parsed from GitHub's public Trending pages. Every card links straight to its repository and its authors.</p>
+  </div>
+
+  <div class="tab-panel" role="tabpanel" id="panel-agents" aria-labelledby="tab-agents" hidden>
+    <h3>The Agent Systems Board — 20 curated open-source projects</h3>
+    <p class="lead">A hand-picked board of the open-source projects that define the agent ecosystem: orchestration frameworks, agent runtimes, memory layers, tool integrations, and chat platforms. Star counts load live from the public GitHub API (cached ~30 minutes). These are their projects, not ours — every row links to the source.</p>
+    <span class="board-status" id="agents-status">Loading live star counts…</span>
+    <div class="table-scroll">
+      <table class="data-table">
+        <thead>
+          <tr><th>Project</th><th>What it is</th><th>Language</th><th>Stars</th><th>Repo</th></tr>
+        </thead>
+        <tbody>
+          <tr data-repo="n8n-io/n8n"><td data-name>n8n</td><td>Workflow automation platform with AI agent nodes</td><td data-lang>—</td><td data-stars>—</td><td><a href="https://github.com/n8n-io/n8n" target="_blank" rel="noopener noreferrer">n8n-io/n8n</a></td></tr>
+          <tr data-repo="significant-gravitas/AutoGPT"><td data-name>AutoGPT</td><td>Pioneering autonomous GPT agent project</td><td data-lang>—</td><td data-stars>—</td><td><a href="https://github.com/significant-gravitas/AutoGPT" target="_blank" rel="noopener noreferrer">significant-gravitas/AutoGPT</a></td></tr>
+          <tr data-repo="langgenius/dify"><td data-name>Dify</td><td>LLM app development platform</td><td data-lang>—</td><td data-stars>—</td><td><a href="https://github.com/langgenius/dify" target="_blank" rel="noopener noreferrer">langgenius/dify</a></td></tr>
+          <tr data-repo="langchain-ai/langchain"><td data-name>LangChain</td><td>Framework for LLM applications and agents</td><td data-lang>—</td><td data-stars>—</td><td><a href="https://github.com/langchain-ai/langchain" target="_blank" rel="noopener noreferrer">langchain-ai/langchain</a></td></tr>
+          <tr data-repo="comfyanonymous/ComfyUI"><td data-name>ComfyUI</td><td>Node-based diffusion model interface</td><td data-lang>—</td><td data-stars>—</td><td><a href="https://github.com/comfyanonymous/ComfyUI" target="_blank" rel="noopener noreferrer">comfyanonymous/ComfyUI</a></td></tr>
+          <tr data-repo="browser-use/browser-use"><td data-name>Browser Use</td><td>Lets AI agents drive a real browser</td><td data-lang>—</td><td data-stars>—</td><td><a href="https://github.com/browser-use/browser-use" target="_blank" rel="noopener noreferrer">browser-use/browser-use</a></td></tr>
+          <tr data-repo="lobehub/lobe-chat"><td data-name>Lobe Chat</td><td>Open chat UI with agents and plugins</td><td data-lang>—</td><td data-stars>—</td><td><a href="https://github.com/lobehub/lobe-chat" target="_blank" rel="noopener noreferrer">lobehub/lobe-chat</a></td></tr>
+          <tr data-repo="All-Hands-AI/OpenHands"><td data-name>OpenHands</td><td>AI software-development agents</td><td data-lang>—</td><td data-stars>—</td><td><a href="https://github.com/All-Hands-AI/OpenHands" target="_blank" rel="noopener noreferrer">All-Hands-AI/OpenHands</a></td></tr>
+          <tr data-repo="geekan/MetaGPT"><td data-name>MetaGPT</td><td>Multi-agent "software company" framework</td><td data-lang>—</td><td data-stars>—</td><td><a href="https://github.com/geekan/MetaGPT" target="_blank" rel="noopener noreferrer">geekan/MetaGPT</a></td></tr>
+          <tr data-repo="mem0ai/mem0"><td data-name>Mem0</td><td>Memory layer for AI agents</td><td data-lang>—</td><td data-stars>—</td><td><a href="https://github.com/mem0ai/mem0" target="_blank" rel="noopener noreferrer">mem0ai/mem0</a></td></tr>
+          <tr data-repo="microsoft/autogen"><td data-name>AutoGen</td><td>Microsoft's multi-agent conversation framework</td><td data-lang>—</td><td data-stars>—</td><td><a href="https://github.com/microsoft/autogen" target="_blank" rel="noopener noreferrer">microsoft/autogen</a></td></tr>
+          <tr data-repo="FlowiseAI/Flowise"><td data-name>Flowise</td><td>Visual builder for LLM flows</td><td data-lang>—</td><td data-stars>—</td><td><a href="https://github.com/FlowiseAI/Flowise" target="_blank" rel="noopener noreferrer">FlowiseAI/Flowise</a></td></tr>
+          <tr data-repo="crewAIInc/crewAI"><td data-name>CrewAI</td><td>Role-based agent team orchestration</td><td data-lang>—</td><td data-stars>—</td><td><a href="https://github.com/crewAIInc/crewAI" target="_blank" rel="noopener noreferrer">crewAIInc/crewAI</a></td></tr>
+          <tr data-repo="run-llama/llama_index"><td data-name>LlamaIndex</td><td>Data framework for LLM apps</td><td data-lang>—</td><td data-stars>—</td><td><a href="https://github.com/run-llama/llama_index" target="_blank" rel="noopener noreferrer">run-llama/llama_index</a></td></tr>
+          <tr data-repo="danny-avila/LibreChat"><td data-name>LibreChat</td><td>Open, multi-provider chat platform</td><td data-lang>—</td><td data-stars>—</td><td><a href="https://github.com/danny-avila/LibreChat" target="_blank" rel="noopener noreferrer">danny-avila/LibreChat</a></td></tr>
+          <tr data-repo="stanfordnlp/dspy"><td data-name>DSPy</td><td>Programming — not prompting — LM pipelines</td><td data-lang>—</td><td data-stars>—</td><td><a href="https://github.com/stanfordnlp/dspy" target="_blank" rel="noopener noreferrer">stanfordnlp/dspy</a></td></tr>
+          <tr data-repo="ComposioHQ/composio"><td data-name>Composio</td><td>Tool and integration layer for agents</td><td data-lang>—</td><td data-stars>—</td><td><a href="https://github.com/ComposioHQ/composio" target="_blank" rel="noopener noreferrer">ComposioHQ/composio</a></td></tr>
+          <tr data-repo="microsoft/semantic-kernel"><td data-name>Semantic Kernel</td><td>Microsoft's AI orchestration SDK</td><td data-lang>—</td><td data-stars>—</td><td><a href="https://github.com/microsoft/semantic-kernel" target="_blank" rel="noopener noreferrer">microsoft/semantic-kernel</a></td></tr>
+          <tr data-repo="assafelovic/gpt-researcher"><td data-name>GPT Researcher</td><td>Autonomous web research agent</td><td data-lang>—</td><td data-stars>—</td><td><a href="https://github.com/assafelovic/gpt-researcher" target="_blank" rel="noopener noreferrer">assafelovic/gpt-researcher</a></td></tr>
+          <tr data-repo="openai/openai-agents-python"><td data-name>OpenAI Agents SDK</td><td>OpenAI's Python agents SDK</td><td data-lang>—</td><td data-stars>—</td><td><a href="https://github.com/openai/openai-agents-python" target="_blank" rel="noopener noreferrer">openai/openai-agents-python</a></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="credit-line">Star counts: public GitHub API. Each project belongs to its authors under its own license — we aggregate and credit, we never claim their code. Want to deploy one of these yourself? Our <a href="/agents.html">agents page</a> covers the landscape.</p>
+  </div>
+
+  <div class="tab-panel" role="tabpanel" id="panel-guide" aria-labelledby="tab-guide" hidden>
+    <h3>How to evaluate an open-source repo before you depend on it</h3>
+    <p class="lead">Stars are the most visible metric on GitHub and the least sufficient. Here is the evaluation method we use before any project earns a place on our boards — or in our stack.</p>
+
+    <div class="grid-3">
+      <div class="card guide-card">
+        <span class="icon-chip">⭐</span>
+        <h3>Stars = accumulated trust</h3>
+        <p>Total stars measure how many people <em>ever</em> found the project interesting. A 10-year-old repo can hold 50k stars and be effectively abandoned. Treat stars as a popularity archive, not a health report.</p>
+      </div>
+      <div class="card guide-card">
+        <span class="icon-chip">📈</span>
+        <h3>Velocity = current momentum</h3>
+        <p>Stars gained <em>this week or month</em> (what our trending boards measure) tell you where attention is flowing right now. High velocity + low total = breaking. High velocity + high total = compounding winner.</p>
+      </div>
+      <div class="card guide-card">
+        <span class="icon-chip">🫀</span>
+        <h3>Pulse = actual health</h3>
+        <p>Check the last commit date, how fast maintainers answer issues, release cadence, and how many people hold merge rights (the "bus factor"). A living project answers its issues; a dead one just collects them.</p>
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <h3>License basics — what you can actually do with the code</h3>
+    <p class="lead">The LICENSE file, not the README, decides what you may build. The three families you'll meet most:</p>
+    <div class="table-scroll">
+      <table class="data-table">
+        <thead>
+          <tr><th>License</th><th>Family</th><th>You can</th><th>You must</th><th>Patent grant</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>MIT</strong></td><td>Permissive</td><td>Use, modify, sell, keep your changes closed</td><td>Keep the license and copyright notice</td><td>Not explicit</td></tr>
+          <tr><td><strong>Apache-2.0</strong></td><td>Permissive</td><td>Use, modify, sell, keep your changes closed</td><td>Keep notices, state significant changes</td><td>Yes — explicit</td></tr>
+          <tr><td><strong>GPL-3.0</strong></td><td>Copyleft</td><td>Use, modify, sell</td><td>Release derivative source under GPL-3.0</td><td>Yes</td></tr>
+          <tr><td><strong>AGPL-3.0</strong></td><td>Network copyleft</td><td>Use, modify, sell</td><td>Share source even when only hosting it as a service</td><td>Yes</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="note-gold note">⚠️ Watch for <strong>source-available</strong> licenses (fair-code, BSL, "sustainable use" and similar). The code is public but commercial hosting or resale can be restricted. Always read the LICENSE file itself. This table is general information, not legal advice.</div>
+
+    <hr class="divider">
+
+    <h3>Security checklist — before you run a stranger's code</h3>
+    <p class="lead">Cloning a repo is downloading executable code from someone you've never met. The checklist we apply, in order:</p>
+    <ol class="steps">
+      <li><strong>Read before you run</strong><p>Skim the entry points and anything that touches the network or filesystem. You don't need to audit every line — you need to know what it talks to and what it writes.</p></li>
+      <li><strong>Inspect install hooks</strong><p>Check <code class="inline">package.json</code> for <code class="inline">postinstall</code> scripts, <code class="inline">setup.py</code> for arbitrary code, and Makefiles or install scripts for <code class="inline">curl | bash</code> patterns. Install-time is the classic attack moment.</p></li>
+      <li><strong>Sandbox the first run</strong><p>First run happens in a container, VM, or throwaway user account — with no API keys, no SSH keys, and no production credentials in the environment.</p></li>
+      <li><strong>Pin versions and use lockfiles</strong><p>Install exact versions and commit the lockfile. Supply-chain attacks often land in a "patch" release of a dependency you never look at.</p></li>
+      <li><strong>Check the dependency tree</strong><p>Fewer dependencies = smaller attack surface. Watch for typosquatting (one letter off a famous package name) and brand-new packages with big claims.</p></li>
+      <li><strong>Grant least privilege</strong><p>If the tool needs an API key, create a scoped key just for it. Never hand a stranger's code your all-powerful credentials to save five minutes.</p></li>
+      <li><strong>Verify the maintainers</strong><p>Real projects have history: older commits, multiple contributors, linked identities. A fresh account pushing a "wallet drainer detector" is the drainer.</p></li>
+    </ol>
+  </div>
+
+  <div class="tab-panel" role="tabpanel" id="panel-git" aria-labelledby="tab-git" hidden>
+    <h3>Ship your first contribution — fork to merged PR</h3>
+    <p class="lead">The complete practical loop for contributing to any open-source project. Each command block has a copy button. Replace <code class="inline">OWNER/REPO</code> and <code class="inline">YOU</code> with the real names.</p>
+    <ol class="steps">
+      <li>
+        <strong>Fork the repository</strong>
+        <p>On the repo's GitHub page, click <em>Fork</em>. This creates your own copy under your account — the only place you need push rights.</p>
+      </li>
+      <li>
+        <strong>Clone your fork and wire the upstream</strong>
+        <p>Clone <em>your</em> fork, then add the original repo as <code class="inline">upstream</code> so you can stay in sync.</p>
+        <pre class="code"><button class="code-copy" type="button">Copy</button>git clone https://github.com/YOU/REPO.git
+cd REPO
+git remote add upstream https://github.com/OWNER/REPO.git
+git remote -v</pre>
+      </li>
+      <li>
+        <strong>Branch for the change</strong>
+        <p>Never work on <code class="inline">main</code>. One branch = one focused change = one reviewable PR.</p>
+        <pre class="code"><button class="code-copy" type="button">Copy</button>git checkout -b fix/short-description</pre>
+      </li>
+      <li>
+        <strong>Make the change, then commit it</strong>
+        <p>Small commits with messages that say <em>why</em>, not just what. Run the project's tests before committing if it has them.</p>
+        <pre class="code"><button class="code-copy" type="button">Copy</button>git add -A
+git commit -m "fix: describe what this changes and why"</pre>
+      </li>
+      <li>
+        <strong>Sync with upstream, then push</strong>
+        <p>Rebase onto the latest upstream so your PR applies cleanly, then push the branch to your fork.</p>
+        <pre class="code"><button class="code-copy" type="button">Copy</button>git fetch upstream
+git rebase upstream/main
+git push -u origin fix/short-description</pre>
+      </li>
+      <li>
+        <strong>Open the pull request</strong>
+        <p>Via the GitHub web UI (a banner appears after you push) or the <code class="inline">gh</code> CLI. Describe the problem, the fix, and how you tested it. Then respond to review promptly — reviewers remember contributors who follow through.</p>
+        <pre class="code"><button class="code-copy" type="button">Copy</button>gh pr create --title "fix: short description" --body "What, why, and how it was tested."</pre>
+      </li>
+    </ol>
+
+    <h3>Daily-driver commands</h3>
+    <p class="lead">The handful of commands that cover 90% of everyday Git work:</p>
+    <pre class="code"><button class="code-copy" type="button">Copy</button>git status              # what changed
+git diff                # see the actual edits
+git log --oneline -10   # recent history
+git stash               # shelve work-in-progress
+git stash pop           # bring it back
+git checkout main &amp;&amp; git pull upstream main   # refresh main</pre>
+    <div class="note">✅ Golden rule: pull before you branch, branch before you edit, test before you push. Almost every Git mess starts by skipping one of those three.</div>
+  </div>
+
+  <div class="tab-panel" role="tabpanel" id="panel-faq" aria-labelledby="tab-faq" hidden>
+    <h3>Frequently asked questions</h3>
+    <details class="acc">
+      <summary>Is ABUZ8's own code on GitHub?</summary>
+      <div class="acc-body">Not yet. There is no public ABUZ8 GitHub organization today. Open-sourcing components of our stack is on the <a href="/roadmap.html">roadmap</a> — planned, not shipped — so we don't link repos that don't exist. ABUZ8 OS is in early access via the <a href="/request.html">request page</a>.</div>
+    </details>
+    <details class="acc">
+      <summary>Where does the trending data come from?</summary>
+      <div class="acc-body">Our server parses GitHub's public Trending pages (weekly and monthly windows) and edge-caches the result for about an hour. If GitHub is unreachable or the markup changes, the board falls back to a frozen real snapshot captured 2026-05-24 — and labels itself as a cached snapshot so you always know what you're looking at.</div>
+    </details>
+    <details class="acc">
+      <summary>Are the projects on these boards yours?</summary>
+      <div class="acc-body">No. Every repository belongs to its authors and every card and row links straight to the source on GitHub. We aggregate public data and credit it — we never copy code or claim it as ours.</div>
+    </details>
+    <details class="acc">
+      <summary>How fresh are the agent-board star counts?</summary>
+      <div class="acc-body">They load live from the public GitHub API, edge-cached about 30 minutes. If GitHub rate-limits the request, the board shows last-known fallback values and says so in the status line. It never invents numbers.</div>
+    </details>
+    <details class="acc">
+      <summary>Which open-source license should I pick for my own project?</summary>
+      <div class="acc-body">Short version: <strong>MIT</strong> if you want maximum adoption with minimum text; <strong>Apache-2.0</strong> if you also want an explicit patent grant; <strong>GPL-3.0</strong> if you want derivatives to stay open source. See the license table in the Open-Source Guide tab — and remember it's general information, not legal advice.</div>
+    </details>
+    <details class="acc">
+      <summary>Can I suggest a project for the Agent Systems Board?</summary>
+      <div class="acc-body">Yes — email <a href="mailto:ahmad@abuz8ai.com">ahmad@abuz8ai.com</a> with the repo link and one sentence on why it belongs. The board is curated: open-source, agent-related, actively maintained.</div>
+    </details>
+  </div>
+</div>
+</section>
+
+<script>
+(function () {
+  'use strict';
+
+  function fmt(n) {
+    return (typeof n === 'number' && isFinite(n)) ? n.toLocaleString('en-US') : '—';
+  }
+  function el(tag, cls, text) {
+    var e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (text != null) e.textContent = text;
+    return e;
+  }
+
+  /* ---- Trending boards (/api/github-trending) ---- */
+  function repoCard(r) {
+    var a = document.createElement('a');
+    a.className = 'card';
+    a.href = r.url || ('https://github.com/' + r.full_name);
+    a.target = '_blank';
+    a.rel = 'noopener noreferrer';
+    a.appendChild(el('h3', null, r.full_name));
+    a.appendChild(el('p', null, r.description || 'No description provided.'));
+    var meta = el('div', 'repo-meta');
+    if (r.language) {
+      var lang = el('span', 'repo-chip');
+      lang.appendChild(el('span', 'lang-dot'));
+      lang.appendChild(document.createTextNode(r.language));
+      meta.appendChild(lang);
+    }
+    meta.appendChild(el('span', 'repo-chip', '★ ' + fmt(r.stars)));
+    if (typeof r.gained === 'number' && isFinite(r.gained)) {
+      meta.appendChild(el('span', 'repo-chip repo-gained', '+' + fmt(r.gained) + ' this ' + (r.period || 'week')));
+    }
+    a.appendChild(meta);
+    return a;
+  }
+
+  function renderBoard(target, repos) {
+    target.innerHTML = '';
+    var g = el('div', 'grid-3');
+    repos.forEach(function (r) { if (r && r.full_name) g.appendChild(repoCard(r)); });
+    target.appendChild(g);
+  }
+
+  function renderOffline(target) {
+    target.innerHTML = '';
+    var n = el('div', 'warn');
+    n.appendChild(document.createTextNode('The live trending feed is offline right now — no cached numbers to show. '));
+    var link = document.createElement('a');
+    link.href = 'https://github.com/trending';
+    link.target = '_blank';
+    link.rel = 'noopener noreferrer';
+    link.textContent = 'Browse GitHub Trending directly →';
+    n.appendChild(link);
+    target.appendChild(n);
+  }
+
+  var weekBoard = document.getElementById('week-board');
+  var monthBoard = document.getElementById('month-board');
+  var weekStatus = document.getElementById('week-status');
+  var monthStatus = document.getElementById('month-status');
+
+  fetch('/api/github-trending')
+    .then(function (res) { if (!res.ok) throw new Error('http ' + res.status); return res.json(); })
+    .then(function (d) {
+      if (!d || !d.ok || !Array.isArray(d.repos) || !d.repos.length) throw new Error('bad payload');
+      var label = (d.source === 'snapshot')
+        ? 'CACHED SNAPSHOT (captured 2026-05-24) — the live feed was unreachable just now.'
+        : 'LIVE — parsed from GitHub Trending, edge-cached about 1 hour.';
+      renderBoard(weekBoard, d.repos);
+      weekStatus.textContent = label;
+      if (Array.isArray(d.monthly) && d.monthly.length) {
+        renderBoard(monthBoard, d.monthly);
+        monthStatus.textContent = label;
+      } else {
+        renderOffline(monthBoard);
+        monthStatus.textContent = 'Monthly feed offline.';
+      }
+    })
+    .catch(function () {
+      weekStatus.textContent = 'Feed offline.';
+      monthStatus.textContent = 'Feed offline.';
+      renderOffline(weekBoard);
+      renderOffline(monthBoard);
+    });
+
+  /* ---- Agent Systems Board (/api/github-agents) ---- */
+  var agentsStatus = document.getElementById('agents-status');
+
+  fetch('/api/github-agents')
+    .then(function (res) { if (!res.ok) throw new Error('http ' + res.status); return res.json(); })
+    .then(function (d) {
+      if (!d || !d.ok || !d.repos) throw new Error('bad payload');
+      var anyFallback = false;
+      Array.prototype.slice.call(document.querySelectorAll('tr[data-repo]')).forEach(function (row) {
+        var info = d.repos[row.getAttribute('data-repo')];
+        if (!info) return;
+        var starCell = row.querySelector('[data-stars]');
+        var langCell = row.querySelector('[data-lang]');
+        if (starCell) starCell.textContent = fmt(info.stars);
+        if (langCell && info.lang) langCell.textContent = info.lang;
+        if (info.fallback) anyFallback = true;
+        if (info.archived) {
+          var nameCell = row.querySelector('[data-name]');
+          if (nameCell) nameCell.appendChild(el('span', 'arch-pill', 'archived'));
+        }
+      });
+      agentsStatus.textContent = anyFallback
+        ? 'Some counts are last-known fallback values (GitHub API limit) — live values refresh about every 30 minutes.'
+        : 'LIVE — public GitHub API star counts, edge-cached about 30 minutes (' + (d.live || 0) + ' of ' + (d.total || 20) + ' fetched live).';
+    })
+    .catch(function () {
+      agentsStatus.textContent = 'Star feed offline — showing the curated project list without counts. Every link still goes straight to the repo.';
+    });
+
+  /* ---- Same-page #tab= links (hero buttons): switch the tab on click.
+         abuz8-ui.js honors #tab=<panel-id> on load only, so cross-page deep
+         links work already; this makes in-page clicks work too. ---- */
+  document.addEventListener('click', function (ev) {
+    var a = ev.target && ev.target.closest ? ev.target.closest('a[href^="#tab="]') : null;
+    if (!a) return;
+    var id = a.getAttribute('href').slice(5);
+    var btn = document.querySelector('.tab-btn[aria-controls="' + id + '"]');
+    if (!btn) return;
+    ev.preventDefault();
+    btn.click();
+    if (history.replaceState) history.replaceState(null, '', '#tab=' + id);
+    btn.scrollIntoView({ block: 'start' });
+  });
+})();
+</script>
+
+<footer class="abuz8-footer">
+<div class="foot-grid">
+  <div class="foot-brand">
+    <div class="logo">ABUZ8</div>
+    <p>Sovereign AI for everyone. Real tools, local models, no fake claims. Built on real hardware by ABUZ8 LLC, Ohio.</p>
+  </div>
+  <div class="foot-col"><h4>Platform</h4>
+    <a href="/tools.html">Free Tools</a><a href="/store.html">Store</a><a href="/models.html">Models</a><a href="/agents.html">AI Agents</a><a href="/news.html">News</a><a href="/blog/">Blog</a>
+  </div>
+  <div class="foot-col"><h4>Mission</h4>
+    <a href="/sovereign.html">Sovereign AI</a><a href="/journey.html">Journey &amp; Goals</a><a href="/roadmap.html">Roadmap</a><a href="/audit.html">Audit &amp; Transparency</a><a href="/purpose.html">Purpose</a>
+  </div>
+  <div class="foot-col"><h4>Hubs</h4>
+    <a href="/github.html">GitHub Hub</a><a href="/huggingface.html">Hugging Face Hub</a><a href="/polymarket.html">Polymarket Tester</a><a href="/community.html">Community</a><a href="/education.html">Education</a><a href="/downloads.html">Downloads</a>
+  </div>
+  <div class="foot-col"><h4>Trust</h4>
+    <a href="/security.html">Security &amp; Compliance</a><a href="/disclaimer.html">Disclaimer</a><a href="/privacy.html">Privacy</a><a href="/terms.html">Terms</a><a href="/refund.html">Refunds</a><a href="/license.html">License</a><a href="/contact.html">Contact</a><a href="/status.html">Status</a>
+  </div>
+</div>
+<div class="foot-base">
+  <div>© <span data-year>2026</span> ABUZ8 LLC. All rights reserved.</div>
+  <div>Built local-first on real hardware · No fake claims · <a href="/sovereign.html">Sovereign AI for everyone</a></div>
+</div>
+</footer>
+<script src="/assets/js/abuz8-ui.js" defer></script>
+<script src="/assets/js/abuz8-onboard.js" defer></script>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>

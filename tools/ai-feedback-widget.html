@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Feedback Widget Builder — Embed Feedback Forms Anywhere | ABUZ8</title>
+<meta name="description" content="Build beautiful feedback widgets — thumbs, stars, NPS, emoji reactions. Get embed code instantly. Free.">
+<link rel="canonical" href="https://abuz8ai.com/tools/ai-feedback-widget">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"AI Feedback Widget Builder","url":"https://abuz8ai.com/tools/ai-feedback-widget","description":"Create embeddable feedback widgets for any website — thumbs up/down, star rating, NPS, emoji.","applicationCategory":"BusinessApplication","isAccessibleForFree":true}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--lapis:#0a1628;--lapis2:#0f1f3d;--lapis3:#162544;--gold:#c9a84c;--gold2:#e8c96d;--turq:#0e9f6e;--turq2:#22b5a0;--text:#e8e4dc;--muted:#8892a4;--border:rgba(201,168,76,0.18);--rad:12px}
+body{background:var(--lapis);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh}
+a{color:var(--gold);text-decoration:none}
+.nav{display:flex;align-items:center;justify-content:space-between;padding:16px 40px;border-bottom:1px solid var(--border)}
+.nav-logo{font-family:'Playfair Display',serif;font-size:1.3rem;color:var(--gold)}
+.nav-links{display:flex;gap:20px;font-size:.83rem}.nav-links a{color:var(--muted)}.nav-links a:hover{color:var(--gold)}
+.hero{text-align:center;padding:44px 20px 28px;max-width:680px;margin:0 auto}
+.hero h1{font-family:'Playfair Display',serif;font-size:clamp(1.9rem,4.5vw,3rem);line-height:1.15;margin-bottom:12px}
+.hero h1 span{color:var(--gold)}
+.hero p{color:var(--muted);font-size:.95rem;line-height:1.7}
+.main{max-width:1060px;margin:28px auto 60px;padding:0 20px;display:grid;grid-template-columns:380px 1fr;gap:24px}
+@media(max-width:840px){.main{grid-template-columns:1fr}}
+.panel{background:var(--lapis2);border:1px solid var(--border);border-radius:var(--rad)}
+.panel-head{padding:14px 18px;border-bottom:1px solid var(--border);font-size:.95rem;font-weight:600;display:flex;align-items:center;gap:8px}
+.panel-body{padding:18px}
+label.lbl{display:block;font-size:.77rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;margin-top:12px}
+label.lbl:first-child{margin-top:0}
+input.fi,textarea.fi{width:100%;background:var(--lapis3);border:1px solid var(--border);border-radius:8px;padding:9px 12px;color:var(--text);font-size:.88rem;font-family:'Inter',sans-serif;outline:none;transition:border-color .2s}
+input.fi:focus,textarea.fi:focus{border-color:var(--gold)}
+input.fi::placeholder,textarea.fi::placeholder{color:var(--muted)}
+.type-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:10px 0}
+.type-card{background:var(--lapis3);border:2px solid var(--border);border-radius:10px;padding:14px;cursor:pointer;text-align:center;transition:all .2s}
+.type-card:hover,.type-card.active{border-color:var(--gold);background:rgba(201,168,76,.06)}
+.type-icon{font-size:1.6rem;margin-bottom:6px}
+.type-label{font-size:.8rem;font-weight:600}
+.type-desc{font-size:.72rem;color:var(--muted);margin-top:3px}
+.opt-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.opt-row label{font-size:.85rem}
+select.sel{background:var(--lapis3);border:1px solid var(--border);border-radius:6px;padding:7px 10px;color:var(--text);font-size:.85rem;outline:none;cursor:pointer}
+.toggle-row{display:flex;align-items:center;gap:8px;font-size:.84rem;color:var(--muted);cursor:pointer;margin-bottom:8px}
+.toggle{width:34px;height:18px;background:var(--lapis3);border:1px solid var(--border);border-radius:100px;position:relative;cursor:pointer;transition:background .2s;flex-shrink:0}
+.toggle.on{background:var(--turq)}
+.toggle::after{content:'';position:absolute;width:12px;height:12px;background:#fff;border-radius:50%;top:2px;left:2px;transition:left .2s}
+.toggle.on::after{left:18px}
+.gen-btn{width:100%;background:var(--gold);color:var(--lapis);border:none;border-radius:var(--rad);padding:13px;font-size:.95rem;font-weight:700;cursor:pointer;transition:all .2s;margin-top:12px}
+.gen-btn:hover{background:var(--gold2)}
+/* Preview */
+.preview-area{padding:24px;background:#f3f4f6;border-radius:0 0 var(--rad) var(--rad);min-height:200px;display:flex;flex-direction:column;gap:20px}
+.preview-area.dark{background:#0a1628}
+.code-area{font-size:.72rem;font-family:'Fira Code',monospace;background:#060e1a;padding:14px;border-radius:8px;max-height:280px;overflow-y:auto;white-space:pre;line-height:1.6;color:#b8d4ff;margin:0 16px 0}
+.code-actions{display:flex;gap:8px;padding:10px 16px 16px}
+.code-btn{background:var(--lapis3);border:1px solid var(--border);border-radius:6px;padding:8px 14px;font-size:.8rem;color:var(--muted);cursor:pointer;transition:all .2s;font-family:'Inter',sans-serif}
+.code-btn:hover{border-color:var(--gold);color:var(--gold)}
+.footer{border-top:1px solid var(--border);padding:24px 40px;display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;align-items:center;font-size:.8rem;color:var(--muted)}
+.footer a{color:var(--muted)}.footer a:hover{color:var(--gold)}
+</style>
+</head>
+<body>
+<nav class="nav">
+  <div class="nav-logo">ABUZ8</div>
+  <div class="nav-links"><a href="/tools">Tools</a><a href="/free.html">Free</a><a href="/news.html">AI Daily</a></div>
+</nav>
+<section class="hero">
+  <h1>Embed <span>Feedback Widgets</span> Anywhere</h1>
+  <p>Thumbs up/down, star ratings, NPS scores, emoji reactions — build the exact widget you need and paste the code.</p>
+</section>
+<div class="main">
+  <div>
+    <div class="panel">
+      <div class="panel-head">🎛 Widget Type</div>
+      <div class="panel-body">
+        <div class="type-grid" id="typeGrid">
+          <div class="type-card active" data-type="thumbs" onclick="setType(this)"><div class="type-icon">👍</div><div class="type-label">Thumbs</div><div class="type-desc">Up / Down vote</div></div>
+          <div class="type-card" data-type="stars" onclick="setType(this)"><div class="type-icon">⭐</div><div class="type-label">Star Rating</div><div class="type-desc">1–5 stars</div></div>
+          <div class="type-card" data-type="nps" onclick="setType(this)"><div class="type-icon">📊</div><div class="type-label">NPS Score</div><div class="type-desc">0–10 scale</div></div>
+          <div class="type-card" data-type="emoji" onclick="setType(this)"><div class="type-icon">😊</div><div class="type-label">Emoji Reaction</div><div class="type-desc">5 mood options</div></div>
+        </div>
+        <label class="lbl">Question / Prompt</label>
+        <input class="fi" id="question" placeholder="Was this helpful?" oninput="updatePreview()">
+        <label class="lbl">Thank You Message</label>
+        <input class="fi" id="thankYou" placeholder="Thanks for your feedback!" oninput="updatePreview()">
+        <label class="lbl">Webhook URL (optional — receives feedback POSTs)</label>
+        <input class="fi" id="webhook" placeholder="https://your-webhook.com/feedback">
+      </div>
+    </div>
+    <div class="panel" style="margin-top:14px">
+      <div class="panel-head">🎨 Appearance</div>
+      <div class="panel-body">
+        <div class="opt-row"><label>Theme</label>
+          <select class="sel" id="theme" onchange="updatePreview()">
+            <option value="light">Light</option>
+            <option value="dark">Dark</option>
+            <option value="transparent">Transparent</option>
+          </select>
+        </div>
+        <div class="opt-row"><label>Position</label>
+          <select class="sel" id="position" onchange="updatePreview()">
+            <option value="inline">Inline</option>
+            <option value="floating">Floating (bottom-right)</option>
+            <option value="banner">Top Banner</option>
+          </select>
+        </div>
+        <div class="toggle-row" onclick="tog('showComment')">
+          <div class="toggle" id="showComment"></div>
+          Show comment box after rating
+        </div>
+        <div class="toggle-row" onclick="tog('showEmail')">
+          <div class="toggle" id="showEmail"></div>
+          Ask for email (optional)
+        </div>
+        <div class="toggle-row" onclick="tog('showPowered')">
+          <div class="toggle on" id="showPowered"></div>
+          Show "Powered by ABUZ8" badge
+        </div>
+      </div>
+    </div>
+    <button class="gen-btn" onclick="generateWidget()">⚡ Generate Embed Code</button>
+  </div>
+  <div>
+    <div class="panel">
+      <div class="panel-head">👁 Live Preview</div>
+      <div class="preview-area" id="previewArea">
+        <div id="widgetPreview"></div>
+      </div>
+      <div class="code-area" id="codeOut" style="display:none"></div>
+      <div class="code-actions" id="codeActions" style="display:none">
+        <button class="code-btn" onclick="copyCode()">📋 Copy Embed Code</button>
+        <button class="code-btn" onclick="downloadWidget()">⬇ Download</button>
+      </div>
+    </div>
+  </div>
+</div>
+<footer class="footer">
+  <div>© 2026 ABUZ8 LLC</div>
+  <div style="display:flex;gap:16px"><a href="/tools">All Tools</a><a href="https://github.com/abuz8studios-ship-it" target="_blank">GitHub ↗</a><a href="/support.html">Support →</a></div>
+</footer>
+<script>
+let widgetType = 'thumbs';
+let embedCode = '';
+
+function setType(el) {
+  document.querySelectorAll('.type-card').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  widgetType = el.dataset.type;
+  updatePreview();
+}
+function tog(id) {
+  document.getElementById(id).classList.toggle('on');
+  updatePreview();
+}
+
+function getConfig() {
+  return {
+    type: widgetType,
+    question: document.getElementById('question').value || 'Was this helpful?',
+    thankYou: document.getElementById('thankYou').value || 'Thanks for your feedback!',
+    webhook: document.getElementById('webhook').value || '',
+    theme: document.getElementById('theme')?.value || 'light',
+    position: document.getElementById('position')?.value || 'inline',
+    showComment: document.getElementById('showComment').classList.contains('on'),
+    showEmail: document.getElementById('showEmail').classList.contains('on'),
+    showPowered: document.getElementById('showPowered').classList.contains('on'),
+  };
+}
+
+function buildWidgetHTML(cfg, forEmbed=false) {
+  const isDark = cfg.theme === 'dark';
+  const bg = isDark?'#0f1f3d':cfg.theme==='transparent'?'transparent':'#fff';
+  const text = isDark?'#e8e4dc':'#111';
+  const sub = isDark?'#8892a4':'#6b7280';
+  const border = isDark?'rgba(201,168,76,.2)':'#e5e7eb';
+  const radius = cfg.position==='banner'?'0':'12px';
+  const shadow = cfg.position==='inline'?'none':'0 8px 32px rgba(0,0,0,.15)';
+  const padding = cfg.position==='banner'?'12px 24px':'20px 24px';
+
+  let ratingHTML = '';
+  if(cfg.type==='thumbs') {
+    ratingHTML = `<div style="display:flex;gap:12px;justify-content:center;margin:12px 0">
+  <button class="fb-btn" data-val="up" style="background:transparent;border:1.5px solid ${border};border-radius:8px;padding:10px 20px;font-size:1.3rem;cursor:pointer;color:${text};transition:all .2s" onmouseover="this.style.background='rgba(34,197,94,.15)'" onmouseout="this.style.background='transparent'" onclick="fb_rate('up',this)">👍</button>
+  <button class="fb-btn" data-val="down" style="background:transparent;border:1.5px solid ${border};border-radius:8px;padding:10px 20px;font-size:1.3rem;cursor:pointer;color:${text};transition:all .2s" onmouseover="this.style.background='rgba(239,68,68,.15)'" onmouseout="this.style.background='transparent'" onclick="fb_rate('down',this)">👎</button>
+</div>`;
+  } else if(cfg.type==='stars') {
+    ratingHTML = `<div id="fbStars" style="display:flex;gap:6px;justify-content:center;margin:12px 0;font-size:1.6rem;cursor:pointer">
+  ${[1,2,3,4,5].map(s=>`<span data-val="${s}" style="color:#d1d5db;transition:color .15s" onmouseover="fbHover(${s})" onmouseout="fbUnhover()" onclick="fb_rate(${s})">★</span>`).join('')}
+</div>`;
+  } else if(cfg.type==='nps') {
+    ratingHTML = `<div style="margin:12px 0">
+  <div style="display:flex;gap:4px;justify-content:center;flex-wrap:wrap">
+    ${[0,1,2,3,4,5,6,7,8,9,10].map(n=>{
+      const c = n<=6?'#ef4444':n<=8?'#f59e0b':'#22c55e';
+      return `<button onclick="fb_rate(${n},this)" style="width:36px;height:36px;background:transparent;border:1.5px solid ${border};border-radius:6px;font-size:.83rem;font-weight:600;color:${text};cursor:pointer;transition:all .2s" onmouseover="this.style.background='${c}33'" onmouseout="this.style.background='transparent'">${n}</button>`;
+    }).join('')}
+  </div>
+  <div style="display:flex;justify-content:space-between;font-size:.72rem;color:${sub};margin-top:6px"><span>Not likely</span><span>Very likely</span></div>
+</div>`;
+  } else {
+    const emojis = [{e:'😍',l:'Love it'},{e:'😊',l:'Good'},{e:'😐',l:'Neutral'},{e:'😕',l:'Meh'},{e:'😠',l:'Bad'}];
+    ratingHTML = `<div style="display:flex;gap:8px;justify-content:center;margin:12px 0">
+  ${emojis.map(({e,l})=>`<button onclick="fb_rate('${l}',this)" title="${l}" style="background:transparent;border:1.5px solid ${border};border-radius:10px;padding:8px;font-size:1.5rem;cursor:pointer;transition:all .2s;display:flex;flex-direction:column;align-items:center;gap:3px" onmouseover="this.style.background='rgba(255,255,255,.08)'" onmouseout="this.style.background='transparent'">
+    <span>${e}</span><span style="font-size:.65rem;color:${sub}">${l}</span>
+  </button>`).join('')}
+</div>`;
+  }
+
+  const commentHTML = cfg.showComment ? `<div id="fbComment" style="display:none;margin-top:10px">
+  <textarea id="fbCommentText" placeholder="Tell us more (optional)" style="width:100%;background:${isDark?'#162544':'#f9fafb'};border:1px solid ${border};border-radius:8px;padding:10px;font-size:.85rem;color:${text};font-family:inherit;resize:none;height:64px;outline:none"></textarea>
+</div>` : '';
+
+  const emailHTML = cfg.showEmail ? `<div id="fbEmail" style="display:none;margin-top:8px">
+  <input id="fbEmailInput" type="email" placeholder="your@email.com (optional)" style="width:100%;background:${isDark?'#162544':'#f9fafb'};border:1px solid ${border};border-radius:8px;padding:9px 12px;font-size:.85rem;color:${text};font-family:inherit;outline:none">
+</div>` : '';
+
+  const submitHTML = (cfg.showComment||cfg.showEmail) ? `<button id="fbSubmit" onclick="fb_submit()" style="display:none;width:100%;margin-top:10px;background:#0e9f6e;color:#fff;border:none;border-radius:8px;padding:10px;font-size:.9rem;font-weight:600;cursor:pointer">Submit Feedback</button>` : '';
+
+  const poweredHTML = cfg.showPowered ? `<div style="text-align:center;margin-top:10px;font-size:.68rem;color:${sub}">Powered by <a href="https://abuz8ai.com" style="color:${isDark?'#c9a84c':'#0e9f6e'};text-decoration:none">ABUZ8</a></div>` : '';
+
+  const wrapStyle = `background:${bg};border:${cfg.theme==='transparent'?'none':`1px solid ${border}`};border-radius:${radius};padding:${padding};box-shadow:${shadow};font-family:-apple-system,BlinkMacSystemFont,'Inter',sans-serif;${cfg.position==='floating'?'position:fixed;bottom:24px;right:24px;z-index:9999;max-width:320px;width:100%':cfg.position==='banner'?'position:fixed;top:0;left:0;right:0;z-index:9999':'max-width:400px;margin:0 auto'}`;
+
+  const webhook = cfg.webhook ? `'${cfg.webhook}'` : 'null';
+  const jsLogic = `
+let fbRated=false;
+function fbHover(n){document.querySelectorAll('#fbStars span').forEach((s,i)=>{s.style.color=i<n?'#f59e0b':'#d1d5db'})}
+function fbUnhover(){if(!fbRated)document.querySelectorAll('#fbStars span').forEach(s=>s.style.color='#d1d5db')}
+function fb_rate(val,el){
+  if(fbRated)return;fbRated=true;
+  document.querySelectorAll('.fb-btn').forEach(b=>b.style.opacity='.4');
+  if(el){el.style.opacity='1';el.style.transform='scale(1.15)'}
+  if(typeof val==='number'&&document.getElementById('fbStars')){
+    document.querySelectorAll('#fbStars span').forEach((s,i)=>s.style.color=i<val?'#f59e0b':'#d1d5db');
+  }
+  ${cfg.showComment?`document.getElementById('fbComment').style.display='block';`:''}
+  ${cfg.showEmail?`document.getElementById('fbEmail').style.display='block';`:''}
+  ${(cfg.showComment||cfg.showEmail)?`document.getElementById('fbSubmit').style.display='block';`:`
+  const wh=${webhook};
+  if(wh)fetch(wh,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({rating:val,question:'${cfg.question.replace(/'/g,"\\'")}',ts:new Date().toISOString()})}).catch(()=>{});
+  setTimeout(()=>{document.getElementById('fbWidget').innerHTML='<div style="text-align:center;padding:16px;color:${text};font-size:.95rem;font-weight:600">${cfg.thankYou}</div>'},300);`}
+}
+function fb_submit(){
+  const comment=${cfg.showComment?`document.getElementById('fbCommentText').value`:`''`};
+  const email=${cfg.showEmail?`document.getElementById('fbEmailInput').value`:`''`};
+  const wh=${webhook};
+  if(wh)fetch(wh,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({comment,email,question:'${cfg.question.replace(/'/g,"\\'")}',ts:new Date().toISOString()})}).catch(()=>{});
+  document.getElementById('fbWidget').innerHTML='<div style="text-align:center;padding:16px;color:${text};font-size:.95rem;font-weight:600">${cfg.thankYou}</div>';
+}`;
+
+  return `<div id="fbWidget" style="${wrapStyle}">
+  <div style="text-align:center;font-size:.9rem;font-weight:600;color:${text};margin-bottom:4px">${cfg.question}</div>
+  ${ratingHTML}
+  ${commentHTML}
+  ${emailHTML}
+  ${submitHTML}
+  ${poweredHTML}
+</div>
+<script>${jsLogic}<\/script>`;
+}
+
+function updatePreview() {
+  const cfg = getConfig();
+  const isDark = cfg.theme === 'dark';
+  document.getElementById('previewArea').className = `preview-area${isDark?' dark':''}`;
+  document.getElementById('widgetPreview').innerHTML = buildWidgetHTML(cfg, false);
+}
+
+function generateWidget() {
+  const cfg = getConfig();
+  embedCode = buildWidgetHTML(cfg, true);
+  const codeEl = document.getElementById('codeOut');
+  codeEl.textContent = embedCode;
+  codeEl.style.display='block';
+  document.getElementById('codeActions').style.display='flex';
+  updatePreview();
+}
+
+function copyCode() {
+  navigator.clipboard.writeText(embedCode).then(()=>{
+    const btn = document.querySelector('.code-btn');
+    btn.textContent='✓ Copied!';
+    setTimeout(()=>btn.textContent='📋 Copy Embed Code',2000);
+  });
+}
+function downloadWidget() {
+  const blob=new Blob([`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Feedback Widget</title></head><body style="padding:40px;display:flex;justify-content:center">${embedCode}
+<script src="/assets/js/dfy-banner.js" async><\/script>
+<script src="/assets/js/abuz8-intent.js" defer><\/script>
+<script>(function(){var orig=window.joinWaitlist||window.joinWL;function wlPost(){var els=['wlEmail','emailInput','email'];var v='';for(var i=0;i<els.length;i++){var el=document.getElementById(els[i]);if(el&&el.value){v=el.value.trim();break;}}if(v&&v.includes('@')){fetch('/api/waitlist',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:v,product:'ai-feedback-widget',ts:Date.now()})}).catch(function(){});}if(orig)orig();}if(typeof joinWaitlist==='function')window.joinWaitlist=wlPost;if(typeof joinWL==='function')window.joinWL=wlPost;})()<\/script>
+<script src="/tools/_tools-shared.js" defer><\/script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body></html>`],{type:'text/html'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='feedback-widget.html';a.click();
+}
+
+updatePreview();
+</script>
+<script src="_abuz8-live-brain.js" defer></script>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+<script>(function(){var orig=window.joinWaitlist||window.joinWL;function wlPost(){var els=['wlEmail','emailInput','email'];var v='';for(var i=0;i<els.length;i++){var el=document.getElementById(els[i]);if(el&&el.value){v=el.value.trim();break;}}if(v&&v.includes('@')){fetch('/api/waitlist',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:v,product:'ai-feedback-widget',ts:Date.now()})}).catch(function(){});}if(orig)orig();}if(typeof joinWaitlist==='function')window.joinWaitlist=wlPost;if(typeof joinWL==='function')window.joinWL=wlPost;})()</script>
+<script src="/tools/_tools-shared.js" defer></script>
+</body>
+</html>
+

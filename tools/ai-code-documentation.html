@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Code Documentation — ABUZ8</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --lapis:#0a1628;--lapis2:#0f1f3d;--lapis3:#162447;
+  --gold:#c9a84c;--gold2:#e8c96a;
+  --turq:#0e9f6e;--turq2:#22b5a0;
+  --cream:#f5f0e8;--cream2:#ede7d9;
+  --muted:#6b7280;
+  --radius:12px;--shadow:0 4px 24px rgba(10,22,40,.13);
+  --code-bg:#0d1117;--code-border:#30363d;
+  --syn-key:#ff7b72;--syn-str:#a5d6ff;--syn-fn:#d2a8ff;
+  --syn-com:#8b949e;--syn-num:#79c0ff;--syn-type:#ffa657;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',sans-serif;background:var(--lapis);color:var(--cream);line-height:1.6;overflow-x:hidden}
+
+nav{display:flex;align-items:center;justify-content:space-between;padding:18px 48px;border-bottom:1px solid rgba(201,168,76,.15);position:sticky;top:0;background:rgba(10,22,40,.95);backdrop-filter:blur(12px);z-index:100}
+.nav-logo{font-family:'Playfair Display',serif;font-size:1.4rem;color:var(--gold)}
+.nav-logo span{color:var(--cream)}
+.nav-cta{background:var(--gold);color:var(--lapis);padding:9px 22px;border-radius:8px;font-weight:600;font-size:.9rem;cursor:pointer;border:none;transition:.2s}
+.nav-cta:hover{background:var(--gold2)}
+
+/* HERO */
+.hero{padding:90px 48px 60px;text-align:center;max-width:960px;margin:0 auto}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(26,138,122,.12);border:1px solid rgba(26,138,122,.35);border-radius:20px;padding:6px 16px;font-size:.82rem;color:var(--turq2);margin-bottom:28px}
+.hero h1{font-family:'Playfair Display',serif;font-size:clamp(2.4rem,5vw,3.8rem);line-height:1.15;margin-bottom:20px}
+.hero h1 em{color:var(--gold);font-style:normal}
+.hero p{font-size:1.12rem;color:var(--cream2);max-width:640px;margin:0 auto 36px}
+.hero-stats{display:flex;justify-content:center;gap:48px;flex-wrap:wrap;margin-bottom:48px}
+.stat-item{text-align:center}
+.stat-num{font-family:'Playfair Display',serif;font-size:2rem;color:var(--gold);font-weight:700}
+.stat-lbl{font-size:.8rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+
+.section{padding:60px 48px;max-width:1100px;margin:0 auto}
+.section-title{font-family:'Playfair Display',serif;font-size:1.9rem;margin-bottom:8px}
+.section-sub{color:var(--muted);margin-bottom:32px;font-size:.97rem}
+
+/* CODE DEMO PANEL */
+.demo-wrap{display:grid;grid-template-columns:1fr 1fr;gap:0;background:var(--code-bg);border:1px solid var(--code-border);border-radius:var(--radius);overflow:hidden;margin-bottom:40px}
+.demo-pane{display:flex;flex-direction:column;min-height:480px}
+.demo-pane-header{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;background:rgba(255,255,255,.04);border-bottom:1px solid var(--code-border);font-size:.78rem}
+.demo-pane-header .file-name{color:#cdd9e5;font-family:'Fira Code',monospace;font-weight:500}
+.demo-pane-header .lang-badge{background:rgba(201,168,76,.15);color:var(--gold);padding:2px 8px;border-radius:4px;font-size:.7rem;font-weight:600}
+.code-area{flex:1;padding:20px;font-family:'Fira Code',monospace;font-size:.82rem;line-height:1.7;overflow:auto;white-space:pre;color:#cdd9e5;position:relative}
+.code-area::-webkit-scrollbar{width:4px;height:4px}
+.code-area::-webkit-scrollbar-thumb{background:var(--code-border);border-radius:2px}
+.doc-area{flex:1;padding:20px;font-size:.85rem;line-height:1.7;overflow:auto;color:var(--cream2);border-left:1px solid var(--code-border)}
+.doc-area::-webkit-scrollbar{width:4px}
+.doc-area::-webkit-scrollbar-thumb{background:var(--code-border);border-radius:2px}
+/* syntax highlight */
+.kw{color:var(--syn-key)}
+.fn{color:var(--syn-fn)}
+.str{color:var(--syn-str)}
+.cm{color:var(--syn-com);font-style:italic}
+.num{color:var(--syn-num)}
+.ty{color:var(--syn-type)}
+/* doc format */
+.doc-badge{display:inline-flex;align-items:center;gap:6px;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:12px}
+.doc-badge.fn-badge{color:var(--syn-fn);background:rgba(210,168,255,.1);border:1px solid rgba(210,168,255,.25);padding:3px 10px;border-radius:4px}
+.doc-section{margin-bottom:16px}
+.doc-section h4{font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--gold);margin-bottom:8px;border-bottom:1px solid rgba(201,168,76,.15);padding-bottom:4px}
+.doc-param{display:flex;align-items:flex-start;gap:10px;margin-bottom:8px;font-size:.82rem}
+.doc-param-name{color:var(--syn-fn);font-family:'Fira Code',monospace;min-width:100px;flex-shrink:0}
+.doc-param-type{color:var(--syn-type);font-family:'Fira Code',monospace;min-width:70px;flex-shrink:0;font-size:.78rem}
+.doc-param-desc{color:var(--cream2)}
+.doc-returns{background:rgba(26,138,122,.1);border-left:3px solid var(--turq2);padding:8px 12px;border-radius:0 6px 6px 0;font-size:.82rem;color:var(--cream2)}
+.doc-example{background:var(--lapis3);border-radius:6px;padding:10px 14px;font-family:'Fira Code',monospace;font-size:.77rem;color:#cdd9e5;margin-top:6px}
+.demo-arrow{display:flex;align-items:center;justify-content:center;padding:0 16px;background:rgba(201,168,76,.05);border-left:1px solid var(--code-border);border-right:1px solid var(--code-border);font-size:1.4rem;color:var(--gold);min-width:56px;writing-mode:horizontal-tb}
+
+/* PASTE TOOL */
+.paste-tool{background:var(--lapis2);border:1px solid rgba(201,168,76,.2);border-radius:var(--radius);padding:32px;margin-bottom:40px}
+.paste-tool h3{font-family:'Playfair Display',serif;font-size:1.2rem;color:var(--gold);margin-bottom:6px}
+.paste-tool p{font-size:.87rem;color:var(--muted);margin-bottom:20px}
+.paste-row{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start}
+.paste-pane{display:flex;flex-direction:column;gap:8px}
+.paste-pane label{font-size:.82rem;font-weight:600;color:var(--cream2);text-transform:uppercase;letter-spacing:.06em}
+.paste-pane textarea{width:100%;height:200px;background:var(--code-bg);border:1px solid var(--code-border);border-radius:8px;padding:14px;color:#cdd9e5;font-family:'Fira Code',monospace;font-size:.82rem;resize:none;outline:none;line-height:1.6;transition:.2s}
+.paste-pane textarea:focus{border-color:var(--gold)}
+.lang-row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.lang-pill{padding:6px 16px;border-radius:16px;border:1px solid rgba(201,168,76,.2);background:transparent;color:var(--cream2);font-size:.82rem;cursor:pointer;transition:.2s}
+.lang-pill:hover{border-color:var(--gold)}
+.lang-pill.active{background:rgba(201,168,76,.15);border-color:var(--gold);color:var(--gold)}
+.doc-style-row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px}
+.ds-btn{padding:6px 16px;border-radius:8px;border:1px solid rgba(201,168,76,.2);background:transparent;color:var(--cream2);font-size:.82rem;cursor:pointer;transition:.2s}
+.ds-btn:hover{border-color:var(--gold)}
+.ds-btn.active{background:rgba(201,168,76,.15);border-color:var(--gold);color:var(--gold)}
+.gen-btn{background:var(--gold);color:var(--lapis);border:none;padding:11px 28px;border-radius:8px;font-weight:700;cursor:pointer;font-size:.9rem;transition:.2s;display:flex;align-items:center;gap:8px;margin-top:12px}
+.gen-btn:hover{background:var(--gold2)}
+.gen-btn.loading{opacity:.7;cursor:not-allowed}
+
+/* DOC OUTPUT */
+.doc-output{background:var(--code-bg);border:1px solid var(--code-border);border-radius:8px;padding:20px;font-family:'Fira Code',monospace;font-size:.82rem;line-height:1.7;color:#cdd9e5;white-space:pre-wrap;min-height:200px;display:none}
+.doc-output.visible{display:block}
+
+/* DOC TYPES GRID */
+.doc-types{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:40px}
+.dt-card{background:var(--lapis2);border:1px solid rgba(201,168,76,.15);border-radius:var(--radius);padding:22px 18px;transition:.25s}
+.dt-card:hover{border-color:rgba(201,168,76,.35);transform:translateY(-3px)}
+.dt-icon{font-size:1.6rem;margin-bottom:10px}
+.dt-name{font-weight:700;font-size:.95rem;margin-bottom:6px}
+.dt-desc{font-size:.82rem;color:var(--muted);line-height:1.5}
+.dt-formats{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.dt-format{font-size:.72rem;color:var(--turq2);background:rgba(26,138,122,.1);padding:2px 8px;border-radius:4px;font-family:'Fira Code',monospace}
+
+/* METRICS STRIP */
+.metrics-strip{background:linear-gradient(90deg,rgba(26,138,122,.12),rgba(201,168,76,.08));border:1px solid rgba(201,168,76,.2);border-radius:var(--radius);padding:28px 32px;display:grid;grid-template-columns:repeat(4,1fr);gap:20px;margin-bottom:40px}
+.ms-item{text-align:center}
+.ms-num{font-family:'Playfair Display',serif;font-size:2rem;color:var(--gold);font-weight:700}
+.ms-lbl{font-size:.8rem;color:var(--muted);margin-top:4px}
+
+/* SUPPORTED LANGUAGES */
+.lang-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-bottom:40px}
+.lang-card{background:var(--lapis2);border:1px solid rgba(201,168,76,.1);border-radius:8px;padding:14px 8px;text-align:center;font-size:.75rem;color:var(--cream2);transition:.2s}
+.lang-card:hover{border-color:rgba(201,168,76,.3)}
+.lang-card .lang-icon{font-size:1.4rem;margin-bottom:5px}
+
+/* PRICING */
+.pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-bottom:40px}
+.price-card{background:var(--lapis2);border:2px solid rgba(201,168,76,.15);border-radius:var(--radius);padding:32px 24px;text-align:center;transition:.3s;position:relative;overflow:hidden}
+.price-card.popular{border-color:var(--turq2)}
+.price-card.popular::before{content:'Best Value';position:absolute;top:16px;right:-28px;background:var(--turq);color:white;font-size:.7rem;font-weight:700;padding:4px 36px;transform:rotate(45deg);letter-spacing:.06em}
+.price-card:hover{transform:translateY(-4px);box-shadow:var(--shadow)}
+.price-name{font-size:.85rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--gold);margin-bottom:8px}
+.price-num{font-family:'Playfair Display',serif;font-size:2.4rem;color:var(--cream);margin-bottom:4px}
+.price-num span{font-size:1rem;color:var(--muted)}
+.price-desc{font-size:.82rem;color:var(--muted);margin-bottom:24px}
+.price-features{list-style:none;text-align:left;margin-bottom:28px;display:flex;flex-direction:column;gap:8px}
+.price-features li{font-size:.83rem;color:var(--cream2);display:flex;align-items:flex-start;gap:8px}
+.price-features li::before{content:'✦';color:var(--gold);font-size:.7rem;flex-shrink:0;margin-top:3px}
+.price-cta{width:100%;padding:12px;border-radius:8px;font-weight:700;font-size:.9rem;cursor:pointer;transition:.2s;border:none}
+.price-cta.primary{background:var(--turq);color:white}
+.price-cta.primary:hover{background:var(--turq2)}
+.price-cta.secondary{background:transparent;border:2px solid var(--gold);color:var(--gold)}
+.price-cta.secondary:hover{background:rgba(201,168,76,.1)}
+
+/* PROOF */
+.proof-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-bottom:40px}
+.proof-card{background:var(--lapis2);border:1px solid rgba(201,168,76,.15);border-radius:var(--radius);padding:24px}
+.proof-metric{font-family:'Playfair Display',serif;font-size:1.5rem;color:var(--turq2);font-weight:700;margin-bottom:8px}
+.proof-text{font-size:.87rem;color:var(--cream2);line-height:1.6;font-style:italic;margin-bottom:16px}
+.proof-author{display:flex;align-items:center;gap:10px}
+.proof-avatar{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.85rem;font-weight:700;flex-shrink:0}
+.proof-name{font-size:.85rem;font-weight:600;color:var(--cream)}
+.proof-role{font-size:.78rem;color:var(--muted)}
+
+/* WAITLIST */
+.waitlist-section{background:linear-gradient(135deg,var(--lapis2),var(--lapis3));border-top:1px solid rgba(201,168,76,.2);padding:80px 48px;text-align:center}
+.waitlist-section h2{font-family:'Playfair Display',serif;font-size:2.2rem;margin-bottom:12px}
+.waitlist-section h2 em{color:var(--gold);font-style:normal}
+.waitlist-section p{color:var(--cream2);margin-bottom:36px;max-width:500px;margin-left:auto;margin-right:auto}
+.wl-form{display:flex;gap:12px;max-width:480px;margin:0 auto 20px;flex-wrap:wrap}
+.wl-form input{flex:1;min-width:220px;background:var(--lapis3);border:1px solid rgba(201,168,76,.3);border-radius:8px;padding:13px 18px;color:var(--cream);font-family:'Inter',sans-serif;font-size:.95rem;outline:none}
+.wl-form input:focus{border-color:var(--gold)}
+.wl-form button{background:var(--turq);color:white;border:none;padding:13px 28px;border-radius:8px;font-weight:700;font-size:.95rem;cursor:pointer;transition:.2s}
+.wl-form button:hover{background:var(--turq2)}
+.wl-note{font-size:.8rem;color:var(--muted)}
+.wl-success{display:none;background:rgba(26,138,122,.12);border:1px solid var(--turq);border-radius:10px;padding:20px 28px;max-width:480px;margin:0 auto;color:var(--turq2);font-weight:600}
+
+@media(max-width:768px){
+  nav{padding:16px 20px}
+  .hero{padding:60px 20px 40px}
+  .section{padding:40px 20px}
+  .demo-wrap{grid-template-columns:1fr}
+  .demo-arrow{display:none}
+  .paste-row{grid-template-columns:1fr}
+  .doc-types{grid-template-columns:1fr 1fr}
+  .lang-grid{grid-template-columns:repeat(3,1fr)}
+  .pricing-grid{grid-template-columns:1fr}
+  .proof-grid{grid-template-columns:1fr}
+  .metrics-strip{grid-template-columns:repeat(2,1fr)}
+  .hero-stats{gap:24px}
+}
+</style>
+<link rel="canonical" href="https://abuz8ai.com/tools/ai-code-documentation">
+<meta name="description" content="AI Code Documentation — Auto-document a codebase. Free, no signup, runs entirely in your browser. One of 169 free AI and developer tools by ABUZ8.">
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">ABU<span>Z8</span> · Code Docs</div>
+  <button class="nav-cta" onclick="document.querySelector('.paste-tool').scrollIntoView({behavior:'smooth'})">Try the Live Demo</button>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-badge">💻 QADIR Code Intelligence · All Languages</div>
+  <h1>Your Entire Codebase<br><em>Documented in Hours</em></h1>
+  <p>Stop writing docs by hand. QADIR reads your code and produces complete API references, inline comments, README files, and architecture docs — automatically, instantly, in your team's style.</p>
+  <div class="hero-stats">
+    <div class="stat-item"><div class="stat-num">6</div><div class="stat-lbl">Languages in Live Demo</div></div>
+    <div class="stat-item"><div class="stat-num">5</div><div class="stat-lbl">Doc Style Formats</div></div>
+    <div class="stat-item"><div class="stat-num">Live</div><div class="stat-lbl">Real AI-Generated Output</div></div>
+    <div class="stat-item"><div class="stat-num">Free</div><div class="stat-lbl">Try It, No Signup</div></div>
+  </div>
+</section>
+
+<!-- LIVE DEMO -->
+<section class="section">
+  <h2 class="section-title">See It in Action</h2>
+  <p class="section-sub">Input: raw undocumented code. Output: production-ready docs — generated in real time.</p>
+  <div class="demo-wrap">
+    <!-- CODE SIDE -->
+    <div class="demo-pane">
+      <div class="demo-pane-header">
+        <span class="file-name">payment_processor.py</span>
+        <span class="lang-badge">Python · Input</span>
+      </div>
+      <div class="code-area" id="codeInput"><span class="kw">import</span> stripe
+<span class="kw">from</span> typing <span class="kw">import</span> <span class="ty">Optional</span>, <span class="ty">Dict</span>, <span class="ty">Any</span>
+<span class="kw">from</span> decimal <span class="kw">import</span> <span class="ty">Decimal</span>
+
+<span class="kw">class</span> <span class="ty">PaymentProcessor</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, api_key: <span class="ty">str</span>, webhook_secret: <span class="ty">str</span>):
+        self.client = stripe.<span class="ty">Stripe</span>(api_key)
+        self.webhook_secret = webhook_secret
+        self._cache: <span class="ty">Dict</span>[<span class="ty">str</span>, <span class="ty">Any</span>] = {}
+
+    <span class="kw">def</span> <span class="fn">charge_customer</span>(
+        self,
+        customer_id: <span class="ty">str</span>,
+        amount: <span class="ty">Decimal</span>,
+        currency: <span class="ty">str</span> = <span class="str">"usd"</span>,
+        description: <span class="ty">Optional</span>[<span class="ty">str</span>] = <span class="num">None</span>,
+        idempotency_key: <span class="ty">Optional</span>[<span class="ty">str</span>] = <span class="num">None</span>
+    ) -> <span class="ty">Dict</span>[<span class="ty">str</span>, <span class="ty">Any</span>]:
+        amount_cents = <span class="fn">int</span>(amount * <span class="num">100</span>)
+        <span class="kw">if</span> amount_cents &lt; <span class="num">50</span>:
+            <span class="kw">raise</span> <span class="ty">ValueError</span>(<span class="str">"Amount below minimum"</span>)
+        <span class="kw">try</span>:
+            intent = self.client.payment_intents.<span class="fn">create</span>(
+                amount=amount_cents,
+                currency=currency,
+                customer=customer_id,
+                description=description,
+                idempotency_key=idempotency_key,
+            )
+            <span class="kw">return</span> {<span class="str">"id"</span>: intent.id, <span class="str">"status"</span>: intent.status}
+        <span class="kw">except</span> stripe.<span class="ty">StripeError</span> <span class="kw">as</span> e:
+            <span class="kw">raise</span> <span class="ty">PaymentError</span>(<span class="fn">str</span>(e)) <span class="kw">from</span> e
+</div>
+    </div>
+    <!-- ARROW -->
+    <div class="demo-arrow">→</div>
+    <!-- DOC SIDE -->
+    <div class="demo-pane">
+      <div class="demo-pane-header">
+        <span class="file-name">payment_processor.md</span>
+        <span class="lang-badge">Docs · Output</span>
+      </div>
+      <div class="doc-area">
+        <div class="doc-badge fn-badge">⚡ method</div>
+        <h3 style="font-family:'Playfair Display',serif;font-size:1.1rem;color:var(--cream);margin-bottom:4px"><code style="font-family:'Fira Code',monospace;color:var(--syn-fn)">charge_customer</code></h3>
+        <p style="font-size:.85rem;color:var(--cream2);margin-bottom:16px">Creates a Stripe PaymentIntent for a given customer. Converts the decimal amount to cents, validates the minimum charge threshold ($0.50), and returns a normalized response dict with the payment intent ID and status.</p>
+
+        <div class="doc-section">
+          <h4>Parameters</h4>
+          <div class="doc-param"><span class="doc-param-name">customer_id</span><span class="doc-param-type">str</span><span class="doc-param-desc">Stripe customer ID (e.g. <code style="font-family:'Fira Code',monospace;font-size:.78rem;color:var(--syn-str)">"cus_xxx"</code>). Must exist in your Stripe account.</span></div>
+          <div class="doc-param"><span class="doc-param-name">amount</span><span class="doc-param-type">Decimal</span><span class="doc-param-desc">Charge amount in major currency units (dollars, not cents). Minimum: 0.50. Converted internally via <code style="font-family:'Fira Code',monospace;font-size:.78rem">int(amount * 100)</code>.</span></div>
+          <div class="doc-param"><span class="doc-param-name">currency</span><span class="doc-param-type">str</span><span class="doc-param-desc">ISO 4217 currency code. Defaults to <code style="font-family:'Fira Code',monospace;font-size:.78rem;color:var(--syn-str)">"usd"</code>. Must match the customer's default currency.</span></div>
+          <div class="doc-param"><span class="doc-param-name">description</span><span class="doc-param-type">str?</span><span class="doc-param-desc">Optional human-readable description shown in Stripe dashboard and on receipts.</span></div>
+          <div class="doc-param"><span class="doc-param-name">idempotency_key</span><span class="doc-param-type">str?</span><span class="doc-param-desc">Optional idempotency key for safe retries. Stripe deduplicates requests with the same key within 24 hours.</span></div>
+        </div>
+
+        <div class="doc-section">
+          <h4>Returns</h4>
+          <div class="doc-returns"><code style="font-family:'Fira Code',monospace;color:var(--syn-type)">Dict[str, Any]</code> — <code style="font-family:'Fira Code',monospace;color:var(--syn-str)">{id: str, status: str}</code><br>Where <code style="font-family:'Fira Code',monospace">status</code> is one of: <code style="font-family:'Fira Code',monospace">requires_payment_method</code>, <code style="font-family:'Fira Code',monospace">requires_confirmation</code>, <code style="font-family:'Fira Code',monospace">succeeded</code>.</div>
+        </div>
+
+        <div class="doc-section">
+          <h4>Raises</h4>
+          <div class="doc-param"><span class="doc-param-name" style="color:#ff7b72">ValueError</span><span class="doc-param-type"></span><span class="doc-param-desc">If amount converts to less than 50 cents (Stripe minimum).</span></div>
+          <div class="doc-param"><span class="doc-param-name" style="color:#ff7b72">PaymentError</span><span class="doc-param-type"></span><span class="doc-param-desc">Wraps any <code style="font-family:'Fira Code',monospace">stripe.StripeError</code> — includes card declines, invalid customer IDs, rate limits.</span></div>
+        </div>
+
+        <div class="doc-section">
+          <h4>Example</h4>
+          <div class="doc-example"><span class="kw">processor</span> = PaymentProcessor(api_key, secret)
+result = processor.charge_customer(
+    customer_id=<span class="str">"cus_AbC123"</span>,
+    amount=<span class="ty">Decimal</span>(<span class="str">"49.99"</span>),
+    description=<span class="str">"Pro plan - May 2026"</span>,
+    idempotency_key=f<span class="str">"charge-{order_id}"</span>
+)
+<span class="cm"># → {"id": "pi_xxx", "status": "requires_confirmation"}</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PASTE YOUR CODE -->
+<section class="section" style="padding-top:0">
+  <h2 class="section-title">Try It — Paste Your Code</h2>
+  <p class="section-sub">Drop any function, class, or file. Get production-ready docs back in seconds.</p>
+  <div class="paste-tool">
+    <h3>✦ Live Code Documenter</h3>
+    <p>Works with any language. The more code you paste, the more context-aware the output.</p>
+
+    <div style="margin-bottom:16px">
+      <div style="font-size:.82rem;font-weight:600;color:var(--cream2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">Language</div>
+      <div class="lang-row" id="langRow">
+        <div class="lang-pill active" onclick="setLang(this,'python')">Python</div>
+        <div class="lang-pill" onclick="setLang(this,'typescript')">TypeScript</div>
+        <div class="lang-pill" onclick="setLang(this,'javascript')">JavaScript</div>
+        <div class="lang-pill" onclick="setLang(this,'go')">Go</div>
+        <div class="lang-pill" onclick="setLang(this,'rust')">Rust</div>
+        <div class="lang-pill" onclick="setLang(this,'java')">Java</div>
+      </div>
+    </div>
+
+    <div style="margin-bottom:16px">
+      <div style="font-size:.82rem;font-weight:600;color:var(--cream2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">Doc Style</div>
+      <div class="doc-style-row" id="docStyleRow">
+        <div class="ds-btn active" onclick="setDocStyle(this,'docstring')">Docstring / JSDoc</div>
+        <div class="ds-btn" onclick="setDocStyle(this,'markdown')">Markdown</div>
+        <div class="ds-btn" onclick="setDocStyle(this,'readme')">README section</div>
+        <div class="ds-btn" onclick="setDocStyle(this,'openapi')">OpenAPI / Swagger</div>
+        <div class="ds-btn" onclick="setDocStyle(this,'confluence')">Confluence Wiki</div>
+      </div>
+    </div>
+
+    <div class="paste-row">
+      <div class="paste-pane">
+        <label>Your Code (paste here)</label>
+        <textarea id="codeInput2" placeholder="def process_payment(customer_id, amount):
+    # charge customer via Stripe
+    charge = stripe.Charge.create(
+        amount=int(amount * 100),
+        currency='usd',
+        customer=customer_id
+    )
+    return charge.id"></textarea>
+        <button class="gen-btn" id="genBtn" onclick="generateDocs()">
+          <span id="genBtnText">✦ Generate Documentation →</span>
+        </button>
+      </div>
+      <div class="paste-pane">
+        <label>Generated Documentation</label>
+        <div class="doc-output" id="docOutput"></div>
+        <div id="docPlaceholder" style="background:var(--code-bg);border:1px solid var(--code-border);border-radius:8px;padding:20px;height:200px;display:flex;align-items:center;justify-content:center;font-size:.85rem;color:var(--muted)">Documentation will appear here ↑</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DOC TYPES -->
+<section class="section" style="padding-top:0">
+  <h2 class="section-title">What Gets Documented</h2>
+  <p class="section-sub">QADIR handles every layer of your documentation stack.</p>
+  <div class="doc-types">
+    <div class="dt-card">
+      <div class="dt-icon">📖</div>
+      <div class="dt-name">API Reference</div>
+      <div class="dt-desc">Every endpoint, parameter, type, error code, and example — automatically from your code.</div>
+      <div class="dt-formats"><span class="dt-format">OpenAPI</span><span class="dt-format">Markdown</span><span class="dt-format">HTML</span></div>
+    </div>
+    <div class="dt-card">
+      <div class="dt-icon">💬</div>
+      <div class="dt-name">Inline Comments</div>
+      <div class="dt-desc">Adds contextual comments to complex logic, explaining the "why" not just the "what."</div>
+      <div class="dt-formats"><span class="dt-format">JSDoc</span><span class="dt-format">PyDoc</span><span class="dt-format">GoDoc</span></div>
+    </div>
+    <div class="dt-card">
+      <div class="dt-icon">📋</div>
+      <div class="dt-name">README Files</div>
+      <div class="dt-desc">Full README with setup, usage, env vars, architecture overview, and contribution guide.</div>
+      <div class="dt-formats"><span class="dt-format">Markdown</span><span class="dt-format">MDX</span></div>
+    </div>
+    <div class="dt-card">
+      <div class="dt-icon">🏗️</div>
+      <div class="dt-name">Architecture Docs</div>
+      <div class="dt-desc">Reads your entire codebase and generates system diagrams, data flow docs, and service maps.</div>
+      <div class="dt-formats"><span class="dt-format">Mermaid</span><span class="dt-format">Confluence</span></div>
+    </div>
+    <div class="dt-card">
+      <div class="dt-icon">🔄</div>
+      <div class="dt-name">Changelog Generation</div>
+      <div class="dt-desc">From git diff to user-facing CHANGELOG in one step. Human-readable, semantic versioned.</div>
+      <div class="dt-formats"><span class="dt-format">CHANGELOG.md</span><span class="dt-format">Release Notes</span></div>
+    </div>
+    <div class="dt-card">
+      <div class="dt-icon">🧪</div>
+      <div class="dt-name">Test Documentation</div>
+      <div class="dt-desc">Generates test plans, test case descriptions, and coverage reports from existing test files.</div>
+      <div class="dt-formats"><span class="dt-format">HTML Report</span><span class="dt-format">Markdown</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- METRICS -->
+<section class="section" style="padding-top:0">
+  <div class="metrics-strip">
+    <div class="ms-item"><div class="ms-num">6</div><div class="ms-lbl">Languages in Live Demo</div></div>
+    <div class="ms-item"><div class="ms-num">5</div><div class="ms-lbl">Doc Style Formats</div></div>
+    <div class="ms-item"><div class="ms-num">Live</div><div class="ms-lbl">Real AI Generation</div></div>
+    <div class="ms-item"><div class="ms-num">Free</div><div class="ms-lbl">No Credit Card Required</div></div>
+  </div>
+</section>
+
+<!-- SUPPORTED LANGUAGES -->
+<section class="section" style="padding-top:0">
+  <h2 class="section-title">Supported Languages</h2>
+  <div class="lang-grid">
+    <div class="lang-card"><div class="lang-icon">🐍</div><div>Python</div></div>
+    <div class="lang-card"><div class="lang-icon">🟦</div><div>TypeScript</div></div>
+    <div class="lang-card"><div class="lang-icon">🟨</div><div>JavaScript</div></div>
+    <div class="lang-card"><div class="lang-icon">🐹</div><div>Go</div></div>
+    <div class="lang-card"><div class="lang-icon">🦀</div><div>Rust</div></div>
+    <div class="lang-card"><div class="lang-icon">☕</div><div>Java</div></div>
+    <div class="lang-card"><div class="lang-icon">🔷</div><div>C#/.NET</div></div>
+    <div class="lang-card"><div class="lang-icon">⬛</div><div>C / C++</div></div>
+    <div class="lang-card"><div class="lang-icon">💎</div><div>Ruby</div></div>
+    <div class="lang-card"><div class="lang-icon">🐘</div><div>PHP</div></div>
+    <div class="lang-card"><div class="lang-icon">🔴</div><div>Swift</div></div>
+    <div class="lang-card"><div class="lang-icon">🎯</div><div>Kotlin</div></div>
+    <div class="lang-card"><div class="lang-icon">🌙</div><div>Lua</div></div>
+    <div class="lang-card"><div class="lang-icon">⚡</div><div>Scala</div></div>
+    <div class="lang-card"><div class="lang-icon">🌊</div><div>Elixir</div></div>
+    <div class="lang-card"><div class="lang-icon">🔧</div><div>SQL</div></div>
+    <div class="lang-card"><div class="lang-icon">📄</div><div>GraphQL</div></div>
+    <div class="lang-card"><div class="lang-icon">🔌</div><div>+30 more</div></div>
+  </div>
+</section>
+
+<!-- ROADMAP (honest — no purchase flow exists today; ABUZ8's real products are one-time purchases at /store.html, not subscriptions) -->
+<section class="section" style="padding-top:0">
+  <h2 class="section-title">What This Is</h2>
+  <p class="section-sub">This page is a free, working demo — not a subscription product. There's nothing to buy here today.</p>
+  <div class="proof-card" style="max-width:680px">
+    <div class="doc-badge fn-badge" style="margin-bottom:12px">🗺️ Roadmap</div>
+    <p style="font-size:.87rem;color:var(--cream2);line-height:1.65;margin-bottom:16px">The demo above uses real AI to generate documentation from whatever code you paste in — try it free, no signup. A full CI-integrated, whole-repo version (auto-doc on every PR, architecture diagrams, team workspace) doesn't exist yet. If we build it, it'll be listed honestly at <a href="../store.html" style="color:var(--gold)">store.html</a> as a one-time purchase, the same way every other ABUZ8 product is sold — no recurring subscriptions.</p>
+    <p style="font-size:.87rem;color:var(--cream2);line-height:1.65;margin-bottom:20px">Want to tell us what you'd need from a full version? We read every note.</p>
+    <a href="mailto:ahmad@abuz8ai.com?subject=Code%20Documentation%20Tool%20-%20Interest" style="display:inline-block;background:var(--gold);color:var(--lapis);padding:11px 24px;border-radius:8px;font-weight:700;font-size:.9rem;text-decoration:none">Email Us Your Use Case →</a>
+  </div>
+</section>
+
+<!-- PROOF -->
+<section class="section" style="padding-top:0">
+  <h2 class="section-title">Be our first customer</h2>
+  <div class="proof-grid">
+    <div class="proof-card">
+      <div class="proof-text" style="font-style:normal">We're newly launched — no customer case studies yet. Want to be the first? <a href="../request.html" style="color:var(--gold)">Get started</a>.</div>
+    </div>
+  </div>
+</section>
+
+<!-- WAITLIST (honest — email signup for future updates, not an active product/API key/CI integration) -->
+<div class="waitlist-section">
+  <h2>Want <em>Updates</em>?</h2>
+  <p>The demo above is free to use right now, no signup needed. Leave your email if you want to hear about a full team/CI version if we build one.</p>
+  <div class="wl-form" id="wlForm">
+    <input type="email" id="wlEmail" placeholder="Work email address">
+    <button onclick="joinWaitlist()">Notify Me →</button>
+  </div>
+  <div class="wl-success" id="wlSuccess">
+    💻 Thanks — you're on the list. We'll only email you if there's something real to share.
+  </div>
+  <div class="wl-note">No spam · No credit card · Unsubscribe anytime</div>
+</div>
+
+<script>
+// ——————————————————————————
+// LANGUAGE + DOC STYLE STATE
+// ——————————————————————————
+let activeLang = 'python';
+let activeDocStyle = 'docstring';
+
+function setLang(el, lang){
+  document.querySelectorAll('.lang-pill').forEach(p=>p.classList.remove('active'));
+  el.classList.add('active');
+  activeLang = lang;
+}
+
+function setDocStyle(el, style){
+  document.querySelectorAll('.ds-btn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  activeDocStyle = style;
+}
+
+// ——————————————————————————
+// DOC GENERATION
+// ——————————————————————————
+const DOC_TEMPLATES = {
+  docstring: (fn, lang) => {
+    if (lang === 'python') return `def ${fn}(
+    customer_id: str,
+    amount: Decimal,
+    currency: str = "usd",
+    description: Optional[str] = None,
+    idempotency_key: Optional[str] = None
+) -> Dict[str, Any]:
+    """
+    Create a Stripe PaymentIntent for a given customer.
+
+    Converts the decimal amount to integer cents and validates
+    the minimum charge threshold. Returns a normalized response
+    dict with the payment intent ID and current status.
+
+    Args:
+        customer_id: Stripe customer ID (e.g. "cus_xxx").
+        amount: Charge amount in major units (e.g. Decimal("49.99")).
+                Minimum: Decimal("0.50") (50 cents).
+        currency: ISO 4217 currency code. Defaults to "usd".
+        description: Optional descriptor shown on receipts.
+        idempotency_key: Optional key for safe retries.
+
+    Returns:
+        Dict containing:
+            - id (str): Stripe PaymentIntent ID.
+            - status (str): One of "requires_payment_method",
+              "requires_confirmation", or "succeeded".
+
+    Raises:
+        ValueError: If amount < $0.50.
+        PaymentError: Wraps stripe.StripeError on API failure.
+
+    Example:
+        >>> result = processor.charge_customer(
+        ...     customer_id="cus_AbC123",
+        ...     amount=Decimal("49.99"),
+        ...     idempotency_key=f"charge-{order_id}"
+        ... )
+        >>> result["status"]
+        'requires_confirmation'
+    """`;
+    return `/**
+ * Process a payment for the given customer.
+ *
+ * @param {string} customerId - The customer identifier.
+ * @param {number} amount - Amount in major currency units.
+ * @param {string} [currency="usd"] - ISO 4217 currency code.
+ * @param {string} [description] - Optional charge description.
+ * @returns {Promise<{id: string, status: string}>}
+ * @throws {PaymentError} When the Stripe API call fails.
+ *
+ * @example
+ * const result = await chargeCustomer("cus_xxx", 49.99);
+ * console.log(result.status); // "requires_confirmation"
+ */`;
+  },
+  markdown: (fn) => `## \`${fn}\`
+
+**Signature:** \`charge_customer(customer_id, amount, currency="usd", description=None, idempotency_key=None)\`
+
+Creates a Stripe PaymentIntent for the given customer.
+
+### Parameters
+
+| Parameter | Type | Required | Description |
+|---|---|---|---|
+| \`customer_id\` | \`str\` | ✓ | Stripe customer ID |
+| \`amount\` | \`Decimal\` | ✓ | Amount in dollars. Min: $0.50 |
+| \`currency\` | \`str\` | — | ISO 4217 code. Default: \`"usd"\` |
+| \`description\` | \`str\` | — | Shown on receipts |
+| \`idempotency_key\` | \`str\` | — | For safe retries |
+
+### Returns
+
+\`Dict[str, Any]\` — \`{id: str, status: str}\`
+
+### Raises
+
+- \`ValueError\` — If amount < $0.50
+- \`PaymentError\` — Wraps stripe.StripeError`,
+
+  readme: () => `## Payment Processing
+
+This module handles Stripe payment processing for the application.
+
+### Quick Start
+
+\`\`\`python
+from payment_processor import PaymentProcessor
+from decimal import Decimal
+
+processor = PaymentProcessor(
+    api_key=os.environ["STRIPE_SECRET_KEY"],
+    webhook_secret=os.environ["STRIPE_WEBHOOK_SECRET"]
+)
+
+result = processor.charge_customer(
+    customer_id="cus_AbC123",
+    amount=Decimal("49.99"),
+    description="Pro Plan - May 2026"
+)
+\`\`\`
+
+### Environment Variables
+
+| Variable | Description |
+|---|---|
+| \`STRIPE_SECRET_KEY\` | Stripe secret API key |
+| \`STRIPE_WEBHOOK_SECRET\` | Webhook signing secret |`,
+
+  openapi: () => `paths:
+  /payments/charge:
+    post:
+      summary: Charge a customer
+      operationId: chargeCustomer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [customer_id, amount]
+              properties:
+                customer_id:
+                  type: string
+                  description: Stripe customer ID
+                  example: "cus_AbC123"
+                amount:
+                  type: number
+                  format: decimal
+                  minimum: 0.50
+                  description: Amount in dollars
+                currency:
+                  type: string
+                  default: usd
+                  description: ISO 4217 currency code
+      responses:
+        '200':
+          description: Payment intent created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  status:
+                    type: string`,
+
+  confluence: () => `h2. charge_customer
+
+*Summary:* Creates a Stripe PaymentIntent for a customer.
+
+h3. Parameters
+
+|| Parameter || Type || Required || Description ||
+| customer_id | String | Yes | Stripe customer ID |
+| amount | Decimal | Yes | Amount in dollars (min $0.50) |
+| currency | String | No | ISO 4217 code, default "usd" |
+| description | String | No | Optional receipt descriptor |
+
+h3. Return Value
+
+Returns a Dict with:
+* *id* (String) — PaymentIntent ID
+* *status* (String) — Current status
+
+h3. Error Handling
+
+{warning}
+ValueError is raised for amounts below $0.50.
+PaymentError wraps all Stripe API failures.
+{warning}`
+};
+
+async function generateDocs(){
+  const code = document.getElementById('codeInput2').value.trim();
+  const btn = document.getElementById('genBtn');
+  const btnText = document.getElementById('genBtnText');
+
+  if (!code){ document.getElementById('codeInput2').style.borderColor='#ef4444'; return; }
+  document.getElementById('codeInput2').style.borderColor='';
+
+  if (btn.classList.contains('loading')) return;
+  btn.classList.add('loading');
+  btnText.textContent = '⏳ Generating…';
+
+  const outputEl = document.getElementById('docOutput');
+  const placeholder = document.getElementById('docPlaceholder');
+
+  // Real AI documentation via the ABUZ8 brain (Cloudflare Workers AI). No templates.
+  try {
+    const r = await fetch('/api/waitlist', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        tool: 'code-documentation',
+        data: { code, language: activeLang, docStyle: activeDocStyle }
+      })
+    });
+    const res = await r.json();
+    if (!res.success || !res.result) throw new Error(res.error || 'Generation failed');
+
+    outputEl.style.whiteSpace = 'normal';
+    outputEl.innerHTML = mdToHtml(res.result);
+    outputEl.classList.add('visible');
+    placeholder.style.display='none';
+
+    btn.classList.remove('loading');
+    btnText.textContent = '✓ Docs Generated';
+    setTimeout(()=>btnText.textContent='✦ Regenerate →', 3000);
+  } catch (err) {
+    btn.classList.remove('loading');
+    btnText.textContent = '✦ Generate Documentation →';
+    alert('Generation failed: ' + err.message + '. Please try again in a moment.');
+  }
+}
+
+// Minimal, safe markdown → HTML renderer for AI brain output (escapes HTML first).
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function mdToHtml(md){
+  let s = esc(String(md));
+  const blocks = [];
+  s = s.replace(/```(\w*)\n?([\s\S]*?)```/g, (m, lang, code) => {
+    blocks.push('<pre style="background:var(--code-bg);border:1px solid var(--code-border);border-radius:6px;padding:12px;overflow-x:auto;font-family:Fira Code,monospace;font-size:.8rem;line-height:1.6;white-space:pre;margin:10px 0;color:#cdd9e5">' + code.replace(/\n$/,'') + '</pre>');
+    return 'ABZBLOCK' + (blocks.length - 1) + 'ENDABZ';
+  });
+  s = s.replace(/`([^`\n]+)`/g, '<code style="background:var(--lapis3);padding:1px 5px;border-radius:4px;font-family:Fira Code,monospace;font-size:.85em">$1</code>');
+  s = s.replace(/^######\s+(.*)$/gm, '<h6>$1</h6>')
+       .replace(/^#####\s+(.*)$/gm, '<h5>$1</h5>')
+       .replace(/^####\s+(.*)$/gm, '<h4 style="color:var(--gold);margin:14px 0 6px">$1</h4>')
+       .replace(/^###\s+(.*)$/gm, '<h4 style="color:var(--gold);margin:14px 0 6px">$1</h4>')
+       .replace(/^##\s+(.*)$/gm, '<h4 style="color:var(--gold);margin:14px 0 6px">$1</h4>')
+       .replace(/^#\s+(.*)$/gm, '<h4 style="color:var(--gold);margin:14px 0 6px">$1</h4>');
+  s = s.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+       .replace(/(^|[^*])\*([^*\n]+)\*/g, '$1<em>$2</em>');
+  s = s.replace(/(?:^[ \t]*(?:[-*]|\d+\.)\s+.*(?:\n|$))+/gm, (block) => {
+    const ordered = /^\s*\d+\.\s/.test(block);
+    const items = block.trim().split(/\n/).map(l => l.replace(/^\s*(?:[-*]|\d+\.)\s+/, '').trim()).filter(Boolean);
+    return '<' + (ordered?'ol':'ul') + ' style="padding-left:20px;margin:8px 0">' + items.map(i=>'<li style="margin-bottom:4px">'+i+'</li>').join('') + '</' + (ordered?'ol':'ul') + '>';
+  });
+  s = s.split(/\n{2,}/).map(p => {
+    p = p.trim();
+    if (!p) return '';
+    if (/^ABZBLOCK\d+ENDABZ$/.test(p)) return p;
+    if (/^\s*<(h\d|ul|ol|pre)/.test(p)) return p;
+    return '<p style="margin-bottom:10px">' + p.replace(/\n/g, '<br>') + '</p>';
+  }).join('\n');
+  s = s.replace(/(?:<p[^>]*>)?\s*ABZBLOCK(\d+)ENDABZ\s*(?:<\/p>)?/g, (m, i) => blocks[+i]);
+  return s;
+}
+
+// ——————————————————————————
+// WAITLIST
+// ——————————————————————————
+async function joinWaitlist(){
+  const email = document.getElementById('wlEmail').value.trim();
+  if (!email || !email.includes('@')){
+    document.getElementById('wlEmail').style.borderColor='#ef4444';
+    setTimeout(()=>document.getElementById('wlEmail').style.borderColor='',1500);
+    return;
+  }
+  try {
+    if (window.ABUZ8 && window.ABUZ8.callBrain){
+      await window.ABUZ8.callBrain('code_docs_waitlist', {
+        email, lang: activeLang, style: activeDocStyle, ts: Date.now()
+      });
+    }
+  } catch(e){}
+  document.getElementById('wlForm').style.display='none';
+  document.getElementById('wlSuccess').style.display='block';
+}
+</script>
+<script src="/tools/_abuz8-live-brain.js" onerror="console.log('brain offline — demo mode')"></script>
+
+<script src="/assets/js/dfy-banner.js" async></script>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+<script src="/tools/_tools-shared.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>
+

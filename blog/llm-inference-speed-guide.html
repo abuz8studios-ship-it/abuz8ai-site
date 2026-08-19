@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<!-- 2026-07-20 — Weekly content: llm-inference-speed-guide -->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LLM Inference Speed: The Tokens-Per-Second Math That Predicts Your UX | ABUZ8</title>
+<meta name="description" content="LLM inference speed explained: prefill vs decode, why tokens per second is memory-bound, how to estimate t/s from hardware specs, and what actually makes local models fast.">
+<meta name="keywords" content="llm inference speed, tokens per second, llm tps, time to first token, memory bandwidth llm, local llm speed, inference optimization">
+<link rel="canonical" href="https://abuz8ai.com/blog/llm-inference-speed-guide">
+<meta property="og:title" content="LLM Inference Speed: The Tokens-Per-Second Math That Predicts Your UX">
+<meta property="og:type" content="article">
+<link rel="stylesheet" href="/blog/_blog-base.css">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@300;400;600;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
+<style>
+:root{
+  --lapis:#0a1628; --lapis-mid:#EEF3F8; --lapis-light:#E3EBF3;
+  --card:#0d1a30; --border:#D6E0EC;
+  --text:#e8e4d8; --cream:#1F2D3D; --dim:#5A6B7D;
+  --gold:#5fa8e8; --gold-light:#255F95; --gold-dim:#7DA3C8;
+  --turq:#5fa8e8; --turq-light:#5fa8e8; --turq-bright:#255F95;
+  --primary:#5fa8e8;
+}
+body{background:var(--lapis);}
+code{background:#EEF3F8;color:#255F95;}
+.callout.cta{background:linear-gradient(135deg,#EAF2FA,#0a1628);}
+</style>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","headline":"LLM Inference Speed: The Tokens-Per-Second Math That Predicts Your UX","datePublished":"2026-07-20","author":{"@type":"Organization","name":"ABUZ8 AI"}}
+</script>
+</head>
+<body>
+<div class="container">
+  <a href="/blog/" class="back">&larr; ABUZ8 BLOG</a>
+  <h1>LLM Inference Speed: The Tokens-Per-Second Math That Predicts Your UX</h1>
+  <div class="meta-row"><span>DEVELOPERS</span><span class="dot"></span><span>JULY 20, 2026</span><span class="dot"></span><span>8 MIN READ</span></div>
+
+  <p>Ask why a model feels slow and you'll get vibes. Ask what its tokens-per-second should be on given hardware and the room goes quiet. Yet <strong>LLM inference speed</strong> is one of the most predictable numbers in this entire field — a back-of-napkin division problem you can do before buying a GPU or signing a contract. Speed isn't a mystery; it's memory bandwidth divided by model size, with an asterisk or two. Once you can run that math, marketing benchmarks stop working on you.</p>
+
+  <p>This guide covers the two phases of inference, the bandwidth arithmetic, what actually moves the number (quantization, batching, speculative decoding), and the UX thresholds that decide whether your app feels instant or broken.</p>
+
+  <h2>Two phases, two bottlenecks</h2>
+  <p>Every request has two acts. <strong>Prefill</strong> reads your whole prompt and computes attention over it in parallel — it's compute-bound, hammering the GPU's math units, and you experience it as time-to-first-token (TTFT). <strong>Decode</strong> then generates one token at a time — and each token requires reading essentially every weight of the model from memory. That makes decode memory-bandwidth-bound: the GPU's math units mostly sit idle, waiting on the memory bus.</p>
+
+  <p>This split explains behavior that otherwise looks random. Long prompt, short answer? Your cost is prefill; TTFT dominates. Short prompt, long answer? Decode dominates; tokens-per-second is everything. Optimizations target one phase or the other — prefix reuse and caching attack prefill (we've measured ~5&times; there — see <a href="/blog/llm-prompt-caching-explained" class="in">prompt caching explained</a>), while quantization and bandwidth attack decode.</p>
+
+  <h2>The napkin math</h2>
+  <p>Decode speed ≈ memory bandwidth ÷ bytes-per-token. Bytes-per-token is roughly the size of the model in memory (every weight gets read once per token, ignoring cache effects and overlap).</p>
+
+  <p>Worked example: a 7B-parameter model quantized to ~5 bits per weight occupies about 4.5 GB. On a consumer GPU with 1,000 GB/s of bandwidth: 1000 ÷ 4.5 ≈ 220 t/s theoretical ceiling; real-world lands at 50–70% of ceiling, so expect 110–160 t/s. Same model on a CPU with 60 GB/s of system RAM bandwidth: 60 ÷ 4.5 ≈ 13 t/s ceiling, maybe 7–9 real. A 70B model at 4-bit (~40 GB) on that same GPU — if it even fits — comes in around 1000 ÷ 40 = 25 t/s ceiling. Notice what happened: we predicted an order-of-magnitude UX difference with grade-school division. Run your own configuration through the free <a href="/tools/ai-inference-speed-calculator.html" class="in">inference speed calculator</a>, and check whether the model fits in memory at all with the <a href="/tools/ai-vram-calculator.html" class="in">VRAM calculator</a> — fit comes before speed, because spillover to system RAM murders bandwidth.</p>
+
+  <h2>What actually moves the number</h2>
+  <p><strong>Quantization</strong> is the honest speedup: fewer bits per weight = fewer bytes read per token = proportionally faster decode (plus it fits bigger models in the same VRAM). Going FP16 → 4-bit cuts bytes ~4&times; and typically buys 2–3&times; real throughput with modest quality cost at sane levels. <strong>Batching</strong> raises aggregate throughput — the same weight-read serves many concurrent sequences — which is why servers report huge t/s numbers; it does nothing for a single user's stream. <strong>Speculative decoding</strong> lets a small draft model propose tokens the big model verifies in bulk — real 1.5–3&times; wins on the single stream, workload-dependent. <strong>KV-cache growth</strong> is the silent killer: at long context, reading the attention cache competes with reading weights, which is why t/s degrades as conversations get long, and why context discipline (see the <a href="/tools/ai-context-window-planner.html" class="in">context window planner</a>) is a speed decision, not just a cost one.</p>
+
+  <h2>The UX thresholds that matter</h2>
+  <p>Human reading speed is ~5–7 words/second — call it 8–10 t/s. Below that, users watch text crawl and assume something is broken. At 20–30 t/s streaming feels fluid; past ~50 t/s extra speed is imperceptible for reading and only matters for agent chains, code generation, or bulk work where the consumer is a machine. TTFT has its own budget: under ~500 ms feels instant, past 2–3 s users start re-clicking. Engineer to these thresholds, not to leaderboard numbers — a model that's "slower" but streams immediately usually feels faster than one with better t/s and lazy TTFT.</p>
+
+  <h2>Cloud numbers vs your numbers</h2>
+  <p>API latency adds network round-trips and multi-tenant queueing you can't control or predict — the same endpoint is snappy at 3 a.m. and sluggish at peak. Local inference trades peak silicon for determinism: your t/s is your t/s, every hour of every day. That predictability is worth more than most benchmarks admit, and it's a core reason <strong>QADIR OS</strong> is local-first: a sovereign agentic OS that routes routine work to the fastest model your own hardware serves — with autocomplete-grade paths tuned to sub-30 ms medians on our own rig — and escalates to cloud only when a task genuinely needs the bigger brain. Speed you own doesn't rent-spike.</p>
+
+  <div class="callout cta">
+    <p><strong>Predict before you buy.</strong> Run the division in the free <a href="/tools/ai-inference-speed-calculator.html" class="in">inference speed calculator</a>, check fit with the <a href="/tools/ai-vram-calculator.html" class="in">VRAM calculator</a>, or <a href="/" class="in">join QADIR OS early access</a> and get speed that's yours. No card required.</p>
+  </div>
+  <div class="foot">Built by <a href="/">ABUZ8 LLC</a> — we're building QADIR OS, the sovereign agentic operating system.</div>
+</div>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+<script src="/blog/_blog-shared.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>

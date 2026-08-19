@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Habit Tracker — ABUZ8</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--lapis:#0a1628;--lapis2:#0f1f3d;--lapis3:#162544;--gold:#c9a84c;--turq:#0e9f6e;--turq2:#22b5a0;--cream:#f5f0e8;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--lapis);color:var(--cream);font-family:'Inter',sans-serif;min-height:100vh;}
+header{background:var(--lapis2);border-bottom:1px solid rgba(201,168,76,.15);padding:16px 32px;display:flex;align-items:center;gap:12px;}
+header h1{font-family:'Playfair Display',serif;font-size:1.4rem;color:var(--gold);}
+header span{background:var(--turq);color:#fff;font-size:11px;font-weight:600;padding:2px 8px;border-radius:20px;}
+.hero{text-align:center;padding:40px 20px 24px;}
+.hero h2{font-family:'Playfair Display',serif;font-size:2rem;color:var(--cream);margin-bottom:10px;}
+.hero p{color:rgba(245,240,232,.7);font-size:.95rem;max-width:480px;margin:0 auto;}
+.main{max-width:860px;margin:0 auto;padding:0 20px 80px;}
+.card{background:var(--lapis2);border:1px solid rgba(201,168,76,.12);border-radius:12px;padding:24px;}
+.card+.card{margin-top:16px;}
+/* Add habit */
+.add-row{display:flex;gap:10px;flex-wrap:wrap;}
+.add-row input{flex:1;min-width:180px;background:var(--lapis3);border:1px solid rgba(201,168,76,.2);border-radius:8px;padding:11px 14px;color:var(--cream);font-family:'Inter',sans-serif;font-size:14px;outline:none;transition:border .2s;}
+.add-row input:focus{border-color:var(--gold);}
+.add-row select{background:var(--lapis3);border:1px solid rgba(201,168,76,.2);border-radius:8px;padding:11px 14px;color:var(--cream);font-family:'Inter',sans-serif;font-size:13px;outline:none;}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:11px 22px;border-radius:8px;border:none;cursor:pointer;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;transition:all .2s;}
+.btn-gold{background:var(--gold);color:var(--lapis);}
+.btn-gold:hover{background:#e0bc5a;}
+.btn-outline{background:transparent;border:1px solid rgba(201,168,76,.3);color:var(--cream);}
+.btn-outline:hover{border-color:var(--gold);color:var(--gold);}
+/* Habit row */
+.habit-list{margin-top:4px;}
+.habit-row{display:flex;align-items:center;gap:12px;padding:14px;background:var(--lapis3);border:1px solid rgba(201,168,76,.1);border-radius:10px;margin-top:10px;transition:border-color .2s;}
+.habit-row:hover{border-color:rgba(201,168,76,.25);}
+.habit-icon{font-size:20px;min-width:28px;text-align:center;}
+.habit-info{flex:1;}
+.habit-name{font-size:14px;font-weight:600;color:var(--cream);}
+.habit-meta{font-size:11px;color:rgba(245,240,232,.45);margin-top:2px;}
+/* Streak chain */
+.streak-chain{display:flex;gap:4px;align-items:center;margin-top:6px;flex-wrap:wrap;}
+.dot{width:14px;height:14px;border-radius:50%;transition:all .2s;}
+.dot.done{background:var(--turq2);}
+.dot.missed{background:rgba(255,255,255,.08);}
+.dot.today{background:var(--gold);box-shadow:0 0 6px rgba(201,168,76,.5);}
+/* Check button */
+.check-btn{width:36px;height:36px;border-radius:50%;border:2px solid rgba(201,168,76,.3);background:transparent;cursor:pointer;font-size:16px;transition:all .2s;display:flex;align-items:center;justify-content:center;}
+.check-btn.done{background:var(--turq2);border-color:var(--turq2);}
+.check-btn:hover{border-color:var(--turq2);}
+.del-btn{background:none;border:none;cursor:pointer;color:rgba(245,240,232,.2);font-size:16px;padding:4px;transition:color .2s;}
+.del-btn:hover{color:rgba(255,100,100,.7);}
+/* Stats bar */
+.stats-row{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:16px;}
+.stat-box{flex:1;min-width:90px;background:var(--lapis3);border:1px solid rgba(201,168,76,.1);border-radius:10px;padding:12px;text-align:center;}
+.stat-val{font-size:1.5rem;font-weight:700;color:var(--gold);}
+.stat-lbl{font-size:11px;color:rgba(245,240,232,.45);text-transform:uppercase;letter-spacing:.05em;margin-top:2px;}
+/* Preset habits */
+.preset-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;}
+.preset{padding:6px 14px;border-radius:20px;border:1px solid rgba(201,168,76,.2);cursor:pointer;font-size:12px;color:rgba(245,240,232,.7);transition:all .2s;}
+.preset:hover{border-color:var(--gold);color:var(--gold);}
+/* Progress ring */
+.prog-ring{display:flex;align-items:center;justify-content:center;margin-bottom:16px;}
+svg.ring{transform:rotate(-90deg);}
+.ring-track{fill:none;stroke:rgba(255,255,255,.07);}
+.ring-fill{fill:none;stroke:var(--turq2);stroke-linecap:round;transition:stroke-dashoffset .5s;}
+.ring-label{position:absolute;text-align:center;}
+.ring-pct{font-size:1.8rem;font-weight:700;color:var(--gold);}
+.ring-sub{font-size:12px;color:rgba(245,240,232,.5);}
+.ring-wrap{position:relative;display:inline-flex;align-items:center;justify-content:center;}
+/* Date header */
+.date-header{text-align:center;font-size:13px;color:rgba(245,240,232,.5);margin-bottom:16px;}
+/* Empty state */
+.empty{text-align:center;padding:40px;color:rgba(245,240,232,.4);}
+.empty .icon{font-size:40px;margin-bottom:12px;}
+/* Waitlist */
+.waitlist{background:linear-gradient(135deg,var(--lapis2),var(--lapis3));border:1px solid rgba(201,168,76,.2);border-radius:12px;padding:28px;text-align:center;margin-top:16px;}
+.waitlist h3{font-family:'Playfair Display',serif;font-size:1.3rem;color:var(--gold);margin-bottom:8px;}
+.waitlist p{color:rgba(245,240,232,.7);margin-bottom:16px;font-size:14px;}
+.wl-form{display:flex;gap:10px;max-width:380px;margin:0 auto;flex-wrap:wrap;}
+.wl-form input{flex:1;min-width:180px;background:var(--lapis3);border:1px solid rgba(201,168,76,.2);border-radius:8px;padding:10px 14px;color:var(--cream);font-family:'Inter',sans-serif;font-size:14px;outline:none;}
+.wl-success{color:var(--turq2);font-weight:600;display:none;}
+</style>
+<link rel="canonical" href="https://abuz8ai.com/tools/ai-habit-tracker">
+<meta name="description" content="AI Habit Tracker — Track and build habits. Free, no signup, runs entirely in your browser. One of 169 free AI and developer tools by ABUZ8.">
+</head>
+<body>
+<header>
+  <h1>⚡ ABUZ8</h1>
+  <span>AI HABIT TRACKER</span>
+</header>
+<div class="hero">
+  <h2>Build Habits That Stick</h2>
+  <p>Track your daily habits, visualize streaks, and let AI keep you on track toward your goals.</p>
+</div>
+<div class="main">
+  <!-- Today's progress -->
+  <div class="card">
+    <div class="date-header" id="dateHeader"></div>
+    <div class="stats-row" id="statsRow">
+      <div class="stat-box"><div class="stat-val" id="statDone">0</div><div class="stat-lbl">Done Today</div></div>
+      <div class="stat-box"><div class="stat-val" id="statTotal">0</div><div class="stat-lbl">Total Habits</div></div>
+      <div class="stat-box"><div class="stat-val" id="statStreak">0</div><div class="stat-lbl">Best Streak</div></div>
+      <div class="stat-box"><div class="stat-val" id="statRate">0%</div><div class="stat-lbl">7-Day Rate</div></div>
+    </div>
+    <!-- Progress ring -->
+    <div style="text-align:center;">
+      <div class="ring-wrap">
+        <svg class="ring" width="120" height="120" viewBox="0 0 120 120">
+          <circle class="ring-track" cx="60" cy="60" r="50" stroke-width="10"/>
+          <circle class="ring-fill" id="ringFill" cx="60" cy="60" r="50" stroke-width="10" stroke-dasharray="314" stroke-dashoffset="314"/>
+        </svg>
+        <div class="ring-label">
+          <div class="ring-pct" id="ringPct">0%</div>
+          <div class="ring-sub">today</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add habit -->
+  <div class="card">
+    <div style="font-size:13px;font-weight:700;color:var(--gold);letter-spacing:.05em;margin-bottom:12px;">+ ADD HABIT</div>
+    <div class="add-row">
+      <input type="text" id="habitInput" placeholder="e.g. Drink 8 glasses of water 💧" maxlength="60" onkeydown="if(event.key==='Enter')addHabit()">
+      <select id="habitIcon">
+        <option value="💪">💪 Fitness</option>
+        <option value="🧠">🧠 Mental</option>
+        <option value="💧">💧 Health</option>
+        <option value="📚">📚 Learning</option>
+        <option value="😴">😴 Sleep</option>
+        <option value="🥗">🥗 Nutrition</option>
+        <option value="🧘">🧘 Mindfulness</option>
+        <option value="💰">💰 Finance</option>
+        <option value="🎯">🎯 Goals</option>
+        <option value="⭐">⭐ Custom</option>
+      </select>
+      <button class="btn btn-gold" onclick="addHabit()">Add Habit</button>
+    </div>
+    <div style="font-size:12px;color:rgba(245,240,232,.5);margin-top:10px;">Quick add:</div>
+    <div class="preset-row">
+      <span class="preset" onclick="quickAdd('Drink 8 glasses of water','💧')">💧 Drink Water</span>
+      <span class="preset" onclick="quickAdd('Exercise 30 minutes','💪')">💪 Exercise</span>
+      <span class="preset" onclick="quickAdd('Read for 20 minutes','📚')">📚 Read</span>
+      <span class="preset" onclick="quickAdd('Meditate 10 minutes','🧘')">🧘 Meditate</span>
+      <span class="preset" onclick="quickAdd('Sleep 8 hours','😴')">😴 Sleep 8h</span>
+      <span class="preset" onclick="quickAdd('No social media after 9pm','📵')">📵 No Late Scroll</span>
+      <span class="preset" onclick="quickAdd('Journal 5 minutes','✍️')">✍️ Journal</span>
+      <span class="preset" onclick="quickAdd('Cold shower','🚿')">🚿 Cold Shower</span>
+      <span class="preset" onclick="quickAdd('No sugar today','🚫')">🚫 No Sugar</span>
+      <span class="preset" onclick="quickAdd('Take vitamins','💊')">💊 Vitamins</span>
+    </div>
+  </div>
+
+  <!-- Habit list -->
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+      <div style="font-size:13px;font-weight:700;color:var(--gold);letter-spacing:.05em;">TODAY'S HABITS</div>
+      <button class="btn btn-outline" onclick="clearAll()" style="padding:6px 14px;font-size:11px;">Clear All</button>
+    </div>
+    <div class="habit-list" id="habitList">
+      <div class="empty" id="emptyState"><div class="icon">🌱</div><div>No habits yet. Add your first habit above!</div></div>
+    </div>
+  </div>
+
+  <div class="waitlist">
+    <h3>🚀 Smart Reminders & AI Coaching</h3>
+    <p>Join for push notifications, AI streak recovery suggestions, and weekly performance reports.</p>
+    <div class="wl-form">
+      <input type="email" id="wlEmail" placeholder="your@email.com">
+      <button class="btn btn-gold" onclick="joinWaitlist()">Join Waitlist</button>
+    </div>
+    <div class="wl-success" id="wlSuccess">✓ You're on the list!</div>
+  </div>
+</div>
+
+<script src="_abuz8-live-brain.js" defer></script>
+<script>
+// Storage
+let habits = [];
+let completions = {}; // {habitId: {dateStr: bool}}
+
+function todayStr() {
+  return new Date().toISOString().slice(0,10);
+}
+
+function loadData() {
+  try {
+    habits = JSON.parse(localStorage.getItem('abuz8_habits') || '[]');
+    completions = JSON.parse(localStorage.getItem('abuz8_completions') || '{}');
+  } catch(e) { habits=[]; completions={}; }
+}
+
+function saveData() {
+  try {
+    localStorage.setItem('abuz8_habits', JSON.stringify(habits));
+    localStorage.setItem('abuz8_completions', JSON.stringify(completions));
+  } catch(e) {}
+}
+
+function addHabit() {
+  const input = document.getElementById('habitInput');
+  const name = input.value.trim();
+  const icon = document.getElementById('habitIcon').value;
+  if(!name) return;
+  habits.push({ id: Date.now().toString(), name, icon, created: todayStr() });
+  input.value = '';
+  saveData(); renderAll();
+}
+
+function quickAdd(name, icon) {
+  habits.push({ id: Date.now().toString()+Math.random(), name, icon, created: todayStr() });
+  saveData(); renderAll();
+}
+
+function deleteHabit(id) {
+  habits = habits.filter(h => h.id !== id);
+  delete completions[id];
+  saveData(); renderAll();
+}
+
+function toggleToday(id) {
+  const today = todayStr();
+  if(!completions[id]) completions[id] = {};
+  completions[id][today] = !completions[id][today];
+  saveData(); renderAll();
+}
+
+function isCompleted(id, date) {
+  return !!(completions[id] && completions[id][date]);
+}
+
+function getStreak(id) {
+  let streak = 0;
+  const d = new Date();
+  // Don't count today in streak if not done
+  const today = todayStr();
+  if(!isCompleted(id, today)) { d.setDate(d.getDate()-1); }
+  for(let i=0;i<365;i++) {
+    const s = d.toISOString().slice(0,10);
+    if(isCompleted(id, s)) { streak++; d.setDate(d.getDate()-1); }
+    else break;
+  }
+  return streak;
+}
+
+function getLast28(id) {
+  const days = [];
+  const d = new Date();
+  for(let i=27;i>=0;i--) {
+    const dd = new Date(d); dd.setDate(d.getDate()-i);
+    const s = dd.toISOString().slice(0,10);
+    days.push({ date:s, done:isCompleted(id,s), isToday: s===todayStr() });
+  }
+  return days;
+}
+
+function get7DayRate() {
+  if(!habits.length) return 0;
+  const d = new Date(); let total=0, done=0;
+  for(let i=0;i<7;i++) {
+    const dd = new Date(d); dd.setDate(d.getDate()-i);
+    const s = dd.toISOString().slice(0,10);
+    habits.forEach(h => { total++; if(isCompleted(h.id,s)) done++; });
+  }
+  return total > 0 ? Math.round(done/total*100) : 0;
+}
+
+function renderAll() {
+  const today = todayStr();
+  const list = document.getElementById('habitList');
+  const empty = document.getElementById('emptyState');
+
+  if(!habits.length) {
+    empty.style.display='block'; list.innerHTML=''; list.appendChild(empty);
+    updateStats(0,0,0,0); return;
+  }
+  empty.style.display='none';
+
+  const doneToday = habits.filter(h => isCompleted(h.id, today)).length;
+  const bestStreak = Math.max(...habits.map(h => getStreak(h.id)), 0);
+  const rate = get7DayRate();
+
+  list.innerHTML = habits.map(h => {
+    const done = isCompleted(h.id, today);
+    const streak = getStreak(h.id);
+    const last28 = getLast28(h.id);
+    const recentDots = last28.slice(-14);
+    return `
+    <div class="habit-row">
+      <div class="habit-icon">${h.icon}</div>
+      <div class="habit-info">
+        <div class="habit-name">${h.name}</div>
+        <div class="habit-meta">🔥 ${streak} day streak</div>
+        <div class="streak-chain">
+          ${recentDots.map(d=>`<div class="dot ${d.isToday?'today':d.done?'done':'missed'}" title="${d.date}"></div>`).join('')}
+        </div>
+      </div>
+      <button class="check-btn ${done?'done':''}" onclick="toggleToday('${h.id}')">
+        ${done?'✓':''}
+      </button>
+      <button class="del-btn" onclick="deleteHabit('${h.id}')">×</button>
+    </div>`;
+  }).join('');
+
+  updateStats(doneToday, habits.length, bestStreak, rate);
+}
+
+function updateStats(done, total, streak, rate) {
+  document.getElementById('statDone').textContent = done;
+  document.getElementById('statTotal').textContent = total;
+  document.getElementById('statStreak').textContent = streak;
+  document.getElementById('statRate').textContent = rate+'%';
+  const pct = total > 0 ? Math.round(done/total*100) : 0;
+  document.getElementById('ringPct').textContent = pct+'%';
+  const circumference = 314;
+  document.getElementById('ringFill').style.strokeDashoffset = circumference - (circumference * pct / 100);
+}
+
+function clearAll() {
+  if(!confirm('Remove all habits? This cannot be undone.')) return;
+  habits=[]; completions={};
+  saveData(); renderAll();
+}
+
+function setDateHeader() {
+  const d = new Date();
+  const opts = {weekday:'long',year:'numeric',month:'long',day:'numeric'};
+  document.getElementById('dateHeader').textContent = d.toLocaleDateString('en-US', opts);
+}
+
+function joinWaitlist() {
+  const email = document.getElementById('wlEmail').value.trim();
+  if(!email||!email.includes('@')) { alert('Please enter a valid email.'); return; }
+  fetch('/api/waitlist',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,product:'ai-habit-tracker',ts:Date.now()})}).catch(()=>{});
+  document.getElementById('wlEmail').value='';
+  document.querySelector('.wl-form').style.display='none';
+  document.getElementById('wlSuccess').style.display='block';
+}
+
+// Init
+loadData();
+setDateHeader();
+renderAll();
+</script>
+
+<script src="/assets/js/dfy-banner.js" async></script>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+<script src="/tools/_tools-shared.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>
+

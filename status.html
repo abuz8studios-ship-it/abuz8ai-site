@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>System Status — ABUZ8 AI</title>
+<meta name="description" content="Live system status for abuz8ai.com — real checks run in your browser: pages, APIs, sitemap, analytics. No hardcoded claims.">
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#0a1628">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/abuz8-theme.css">
+<style>
+.status-legend{display:flex;gap:18px;flex-wrap:wrap;font-size:11px;color:var(--dim);margin:10px 0 18px}
+.status-legend span{display:inline-flex;align-items:center;gap:6px}
+.sdot{width:11px;height:11px;border-radius:50%;flex:none;background:var(--muted)}
+.sdot.up{background:var(--green-bright);box-shadow:0 0 0 3px rgba(47,191,143,.15)}
+.sdot.down{background:#d96b5c;box-shadow:0 0 0 3px rgba(217,107,92,.15)}
+.sdot.warn{background:#f0a35c;box-shadow:0 0 0 3px rgba(240,163,92,.15)}
+.check-row{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid rgba(26,46,80,.5)}
+.check-row:last-child{border-bottom:none}
+.check-row .nm{font-size:14px;color:var(--white);font-weight:600;min-width:180px}
+.check-row .ds{font-size:12px;color:var(--dim);flex:1}
+.check-row .st{font-family:var(--font-mono);font-size:11px;letter-spacing:1px;text-transform:uppercase;font-weight:700}
+.st.up{color:var(--green-bright)}.st.down{color:#d96b5c}.st.warn{color:#f0a35c}.st.wait{color:var(--muted)}
+.refresh-btn{background:transparent;border:1px solid var(--border);color:var(--text);padding:9px 18px;border-radius:8px;font-family:var(--font-body);font-size:12px;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;transition:border-color .3s,color .3s}
+.refresh-btn:hover{border-color:var(--gold);color:var(--gold)}
+.gen-note{font-size:11px;color:var(--muted);font-style:italic;margin-top:8px}
+</style>
+</head>
+<body>
+<div class="geo-bg"></div>
+<nav class="abuz8-nav">
+<div class="nav-inner">
+  <a href="/" style="text-decoration:none;">
+    <div class="logo">ABUZ8</div>
+    <div class="logo-sub">Sovereign AI</div>
+  </a>
+  <div class="nav-links">
+    <a href="/tools.html">Tools</a>
+    <a href="/store.html">Store</a>
+    
+    <a href="/agents.html">Agents</a>
+    <a href="/models.html">Models</a>
+    <a href="/news.html">News</a>
+    <a href="/roadmap.html">Roadmap</a>
+    <a href="/store.html" class="nav-cta">Get Started</a>
+  </div>
+</div>
+</nav>
+
+<section>
+<div class="wrap">
+  <div class="crumbs"><a href="/">Home</a> › System Status</div>
+
+  <div class="hero" style="padding:56px 0 30px">
+    <div class="hero-eyebrow">Nothing Hardcoded · Checks Run In Your Browser</div>
+    <h1 style="font-family:var(--font-display);font-size:clamp(2rem,5vw,3rem)"><span class="gold">System Status</span></h1>
+    <p>Every number below is either fetched live right now or generated from disk at the last deploy. If something is broken, this page says so — that's the point.</p>
+    <button class="refresh-btn" id="refresh">↻ Re-run all checks</button>
+    <div class="gen-note" id="updated"></div>
+  </div>
+
+  <div class="status-legend">
+    <span><span class="sdot up"></span> passing</span>
+    <span><span class="sdot warn"></span> degraded / pending</span>
+    <span><span class="sdot down"></span> failing</span>
+    <span><span class="sdot"></span> checking…</span>
+  </div>
+
+  <div class="section-head" style="text-align:left;margin-bottom:16px"><h2 style="font-size:1.4rem">Site facts <span style="font-size:12px;-webkit-text-fill-color:var(--dim);font-family:var(--font-body)">— generated from disk at deploy time</span></h2></div>
+  <div class="grid-4" id="facts">
+    <div class="card"><h3 class="stat-num" id="f-tools">…</h3><p>Free tool pages (all linked from the <a href="/tools.html">hub</a>)</p></div>
+    <div class="card"><h3 class="stat-num" id="f-blog">…</h3><p>Blog guides &amp; posts</p></div>
+    <div class="card"><h3 class="stat-num" id="f-products">…</h3><p>Store products · product pages</p></div>
+    <div class="card"><h3 class="stat-num" id="f-sitemap">…</h3><p>URLs in sitemap.xml</p></div>
+  </div>
+  <div class="gen-note" id="gen-when"></div>
+
+  <div class="divider"></div>
+
+  <div class="section-head" style="text-align:left;margin-bottom:16px"><h2 style="font-size:1.4rem">Live checks — public site</h2></div>
+  <div class="panel" style="padding:8px 0" id="live-checks"></div>
+
+  <div class="divider"></div>
+
+  <div class="section-head" style="text-align:left;margin-bottom:16px"><h2 style="font-size:1.4rem">Analytics — honest state</h2></div>
+  <div class="panel" id="analytics-panel">
+    <div class="check-row"><span class="sdot" id="an-dot"></span><div class="nm">Cloudflare Web Analytics</div><div class="ds" id="an-ds">Checking…</div><span class="st wait" id="an-st">…</span></div>
+    <div class="check-row"><span class="sdot up"></span><div class="nm">Placeholder trackers</div><div class="ds" id="ph-ds">Checking…</div><span class="st up" id="ph-st">…</span></div>
+    <p style="font-size:12px;color:var(--dim);padding:10px 16px 6px">We deliberately run no tracking cookies. When Cloudflare Web Analytics is enabled (cookieless, privacy-first) this check flips green automatically — see <a href="/security.html">Security &amp; Compliance</a>.</p>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="section-head" style="text-align:left;margin-bottom:16px"><h2 style="font-size:1.4rem">Early-access signups</h2></div>
+  <div class="panel">
+    <div class="table-scroll" style="border:none"><table class="data-table" id="waitlist-table">
+      <thead><tr><th>Product interest</th><th>Signups</th></tr></thead>
+      <tbody><tr><td>Loading live from the waitlist database…</td><td>—</td></tr></tbody>
+    </table></div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="section-head" style="text-align:left;margin-bottom:16px"><h2 style="font-size:1.4rem">Rig services <span style="font-size:12px;-webkit-text-fill-color:var(--dim);font-family:var(--font-body)">— only meaningful when viewed on the ABUZ8 machine</span></h2></div>
+  <div class="panel" style="padding:8px 0" id="rig-checks"></div>
+  <p class="gen-note">From any other device these show unreachable — that's expected, not an outage.</p>
+
+  <div class="divider"></div>
+
+  <div class="panel panel-gold">
+    <h3 style="margin-bottom:10px">Current focus — in order</h3>
+    <p style="font-size:13px;color:var(--dim);line-height:1.8">
+      <b style="color:var(--text)">1.</b> Traffic — the tools, store, and hubs are live and verified; distribution is the binding constraint.&nbsp;
+      <b style="color:var(--text)">2.</b> Enable Cloudflare Web Analytics (owner, one click) so this page's analytics check goes green.&nbsp;
+      <b style="color:var(--text)">3.</b> Resubmit sitemap.xml in Google Search Console (owner login).&nbsp;
+      <b style="color:var(--text)">4.</b> Wire the rotated Stripe key for revenue reporting.
+    </p>
+  </div>
+
+</div>
+</section>
+
+<footer class="abuz8-footer">
+<div class="foot-grid">
+  <div class="foot-brand">
+    <div class="logo">ABUZ8</div>
+    <p>Sovereign AI for everyone. Real tools, local models, no fake claims. Built on real hardware by ABUZ8 LLC, Ohio.</p>
+  </div>
+  <div class="foot-col"><h4>Platform</h4>
+    <a href="/tools.html">Free Tools</a><a href="/store.html">Store</a><a href="/models.html">Models</a><a href="/agents.html">AI Agents</a><a href="/news.html">News</a><a href="/blog/">Blog</a>
+  </div>
+  <div class="foot-col"><h4>Mission</h4>
+    <a href="/sovereign.html">Sovereign AI</a><a href="/journey.html">Journey &amp; Goals</a><a href="/roadmap.html">Roadmap</a><a href="/audit.html">Audit &amp; Transparency</a><a href="/purpose.html">Purpose</a>
+  </div>
+  <div class="foot-col"><h4>Hubs</h4>
+    <a href="/github.html">GitHub Hub</a><a href="/huggingface.html">Hugging Face Hub</a><a href="/polymarket.html">Polymarket Tester</a><a href="/community.html">Community</a><a href="/education.html">Education</a><a href="/downloads.html">Downloads</a>
+  </div>
+  <div class="foot-col"><h4>Trust</h4>
+    <a href="/security.html">Security &amp; Compliance</a><a href="/disclaimer.html">Disclaimer</a><a href="/privacy.html">Privacy</a><a href="/terms.html">Terms</a><a href="/refund.html">Refunds</a><a href="/license.html">License</a><a href="/contact.html">Contact</a><a href="/status.html">Status</a>
+  </div>
+</div>
+<div class="foot-base">
+  <div>© <span data-year>2026</span> ABUZ8 LLC. All rights reserved.</div>
+  <div>Built local-first on real hardware · No fake claims · <a href="/sovereign.html">Sovereign AI for everyone</a></div>
+</div>
+</footer>
+
+<script>
+(function () {
+  'use strict';
+  var $ = function (s) { return document.querySelector(s); };
+
+  /* ---- Live public checks: each fetches the real endpoint right now ---- */
+  var CHECKS = [
+    { nm: 'Homepage', ds: 'GET / responds with the real page', run: function () {
+        return fetch('/', { cache: 'no-store' }).then(function (r) { return r.ok ? 'up' : 'down'; }); } },
+    { nm: 'Tools hub', ds: 'GET /tools.html', run: function () {
+        return fetch('/tools.html', { cache: 'no-store' }).then(function (r) { return r.ok ? 'up' : 'down'; }); } },
+    { nm: 'Store', ds: 'GET /store.html (Stripe checkout page)', run: function () {
+        return fetch('/store.html', { cache: 'no-store' }).then(function (r) { return r.ok ? 'up' : 'down'; }); } },
+    { nm: 'Waitlist API', ds: 'GET /api/waitlist (count endpoint)', run: function () {
+        return fetch('/api/waitlist').then(function (r) { return r.json(); })
+          .then(function (j) { return j.ok ? 'up' : 'warn'; }); } },
+    { nm: 'GitHub trending feed', ds: 'GET /api/github-trending — live or labeled snapshot', run: function () {
+        return fetch('/api/github-trending?limit=1').then(function (r) { return r.json(); })
+          .then(function (j) { return j.ok ? (j.source === 'live' ? 'up' : 'warn') : 'down'; }); } },
+    { nm: 'Polymarket proxy', ds: 'GET /api/polymarket?type=markets', run: function () {
+        return fetch('/api/polymarket?type=markets').then(function (r) { return r.json(); })
+          .then(function (j) { return j.ok ? (j.source === 'live' ? 'up' : 'warn') : 'down'; }); } },
+    { nm: 'Sitemap', ds: 'GET /sitemap.xml — parsed in your browser', run: function () {
+        return fetch('/sitemap.xml', { cache: 'no-store' }).then(function (r) { return r.text(); })
+          .then(function (t) {
+            var doc = new DOMParser().parseFromString(t, 'application/xml');
+            var n = doc.getElementsByTagName('url').length;
+            var err = doc.getElementsByTagName('parsererror').length;
+            var el = document.getElementById('f-sitemap');
+            if (el && n) { el.textContent = String(n); }
+            return (!err && n > 0) ? 'up' : 'down';
+          }); } },
+    { nm: 'Design system', ds: '/assets/css/abuz8-theme.css + ui + onboard widget', run: function () {
+        return Promise.all([
+          fetch('/assets/css/abuz8-theme.css', { cache: 'no-store' }),
+          fetch('/assets/js/abuz8-ui.js', { cache: 'no-store' }),
+          fetch('/assets/js/abuz8-onboard.js', { cache: 'no-store' })
+        ]).then(function (rs) {
+          return rs.every(function (r) { return r.ok; }) ? 'up' : 'down';
+        }); } }
+  ];
+
+  var RIG = [
+    { nm: 'ABUZ8 OS trunk', ds: ':8900', url: 'http://localhost:8900/api/health' },
+    { nm: 'Ornith brain', ds: ':8011', url: 'http://localhost:8011/health' },
+    { nm: 'Ollama', ds: ':11434', url: 'http://localhost:11434/api/tags' },
+    { nm: 'ComfyUI', ds: ':8188', url: 'http://localhost:8188/system_stats' },
+    { nm: 'OpenClaw', ds: ':18789', url: 'http://localhost:18789/' },
+    { nm: 'Postiz', ds: ':4200', url: 'http://localhost:4200/' }
+  ];
+
+  function row(nm, ds, st, label) {
+    return '<div class="check-row"><span class="sdot ' + st + '"></span>' +
+      '<div class="nm">' + nm + '</div><div class="ds">' + ds + '</div>' +
+      '<span class="st ' + st + '">' + label + '</span></div>';
+  }
+
+  function renderChecks(states) {
+    $('#live-checks').innerHTML = CHECKS.map(function (c, i) {
+      var st = states[i] || 'wait';
+      var label = st === 'up' ? 'pass' : st === 'down' ? 'fail' : st === 'warn' ? 'degraded' : '…';
+      return row(c.nm, c.ds, st === 'wait' ? '' : st, label);
+    }).join('');
+  }
+
+  function runChecks() {
+    var states = CHECKS.map(function () { return 'wait'; });
+    renderChecks(states);
+    CHECKS.forEach(function (c, i) {
+      var guard = setTimeout(function () { if (states[i] === 'wait') { states[i] = 'down'; renderChecks(states); } }, 9000);
+      c.run().then(function (st) { states[i] = st; })
+        .catch(function () { states[i] = 'down'; })
+        .then(function () { clearTimeout(guard); renderChecks(states); });
+    });
+  }
+
+  function probeRig() {
+    var el = $('#rig-checks');
+    var states = RIG.map(function () { return 'wait'; });
+    function render() {
+      el.innerHTML = RIG.map(function (s, i) {
+        var st = states[i];
+        var label = st === 'up' ? 'up' : st === 'down' ? 'unreachable' : '…';
+        return row(s.nm, s.ds, st === 'wait' ? '' : st, label);
+      }).join('');
+    }
+    render();
+    RIG.forEach(function (s, i) {
+      var done = false;
+      var t = setTimeout(function () { if (!done) { done = true; states[i] = 'down'; render(); } }, 3500);
+      fetch(s.url, { mode: 'no-cors', cache: 'no-store' })
+        .then(function () { if (!done) { done = true; clearTimeout(t); states[i] = 'up'; render(); } })
+        .catch(function () { if (!done) { done = true; clearTimeout(t); states[i] = 'down'; render(); } });
+    });
+  }
+
+  function loadManifest() {
+    fetch('/assets/data/site-manifest.json', { cache: 'no-store' })
+      .then(function (r) { return r.json(); })
+      .then(function (m) {
+        $('#f-tools').textContent = m.tools_total + ' / ' + m.tools_linked_from_hub;
+        $('#f-blog').textContent = m.blog_posts;
+        $('#f-products').textContent = m.store_products + ' · ' + m.product_pages;
+        if ($('#f-sitemap').textContent === '…') { $('#f-sitemap').textContent = m.sitemap_urls; }
+        $('#gen-when').textContent = 'Generated from disk ' + m.generated + ' — regenerated at every deploy.';
+        var ph = m.analytics.placeholder_pages;
+        $('#ph-ds').textContent = ph === 0
+          ? 'Zero placeholder GA4/AdSense tags remain in deployed pages.'
+          : ph + ' page(s) still carry a dead placeholder tag.';
+        $('#ph-st').textContent = ph === 0 ? 'clean' : 'sweep';
+        $('#ph-st').className = 'st ' + (ph === 0 ? 'up' : 'warn');
+      })
+      .catch(function () { $('#gen-when').textContent = 'Manifest unavailable.'; });
+  }
+
+  function checkAnalytics() {
+    var installed = !!document.querySelector('script[src*="cloudflareinsights"], script[data-cf-beacon]');
+    $('#an-dot').className = 'sdot ' + (installed ? 'up' : 'warn');
+    $('#an-st').className = 'st ' + (installed ? 'up' : 'warn');
+    $('#an-st').textContent = installed ? 'recording' : 'pending';
+    $('#an-ds').textContent = installed
+      ? 'Beacon detected on this page — visits are being recorded (cookieless).'
+      : 'Not installed yet — a one-click owner action in the Cloudflare dashboard. Until then, no visitor analytics are recorded (and we say so, rather than pretend).';
+  }
+
+  function loadWaitlist() {
+    fetch('/api/status', { cache: 'no-store' })
+      .then(function (r) { return r.json(); })
+      .then(function (j) {
+        var tbody = $('#waitlist-table tbody');
+        if (j.byProduct && j.byProduct.length) {
+          tbody.innerHTML = j.byProduct.map(function (r2) {
+            return '<tr><td>' + (r2.product || '—') + '</td><td>' + r2.n + '</td></tr>';
+          }).join('');
+        } else {
+          tbody.innerHTML = '<tr><td>No signups yet — honest zero</td><td>0</td></tr>';
+        }
+      })
+      .catch(function () {
+        $('#waitlist-table tbody').innerHTML = '<tr><td>Waitlist API unreachable</td><td>—</td></tr>';
+      });
+  }
+
+  function run() {
+    $('#updated').textContent = 'Checks run ' + new Date().toLocaleString();
+    runChecks(); probeRig(); loadManifest(); checkAnalytics(); loadWaitlist();
+  }
+  $('#refresh').addEventListener('click', run);
+  run();
+})();
+</script>
+<script src="/assets/js/abuz8-ui.js" defer></script>
+<script src="/assets/js/abuz8-onboard.js" defer></script>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>

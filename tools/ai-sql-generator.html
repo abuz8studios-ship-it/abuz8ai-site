@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI SQL Generator — ABUZ8</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--lapis:#0a1628;--lapis2:#0f1f3d;--lapis3:#162544;--gold:#c9a84c;--turq:#0e9f6e;--turq2:#22b5a0;--cream:#f5f0e8;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--lapis);color:var(--cream);font-family:'Inter',sans-serif;min-height:100vh;}
+.hero{background:linear-gradient(135deg,var(--lapis2) 0%,var(--lapis3) 100%);padding:48px 24px 36px;text-align:center;border-bottom:1px solid rgba(201,168,76,.15);}
+.hero h1{font-family:'Playfair Display',serif;font-size:clamp(2rem,5vw,3rem);color:var(--gold);margin-bottom:8px;}
+.hero p{color:rgba(245,240,232,.7);font-size:1.05rem;max-width:560px;margin:0 auto;}
+.main{max-width:1000px;margin:0 auto;padding:32px 20px;}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;}
+@media(max-width:700px){.grid{grid-template-columns:1fr;}}
+.card{background:var(--lapis2);border:1px solid rgba(201,168,76,.12);border-radius:12px;padding:24px;}
+.card h3{font-size:.88rem;font-weight:600;color:rgba(245,240,232,.5);text-transform:uppercase;letter-spacing:.08em;margin-bottom:16px;}
+.db-pills{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px;}
+.db-pill{background:var(--lapis3);border:1px solid rgba(201,168,76,.15);border-radius:20px;padding:6px 16px;font-size:.83rem;cursor:pointer;color:rgba(245,240,232,.6);transition:all .2s;}
+.db-pill.active{background:rgba(201,168,76,.12);border-color:var(--gold);color:var(--gold);}
+label{display:block;font-size:.82rem;color:rgba(245,240,232,.5);margin-bottom:6px;font-weight:500;}
+textarea.input-area{background:var(--lapis3);border:1px solid rgba(201,168,76,.12);border-radius:8px;color:var(--cream);font-family:'Inter',sans-serif;font-size:.9rem;padding:12px 14px;width:100%;resize:vertical;outline:none;line-height:1.6;}
+textarea.input-area:focus{border-color:rgba(201,168,76,.35);}
+.schema-editor{background:var(--lapis3);border:1px solid rgba(201,168,76,.12);border-radius:8px;color:var(--cream);font-family:'JetBrains Mono',monospace;font-size:.78rem;padding:12px;width:100%;min-height:160px;resize:vertical;outline:none;line-height:1.7;}
+.schema-editor:focus{border-color:rgba(201,168,76,.35);}
+.gen-btn{background:var(--gold);color:var(--lapis);border:none;border-radius:8px;padding:13px 28px;font-weight:700;font-size:.98rem;cursor:pointer;width:100%;margin-top:20px;transition:opacity .2s;letter-spacing:.02em;}
+.gen-btn:hover{opacity:.88;}
+.gen-btn:disabled{opacity:.5;cursor:not-allowed;}
+.example-queries{display:flex;flex-direction:column;gap:8px;}
+.eq-item{background:var(--lapis3);border:1px solid rgba(201,168,76,.08);border-radius:8px;padding:10px 14px;cursor:pointer;font-size:.83rem;color:rgba(245,240,232,.6);transition:all .2s;}
+.eq-item:hover{border-color:rgba(201,168,76,.3);color:var(--cream);}
+.eq-item .eq-arrow{float:right;color:var(--gold);}
+.output-section{margin-top:28px;}
+.output-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+.output-header h2{font-family:'Playfair Display',serif;color:var(--gold);font-size:1.3rem;}
+.out-actions{display:flex;gap:8px;}
+.out-btn{background:var(--lapis3);border:1px solid rgba(201,168,76,.15);border-radius:6px;color:rgba(245,240,232,.6);padding:6px 14px;font-size:.8rem;cursor:pointer;}
+.out-btn:hover{border-color:var(--gold);color:var(--gold);}
+.sql-output{background:var(--lapis2);border:1px solid rgba(201,168,76,.12);border-radius:12px;overflow:hidden;}
+.sql-tabs{display:flex;border-bottom:1px solid rgba(201,168,76,.1);padding:0 16px;}
+.sql-tab{padding:11px 16px;font-size:.83rem;color:rgba(245,240,232,.4);cursor:pointer;border-bottom:2px solid transparent;}
+.sql-tab.active{color:var(--gold);border-bottom-color:var(--gold);}
+.sql-block{background:var(--lapis3);margin:16px;border-radius:8px;padding:20px;font-family:'JetBrains Mono',monospace;font-size:.82rem;line-height:1.8;white-space:pre-wrap;overflow-x:auto;}
+.sql-keyword{color:#60a5fa;font-weight:600;}
+.sql-fn{color:#f472b6;}
+.sql-str{color:#86efac;}
+.sql-num{color:#fbbf24;}
+.sql-comment{color:#64748b;font-style:italic;}
+.sql-table{color:#c084fc;}
+.explanation-block{margin:16px;background:var(--lapis3);border-radius:8px;padding:20px;font-size:.88rem;line-height:1.7;color:rgba(245,240,232,.8);}
+.explain-step{margin-bottom:14px;display:flex;gap:12px;}
+.explain-num{background:rgba(201,168,76,.15);border:1px solid rgba(201,168,76,.3);border-radius:50%;width:24px;height:24px;min-width:24px;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700;color:var(--gold);}
+.explain-text strong{color:var(--cream);}
+.variations-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px;}
+@media(max-width:600px){.variations-grid{grid-template-columns:1fr;}}
+.var-card{background:var(--lapis3);border:1px solid rgba(201,168,76,.08);border-radius:8px;padding:14px;cursor:pointer;}
+.var-card:hover{border-color:rgba(201,168,76,.3);}
+.var-label{font-size:.75rem;color:var(--gold);font-weight:600;margin-bottom:6px;}
+.var-sql{font-family:'JetBrains Mono',monospace;font-size:.75rem;color:rgba(245,240,232,.6);line-height:1.6;}
+.empty-out{text-align:center;padding:48px;color:rgba(245,240,232,.25);}
+.empty-icon{font-size:2.5rem;margin-bottom:12px;}
+.spinner{display:inline-block;width:28px;height:28px;border:3px solid rgba(201,168,76,.15);border-top-color:var(--gold);border-radius:50%;animation:spin .7s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.waitlist{background:linear-gradient(135deg,var(--lapis3),var(--lapis2));border:1px solid rgba(201,168,76,.2);border-radius:12px;padding:32px;text-align:center;margin-top:40px;}
+.waitlist h3{font-family:'Playfair Display',serif;color:var(--gold);font-size:1.5rem;margin-bottom:8px;}
+.wl-form{display:flex;gap:10px;max-width:440px;margin:0 auto;}
+.wl-input{flex:1;background:var(--lapis);border:1px solid rgba(201,168,76,.25);border-radius:8px;color:var(--cream);padding:11px 16px;font-size:.92rem;outline:none;}
+.wl-input:focus{border-color:var(--gold);}
+.wl-btn{background:var(--gold);color:var(--lapis);border:none;border-radius:8px;padding:11px 22px;font-weight:600;cursor:pointer;}
+</style>
+<link rel="canonical" href="https://abuz8ai.com/tools/ai-sql-generator">
+<meta name="description" content="AI SQL Generator — Natural language → dialect-correct SQL. Free, no signup, runs entirely in your browser. One of 169 free AI and developer tools by ABUZ8.">
+</head>
+<body>
+<div class="hero">
+  <h1>🗄 AI SQL Generator</h1>
+  <p>Describe what you want in plain English. Get production-ready SQL with explanations, optimizations, and variations.</p>
+</div>
+<div class="main">
+  <div class="grid">
+    <div>
+      <div class="card">
+        <h3>Database</h3>
+        <div class="db-pills">
+          <div class="db-pill active" onclick="setDB(this,'postgresql')">PostgreSQL</div>
+          <div class="db-pill" onclick="setDB(this,'mysql')">MySQL</div>
+          <div class="db-pill" onclick="setDB(this,'sqlite')">SQLite</div>
+          <div class="db-pill" onclick="setDB(this,'mssql')">SQL Server</div>
+          <div class="db-pill" onclick="setDB(this,'bigquery')">BigQuery</div>
+          <div class="db-pill" onclick="setDB(this,'snowflake')">Snowflake</div>
+        </div>
+        <label>Describe your query in plain English</label>
+        <textarea class="input-area" id="queryDesc" rows="4" placeholder="E.g.: Get the top 10 customers by total order value in the last 30 days, including their email and number of orders"></textarea>
+        <label style="margin-top:16px;">Schema (optional — paste CREATE TABLE statements)</label>
+        <textarea class="schema-editor" id="schema" placeholder="CREATE TABLE users (
+  id SERIAL PRIMARY KEY,
+  name VARCHAR(100),
+  email VARCHAR(100),
+  created_at TIMESTAMP
+);
+
+CREATE TABLE orders (
+  id SERIAL PRIMARY KEY,
+  user_id INT REFERENCES users(id),
+  total DECIMAL(10,2),
+  created_at TIMESTAMP
+);"></textarea>
+        <button class="gen-btn" id="genBtn" onclick="generateSQL()">⚡ Generate SQL</button>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <h3>Example Queries — click to try</h3>
+        <div class="example-queries">
+          <div class="eq-item" onclick="loadExample(0)">Top 10 customers by revenue last 30 days <span class="eq-arrow">→</span></div>
+          <div class="eq-item" onclick="loadExample(1)">Monthly sales totals with growth % <span class="eq-arrow">→</span></div>
+          <div class="eq-item" onclick="loadExample(2)">Find users who signed up but never ordered <span class="eq-arrow">→</span></div>
+          <div class="eq-item" onclick="loadExample(3)">Products with low inventory + reorder point <span class="eq-arrow">→</span></div>
+          <div class="eq-item" onclick="loadExample(4)">Daily active users (last 7 days) <span class="eq-arrow">→</span></div>
+          <div class="eq-item" onclick="loadExample(5)">Average order value by customer segment <span class="eq-arrow">→</span></div>
+          <div class="eq-item" onclick="loadExample(6)">Duplicate email addresses in users table <span class="eq-arrow">→</span></div>
+          <div class="eq-item" onclick="loadExample(7)">Cohort retention: users who returned after 7 days <span class="eq-arrow">→</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="output-section" id="outputSection">
+    <div class="empty-out" id="emptyState">
+      <div class="empty-icon">🗄</div>
+      <div>Describe a query above to generate SQL</div>
+    </div>
+    <div id="loadingState" style="display:none;text-align:center;padding:48px;">
+      <div class="spinner"></div>
+      <div style="margin-top:12px;color:rgba(245,240,232,.4);">Generating SQL…</div>
+    </div>
+    <div id="sqlResult" style="display:none;">
+      <div class="output-header">
+        <h2>Generated SQL</h2>
+        <div class="out-actions">
+          <button class="out-btn" onclick="copySQL()">📋 Copy</button>
+          <button class="out-btn" onclick="downloadSQL()">⬇ Download</button>
+        </div>
+      </div>
+      <div class="sql-output">
+        <div class="sql-tabs">
+          <div class="sql-tab active" onclick="switchSQLTab(this,'st-query')">Query + Explanation</div>
+        </div>
+        <div id="st-query"><div class="sql-block" id="sqlQueryBlock" style="white-space:normal"></div></div>
+        <div id="st-explain" style="display:none;"><div class="explanation-block" id="sqlExplainBlock"></div></div>
+        <div id="st-variations" style="display:none;"><div class="variations-grid" id="sqlVariationsBlock"></div></div>
+        <div id="st-optimize" style="display:none;"><div class="explanation-block" id="sqlOptimizeBlock"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="waitlist">
+    <h3>SQL Pro — Connect Your Database</h3>
+    <p>Point at your actual schema, auto-explain query plans, suggest indexes, and run queries live.</p>
+    <div class="wl-form">
+      <input class="wl-input" id="wlEmail" type="email" placeholder="your@email.com">
+      <button class="wl-btn" onclick="joinWaitlist()">Join Waitlist</button>
+    </div>
+    <div id="wlMsg" style="margin-top:12px;font-size:.85rem;color:var(--turq2);"></div>
+  </div>
+</div>
+<script src="_abuz8-live-brain.js" defer></script>
+<script>
+let currentDB = 'postgresql';
+let generatedSQL = '';
+
+const EXAMPLES = [
+  {
+    desc: "Get the top 10 customers by total order value in the last 30 days, including their email and number of orders",
+    schema: "CREATE TABLE users (id SERIAL PRIMARY KEY, name VARCHAR(100), email VARCHAR(100), created_at TIMESTAMP);\nCREATE TABLE orders (id SERIAL PRIMARY KEY, user_id INT, total DECIMAL(10,2), created_at TIMESTAMP);"
+  },
+  {
+    desc: "Show monthly sales totals for this year with month-over-month growth percentage",
+    schema: "CREATE TABLE orders (id SERIAL PRIMARY KEY, total DECIMAL(10,2), created_at TIMESTAMP, status VARCHAR(20));"
+  },
+  {
+    desc: "Find all users who signed up more than 7 days ago but have never placed an order",
+    schema: "CREATE TABLE users (id SERIAL PRIMARY KEY, email VARCHAR(100), created_at TIMESTAMP);\nCREATE TABLE orders (id SERIAL PRIMARY KEY, user_id INT, created_at TIMESTAMP);"
+  },
+  {
+    desc: "Show products with quantity below reorder point, sorted by urgency",
+    schema: "CREATE TABLE products (id SERIAL PRIMARY KEY, name VARCHAR(100), sku VARCHAR(50), quantity INT, reorder_point INT, unit_cost DECIMAL(10,2));"
+  },
+  {
+    desc: "Count daily active users for the last 7 days based on login events",
+    schema: "CREATE TABLE events (id SERIAL PRIMARY KEY, user_id INT, event_type VARCHAR(50), created_at TIMESTAMP);"
+  },
+  {
+    desc: "Calculate average order value broken down by customer segment (segment stored on users table)",
+    schema: "CREATE TABLE users (id SERIAL PRIMARY KEY, segment VARCHAR(50));\nCREATE TABLE orders (id SERIAL PRIMARY KEY, user_id INT, total DECIMAL(10,2));"
+  },
+  {
+    desc: "Find all duplicate email addresses in the users table",
+    schema: "CREATE TABLE users (id SERIAL PRIMARY KEY, email VARCHAR(100), name VARCHAR(100), created_at TIMESTAMP);"
+  },
+  {
+    desc: "Cohort retention: users who performed any action within 7 days of signup",
+    schema: "CREATE TABLE users (id SERIAL PRIMARY KEY, created_at TIMESTAMP);\nCREATE TABLE events (id SERIAL PRIMARY KEY, user_id INT, created_at TIMESTAMP);"
+  }
+];
+
+const TEMPLATES = {
+  top_customers: {
+    postgresql: `-- Top 10 customers by order value (last 30 days)\nSELECT\n  u.id,\n  u.name,\n  u.email,\n  COUNT(o.id)            AS order_count,\n  SUM(o.total)           AS total_revenue,\n  AVG(o.total)           AS avg_order_value,\n  MAX(o.created_at)      AS last_order_date\nFROM users u\nINNER JOIN orders o ON o.user_id = u.id\nWHERE o.created_at >= NOW() - INTERVAL '30 days'\nGROUP BY u.id, u.name, u.email\nORDER BY total_revenue DESC\nLIMIT 10;`,
+    mysql: `-- Top 10 customers by order value (last 30 days)\nSELECT\n  u.id,\n  u.name,\n  u.email,\n  COUNT(o.id)            AS order_count,\n  SUM(o.total)           AS total_revenue,\n  AVG(o.total)           AS avg_order_value,\n  MAX(o.created_at)      AS last_order_date\nFROM users u\nINNER JOIN orders o ON o.user_id = u.id\nWHERE o.created_at >= NOW() - INTERVAL 30 DAY\nGROUP BY u.id, u.name, u.email\nORDER BY total_revenue DESC\nLIMIT 10;`,
+    bigquery: `-- Top 10 customers by order value (last 30 days)\nSELECT\n  u.id,\n  u.name,\n  u.email,\n  COUNT(o.id)            AS order_count,\n  SUM(o.total)           AS total_revenue,\n  AVG(o.total)           AS avg_order_value,\n  MAX(o.created_at)      AS last_order_date\nFROM \`project.dataset.users\` u\nINNER JOIN \`project.dataset.orders\` o ON o.user_id = u.id\nWHERE o.created_at >= TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 30 DAY)\nGROUP BY u.id, u.name, u.email\nORDER BY total_revenue DESC\nLIMIT 10;`,
+  },
+  monthly_sales: `-- Monthly sales with MoM growth\nWITH monthly AS (\n  SELECT\n    DATE_TRUNC('month', created_at) AS month,\n    SUM(total)                       AS revenue,\n    COUNT(*)                         AS orders\n  FROM orders\n  WHERE EXTRACT(YEAR FROM created_at) = EXTRACT(YEAR FROM NOW())\n    AND status = 'completed'\n  GROUP BY 1\n)\nSELECT\n  TO_CHAR(month, 'Month YYYY')   AS month_name,\n  revenue,\n  orders,\n  LAG(revenue) OVER (ORDER BY month) AS prev_revenue,\n  ROUND(\n    ((revenue - LAG(revenue) OVER (ORDER BY month)) /\n     NULLIF(LAG(revenue) OVER (ORDER BY month), 0)) * 100,\n    1\n  ) AS growth_pct\nFROM monthly\nORDER BY month;`,
+  never_ordered: `-- Users who signed up 7+ days ago but never ordered\nSELECT\n  u.id,\n  u.email,\n  u.created_at,\n  NOW() - u.created_at AS account_age\nFROM users u\nLEFT JOIN orders o ON o.user_id = u.id\nWHERE u.created_at < NOW() - INTERVAL '7 days'\n  AND o.id IS NULL\nORDER BY u.created_at ASC;`,
+  low_inventory: `-- Products below reorder point\nSELECT\n  id,\n  name,\n  sku,\n  quantity,\n  reorder_point,\n  reorder_point - quantity     AS units_short,\n  unit_cost * reorder_point    AS estimated_reorder_cost\nFROM products\nWHERE quantity < reorder_point\nORDER BY (reorder_point - quantity) DESC;`,
+  dau: `-- Daily active users (last 7 days)\nSELECT\n  DATE_TRUNC('day', created_at) AS day,\n  COUNT(DISTINCT user_id)        AS daily_active_users\nFROM events\nWHERE created_at >= NOW() - INTERVAL '7 days'\n  AND event_type = 'login'\nGROUP BY 1\nORDER BY 1 DESC;`,
+  aov_segment: `-- Average order value by customer segment\nSELECT\n  u.segment,\n  COUNT(DISTINCT u.id)          AS customer_count,\n  COUNT(o.id)                   AS order_count,\n  ROUND(AVG(o.total), 2)        AS avg_order_value,\n  ROUND(SUM(o.total), 2)        AS total_revenue\nFROM users u\nJOIN orders o ON o.user_id = u.id\nGROUP BY u.segment\nORDER BY avg_order_value DESC;`,
+  duplicates: `-- Find duplicate emails\nSELECT\n  email,\n  COUNT(*)          AS occurrences,\n  ARRAY_AGG(id)     AS user_ids,\n  MIN(created_at)   AS first_signup,\n  MAX(created_at)   AS last_signup\nFROM users\nGROUP BY email\nHAVING COUNT(*) > 1\nORDER BY occurrences DESC;`,
+  retention: `-- 7-day cohort retention\nWITH cohort AS (\n  SELECT\n    u.id AS user_id,\n    DATE_TRUNC('day', u.created_at) AS signup_day\n  FROM users u\n),\nreturned AS (\n  SELECT DISTINCT\n    c.user_id,\n    c.signup_day\n  FROM cohort c\n  JOIN events e ON e.user_id = c.user_id\n  WHERE e.created_at BETWEEN c.signup_day + INTERVAL '1 day'\n                         AND c.signup_day + INTERVAL '7 days'\n)\nSELECT\n  c.signup_day,\n  COUNT(DISTINCT c.user_id)  AS cohort_size,\n  COUNT(DISTINCT r.user_id)  AS retained,\n  ROUND(\n    COUNT(DISTINCT r.user_id)::numeric /\n    NULLIF(COUNT(DISTINCT c.user_id), 0) * 100, 1\n  ) AS retention_pct\nFROM cohort c\nLEFT JOIN returned r ON r.user_id = c.user_id\nGROUP BY c.signup_day\nORDER BY c.signup_day DESC;`
+};
+
+const EXPLANATIONS = [
+  [
+    {title:'JOIN users → orders',text:'INNER JOIN ensures we only include users who actually have orders in the time window.'},
+    {title:'WHERE clause',text:'Filters orders to only the last 30 days using NOW() - INTERVAL — fully index-friendly.'},
+    {title:'GROUP BY user',text:'Aggregates all orders per user to calculate totals, counts, and averages.'},
+    {title:'ORDER BY + LIMIT',text:'Sorts by revenue descending and caps at 10 rows — sorted scan uses index on total.'},
+  ],
+  [
+    {title:'CTE: monthly',text:'Common Table Expression aggregates sales into monthly buckets using DATE_TRUNC.'},
+    {title:'Window function',text:'LAG() retrieves the previous row\'s revenue for growth calculation without a self-join.'},
+    {title:'NULLIF guard',text:'NULLIF(prev_revenue, 0) prevents division-by-zero for the first month.'},
+    {title:'ROUND',text:'Limits growth percentage to 1 decimal for clean reporting output.'},
+  ],
+  [
+    {title:'LEFT JOIN',text:'LEFT JOIN preserves all users — the WHERE o.id IS NULL then filters to non-buyers.'},
+    {title:'Age filter',text:'created_at < NOW() - INTERVAL \'7 days\' limits to users old enough to be considered inactive.'},
+    {title:'Anti-join pattern',text:'This LEFT JOIN / IS NULL pattern is faster than NOT IN for large tables.'},
+  ],
+  [
+    {title:'Computed urgency',text:'reorder_point - quantity gives the units short, sortable by how critically low each item is.'},
+    {title:'Estimated cost',text:'Estimated reorder cost helps procurement budget without a subquery.'},
+  ],
+  [
+    {title:'DATE_TRUNC',text:'Truncates timestamps to day boundaries for grouping — avoids time-of-day splits.'},
+    {title:'COUNT DISTINCT',text:'Counts unique users, not raw event rows, for accurate DAU.'},
+  ],
+  [
+    {title:'JOIN strategy',text:'JOIN (not LEFT JOIN) excludes users with no orders for clean segment averages.'},
+    {title:'Multiple aggregates',text:'Single GROUP BY pass computes count, AOV, and total — efficient single scan.'},
+  ],
+  [
+    {title:'HAVING clause',text:'HAVING COUNT(*) > 1 filters after grouping — cannot use WHERE for aggregated conditions.'},
+    {title:'ARRAY_AGG',text:'Collects all IDs with that email so you can identify which accounts to merge.'},
+  ],
+  [
+    {title:'Two CTEs',text:'cohort identifies signup day; returned identifies users who came back in the window.'},
+    {title:'BETWEEN range',text:'Checks for activity specifically in days 1–7 after signup.'},
+    {title:'::numeric cast',text:'Cast to numeric before division prevents integer truncation in PostgreSQL.'},
+    {title:'LEFT JOIN / retention',text:'LEFT JOIN on returned keeps all cohort members; NULL returned = not retained.'},
+  ]
+];
+
+const VARIATIONS = [
+  [
+    {label:'With window rank',sql:'SELECT *, RANK() OVER (ORDER BY total_revenue DESC) AS rank\nFROM ( ... previous query ) ranked;'},
+    {label:'Last 90 days',sql:"WHERE o.created_at >= NOW() - INTERVAL '90 days'"},
+    {label:'Exclude refunds',sql:"WHERE o.status NOT IN ('refunded', 'cancelled')"},
+    {label:'With pagination',sql:'ORDER BY total_revenue DESC\nLIMIT 10 OFFSET 0; -- page 1'},
+  ],
+  [
+    {label:'Weekly breakdown',sql:"DATE_TRUNC('week', created_at) AS week"},
+    {label:'Revenue + units',sql:'SUM(total) AS revenue,\nSUM(quantity) AS units_sold'},
+    {label:'Rolling 12 months',sql:"WHERE created_at >= NOW() - INTERVAL '12 months'"},
+    {label:'Filter by channel',sql:"AND channel = 'web'"},
+  ],
+  [
+    {label:'With last login',sql:'LEFT JOIN events e ON e.user_id = u.id\n  AND e.event_type = \'login\''},
+    {label:'Email domain filter',sql:"WHERE u.email LIKE '%@gmail.com'"},
+    {label:'Sort by age desc',sql:'ORDER BY u.created_at ASC -- oldest first'},
+  ],
+  [
+    {label:'Add supplier',sql:'JOIN suppliers s ON s.id = p.supplier_id\nSELECT s.name AS supplier'},
+    {label:'Category filter',sql:"WHERE category = 'electronics'"},
+  ],
+  [
+    {label:'All event types',sql:'-- Remove the event_type filter'},
+    {label:'7-day rolling avg',sql:'AVG(dau) OVER (ORDER BY day ROWS 6 PRECEDING) AS rolling_7d'},
+  ],
+  [
+    {label:'Min 3 orders',sql:'HAVING COUNT(o.id) >= 3'},
+    {label:'Date range',sql:"WHERE o.created_at BETWEEN '2026-01-01' AND '2026-12-31'"},
+  ],
+  [
+    {label:'Delete duplicates',sql:'DELETE FROM users\nWHERE id NOT IN (\n  SELECT MIN(id) FROM users GROUP BY email\n);'},
+    {label:'Show only newer dup',sql:'HAVING COUNT(*) > 1 AND MAX(created_at) > \'2026-01-01\''},
+  ],
+  [
+    {label:'30-day window',sql:'AND e.created_at BETWEEN c.signup_day AND c.signup_day + INTERVAL \'30 days\''},
+    {label:'By signup week',sql:"DATE_TRUNC('week', u.created_at) AS cohort_week"},
+  ]
+];
+
+const OPTIMIZE_TIPS = [
+  "**Index on orders(user_id, created_at)** — The JOIN and date filter will use this composite index for fast lookup.\n\n**Partial index** — If most orders are recent, a partial index WHERE created_at > '2025-01-01' can be much faster.\n\n**LIMIT pushdown** — PostgreSQL's planner should push the LIMIT down into the sort, avoiding a full sort.\n\n**Materialized view** — For dashboards refreshed hourly, materialize this query and index total_revenue.",
+  "**Index on orders(created_at)** — DATE_TRUNC is not index-friendly directly; consider a BRIN index on created_at for time-series tables.\n\n**CTE optimization** — In older PostgreSQL, CTEs are optimization fences. Use subqueries if performance is critical.\n\n**Avoid recalculating LAG** — If this runs frequently, store monthly summaries in a separate table.",
+  "**Index on users(created_at)** — Filter on created_at uses this. Add partial index WHERE created_at < NOW() - INTERVAL '7 days'.\n\n**Anti-join vs NOT IN** — LEFT JOIN / IS NULL is generally faster than NOT IN for large tables.\n\n**NOT EXISTS alternative** — SELECT u.* FROM users u WHERE NOT EXISTS (SELECT 1 FROM orders o WHERE o.user_id = u.id) — often equally fast.",
+  "**Index on products(quantity)** — Direct comparison on quantity benefits from a B-tree index.\n\n**Functional index** — If filtering by reorder_point - quantity, create a functional index on that expression.",
+  "**Partial index** — CREATE INDEX ON events(user_id, created_at) WHERE event_type = 'login'.\n\n**Partitioning** — For high-volume event tables, partition by month for fast range scans.\n\n**HyperLogLog** — For approximate DAU on billions of rows, use HLL extension for 10x speed.",
+  "**Index on orders(user_id)** — JOIN key should be indexed.\n\n**Covering index** — INDEX ON orders(user_id, total) covers both the JOIN and SUM without heap access.",
+  "**Index on users(email)** — Without an index, finding duplicates requires a full seq scan.\n\n**DISTINCT ON** — If you want to keep one record per email, use SELECT DISTINCT ON (email) rather than this aggregation.",
+  "**Two indexes needed** — users(created_at) for cohort CTE, events(user_id, created_at) for the join.\n\n**CTE materialization** — Force with MATERIALIZED keyword if planner re-plans inefficiently.\n\n**Pre-aggregate events** — For large tables, pre-aggregate events into a daily_user_actions table."
+];
+
+function setDB(el, db){
+  document.querySelectorAll('.db-pill').forEach(p=>p.classList.remove('active'));
+  el.classList.add('active');
+  currentDB = db;
+}
+
+function loadExample(i){
+  document.getElementById('queryDesc').value = EXAMPLES[i].desc;
+  document.getElementById('schema').value = EXAMPLES[i].schema;
+}
+
+function generateSQL(){
+  const desc = document.getElementById('queryDesc').value.trim();
+  if(!desc){alert('Describe the query you want to generate');return;}
+  const schema = document.getElementById('schema').value.trim();
+  const btn = document.getElementById('genBtn');
+  btn.disabled = true; btn.textContent = '⚡ Generating...';
+  document.getElementById('emptyState').style.display='none';
+  document.getElementById('sqlResult').style.display='none';
+  document.getElementById('loadingState').style.display='block';
+
+  // Real AI SQL generation via the ABUZ8 brain (Cloudflare Workers AI). No canned templates.
+  fetch('/api/waitlist', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      tool: 'sql-generator',
+      data: { description: desc, dialect: currentDB, schema }
+    })
+  })
+  .then(r => r.json())
+  .then(res => {
+    if (!res.success || !res.result) throw new Error(res.error || 'Generation failed');
+    document.getElementById('loadingState').style.display='none';
+    document.getElementById('sqlResult').style.display='block';
+
+    // The brain returns SQL (often in a ```sql fence) plus explanation/optimization prose.
+    // Extract the first SQL code block for copy/download; render the full answer for reading.
+    const fence = res.result.match(/```(?:sql)?\s*([\s\S]*?)```/i);
+    generatedSQL = fence ? fence[1].trim() : res.result.trim();
+
+    document.getElementById('sqlQueryBlock').innerHTML = mdToHtml(res.result);
+
+    btn.disabled = false; btn.textContent = '⚡ Regenerate SQL';
+  })
+  .catch(err => {
+    document.getElementById('loadingState').style.display='none';
+    document.getElementById('emptyState').style.display='block';
+    btn.disabled = false; btn.textContent = '⚡ Generate SQL';
+    alert('Generation failed: ' + err.message + '. Please try again in a moment.');
+  });
+}
+
+function highlightSQL(sql){
+  const keywords = ['SELECT','FROM','WHERE','JOIN','INNER JOIN','LEFT JOIN','RIGHT JOIN','GROUP BY','ORDER BY','HAVING','LIMIT','OFFSET','WITH','AS','ON','AND','OR','NOT','IN','IS NULL','IS NOT NULL','DISTINCT','COUNT','SUM','AVG','MAX','MIN','ROUND','NULLIF','COALESCE','CASE','WHEN','THEN','ELSE','END','DATE_TRUNC','EXTRACT','NOW','INTERVAL','OVER','PARTITION BY','LAG','LEAD','RANK','ROW_NUMBER','ARRAY_AGG','GROUP_CONCAT','INSERT','UPDATE','DELETE','CREATE TABLE','BETWEEN'];
+  let out = sql.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  out = out.replace(/(--[^\n]*)/g,'<span class="sql-comment">$1</span>');
+  keywords.forEach(kw=>{
+    const re = new RegExp(`\\b(${kw})\\b`,'g');
+    out = out.replace(re,'<span class="sql-keyword">$1</span>');
+  });
+  out = out.replace(/'([^']*)'/g,'<span class="sql-str">\'$1\'</span>');
+  out = out.replace(/\b(\d+)\b/g,'<span class="sql-num">$1</span>');
+  return out;
+}
+
+// Minimal, safe markdown → HTML renderer for AI brain output (escapes HTML first; SQL fences get syntax highlight).
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function mdToHtml(md){
+  let s = String(md);
+  const blocks = [];
+  s = s.replace(/```(\w*)\n?([\s\S]*?)```/g, (m, lang, code) => {
+    blocks.push('<pre style="background:var(--lapis);border-radius:8px;padding:16px;overflow-x:auto;font-family:JetBrains Mono,monospace;font-size:.82rem;line-height:1.8;white-space:pre;margin:10px 0">' + highlightSQL(code.replace(/\n$/,'')) + '</pre>');
+    return 'ABZBLOCK' + (blocks.length - 1) + 'ENDABZ';
+  });
+  s = esc(s);
+  s = s.replace(/`([^`\n]+)`/g, '<code style="background:var(--lapis3);padding:1px 5px;border-radius:4px;font-family:JetBrains Mono,monospace;font-size:.85em">$1</code>');
+  s = s.replace(/^######\s+(.*)$/gm, '<h6>$1</h6>')
+       .replace(/^#####\s+(.*)$/gm, '<h5>$1</h5>')
+       .replace(/^####\s+(.*)$/gm, '<h4 style="color:var(--gold);margin:14px 0 6px">$1</h4>')
+       .replace(/^###\s+(.*)$/gm, '<h3 style="color:var(--gold);margin:14px 0 6px;font-size:1.05rem">$1</h3>')
+       .replace(/^##\s+(.*)$/gm, '<h3 style="color:var(--gold);margin:14px 0 6px;font-size:1.05rem">$1</h3>')
+       .replace(/^#\s+(.*)$/gm, '<h3 style="color:var(--gold);margin:14px 0 6px;font-size:1.05rem">$1</h3>');
+  s = s.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+       .replace(/(^|[^*])\*([^*\n]+)\*/g, '$1<em>$2</em>');
+  s = s.replace(/(?:^[ \t]*(?:[-*]|\d+\.)\s+.*(?:\n|$))+/gm, (block) => {
+    const ordered = /^\s*\d+\.\s/.test(block);
+    const items = block.trim().split(/\n/).map(l => l.replace(/^\s*(?:[-*]|\d+\.)\s+/, '').trim()).filter(Boolean);
+    return '<' + (ordered?'ol':'ul') + ' style="padding-left:20px;margin:8px 0">' + items.map(i=>'<li style="margin-bottom:5px">'+i+'</li>').join('') + '</' + (ordered?'ol':'ul') + '>';
+  });
+  s = s.split(/\n{2,}/).map(p => {
+    p = p.trim();
+    if (!p) return '';
+    if (/^ABZBLOCK\d+ENDABZ$/.test(p)) return p;
+    if (/^\s*<(h\d|ul|ol|pre)/.test(p)) return p;
+    return '<p style="margin-bottom:10px">' + p.replace(/\n/g, '<br>') + '</p>';
+  }).join('\n');
+  s = s.replace(/(?:<p[^>]*>)?\s*ABZBLOCK(\d+)ENDABZ\s*(?:<\/p>)?/g, (m, i) => blocks[+i]);
+  return s;
+}
+
+function switchSQLTab(el, tabId){
+  document.querySelectorAll('.sql-tab').forEach(t=>t.classList.remove('active'));
+  ['st-query','st-explain','st-variations','st-optimize'].forEach(id=>{
+    const el2=document.getElementById(id); if(el2) el2.style.display='none';
+  });
+  el.classList.add('active');
+  document.getElementById(tabId).style.display='block';
+}
+
+function useVariation(card){
+  const sql = card.querySelector('.var-sql').textContent;
+  navigator.clipboard.writeText(sql).then(()=>{
+    card.style.borderColor='var(--gold)';
+    setTimeout(()=>card.style.borderColor='',1500);
+  });
+}
+
+function copySQL(){
+  navigator.clipboard.writeText(generatedSQL).then(()=>{
+    const btn = event.target; btn.textContent='✓ Copied!';
+    setTimeout(()=>btn.textContent='📋 Copy',2000);
+  });
+}
+
+function downloadSQL(){
+  const blob = new Blob([generatedSQL],{type:'text/plain'});
+  const a = document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='query.sql'; a.click();
+}
+
+async function joinWaitlist(){
+  const email = document.getElementById('wlEmail').value.trim();
+  if(!email||!email.includes('@')){document.getElementById('wlMsg').textContent='Enter a valid email.';return;}
+  try{
+    await fetch('/api/waitlist',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,product:'ai-sql-generator',source:'abuz8'})});
+  }catch(e){localStorage.setItem('wl_sql_gen',email);}
+  document.getElementById('wlMsg').textContent='✓ On the list! We\'ll notify you.';
+  document.getElementById('wlEmail').value='';
+}
+</script>
+
+<script src="/assets/js/dfy-banner.js" async></script>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+<script src="/tools/_tools-shared.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>
+

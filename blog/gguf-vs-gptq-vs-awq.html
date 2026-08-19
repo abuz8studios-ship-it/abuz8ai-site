@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GGUF vs GPTQ vs AWQ: Which Quantization Should You Use? | ABUZ8</title>
+<meta name="description" content="GGUF vs GPTQ vs AWQ compared in plain language — what each quantization format is for, CPU vs GPU, quality vs speed, and how to pick one for running a local LLM in 2026.">
+<meta name="keywords" content="gguf vs gptq vs awq, quantization format llm, gptq vs awq, which quantization, local llm quantization">
+<link rel="canonical" href="https://abuz8ai.com/blog/gguf-vs-gptq-vs-awq">
+<meta property="og:title" content="GGUF vs GPTQ vs AWQ: Which Quantization Should You Use?">
+<meta property="og:type" content="article">
+<link rel="stylesheet" href="/blog/_blog-base.css">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@300;400;600;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
+<style>
+:root{
+  --lapis:#F8FAFC; --lapis-mid:#EEF3F8; --lapis-light:#E3EBF3;
+  --card:#FFFFFF; --border:#D7E0EA;
+  --cream:#1F3A5F; --ivory:#16324F; --text:#2C3E50; --dim:#5A6B7C;
+  --gold:#1F5B94; --gold-light:#12866E; --gold-dim:#7DA3C8;
+  --turq:#0E7C63; --turq-light:#1F5B94; --turq-bright:#12866E;
+  --primary:#2E75B6;
+}
+code{background:#EEF3F8;color:#1F5B94;font-family:'JetBrains Mono',monospace;font-size:0.85em;padding:0.1em 0.35em;border-radius:4px;}
+.callout.cta{background:#EEF3F8;border:1px solid #2E75B6;border-radius:12px;padding:22px 24px;margin:36px 0 10px;}
+.callout.cta p{margin:0;color:#2C3E50;}
+.foot{color:#5A6B7C;font-size:13px;margin-top:40px;border-top:1px solid #D7E0EA;padding-top:18px;}
+.foot a{color:#1F5B94;}
+</style>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","headline":"GGUF vs GPTQ vs AWQ: Which Quantization Should You Use?","datePublished":"2026-07-24","author":{"@type":"Organization","name":"ABUZ8 AI"}}
+</script>
+</head>
+<body>
+<div class="container">
+  <a href="/blog/" class="back">&larr; ABUZ8 BLOG</a>
+  <h1>GGUF vs GPTQ vs AWQ: Which Quantization Should You Use?</h1>
+  <div class="meta-row"><span>DEVELOPERS</span><span class="dot"></span><span>JULY 24, 2026</span><span class="dot"></span><span>5 MIN READ</span></div>
+
+  <p>If you've tried to download a local model, you've hit the wall: the same model is offered as <strong>GGUF, GPTQ, and AWQ</strong>, and nobody tells you which to grab. They're all quantization formats — ways of compressing a model's weights so it fits in less memory — but they're built for different runtimes and different hardware. Pick the wrong one and it either won't load or runs badly. This is the plain-language comparison, and by the end you'll know which to click without a computer-science degree.</p>
+
+  <h2>First, what quantization even does</h2>
+  <p>A model's weights are normally 16-bit numbers. Quantization stores them in fewer bits — commonly 4 — which shrinks the file by roughly three-quarters and lets a model that needed a big GPU run on modest hardware, with a small and usually acceptable quality cost. If you want the full mechanism, <a href="/blog/llm-quantization-explained" class="in">LLM quantization explained</a> covers it. The three formats below are just different <em>recipes</em> for doing that compression, each optimized for a different way of running the model.</p>
+
+  <h2>GGUF — the CPU-first, run-anywhere format</h2>
+  <p>GGUF is the format for running models on CPUs, laptops, and mixed CPU-plus-GPU setups. It's a single self-contained file, it's what the popular desktop runners expect, and it's the most forgiving choice if you don't have a big dedicated GPU. It offers a whole ladder of quant levels so you can trade size for quality. If you're running a model on a normal computer, or you're not sure what hardware you'll end up on, GGUF is the safe default — it's the same format behind <a href="/blog/run-llm-on-cpu-no-gpu" class="in">running an LLM on CPU with no GPU</a>. Deeper background lives in <a href="/blog/what-is-a-gguf-model" class="in">what is a GGUF model</a>.</p>
+
+  <h2>GPTQ — the classic GPU format</h2>
+  <p>GPTQ is a GPU-oriented format that quantizes a model using a calibration dataset to preserve accuracy at 4 bits. It's been around long enough to be widely supported by GPU inference servers, and it's a solid pick when your model lives entirely in GPU memory and you want fast generation. Its weakness is the flip side of its strength: it's built for the GPU path, so it's not the right choice if you're trying to run mostly on CPU. If you have a capable GPU and want throughput, GPTQ is a reasonable choice.</p>
+
+  <h2>AWQ — the newer GPU format tuned for quality-at-speed</h2>
+  <p>AWQ is the more recent GPU format. Its idea is that not all weights matter equally, so it protects the most important ones during quantization — which tends to preserve quality well at 4-bit while staying fast on GPU. In practice it's become a favorite for GPU serving where you want strong quality without giving up speed. Like GPTQ, it assumes a GPU; it is not aimed at CPU-only setups. If you're deploying on GPUs and quality-per-token matters, AWQ is worth testing head-to-head against GPTQ on your own workload.</p>
+
+  <h2>The one-line decision</h2>
+  <p>No GPU, a laptop, or unsure hardware &rarr; <strong>GGUF</strong>. A real GPU and you want fast serving &rarr; <strong>GPTQ or AWQ</strong>, with AWQ often the better quality-at-speed pick and GPTQ the more universally supported one. Whatever you choose, the amount of memory it needs depends on the model size and the bit-width — check it before you download with the <a href="/tools/ai-vram-calculator.html" class="in">VRAM calculator</a> so you know a 4-bit build actually fits your card or your RAM. And estimate how fast it'll generate with the <a href="/tools/ai-inference-speed-calculator.html" class="in">inference speed calculator</a> before you build anything around it.</p>
+
+  <h2>A note on "which is highest quality"</h2>
+  <p>People want a single winner, but at the same bit-width the quality differences between these formats are usually small compared to the difference between model <em>sizes</em>. A bigger model at 4-bit almost always beats a smaller model at 8-bit. So don't agonize over the format — get the largest model that fits your memory (the calculators above tell you what fits), pick the format that matches your hardware, and spend your energy on the prompt and the retrieval instead. To choose the underlying model in the first place, see <a href="/blog/best-local-ai-models-2026" class="in">the best local AI models of 2026</a>.</p>
+
+  <div class="callout cta">
+    <p><strong>The format is a hardware question, not a hard question.</strong> The sizing tools above are free, no signup — they tell you what fits before you download 20GB. QADIR OS runs local models directly, so once you've picked a build it plugs straight in as an on-device brain. <a href="/" class="in">Join QADIR OS early access</a>.</p>
+  </div>
+  <div class="foot">Built by <a href="/">ABUZ8 LLC</a> — we're building QADIR OS, the sovereign agentic operating system.</div>
+</div>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+<script src="/blog/_blog-shared.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>

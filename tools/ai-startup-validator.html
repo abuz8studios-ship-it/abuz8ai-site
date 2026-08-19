@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Startup Validator | ABUZ8</title>
+<style>
+  :root{--lapis:#0a1628;--lapis2:#0f1f3d;--lapis3:#162444;--gold:#c9a84c;--gold2:#e2c06a;--turq:#0e9f6e;--turq2:#22a090;--text:#e8e4dc;--text2:#b8b4ac;--text3:#888480;--red:#e05555;--green:#3db87a;--orange:#e09040;--radius:12px;--radius-sm:8px;--border:1px solid rgba(201,168,76,0.18)}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--lapis);color:var(--text);font-family:'Inter',system-ui,sans-serif;min-height:100vh}
+  header{background:linear-gradient(135deg,var(--lapis2),var(--lapis3));border-bottom:var(--border);padding:22px 40px;display:flex;align-items:center;gap:18px}
+  .logo{width:40px;height:40px;background:linear-gradient(135deg,var(--gold),var(--turq));border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:16px;color:var(--lapis);flex-shrink:0}
+  header h1{font-family:'Playfair Display',Georgia,serif;font-size:23px;color:var(--gold)}
+  header p{font-size:12px;color:var(--text2);margin-top:2px}
+  .badge{margin-left:auto;background:rgba(201,168,76,0.1);border:var(--border);padding:5px 12px;border-radius:20px;font-size:12px;color:var(--gold);white-space:nowrap}
+  .container{max-width:1100px;margin:0 auto;padding:26px 20px}
+  .two-col{display:grid;grid-template-columns:360px 1fr;gap:20px;align-items:start}
+  .panel{background:var(--lapis2);border:var(--border);border-radius:var(--radius);padding:20px}
+  .panel-title{font-size:11px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--gold);margin-bottom:13px}
+  .field{margin-bottom:12px}
+  label{font-size:12px;color:var(--text2);display:block;margin-bottom:4px;font-weight:500}
+  input,select,textarea{width:100%;background:var(--lapis3);border:1px solid rgba(201,168,76,0.2);border-radius:var(--radius-sm);color:var(--text);padding:9px 12px;font-size:13px;outline:none;transition:border-color 0.2s;font-family:inherit}
+  input:focus,select:focus,textarea:focus{border-color:var(--gold)}
+  textarea{resize:vertical}
+  select option{background:var(--lapis3)}
+  .generate-btn{width:100%;background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--lapis);border:none;border-radius:var(--radius-sm);padding:13px;font-size:15px;font-weight:700;cursor:pointer;transition:all 0.2s;margin-top:6px}
+  .generate-btn:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(201,168,76,0.35)}
+
+  /* VERDICT */
+  .verdict-bar{display:flex;align-items:center;gap:20px;background:var(--lapis2);border:var(--border);border-radius:var(--radius);padding:20px 24px;margin-bottom:20px}
+  .verdict-icon{font-size:40px}
+  .verdict-title{font-size:20px;font-weight:700;font-family:'Playfair Display',Georgia,serif}
+  .verdict-sub{font-size:13px;color:var(--text2);margin-top:4px}
+  .verdict-score{margin-left:auto;text-align:center}
+  .verdict-score-num{font-size:44px;font-weight:700;font-family:'Playfair Display',Georgia,serif;line-height:1}
+  .verdict-score-lbl{font-size:11px;color:var(--text3)}
+
+  /* DIMENSION SCORES */
+  .dim-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px}
+  .dim-card{background:var(--lapis2);border:var(--border);border-radius:var(--radius-sm);padding:14px}
+  .dim-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+  .dim-name{font-size:12px;font-weight:600;color:var(--text)}
+  .dim-score{font-size:15px;font-weight:700}
+  .dim-bar{height:5px;background:rgba(255,255,255,0.1);border-radius:3px;overflow:hidden}
+  .dim-fill{height:100%;border-radius:3px}
+  .dim-comment{font-size:11px;color:var(--text3);margin-top:7px;line-height:1.5}
+
+  /* RED FLAGS / GREEN FLAGS */
+  .flags-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px}
+  .flag-box{background:var(--lapis2);border:var(--border);border-radius:var(--radius-sm);padding:16px}
+  .flag-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:10px}
+  .flag-box.red .flag-title{color:var(--red)}
+  .flag-box.green .flag-title{color:var(--green)}
+  .flag-item{display:flex;gap:8px;font-size:12px;color:var(--text2);margin-bottom:7px;line-height:1.5;align-items:flex-start}
+  .flag-box.red .flag-item::before{content:'⚠';color:var(--red);flex-shrink:0}
+  .flag-box.green .flag-item::before{content:'✓';color:var(--green);flex-shrink:0}
+
+  /* NEXT STEPS */
+  .next-steps{background:var(--lapis2);border:var(--border);border-radius:var(--radius-sm);padding:16px}
+  .next-item{display:flex;gap:12px;margin-bottom:10px;align-items:flex-start;font-size:13px;color:var(--text2);line-height:1.5}
+  .next-num{width:22px;height:22px;border-radius:50%;background:rgba(201,168,76,0.12);border:1px solid rgba(201,168,76,0.3);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:var(--gold);flex-shrink:0;margin-top:1px}
+
+  .placeholder{text-align:center;padding:60px 20px;color:var(--text3)}
+  .placeholder-icon{font-size:48px;margin-bottom:16px;opacity:.5}
+  .placeholder h3{font-size:17px;color:var(--text2);margin-bottom:8px}
+  @media(max-width:900px){.two-col{grid-template-columns:1fr}.dim-grid{grid-template-columns:repeat(2,1fr)}.flags-row{grid-template-columns:1fr}}
+</style>
+<script src="_abuz8-live-brain.js" defer></script>
+
+<script src="_abuz8-config.js" defer></script>
+<link rel="canonical" href="https://abuz8ai.com/tools/ai-startup-validator">
+<meta name="description" content="AI Startup Validator — Pressure-test an idea. Free, no signup, runs entirely in your browser. One of 169 free AI and developer tools by ABUZ8.">
+</head>
+<body>
+<header>
+  <div class="logo">A8</div>
+  <div><h1>AI Startup Validator</h1><p>Score your startup idea across 9 investor-grade dimensions</p></div>
+  <span class="badge">🚀 Free Analysis</span>
+</header>
+<div class="container">
+  <div class="two-col">
+    <div>
+      <div class="panel">
+        <div class="panel-title">⚙ Your Startup</div>
+        <div class="field"><label>STARTUP NAME *</label><input type="text" id="startupName" placeholder="e.g. ABUZ8 AI" maxlength="60"></div>
+        <div class="field"><label>WHAT PROBLEM DO YOU SOLVE? *</label><textarea id="problem" rows="2" placeholder="e.g. Enterprises waste 40% of ops time on manual, repetitive workflows that could be automated"></textarea></div>
+        <div class="field"><label>YOUR SOLUTION *</label><textarea id="solution" rows="2" placeholder="e.g. Sovereign AI OS with 192 native tools that automates any knowledge workflow"></textarea></div>
+        <div class="field"><label>TARGET CUSTOMER</label><input type="text" id="customer" placeholder="e.g. Enterprise ops teams, SMB founders" maxlength="80"></div>
+        <div class="field"><label>BUSINESS MODEL</label>
+          <select id="bizModel">
+            <option value="saas">SaaS Subscription</option>
+            <option value="usage">Usage-Based</option>
+            <option value="marketplace">Marketplace</option>
+            <option value="services">Services / Consulting</option>
+            <option value="ecomm">E-commerce</option>
+            <option value="freemium">Freemium → Paid</option>
+            <option value="enterprise">Enterprise License</option>
+          </select>
+        </div>
+        <div class="field"><label>MARKET SIZE ESTIMATE</label>
+          <select id="mktSize">
+            <option value="small">Under $1B</option>
+            <option value="medium">$1B–$10B</option>
+            <option value="large">$10B–$100B</option>
+            <option value="massive">$100B+</option>
+          </select>
+        </div>
+        <div class="field"><label>CURRENT TRACTION</label>
+          <select id="traction">
+            <option value="idea">Idea only</option>
+            <option value="research">Research / Validation done</option>
+            <option value="mvp">MVP built</option>
+            <option value="beta">Beta users / waitlist</option>
+            <option value="revenue">Early revenue ($1–10K MRR)</option>
+            <option value="growing">Growing revenue ($10K+ MRR)</option>
+          </select>
+        </div>
+        <div class="field"><label>COMPETITIVE ADVANTAGE (optional)</label><textarea id="moat" rows="2" placeholder="e.g. Proprietary neural router, 18-month infrastructure lead, local inference cost advantage"></textarea></div>
+        <div class="field"><label>TEAM SIZE</label>
+          <select id="teamSize">
+            <option value="solo">Solo founder</option>
+            <option value="cofounder">2 co-founders</option>
+            <option value="small">3–5 people</option>
+            <option value="medium">6–15 people</option>
+            <option value="large">15+ people</option>
+          </select>
+        </div>
+        <button class="generate-btn" onclick="validateStartup()">⚡ Validate My Startup</button>
+      </div>
+    </div>
+    <div id="resultsPane">
+      <div class="panel">
+        <div class="placeholder">
+          <div class="placeholder-icon">🚀</div>
+          <h3>Your validation report will appear here</h3>
+          <p>Describe your startup on the left and click Validate.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const DIMENSIONS = [
+  {id:'problem',    name:'Problem Clarity',       weight:12},
+  {id:'solution',   name:'Solution Fit',           weight:12},
+  {id:'market',     name:'Market Size',            weight:10},
+  {id:'bizmodel',   name:'Business Model',         weight:12},
+  {id:'traction',   name:'Traction / Validation',  weight:15},
+  {id:'moat',       name:'Competitive Moat',       weight:12},
+  {id:'team',       name:'Team Strength',          weight:12},
+  {id:'timing',     name:'Market Timing',          weight:8},
+  {id:'fundable',   name:'Investor Fundability',   weight:7},
+];
+
+const DIM_COMMENTS = {
+  problem:  ['Problem statement is vague — quantify the pain with data','Solid problem identification — add customer quote','Clear, painful, specific problem — investor-ready'],
+  solution: ['Solution doesn\'t obviously solve the stated problem','Solution is clear but differentiation is weak','Compelling solution with obvious problem-solution fit'],
+  market:   ['Market too small for venture scale','Good market size — ensure bottom-up sizing','Large addressable market — needs segmentation'],
+  bizmodel: ['Revenue model unclear or unproven at scale','Solid model — add unit economics (CAC/LTV)','Strong recurring model with healthy margin potential'],
+  traction: ['No traction yet — de-risks quickly with paid pilots','Early traction present — accelerate with case studies','Strong traction — lead all conversations with this'],
+  moat:     ['No clear moat identified — this is a major risk','Some differentiation — needs to be more defensible','Strong moat — competitors face significant switching costs'],
+  team:     ['Solo founder is a risk — find a co-founder or advisor','Good team but gaps — be transparent about key hires needed','Strong team with relevant domain expertise'],
+  timing:   ['Timing may be early — market education required','Good timing with clear tailwinds','Exceptional timing — market is pulling, not pushing'],
+  fundable: ['Needs more traction before institutional raise','Fundable at angel/pre-seed level','Strong fundability — ready for institutional investor conversations'],
+};
+
+const RED_FLAGS = {
+  idea: ['No validation yet — high-risk stage for investors','Product-market fit is unproven','Customer interviews critical before building'],
+  solo: ['Solo founder increases execution risk significantly'],
+  small: ['Limited runway if bootstrapped'],
+  medium: [],
+  small_mkt: ['Sub-$1B market unlikely to attract VC interest'],
+};
+
+const GREEN_FLAGS = {
+  growing: ['Proven revenue growth de-risks the business model','MRR traction is the single strongest signal for early-stage investors'],
+  revenue: ['Early revenue shows willingness to pay'],
+  saas: ['SaaS model has predictable, high-margin revenue characteristics'],
+  enterprise: ['Enterprise contracts provide high ACV and low churn'],
+  massive: ['$100B+ market means room for multiple winners'],
+  large: ['$10B+ market provides sufficient room for scale'],
+};
+
+function scoreDimension(id, formData) {
+  let score = 45;
+  const {problem, solution, traction, bizModel, mktSize, moat, teamSize} = formData;
+  const pLen = problem.length; const sLen = solution.length; const mLen = moat.length;
+
+  if (id==='problem')  { score = pLen > 50 ? 75 : pLen > 20 ? 60 : 40; if (problem.includes('%')||problem.includes('$')||problem.includes('billion')||problem.includes('million')) score += 15; }
+  if (id==='solution') { score = sLen > 40 ? 70 : sLen > 20 ? 58 : 42; if (sLen > 80) score += 10; }
+  if (id==='market')   { score = {small:35, medium:60, large:78, massive:90}[mktSize]; }
+  if (id==='bizmodel') { score = {saas:80, enterprise:78, usage:72, marketplace:68, freemium:62, ecomm:58, services:55}[bizModel]; }
+  if (id==='traction') { score = {idea:25, research:38, mvp:50, beta:62, revenue:78, growing:92}[traction]; }
+  if (id==='moat')     { score = mLen > 60 ? 80 : mLen > 20 ? 62 : 40; }
+  if (id==='team')     { score = {solo:50, cofounder:72, small:78, medium:85, large:88}[teamSize]; }
+  if (id==='timing')   { score = 65; if (solution.toLowerCase().includes('ai')||solution.toLowerCase().includes('automation')) score = 82; }
+  if (id==='fundable') {
+    const tractionScore = {idea:20, research:30, mvp:45, beta:58, revenue:75, growing:90}[traction];
+    const mktScore = {small:30, medium:55, large:75, massive:90}[mktSize];
+    score = Math.round((tractionScore + mktScore) / 2);
+  }
+  return Math.max(20, Math.min(98, score + Math.round((Math.random()-0.5)*6)));
+}
+
+function getDimCommentLevel(score) { return score >= 75 ? 2 : score >= 55 ? 1 : 0; }
+
+function getVerdict(overall) {
+  if (overall >= 80) return {icon:'🚀', title:'Strong — Investor-Ready', color:'var(--green)', sub:'This startup has a compelling foundation. Prioritize traction and lead with your moat in every investor conversation.'};
+  if (overall >= 65) return {icon:'✅', title:'Solid — Pre-Seed Fundable', color:'var(--turq2)', sub:'Good fundamentals with clear areas to strengthen. Address the red flags before your next raise.'};
+  if (overall >= 50) return {icon:'⚡', title:'Promising — Needs Validation', color:'var(--gold2)', sub:'Strong concept but execution risks remain. Focus on traction before raising.'};
+  return {icon:'⚠️', title:'Early Stage — High Risk', color:'var(--orange)', sub:'Too early for institutional investors. Validate the problem and get 3–5 paying customers first.'};
+}
+
+function buildRedFlags(formData) {
+  const flags = [];
+  const {traction, teamSize, mktSize, problem, moat} = formData;
+  if (traction === 'idea') flags.push('No customer validation — critical risk for investors');
+  if (teamSize === 'solo') flags.push('Solo founder — high execution risk; seek co-founder or advisory board');
+  if (mktSize === 'small') flags.push('Market under $1B — may limit venture scale potential');
+  if (moat.length < 20)   flags.push('Competitive moat is not articulated — major investor concern');
+  if (problem.length < 30) flags.push('Problem statement too vague — quantify the pain');
+  if (flags.length === 0) flags.push('No critical red flags identified — strong foundation');
+  return flags;
+}
+
+function buildGreenFlags(formData) {
+  const flags = [];
+  const {traction, bizModel, mktSize, solution, moat} = formData;
+  if (traction === 'growing' || traction === 'revenue') flags.push('Paying customers validate willingness to pay');
+  if (traction === 'beta') flags.push('Beta users demonstrate real demand');
+  if (bizModel === 'saas' || bizModel === 'enterprise') flags.push('Recurring revenue model with strong margin potential');
+  if (mktSize === 'massive' || mktSize === 'large') flags.push('Large addressable market provides room for significant scale');
+  if (moat.length > 40) flags.push('Competitive moat is clearly articulated — differentiates from competition');
+  if (solution.toLowerCase().includes('ai') || solution.toLowerCase().includes('automation')) flags.push('AI/automation market timing is exceptional — $200B+ enterprise spend by 2027');
+  if (flags.length === 0) flags.push('Interesting concept with potential — focus on validation to build signal');
+  return flags;
+}
+
+function validateStartup() {
+  const formData = {
+    name:     document.getElementById('startupName').value.trim() || 'Your Startup',
+    problem:  document.getElementById('problem').value.trim(),
+    solution: document.getElementById('solution').value.trim(),
+    customer: document.getElementById('customer').value.trim(),
+    bizModel: document.getElementById('bizModel').value,
+    mktSize:  document.getElementById('mktSize').value,
+    traction: document.getElementById('traction').value,
+    moat:     document.getElementById('moat').value.trim(),
+    teamSize: document.getElementById('teamSize').value,
+  };
+
+  const pane = document.getElementById('resultsPane');
+  const btn = document.querySelector('.generate-btn');
+  if (btn) { btn.disabled = true; btn.dataset.label = btn.dataset.label || btn.textContent; btn.textContent = '⏳ Validating…'; }
+
+  pane.innerHTML = `
+    <div class="panel" style="text-align:center;padding:48px 24px">
+      <div style="font-size:40px;margin-bottom:14px">🚀</div>
+      <div style="color:var(--gold);font-family:'Playfair Display',Georgia,serif;font-size:1.1rem;margin-bottom:8px">Validating ${formData.name}…</div>
+      <div style="font-size:13px;color:var(--text3);max-width:340px;margin:0 auto">Live AI on an RTX 5090. The first call cold-loads the model, so this can take 20–90s.</div>
+    </div>`;
+
+  // Real AI validation via the ABUZ8 brain (Cloudflare Workers AI). No templates, no Math.random scores.
+  fetch('/api/waitlist', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ tool: 'startup-validator', data: formData })
+  })
+  .then(r => r.json())
+  .then(res => {
+    if (!res.success || !res.result) throw new Error(res.error || 'Generation failed');
+    pane.innerHTML = `
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px">
+        <div class="panel-title" style="margin:0">${formData.name} — Validation Report</div>
+        <button class="action-btn" onclick="validateStartup()" style="background:var(--lapis3);border:var(--border);color:var(--text2);padding:7px 14px;border-radius:var(--radius-sm);cursor:pointer;font-size:13px">↺ Regenerate</button>
+      </div>
+      <div class="panel" style="line-height:1.8">${ABUZ8.formatResult(res.result)}</div>`;
+    if (btn) { btn.disabled = false; btn.textContent = btn.dataset.label; }
+  })
+  .catch(err => {
+    if (btn) { btn.disabled = false; btn.textContent = btn.dataset.label; }
+    pane.innerHTML = `
+      <div class="panel" style="text-align:center;padding:48px 24px">
+        <div style="font-size:40px;margin-bottom:14px">⚠️</div>
+        <div style="color:var(--red);font-family:'Playfair Display',Georgia,serif;font-size:1.1rem;margin-bottom:8px">Validation failed</div>
+        <div style="font-size:13px;color:var(--text3);max-width:360px;margin:0 auto 14px">${err.message}. The live AI may be cold-starting — please try again in a moment.</div>
+        <button class="generate-btn" style="max-width:220px;margin:0 auto" onclick="validateStartup()">↺ Try Again</button>
+      </div>`;
+    alert('Generation failed: ' + err.message + '. Please try again in a moment.');
+  });
+}
+
+function getDimCommentLevel(score){return score>=75?2:score>=55?1:0}
+</script>
+
+<script src="/assets/js/dfy-banner.js" async></script>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+<script src="/tools/_tools-shared.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>
+

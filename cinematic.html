@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QADIR OS — The Sovereign Agentic Operating System | ABUZ8</title>
+<meta name="description" content="QADIR OS — the agentic-loop-first AI operating system. Local + cloud + mobile. The cinematic spaceport for AI.">
+<meta name="keywords" content="agentic AI, AI operating system, Claude Desktop alternative, MCP server, local LLM, ComfyUI, AI agent framework, autonomous AI, sovereign AI">
+<meta name="author" content="ABUZ8 AI">
+<meta name="theme-color" content="#0a1628">
+<link rel="canonical" href="https://abuz8ai.com/cinematic">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="QADIR OS — The Sovereign Agentic Operating System">
+<meta property="og:description" content="QADIR OS — agentic-loop-first AI operating system. Local + cloud + mobile. The cinematic spaceport for AI.">
+<meta property="og:url" content="https://abuz8ai.com/cinematic">
+<meta property="og:image" content="https://abuz8ai.com/og-cinematic.png">
+<meta property="og:site_name" content="ABUZ8 AI">
+
+<!-- Twitter -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="QADIR OS — The Sovereign Agentic Operating System">
+<meta name="twitter:description" content="QADIR OS — agentic-loop-first AI operating system. Cinematic agentic spaceport.">
+<meta name="twitter:image" content="https://abuz8ai.com/og-cinematic.png">
+
+<!-- JSON-LD Schema -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://abuz8ai.com/#org",
+      "name": "ABUZ8 AI",
+      "url": "https://abuz8ai.com/",
+      "logo": "https://abuz8ai.com/logo.png",
+      "sameAs": ["https://x.com/abuz8ai"]
+    },
+    {
+      "@type": "SoftwareApplication",
+      "@id": "https://abuz8ai.com/cinematic.html#qadir",
+      "name": "QADIR OS",
+      "applicationCategory": "DeveloperApplication",
+      "operatingSystem": "Windows, macOS, Linux, Mobile",
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+      "publisher": { "@id": "https://abuz8ai.com/#org" },
+      "description": "Agentic-loop-first AI operating system. Multi-provider AI routing, local + cloud + mobile."
+    },
+    {
+      "@type": "WebPage",
+      "@id": "https://abuz8ai.com/cinematic.html#page",
+      "url": "https://abuz8ai.com/cinematic.html",
+      "name": "QADIR OS — The Sovereign Agentic Operating System",
+      "isPartOf": { "@id": "https://abuz8ai.com/#org" },
+      "primaryImageOfPage": "https://abuz8ai.com/og-cinematic.png"
+    }
+  ]
+}
+</script>
+
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+/* ============================================================
+   ABUZ8 DESIGN TOKENS — single source of truth
+   ============================================================ */
+:root {
+  /* Lapis stack — Persian/Islamic deep blue */
+  --lapis: #0a1628;
+  --lapis-mid: #0f2040;
+  --lapis-light: #163060;
+  --lapis-deep: #050b18;
+
+  /* Gold stack — mihrab gilding */
+  --gold: #c9a84c;
+  --gold-light: #e8d48b;
+  --gold-dim: #8a7030;
+  --gold-shimmer: #f4e0a0;
+
+  /* Turq stack — Persian tilework */
+  --turq: #0e9f6e;
+  --turq-light: #2fbf8f;
+  --turq-bright: #2fbf8f;
+  --turq-deep: #0f5a4f;
+
+  /* Paper / cream — illuminated manuscript */
+  --cream: #f5f0e8;
+  --ivory: #faf8f2;
+
+  /* Text */
+  --text: #e8e4d8;
+  --text-bright: #f5f0e8;
+  --dim: #8a9aaa;
+  --whisper: #5a6878;
+
+  /* Surfaces */
+  --card: #0d1a30;
+  --card-elevated: #122448;
+  --border: #1a2e50;
+  --border-gold: #3a3018;
+
+  /* Motion */
+  --ease-cinema: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-soft: cubic-bezier(0.4, 0, 0.2, 1);
+  --t-slow: 1200ms;
+  --t-med: 600ms;
+  --t-fast: 280ms;
+
+  /* Type */
+  --serif: 'Playfair Display', 'Times New Roman', serif;
+  --sans: 'Inter', system-ui, sans-serif;
+  --mono: 'JetBrains Mono', 'Consolas', monospace;
+}
+
+/* ============================================================
+   BASE
+   ============================================================ */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--lapis-deep);
+  color: var(--text);
+  font-family: var(--sans);
+  font-weight: 400;
+  line-height: 1.65;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Film-grain overlay — subtle, photosensitivity-safe (static, no animation) */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.79 0 0 0 0 0.66 0 0 0 0 0.30 0 0 0 0.06 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  opacity: 0.5;
+  pointer-events: none;
+  z-index: 1;
+  mix-blend-mode: overlay;
+}
+
+/* ============================================================
+   ISLAMIC GEOMETRIC BACKGROUND — 8-fold star tessellation
+   ============================================================ */
+.geo-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  opacity: 0.045;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'><g fill='none' stroke='%23c9a84c' stroke-width='0.8'><polygon points='80,10 92,40 122,40 100,62 110,92 80,76 50,92 60,62 38,40 68,40'/><polygon points='80,150 92,120 122,120 100,98 110,68 80,84 50,68 60,98 38,120 68,120'/><circle cx='80' cy='80' r='30'/><polygon points='80,50 95,80 80,110 65,80'/><polygon points='50,80 80,65 110,80 80,95'/></g></svg>");
+  background-size: 320px 320px;
+  animation: drift 90s linear infinite;
+}
+@keyframes drift {
+  from { background-position: 0 0; }
+  to { background-position: 320px 320px; }
+}
+
+/* Reduce motion accommodation */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+  .geo-overlay { animation: none; }
+}
+
+/* ============================================================
+   TYPOGRAPHY
+   ============================================================ */
+h1, h2, h3, h4, .display {
+  font-family: var(--serif);
+  font-weight: 500;
+  letter-spacing: -0.015em;
+  color: var(--text-bright);
+  line-height: 1.15;
+}
+h1 { font-size: clamp(2.8rem, 7vw, 6rem); font-weight: 600; }
+h2 { font-size: clamp(2rem, 4.5vw, 3.6rem); }
+h3 { font-size: clamp(1.4rem, 2.4vw, 1.9rem); }
+.eyebrow {
+  font-family: var(--sans);
+  font-size: 0.78rem;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 1.2rem;
+}
+p { font-size: 1.05rem; color: var(--text); max-width: 64ch; }
+p.lede { font-size: 1.25rem; line-height: 1.6; color: var(--cream); max-width: 56ch; }
+.gold { color: var(--gold); }
+.turq { color: var(--turq-bright); }
+.cream { color: var(--cream); }
+em { font-style: italic; color: var(--gold-light); }
+
+/* ============================================================
+   LAYOUT
+   ============================================================ */
+.shell { position: relative; z-index: 2; }
+section { position: relative; padding: 8rem 2rem; }
+.container { max-width: 1280px; margin: 0 auto; }
+.container-wide { max-width: 1480px; margin: 0 auto; }
+
+/* ============================================================
+   NAV — minimal, cinematic
+   ============================================================ */
+.nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  padding: 1.4rem 2.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: linear-gradient(180deg, rgba(10,22,40,0.92) 0%, rgba(10,22,40,0) 100%);
+  backdrop-filter: blur(8px);
+  transition: padding var(--t-med) var(--ease-soft);
+}
+.brand {
+  font-family: var(--serif);
+  font-size: 1.35rem;
+  font-weight: 600;
+  color: var(--text-bright);
+  letter-spacing: 0.02em;
+  text-decoration: none;
+}
+.brand .accent { color: var(--gold); }
+.nav-links { display: flex; gap: 2rem; align-items: center; }
+.nav-links a {
+  color: var(--dim);
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  transition: color var(--t-fast);
+}
+.nav-links a:hover { color: var(--gold-light); }
+.nav-cta {
+  padding: 0.6rem 1.4rem;
+  border: 1px solid var(--gold-dim);
+  color: var(--gold) !important;
+  border-radius: 2px;
+  transition: all var(--t-med) var(--ease-soft);
+}
+.nav-cta:hover {
+  background: var(--gold);
+  color: var(--lapis) !important;
+  border-color: var(--gold);
+}
+
+/* ============================================================
+   HERO — full viewport cinema
+   ============================================================ */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 2rem;
+  position: relative;
+  overflow: hidden;
+}
+.hero-glow {
+  position: absolute;
+  width: 1000px; height: 1000px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(201,168,76,0.10) 0%, rgba(201,168,76,0) 65%);
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  animation: pulse-glow 12s ease-in-out infinite;
+}
+@keyframes pulse-glow {
+  0%, 100% { opacity: 0.6; transform: translate(-50%, -50%) scale(1); }
+  50% { opacity: 1; transform: translate(-50%, -50%) scale(1.08); }
+}
+.hero-content {
+  text-align: center;
+  max-width: 980px;
+  position: relative;
+  z-index: 2;
+}
+.hero h1 {
+  margin-bottom: 1.6rem;
+  background: linear-gradient(180deg, var(--cream) 0%, var(--gold-light) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.hero .lede {
+  margin: 0 auto 3rem;
+  text-align: center;
+}
+.hero-cta-row {
+  display: flex;
+  justify-content: center;
+  gap: 1.2rem;
+  flex-wrap: wrap;
+  margin-top: 2.4rem;
+}
+.btn-primary, .btn-secondary {
+  padding: 1.1rem 2.4rem;
+  border-radius: 2px;
+  font-family: var(--sans);
+  font-size: 0.95rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: all var(--t-med) var(--ease-cinema);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+.btn-primary {
+  background: var(--gold);
+  color: var(--lapis);
+  border: 1px solid var(--gold);
+}
+.btn-primary:hover {
+  background: var(--gold-light);
+  border-color: var(--gold-light);
+  box-shadow: 0 0 40px rgba(232,212,139,0.25);
+  transform: translateY(-2px);
+}
+.btn-secondary {
+  background: transparent;
+  color: var(--text-bright);
+  border: 1px solid var(--border);
+}
+.btn-secondary:hover {
+  border-color: var(--turq-bright);
+  color: var(--turq-bright);
+  transform: translateY(-2px);
+}
+.hero-meta {
+  display: flex;
+  justify-content: center;
+  gap: 3rem;
+  margin-top: 4rem;
+  font-family: var(--mono);
+  font-size: 0.82rem;
+  color: var(--whisper);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.hero-meta span .val { color: var(--gold); font-weight: 500; }
+
+/* ============================================================
+   PILLARS — the 4 mission anchors
+   ============================================================ */
+.pillars {
+  background: linear-gradient(180deg, var(--lapis-deep) 0%, var(--lapis) 100%);
+  border-top: 1px solid var(--border-gold);
+}
+.pillars-header { text-align: center; margin-bottom: 5rem; }
+.pillars-header h2 { margin-bottom: 1rem; }
+.pillars-header p { margin: 0 auto; }
+.pillar-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.4rem;
+}
+.pillar {
+  background: linear-gradient(170deg, var(--card) 0%, var(--lapis-mid) 100%);
+  border: 1px solid var(--border);
+  padding: 2.6rem 2rem 2.4rem;
+  border-radius: 4px;
+  position: relative;
+  transition: all var(--t-med) var(--ease-cinema);
+  overflow: hidden;
+}
+.pillar::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: var(--gold);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--t-slow) var(--ease-cinema);
+}
+.pillar:hover::before { transform: scaleX(1); }
+.pillar:hover {
+  border-color: var(--gold-dim);
+  transform: translateY(-4px);
+  box-shadow: 0 24px 60px rgba(0,0,0,0.4);
+}
+.pillar-num {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 0.95rem;
+  color: var(--gold);
+  margin-bottom: 1.2rem;
+}
+.pillar-glyph {
+  width: 56px; height: 56px;
+  margin-bottom: 1.4rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.pillar-glyph svg { width: 100%; height: 100%; stroke: var(--gold); fill: none; stroke-width: 1.2; }
+.pillar h3 { margin-bottom: 0.8rem; }
+.pillar p { font-size: 0.95rem; color: var(--dim); }
+
+/* ============================================================
+   LIVE STATE — placeholder skeleton (Step 5 will wire real data)
+   ============================================================ */
+.state-section {
+  background: var(--lapis);
+  border-top: 1px solid var(--border);
+}
+.state-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 3rem; flex-wrap: wrap; gap: 1rem; }
+.state-header h2 { margin: 0; }
+.state-pulse {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  color: var(--turq-bright);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+.state-pulse .dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--turq-bright);
+  box-shadow: 0 0 12px var(--turq-bright);
+  animation: heartbeat 2.4s ease-in-out infinite;
+}
+@keyframes heartbeat {
+  0%, 60%, 100% { opacity: 1; transform: scale(1); }
+  30% { opacity: 0.4; transform: scale(0.8); }
+}
+.state-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.2rem;
+}
+.state-tile {
+  background: var(--card);
+  border: 1px solid var(--border);
+  padding: 1.6rem 1.4rem;
+  border-radius: 4px;
+}
+.state-label {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  color: var(--whisper);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  margin-bottom: 0.6rem;
+}
+.state-value {
+  font-family: var(--serif);
+  font-size: 2.4rem;
+  color: var(--gold);
+  font-weight: 500;
+  line-height: 1;
+}
+.state-sub {
+  font-size: 0.82rem;
+  color: var(--dim);
+  margin-top: 0.4rem;
+}
+.skeleton {
+  display: inline-block;
+  width: 60%; height: 1em;
+  background: linear-gradient(90deg, var(--border) 0%, var(--lapis-light) 50%, var(--border) 100%);
+  background-size: 200% 100%;
+  animation: shimmer 2.4s linear infinite;
+  border-radius: 2px;
+}
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* ============================================================
+   TOOLS CONSTELLATION — placeholder SVG field (Step 5 wires real data)
+   ============================================================ */
+.tools-section {
+  background: linear-gradient(180deg, var(--lapis) 0%, var(--lapis-deep) 100%);
+  border-top: 1px solid var(--border);
+  overflow: hidden;
+}
+.tools-header { text-align: center; margin-bottom: 4rem; }
+.constellation {
+  position: relative;
+  height: 520px;
+  max-width: 1100px;
+  margin: 0 auto;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: radial-gradient(ellipse at center, rgba(26,138,122,0.06) 0%, transparent 70%);
+  overflow: hidden;
+}
+.constellation svg { width: 100%; height: 100%; display: block; }
+.node {
+  fill: var(--gold);
+  opacity: 0.85;
+  transition: all var(--t-med);
+}
+.node-link { stroke: var(--turq); stroke-width: 0.4; opacity: 0.35; }
+.node:hover { fill: var(--gold-shimmer); opacity: 1; r: 5; }
+.constellation-caption {
+  text-align: center;
+  margin-top: 2rem;
+  font-family: var(--mono);
+  font-size: 0.82rem;
+  color: var(--dim);
+  letter-spacing: 0.1em;
+}
+
+/* ============================================================
+   MISSION CTA
+   ============================================================ */
+.mission-cta {
+  background: var(--lapis-deep);
+  border-top: 1px solid var(--border-gold);
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.mission-cta::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at center bottom, rgba(201,168,76,0.06) 0%, transparent 60%);
+  pointer-events: none;
+}
+.mission-cta h2 {
+  font-style: italic;
+  font-weight: 400;
+  max-width: 900px;
+  margin: 0 auto 2rem;
+  position: relative;
+  z-index: 1;
+}
+.mission-cta .signature {
+  font-family: var(--serif);
+  font-style: italic;
+  color: var(--gold);
+  margin-top: 1.6rem;
+  font-size: 1.1rem;
+  position: relative;
+  z-index: 1;
+}
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+.footer {
+  background: var(--lapis-deep);
+  padding: 3rem 2rem 2rem;
+  text-align: center;
+  border-top: 1px solid var(--border);
+}
+.footer-brand {
+  font-family: var(--serif);
+  font-size: 1.2rem;
+  color: var(--gold);
+  margin-bottom: 0.6rem;
+}
+.footer p { margin: 0 auto; font-size: 0.82rem; color: var(--whisper); }
+.footer-stamp {
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  color: var(--whisper);
+  letter-spacing: 0.12em;
+  margin-top: 1.4rem;
+  text-transform: uppercase;
+}
+
+/* ============================================================
+   SCROLL FADE-IN
+   ============================================================ */
+.fade-in {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity var(--t-slow) var(--ease-cinema), transform var(--t-slow) var(--ease-cinema);
+}
+.fade-in.visible { opacity: 1; transform: translateY(0); }
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 768px) {
+  section { padding: 5rem 1.4rem; }
+  .nav { padding: 1rem 1.4rem; }
+  .nav-links { gap: 1rem; }
+  .nav-links a:not(.nav-cta) { display: none; }
+  .hero-meta { gap: 1.4rem; flex-wrap: wrap; }
+  .constellation { height: 380px; }
+}
+</style>
+</head>
+<body>
+
+<!-- Background layers -->
+<div class="geo-overlay" aria-hidden="true"></div>
+
+<div class="shell">
+
+<!-- ============================================================
+     NAV
+     ============================================================ -->
+<nav class="nav" aria-label="Primary">
+  <a href="/" class="brand">ABUZ8<span class="accent">·</span>AI</a>
+  <div class="nav-links">
+    <a href="#pillars">Mission</a>
+    <a href="#state">Live State</a>
+    <a href="#tools">Tools</a>
+    <a href="/tools.html">All Tools</a>
+    <a href="#join" class="nav-cta">Join Waitlist</a>
+  </div>
+</nav>
+
+<!-- ============================================================
+     HERO
+     ============================================================ -->
+<header class="hero" role="banner">
+  <div class="hero-glow" aria-hidden="true"></div>
+  <div class="hero-content">
+    <p class="eyebrow fade-in">The Sovereign Agentic Operating System</p>
+    <h1 class="fade-in">QADIR&nbsp;OS</h1>
+    <p class="lede fade-in">
+      An agentic-loop-first operating system for AI. <em>Local brains</em> plus
+      <em>cloud brains</em>, wired through one sovereign engine. Built to be
+      simple enough for a fifth grader, powerful enough to conquer the internet.
+    </p>
+    <div class="hero-cta-row fade-in">
+      <a href="#join" class="btn-primary">Enter the Spaceport →</a>
+      <a href="#pillars" class="btn-secondary">The Mission</a>
+    </div>
+    <div class="hero-meta fade-in">
+      <span><span class="val">Dozens</span>&nbsp;tools live</span>
+      <span><span class="val">192</span>&nbsp;MCP integrations</span>
+      <span><span class="val">426</span>&nbsp;media demos</span>
+      <span><span class="val">8</span>&nbsp;native brain models</span>
+    </div>
+  </div>
+</header>
+
+<!-- ============================================================
+     PILLARS — The 4 mission anchors
+     ============================================================ -->
+<section class="pillars" id="pillars">
+  <div class="container">
+    <div class="pillars-header fade-in">
+      <p class="eyebrow">The Prime Directive</p>
+      <h2>Every dollar is fuel for <span class="gold">four pillars</span>.</h2>
+      <p class="lede" style="margin: 1.2rem auto 0;">
+        QADIR OS is not the mission. QADIR OS is the engine that <em>funds</em>
+        the mission. Revenue feeds research. Research preserves life.
+      </p>
+    </div>
+
+    <div class="pillar-grid">
+      <article class="pillar fade-in">
+        <div class="pillar-num">I.</div>
+        <div class="pillar-glyph" aria-hidden="true">
+          <svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="22"/><path d="M32 14 L32 50 M14 32 L50 32 M19 19 L45 45 M19 45 L45 19"/></svg>
+        </div>
+        <h3>Preserve Life</h3>
+        <p>Earth, people, animals. Life is precious. This is the prime
+        directive — the other three pillars exist to serve it.</p>
+      </article>
+
+      <article class="pillar fade-in">
+        <div class="pillar-num">II.</div>
+        <div class="pillar-glyph" aria-hidden="true">
+          <svg viewBox="0 0 64 64"><path d="M32 8 C20 8, 14 18, 14 28 C14 36, 20 42, 24 44 L24 52 L40 52 L40 44 C44 42, 50 36, 50 28 C50 18, 44 8, 32 8 Z"/><path d="M24 28 L40 28 M32 20 L32 36"/></svg>
+        </div>
+        <h3>Mind Cap</h3>
+        <p>Neural interface technology. Direct, sovereign, lossless
+        signal between human cognition and the silicon substrate.</p>
+      </article>
+
+      <article class="pillar fade-in">
+        <div class="pillar-num">III.</div>
+        <div class="pillar-glyph" aria-hidden="true">
+          <svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="6"/><circle cx="32" cy="32" r="14"/><circle cx="32" cy="32" r="22"/><path d="M32 10 L32 6 M32 58 L32 54 M10 32 L6 32 M58 32 L54 32"/></svg>
+        </div>
+        <h3>Nanoparticle Immune</h3>
+        <p>Programmable immune defense. Targeted, intelligent,
+        autonomous biological agents directed by software.</p>
+      </article>
+
+      <article class="pillar fade-in">
+        <div class="pillar-num">IV.</div>
+        <div class="pillar-glyph" aria-hidden="true">
+          <svg viewBox="0 0 64 64"><path d="M22 18 C22 14, 26 10, 32 10 C38 10, 42 14, 42 18 C42 22, 40 26, 36 28 C40 30, 42 34, 42 38 C42 42, 38 46, 32 46 C26 46, 22 42, 22 38"/><path d="M20 50 L44 50 M24 56 L40 56"/></svg>
+        </div>
+        <h3>Regenerative Brain</h3>
+        <p>Neural and autoimmune disease cure. Architecture that doesn't
+        just slow decay — it reverses it.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     LIVE STATE — Step 5 will wire to api.abuz8ai.com
+     ============================================================ -->
+<section class="state-section" id="state">
+  <div class="container">
+    <div class="state-header fade-in">
+      <h2>The system, <em>breathing</em>.</h2>
+      <span class="state-pulse"><span class="dot"></span>Live · pre-wire</span>
+    </div>
+
+    <div class="state-grid">
+      <div class="state-tile fade-in">
+        <div class="state-label">Tools deployed</div>
+        <div class="state-value" data-live="tools-live">106</div>
+        <div class="state-sub">across 8 tiers</div>
+      </div>
+      <div class="state-tile fade-in">
+        <div class="state-label">MCP integrations</div>
+        <div class="state-value" data-live="mcp-count">192</div>
+        <div class="state-sub">agentic surfaces wired</div>
+      </div>
+      <div class="state-tile fade-in">
+        <div class="state-label">GPU bridge</div>
+        <div class="state-value" data-live="gpu-status" style="font-size: 1.4rem;">PENDING TUNNEL</div>
+        <div class="state-sub">step 2 of build</div>
+      </div>
+      <div class="state-tile fade-in">
+        <div class="state-label">Brain models</div>
+        <div class="state-value" data-live="brain-count">8</div>
+        <div class="state-sub">GGUF · LoRA · adapter</div>
+      </div>
+      <div class="state-tile fade-in">
+        <div class="state-label">Active memory layers</div>
+        <div class="state-value" data-live="memory-layers">11</div>
+        <div class="state-sub">L1·L2·L3·L4·R1·G18·G19</div>
+      </div>
+      <div class="state-tile fade-in">
+        <div class="state-label">Last mission-path</div>
+        <div class="state-value" data-live="last-path" style="font-size: 1.15rem; line-height: 1.4;">
+          Stripe → Revenue → QADIR OS
+        </div>
+        <div class="state-sub">2 hops · co_mention graph</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     TOOLS CONSTELLATION — placeholder, Step 5 wires real registry
+     ============================================================ -->
+<section class="tools-section" id="tools">
+  <div class="container-wide">
+    <div class="tools-header fade-in">
+      <p class="eyebrow">The Hands</p>
+      <h2>A constellation of <span class="gold">dozens of tools</span>, one engine.</h2>
+      <p class="lede" style="margin: 1.2rem auto 0;">
+        Every tool, every brain, every agent — wired through one sovereign loop.
+      </p>
+    </div>
+
+    <div class="constellation fade-in">
+      <svg viewBox="0 0 1100 520" preserveAspectRatio="xMidYMid meet" id="constellation-svg" aria-hidden="true">
+        <!-- Static placeholder constellation. Step 5 will render from gpu-mcp tool registry. -->
+        <g id="links"></g>
+        <g id="nodes"></g>
+      </svg>
+    </div>
+    <p class="constellation-caption">Live wire from <span class="gold">gpu-mcp</span> registry — pending Step 5.</p>
+  </div>
+</section>
+
+<!-- ============================================================
+     MISSION CTA
+     ============================================================ -->
+<section class="mission-cta" id="join">
+  <div class="container">
+    <p class="eyebrow fade-in">Join the build</p>
+    <h2 class="fade-in">
+      "Build things so extraordinary that the correct people come to <em>you</em>."
+    </h2>
+    <div class="fade-in" style="margin-top: 2.4rem;">
+      <a href="/free.html" class="btn-primary">Reserve your seat →</a>
+    </div>
+    <p class="signature fade-in">— Ahmad, founder · ABUZ8 AI</p>
+  </div>
+</section>
+
+<!-- ============================================================
+     FOOTER
+     ============================================================ -->
+<footer class="footer">
+  <div class="footer-brand">ABUZ8 · AI</div>
+  <p>The sovereign agentic operating system. Built for acquisition. Powered by purpose.</p>
+  <div class="footer-stamp">Cinematic v0.1 · Step 1 of 6 · 2026-05-12</div>
+</footer>
+
+</div><!-- /.shell -->
+
+<script>
+// ============================================================
+// SCROLL FADE-IN — IntersectionObserver
+// ============================================================
+(function() {
+  const els = document.querySelectorAll('.fade-in');
+  if (!('IntersectionObserver' in window)) {
+    els.forEach(el => el.classList.add('visible'));
+    return;
+  }
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        // Stagger reveal slightly for the cinematic cascade feel
+        setTimeout(() => entry.target.classList.add('visible'), i * 60);
+        io.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -10% 0px' });
+  els.forEach(el => io.observe(el));
+})();
+
+// ============================================================
+// CONSTELLATION — static placeholder (Step 5 will hit gpu-mcp)
+// ============================================================
+(function() {
+  const svg = document.getElementById('constellation-svg');
+  if (!svg) return;
+  const W = 1100, H = 520;
+  const nodes = [];
+  const N = 64; // placeholder: 64 nodes, Step 5 will use real 106 tool registry
+  // Deterministic-ish layout with mild jitter
+  for (let i = 0; i < N; i++) {
+    const angle = (i / N) * Math.PI * 2;
+    const ring = 1 + (i % 3) * 0.5;
+    const r = (Math.min(W, H) / 3) * ring * (0.6 + ((i * 17) % 41) / 100);
+    const cx = W / 2 + Math.cos(angle) * r + ((i * 13) % 31) - 15;
+    const cy = H / 2 + Math.sin(angle) * r * 0.6 + ((i * 23) % 29) - 14;
+    nodes.push({ x: cx, y: cy });
+  }
+  const linksG = svg.querySelector('#links');
+  const nodesG = svg.querySelector('#nodes');
+  // Sparse connections — every node to ~2 nearest
+  for (let i = 0; i < nodes.length; i++) {
+    const ds = nodes.map((n, j) => ({ j, d: (n.x - nodes[i].x) ** 2 + (n.y - nodes[i].y) ** 2 }))
+      .filter(x => x.j !== i).sort((a, b) => a.d - b.d).slice(0, 2);
+    for (const { j } of ds) {
+      if (j > i) {
+        const l = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        l.setAttribute('x1', nodes[i].x); l.setAttribute('y1', nodes[i].y);
+        l.setAttribute('x2', nodes[j].x); l.setAttribute('y2', nodes[j].y);
+        l.setAttribute('class', 'node-link');
+        linksG.appendChild(l);
+      }
+    }
+  }
+  for (const n of nodes) {
+    const c = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    c.setAttribute('cx', n.x); c.setAttribute('cy', n.y);
+    c.setAttribute('r', 3); c.setAttribute('class', 'node');
+    nodesG.appendChild(c);
+  }
+})();
+
+// ============================================================
+// LIGHTWEIGHT PARALLAX — hero glow only (no janky scroll-jacking)
+// ============================================================
+(function() {
+  const glow = document.querySelector('.hero-glow');
+  if (!glow || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  let ticking = false;
+  window.addEventListener('scroll', () => {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(() => {
+      const y = window.scrollY;
+      glow.style.transform = `translate(-50%, calc(-50% + ${y * 0.18}px))`;
+      ticking = false;
+    });
+  }, { passive: true });
+})();
+</script>
+
+<script src="/assets/js/abuz8-intent.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>
+

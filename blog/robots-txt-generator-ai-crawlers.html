@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<!-- 2026-07-17 — Weekly content: robots-txt-generator-ai-crawlers -->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Robots.txt Generator: Control GPTBot, ClaudeBot &amp; 25+ AI Crawlers | ABUZ8</title>
+<meta name="description" content="Use a robots.txt generator to decide which AI crawlers — GPTBot, ClaudeBot, CCBot, Bytespider — can use your content, without breaking your Google indexing.">
+<meta name="keywords" content="robots.txt generator, block gptbot, block ai crawlers, claudebot robots.txt, ai crawler list, robots txt seo">
+<link rel="canonical" href="https://abuz8ai.com/blog/robots-txt-generator-ai-crawlers">
+<meta property="og:title" content="Robots.txt Generator: Control GPTBot, ClaudeBot &amp; 25+ AI Crawlers">
+<meta property="og:type" content="article">
+<link rel="stylesheet" href="/blog/_blog-base.css">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@300;400;600;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
+<style>
+:root{
+  --lapis:#0a1628; --lapis-mid:#EEF3F8; --lapis-light:#E3EBF3;
+  --card:#0d1a30; --border:#D6E0EC;
+  --text:#e8e4d8; --cream:#1F2D3D; --dim:#5A6B7D;
+  --gold:#5fa8e8; --gold-light:#255F95; --gold-dim:#7DA3C8;
+  --turq:#5fa8e8; --turq-light:#5fa8e8; --turq-bright:#255F95;
+  --primary:#5fa8e8;
+}
+body{background:var(--lapis);}
+code{background:#EEF3F8;color:#255F95;}
+.callout.cta{background:linear-gradient(135deg,#EAF2FA,#0a1628);}
+</style>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","headline":"Robots.txt Generator: Control GPTBot, ClaudeBot & 25+ AI Crawlers","datePublished":"2026-07-17","author":{"@type":"Organization","name":"ABUZ8 AI"}}
+</script>
+</head>
+<body>
+<div class="container">
+  <a href="/blog/" class="back">&larr; ABUZ8 BLOG</a>
+  <h1>Robots.txt Generator: Control GPTBot, ClaudeBot &amp; 25+ AI Crawlers</h1>
+  <div class="meta-row"><span>SEO</span><span class="dot"></span><span>JULY 17, 2026</span><span class="dot"></span><span>6 MIN READ</span></div>
+
+  <p>Right now, whether you decided anything or not, your site has an AI training policy. If your robots.txt doesn't mention GPTBot, ClaudeBot, or CCBot, your policy is "take everything." Maybe that's what you want — AI answer engines are a real traffic source now. Maybe it isn't. Either way it should be a choice, and a <strong>robots.txt generator</strong> is the fastest way to make that choice explicit: pick which crawlers get in, which stay out, and ship a file that doesn't accidentally torch your Google rankings in the process.</p>
+
+  <p>This guide covers what robots.txt actually enforces, the AI crawler roster in 2026, the block-or-allow tradeoff nobody gives you a straight answer on, and the syntax traps that break real sites.</p>
+
+  <h2>What robots.txt is — and the security myth</h2>
+  <p>Robots.txt is a plain text file at your domain root that tells crawlers which paths they may fetch. It's etiquette, not enforcement: compliant bots (Googlebot, Bingbot, GPTBot, ClaudeBot) honor it, and scrapers that don't identify themselves ignore it entirely. Putting <code>/admin</code> in robots.txt doesn't protect it — it advertises it. Access control is authentication's job; robots.txt just manages the polite crowd, which happens to include every crawler that matters for search and AI visibility.</p>
+
+  <p>One more distinction that trips people: robots.txt controls <em>crawling</em>, not <em>indexing</em>. A blocked URL can still appear in Google if other sites link to it — as a bare link with no snippet. If you need a page out of the index, that's a <code>noindex</code> meta tag, and the page must be crawlable for Google to see the tag. Blocking and noindexing the same page cancels itself out. (For the head-tag side of this, see the <a href="/blog/meta-tag-generator-seo-guide.html" class="in">meta tag guide</a>.)</p>
+
+  <h2>The AI crawler roster, 2026 edition</h2>
+  <p>The user-agents worth knowing, grouped by what they feed:</p>
+  <p><strong>Training crawlers</strong> — fetch content to train models: <code>GPTBot</code> (OpenAI), <code>ClaudeBot</code> (Anthropic), <code>Google-Extended</code> (Google's AI training switch — separate from Googlebot, blocking it does not affect Search), <code>CCBot</code> (Common Crawl, the dataset half the industry trains on), <code>Bytespider</code> (ByteDance), <code>meta-externalagent</code> (Meta), <code>Applebot-Extended</code> (Apple AI training).</p>
+  <p><strong>Answer-time fetchers</strong> — retrieve pages live to answer a user's question and often cite the source: <code>OAI-SearchBot</code> and <code>ChatGPT-User</code> (OpenAI), <code>Claude-SearchBot</code> and <code>Claude-User</code> (Anthropic), <code>PerplexityBot</code> and <code>Perplexity-User</code>. Blocking these removes you from AI answers and their citation links.</p>
+  <p>The roster shifts every few months — new agents appear, names change. That's why we keep the list maintained inside the <a href="/tools/ai-robots-txt-generator.html" class="in">free AI robots.txt generator</a>: 25+ AI crawlers, each with a toggle, grouped by training versus answer-time, on top of the classic search bot rules.</p>
+
+  <h2>Block or allow? The actual tradeoff</h2>
+  <p>The honest version, without the outrage or the hype:</p>
+  <p><strong>The case for blocking training bots:</strong> your content is your asset. Training crawlers take it wholesale, compensation is zero, and attribution inside a trained model is nonexistent. Publishers with paywalled or differentiated content increasingly block <code>GPTBot</code>, <code>CCBot</code>, and <code>Bytespider</code> on principle and lose nothing measurable.</p>
+  <p><strong>The case for allowing answer-time bots:</strong> AI assistants are becoming a discovery channel. When Perplexity or ChatGPT cites your page, that's a referral path that didn't exist three years ago. Blocking answer-time fetchers is opting out of that channel — defensible, but know that's what you're doing.</p>
+  <p><strong>The pragmatic middle</strong>, and the most common configuration we see: block bulk training crawlers, allow answer-time fetchers and citation bots, always allow classic search. You keep Google, keep AI citations, and stop feeding training pipelines for free. Any of the three positions is legitimate — the failure mode is not choosing.</p>
+
+  <h2>Syntax traps that break real sites</h2>
+  <p>Robots.txt looks trivial and misfires constantly. The classics: <strong>the stray blanket disallow</strong> — a <code>Disallow: /</code> left under <code>User-agent: *</code> from staging is still the most efficient way to deindex a business. <strong>Group scoping</strong> — rules apply only to the user-agent block above them; a crawler matches its most specific block and ignores the rest, so your <code>*</code> rules do NOT cascade into the <code>GPTBot</code> block. <strong>Case sensitivity</strong> — paths are case-sensitive; <code>/Admin</code> and <code>/admin</code> are different rules. <strong>Crawl-delay</strong> — ignored by Google entirely. And put a <code>Sitemap:</code> line in the file; it's the one place every crawler reliably looks for it.</p>
+
+  <p>Validate after deploying: fetch <code>yourdomain.com/robots.txt</code>, confirm a 200 and the content you expect — a misconfigured redirect can serve your www and apex domains different files. (A <a href="/tools/http-status-codes.html" class="in">status code reference</a> helps when the response isn't what you expected.)</p>
+
+  <h2>Sovereignty, in file form</h2>
+  <p>Robots.txt is a small lever, but it's the same principle we build on: you decide what leaves your infrastructure. <strong>QADIR OS</strong> applies that to the other side of the equation — AI agents that run on your machine, with your data staying local, instead of your workflows living on someone else's metered cloud. Deciding who reads your content and deciding where your agents run are the same decision at different scales.</p>
+
+  <div class="callout cta">
+    <p><strong>Set your AI crawler policy in 60 seconds.</strong> The <a href="/tools/ai-robots-txt-generator.html" class="in">free AI robots.txt generator</a> covers GPTBot, ClaudeBot, and 25+ crawlers with per-bot toggles. Then <a href="/tools/meta-tag-generator.html" class="in">fix your meta tags</a> — or <a href="/" class="in">join early access</a> to run sovereign agents of your own. No card required.</p>
+  </div>
+  <div class="foot">Built by <a href="/">ABUZ8 LLC</a> — we're building QADIR OS, the sovereign agentic operating system.</div>
+</div>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+<script src="/blog/_blog-shared.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>

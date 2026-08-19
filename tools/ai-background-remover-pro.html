@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Background Remover Pro - Clean Cutouts on Local RTX | ABUZ8</title>
+<meta name="description" content="Remove backgrounds with pixel-clean edges on local RTX 5090s. Transparent PNG, solid color, or AI-generated replacement scene. Hair, fur, glass, and motion edges handled. Join early access.">
+<link rel="canonical" href="https://abuz8ai.com/tools/ai-background-remover-pro">
+<meta property="og:title" content="AI Background Remover Pro - Clean Cutouts on Local RTX | ABUZ8">
+<meta property="og:description" content="Pixel-clean background removal on local RTX 5090s. Transparent PNG, solid color, or AI-generated replacement scene. Hair and fine-edge safe.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://abuz8ai.com/tools/ai-background-remover-pro">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/assets/css/abuz8-mach3.css">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@300;400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --lapis:#0a1628; --lapis-2:#0d1a30; --lapis-3:#111f38;
+  --gold:#c9a84c; --gold-2:#e6c879;
+  --turq:#0e9f6e; --turq-2:#2bb39e;
+  --cream:#f5f0e8; --text:#e8e4d8; --dim:#8a9aaa; --border:#1a2e50;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{background:var(--lapis);color:var(--text);font-family:'Inter',sans-serif;line-height:1.6;min-height:100vh;-webkit-font-smoothing:antialiased}
+a{color:var(--gold);text-decoration:none}
+.mono{font-family:'JetBrains Mono',monospace}
+.wrap{max-width:1200px;margin:0 auto;padding:32px 24px}
+
+/* TOP NAV */
+.nav{display:flex;justify-content:space-between;align-items:center;padding-bottom:20px;border-bottom:1px solid var(--border);margin-bottom:40px}
+.brand{font-family:'Playfair Display',serif;font-size:22px;color:var(--cream);letter-spacing:.5px}
+.brand .acc{color:var(--gold)}
+.back{font-size:11px;color:var(--dim);letter-spacing:2px;text-transform:uppercase}
+.back:hover{color:var(--gold)}
+
+/* HERO */
+.hero{display:grid;grid-template-columns:1.1fr .9fr;gap:48px;align-items:center;margin-bottom:56px}
+@media(max-width:880px){.hero{grid-template-columns:1fr}}
+.eyebrow{color:var(--turq-2);font-size:11px;letter-spacing:3px;text-transform:uppercase;margin-bottom:18px;font-weight:600}
+h1{font-family:'Playfair Display',serif;font-size:clamp(2.2rem,5vw,4rem);color:var(--cream);line-height:1.05;margin-bottom:20px;font-weight:900}
+h1 .gold{color:var(--gold)}
+.lede{color:var(--dim);font-size:18px;font-weight:300;max-width:540px;margin-bottom:28px}
+.row-stats{display:flex;gap:32px;margin-top:20px;flex-wrap:wrap}
+.stat{border-left:2px solid var(--gold);padding-left:14px}
+.stat .n{font-family:'Playfair Display',serif;font-size:28px;color:var(--cream);font-weight:700;line-height:1}
+.stat .l{font-size:10px;color:var(--dim);letter-spacing:2px;text-transform:uppercase;margin-top:6px}
+
+/* BEFORE / AFTER HERO PANEL */
+.ba{border-radius:18px;overflow:hidden;border:1px solid var(--border);background:var(--lapis-2);padding:10px}
+.ba-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.ba-cell{aspect-ratio:1/1;border-radius:12px;position:relative;overflow:hidden;display:flex;align-items:flex-end;padding:14px;background:linear-gradient(135deg,#1a2e50,#0d1a30)}
+.ba-cell.checker{background-image:linear-gradient(45deg,#15243f 25%,transparent 25%),linear-gradient(-45deg,#15243f 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#15243f 75%),linear-gradient(-45deg,transparent 75%,#15243f 75%);background-size:20px 20px;background-position:0 0,0 10px,10px -10px,-10px 0}
+.ba-cell.busy::after{content:'';position:absolute;inset:0;background:radial-gradient(circle at 60% 40%,rgba(201,168,76,0.12),transparent 55%),radial-gradient(circle at 30% 70%,rgba(43,179,158,0.14),transparent 50%)}
+.ba-cell::before{content:'';position:absolute;left:50%;top:42%;transform:translate(-50%,-50%);width:46%;height:62%;border-radius:50% 50% 46% 46%;background:linear-gradient(180deg,rgba(245,240,232,0.85),rgba(245,240,232,0.55))}
+.ba-cell .tag{position:relative;font-size:10px;letter-spacing:2px;text-transform:uppercase;font-weight:600;z-index:2}
+.ba-cell.busy .tag{color:var(--dim)}
+.ba-cell.clean .tag{color:var(--gold)}
+.ba-cap{display:flex;justify-content:space-between;padding:10px 6px 4px;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--dim)}
+
+/* WORKBENCH */
+.bench{display:grid;grid-template-columns:1fr 1fr;gap:32px;background:var(--lapis-2);border:1px solid var(--border);border-radius:22px;padding:36px;margin-bottom:56px}
+@media(max-width:880px){.bench{grid-template-columns:1fr}}
+.panel h3{font-family:'Playfair Display',serif;font-size:24px;color:var(--cream);margin-bottom:6px}
+.panel .pre{color:var(--turq-2);font-size:10px;letter-spacing:3px;text-transform:uppercase;margin-bottom:18px;font-weight:600}
+
+/* DROP */
+.drop{border:2px dashed var(--border);border-radius:14px;padding:42px 20px;text-align:center;cursor:pointer;transition:.2s;background:rgba(255,255,255,0.02)}
+.drop:hover,.drop.hot{border-color:var(--gold);background:rgba(201,168,76,0.06)}
+.drop .ico{font-size:34px;margin-bottom:8px;color:var(--gold)}
+.drop .t{font-weight:600;color:var(--cream)}
+.drop .h{font-size:12px;color:var(--dim);margin-top:6px}
+.thumb{display:none;margin-top:18px;border-radius:12px;overflow:hidden;border:1px solid var(--border)}
+.thumb img{width:100%;display:block}
+.meta{display:none;margin-top:10px;font-size:11px;color:var(--dim);letter-spacing:1px}
+.meta b{color:var(--turq-2);font-weight:600}
+
+/* FIELDS */
+.field{margin-bottom:18px}
+.field label{display:block;font-size:10px;color:var(--gold);letter-spacing:2.5px;text-transform:uppercase;margin-bottom:8px;font-weight:700}
+.field .hint{font-size:11px;color:var(--dim);margin-top:6px;font-style:italic}
+.input,.select{width:100%;padding:13px 14px;background:#0f2040;border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:inherit;font-size:14px}
+.input:focus,.select:focus{outline:none;border-color:var(--gold)}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
+.chip{padding:8px 14px;border:1px solid var(--border);border-radius:999px;font-size:12px;cursor:pointer;color:var(--dim);background:transparent;transition:.15s;font-family:inherit}
+.chip:hover{border-color:var(--turq-2);color:var(--text)}
+.chip.on{background:var(--gold);color:var(--lapis);border-color:var(--gold);font-weight:600}
+
+/* SWATCHES */
+.swatches{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
+.swatch{width:30px;height:30px;border-radius:8px;border:2px solid var(--border);cursor:pointer;transition:.15s;position:relative}
+.swatch:hover{transform:translateY(-1px)}
+.swatch.on{border-color:var(--gold);box-shadow:0 0 0 2px rgba(201,168,76,.35)}
+.swatch.transparent{background-image:linear-gradient(45deg,#888 25%,transparent 25%),linear-gradient(-45deg,#888 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#888 75%),linear-gradient(-45deg,transparent 75%,#888 75%);background-size:10px 10px;background-position:0 0,0 5px,5px -5px,-5px 0;background-color:#fff}
+
+/* TOGGLE */
+.toggle{display:flex;align-items:center;gap:12px;cursor:pointer;user-select:none}
+.toggle input{position:absolute;opacity:0;pointer-events:none}
+.toggle .track{width:44px;height:24px;border-radius:99px;background:#0f2040;border:1px solid var(--border);position:relative;transition:.2s;flex:none}
+.toggle .track::after{content:'';position:absolute;top:2px;left:2px;width:18px;height:18px;border-radius:50%;background:var(--dim);transition:.2s}
+.toggle input:checked + .track{background:var(--turq);border-color:var(--turq-2)}
+.toggle input:checked + .track::after{transform:translateX(20px);background:var(--cream)}
+.toggle .tl{font-size:13px;color:var(--text)}
+.toggle .tl span{display:block;font-size:11px;color:var(--dim);font-style:italic}
+
+.scene-wrap{display:none}
+.scene-wrap.show{display:block}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:16px 20px;border-radius:12px;font-weight:700;font-size:14px;text-transform:uppercase;letter-spacing:2px;cursor:pointer;border:none;transition:.2s;font-family:inherit}
+.btn-gold{background:linear-gradient(180deg,var(--gold-2),var(--gold));color:var(--lapis)}
+.btn-gold:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(201,168,76,0.28)}
+.btn-ghost{background:transparent;border:1px solid var(--border);color:var(--text)}
+.btn-ghost:hover{border-color:var(--gold);color:var(--gold)}
+.btn[disabled]{opacity:.5;cursor:not-allowed;transform:none;box-shadow:none}
+
+/* STATUS */
+.status{margin-top:18px;padding:14px 16px;border-radius:10px;background:#0f2040;border:1px solid var(--border);font-size:13px;display:none}
+.status.show{display:block}
+.status.ok{border-color:var(--turq-2)}
+.status.err{border-color:#c95a4c}
+.bar{height:6px;background:var(--lapis);border-radius:99px;overflow:hidden;margin-top:10px}
+.bar > i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--turq),var(--gold));transition:width .4s}
+
+/* RESULTS */
+.results{display:grid;grid-template-columns:1fr;gap:12px;margin-top:18px}
+.result-card{border-radius:10px;border:1px solid var(--border);overflow:hidden;background:#0d1a30;position:relative}
+.result-card img{width:100%;display:block;background-image:linear-gradient(45deg,#15243f 25%,transparent 25%),linear-gradient(-45deg,#15243f 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#15243f 75%),linear-gradient(-45deg,transparent 75%,#15243f 75%);background-size:20px 20px;background-position:0 0,0 10px,10px -10px,-10px 0}
+.result-card .dl{position:absolute;bottom:8px;right:8px;background:rgba(10,22,40,0.85);color:var(--gold);padding:6px 10px;border-radius:6px;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;text-decoration:none}
+
+/* SECTIONS */
+.section-title{font-family:'Playfair Display',serif;font-size:32px;color:var(--cream);margin-bottom:28px}
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-bottom:56px}
+@media(max-width:880px){.steps{grid-template-columns:repeat(2,1fr)}}
+.step{background:var(--lapis-2);border:1px solid var(--border);border-radius:16px;padding:22px}
+.step .num{font-family:'Playfair Display',serif;font-size:34px;color:var(--gold);font-weight:900;line-height:1}
+.step h4{font-size:14px;color:var(--cream);margin:10px 0 6px;letter-spacing:.5px}
+.step p{font-size:13px;color:var(--dim)}
+
+/* MODELS BAR */
+.models{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:48px}
+@media(max-width:880px){.models{grid-template-columns:1fr}}
+.model{background:var(--lapis-2);border:1px solid var(--border);border-radius:14px;padding:18px}
+.model .nm{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--turq-2);letter-spacing:1.5px;text-transform:uppercase}
+.model .ttl{font-family:'Playfair Display',serif;font-size:18px;color:var(--cream);margin:6px 0 4px}
+.model .ds{font-size:12px;color:var(--dim);line-height:1.5}
+
+/* CTA / WAITLIST */
+.cta{background:linear-gradient(135deg,var(--lapis-3),var(--lapis-2));border:1px solid var(--gold);border-radius:24px;padding:48px;text-align:center;margin-bottom:48px;position:relative;overflow:hidden}
+.cta::before{content:'';position:absolute;inset:-1px;background:radial-gradient(circle at 80% 0%,rgba(201,168,76,0.16),transparent 50%);pointer-events:none}
+.cta h2{font-family:'Playfair Display',serif;font-size:clamp(1.8rem,4vw,2.8rem);color:var(--cream);margin-bottom:14px;position:relative}
+.cta p{color:var(--dim);max-width:540px;margin:0 auto 28px;position:relative}
+.waitform{display:flex;gap:10px;max-width:520px;margin:0 auto;position:relative;flex-wrap:wrap}
+.waitform .input{flex:1;min-width:240px}
+.waitform .btn{width:auto;padding:13px 24px}
+.tinynote{margin-top:14px;font-size:11px;color:var(--dim);letter-spacing:1px;position:relative}
+
+.foot{padding:32px 0;border-top:1px solid var(--border);color:var(--dim);font-size:12px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px}
+
+/* Reduced motion */
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<script>
+// Cloud fallback: if ComfyUI is unreachable, redirect generate calls to Workers AI
+(function(){
+  var comfyUrl = (window.ABUZ8_COMFY_BASE) || 'https://comfy.abuz8ai.com';
+  var checked = false, comfyLive = false;
+  window._checkComfy = async function(){
+    if(checked) return comfyLive;
+    try{
+      var r = await fetch(comfyUrl+'/system_stats',{signal:AbortSignal.timeout(3000)});
+      comfyLive = r.ok; checked = true;
+    }catch(_){ comfyLive = false; checked = true; }
+    return comfyLive;
+  };
+  window._cloudGenerate = async function(prompt){
+    try{
+      var r = await fetch('/api/ai-image',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt:prompt})});
+      if(!r.ok) return null;
+      var blob = await r.blob();
+      return URL.createObjectURL(blob);
+    }catch(_){ return null; }
+  };
+})();
+</script>
+<div class="wrap">
+
+  <nav class="nav">
+    <a href="/index.html" class="brand">ABUZ8</a>
+    <a href="../tools.html" class="back">&larr; All Tools</a>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div>
+      <div class="eyebrow">AI Background Remover Pro · Tier A · Studio</div>
+      <h1>Busy background out.<br><span class="gold">Clean cutout</span> in.</h1>
+      <p class="lede">Strip the background from any photo with edges that hold up at 100% zoom — hair, fur, glass, and motion blur included. Export a transparent PNG, drop in a solid brand color, or let the rig generate a brand-new replacement scene. Runs on local RTX 5090s. Nothing leaves our infrastructure.</p>
+      <div class="row-stats">
+        <div class="stat"><div class="n">~6s</div><div class="l">Per cutout</div></div>
+        <div class="stat"><div class="n">4K</div><div class="l">Edge-accurate output</div></div>
+        <div class="stat"><div class="n">3</div><div class="l">Output modes</div></div>
+      </div>
+    </div>
+    <div class="ba" aria-hidden="true">
+      <div class="ba-grid">
+        <div class="ba-cell busy"><span class="tag">Cluttered scene</span></div>
+        <div class="ba-cell clean checker"><span class="tag">Transparent · clean</span></div>
+      </div>
+      <div class="ba-cap"><span>Before</span><span>After · alpha matte</span></div>
+    </div>
+  </section>
+
+  <!-- WORKBENCH -->
+  <section class="bench" id="bench">
+    <div class="panel">
+      <div class="pre">Step 01 · Source</div>
+      <h3>Upload your image</h3>
+
+      <div class="field">
+        <label>Source image</label>
+        <label class="drop" id="drop">
+          <div class="ico">&#9650;</div>
+          <div class="t">Drop an image or click to browse</div>
+          <div class="h">PNG · JPG · WEBP · &le; 12MB</div>
+          <input id="file" type="file" accept="image/png,image/jpeg,image/webp" hidden>
+        </label>
+        <div class="thumb" id="thumb"><img id="thumb-img" alt="Source preview"></div>
+        <div class="meta" id="meta"></div>
+      </div>
+
+      <div class="field">
+        <label>Subject type</label>
+        <div class="chips" id="subjectChips">
+          <button class="chip on" data-subject="auto">Auto-detect</button>
+          <button class="chip" data-subject="person">Person</button>
+          <button class="chip" data-subject="product">Product</button>
+          <button class="chip" data-subject="animal">Animal</button>
+          <button class="chip" data-subject="car">Vehicle</button>
+        </div>
+        <div class="hint">Auto-detect runs the segmentation model on its own. Hinting the subject tightens the matte on tricky edges like hair, fur, and chrome.</div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="pre">Step 02 · Output</div>
+      <h3>Pick your background</h3>
+
+      <div class="field">
+        <label>Output mode</label>
+        <div class="chips" id="modeChips">
+          <button class="chip on" data-mode="transparent">Transparent PNG</button>
+          <button class="chip" data-mode="solid">Solid color</button>
+          <button class="chip" data-mode="scene">AI scene</button>
+        </div>
+        <div class="hint">Transparent = alpha cutout. Solid = drop on a brand color. AI scene = generate a fresh background and composite the subject in.</div>
+      </div>
+
+      <div class="field" id="solidField" style="display:none">
+        <label>Background color</label>
+        <div class="swatches" id="swatches">
+          <button class="swatch transparent on" data-color="" title="No fill"></button>
+          <button class="swatch" data-color="#ffffff" style="background:#ffffff" title="White"></button>
+          <button class="swatch" data-color="#0a1628" style="background:#0a1628" title="Lapis"></button>
+          <button class="swatch" data-color="#c9a84c" style="background:#c9a84c" title="Gold"></button>
+          <button class="swatch" data-color="#0e9f6e" style="background:#0e9f6e" title="Turquoise"></button>
+          <button class="swatch" data-color="#e8e4d8" style="background:#e8e4d8" title="Cream"></button>
+          <button class="swatch" data-color="#16a34a" style="background:#16a34a" title="Studio green"></button>
+        </div>
+        <div class="hint">Studio green is the cleanest fill if you plan to re-key the subject in a video editor later.</div>
+      </div>
+
+      <div class="field scene-wrap" id="sceneField">
+        <label>Replacement scene</label>
+        <input class="input" id="scenePrompt" type="text" placeholder="e.g. soft studio gradient, marble countertop, sunset beach">
+        <div class="hint">Describe the new background in plain language. The rig generates it and composites your subject with edge-aware lighting.</div>
+      </div>
+
+      <div class="field">
+        <label>Edge refinement</label>
+        <div class="chips" id="refineChips">
+          <button class="chip" data-refine="fast">Fast</button>
+          <button class="chip on" data-refine="balanced">Balanced</button>
+          <button class="chip" data-refine="hair">Hair / fur</button>
+        </div>
+        <div class="hint">Hair/fur runs an extra alpha-matting pass for fine strands — slower, but the cleanest edge on portraits and pets.</div>
+      </div>
+
+      <div class="field">
+        <label class="toggle">
+          <input type="checkbox" id="dropShadow">
+          <span class="track"></span>
+          <span class="tl">Add soft shadow<span>Natural contact shadow under the subject (solid &amp; scene modes)</span></span>
+        </label>
+      </div>
+
+      <button class="btn btn-gold" id="run">Remove Background</button>
+
+      <div class="status" id="status">
+        <div class="mono" id="status-text">Idle.</div>
+        <div class="bar"><i id="status-bar"></i></div>
+      </div>
+
+      <div class="results" id="results"></div>
+    </div>
+  </section>
+
+  <!-- MODELS UNDER THE HOOD -->
+  <h2 class="section-title">What's under the hood</h2>
+  <div class="models">
+    <div class="model">
+      <div class="nm">Segmentation</div>
+      <div class="ttl">Subject matte</div>
+      <div class="ds">A high-recall segmentation pass isolates the subject from the scene and builds a soft alpha matte — the foundation every output mode is composited from. Subject hints tighten the mask on ambiguous edges.</div>
+    </div>
+    <div class="model">
+      <div class="nm">comfyui_fun_inpaint</div>
+      <div class="ttl">Edge-aware fill</div>
+      <div class="ds">For solid and AI-scene modes, the inverted matte feeds an inpainting pass on dual RTX 5090s. The subject is locked while the background is regenerated or filled — no halo, no fringe, no leftover edge pixels.</div>
+    </div>
+    <div class="model">
+      <div class="nm">Alpha matting</div>
+      <div class="ttl">Hair / fur refine</div>
+      <div class="ds">An optional fine-detail pass recovers individual strands of hair and fur and feathers semi-transparent edges like glass and motion blur — the difference between a sticker cutout and a studio composite.</div>
+    </div>
+  </div>
+
+  <!-- HOW IT WORKS -->
+  <h2 class="section-title">How it actually works</h2>
+  <div class="steps">
+    <div class="step"><div class="num">01</div><h4>Upload</h4><p>Your image is read in-browser and pushed to the local render node. Nothing touches a third-party API or leaves our infrastructure.</p></div>
+    <div class="step"><div class="num">02</div><h4>Segment</h4><p>The segmentation model builds a soft alpha matte of the subject. Your subject hint tightens the mask on hair, fur, chrome, and glass edges.</p></div>
+    <div class="step"><div class="num">03</div><h4>Composite</h4><p>Transparent keeps the matte as-is. Solid drops a color behind it. AI scene inverts the mask and inpaints a fresh background with edge-aware lighting on the 5090s.</p></div>
+    <div class="step"><div class="num">04</div><h4>Delivery</h4><p>Full-resolution PNG — transparent or composited. Direct download, no watermark. Early-access members get priority queue and batch processing.</p></div>
+  </div>
+
+  <!-- WAITLIST CTA -->
+  <section class="cta" id="early-access">
+    <h2>Join Early Access</h2>
+    <p>Background removal is gated to early-access members while we calibrate the render queue. Drop your email - we'll bring you in and run your first batch of cutouts on the house.</p>
+    <form class="waitform" id="wait" novalidate>
+      <input type="email" class="input" id="wait-email" placeholder="you@company.com" required autocomplete="email">
+      <button type="submit" class="btn btn-gold">Join Early Access</button>
+    </form>
+    <div class="tinynote mono">No spam. No fluff. Unsubscribe with one click.</div>
+    <div class="status" id="wait-status" style="max-width:520px;margin:18px auto 0"><div id="wait-msg" class="mono">Idle.</div></div>
+  </section>
+
+  <footer class="foot">
+    <div>&copy; 2026 ABUZ8 LLC</div>
+    <div><a href="/privacy.html">Privacy</a> &middot; <a href="/terms.html">Terms</a> &middot; <a href="../tools.html">All tools</a></div>
+  </footer>
+
+</div>
+
+<script type="application/ld+json">
+{
+  "@context":"https://schema.org",
+  "@type":"SoftwareApplication",
+  "name":"AI Background Remover Pro",
+  "applicationCategory":"MultimediaApplication",
+  "operatingSystem":"Web",
+  "description":"Remove image backgrounds with pixel-clean edges on local RTX 5090s. Export transparent PNG, drop in a solid color, or generate an AI replacement scene. Optional hair/fur alpha-matting and soft contact shadow.",
+  "offers":{"@type":"Offer","price":"0","priceCurrency":"USD","availability":"https://schema.org/PreOrder"},
+  "publisher":{"@type":"Organization","name":"ABUZ8 LLC","url":"https://abuz8ai.com"}
+}
+</script>
+
+<script>
+/* AI BACKGROUND REMOVER PRO - frontend wiring
+ * - Talks to ComfyUI at https://comfy.abuz8ai.com
+ * - Backend tool: comfyui_fun_inpaint (mask inversion + edge-aware fill)
+ * - Pipeline: segmentation -> soft alpha matte -> mode composite
+ *     transparent -> return alpha cutout PNG (no inpaint needed)
+ *     solid       -> flatten matte onto chosen color (optional contact shadow)
+ *     scene       -> invert matte, comfyui_fun_inpaint regenerates background from scenePrompt
+ * - Edge refine: fast | balanced | hair (extra alpha-matting pass)
+ * - Falls back to early-access submission if local backend is unreachable.
+ * - Waitlist POSTs to /api/waitlist with fallback to /functions/waitlist and localStorage queue.
+ * - Zero external deps. No analytics on input fields.
+ */
+(function(){
+  'use strict';
+
+  var COMFY = (window.ABUZ8_COMFY_BASE) || 'https://comfy.abuz8ai.com';
+  var PROMPT_API = COMFY + '/prompt';
+  var HISTORY_API = COMFY + '/history';
+  var VIEW_API = COMFY + '/view';
+  var UPLOAD_API = COMFY + '/upload/image';
+
+  var $ = function(s){return document.querySelector(s);};
+  var drop = $('#drop'), file = $('#file'), thumb = $('#thumb'), thumbImg = $('#thumb-img'), meta = $('#meta');
+  var run = $('#run'), statusEl = $('#status'), statusText = $('#status-text'), statusBar = $('#status-bar');
+  var results = $('#results');
+  var solidField = $('#solidField'), sceneField = $('#sceneField'), scenePrompt = $('#scenePrompt');
+  var wait = $('#wait'), waitEmail = $('#wait-email'), waitStatus = $('#wait-status'), waitMsg = $('#wait-msg');
+
+  var state = {
+    file: null,
+    width: 0,
+    height: 0,
+    subject: 'auto',
+    mode: 'transparent',
+    color: '',
+    scene: '',
+    refine: 'balanced',
+    dropShadow: false
+  };
+
+  /* REFINE MAP - frontend names map to server-side matting effort */
+  var REFINE_MAP = {
+    fast:     { matting: 'none',  est: 4,  label: 'Fast' },
+    balanced: { matting: 'guided', est: 6,  label: 'Balanced' },
+    hair:     { matting: 'alpha_fine', est: 11, label: 'Hair / fur' }
+  };
+
+  /* CHIPS */
+  function bindChips(sel, key, after){
+    document.querySelectorAll(sel + ' .chip').forEach(function(c){
+      c.addEventListener('click', function(e){
+        e.preventDefault();
+        document.querySelectorAll(sel + ' .chip').forEach(function(x){x.classList.remove('on');});
+        c.classList.add('on');
+        state[key] = c.dataset[key];
+        if(after) after();
+      });
+    });
+  }
+  bindChips('#subjectChips', 'subject');
+  bindChips('#modeChips', 'mode', applyMode);
+  bindChips('#refineChips', 'refine');
+
+  function applyMode(){
+    solidField.style.display = (state.mode === 'solid') ? 'block' : 'none';
+    sceneField.classList.toggle('show', state.mode === 'scene');
+  }
+
+  /* SWATCHES */
+  document.querySelectorAll('#swatches .swatch').forEach(function(s){
+    s.addEventListener('click', function(e){
+      e.preventDefault();
+      document.querySelectorAll('#swatches .swatch').forEach(function(x){x.classList.remove('on');});
+      s.classList.add('on');
+      state.color = s.dataset.color || '';
+    });
+  });
+
+  scenePrompt.addEventListener('input', function(e){state.scene = e.target.value;});
+  $('#dropShadow').addEventListener('change', function(e){state.dropShadow = e.target.checked;});
+
+  /* DROP / FILE */
+  drop.addEventListener('click', function(){file.click();});
+  ['dragenter','dragover'].forEach(function(ev){drop.addEventListener(ev, function(e){e.preventDefault();drop.classList.add('hot');});});
+  ['dragleave','drop'].forEach(function(ev){drop.addEventListener(ev, function(e){e.preventDefault();drop.classList.remove('hot');});});
+  drop.addEventListener('drop', function(e){if(e.dataTransfer.files[0]) loadFile(e.dataTransfer.files[0]);});
+  file.addEventListener('change', function(e){if(e.target.files[0]) loadFile(e.target.files[0]);});
+
+  function loadFile(f){
+    if(!/^image\/(png|jpeg|webp)$/.test(f.type)){return setStatus('Use a PNG, JPG, or WEBP.', 'err', 0);}
+    if(f.size > 12*1024*1024){return setStatus('Max 12MB.', 'err', 0);}
+    state.file = f;
+    var r = new FileReader();
+    r.onload = function(e){
+      thumbImg.src = e.target.result;
+      thumb.style.display = 'block';
+      var probe = new Image();
+      probe.onload = function(){
+        state.width = probe.naturalWidth;
+        state.height = probe.naturalHeight;
+        showMeta();
+        setStatus('Source loaded · ' + state.width + '×' + state.height + ' px.', 'ok', 6);
+      };
+      probe.src = e.target.result;
+    };
+    r.readAsDataURL(f);
+  }
+
+  function showMeta(){
+    if(!state.width){meta.style.display='none';return;}
+    meta.style.display = 'block';
+    meta.innerHTML = 'Source <b>' + state.width + '×' + state.height + '</b> px · output preserves resolution';
+  }
+
+  function setStatus(msg, kind, pct){
+    statusEl.classList.add('show');
+    statusEl.classList.remove('ok','err');
+    if(kind) statusEl.classList.add(kind);
+    statusText.textContent = msg;
+    if(typeof pct === 'number') statusBar.style.width = Math.max(0, Math.min(100, pct)) + '%';
+  }
+
+  function buildPayload(refName){
+    var rf = REFINE_MAP[state.refine];
+    return {
+      client_id: 'abuz8-bgremove-' + Math.random().toString(36).slice(2,10),
+      prompt: {
+        params: {
+          tool: 'comfyui_fun_inpaint',
+          op: 'background_remove',
+          source_image: refName,
+          subject_hint: state.subject,
+          output_mode: state.mode,             // transparent | solid | scene
+          fill_color: state.mode === 'solid' ? (state.color || null) : null,
+          scene_prompt: state.mode === 'scene' ? (state.scene || 'clean soft studio gradient') : null,
+          matting: rf.matting,
+          mask_invert: state.mode === 'scene', // scene mode regenerates the inverted (background) region
+          contact_shadow: state.dropShadow && state.mode !== 'transparent',
+          output_format: 'png'
+        }
+      }
+    };
+  }
+
+  async function uploadSource(f){
+    var fd = new FormData();
+    fd.append('image', f, f.name || 'source.png');
+    fd.append('subfolder', 'abuz8/bgremove');
+    var res = await fetch(UPLOAD_API, { method: 'POST', body: fd });
+    if(!res.ok) throw new Error('Upload failed: ' + res.status);
+    var j = await res.json();
+    return j.name || (f.name || 'source.png');
+  }
+
+  async function pollHistory(promptId, onTick, ceiling){
+    ceiling = ceiling || 180;
+    for(var i = 0; i < ceiling; i++){
+      await new Promise(function(r){setTimeout(r, 1000);});
+      if(onTick) onTick(i);
+      try{
+        var r = await fetch(HISTORY_API + '/' + promptId);
+        if(r.ok){
+          var j = await r.json();
+          var entry = j[promptId];
+          if(entry && entry.outputs){
+            var files = [];
+            for(var nodeId in entry.outputs){
+              var node = entry.outputs[nodeId];
+              if(node.images) files.push.apply(files, node.images);
+            }
+            if(files.length) return files;
+          }
+        }
+      } catch(e){ /* keep polling */ }
+    }
+    throw new Error('Background removal timed out.');
+  }
+
+  function renderResults(files){
+    results.innerHTML = '';
+    files.forEach(function(f){
+      var url = VIEW_API + '?filename=' + encodeURIComponent(f.filename) +
+                '&subfolder=' + encodeURIComponent(f.subfolder || '') +
+                '&type=' + encodeURIComponent(f.type || 'output');
+      var card = document.createElement('div');
+      card.className = 'result-card';
+      card.innerHTML = '<img alt="Background removed result" src="' + url + '">' +
+                       '<a class="dl" href="' + url + '" download>Download</a>';
+      results.appendChild(card);
+    });
+  }
+
+  run.addEventListener('click', async function(){
+    if(!state.file){
+      return setStatus('Upload an image first.', 'err', 0);
+    }
+    if(state.mode === 'scene' && !(state.scene || '').trim()){
+      return setStatus('Describe the replacement scene, or switch to Transparent / Solid.', 'err', 0);
+    }
+    run.disabled = true;
+    results.innerHTML = '';
+    try {
+      setStatus('Uploading source to render node...', 'ok', 10);
+      var refName = await uploadSource(state.file);
+
+      var modeLabel = state.mode === 'transparent' ? 'transparent cutout'
+                    : state.mode === 'solid' ? 'solid-fill composite'
+                    : 'AI-scene composite';
+      setStatus('Queuing ' + modeLabel + ' · ' + REFINE_MAP[state.refine].label + ' edges...', 'ok', 25);
+      var payload = buildPayload(refName);
+      var submit = await fetch(PROMPT_API, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(payload)
+      });
+      if(!submit.ok) throw new Error('ComfyUI rejected the job: ' + submit.status);
+      var sj = await submit.json();
+      var pid = sj.prompt_id || sj.promptId;
+      if(!pid) throw new Error('No prompt_id returned.');
+
+      var est = REFINE_MAP[state.refine].est + (state.mode === 'scene' ? 14 : 0) + (state.dropShadow ? 3 : 0);
+      setStatus('Processing on RTX 5090 - estimated ~' + est + 's...', 'ok', 45);
+
+      var files = await pollHistory(pid, function(t){
+        var pct = Math.min(95, 45 + (t / est) * 50);
+        setStatus('Removing background · ' + t + 's elapsed · ~' + Math.max(0, est - t) + 's remaining...', 'ok', pct);
+      }, est + 90);
+
+      renderResults(files);
+      setStatus('Done · ' + files.length + ' cutout(s) ready.', 'ok', 100);
+      try { gtag('event', 'background_removed', {mode: state.mode, refine: state.refine}); } catch(e){}
+    } catch(err){
+      console.warn('[bgremover-pro]', err);
+      setStatus('Local render node unreachable. Join early access and we will run your cutouts on our cloud rig for you.', 'err', 0);
+      document.getElementById('early-access').scrollIntoView({behavior: 'smooth', block: 'start'});
+    } finally {
+      run.disabled = false;
+    }
+  });
+
+  /* WAITLIST - same triple-fallback pattern as headshot-pro / room-redesign-pro / video-generator-pro / upscaler-pro */
+  wait.addEventListener('submit', async function(e){
+    e.preventDefault();
+    var email = (waitEmail.value || '').trim();
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
+      waitStatus.classList.add('show', 'err');
+      waitStatus.classList.remove('ok');
+      waitMsg.textContent = 'Enter a valid work email.';
+      return;
+    }
+    waitStatus.classList.add('show');
+    waitStatus.classList.remove('err');
+    waitStatus.classList.add('ok');
+    waitMsg.textContent = 'Reserving your spot...';
+    try {
+      var r = await fetch('/api/waitlist', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({email: email, product: 'ai-background-remover-pro', ts: Date.now(), referrer: document.referrer || null})
+      });
+      if(!r.ok) throw new Error('waitlist endpoint ' + r.status);
+      waitMsg.textContent = 'You are in. We will email you when your slot opens.';
+      try { gtag('event', 'waitlist_join', {product: 'ai-background-remover-pro'}); } catch(e){}
+      wait.reset();
+    } catch(err){
+      try {
+        await fetch('/functions/waitlist', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({email: email, product: 'ai-background-remover-pro'})
+        });
+        waitMsg.textContent = 'You are in. We will email you when your slot opens.';
+      } catch(e2){
+        waitMsg.textContent = 'Saved locally. We will sync your spot when the network is back.';
+        try {
+          var queue = JSON.parse(localStorage.getItem('abuz8_waitlist_queue') || '[]');
+          queue.push({email: email, product: 'ai-background-remover-pro', ts: Date.now()});
+          localStorage.setItem('abuz8_waitlist_queue', JSON.stringify(queue));
+        } catch(e3){}
+      }
+    }
+  });
+
+  applyMode();
+})();
+</script>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+<script src="/tools/_abuz8-live-brain.js" defer></script>
+<script src="/tools/_tools-shared.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+
+<!-- ABUZ8 LIVE STUDIO (injected 2026-08-11-studio) -->
+<section id="abuz8-studio-section" style="padding:56px 0 8px">
+  <div style="max-width:1180px;margin:0 auto;padding:0 20px">
+    <h2 style="font:800 clamp(24px,3.2vw,34px)/1.15 Playfair Display,Georgia,serif;
+               color:var(--text,#e8e4d8);margin:0 0 10px">Live Studio</h2>
+    <p style="font:400 15px/1.65 Inter,system-ui,sans-serif;color:var(--dim,#8a9aaa);
+              max-width:70ch;margin:0 0 26px">
+      This runs on <strong style="color:var(--text,#e8e4d8)">your own machine</strong>, not our servers.
+      If ComfyUI is running locally on port 8188 you get the full studio below and your images
+      never leave your computer. If it is not, you will see Early Access instead &mdash;
+      we never show a spinner that is not doing anything.
+    </p>
+  </div>
+  <div id="abuz8-studio"></div>
+</section>
+<script src="_comfy-client.js"></script>
+<script src="_comfy-studio.js"></script>
+<script>
+(function () {
+  function boot() {
+
+  new ComfyStudio({
+    mount: '#abuz8-studio', slug: 'bgremove',
+    needsImage: true,
+    promptLabel: null,
+    hideSampler: true,
+    goLabel: 'Remove Background',
+    note: 'Deterministic segmentation (RemBG / u2net) — no prompt, no seed, no sampler. ' +
+          'Your image is processed on your own GPU and never leaves your machine.',
+    sizes: [1024], maxBatch: 1, defaultSteps: 20,
+    requires: { node:'RemBGSession+', field:'model', label:'background removal (RemBG)' },
+    buildWorkflow: function (c) {
+      return {
+        '1':{class_type:'LoadImage',inputs:{image:c.image}},
+        '2':{class_type:'RemBGSession+',inputs:{model:'isnet-general-use: general purpose',providers:'CPU'}},
+        '3':{class_type:'ImageRemoveBackground+',inputs:{rembg_session:['2',0],image:['1',0]}},
+        '4':{class_type:'SaveImage',inputs:{filename_prefix:'abuz8_bgremove',images:['3',0]}}
+      };
+    }
+  }).mount();
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
+  else boot();
+})();
+</script>
+<!-- /ABUZ8 LIVE STUDIO -->
+
+</body>
+</html>

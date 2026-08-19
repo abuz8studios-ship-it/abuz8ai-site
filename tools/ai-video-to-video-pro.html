@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Video-to-Video Pro — Restyle Any Video with AI | ABUZ8</title>
+<meta name="description" content="Transform existing footage into any visual style. Anime, cinematic, cartoon, painting, cyberpunk — 8 curated styles. ComfyUI VACE engine. Local RTX 5090. No watermarks.">
+<meta name="keywords" content="ai video to video, video style transfer ai, restyle video ai, ai video transformation, comfyui video, video to anime, ai video filter, video restyling">
+<link rel="canonical" href="https://abuz8ai.com/tools/ai-video-to-video-pro">
+<meta property="og:title" content="AI Video-to-Video Pro — Restyle Any Video in Any Style | ABUZ8">
+<meta property="og:description" content="Transform your footage into anime, cinematic film, cartoon, or oil painting. ComfyUI VACE engine. RTX 5090. No watermarks.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://abuz8ai.com/tools/ai-video-to-video-pro">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="AI Video-to-Video Pro | ABUZ8">
+<meta name="twitter:description" content="Restyle any video with AI. 8 curated styles. ComfyUI VACE. Local RTX 5090 processing.">
+<link rel="stylesheet" href="/assets/css/abuz8-mach3.css">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@300;400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"SoftwareApplication","name":"AI Video-to-Video Pro","applicationCategory":"MultimediaApplication","operatingSystem":"Web","description":"Transform any video into a new visual style using ComfyUI VACE engine running on local RTX 5090. 8 curated styles: Cinematic Film, Anime, Oil Painting, Watercolor, Cyberpunk, Cartoon, Studio Ghibli, and Noir. Frame-consistent output with temporal coherence. No watermarks.","offers":{"@type":"Offer","price":"0","priceCurrency":"USD","availability":"https://schema.org/PreOrder"},"creator":{"@type":"Organization","name":"ABUZ8 LLC","url":"https://abuz8ai.com"}}
+</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What video formats are supported?","acceptedAnswer":{"@type":"Answer","text":"MP4 (H.264/H.265), MOV, and WEBM. Maximum upload size is 200MB. For best results, use clips under 30 seconds and 1080p or lower resolution."}},{"@type":"Question","name":"How long does video processing take?","acceptedAnswer":{"@type":"Answer","text":"Processing time depends on clip length and style complexity. A 10-second 720p clip typically renders in 2–5 minutes on RTX 5090. Cinematic Film and Oil Painting are the most computationally intensive styles."}},{"@type":"Question","name":"Does the output stay temporally consistent?","acceptedAnswer":{"@type":"Answer","text":"Yes. The VACE engine processes frames with temporal coherence — the style applies consistently across frames without flickering or drift. This is the key advantage over frame-by-frame image style transfer."}},{"@type":"Question","name":"Can I control how strongly the style is applied?","acceptedAnswer":{"@type":"Answer","text":"Yes. The style strength slider lets you blend between the original footage and the full styled output. Lower values preserve more of the original video's look while adding subtle stylization."}},{"@type":"Question","name":"Is my video uploaded to third-party servers?","acceptedAnswer":{"@type":"Answer","text":"No. Your video is processed entirely on our local RTX 5090 hardware and deleted immediately after processing. No third-party AI services are involved."}},{"@type":"Question","name":"What is the maximum clip length?","acceptedAnswer":{"@type":"Answer","text":"Early access supports clips up to 60 seconds. For longer content, split your video into segments and use the AI Long Video Stitcher to combine the styled clips."}}]}
+</script>
+
+<style>
+:root{
+  --lapis:#0a1628;--lapis-2:#0d1a30;--lapis-3:#111f38;
+  --gold:#c9a84c;--gold-2:#e6c879;
+  --turq:#0e9f6e;--turq-2:#2bb39e;
+  --cream:#f5f0e8;--text:#e8e4d8;--dim:#8a9aaa;--border:#1a2e50;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{background:var(--lapis);color:var(--text);font-family:'Inter',sans-serif;line-height:1.6;min-height:100vh;-webkit-font-smoothing:antialiased}
+a{color:var(--gold);text-decoration:none}
+.mono{font-family:'JetBrains Mono',monospace}
+.wrap{max-width:1200px;margin:0 auto;padding:32px 24px}
+.nav{display:flex;justify-content:space-between;align-items:center;padding-bottom:20px;border-bottom:1px solid var(--border);margin-bottom:40px}
+.brand{font-family:'Playfair Display',serif;font-size:22px;color:var(--cream);letter-spacing:.5px}
+.brand .acc{color:var(--gold)}
+.back{font-size:11px;color:var(--dim);letter-spacing:2px;text-transform:uppercase}
+.back:hover{color:var(--gold)}
+.hero{display:grid;grid-template-columns:1.1fr .9fr;gap:48px;align-items:center;margin-bottom:56px}
+@media(max-width:880px){.hero{grid-template-columns:1fr}}
+.eyebrow{color:var(--turq-2);font-size:11px;letter-spacing:3px;text-transform:uppercase;margin-bottom:18px;font-weight:600}
+h1{font-family:'Playfair Display',serif;font-size:clamp(2.2rem,5vw,3.6rem);color:var(--cream);line-height:1.05;margin-bottom:20px;font-weight:900}
+h1 .gold{color:var(--gold)}
+.lede{color:var(--dim);font-size:18px;font-weight:300;max-width:540px;margin-bottom:28px}
+.row-stats{display:flex;gap:32px;margin-top:20px;flex-wrap:wrap}
+.stat{border-left:2px solid var(--gold);padding-left:14px}
+.stat .n{font-family:'Playfair Display',serif;font-size:28px;color:var(--cream);font-weight:700;line-height:1}
+.stat .l{font-size:10px;color:var(--dim);letter-spacing:2px;text-transform:uppercase;margin-top:6px}
+.demo-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;border-radius:18px;overflow:hidden;border:1px solid var(--border);background:var(--lapis-2);padding:12px}
+.demo-card{aspect-ratio:1/1;border-radius:12px;background:linear-gradient(135deg,#1a2e50,#0d1a30);position:relative;overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:14px;gap:8px}
+.demo-card::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 40% 30%,rgba(201,168,76,0.12),transparent 60%)}
+.demo-card .ico{font-size:32px;position:relative;z-index:1}
+.demo-card .tag{position:relative;z-index:1;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--turq-2);font-weight:600;text-align:center}
+.demo-card .style-name{position:relative;z-index:1;font-family:'Playfair Display',serif;font-size:13px;color:var(--cream);font-weight:700;text-align:center;margin-top:2px}
+.bench{display:grid;grid-template-columns:1fr 1fr;gap:32px;background:var(--lapis-2);border:1px solid var(--border);border-radius:22px;padding:36px;margin-bottom:56px}
+@media(max-width:880px){.bench{grid-template-columns:1fr}}
+.panel h3{font-family:'Playfair Display',serif;font-size:24px;color:var(--cream);margin-bottom:6px}
+.panel .pre{color:var(--turq-2);font-size:10px;letter-spacing:3px;text-transform:uppercase;margin-bottom:18px;font-weight:600}
+.field{margin-bottom:18px}
+.field label{display:block;font-size:10px;color:var(--gold);letter-spacing:2.5px;text-transform:uppercase;margin-bottom:8px;font-weight:700}
+.input,.select{width:100%;padding:13px 14px;background:#0f2040;border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:inherit;font-size:14px;transition:border-color .2s}
+.input:focus,.select:focus{outline:none;border-color:var(--gold)}
+.style-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:18px}
+@media(max-width:600px){.style-grid{grid-template-columns:repeat(2,1fr)}}
+.style-chip{background:#0f2040;border:1px solid var(--border);border-radius:10px;padding:10px 8px;cursor:pointer;transition:all .2s;text-align:center}
+.style-chip:hover{border-color:var(--turq)}
+.style-chip.active{border-color:var(--gold);background:rgba(201,168,76,.08)}
+.style-chip .chip-ico{font-size:22px;display:block;margin-bottom:4px}
+.style-chip .chip-name{font-size:10px;color:var(--dim);letter-spacing:1px;text-transform:uppercase;line-height:1.3}
+.style-chip.active .chip-name{color:var(--gold)}
+.active-style-info{background:#0f2040;border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:18px;display:flex;gap:12px;align-items:flex-start}
+.active-style-info .asi-ico{font-size:28px;flex-shrink:0}
+.active-style-info .asi-name{font-size:14px;font-weight:700;color:var(--cream);margin-bottom:4px}
+.active-style-info .asi-desc{font-size:12px;color:var(--dim);line-height:1.5}
+.slider-row{display:flex;align-items:center;gap:12px;margin-bottom:22px}
+.slider-row input[type=range]{flex:1;-webkit-appearance:none;height:4px;background:var(--border);border-radius:2px;outline:none}
+.slider-row input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--gold);cursor:pointer}
+.strength-val{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--gold);min-width:32px;text-align:right}
+.upload-zone{border:2px dashed var(--border);border-radius:12px;padding:28px;text-align:center;cursor:pointer;transition:border-color .2s;margin-bottom:18px;background:#090f1e}
+.upload-zone:hover,.upload-zone.drag{border-color:var(--gold)}
+.upload-zone p{font-size:13px;color:var(--dim);margin-top:8px}
+.upload-zone input{display:none}
+.upload-zone .ico{font-size:28px}
+.vid-preview{max-width:100%;border-radius:8px;margin-top:10px;display:none;border:1px solid var(--border);max-height:140px}
+.gen-btn{width:100%;padding:16px;background:var(--gold);color:#0a1628;font-family:'Playfair Display',serif;font-size:18px;font-weight:700;border:none;border-radius:12px;cursor:pointer;transition:all .25s;letter-spacing:.5px;margin-top:8px}
+.gen-btn:hover:not(:disabled){background:var(--gold-2);transform:translateY(-1px);box-shadow:0 8px 24px rgba(201,168,76,.3)}
+.gen-btn:disabled{opacity:.6;cursor:not-allowed;transform:none}
+.output-area{display:flex;flex-direction:column;gap:16px}
+.canvas-wrap{aspect-ratio:16/9;background:#090f1e;border:1px solid var(--border);border-radius:16px;overflow:hidden;position:relative;display:flex;align-items:center;justify-content:center}
+.placeholder{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;color:var(--dim)}
+.placeholder .p-ico{font-size:48px;opacity:.4}
+.placeholder p{font-size:13px;text-align:center;max-width:200px;line-height:1.6}
+#outputVid{width:100%;height:100%;object-fit:contain;display:none;border-radius:12px}
+.status-line{font-size:12px;min-height:18px;color:var(--dim);font-family:'JetBrains Mono',monospace}
+.status-line.active{color:var(--turq-2)}
+.status-line.done{color:#3de87a}
+.status-line.err{color:#e87a3d}
+.progress-bar{height:3px;background:var(--border);border-radius:2px;overflow:hidden;display:none}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--turq),var(--gold));width:0%;transition:width .8s ease}
+.action-row{display:flex;gap:10px}
+.btn-dl,.btn-share{flex:1;padding:11px;background:#0f2040;border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:12px;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;transition:all .2s;font-family:inherit;display:none}
+.btn-dl:hover,.btn-share:hover{border-color:var(--gold);color:var(--gold)}
+.offline-notice{background:rgba(232,122,61,.08);border:1px solid rgba(232,122,61,.3);border-radius:10px;padding:14px 16px;font-size:13px;color:#e8a07a;display:none}
+.offline-notice a{color:var(--gold)}
+.how-section,.styles-section,.specs-section,.faq-section{margin-bottom:56px}
+.how-section h2,.styles-section h2,.specs-section h2,.faq-section h2{font-family:'Playfair Display',serif;font-size:2rem;color:var(--cream);margin-bottom:8px}
+.sub{color:var(--dim);font-size:15px;margin-bottom:32px}
+.how-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
+@media(max-width:800px){.how-grid{grid-template-columns:repeat(2,1fr)}}
+.how-step{background:var(--lapis-2);border:1px solid var(--border);border-radius:16px;padding:24px}
+.how-step .num{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--gold);letter-spacing:2px;margin-bottom:12px}
+.how-step h4{font-family:'Playfair Display',serif;font-size:16px;color:var(--cream);margin-bottom:8px}
+.how-step p{font-size:13px;color:var(--dim);line-height:1.6}
+.styles-showcase{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+@media(max-width:800px){.styles-showcase{grid-template-columns:repeat(2,1fr)}}
+.showcase-card{background:var(--lapis-2);border:1px solid var(--border);border-radius:16px;padding:22px;text-align:center}
+.showcase-card .sc-ico{font-size:36px;margin-bottom:12px}
+.showcase-card h4{font-family:'Playfair Display',serif;font-size:15px;color:var(--cream);margin-bottom:6px}
+.showcase-card p{font-size:12px;color:var(--dim);line-height:1.5}
+.specs-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+@media(max-width:700px){.specs-grid{grid-template-columns:1fr}}
+.spec-card{background:var(--lapis-2);border:1px solid var(--border);border-radius:14px;padding:20px}
+.spec-card .sc-label{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:8px;font-weight:700}
+.spec-card .sc-val{font-family:'JetBrains Mono',monospace;font-size:15px;color:var(--cream);font-weight:600}
+.spec-card .sc-note{font-size:12px;color:var(--dim);margin-top:4px}
+.faq-item{border:1px solid var(--border);border-radius:12px;margin-bottom:10px;overflow:hidden}
+.faq-q{padding:16px 20px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;color:var(--cream);font-size:14px;font-weight:600;transition:background .2s}
+.faq-q:hover{background:var(--lapis-2)}
+.faq-arrow{color:var(--gold);font-size:12px;transition:transform .25s;flex-shrink:0}
+.faq-item.open .faq-arrow{transform:rotate(180deg)}
+.faq-a{max-height:0;overflow:hidden;transition:max-height .35s ease,padding .2s}
+.faq-item.open .faq-a{max-height:300px;padding:0 20px 16px}
+.faq-a p{font-size:13px;color:var(--dim);line-height:1.7}
+.wl-section{background:linear-gradient(135deg,#0d1a30,#111f38);border:1px solid var(--border);border-radius:24px;padding:48px;text-align:center;margin-bottom:48px}
+.wl-section h2{font-family:'Playfair Display',serif;font-size:2.4rem;color:var(--cream);margin-bottom:12px}
+.wl-section p{color:var(--dim);font-size:16px;margin-bottom:32px;max-width:480px;margin-left:auto;margin-right:auto}
+.wl-form{display:flex;gap:12px;max-width:400px;margin:0 auto 14px;flex-wrap:wrap}
+.wl-form input{flex:1;padding:13px 16px;background:#0a1628;border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:15px;font-family:inherit;min-width:200px}
+.wl-form input:focus{outline:none;border-color:var(--gold)}
+.wl-form button{padding:13px 24px;background:var(--gold);color:#0a1628;border:none;border-radius:10px;font-weight:700;font-size:14px;cursor:pointer;font-family:'Playfair Display',serif;transition:background .2s}
+.wl-form button:hover{background:var(--gold-2)}
+.wl-success{color:#3de87a;font-size:14px;display:none;margin-top:8px}
+.wl-note{font-size:12px;color:var(--dim);margin-top:10px}
+.footer{padding-top:28px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;font-size:12px;color:var(--dim)}
+.footer-links{display:flex;gap:20px}
+.footer-links a{color:var(--dim)}
+.footer-links a:hover{color:var(--gold)}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <nav class="nav">
+    <a href="/index.html" class="brand">ABU<span class="acc">Z8</span></a>
+    <a href="/tools.html" class="back">← All Tools</a>
+  </nav>
+
+  <section class="hero">
+    <div class="hero-copy">
+      <div class="eyebrow">AI Video-to-Video Pro</div>
+      <h1>Restyle Any Video.<br><span class="gold">Any Style.</span></h1>
+      <p class="lede">Upload footage, pick a style, get a transformed video. ComfyUI VACE engine with temporal coherence — no flickering, no frame drift. Runs on local RTX 5090.</p>
+      <div class="row-stats">
+        <div class="stat"><div class="n">8</div><div class="l">Video Styles</div></div>
+        <div class="stat"><div class="n">60s</div><div class="l">Max Clip Length</div></div>
+        <div class="stat"><div class="n">1080p</div><div class="l">Output Quality</div></div>
+      </div>
+    </div>
+    <div class="demo-strip">
+      <div class="demo-card"><span class="ico">🎬</span><div class="tag">Style</div><div class="style-name">Cinematic Film</div></div>
+      <div class="demo-card"><span class="ico">🌸</span><div class="tag">Style</div><div class="style-name">Anime</div></div>
+      <div class="demo-card"><span class="ico">🖼</span><div class="tag">Style</div><div class="style-name">Oil Painting</div></div>
+      <div class="demo-card"><span class="ico">🌆</span><div class="tag">Style</div><div class="style-name">Cyberpunk</div></div>
+      <div class="demo-card"><span class="ico">🎨</span><div class="tag">Style</div><div class="style-name">Cartoon</div></div>
+      <div class="demo-card"><span class="ico">🌿</span><div class="tag">Style</div><div class="style-name">Studio Ghibli</div></div>
+    </div>
+  </section>
+
+  <div class="bench">
+    <div class="panel">
+      <div class="pre">Configure</div>
+      <h3>Your Video</h3>
+
+      <div class="field" style="margin-top:18px">
+        <label>Visual Style</label>
+        <div class="style-grid">
+          <div class="style-chip active" data-style="cinematic" onclick="selectStyle(this)"><span class="chip-ico">🎬</span><span class="chip-name">Cinematic</span></div>
+          <div class="style-chip" data-style="anime" onclick="selectStyle(this)"><span class="chip-ico">🌸</span><span class="chip-name">Anime</span></div>
+          <div class="style-chip" data-style="oilpainting" onclick="selectStyle(this)"><span class="chip-ico">🖼</span><span class="chip-name">Oil Painting</span></div>
+          <div class="style-chip" data-style="watercolor" onclick="selectStyle(this)"><span class="chip-ico">🎭</span><span class="chip-name">Watercolor</span></div>
+          <div class="style-chip" data-style="cyberpunk" onclick="selectStyle(this)"><span class="chip-ico">🌆</span><span class="chip-name">Cyberpunk</span></div>
+          <div class="style-chip" data-style="cartoon" onclick="selectStyle(this)"><span class="chip-ico">🎨</span><span class="chip-name">Cartoon</span></div>
+          <div class="style-chip" data-style="ghibli" onclick="selectStyle(this)"><span class="chip-ico">🌿</span><span class="chip-name">Ghibli</span></div>
+          <div class="style-chip" data-style="noir" onclick="selectStyle(this)"><span class="chip-ico">🎥</span><span class="chip-name">Film Noir</span></div>
+        </div>
+        <div class="active-style-info">
+          <div class="asi-ico" id="activeStyleIco">🎬</div>
+          <div>
+            <div class="asi-name" id="activeStyleName">Cinematic Film</div>
+            <div class="asi-desc" id="activeStyleDesc">Hollywood-grade color grading, cinematic luts, anamorphic lens flare. Transforms any footage into polished film-quality output.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Upload Video</label>
+        <div class="upload-zone" id="uploadZone" onclick="document.getElementById('videoInput').click()">
+          <input type="file" id="videoInput" accept="video/*">
+          <div class="ico">🎞</div>
+          <p>Click or drag a video here · MP4, MOV, WEBM · max 200MB</p>
+        </div>
+        <video class="vid-preview" id="vidPreview" muted playsinline controls></video>
+      </div>
+
+      <div class="field">
+        <label>Style Strength</label>
+        <div class="slider-row">
+          <span style="font-size:12px;color:var(--dim)">Subtle</span>
+          <input type="range" id="strengthSlider" min="30" max="100" value="75">
+          <span style="font-size:12px;color:var(--dim)">Full</span>
+          <span class="strength-val" id="strengthVal">0.75</span>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Output Resolution</label>
+        <select class="select" id="resSelect">
+          <option value="720">720p — Fastest</option>
+          <option value="1080" selected>1080p — Balanced</option>
+        </select>
+      </div>
+
+      <button class="gen-btn" id="genBtn" onclick="generate()">✦ Transform Video</button>
+    </div>
+
+    <div class="panel output-area">
+      <div class="pre">Output</div>
+      <h3>Transformed Video</h3>
+      <div class="canvas-wrap">
+        <div class="placeholder" id="placeholder">
+          <span class="p-ico">🎬</span>
+          <p>Upload a video to transform it</p>
+        </div>
+        <video id="outputVid" controls muted playsinline></video>
+      </div>
+      <div class="progress-bar" id="progressBar"><div class="progress-fill" id="progressFill"></div></div>
+      <div class="status-line" id="statusLine"></div>
+      <div class="offline-notice" id="offlineNotice">
+        Server offline right now — <a href="#waitlist" onclick="showWaitlist()">join the waitlist</a> for priority access when we go live.
+      </div>
+      <div class="action-row">
+        <button class="btn-dl" id="dlBtn" onclick="downloadVid()">⬇ Download MP4</button>
+        <button class="btn-share" id="shareBtn" onclick="shareVid()">Share</button>
+      </div>
+    </div>
+  </div>
+
+  <section class="how-section">
+    <div class="eyebrow">How It Works</div>
+    <h2>Four steps to a new look.</h2>
+    <p class="sub">Upload your footage, configure, transform. No technical knowledge required.</p>
+    <div class="how-grid">
+      <div class="how-step"><div class="num">STEP 01</div><h4>Upload your clip</h4><p>Drop in any MP4, MOV, or WEBM file. Clips up to 60 seconds. 200MB max. 1080p or lower for best results.</p></div>
+      <div class="how-step"><div class="num">STEP 02</div><h4>Choose a style</h4><p>Pick from 8 curated visual styles — Cinematic, Anime, Oil Painting, Watercolor, Cyberpunk, Cartoon, Ghibli, or Film Noir.</p></div>
+      <div class="how-step"><div class="num">STEP 03</div><h4>Set strength &amp; quality</h4><p>Control how heavily the style is applied. Lower values keep the original footage grounded; higher values go full transformation.</p></div>
+      <div class="how-step"><div class="num">STEP 04</div><h4>Download your video</h4><p>VACE processes frames with temporal coherence — no flickering. Download the styled MP4. Commercial use cleared.</p></div>
+    </div>
+  </section>
+
+  <section class="styles-section">
+    <div class="eyebrow">All Styles</div>
+    <h2>Eight visual universes.</h2>
+    <p class="sub">Each style is tuned for a different aesthetic and use case.</p>
+    <div class="styles-showcase">
+      <div class="showcase-card"><div class="sc-ico">🎬</div><h4>Cinematic Film</h4><p>Hollywood-grade color grading, anamorphic lens flare, cinematic depth. Best for travel, documentary, and narrative content.</p></div>
+      <div class="showcase-card"><div class="sc-ico">🌸</div><h4>Anime</h4><p>Cel-shaded anime aesthetics with bold outlines. Works beautifully on portrait shots and nature footage.</p></div>
+      <div class="showcase-card"><div class="sc-ico">🖼</div><h4>Oil Painting</h4><p>Rich brushwork, deep saturation, impasto texture. Transforms landscapes and portraits into fine art.</p></div>
+      <div class="showcase-card"><div class="sc-ico">🎭</div><h4>Watercolor</h4><p>Soft edges, color bleeding, paper texture. Perfect for travel vlogs and nature footage.</p></div>
+      <div class="showcase-card"><div class="sc-ico">🌆</div><h4>Cyberpunk</h4><p>Neon-lit, rain-soaked, high-contrast urban. Perfect for city footage, music videos, and tech content.</p></div>
+      <div class="showcase-card"><div class="sc-ico">🎨</div><h4>Cartoon</h4><p>Bold outlines and vibrant fills. Great for family content, explainer videos, and social media clips.</p></div>
+      <div class="showcase-card"><div class="sc-ico">🌿</div><h4>Studio Ghibli</h4><p>Painterly, nature-lit, magical. Particularly stunning on outdoor and landscape footage.</p></div>
+      <div class="showcase-card"><div class="sc-ico">🎥</div><h4>Film Noir</h4><p>Dramatic black &amp; white with moody shadows and high contrast. Transforms interviews and portraits.</p></div>
+    </div>
+  </section>
+
+  <section class="specs-section">
+    <div class="eyebrow">Technical Specs</div>
+    <h2>What's under the hood.</h2>
+    <p class="sub">ComfyUI VACE engine with temporal coherence on dedicated RTX 5090 hardware.</p>
+    <div class="specs-grid">
+      <div class="spec-card"><div class="sc-label">Engine</div><div class="sc-val">ComfyUI VACE</div><div class="sc-note">comfyui_vace + comfyui_image_to_video</div></div>
+      <div class="spec-card"><div class="sc-label">Hardware</div><div class="sc-val">RTX 5090 · 32GB VRAM</div><div class="sc-note">Local inference — no cloud roundtrip</div></div>
+      <div class="spec-card"><div class="sc-label">Output</div><div class="sc-val">720p / 1080p MP4</div><div class="sc-note">H.264, no watermarks</div></div>
+      <div class="spec-card"><div class="sc-label">Max Length</div><div class="sc-val">60 seconds</div><div class="sc-note">Use AI Stitcher for longer content</div></div>
+      <div class="spec-card"><div class="sc-label">Privacy</div><div class="sc-val">Zero third-party servers</div><div class="sc-note">Video deleted immediately after render</div></div>
+      <div class="spec-card"><div class="sc-label">License</div><div class="sc-val">Personal + Commercial</div><div class="sc-note">Client work and YouTube cleared</div></div>
+    </div>
+  </section>
+
+  <section class="faq-section">
+    <div class="eyebrow">FAQ</div>
+    <h2>Questions answered.</h2>
+    <p class="sub">Everything you need to know before joining early access.</p>
+    <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">What video formats are supported? <span class="faq-arrow">▼</span></div><div class="faq-a"><p>MP4 (H.264/H.265), MOV, and WEBM. Maximum upload size is 200MB. For best results, use clips under 30 seconds and 1080p or lower resolution.</p></div></div>
+    <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">How long does processing take? <span class="faq-arrow">▼</span></div><div class="faq-a"><p>A 10-second 720p clip renders in approximately 2–5 minutes on RTX 5090. Cinematic Film and Oil Painting are the most computationally intensive styles. Cartoon and Watercolor are fastest.</p></div></div>
+    <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">Does the output stay temporally consistent? <span class="faq-arrow">▼</span></div><div class="faq-a"><p>Yes. The VACE engine processes frames with temporal coherence — the style applies consistently across frames without flickering or drift. This is the key advantage over simple frame-by-frame style transfer.</p></div></div>
+    <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">Is my video uploaded to third-party servers? <span class="faq-arrow">▼</span></div><div class="faq-a"><p>No. Your video is processed entirely on our local RTX 5090 hardware and deleted immediately after processing. No third-party AI services handle your content.</p></div></div>
+    <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">What is the maximum clip length? <span class="faq-arrow">▼</span></div><div class="faq-a"><p>Early access supports clips up to 60 seconds. For longer content, split your video into segments and use the AI Long Video Stitcher to combine the styled clips into a seamless final edit.</p></div></div>
+    <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">Can I use outputs commercially? <span class="faq-arrow">▼</span></div><div class="faq-a"><p>Yes. Outputs are cleared for personal and commercial use — client videos, YouTube content, brand reels, and advertising are all covered.</p></div></div>
+  </section>
+
+  <section class="wl-section" id="waitlist">
+    <div class="eyebrow">Early Access</div>
+    <h2>Join the waitlist.</h2>
+    <p>Be first to transform your footage when we open early access. No spam — one email when access opens.</p>
+    <div class="wl-form" id="wlForm">
+      <input type="email" id="wlEmail" placeholder="your@email.com" autocomplete="email">
+      <button onclick="joinWaitlist()">Join Now</button>
+    </div>
+    <div class="wl-success" id="wlSuccess">✓ You're on the list. We'll email you when access opens.</div>
+    <div class="wl-note">No spam. One email when access opens. Unsubscribe anytime.</div>
+  </section>
+
+  <footer class="footer">
+    <div>© 2026 ABUZ8 LLC — All rights reserved</div>
+    <div class="footer-links">
+      <a href="/tools.html">All Tools</a>
+      <a href="/about.html">About</a>
+      <a href="/disclaimer.html">Terms</a>
+    </div>
+  </footer>
+</div>
+
+<script>
+const STYLES = {
+  cinematic:  { name: 'Cinematic Film',    icon: '🎬', desc: 'Hollywood-grade color grading, cinematic luts, anamorphic lens flare. Transforms any footage into polished film-quality output.' },
+  anime:      { name: 'Anime',             icon: '🌸', desc: 'Cel-shaded anime aesthetics with bold outlines and vibrant color. Works beautifully on portrait shots and nature footage.' },
+  oilpainting:{ name: 'Oil Painting',      icon: '🖼', desc: 'Rich brushwork, deep saturation, impasto texture. Transforms landscapes and portrait shots into fine art.' },
+  watercolor: { name: 'Watercolor',        icon: '🎭', desc: 'Soft edges, color bleeding, paper texture. Perfect for travel vlogs and nature footage with organic feel.' },
+  cyberpunk:  { name: 'Cyberpunk',         icon: '🌆', desc: 'Neon-lit, rain-soaked, high-contrast urban. Perfect for city footage, music videos, and tech content.' },
+  cartoon:    { name: 'Cartoon',           icon: '🎨', desc: 'Bold outlines and vibrant fills. Great for family content, explainer videos, and social media clips.' },
+  ghibli:     { name: 'Studio Ghibli',     icon: '🌿', desc: 'Painterly, nature-lit, magical. Particularly stunning on outdoor and landscape footage.' },
+  noir:       { name: 'Film Noir',         icon: '🎥', desc: 'Dramatic black & white with moody shadows and high contrast. Transforms interviews and portrait footage.' }
+};
+
+let selectedStyle = 'cinematic';
+let uploadedFile = null;
+let outputUrl = null;
+
+function selectStyle(el) {
+  document.querySelectorAll('.style-chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  selectedStyle = el.dataset.style;
+  const s = STYLES[selectedStyle];
+  document.getElementById('activeStyleIco').textContent = s.icon;
+  document.getElementById('activeStyleName').textContent = s.name;
+  document.getElementById('activeStyleDesc').textContent = s.desc;
+}
+
+const slider = document.getElementById('strengthSlider');
+const strengthVal = document.getElementById('strengthVal');
+slider.addEventListener('input', () => { strengthVal.textContent = (slider.value / 100).toFixed(2); });
+
+const videoInput = document.getElementById('videoInput');
+const uploadZone = document.getElementById('uploadZone');
+const vidPreview = document.getElementById('vidPreview');
+
+videoInput.addEventListener('change', e => {
+  const file = e.target.files[0];
+  if (!file) return;
+  uploadedFile = file;
+  vidPreview.src = URL.createObjectURL(file);
+  vidPreview.style.display = 'block';
+  uploadZone.querySelector('p').textContent = '✓ ' + file.name + ' (' + (file.size / 1024 / 1024).toFixed(1) + ' MB)';
+});
+
+uploadZone.addEventListener('dragover', e => { e.preventDefault(); uploadZone.classList.add('drag'); });
+uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('drag'));
+uploadZone.addEventListener('drop', e => {
+  e.preventDefault();
+  uploadZone.classList.remove('drag');
+  const file = e.dataTransfer.files[0];
+  if (!file || !file.type.startsWith('video/')) return;
+  uploadedFile = file;
+  vidPreview.src = URL.createObjectURL(file);
+  vidPreview.style.display = 'block';
+  uploadZone.querySelector('p').textContent = '✓ ' + file.name;
+});
+
+async function generate() {
+  if (!uploadedFile) { setStatus('Upload a video first.', 'err'); return; }
+
+  const btn = document.getElementById('genBtn');
+  btn.disabled = true;
+  btn.textContent = '⏳ Processing…';
+  setStatus('Uploading video to ComfyUI…', 'active');
+  showProgress(true);
+  animateProgress(8, 3000);
+
+  document.getElementById('dlBtn').style.display = 'none';
+  document.getElementById('shareBtn').style.display = 'none';
+  document.getElementById('outputVid').style.display = 'none';
+  document.getElementById('placeholder').style.display = 'flex';
+  document.getElementById('offlineNotice').style.display = 'none';
+
+  try {
+    const formData = new FormData();
+    formData.append('tool', 'comfyui_vace');
+    formData.append('style', selectedStyle);
+    formData.append('strength', (slider.value / 100).toFixed(2));
+    formData.append('resolution', document.getElementById('resSelect').value);
+    formData.append('video', uploadedFile);
+
+    const resp = await fetch('/api/tools/run', { method: 'POST', body: formData });
+    if (!resp.ok) throw new Error('Server error: ' + resp.status);
+    const data = await resp.json();
+
+    if (data.job_id) {
+      animateProgress(20, 1000);
+      setStatus('Job queued — rendering frames…', 'active');
+      await pollJob(data.job_id);
+    } else if (data.video_url || data.output) {
+      showResult(data.video_url || data.output);
+    } else {
+      throw new Error(data.error || 'Unexpected response');
+    }
+  } catch (err) {
+    console.error(err);
+    showOffline();
+    setStatus('Backend offline — join the waitlist for priority access.', 'err');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '✦ Transform Video';
+    showProgress(false);
+  }
+}
+
+async function pollJob(jobId) {
+  for (let i = 0; i < 80; i++) {
+    await sleep(5000);
+    const pct = Math.min(20 + i * 1.0, 95);
+    animateProgress(pct, 1500);
+    setStatus('Rendering frames on RTX 5090… (' + Math.round(i * 5) + 's)', 'active');
+    try {
+      const r = await fetch('/api/tools/status/' + jobId);
+      const d = await r.json();
+      if (d.status === 'done' || d.status === 'complete' || d.status === 'finished') {
+        animateProgress(100, 400);
+        showResult(d.video_url || d.output || d.result);
+        return;
+      }
+      if (d.status === 'error' || d.status === 'failed') throw new Error(d.error || 'Render failed');
+    } catch (e) { if (e.message !== 'Failed to fetch') throw e; }
+  }
+  throw new Error('Render timeout — video too long or server busy');
+}
+
+function showResult(url) {
+  const vid = document.getElementById('outputVid');
+  vid.src = url;
+  vid.style.display = 'block';
+  outputUrl = url;
+  document.getElementById('placeholder').style.display = 'none';
+  document.getElementById('dlBtn').style.display = 'block';
+  document.getElementById('shareBtn').style.display = 'block';
+  setStatus('Done — your styled video is ready!', 'done');
+}
+
+function showOffline() { document.getElementById('offlineNotice').style.display = 'block'; }
+function showProgress(v) { document.getElementById('progressBar').style.display = v ? 'block' : 'none'; }
+function animateProgress(target, dur) {
+  const fill = document.getElementById('progressFill');
+  fill.style.transition = `width ${dur}ms ease`;
+  fill.style.width = Math.min(target, 98) + '%';
+}
+function setStatus(msg, type) {
+  const el = document.getElementById('statusLine');
+  el.textContent = msg;
+  el.className = 'status-line' + (type ? ' ' + type : '');
+}
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+function downloadVid() {
+  if (!outputUrl) return;
+  const a = document.createElement('a');
+  a.href = outputUrl;
+  a.download = 'abuz8-v2v-' + selectedStyle + '-' + Date.now() + '.mp4';
+  a.click();
+}
+
+function shareVid() {
+  navigator.clipboard.writeText(window.location.href).then(() => {
+    document.getElementById('shareBtn').textContent = 'Link Copied!';
+    setTimeout(() => { document.getElementById('shareBtn').textContent = 'Share'; }, 2000);
+  });
+}
+
+function showWaitlist() { document.getElementById('waitlist').scrollIntoView({ behavior: 'smooth' }); }
+
+function toggleFaq(el) {
+  const item = el.closest('.faq-item');
+  const isOpen = item.classList.contains('open');
+  document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+  if (!isOpen) item.classList.add('open');
+}
+
+async function joinWaitlist() {
+  const email = document.getElementById('wlEmail').value.trim();
+  if (!email || !email.includes('@')) { document.getElementById('wlEmail').focus(); return; }
+  try {
+    const r = await fetch('/api/waitlist', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, tool: 'video-to-video-pro', source: 'tool-page' })
+    });
+    if (r.ok) {
+      document.getElementById('wlSuccess').style.display = 'block';
+      document.getElementById('wlForm').style.display = 'none';
+    }
+  } catch (e) {
+    document.getElementById('wlSuccess').style.display = 'block';
+    document.getElementById('wlForm').style.display = 'none';
+  }
+}
+</script>
+<script src="_abuz8-live-brain.js" defer></script>
+<script src="/tools/_tools-shared.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>
+

@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<link rel="stylesheet" href="/assets/css/abuz8-mach3.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Color Palette Generator — ABUZ8</title>
+<meta name="description" content="Free online color palette generator. Generate harmonious color schemes using the ABUZ8 design system principles. Part of the ABUZ8 AI tool ecosystem.">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@300;400;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --lapis: #0a1628;
+  --lapis-mid: #0f2040;
+  --gold: #c9a84c;
+  --gold-light: #e8d48b;
+  --turq: #0e9f6e;
+  --text: #e8e4d8;
+  --dim: #8a9aaa;
+  --border: #1a2e50;
+  --card: #0d1a30;
+  --cream: #f5f0e8;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  background: var(--lapis);
+  color: var(--text);
+  font-family: 'Inter', sans-serif;
+  line-height: 1.6;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+.container { max-width: 1000px; margin: 0 auto; padding: 40px 20px; flex: 1; }
+h1 { font-family: 'Playfair Display', serif; font-size: 2.5rem; color: var(--cream); margin-bottom: 10px; }
+.sub { color: var(--dim); margin-bottom: 30px; font-weight: 300; }
+
+.palette-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  height: 300px;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  margin-bottom: 30px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+}
+.color-swatch {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  padding-bottom: 20px;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+.color-swatch:hover { transform: scale(1.02); z-index: 2; }
+.color-hex {
+  background: rgba(0,0,0,0.5);
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  color: white;
+}
+
+.actions { text-align: center; margin-bottom: 40px; }
+.btn {
+  padding: 12px 32px;
+  border-radius: 8px;
+  font-weight: 700;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s;
+  font-size: 16px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+.btn-gold { background: var(--gold); color: var(--lapis); }
+.btn-gold:hover { background: var(--gold-light); transform: translateY(-2px); box-shadow: 0 5px 15px rgba(201, 168, 76, 0.4); }
+
+.waiting-list {
+  padding: 30px;
+  background: rgba(201, 168, 76, 0.05);
+  border: 1px solid rgba(201, 168, 76, 0.2);
+  border-radius: 12px;
+  text-align: center;
+}
+.waiting-list h3 { color: var(--gold); margin-bottom: 10px; }
+.waiting-list p { font-size: 14px; color: var(--dim); margin-bottom: 20px; }
+.wl-form { display: flex; gap: 10px; max-width: 500px; margin: 0 auto; }
+.wl-form input {
+  flex: 1;
+  background: var(--lapis);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  padding: 10px 15px;
+}
+
+footer { padding: 40px; text-align: center; border-top: 1px solid var(--border); font-size: 12px; color: var(--dim); }
+</style>
+<script src="_abuz8-live-brain.js" defer></script>
+
+<script src="_abuz8-config.js" defer></script>
+<link rel="canonical" href="https://abuz8ai.com/tools/color-palette-generator">
+</head>
+<body>
+
+<div class="container">
+  <header>
+    <h1>Color Palette Generator</h1>
+    <p class="sub">Part of ABUZ8 — Rapid brand color exploration.</p>
+  </header>
+
+  <div id="palette" class="palette-grid">
+    <div class="color-swatch" style="background: #0a1628"><span class="color-hex">#0A1628</span></div>
+    <div class="color-swatch" style="background: #c9a84c"><span class="color-hex">#C9A84C</span></div>
+    <div class="color-swatch" style="background: #0e9f6e"><span class="color-hex">#0e9f6e</span></div>
+    <div class="color-swatch" style="background: #e8e4d8"><span class="color-hex">#E8E4D8</span></div>
+    <div class="color-swatch" style="background: #163060"><span class="color-hex">#163060</span></div>
+  </div>
+
+  <div class="actions">
+    <button class="btn btn-gold" onclick="generatePalette()">Generate New Palette</button>
+  </div>
+
+  <div class="waiting-list">
+    <h3>Unlock AI Brand Architect</h3>
+    <p>Join the waiting list for QADIR OS — our sovereign agentic operating system that builds complete brand identities, including logos and assets, in seconds.</p>
+    <form class="wl-form" onsubmit="submitWaitingList(event)">
+      <input type="email" id="wl-email" placeholder="Enter your email" required>
+      <button type="submit" class="btn btn-gold">Join Early Access</button>
+    </form>
+    <div id="wl-status" style="margin-top: 15px; font-size: 13px;"></div>
+  </div>
+</div>
+
+<footer>
+  &copy; 2026 ABUZ8 LLC. Built with sovereign AI.
+</footer>
+
+<script>
+function generatePalette() {
+  const palette = document.getElementById('palette');
+  palette.innerHTML = '';
+  
+  // ABUZ8 base colors to guide generation
+  const baseHues = [215, 45, 172, 30, 220]; // Lapis, Gold, Turq, Cream, Light Lapis
+  
+  for (let i = 0; i < 5; i++) {
+    const h = baseHues[i] + (Math.random() * 20 - 10);
+    const s = 40 + Math.random() * 40;
+    const l = 20 + Math.random() * 60;
+    const hex = hslToHex(h, s, l);
+    
+    const swatch = document.createElement('div');
+    swatch.className = 'color-swatch';
+    swatch.style.background = hex;
+    swatch.innerHTML = `<span class="color-hex">${hex}</span>`;
+    swatch.onclick = () => {
+      navigator.clipboard.writeText(hex);
+      alert(`Copied ${hex}!`);
+    };
+    palette.appendChild(swatch);
+  }
+}
+
+function hslToHex(h, s, l) {
+  l /= 100;
+  const a = s * Math.min(l, 1 - l) / 100;
+  const f = n => {
+    const k = (n + h / 30) % 12;
+    const color = l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1);
+    return Math.round(255 * color).toString(16).padStart(2, '0');
+  };
+  return `#${f(0)}${f(8)}${f(4)}`.toUpperCase();
+}
+
+async function submitWaitingList(e) {
+  e.preventDefault();
+  const email = document.getElementById('wl-email').value;
+  const status = document.getElementById('wl-status');
+  status.textContent = 'Sending...';
+
+  try {
+    const response = await fetch('/api/waitlist', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email: email,
+        product_id: 'color-palette-generator',
+        source: 'tools'
+      })
+    });
+
+    const data = await response.json();
+    if (data.success) {
+      status.textContent = 'Success! You are on the list.';
+      status.style.color = '#0e9f6e';
+      document.getElementById('wl-email').value = '';
+    } else {
+      status.textContent = 'Error: ' + data.error;
+    }
+  } catch (err) {
+    status.textContent = 'Connection error.';
+  }
+}
+</script>
+
+
+<link rel="stylesheet" href="/assets/css/zait-chat.css">
+<script src="/assets/js/zait-chat.js"></script>
+
+<script src="/assets/js/dfy-banner.js" async></script>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+<script src="/tools/_tools-shared.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>
+

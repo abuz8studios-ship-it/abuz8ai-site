@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Meeting Notes: The 4 Outputs Every Meeting Should Generate | ABUZ8</title>
+<meta name="description" content="Why most AI meeting note tools produce useless transcripts, the four artifacts a meeting actually needs, and the structure that turns a 60-min call into 90 seconds of reading.">
+<meta name="keywords" content="ai meeting notes, ai meeting summarizer, meeting notes ai, free meeting notes ai">
+<link rel="canonical" href="https://abuz8ai.com/blog/ai-meeting-notes">
+<meta property="og:title" content="AI Meeting Notes: The 4 Outputs Every Meeting Should Generate">
+<meta property="og:type" content="article">
+<link rel="stylesheet" href="/blog/_blog-base.css">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@300;400;600;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","headline":"AI Meeting Notes: The 4 Outputs Every Meeting Should Generate","datePublished":"2026-05-14","author":{"@type":"Organization","name":"ABUZ8 AI"}}
+</script>
+</head>
+<body>
+<div class="container">
+  <a href="/blog/" class="back">&larr; ABUZ8 BLOG</a>
+  <h1>AI Meeting Notes: The 4 Outputs Every Meeting Should Generate</h1>
+  <div class="meta-row"><span>PRODUCTIVITY</span><span class="dot"></span><span>MAY 14, 2026</span><span class="dot"></span><span>6 MIN READ</span></div>
+
+  <p>An <strong>AI meeting notes tool</strong> that hands you a 4,000-word transcript at the end of a call has solved nothing. Nobody reads it. The action items get lost. The decisions get re-litigated three weeks later because nobody can find where they were made. The promise of AI meeting tools was supposed to be "you never have to take notes again." The delivery was "you now have an unread transcript instead of unread notes."</p>
+
+  <p>This post is the four output artifacts a meeting should actually generate, the prompt structure that produces them, and why "summary" is the wrong word for what you want.</p>
+
+  <p>Skip ahead to our <a href="/tools/ai-meeting-notes.html" class="in">free meeting notes tool</a> if you want the patterns running out of the box.</p>
+
+  <h2>The four artifacts every meeting should produce</h2>
+
+  <p>A meeting generates value only if it produces these four artifacts. Skip any one and the meeting partially wasted.</p>
+
+  <div class="callout">
+    <p><strong>1. DECISIONS.</strong> What was decided. Who decided it. When it takes effect. (Not "discussed" — decided.)</p>
+    <p><strong>2. ACTION ITEMS.</strong> Specific tasks. Specific owner per task. Specific due date per task. (No "we'll all think about it.")</p>
+    <p><strong>3. OPEN QUESTIONS.</strong> Things raised that did not get resolved. With the owner who agreed to chase the answer. Without this list, open questions get forgotten and turn into surprises later.</p>
+    <p><strong>4. CONTEXT FOR PEOPLE WHO WEREN'T THERE.</strong> A 4-sentence narrative that lets a stakeholder who missed the meeting know what changed. Not a transcript. Not a summary. A briefing.</p>
+  </div>
+
+  <p>Notice what's missing from this list: a "summary." Summaries are useless. The four artifacts above are actionable. They tell you what changed, what to do, what you owe, and what to chase down.</p>
+
+  <h2>Why generic AI meeting tools fail</h2>
+
+  <p>Most AI meeting tools — including the ones built into Zoom, Teams, and Google Meet — generate either a transcript, a "summary," or "key points." None of these are what you want, for three reasons:</p>
+
+  <ol>
+    <li><strong>They don't distinguish decisions from discussion.</strong> "We talked about X" and "We decided on X" look the same in a summary. Three weeks later, no one knows which it was.</li>
+    <li><strong>They don't extract ownership.</strong> An action item without an owner is not an action item. It's a feeling. Most tools list tasks without saying who's on the hook.</li>
+    <li><strong>They have no due-date intuition.</strong> "By next week" gets paraphrased as "soon." That's not an action item, that's noise.</li>
+  </ol>
+
+  <p>The fix is structural: the AI should be prompted to produce the four artifacts above, not "a summary," and to refuse to fill any of them with vague content.</p>
+
+  <h2>The prompt structure that works</h2>
+
+  <p>The prompt our pipeline runs on every meeting:</p>
+
+  <pre><code>You are a structured meeting analyst. Given the transcript below,
+produce ONLY these four sections. Each section has strict rules.
+
+DECISIONS:
+- Only list things that were actually decided. If unsure, do not include.
+- Format: [Decision] — decided by [name(s)] — effective [date or "immediate"]
+- If no decisions were made, write "NONE."
+
+ACTION ITEMS:
+- Only list tasks with a specific owner.
+- Format: [Task] — owner: [name] — due: [date]
+- If the transcript doesn't specify an owner or date, write "Owner: TBD" or
+  "Due: TBD" — DO NOT GUESS.
+
+OPEN QUESTIONS:
+- Things raised that were not resolved.
+- Format: [Question] — chase owner: [name]
+- If nobody agreed to chase it, mark as "Unowned."
+
+CONTEXT BRIEFING (4 sentences max):
+- Written for someone who wasn't in the meeting.
+- Sentence 1: what topic was discussed.
+- Sentence 2: what changed.
+- Sentence 3: what's pending.
+- Sentence 4: what they should care about.</code></pre>
+
+  <p>The "DO NOT GUESS" instruction is doing more work than it looks. Without it, the model will invent owners and due dates to be helpful, and you'll end up assigning tasks to people who weren't even on the call.</p>
+
+  <h2>The "context briefing" is the underrated artifact</h2>
+
+  <p>Of the four artifacts, the most-skipped and highest-leverage is the 4-sentence context briefing. Most teams forward the full transcript to stakeholders who missed the meeting. Nobody reads it. The context briefing is what lets a peer manager catch up in 15 seconds.</p>
+
+  <p>Example, from a real product strategy meeting:</p>
+
+  <pre><code>1. We reviewed Q3 roadmap priorities, specifically the trade-off between
+   shipping the mobile app and finishing the API redesign.
+2. We decided to push mobile to Q4 and prioritize API; engineering felt the
+   API debt was blocking three other initiatives.
+3. Pending: marketing needs to update the Q3 launch comms; that's owned
+   by Priya, due Friday.
+4. Worth caring about: this delays the mobile launch story; if you're
+   talking to any customers who asked about mobile, the new ETA is
+   October.</code></pre>
+
+  <p>That's 90 seconds of reading for what was a 75-minute meeting. The recipient knows what changed, what's coming, who owns the next step, and what to tell their counterparts. THAT is what AI meeting notes should produce.</p>
+
+  <h2>What about real-time vs. async?</h2>
+
+  <p>Two ways to run AI meeting notes:</p>
+
+  <ul>
+    <li><strong>Real-time bot in the meeting.</strong> Otter, Fireflies, Granola, your meeting platform's built-in tool. Records, transcribes live, generates output. Privacy concern: external bots in confidential meetings.</li>
+    <li><strong>Async after the fact.</strong> Record locally (or pull from Zoom/Meet recording), upload transcript, get the four artifacts back. No bot in the room. Slower but more controllable.</li>
+  </ul>
+
+  <p>For most teams: real-time for internal meetings, async with local recording for anything customer-facing or sensitive. Don't put a third-party bot in a meeting where you'd be uncomfortable forwarding the transcript later.</p>
+
+  <h2>Try the free tool</h2>
+  <p>The <a href="/tools/ai-meeting-notes.html" class="in">ABUZ8 meeting notes tool</a> takes a transcript (paste, .txt, .vtt, or .srt file) and returns the four artifacts above. Free, no account, no bot-in-the-room. Pair with the <a href="/tools/ai-blog-writer.html" class="in">blog writer</a> if you want a public-facing recap, or the <a href="/tools/ai-presentation-maker.html" class="in">presentation maker</a> if the outcome needs a slide deck.</p>
+
+  <div class="cta-block">
+    <h3>Join Early Access</h3>
+    <p>Premium adds: direct Zoom and Google Meet integration (auto-pull recordings), team-wide action item tracking (every meeting's owner-tasks roll into one dashboard), follow-up email drafting, and the full QADIR OS productivity suite. Founding pricing while we ship Q3 2026.</p>
+    <a href="/free.html" class="cta-btn">Join Early Access &rarr;</a>
+  </div>
+</div>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+<script src="/blog/_blog-shared.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>
+

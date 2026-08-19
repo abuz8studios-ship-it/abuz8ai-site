@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Long Video Stitcher Pro — Script to Film, Clips to Movie | ABUZ8</title>
+<meta name="description" content="Turn a script into a full-length film or stitch multiple AI clips into a seamless video. Automated shot-planning, music scoring, and final export. Runs on local RTX 5090.">
+<meta name="keywords" content="ai video stitcher, ai long video generator, script to video ai, ai film maker, ai video editor, stitch ai clips, comfyui long video, ai movie maker, automated video production">
+<link rel="canonical" href="https://abuz8ai.com/tools/ai-long-video-stitcher-pro">
+<meta property="og:title" content="AI Long Video Stitcher Pro — Script to Film | ABUZ8">
+<meta property="og:description" content="Upload clips or write a script. AI stitches, scores, and delivers a seamless long-form video. Local RTX 5090. No watermarks.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://abuz8ai.com/tools/ai-long-video-stitcher-pro">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="AI Long Video Stitcher Pro | ABUZ8">
+<meta name="twitter:description" content="Script to film. Clips to movie. AI handles shot planning, transitions, music scoring, final export. Join early access.">
+<link rel="stylesheet" href="/assets/css/abuz8-mach3.css">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@300;400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"SoftwareApplication","name":"AI Long Video Stitcher Pro","applicationCategory":"MultimediaApplication","operatingSystem":"Web","description":"Transform a written script into a complete long-form video, or stitch multiple AI-generated clips into a seamless film using ComfyUI's stitch_long and render_long pipelines on local RTX 5090 hardware. Supports script-to-film mode (automated shot breakdown, clip generation, transition handling, music scoring) and clip-assembly mode (upload up to 20 clips, AI handles ordering, transitions, and audio mix). Output: MP4 up to 20 minutes, watermark-free.","offers":{"@type":"Offer","price":"0","priceCurrency":"USD","availability":"https://schema.org/PreOrder"},"creator":{"@type":"Organization","name":"ABUZ8 LLC","url":"https://abuz8ai.com"}}
+</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"HowTo","name":"Create a Long-Form Video with AI","step":[{"@type":"HowToStep","name":"Choose your mode","text":"Script-to-Film: paste your script and AI generates every shot. Clip Assembly: upload up to 20 existing video clips and AI stitches them into a seamless film."},{"@type":"HowToStep","name":"Configure production settings","text":"Set target duration, aspect ratio (16:9 landscape or 9:16 vertical), music mood, and transition style. The AI uses these to plan the shot rhythm and pacing."},{"@type":"HowToStep","name":"Review the shot breakdown","text":"In Script-to-Film mode, the AI outputs a storyboard breakdown before rendering. You can approve it or adjust shot descriptions before committing to the full render."},{"@type":"HowToStep","name":"Render and download","text":"ComfyUI runs the full pipeline on local RTX 5090 hardware: shot generation, clip rendering, transition compositing, music scoring, and final stitch. Output is a single MP4 file, watermark-free, ready for upload."}]}
+</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What's the maximum output length?","acceptedAnswer":{"@type":"Answer","text":"Up to 20 minutes in the current early-access build. The render_long pipeline renders shots in parallel and stitches them in sequence using comfyui_stitch_long. Longer formats (documentary length) are on the launch roadmap."}},{"@type":"Question","name":"Can I use Script-to-Film mode for YouTube videos?","acceptedAnswer":{"@type":"Answer","text":"Yes. Script-to-Film works for any format: YouTube explainers, short films, product demos, course content, or social reels. The shot breakdown adapts to your target platform."}},{"@type":"Question","name":"What video formats can I upload in Clip Assembly mode?","acceptedAnswer":{"@type":"Answer","text":"MP4 and WebM clips are supported, up to 200MB each, maximum 20 clips per session. The AI handles differing resolutions and frame rates by normalizing to your chosen output spec before stitching."}},{"@type":"Question","name":"How does the AI handle transitions?","acceptedAnswer":{"@type":"Answer","text":"You choose a transition style (Seamless Blend, Hard Cut, Fade, Wipe, or Cinematic). The AI composites transitions at edit points using optical flow analysis to minimize visual jarring between clips."}},{"@type":"Question","name":"Does the tool add music automatically?","acceptedAnswer":{"@type":"Answer","text":"Yes. Set a music mood (Cinematic, Upbeat, Ambient, Dramatic, or No Music) and the pipeline generates an original score using comfyui_music via AudioCraft, timed to the edit rhythm. Or you can upload your own audio track."}},{"@type":"Question","name":"How long does rendering take?","acceptedAnswer":{"@type":"Answer","text":"A 2-minute script-to-film video takes roughly 8–12 minutes on RTX 5090. Clip assembly for a 5-minute video from 10 clips takes 3–6 minutes. Actual times depend on clip count and effects complexity."}},{"@type":"Question","name":"What resolution is the output?","acceptedAnswer":{"@type":"Answer","text":"1920×1080 (16:9 landscape) or 1080×1920 (9:16 vertical for Reels/Shorts). H.264 MP4. Watermark-free."}},{"@type":"Question","name":"Can I add narration or voiceover?","acceptedAnswer":{"@type":"Answer","text":"Upload an audio narration file and it will be mixed into the final video at the correct level with music ducking applied. Text-to-speech voiceover is on the roadmap for the full launch."}}]}
+</script>
+</head>
+<body>
+<script>
+(function(){
+  var comfyUrl=(window.ABUZ8_COMFY_BASE)||'https://comfy.abuz8ai.com';
+  window._checkComfy=async function(){
+    try{var r=await fetch(comfyUrl+'/system_stats',{signal:AbortSignal.timeout(3000)});return r.ok;}catch(_){return false;}
+  };
+})();
+</script>
+<style>
+:root{
+  --lapis:#0a1628;--lapis-2:#0d1a30;--lapis-3:#111f38;
+  --gold:#c9a84c;--gold-2:#e6c879;
+  --turq:#0e9f6e;--turq-2:#2bb39e;
+  --cream:#f5f0e8;--text:#e8e4d8;--dim:#8a9aaa;--border:#1a2e50;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{background:var(--lapis);color:var(--text);font-family:'Inter',sans-serif;line-height:1.6;min-height:100vh;-webkit-font-smoothing:antialiased}
+a{color:var(--gold);text-decoration:none}
+.mono{font-family:'JetBrains Mono',monospace}
+.wrap{max-width:1200px;margin:0 auto;padding:32px 24px}
+.nav{display:flex;justify-content:space-between;align-items:center;padding-bottom:20px;border-bottom:1px solid var(--border);margin-bottom:40px}
+.brand{font-family:'Playfair Display',serif;font-size:22px;color:var(--cream);letter-spacing:.5px}
+.brand .acc{color:var(--gold)}
+.back{font-size:11px;color:var(--dim);letter-spacing:2px;text-transform:uppercase}
+.back:hover{color:var(--gold)}
+.hero{display:grid;grid-template-columns:1.1fr .9fr;gap:48px;align-items:center;margin-bottom:56px}
+@media(max-width:880px){.hero{grid-template-columns:1fr}}
+.eyebrow{color:var(--turq-2);font-size:11px;letter-spacing:3px;text-transform:uppercase;margin-bottom:18px;font-weight:600}
+h1{font-family:'Playfair Display',serif;font-size:clamp(2.2rem,5vw,4rem);color:var(--cream);line-height:1.05;margin-bottom:20px;font-weight:900}
+h1 .gold{color:var(--gold)}
+.lede{color:var(--dim);font-size:18px;font-weight:300;max-width:540px;margin-bottom:28px}
+.row-stats{display:flex;gap:32px;margin-top:20px;flex-wrap:wrap}
+.stat{border-left:2px solid var(--gold);padding-left:14px}
+.stat .n{font-family:'Playfair Display',serif;font-size:28px;color:var(--cream);font-weight:700;line-height:1}
+.stat .l{font-size:10px;color:var(--dim);letter-spacing:2px;text-transform:uppercase;margin-top:6px}
+.gallery{display:grid;grid-template-columns:1fr 1fr;gap:10px;border-radius:18px;border:1px solid var(--border);background:var(--lapis-2);padding:10px}
+.gal-card{aspect-ratio:16/9;border-radius:10px;background:linear-gradient(135deg,#1a2e50,#0d1a30);position:relative;overflow:hidden;display:flex;align-items:flex-end;padding:14px}
+.gal-card::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 30% 20%,rgba(201,168,76,0.18),transparent 60%)}
+.gal-card .tag{position:relative;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);font-weight:600}
+.mode-toggle{display:flex;gap:12px;margin-bottom:40px}
+.mode-btn{flex:1;padding:18px 20px;border-radius:14px;border:2px solid var(--border);background:transparent;color:var(--dim);cursor:pointer;font-family:'Inter',sans-serif;font-size:14px;font-weight:600;text-align:center;transition:.2s;letter-spacing:.5px}
+.mode-btn:hover{border-color:var(--turq-2);color:var(--text)}
+.mode-btn.on{border-color:var(--gold);background:rgba(201,168,76,0.08);color:var(--cream)}
+.mode-btn .sub{display:block;font-size:11px;color:var(--dim);font-weight:400;margin-top:4px;letter-spacing:1px}
+.bench{background:var(--lapis-2);border:1px solid var(--border);border-radius:22px;padding:36px;margin-bottom:56px}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:32px}
+@media(max-width:880px){.two-col{grid-template-columns:1fr}}
+.panel h3{font-family:'Playfair Display',serif;font-size:24px;color:var(--cream);margin-bottom:6px}
+.panel .pre{color:var(--turq-2);font-size:10px;letter-spacing:3px;text-transform:uppercase;margin-bottom:18px;font-weight:600}
+.field{margin-bottom:18px}
+.field label{display:block;font-size:10px;color:var(--gold);letter-spacing:2.5px;text-transform:uppercase;margin-bottom:8px;font-weight:700}
+.input,.select,.textarea{width:100%;padding:13px 14px;background:#0f2040;border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:inherit;font-size:14px}
+.textarea{resize:vertical;min-height:160px}
+.input:focus,.select:focus,.textarea:focus{outline:none;border-color:var(--gold)}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
+.chip{padding:8px 14px;border:1px solid var(--border);border-radius:999px;font-size:12px;cursor:pointer;color:var(--dim);background:transparent;transition:.15s}
+.chip:hover{border-color:var(--turq-2);color:var(--text)}
+.chip.on{background:var(--gold);color:var(--lapis);border-color:var(--gold);font-weight:600}
+.clip-drop-zone{border:2px dashed var(--border);border-radius:14px;padding:32px;text-align:center;cursor:pointer;transition:.2s;background:rgba(255,255,255,0.02);min-height:160px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px}
+.clip-drop-zone:hover,.clip-drop-zone.hot{border-color:var(--gold);background:rgba(201,168,76,0.06)}
+.clip-drop-zone .ico{font-size:32px;color:var(--gold)}
+.clip-drop-zone .t{font-weight:600;color:var(--cream);font-size:13px}
+.clip-drop-zone .h{font-size:11px;color:var(--dim)}
+.clip-list{margin-top:14px;display:flex;flex-direction:column;gap:8px;max-height:200px;overflow-y:auto}
+.clip-item{display:flex;justify-content:space-between;align-items:center;background:#0f2040;border:1px solid var(--border);border-radius:8px;padding:10px 14px;font-size:12px}
+.clip-item .name{color:var(--cream);font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:200px}
+.clip-item .size{color:var(--dim);font-family:'JetBrains Mono',monospace;font-size:11px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:16px 20px;border-radius:12px;font-weight:700;font-size:14px;text-transform:uppercase;letter-spacing:2px;cursor:pointer;border:none;transition:.2s}
+.btn-gold{background:linear-gradient(180deg,var(--gold-2),var(--gold));color:var(--lapis)}
+.btn-gold:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(201,168,76,0.28)}
+.btn[disabled]{opacity:.5;cursor:not-allowed;transform:none;box-shadow:none}
+.status{margin-top:18px;padding:14px 16px;border-radius:10px;background:#0f2040;border:1px solid var(--border);font-size:13px;display:none}
+.status.show{display:block}
+.status.ok{border-color:var(--turq-2)}
+.status.err{border-color:#c95a4c}
+.bar{height:6px;background:var(--lapis);border-radius:99px;overflow:hidden;margin-top:10px}
+.bar > i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--turq),var(--gold));transition:width .4s}
+.output-area{margin-top:18px;display:none}
+.output-area.show{display:block}
+.output-area video{width:100%;border-radius:12px;border:1px solid var(--border)}
+.section-title{font-family:'Playfair Display',serif;font-size:32px;color:var(--cream);margin-bottom:28px}
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-bottom:56px}
+@media(max-width:880px){.steps{grid-template-columns:repeat(2,1fr)}}
+.step{background:var(--lapis-2);border:1px solid var(--border);border-radius:16px;padding:22px}
+.step .num{font-family:'Playfair Display',serif;font-size:34px;color:var(--gold);font-weight:900;line-height:1}
+.step h4{font-size:14px;color:var(--cream);margin:10px 0 6px;letter-spacing:.5px}
+.step p{font-size:13px;color:var(--dim)}
+.cta{background:linear-gradient(135deg,var(--lapis-3),var(--lapis-2));border:1px solid var(--gold);border-radius:24px;padding:48px;text-align:center;margin-bottom:48px;position:relative;overflow:hidden}
+.cta::before{content:'';position:absolute;inset:-1px;background:radial-gradient(circle at 80% 0%,rgba(201,168,76,0.16),transparent 50%);pointer-events:none}
+.cta h2{font-family:'Playfair Display',serif;font-size:clamp(1.8rem,4vw,2.8rem);color:var(--cream);margin-bottom:14px;position:relative}
+.cta p{color:var(--dim);max-width:540px;margin:0 auto 28px;position:relative}
+.waitform{display:flex;gap:10px;max-width:520px;margin:0 auto;position:relative;flex-wrap:wrap}
+.waitform .input{flex:1;min-width:240px}
+.waitform .btn{width:auto;padding:13px 24px}
+.tinynote{margin-top:14px;font-size:11px;color:var(--dim);letter-spacing:1px;position:relative}
+.foot{padding:32px 0;border-top:1px solid var(--border);color:var(--dim);font-size:12px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px}
+[data-mode]{display:none}[data-mode].active{display:block}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+<div class="wrap">
+  <nav class="nav">
+    <a href="/index.html" class="brand">ABUZ<span class="acc">8</span></a>
+    <a href="../tools.html" class="back">&larr; All Tools</a>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div>
+      <div class="eyebrow">AI Long Video Stitcher Pro · Tier A · ComfyUI</div>
+      <h1>Script in.<br><span class="gold">Film out.</span><br>No editor needed.</h1>
+      <p class="lede">Write a script and watch it become a full-length video — shot-planned, rendered, scored, and stitched in one pipeline. Or drop in your clips and let AI build the final cut. Up to 20 minutes. Watermark-free.</p>
+      <div class="row-stats">
+        <div class="stat"><div class="n">20min</div><div class="l">Max output</div></div>
+        <div class="stat"><div class="n">20</div><div class="l">Clips max</div></div>
+        <div class="stat"><div class="n">RTX&nbsp;5090</div><div class="l">Local render</div></div>
+      </div>
+    </div>
+    <div class="gallery" aria-hidden="true">
+      <div class="gal-card"><span class="tag">Script to Film</span></div>
+      <div class="gal-card"><span class="tag">Clip Assembly</span></div>
+      <div class="gal-card"><span class="tag">Auto Music Score</span></div>
+      <div class="gal-card"><span class="tag">Transition AI</span></div>
+    </div>
+  </section>
+
+  <!-- MODE TOGGLE -->
+  <div class="mode-toggle">
+    <button class="mode-btn on" id="modeScript" data-mode="script">
+      Script-to-Film
+      <span class="sub">Paste script → AI generates every shot</span>
+    </button>
+    <button class="mode-btn" id="modeClips" data-mode="clips">
+      Clip Assembly
+      <span class="sub">Upload clips → AI stitches + scores</span>
+    </button>
+  </div>
+
+  <!-- WORKBENCH -->
+  <section class="bench" id="bench">
+
+    <!-- SCRIPT MODE -->
+    <div data-mode="script" class="active">
+      <div class="two-col">
+        <div class="panel">
+          <div class="pre">Step 01 · Write Your Script</div>
+          <h3>Paste or type</h3>
+          <p style="color:var(--dim);font-size:13px;margin:8px 0 18px">Write naturally — scene descriptions, dialogue, narration. The AI breaks it into shots automatically. No special formatting required.</p>
+          <div class="field">
+            <label>Script</label>
+            <textarea class="textarea" id="scriptInput" style="min-height:220px" placeholder="SCENE 01: A lone engineer sits in a dark server room. LED indicators pulse rhythmically on racks of hardware. The sound of cooling fans fills the air.&#10;&#10;NARRATION: For five years, Ahmad built in silence. Not because the world wasn't watching — but because the work demanded it.&#10;&#10;SCENE 02: Time-lapse of code scrolling across multiple monitors..."></textarea>
+          </div>
+          <div class="field">
+            <label>Visual Style</label>
+            <div class="chips" id="visualChips">
+              <button class="chip on" data-vis="cinematic">Cinematic</button>
+              <button class="chip" data-vis="documentary">Documentary</button>
+              <button class="chip" data-vis="anime">Anime</button>
+              <button class="chip" data-vis="corporate">Corporate</button>
+              <button class="chip" data-vis="social_reel">Social Reel</button>
+            </div>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="pre">Step 02 · Production Settings</div>
+          <h3>Configure output</h3>
+          <div class="field">
+            <label>Target Duration</label>
+            <select class="select" id="duration">
+              <option value="60">~1 minute</option>
+              <option value="120" selected>~2 minutes</option>
+              <option value="300">~5 minutes</option>
+              <option value="600">~10 minutes</option>
+              <option value="1200">~20 minutes</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Aspect Ratio</label>
+            <div class="chips" id="ratioChips">
+              <button class="chip on" data-ratio="16:9">16:9 Landscape</button>
+              <button class="chip" data-ratio="9:16">9:16 Vertical</button>
+              <button class="chip" data-ratio="1:1">1:1 Square</button>
+            </div>
+          </div>
+          <div class="field">
+            <label>Music Mood</label>
+            <div class="chips" id="musicChips">
+              <button class="chip on" data-music="cinematic">Cinematic</button>
+              <button class="chip" data-music="upbeat">Upbeat</button>
+              <button class="chip" data-music="ambient">Ambient</button>
+              <button class="chip" data-music="dramatic">Dramatic</button>
+              <button class="chip" data-music="none">No Music</button>
+            </div>
+          </div>
+          <div class="field">
+            <label>Transitions</label>
+            <select class="select" id="transStyle">
+              <option value="seamless">Seamless Blend (recommended)</option>
+              <option value="hard_cut">Hard Cut</option>
+              <option value="fade">Fade</option>
+              <option value="wipe">Wipe</option>
+              <option value="cinematic">Cinematic Dissolve</option>
+            </select>
+          </div>
+          <button class="btn btn-gold" id="runScript" disabled>Generate Film</button>
+          <div class="status" id="statusScript">
+            <div class="mono" id="statusScript-text">Idle.</div>
+            <div class="bar"><i id="statusScript-bar"></i></div>
+          </div>
+          <div class="output-area" id="outputScript">
+            <video id="videoScript" controls playsinline></video>
+            <a id="dlScript" class="btn btn-gold" style="margin-top:12px;display:none">Download MP4</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CLIPS MODE -->
+    <div data-mode="clips">
+      <div class="two-col">
+        <div class="panel">
+          <div class="pre">Step 01 · Upload Clips</div>
+          <h3>Add your footage</h3>
+          <p style="color:var(--dim);font-size:13px;margin:8px 0 18px">Up to 20 clips. MP4 or WebM. Max 200MB each. The AI handles different resolutions and frame rates.</p>
+          <label class="clip-drop-zone" id="dropClips">
+            <div class="ico">⬡</div>
+            <div class="t">Drop clips here or click to browse</div>
+            <div class="h">MP4 · WebM · up to 20 files · 200MB each</div>
+            <input id="fileClips" type="file" accept="video/mp4,video/webm" multiple hidden>
+          </label>
+          <div class="clip-list" id="clipList"></div>
+          <div style="font-size:12px;color:var(--dim);margin-top:10px"><span id="clipCount">0</span> / 20 clips loaded</div>
+        </div>
+        <div class="panel">
+          <div class="pre">Step 02 · Assembly Settings</div>
+          <h3>Configure the final cut</h3>
+          <div class="field">
+            <label>Clip Order</label>
+            <div class="chips" id="orderChips">
+              <button class="chip on" data-order="ai">AI decides best order</button>
+              <button class="chip" data-order="uploaded">Keep upload order</button>
+            </div>
+          </div>
+          <div class="field">
+            <label>Music Mood</label>
+            <div class="chips" id="musicClipsChips">
+              <button class="chip on" data-music2="cinematic">Cinematic</button>
+              <button class="chip" data-music2="upbeat">Upbeat</button>
+              <button class="chip" data-music2="ambient">Ambient</button>
+              <button class="chip" data-music2="none">No Music</button>
+            </div>
+          </div>
+          <div class="field">
+            <label>Transitions</label>
+            <select class="select" id="transClips">
+              <option value="seamless">Seamless Blend</option>
+              <option value="hard_cut">Hard Cut</option>
+              <option value="cinematic">Cinematic Dissolve</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Output Aspect Ratio</label>
+            <div class="chips" id="ratioClipsChips">
+              <button class="chip on" data-ratio2="16:9">16:9</button>
+              <button class="chip" data-ratio2="9:16">9:16</button>
+            </div>
+          </div>
+          <button class="btn btn-gold" id="runClips" disabled>Stitch &amp; Export</button>
+          <div class="status" id="statusClips">
+            <div class="mono" id="statusClips-text">Idle.</div>
+            <div class="bar"><i id="statusClips-bar"></i></div>
+          </div>
+          <div class="output-area" id="outputClips">
+            <video id="videoClips" controls playsinline></video>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <h2 class="section-title">How the pipeline works</h2>
+  <div class="steps">
+    <div class="step"><div class="num">01</div><h4>Shot breakdown</h4><p>In Script-to-Film mode, AI uses <span class="mono">storyboard_breakdown</span> to decompose your script into individual shots — scene type, camera angle, duration, visual mood, and key action per shot.</p></div>
+    <div class="step"><div class="num">02</div><h4>Parallel rendering</h4><p>Each shot is queued into ComfyUI as an independent generation job. All shots render in parallel on the RTX 5090, then a completion gate waits for the full set before stitching begins.</p></div>
+    <div class="step"><div class="num">03</div><h4>Stitch + score</h4><p><span class="mono">comfyui_stitch_long</span> handles clip assembly with transition compositing. <span class="mono">comfyui_music</span> generates a synchronized original score using AudioCraft, timed to the edit rhythm.</p></div>
+    <div class="step"><div class="num">04</div><h4>Final export</h4><p>Output is a single H.264 MP4. 1920×1080 or 1080×1920. Your script and footage never touch external servers. Private. Watermark-free. Download link available for 24 hours.</p></div>
+  </div>
+
+  <!-- EARLY ACCESS CTA -->
+  <section class="cta" id="early-access">
+    <h2>Join Early Access</h2>
+    <p>Early-access members get a free 5-minute render plus permanent early-access pricing when we launch. Drop your email — we'll notify you when your slot opens.</p>
+    <form class="waitform" id="wait" novalidate>
+      <input type="email" class="input" id="wait-email" placeholder="you@company.com" required autocomplete="email">
+      <button type="submit" class="btn btn-gold">Join Early Access</button>
+    </form>
+    <div class="tinynote mono">No spam. Unsubscribe with one click.</div>
+    <div class="status" id="wait-status" style="max-width:520px;margin:18px auto 0"><div id="wait-msg" class="mono">Idle.</div></div>
+  </section>
+
+  <footer class="foot">
+    <div>© 2026 ABUZ8 LLC</div>
+    <div><a href="/privacy.html">Privacy</a> · <a href="/terms.html">Terms</a> · <a href="../tools.html">All tools</a></div>
+  </footer>
+</div>
+
+<script>
+/* AI LONG VIDEO STITCHER PRO — frontend wiring
+ * Backends: comfyui_stitch_long, render_long, storyboard_breakdown, comfyui_music
+ * Falls back to waitlist CTA if ComfyUI is unreachable
+ */
+(function(){
+  'use strict';
+  const COMFY=(window.ABUZ8_COMFY_BASE)||'https://comfy.abuz8ai.com';
+  const PROMPT_API=COMFY+'/prompt';
+  const HISTORY_API=COMFY+'/history';
+  const VIEW_API=COMFY+'/view';
+  const $=(s)=>document.querySelector(s);
+
+  /* Mode switching */
+  const modeScriptBtn=$('#modeScript'),modeClipsBtn=$('#modeClips');
+  const modePanels=document.querySelectorAll('[data-mode]');
+  let currentMode='script';
+  function setMode(m){
+    currentMode=m;
+    modePanels.forEach(p=>{p.classList.toggle('active',p.dataset.mode===m)});
+    modeScriptBtn.classList.toggle('on',m==='script');
+    modeClipsBtn.classList.toggle('on',m==='clips');
+  }
+  modeScriptBtn.addEventListener('click',()=>setMode('script'));
+  modeClipsBtn.addEventListener('click',()=>setMode('clips'));
+
+  const state={
+    script:{visual:'cinematic',duration:120,ratio:'16:9',music:'cinematic',transition:'seamless'},
+    clips:{files:[],order:'ai',music:'cinematic',transition:'seamless',ratio:'16:9'}
+  };
+
+  /* Script mode chips */
+  document.querySelectorAll('#visualChips .chip').forEach(c=>{c.addEventListener('click',(e)=>{e.preventDefault();document.querySelectorAll('#visualChips .chip').forEach(x=>x.classList.remove('on'));c.classList.add('on');state.script.visual=c.dataset.vis})});
+  document.querySelectorAll('#ratioChips .chip').forEach(c=>{c.addEventListener('click',(e)=>{e.preventDefault();document.querySelectorAll('#ratioChips .chip').forEach(x=>x.classList.remove('on'));c.classList.add('on');state.script.ratio=c.dataset.ratio})});
+  document.querySelectorAll('#musicChips .chip').forEach(c=>{c.addEventListener('click',(e)=>{e.preventDefault();document.querySelectorAll('#musicChips .chip').forEach(x=>x.classList.remove('on'));c.classList.add('on');state.script.music=c.dataset.music})});
+  $('#duration').addEventListener('change',(e)=>{state.script.duration=parseInt(e.target.value,10)});
+  $('#transStyle').addEventListener('change',(e)=>{state.script.transition=e.target.value});
+
+  /* Script mode run button enable */
+  $('#scriptInput').addEventListener('input',()=>{$('#runScript').disabled=$('#scriptInput').value.trim().length<20});
+
+  /* Clips mode chips */
+  document.querySelectorAll('#orderChips .chip').forEach(c=>{c.addEventListener('click',(e)=>{e.preventDefault();document.querySelectorAll('#orderChips .chip').forEach(x=>x.classList.remove('on'));c.classList.add('on');state.clips.order=c.dataset.order})});
+  document.querySelectorAll('#musicClipsChips .chip').forEach(c=>{c.addEventListener('click',(e)=>{e.preventDefault();document.querySelectorAll('#musicClipsChips .chip').forEach(x=>x.classList.remove('on'));c.classList.add('on');state.clips.music=c.dataset.music2})});
+  document.querySelectorAll('#ratioClipsChips .chip').forEach(c=>{c.addEventListener('click',(e)=>{e.preventDefault();document.querySelectorAll('#ratioClipsChips .chip').forEach(x=>x.classList.remove('on'));c.classList.add('on');state.clips.ratio=c.dataset.ratio2})});
+  $('#transClips').addEventListener('change',(e)=>{state.clips.transition=e.target.value});
+
+  /* Clips drag & drop */
+  const dropClips=$('#dropClips'),fileClips=$('#fileClips'),clipList=$('#clipList'),clipCountEl=$('#clipCount');
+  dropClips.addEventListener('click',()=>fileClips.click());
+  ['dragenter','dragover'].forEach(ev=>dropClips.addEventListener(ev,(e)=>{e.preventDefault();dropClips.classList.add('hot')}));
+  ['dragleave','drop'].forEach(ev=>dropClips.addEventListener(ev,(e)=>{e.preventDefault();dropClips.classList.remove('hot')}));
+  dropClips.addEventListener('drop',(e)=>{if(e.dataTransfer.files.length)addClips(e.dataTransfer.files)});
+  fileClips.addEventListener('change',(e)=>{if(e.target.files.length)addClips(e.target.files)});
+
+  function addClips(files){
+    const arr=Array.from(files).slice(0,20-state.clips.files.length);
+    arr.forEach(f=>{
+      if(!/^video\/(mp4|webm)$/.test(f.type))return;
+      if(f.size>200*1024*1024)return;
+      state.clips.files.push(f);
+    });
+    renderClipList();
+  }
+  function renderClipList(){
+    clipList.innerHTML='';
+    state.clips.files.forEach((f,i)=>{
+      const d=document.createElement('div');d.className='clip-item';
+      d.innerHTML=`<span class="name">${i+1}. ${f.name}</span><span class="size">${(f.size/1024/1024).toFixed(1)} MB</span>`;
+      clipList.appendChild(d);
+    });
+    clipCountEl.textContent=state.clips.files.length;
+    $('#runClips').disabled=state.clips.files.length===0;
+  }
+
+  function setStatus(statusEl,statusText,statusBar,msg,kind,pct){
+    statusEl.classList.add('show');statusEl.classList.remove('ok','err');
+    if(kind)statusEl.classList.add(kind);
+    statusText.textContent=msg;
+    if(typeof pct==='number')statusBar.style.width=Math.max(0,Math.min(100,pct))+'%';
+  }
+
+  async function uploadVideo(f,subfolder){
+    const fd=new FormData();fd.append('video',f,f.name);fd.append('subfolder',subfolder);
+    const res=await fetch(COMFY+'/upload/image',{method:'POST',body:fd});
+    if(!res.ok)throw new Error('Upload failed: '+res.status);
+    const j=await res.json();return j.name||f.name;
+  }
+
+  async function pollHistory(promptId,onTick){
+    for(let i=0;i<600;i++){
+      await new Promise(r=>setTimeout(r,2000));
+      onTick&&onTick(i*2);
+      try{
+        const r=await fetch(HISTORY_API+'/'+promptId);
+        if(r.ok){
+          const j=await r.json();const entry=j[promptId];
+          if(entry&&entry.outputs){
+            for(const node of Object.values(entry.outputs)){if(node.videos&&node.videos.length)return node.videos[0];}
+          }
+        }
+      }catch(e){}
+    }
+    throw new Error('Render timed out.');
+  }
+
+  function fallbackToWaitlist(err){
+    console.warn('[long-video]',err);
+    document.getElementById('early-access').scrollIntoView({behavior:'smooth',block:'start'});
+  }
+
+  /* SCRIPT MODE RENDER */
+  $('#runScript').addEventListener('click',async()=>{
+    const script=$('#scriptInput').value.trim();
+    if(script.length<20)return;
+    $('#runScript').disabled=true;
+    const sEl=$('#statusScript'),sTxt=$('#statusScript-text'),sBar=$('#statusScript-bar');
+    const setS=(m,k,p)=>setStatus(sEl,sTxt,sBar,m,k,p);
+    try{
+      setS('Breaking script into shots…','ok',8);
+      const payload={
+        client_id:'abuz8-longvid-'+Math.random().toString(36).slice(2,10),
+        prompt:{params:{
+          script,
+          visual_style:state.script.visual,
+          target_duration:state.script.duration,
+          aspect_ratio:state.script.ratio,
+          music_mood:state.script.music,
+          transition_style:state.script.transition,
+          workflow:'script_to_film'
+        }}
+      };
+      setS('Queuing render pipeline…','ok',18);
+      const submit=await fetch(PROMPT_API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+      if(!submit.ok)throw new Error('ComfyUI rejected: '+submit.status);
+      const sj=await submit.json();const pid=sj.prompt_id||sj.promptId;
+      if(!pid)throw new Error('No prompt_id returned.');
+      setS('Rendering all shots in parallel…','ok',28);
+      const vid=await pollHistory(pid,(t)=>{
+        setS('Rendering · '+t+'s elapsed (shots in parallel)…','ok',Math.min(90,28+t*0.1));
+      });
+      const url=`${VIEW_API}?filename=${encodeURIComponent(vid.filename)}&subfolder=${encodeURIComponent(vid.subfolder||'')}&type=${encodeURIComponent(vid.type||'output')}`;
+      $('#videoScript').src=url;$('#outputScript').classList.add('show');
+      const dl=$('#dlScript');dl.href=url;dl.download='abuz8-film.mp4';dl.style.display='flex';
+      setS('Film ready. Download or preview below.','ok',100);
+    }catch(err){
+      setS('Render node offline. Join early access — we\'ll run your film on our cloud rig.','err',0);
+      fallbackToWaitlist(err);
+    }finally{$('#runScript').disabled=false;}
+  });
+
+  /* CLIPS ASSEMBLY RENDER */
+  $('#runClips').addEventListener('click',async()=>{
+    if(!state.clips.files.length)return;
+    $('#runClips').disabled=true;
+    const sEl=$('#statusClips'),sTxt=$('#statusClips-text'),sBar=$('#statusClips-bar');
+    const setS=(m,k,p)=>setStatus(sEl,sTxt,sBar,m,k,p);
+    try{
+      setS('Uploading '+state.clips.files.length+' clips…','ok',5);
+      const names=[];
+      for(let i=0;i<state.clips.files.length;i++){
+        setS('Uploading clip '+(i+1)+' of '+state.clips.files.length+'…','ok',5+((i/state.clips.files.length)*30));
+        names.push(await uploadVideo(state.clips.files[i],'abuz8/stitch/clips'));
+      }
+      setS('Queuing stitch pipeline…','ok',38);
+      const payload={
+        client_id:'abuz8-stitch-'+Math.random().toString(36).slice(2,10),
+        prompt:{params:{
+          clip_names:names,
+          order:state.clips.order,
+          music_mood:state.clips.music,
+          transition_style:state.clips.transition,
+          aspect_ratio:state.clips.ratio,
+          workflow:'stitch_long'
+        }}
+      };
+      const submit=await fetch(PROMPT_API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+      if(!submit.ok)throw new Error('ComfyUI rejected: '+submit.status);
+      const sj=await submit.json();const pid=sj.prompt_id||sj.promptId;
+      if(!pid)throw new Error('No prompt_id returned.');
+      setS('Stitching and scoring…','ok',48);
+      const vid=await pollHistory(pid,(t)=>{
+        setS('Stitching · '+t+'s elapsed…','ok',Math.min(92,48+t*0.1));
+      });
+      const url=`${VIEW_API}?filename=${encodeURIComponent(vid.filename)}&subfolder=${encodeURIComponent(vid.subfolder||'')}&type=${encodeURIComponent(vid.type||'output')}`;
+      $('#videoClips').src=url;$('#outputClips').classList.add('show');
+      setS('Done. Final cut ready below.','ok',100);
+    }catch(err){
+      setS('Render node offline. Join early access — we\'ll stitch yours on our cloud rig.','err',0);
+      fallbackToWaitlist(err);
+    }finally{$('#runClips').disabled=false;}
+  });
+
+  /* WAITLIST */
+  $('#wait').addEventListener('submit',async(e)=>{
+    e.preventDefault();
+    const email=($('#wait-email').value||'').trim();
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
+      $('#wait-status').classList.add('show','err');$('#wait-status').classList.remove('ok');$('#wait-msg').textContent='Enter a valid email.';return;
+    }
+    $('#wait-status').classList.add('show');$('#wait-status').classList.remove('err');$('#wait-status').classList.add('ok');
+    $('#wait-msg').textContent='Reserving your spot…';
+    try{
+      const r=await fetch('/api/waitlist',{method:'POST',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({email,product:'ai-long-video-stitcher-pro',ts:Date.now(),referrer:document.referrer||null})});
+      if(!r.ok)throw new Error('waitlist '+r.status);
+      $('#wait-msg').textContent="You're in. Free 5-min render on us when we launch.";
+      try{gtag('event','waitlist_join',{product:'ai-long-video-stitcher-pro'});}catch(e){}
+      $('#wait').reset();
+    }catch(err){
+      $('#wait-msg').textContent='Saved locally. We\'ll sync when the network is back.';
+      try{const q=JSON.parse(localStorage.getItem('abuz8_waitlist_queue')||'[]');q.push({email,product:'ai-long-video-stitcher-pro',ts:Date.now()});localStorage.setItem('abuz8_waitlist_queue',JSON.stringify(q));}catch(e2){}
+    }
+  });
+})();
+</script>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+<script src="/tools/_abuz8-live-brain.js" defer></script>
+<script src="/tools/_tools-shared.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>
+

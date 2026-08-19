@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mixture of Experts, Explained: Why MoE Makes AI Cheaper (2026) | ABUZ8</title>
+<meta name="description" content="Mixture of experts explained in plain English: what MoE is, why it makes large AI models faster and cheaper to run, and how a local mixture-of-experts setup lets modest hardware punch far above its weight.">
+<meta name="keywords" content="mixture of experts explained, what is mixture of experts, moe model, moe ai, mixture of experts llm, sparse model, local moe">
+<link rel="canonical" href="https://abuz8ai.com/blog/mixture-of-experts-explained">
+<meta property="og:title" content="Mixture of Experts, Explained: Why MoE Makes AI Cheaper">
+<meta property="og:type" content="article">
+<link rel="stylesheet" href="/blog/_blog-base.css">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@300;400;600;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
+<style>
+/* Vision-safe LIGHT palette override (Ahmad photosensitivity). 2026-07-04 */
+:root{
+  --lapis:#0a1628; --lapis-mid:#EEF3F8; --lapis-light:#E3EBF3;
+  --card:#0d1a30; --border:#D6E0EC;
+  --text:#e8e4d8; --cream:#1F2D3D; --dim:#5A6B7D;
+  --gold:#5fa8e8; --gold-light:#255F95; --gold-dim:#7DA3C8;
+  --turq:#5fa8e8; --turq-light:#5fa8e8; --turq-bright:#255F95;
+  --primary:#5fa8e8;
+}
+body{background:var(--lapis);}
+code{background:#EEF3F8;color:#255F95;}
+.callout.cta{background:linear-gradient(135deg,#EAF2FA,#0a1628);}
+</style>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","headline":"Mixture of Experts, Explained: Why MoE Makes AI Cheaper","datePublished":"2026-07-04","author":{"@type":"Organization","name":"ABUZ8 AI"}}
+</script>
+</head>
+<body>
+<div class="container">
+  <a href="/blog/" class="back">&larr; ABUZ8 BLOG</a>
+  <h1>Mixture of Experts, Explained</h1>
+  <div class="meta-row"><span>AI EXPLAINED</span><span class="dot"></span><span>JULY 4, 2026</span><span class="dot"></span><span>6 MIN READ</span></div>
+
+  <p>If you've read that a model has "500 billion parameters but only runs 30 billion at a time" and wondered how that math works, you've bumped into <strong>mixture of experts</strong>. MoE is the architecture quietly behind most of the big, capable models of 2026, and it's the single biggest reason a serious AI can run on hardware you actually own instead of a rented datacenter. This is mixture of experts explained without the jargon — what it is, why it's cheaper, and where the catch is.</p>
+
+  <h2>The one-sentence version</h2>
+  <p>A mixture-of-experts model is one big model made of many smaller specialist sub-networks — the "experts" — plus a tiny traffic cop called a router that picks which few experts to use for each word. Instead of firing every neuron for every token like a traditional "dense" model, MoE lights up only the handful of experts that are relevant and leaves the rest dark. You get the knowledge of a huge model while only paying to run a small slice of it at any moment.</p>
+
+  <h2>The mental model that makes it click</h2>
+  <p>Think of a dense model as a single genius who personally answers every question — brilliant, but you're paying for that entire brain on every single word, including "the" and "a." Now picture a mixture of experts as a hospital. A patient walks in, and a triage nurse (the router) glances at the case and sends it to the two right specialists — cardiology, say — while the other forty doctors keep working on their own patients. The hospital collectively knows far more than any one doctor, but each case only occupies the two people it needs. That's MoE: enormous total knowledge, small cost per query.</p>
+
+  <div class="callout">
+    <p><strong>The numbers people quote:</strong> "total parameters" is the size of the whole hospital — everything the model could know. "Active parameters" is how many doctors touch your specific case. A model can be, say, 235B total but only ~22B active. Your speed and memory pressure track the <em>active</em> number; the model's breadth tracks the <em>total</em>. MoE's whole trick is widening the gap between those two.</p>
+  </div>
+
+  <h2>Why this is a big deal for local AI</h2>
+  <p>Running frontier-class models on your own machine used to mean a dense model whose full weight had to move through your GPU on every token — brutal on memory and speed. MoE changes the economics. Because only a fraction of the model is active per token, you get much of a giant model's capability at a fraction of the compute, which is exactly what makes a strong <a href="/blog/local-llm-for-business.html" class="in">local LLM for business</a> practical on a desktop instead of a server farm. If you're picking hardware for it, the trade-offs are laid out in <a href="/blog/best-gpu-for-local-ai-2026.html" class="in">the best GPU for local AI in 2026</a>, and the file format that ships these models is covered in <a href="/blog/what-is-a-gguf-model.html" class="in">what is a GGUF model</a>.</p>
+
+  <h2>The honest catch</h2>
+  <p>MoE isn't free lunch, it's a smart trade. The catch is memory versus compute: you still have to hold all those experts <em>somewhere</em>, because you don't know in advance which ones the router will call. So an MoE model is light on compute but heavy on RAM/VRAM to keep the full set of experts loaded. That's why MoE and multi-GPU setups pair so naturally — spread the experts across cards and you can run a model no single card could hold. We get into that in <a href="/blog/multi-gpu-local-ai-setup.html" class="in">the multi-GPU local AI setup guide</a>. The other subtlety is routing quality: a bad router sends cases to the wrong specialists, so the training that teaches the traffic cop to route well matters as much as the experts themselves.</p>
+
+  <h2>MoE vs just using a smaller model</h2>
+  <p>Fair question — if you want cheap and fast, why not run a small dense model and skip the complexity? Because a small dense model is small, period; it simply knows less. MoE lets you keep the breadth of a large model on tap and only pay for depth when a task demands it. It's the same instinct behind <a href="/blog/ai-model-routing-explained.html" class="in">cost-aware model routing</a> — don't spend heavy capability on light work — just applied <em>inside</em> a single model instead of across several. The two ideas stack: route to the cheapest capable model, and let that model itself be an efficient mixture of experts.</p>
+
+  <h2>Where ABUZ8 / QADIR OS fits</h2>
+  <p><strong>QADIR OS</strong> uses this thinking at two levels. Inside a single model, it runs MoE weights locally. Above that, it runs a "brain council" — a mixture-of-experts approach across <em>whole models</em>, where a router hands each task to the cheapest brain that can do it right and only escalates when the work needs it. On the workstation we build on, that council spreads across two GPUs with the model's experts split between them, so a model too big for one card runs across both. The point isn't the spec sheet — it's that MoE is what lets an OS this capable run on hardware you own instead of someone else's cloud. Start with <a href="/blog/what-is-qadir-os.html" class="in">what is QADIR OS</a>.</p>
+
+  <div class="callout cta">
+    <p><strong>ABUZ8 runs ~180 free AI tools</strong> — no card, most no signup — as the front door to <strong>QADIR OS</strong>, a local-first agentic operating system. Browse the <a href="/tools/" class="in">free tools</a>, read <a href="/blog/best-local-ai-models-2026.html" class="in">the best local AI models of 2026</a>, then <a href="/" class="in">join early access</a>.</p>
+  </div>
+
+  <div class="foot">Built by <a href="/">ABUZ8 LLC</a> — we're building QADIR OS, the sovereign agentic operating system.</div>
+</div>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+<script src="/blog/_blog-shared.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>

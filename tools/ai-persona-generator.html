@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Persona Generator | ABUZ8</title>
+<style>
+  :root{--lapis:#0a1628;--lapis2:#0f1f3d;--lapis3:#162444;--gold:#c9a84c;--gold2:#e0bc6a;--turq:#0e9f6e;--turq2:#22a090;--cream:#f5f0e8;--cream2:#ede8df;--red:#e05555;--green:#3db87a;--text:#e8e4da;--muted:#8a9ab5;}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--lapis);color:var(--text);font-family:'Inter',system-ui,sans-serif;min-height:100vh;}
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;500;600&display=swap');
+  header{background:linear-gradient(135deg,var(--lapis2),var(--lapis3));border-bottom:1px solid rgba(201,168,76,0.3);padding:20px 40px;display:flex;align-items:center;gap:16px;}
+  .logo{font-family:'Playfair Display',serif;font-size:1.6rem;color:var(--gold);letter-spacing:1px;}
+  .logo span{color:var(--turq);}
+  header p{color:var(--muted);font-size:0.9rem;}
+  .hero{background:linear-gradient(135deg,var(--lapis3),var(--lapis2));padding:40px;text-align:center;border-bottom:1px solid rgba(201,168,76,0.15);}
+  .hero h1{font-family:'Playfair Display',serif;font-size:2.2rem;color:var(--gold);margin-bottom:8px;}
+  .hero p{color:var(--muted);max-width:600px;margin:0 auto;font-size:1rem;}
+  .main{max-width:1200px;margin:0 auto;padding:40px 20px;}
+  .grid{display:grid;grid-template-columns:380px 1fr;gap:32px;align-items:start;}
+  @media(max-width:900px){.grid{grid-template-columns:1fr;}}
+  .card{background:var(--lapis2);border:1px solid rgba(201,168,76,0.2);border-radius:12px;padding:28px;}
+  .card h2{font-family:'Playfair Display',serif;color:var(--gold);font-size:1.3rem;margin-bottom:20px;padding-bottom:12px;border-bottom:1px solid rgba(201,168,76,0.2);}
+  .form-group{margin-bottom:16px;}
+  label{display:block;color:var(--muted);font-size:0.8rem;font-weight:600;letter-spacing:0.5px;text-transform:uppercase;margin-bottom:6px;}
+  input,select,textarea{width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(138,154,181,0.3);border-radius:8px;padding:10px 14px;color:var(--text);font-family:inherit;font-size:0.9rem;transition:border 0.2s;}
+  input:focus,select:focus,textarea:focus{outline:none;border-color:var(--gold);background:rgba(201,168,76,0.05);}
+  select option{background:var(--lapis2);}
+  textarea{resize:vertical;min-height:80px;}
+  .seg-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .btn{width:100%;padding:14px;background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--lapis);font-weight:700;font-size:1rem;border:none;border-radius:8px;cursor:pointer;transition:all 0.2s;margin-top:8px;font-family:inherit;}
+  .btn:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(201,168,76,0.4);}
+  .btn-sec{background:transparent;border:1px solid var(--turq);color:var(--turq);font-weight:600;}
+  .btn-sec:hover{background:rgba(26,138,122,0.1);box-shadow:0 4px 12px rgba(26,138,122,0.3);}
+  .persona-card{background:var(--lapis3);border:1px solid rgba(201,168,76,0.25);border-radius:16px;overflow:hidden;display:none;}
+  .persona-header{background:linear-gradient(135deg,rgba(201,168,76,0.15),rgba(26,138,122,0.15));padding:28px;display:flex;align-items:center;gap:20px;border-bottom:1px solid rgba(201,168,76,0.2);}
+  .avatar{width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--turq));display:flex;align-items:center;justify-content:center;font-size:2rem;flex-shrink:0;border:3px solid rgba(201,168,76,0.4);}
+  .persona-name{font-family:'Playfair Display',serif;font-size:1.8rem;color:var(--gold);}
+  .persona-title{color:var(--turq2);font-size:0.95rem;margin:4px 0;}
+  .persona-tagline{color:var(--muted);font-size:0.85rem;font-style:italic;}
+  .persona-body{padding:24px;}
+  .section-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px;}
+  .tab{padding:7px 16px;border-radius:20px;background:rgba(255,255,255,0.05);border:1px solid rgba(138,154,181,0.2);color:var(--muted);font-size:0.8rem;cursor:pointer;transition:all 0.2s;}
+  .tab.active{background:linear-gradient(135deg,rgba(201,168,76,0.2),rgba(26,138,122,0.2));border-color:var(--gold);color:var(--gold);}
+  .tab-content{display:none;}
+  .tab-content.active{display:block;}
+  .trait-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;}
+  .trait-box{background:rgba(255,255,255,0.04);border:1px solid rgba(138,154,181,0.15);border-radius:10px;padding:14px;}
+  .trait-label{font-size:0.75rem;color:var(--gold);font-weight:600;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;}
+  .trait-value{font-size:0.9rem;color:var(--text);}
+  .list-section{margin-bottom:20px;}
+  .list-section h4{color:var(--turq2);font-size:0.85rem;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px;}
+  .tag-list{display:flex;flex-wrap:wrap;gap:6px;}
+  .tag{background:rgba(26,138,122,0.15);border:1px solid rgba(26,138,122,0.3);color:var(--turq2);padding:4px 12px;border-radius:20px;font-size:0.8rem;}
+  .tag.pain{background:rgba(224,85,85,0.1);border-color:rgba(224,85,85,0.3);color:#f08080;}
+  .tag.goal{background:rgba(61,184,122,0.1);border-color:rgba(61,184,122,0.3);color:var(--green);}
+  .tag.obj{background:rgba(201,168,76,0.1);border-color:rgba(201,168,76,0.3);color:var(--gold2);}
+  .msg-card{background:rgba(255,255,255,0.04);border-left:3px solid var(--gold);border-radius:0 8px 8px 0;padding:12px 16px;margin-bottom:10px;}
+  .msg-card .msg-type{font-size:0.75rem;color:var(--gold);font-weight:600;text-transform:uppercase;margin-bottom:4px;}
+  .msg-card p{font-size:0.9rem;color:var(--text);line-height:1.6;}
+  .bar-row{display:flex;align-items:center;gap:12px;margin-bottom:8px;}
+  .bar-label{width:120px;font-size:0.8rem;color:var(--muted);text-align:right;flex-shrink:0;}
+  .bar-track{flex:1;background:rgba(255,255,255,0.08);border-radius:4px;height:8px;overflow:hidden;}
+  .bar-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--turq),var(--gold));transition:width 0.8s ease;}
+  .bar-val{width:32px;font-size:0.8rem;color:var(--gold);text-align:right;flex-shrink:0;}
+  .quote-box{background:linear-gradient(135deg,rgba(201,168,76,0.08),rgba(26,138,122,0.08));border:1px solid rgba(201,168,76,0.2);border-radius:10px;padding:16px 20px;margin-bottom:16px;}
+  .quote-box p{font-style:italic;color:var(--cream);line-height:1.6;font-size:0.95rem;}
+  .quote-box cite{display:block;margin-top:8px;font-size:0.8rem;color:var(--gold);font-style:normal;}
+  .action-row{display:flex;gap:10px;padding:16px 24px;background:rgba(0,0,0,0.2);border-top:1px solid rgba(201,168,76,0.1);}
+  .action-row .btn{margin:0;flex:1;}
+  .empty{text-align:center;padding:60px 20px;color:var(--muted);}
+  .empty .icon{font-size:3rem;margin-bottom:16px;}
+  .empty h3{font-family:'Playfair Display',serif;color:var(--lapis3);font-size:1.4rem;margin-bottom:8px;}
+  .kv-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.06);}
+  .kv-row:last-child{border:none;}
+  .kv-key{color:var(--muted);font-size:0.85rem;}
+  .kv-val{color:var(--text);font-size:0.9rem;font-weight:500;}
+  .multi-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  @media(max-width:600px){.multi-grid{grid-template-columns:1fr;}.seg-row{grid-template-columns:1fr;}}
+</style>
+<script src="_abuz8-live-brain.js" defer></script>
+
+<script src="_abuz8-config.js" defer></script>
+<link rel="canonical" href="https://abuz8ai.com/tools/ai-persona-generator">
+<meta name="description" content="AI Persona Generator — Detailed buyer personas. Free, no signup, runs entirely in your browser. One of 169 free AI and developer tools by ABUZ8.">
+</head>
+<body>
+<header>
+  <div>
+    <div class="logo">ABU<span>Z8</span></div>
+    <p>Sovereign AI Infrastructure</p>
+  </div>
+</header>
+<div class="hero">
+  <h1>AI Persona Generator</h1>
+  <p>Build detailed buyer and user personas with demographics, psychographics, goals, pain points, objections, and messaging angles — instantly.</p>
+</div>
+<div class="main">
+  <div class="grid">
+    <!-- LEFT: Config -->
+    <div>
+      <div class="card">
+        <h2>🎯 Persona Config</h2>
+        <div class="form-group">
+          <label>Product / Service</label>
+          <input type="text" id="productName" placeholder="e.g. AI sales automation tool" />
+        </div>
+        <div class="form-group">
+          <label>Industry / Market</label>
+          <select id="industry">
+            <option value="saas">SaaS / Software</option>
+            <option value="ecomm">E-Commerce / Retail</option>
+            <option value="fintech">Fintech / Finance</option>
+            <option value="health">Health / Wellness</option>
+            <option value="edtech">EdTech / Training</option>
+            <option value="agency">Agency / Consulting</option>
+            <option value="realestate">Real Estate</option>
+            <option value="media">Media / Creator Economy</option>
+            <option value="enterprise">Enterprise / B2B</option>
+            <option value="consumer">Consumer / B2C</option>
+          </select>
+        </div>
+        <div class="seg-row">
+          <div class="form-group">
+            <label>Persona Type</label>
+            <select id="personaType">
+              <option value="buyer">Buyer / Decision Maker</option>
+              <option value="user">End User</option>
+              <option value="champion">Internal Champion</option>
+              <option value="blocker">Blocker / Skeptic</option>
+              <option value="influencer">Influencer / Advisor</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Company Size</label>
+            <select id="companySize">
+              <option value="solo">Solo / Freelancer</option>
+              <option value="small">Small (2–20)</option>
+              <option value="mid">Mid (21–200)</option>
+              <option value="growth">Growth (201–1000)</option>
+              <option value="enterprise">Enterprise (1000+)</option>
+            </select>
+          </div>
+        </div>
+        <div class="seg-row">
+          <div class="form-group">
+            <label>Seniority</label>
+            <select id="seniority">
+              <option value="ic">Individual Contributor</option>
+              <option value="manager">Manager / Team Lead</option>
+              <option value="director">Director / Head of</option>
+              <option value="vp">VP / C-Suite</option>
+              <option value="founder">Founder / Owner</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Budget Authority</label>
+            <select id="budget">
+              <option value="none">No authority</option>
+              <option value="limited">Limited (&lt;$5K)</option>
+              <option value="moderate">Moderate ($5–50K)</option>
+              <option value="full">Full ($50K+)</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Primary Job-to-be-Done</label>
+          <input type="text" id="jtbd" placeholder="e.g. close more deals faster" />
+        </div>
+        <div class="form-group">
+          <label>Top Pain Point (optional)</label>
+          <input type="text" id="topPain" placeholder="e.g. manual follow-up taking 3hrs/day" />
+        </div>
+        <div class="form-group">
+          <label>Additional Context</label>
+          <textarea id="context" placeholder="Any extra detail about this persona or your ICP..."></textarea>
+        </div>
+        <button class="btn" onclick="generatePersona()">⚡ Generate Persona</button>
+        <button class="btn btn-sec" onclick="randomPersona()" style="margin-top:8px;">🎲 Surprise Me</button>
+      </div>
+    </div>
+
+    <!-- RIGHT: Output -->
+    <div>
+      <div id="emptyState" class="card empty">
+        <div class="icon">👤</div>
+        <h3 style="color:var(--muted)">Your persona will appear here</h3>
+        <p>Fill in the config and click Generate Persona to build a full profile with demographics, psychographics, messaging, and more.</p>
+      </div>
+      <div id="personaCard" class="persona-card">
+        <div class="persona-header">
+          <div class="avatar" id="personaAvatar">👤</div>
+          <div>
+            <div class="persona-name" id="personaName">—</div>
+            <div class="persona-title" id="personaTitle">—</div>
+            <div class="persona-tagline" id="personaTagline">—</div>
+          </div>
+        </div>
+        <div class="persona-body">
+          <div class="section-tabs" id="tabRow"></div>
+          <div id="tabContents"></div>
+        </div>
+        <div class="action-row">
+          <button class="btn btn-sec" onclick="copyPersona()" style="flex:1">📋 Copy All</button>
+          <button class="btn" onclick="downloadPersona()" style="flex:1">⬇ Download</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const NAMES = {
+  buyer: ['Marcus Chen','Diana Reyes','Jordan Patel','Samantha Brooks','Tyler Evans'],
+  user: ['Alex Kim','Jordan Lee','Sam Torres','Casey Morgan','Riley Quinn'],
+  champion: ['Priya Sharma','Michael Torres','Avery Johnson','Natalie Park','Darius Webb'],
+  blocker: ['Robert Lawson','Patricia Mills','Howard Greene','Barbara Sutton','Craig Whitfield'],
+  influencer: ['Leila Haddad','Ethan Cross','Maya Rodriguez','Felix Wagner','Aisha Okonkwo'],
+};
+const AVATARS = {buyer:'💼',user:'🖥️',champion:'🌟',blocker:'🛡️',influencer:'📣'};
+const TITLES = {
+  saas:{buyer:'VP of Revenue Operations',user:'Senior Sales Rep',champion:'RevOps Manager',blocker:'IT Security Lead',influencer:'G2 Analyst'},
+  ecomm:{buyer:'Head of Growth',user:'Performance Marketer',champion:'E-Com Manager',blocker:'Finance Controller',influencer:'Shopify Partner Agency'},
+  fintech:{buyer:'CFO',user:'Financial Analyst',champion:'Treasury Manager',blocker:'Compliance Officer',influencer:'Fintech Advisor'},
+  health:{buyer:'Director of Operations',user:'Clinical Coordinator',champion:'Practice Manager',blocker:'HIPAA Officer',influencer:'Healthcare Consultant'},
+  edtech:{buyer:'Chief Learning Officer',user:'Instructional Designer',champion:'L&D Manager',blocker:'IT Director',influencer:'EdTech Reviewer'},
+  agency:{buyer:'Founder / CEO',user:'Account Manager',champion:'Ops Director',blocker:'Senior PM',influencer:'Marketing Advisor'},
+  realestate:{buyer:'Broker / Owner',user:'Realtor',champion:'Office Manager',blocker:'Association Lead',influencer:'CRE Consultant'},
+  media:{buyer:'Head of Content',user:'Creator / Influencer',champion:'Social Media Manager',blocker:'Brand Safety Lead',influencer:'Creator Agency'},
+  enterprise:{buyer:'CTO / CIO',user:'Business Analyst',champion:'Digital Transformation Lead',blocker:'Legal / Procurement',influencer:'Gartner Analyst'},
+  consumer:{buyer:'CMO',user:'Power User',champion:'Product Manager',blocker:'Data Privacy Officer',influencer:'YouTuber / Reviewer'},
+};
+const DEMOS = {
+  solo:{age:'28–38',income:'$60K–$120K',education:'Bachelors / Self-taught',location:'Remote / Urban'},
+  small:{age:'30–45',income:'$80K–$160K',education:'Bachelors / MBA',location:'Suburban / Secondary City'},
+  mid:{age:'32–50',income:'$100K–$200K',education:'MBA / Specialist Cert',location:'Major Metro'},
+  growth:{age:'35–52',income:'$130K–$250K',education:'MBA / Advanced Degree',location:'Global / Remote-First'},
+  enterprise:{age:'38–58',income:'$180K–$400K+',education:'Advanced Degree',location:'HQ + Distributed'},
+};
+const PSYCHO = {
+  buyer:['ROI-obsessed, needs board-ready numbers','Risk-averse; prefers proven solutions','Values speed-to-value over feature depth','Respects vendors who know their business','Measures success in revenue impact'],
+  user:['Hates friction in daily workflows','Wants to look competent in front of manager','Prefers self-serve over sales calls','Shares tools that make their job easier','Influenced by peer reviews and demos'],
+  champion:['Sees this as a career opportunity','Builds internal business cases','Translates technical value to exec language','Needs ammunition to fight internal resistance','Personally invested in project success'],
+  blocker:['Primary concern is risk mitigation','Slow-moving by design, not malice','Needs security docs, SOC 2, contracts','Can become an ally with the right process','Measures success by zero incidents'],
+  influencer:['Writes content about tools they love','Has audience credibility in the space','Values co-marketing opportunities','Motivated by being first to discover','Wants exclusive access or early preview'],
+};
+const GOALS_MAP = {
+  saas:['Hit or exceed ARR targets','Reduce customer churn below 5%','Shorten sales cycle by 30%','Scale pipeline without headcount','Automate repetitive ops tasks'],
+  ecomm:['Increase ROAS above 4x','Reduce CAC by 20%','Improve conversion rate','Scale to new channels','Automate inventory management'],
+  fintech:['Reduce operational costs','Ensure regulatory compliance','Speed up reporting cycles','Automate reconciliation','Improve audit readiness'],
+  health:['Reduce admin burden by 40%','Improve patient outcomes','Ensure HIPAA compliance','Scale without more staff','Streamline care coordination'],
+  edtech:['Increase learner engagement','Reduce course completion time','Scale training programs','Measure learning ROI','Cut L&D costs'],
+  agency:['Increase client retention','Automate delivery processes','Win more pitches','Improve team utilization','Expand service lines'],
+  realestate:['Close more deals per month','Reduce time on admin','Nurture leads at scale','Stand out from competition','Automate follow-ups'],
+  media:['Grow audience faster','Monetize content better','Reduce production time','Land brand sponsorships','Build email list'],
+  enterprise:['Digital transformation ROI','Vendor consolidation','Reduce security surface area','Enable remote workforce','Improve operational visibility'],
+  consumer:['Improve product engagement','Reduce churn','Grow organic referrals','Personalize at scale','Increase LTV'],
+};
+const PAINS_MAP = {
+  saas:['CRM data is always out of date','Manual handoffs lose deals','Reporting takes days','Stack is too complex','Onboarding takes too long'],
+  ecomm:['Ad costs keep rising','Attribution is broken','Inventory forecasting is manual','Shipping delays hurt reviews','Hard to personalize at scale'],
+  fintech:['Month-end close takes 2 weeks','Reconciliation is error-prone','Compliance changes constantly','Data lives in silos','Excel as a financial system'],
+  health:['Staff burnout from admin work',"EHR systems don't talk to each other",'Scheduling chaos','Billing errors cost real money','No visibility into outcomes'],
+  edtech:['Employees skip training','No way to measure impact','Content goes stale quickly','One-size-fits-all delivery','LMS is from 2010'],
+  agency:['Scope creep kills margins','Too many tools, no single view','Clients expect more for less','Talent is hard to find','Projects go over budget'],
+  realestate:['Leads go cold before follow-up','Too much time on paperwork',"CRM isn't built for RE",'Marketing costs too high','No visibility into pipeline'],
+  media:['Algorithm changes hurt reach','Monetization is unpredictable','Burnout from constant content','Brand deals take months to close','Hard to prove ROI to sponsors'],
+  enterprise:['Legacy systems slow everything down','Security reviews block vendors','Data governance is a mess','Procurement cycles take 6 months','Shadow IT is everywhere'],
+  consumer:['Users churn after 30 days','Notifications get ignored','Feature bloat confuses users','Support costs are growing','No feedback loop from users'],
+};
+const OBJECTIONS_MAP = {
+  buyer:['We already have a solution for that','Too expensive for current budget','Need to involve IT/Legal first','Prove the ROI first','Not a priority this quarter'],
+  user:['Seems hard to learn','Will this replace my job?',"My manager won't approve",'I tried something similar before','Too many tools already'],
+  champion:['I need exec buy-in first','Legal will push back on data',"What's the migration path?",'How do I justify the switch?',"What if it doesn't work?"],
+  blocker:['We have no security review done','Need SOC 2 / ISO 27001 first','Data residency requirements','What happens to our data?',"Legal hasn't reviewed the contract"],
+  influencer:['Is there an affiliate/partner program?','Do you have an API?','Would you co-create content?','Can I get early access?',"What's your brand story?"],
+};
+const CHANNELS = {
+  buyer:['LinkedIn','Email (cold/warm)','Executive events','Peer referrals','Analyst reports'],
+  user:['Product Hunt','Slack communities','YouTube tutorials','G2/Capterra reviews','Twitter/X'],
+  champion:['LinkedIn','Internal demos','Slack','ROI calculators','Case studies'],
+  blocker:['Vendor security portal','Email','Procurement forms','Trust center docs','Legal calls'],
+  influencer:['Twitter/X','LinkedIn','YouTube','Podcast','Newsletter'],
+};
+const MESSAGES = {
+  buyer:{hero:'Cut costs, drive revenue — measurable results in 30 days.',proof:'Trusted by 500+ companies in your industry.',cta:'See the ROI calculator',urgency:'Your competitors are already using this.'},
+  user:{hero:'Get your time back. Automate the work you hate.',proof:'5,000+ users love it. See why in 2 minutes.',cta:'Try it free — no credit card',urgency:'Your next review is coming. Arrive with results.'},
+  champion:{hero:"Be the hero who brought the solution that scaled the team.",proof:'Other champions like you got promoted after this rollout.',cta:'Get the internal business case template',urgency:'Start the pilot before Q4 planning locks budgets.'},
+  blocker:{hero:'Enterprise-grade security, proven compliance, zero surprises.',proof:'SOC 2 Type II. ISO 27001. GDPR-ready. MSA ready to sign.',cta:'Download the security review package',urgency:'Our security team answers questions same day.'},
+  influencer:{hero:"Your audience discovers the best tools first — this is one of them.",proof:'Join 200+ industry voices already in our Partner Program.',cta:'Apply for early access + co-marketing',urgency:'Launch partnership limited to 10 new voices this quarter.'},
+};
+const PSYCHO_SCORES = {
+  buyer:{analytical:82,social:55,risk:30,innovation:65,urgency:75},
+  user:{analytical:60,social:78,risk:45,innovation:80,urgency:60},
+  champion:{analytical:72,social:85,risk:50,innovation:70,urgency:68},
+  blocker:{analytical:90,social:40,risk:10,innovation:25,urgency:20},
+  influencer:{analytical:55,social:95,risk:55,innovation:88,urgency:50},
+};
+const QUOTES = {
+  buyer:["I don't have time for demos that don't show me the number. Give me the ROI in the first slide.","If you can't tell me how this impacts my number in 60 seconds, I'm already gone.","My job is outcomes. I don't care how it works. I care what it does for revenue."],
+  user:["I just want it to work without a 3-day onboarding.","If I have to open a ticket every time I need help, it's not the right tool.","My best tools are the ones I don't have to think about."],
+  champion:["I put my credibility on the line when I bring in a new vendor. Don't make me regret it.","I need to be able to walk into the all-hands and own this.","If I can't explain it to my CEO in 2 minutes, it's not happening."],
+  blocker:["I'm not blocking this because I'm difficult. I'm blocking it because it's my job to protect the company.","A security review takes 90 days minimum. That's not negotiable.","If it's not in our approved vendor list, it doesn't get deployed."],
+  influencer:["I only recommend tools I actually use. My audience trusts me because I don't sell out.","Give me early access and a story to tell. That's worth more than paid placement.","My feed is my reputation. I'm not putting my name on something mediocre."],
+};
+
+let currentPersonaText = '';
+
+function pickRand(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+
+function generatePersona(overrides={}){
+  const industry = overrides.industry || document.getElementById('industry').value;
+  const personaType = overrides.personaType || document.getElementById('personaType').value;
+  const companySize = overrides.companySize || document.getElementById('companySize').value;
+  const seniority = overrides.seniority || document.getElementById('seniority').value;
+  const budget = overrides.budget || document.getElementById('budget').value;
+  const productName = overrides.productName || document.getElementById('productName').value || 'your product';
+  const jtbd = overrides.jtbd || document.getElementById('jtbd').value || 'get their job done more efficiently';
+  const topPain = overrides.topPain || document.getElementById('topPain').value;
+  const context = document.getElementById('context').value.trim();
+
+  const avatar = AVATARS[personaType]||'👤';
+  const sizeLabel = companySize==='solo'?'Solo / Freelancer':companySize==='small'?'2–20 people':companySize==='mid'?'21–200':companySize==='growth'?'201–1000':'1000+ people';
+
+  // Header reflects the request (not a fabricated identity).
+  document.getElementById('personaAvatar').textContent = avatar;
+  document.getElementById('personaName').textContent = `${personaType.charAt(0).toUpperCase()+personaType.slice(1)} Persona`;
+  document.getElementById('personaTitle').textContent = `${productName} · ${industry} · ${sizeLabel}`;
+  document.getElementById('personaTagline').textContent = jtbd ? `Job-to-be-done: ${jtbd}` : '';
+
+  document.getElementById('tabRow').innerHTML = '';
+  document.getElementById('tabContents').innerHTML = `
+    <div style="text-align:center;padding:48px 24px">
+      <div style="font-size:40px;margin-bottom:14px">👤</div>
+      <div style="color:var(--gold);font-family:'Playfair Display',serif;font-size:1.1rem;margin-bottom:8px">Building your persona…</div>
+      <div style="font-size:.85rem;color:var(--muted);max-width:340px;margin:0 auto">Live AI on an RTX 5090. The first call cold-loads the model, so this can take 20–90s.</div>
+    </div>`;
+
+  document.getElementById('emptyState').style.display = 'none';
+  document.getElementById('personaCard').style.display = 'block';
+
+  const btns = document.querySelectorAll('.card .btn');
+  btns.forEach(b => { b.disabled = true; });
+
+  // Real AI persona via the ABUZ8 brain (Cloudflare Workers AI). No template banks, no Math.random picks.
+  fetch('/api/waitlist', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      tool: 'persona-generator',
+      data: { product: productName, industry, personaType, companySize, seniority, budget, jobToBeDone: jtbd, topPain, context }
+    })
+  })
+  .then(r => r.json())
+  .then(res => {
+    btns.forEach(b => { b.disabled = false; });
+    if (!res.success || !res.result) throw new Error(res.error || 'Generation failed');
+    document.getElementById('tabContents').innerHTML = `<div class="tab-content active" style="line-height:1.8">${ABUZ8.formatResult(res.result)}</div>`;
+    currentPersonaText = document.getElementById('tabContents').innerText.trim();
+  })
+  .catch(err => {
+    btns.forEach(b => { b.disabled = false; });
+    document.getElementById('tabContents').innerHTML = `
+      <div style="text-align:center;padding:48px 24px">
+        <div style="font-size:40px;margin-bottom:14px">⚠️</div>
+        <div style="color:#f08080;font-family:'Playfair Display',serif;font-size:1.1rem;margin-bottom:8px">Generation failed</div>
+        <div style="font-size:.85rem;color:var(--muted);max-width:360px;margin:0 auto 14px">${err.message}. The live AI may be cold-starting — please try again in a moment.</div>
+        <button class="btn" style="max-width:220px;margin:0 auto" onclick="generatePersona()">↺ Try Again</button>
+      </div>`;
+    currentPersonaText = '';
+    alert('Generation failed: ' + err.message + '. Please try again in a moment.');
+  });
+}
+
+function randomPersona(){
+  const industries = ['saas','ecomm','fintech','health','edtech','agency','realestate','media','enterprise','consumer'];
+  const types = ['buyer','user','champion','blocker','influencer'];
+  const sizes = ['solo','small','mid','growth','enterprise'];
+  const seniorities = ['ic','manager','director','vp','founder'];
+  const budgets = ['none','limited','moderate','full'];
+  document.getElementById('industry').value = industries[Math.floor(Math.random()*industries.length)];
+  document.getElementById('personaType').value = types[Math.floor(Math.random()*types.length)];
+  document.getElementById('companySize').value = sizes[Math.floor(Math.random()*sizes.length)];
+  document.getElementById('seniority').value = seniorities[Math.floor(Math.random()*seniorities.length)];
+  document.getElementById('budget').value = budgets[Math.floor(Math.random()*budgets.length)];
+  generatePersona();
+}
+
+function copyPersona(){
+  navigator.clipboard.writeText(currentPersonaText).then(()=>{
+    const btn = event.target;
+    btn.textContent = '✅ Copied!';
+    setTimeout(()=>btn.textContent='📋 Copy All',2000);
+  });
+}
+
+function downloadPersona(){
+  const blob = new Blob([currentPersonaText],{type:'text/plain'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  const name = document.getElementById('personaName').textContent.replace(' ','_');
+  a.download = `persona_${name}_${Date.now()}.txt`;
+  a.click();
+}
+</script>
+
+<script src="/assets/js/dfy-banner.js" async></script>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+<script src="/tools/_tools-shared.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>
+

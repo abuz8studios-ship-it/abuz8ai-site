@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<!-- 2026-07-22 — Weekly content: markdown-preview-online -->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Markdown Preview Online: See Your README Before You Push | ABUZ8</title>
+<meta name="description" content="Free markdown preview online — paste, render, fix, ship. The GitHub-flavored gotchas that break READMEs (tables, line breaks, nested lists) and how to catch them before they're public.">
+<meta name="keywords" content="markdown preview online, markdown editor online, markdown renderer, preview readme online, github flavored markdown, markdown table preview">
+<link rel="canonical" href="https://abuz8ai.com/blog/markdown-preview-online">
+<meta property="og:title" content="Markdown Preview Online: See Your README Before You Push">
+<meta property="og:type" content="article">
+<link rel="stylesheet" href="/blog/_blog-base.css">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@300;400;600;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
+<style>
+:root{
+  --lapis:#0a1628; --lapis-mid:#EEF3F8; --lapis-light:#E3EBF3;
+  --card:#0d1a30; --border:#D6E0EC;
+  --text:#e8e4d8; --cream:#1F2D3D; --dim:#5A6B7D;
+  --gold:#5fa8e8; --gold-light:#255F95; --gold-dim:#7DA3C8;
+  --turq:#5fa8e8; --turq-light:#5fa8e8; --turq-bright:#255F95;
+  --primary:#5fa8e8;
+}
+body{background:var(--lapis);}
+code{background:#EEF3F8;color:#255F95;}
+.callout.cta{background:linear-gradient(135deg,#EAF2FA,#0a1628);}
+</style>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","headline":"Markdown Preview Online: See Your README Before You Push","datePublished":"2026-07-22","author":{"@type":"Organization","name":"ABUZ8 AI"}}
+</script>
+</head>
+<body>
+<div class="container">
+  <a href="/blog/" class="back">&larr; ABUZ8 BLOG</a>
+  <h1>Markdown Preview Online: See Your README Before You Push</h1>
+  <div class="meta-row"><span>DEV TOOLS</span><span class="dot"></span><span>JULY 22, 2026</span><span class="dot"></span><span>5 MIN READ</span></div>
+
+  <p>A <strong>markdown preview online</strong> exists for one recurring moment: you've written a README, a changelog, or a docs page, you push it, and GitHub renders something you did not write. The table is a single mangled paragraph. The nested list collapsed. Your line breaks vanished. Markdown's whole pitch is "plain text that renders nicely," and it mostly delivers — but the gap between "looks right in my editor" and "renders right on the platform" has embarrassed every developer at least once. Previewing before you push closes that gap in ten seconds.</p>
+
+  <p>Our <a href="/tools/markdown-preview.html" class="in">free markdown preview</a> is the paste-render-fix loop with nothing bolted on: no account, no saving your text to someone's server, just a live render pane. Here's how to get the most out of it — and the specific gotchas worth previewing for.</p>
+
+  <h2>Your README is your storefront</h2>
+  <p>For an open-source project, a tool, or a portfolio repo, the README does the job a landing page does everywhere else — most visitors decide whether to care within one scroll. A broken table or a wall of unrendered syntax reads as "unmaintained," fairly or not. Ten seconds in a preview pane is the cheapest polish available. Write, preview, fix, push. It's the same discipline as running code before shipping it, applied to the document people see first.</p>
+
+  <h2>The gotchas that actually bite</h2>
+  <p><strong>Line breaks.</strong> Classic markdown ignores a single newline — two lines of text render as one paragraph unless you leave a blank line or end the line with two spaces. Half of all "markdown is broken" complaints are this one rule.</p>
+  <p><strong>Tables.</strong> Tables need the header separator row (<code>|---|---|</code>), and a missing pipe or a stray space can silently demote your table to plain text. Tables are also the feature that varies most between renderers — always preview them.</p>
+  <p><strong>Nested lists.</strong> Indentation sensitivity strikes: some renderers want two spaces for a nested item, others four, and mixing tabs with spaces produces render roulette. If a nested list looks flat, the indent is almost always the culprit.</p>
+  <p><strong>Code blocks.</strong> Three backticks open a fence, and an unclosed fence swallows the entire rest of your document — the most dramatic markdown failure available. If everything below a certain point renders as code, count your backticks.</p>
+  <p><strong>Raw HTML and special characters.</strong> Angle brackets in prose can get eaten as phantom HTML tags. When you're writing about code rather than writing code, inline backticks protect you.</p>
+  <p><strong>Heading anchors.</strong> Renderers auto-generate link anchors from heading text, so renaming a heading silently breaks every table-of-contents link pointing at it. If your docs cross-link sections, preview after every heading edit — a dead anchor fails without an error message, which is the worst way to fail.</p>
+
+  <h2>Paste-preview-fix, without the tab pile</h2>
+  <p>The workflow is intentionally boring: draft wherever you like, paste into the <a href="/tools/markdown-preview.html" class="in">preview tool</a>, watch the render pane, fix what's wrong, paste back. Everything happens client-side in your browser — your half-written docs aren't uploaded anywhere, which matters more than people think when the README in question describes an unreleased product. It sits in the same shelf of instant dev utilities as the <a href="/tools/json-formatter.html" class="in">JSON formatter</a> and the <a href="/tools/regex-tester.html" class="in">regex tester</a>: single-purpose, zero-friction, bookmark-and-forget.</p>
+
+  <h2>The 30-second pre-push checklist</h2>
+  <p>Before any README or docs page goes public, run this pass in the preview pane. One: scroll the whole render — an unclosed code fence announces itself instantly as a wall of monospace. Two: check every table has its separator row and renders as a table, not a pipe-riddled paragraph. Three: click nothing, but read your link text — <code>[here](url)</code> links reading "click here here here" are the markdown equivalent of mumbling. Four: verify your nested lists actually nest. Five: confirm the first heading and first paragraph say what the project <em>is</em> — because that's all most visitors read. Thirty seconds, five glances, and you've eliminated the entire class of "pushed it, opened GitHub, winced" commits. The preview pane is cheap insurance; the wince is not.</p>
+
+  <h2>Markdown is also how you talk to AI now</h2>
+  <p>A quiet reason markdown fluency pays in 2026: it's become the lingua franca of AI tooling. Model outputs arrive in markdown, agent instructions and skill files are written in it, and every LLM chat interface renders it. When your prompt's formatting breaks, the model's output formatting usually breaks with it. The preview pane doubles as a debugger for that whole class of problem — if it renders clean for GitHub, it'll render clean in your AI stack. We wrote up the same principle for repo hygiene in the <a href="/blog/gitignore-generator-online.html" class="in">gitignore guide</a> — small text files, outsized consequences.</p>
+
+  <div class="callout cta">
+    <p><strong>Stop pushing blind.</strong> Paste your README into the free <a href="/tools/markdown-preview.html" class="in">markdown preview</a> — instant render, browser-side, no signup. And if you like tools that respect your time, <a href="/" class="in">join QADIR OS early access</a> and see the bigger machine we're building. No card required.</p>
+  </div>
+  <div class="foot">Built by <a href="/">ABUZ8 LLC</a> — we're building QADIR OS, the sovereign agentic operating system.</div>
+</div>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+<script src="/blog/_blog-shared.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>

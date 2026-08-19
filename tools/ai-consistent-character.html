@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Consistent Character Generator — Same Face Across Every Scene | ABUZ8</title>
+<meta name="description" content="Build a character once, reuse across unlimited scenes, angles, and outfits. Same face. Same hair. Same identity. Powered by IP-Adapter + ComfyUI on RTX 5090. Royalty-free. Early access.">
+<meta name="keywords" content="ai consistent character, ai character generator, character sheet ai, ip-adapter, ai face lock, ai same character different scenes, comic character ai, webcomic character ai">
+<meta name="robots" content="index, follow">
+<meta name="theme-color" content="#0a1628">
+<link rel="canonical" href="https://abuz8ai.com/tools/ai-consistent-character-pro">
+
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://abuz8ai.com/tools/ai-consistent-character">
+<meta property="og:title" content="AI Consistent Character — Same Face, Infinite Scenes">
+<meta property="og:description" content="Lock a character once. Render them in any scene, any angle, any outfit. Webcomics, games, novels.">
+<meta property="og:image" content="https://abuz8ai.com/og/ai-consistent-character.png">
+<meta property="og:site_name" content="ABUZ8">
+<meta name="twitter:card" content="summary_large_image">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebApplication","name":"AI Consistent Character Generator","url":"https://abuz8ai.com/tools/ai-consistent-character.html","description":"Build a character reference once and reuse the same face, hair, and identity across unlimited scenes. Powered by IP-Adapter + ComfyUI on RTX 5090.","applicationCategory":"DesignApplication","operatingSystem":"Web","offers":{"@type":"Offer","price":"0","priceCurrency":"USD","availability":"https://schema.org/PreOrder"},"publisher":{"@type":"Organization","name":"ABUZ8 AI","url":"https://abuz8ai.com"},"featureList":["Character reference lock","IP-Adapter face anchoring","Pose variants","Outfit swap with identity preserved","Expression variants","Scene placement","Style transfer with identity intact","Royalty-free output"]}
+</script>
+
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"How does character consistency work?","acceptedAnswer":{"@type":"Answer","text":"You either upload a reference photo (real face, illustration, or AI-generated portrait) or describe a character. The system builds a character anchor using IP-Adapter, which then conditions every subsequent render to preserve face, hair, and core features while allowing pose, scene, outfit, and expression to vary."}},{"@type":"Question","name":"Can I use a real person's face?","acceptedAnswer":{"@type":"Answer","text":"You may use your own face or a face you have explicit consent to use. We block known public figures via face-detection guardrails and require an attestation checkbox before processing any photo with real faces."}},{"@type":"Question","name":"How consistent is the face really?","acceptedAnswer":{"@type":"Answer","text":"Very. IP-Adapter weight at 0.8+ holds face structure across pose, outfit, and lighting changes. Higher weights tighten the lock at the cost of pose flexibility. Lower weights allow more variation at the cost of consistency. We default to 0.85 — strong consistency with usable flexibility."}},{"@type":"Question","name":"What's the use case?","acceptedAnswer":{"@type":"Answer","text":"Webcomics, light novels, indie games, VTuber asset packs, D&D character art, brand mascots, children's books, marketing campaigns where a recurring character matters. Any project where you need the SAME character across MANY images."}}]}
+</script>
+
+<style>
+  :root{
+    --lapis:#0a1628;--lapis2:#0f2040;--lapis3:#163060;
+    --gold:#c9a84c;--gold2:#e8d48b;--gold3:#8a7030;
+    --turq:#0e9f6e;--turq2:#2fbf8f;--turq3:#2fbf8f;
+    --cream:#f5f0e8;--ivory:#faf8f2;
+    --text:#e8e4d8;--dim:#8a9aaa;--dim2:#6a7a8a;
+    --card:#0d1a30;--border:#1a2e50;--border2:rgba(201,168,76,0.18);
+    --r:12px;--r-sm:8px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{background:var(--lapis);color:var(--text);font-family:'Inter',system-ui,sans-serif;min-height:100vh;line-height:1.55;-webkit-font-smoothing:antialiased;}
+  a{color:var(--turq2);text-decoration:none;}
+  a:hover{color:var(--turq3);}
+
+  header.site{background:linear-gradient(135deg,var(--lapis2),var(--lapis3));border-bottom:1px solid var(--border2);padding:20px 40px;display:flex;align-items:center;gap:18px;}
+  .logo{width:44px;height:44px;border-radius:10px;background:linear-gradient(135deg,var(--gold),var(--turq));display:flex;align-items:center;justify-content:center;font-weight:900;font-size:18px;color:var(--lapis);}
+  header.site h1{font-family:'Playfair Display',serif;font-size:24px;color:var(--gold);font-weight:700;}
+  header.site p{font-size:12px;color:var(--dim);margin-top:1px;}
+  header.site .home-link{color:var(--dim);font-size:13px;margin-left:auto;}
+  header.site .home-link:hover{color:var(--gold);}
+  .badge-stage{background:rgba(26,138,122,0.12);border:1px solid rgba(42,184,154,0.3);padding:6px 12px;border-radius:20px;font-size:11px;color:var(--turq3);font-weight:600;}
+
+  .hero{max-width:1200px;margin:0 auto;padding:48px 24px 28px;}
+  .hero .eyebrow{display:inline-block;font-size:11px;letter-spacing:1.4px;color:var(--turq3);text-transform:uppercase;font-weight:700;margin-bottom:14px;}
+  .hero h2{font-family:'Playfair Display',serif;font-size:clamp(32px,5vw,52px);line-height:1.08;color:var(--ivory);margin-bottom:18px;font-weight:700;letter-spacing:-0.5px;}
+  .hero h2 .accent{color:var(--gold);}
+  .hero h2 .turq-accent{color:var(--turq2);font-style:italic;}
+  .hero .lede{color:var(--dim);font-size:17px;max-width:780px;line-height:1.6;}
+  .hero .meta-strip{display:flex;gap:18px;flex-wrap:wrap;margin-top:22px;font-size:12px;color:var(--dim2);}
+  .hero .meta-strip .dot{color:var(--turq2);font-size:14px;}
+
+  .container{max-width:1200px;margin:0 auto;padding:24px;}
+  .panel{background:var(--card);border:1px solid var(--border2);border-radius:var(--r);padding:26px;margin-bottom:18px;}
+  .panel-title{font-size:11px;font-weight:700;letter-spacing:1.4px;text-transform:uppercase;color:var(--gold);margin-bottom:20px;}
+
+  .grid-main{display:grid;grid-template-columns:1.1fr 1fr;gap:24px;}
+  @media(max-width:900px){.grid-main{grid-template-columns:1fr;}}
+
+  /* CHARACTER ANCHOR */
+  .anchor-row{display:grid;grid-template-columns:140px 1fr;gap:16px;align-items:start;}
+  @media(max-width:600px){.anchor-row{grid-template-columns:1fr;}}
+  .ref-zone{
+    width:140px;height:140px;border:1px dashed var(--border);
+    border-radius:var(--r-sm);background:var(--lapis2);
+    display:flex;align-items:center;justify-content:center;
+    cursor:pointer;text-align:center;color:var(--dim);font-size:11px;
+    overflow:hidden;position:relative;
+  }
+  .ref-zone:hover{border-color:var(--gold);}
+  .ref-zone img{width:100%;height:100%;object-fit:cover;}
+  .ref-zone .overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:4px;background:rgba(13,26,48,0.85);opacity:0;transition:opacity .15s;color:var(--gold);font-size:11px;}
+  .ref-zone:hover .overlay{opacity:1;}
+
+  label{display:block;font-size:11px;font-weight:600;color:var(--text);text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px;margin-top:18px;}
+  label.first{margin-top:0;}
+  label .hint{font-weight:400;color:var(--dim2);text-transform:none;letter-spacing:0;font-size:11px;margin-left:8px;}
+  input[type="text"],input[type="email"],textarea,select{
+    width:100%;background:var(--lapis2);border:1px solid var(--border);
+    border-radius:var(--r-sm);padding:11px 13px;font-size:13px;color:var(--text);
+    font-family:'Inter',sans-serif;outline:none;transition:border-color .2s;
+  }
+  textarea{resize:vertical;min-height:80px;line-height:1.5;}
+  input:focus,textarea:focus,select:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(201,168,76,0.08);}
+
+  .pill-row{display:flex;flex-wrap:wrap;gap:6px;}
+  .pill{background:var(--lapis2);border:1px solid var(--border);color:var(--dim);border-radius:18px;padding:6px 13px;font-size:11px;font-weight:500;cursor:pointer;transition:all .15s;}
+  .pill:hover:not(.active){color:var(--text);border-color:var(--dim2);}
+  .pill.active{background:rgba(201,168,76,0.13);border-color:var(--gold);color:var(--gold);font-weight:600;}
+  .pill.turq.active{background:rgba(42,184,154,0.13);border-color:var(--turq2);color:var(--turq3);}
+
+  .field-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  .slider-row{display:flex;align-items:center;gap:12px;margin-top:8px;}
+  .slider-row input[type="range"]{flex:1;accent-color:var(--gold);}
+  .slider-row .val{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gold);min-width:40px;}
+
+  .gen-btn{
+    width:100%;padding:16px;margin-top:24px;
+    background:linear-gradient(135deg,var(--gold),var(--gold2));
+    color:var(--lapis);border:none;border-radius:var(--r-sm);
+    font-size:14px;font-weight:700;letter-spacing:.4px;
+    text-transform:uppercase;cursor:pointer;
+    transition:transform .15s,box-shadow .2s;font-family:'Inter',sans-serif;
+  }
+  .gen-btn:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 6px 20px rgba(201,168,76,0.25);}
+  .gen-btn:disabled{opacity:0.6;cursor:wait;}
+  .secondary-btn{
+    width:100%;padding:13px;margin-top:10px;
+    background:transparent;color:var(--turq2);
+    border:1px solid var(--turq);border-radius:var(--r-sm);
+    font-size:13px;font-weight:600;cursor:pointer;
+    transition:all .15s;font-family:'Inter',sans-serif;
+  }
+  .secondary-btn:hover{background:rgba(26,138,122,0.1);color:var(--turq3);}
+
+  /* PREVIEW */
+  .preview-frame{
+    background:linear-gradient(180deg,var(--lapis2),var(--lapis));
+    border:1px dashed var(--border);border-radius:var(--r);
+    padding:32px 24px;text-align:center;min-height:380px;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;
+  }
+  .preview-icon{
+    width:64px;height:64px;border-radius:16px;
+    background:linear-gradient(135deg,rgba(201,168,76,0.15),rgba(42,184,154,0.15));
+    border:1px solid var(--border2);
+    display:flex;align-items:center;justify-content:center;font-size:28px;
+  }
+  .preview-frame h3{font-family:'Playfair Display',serif;font-size:22px;color:var(--cream);font-weight:700;}
+  .preview-frame p{color:var(--dim);font-size:13px;max-width:340px;line-height:1.6;}
+  .preview-prompt{background:var(--lapis);border:1px solid var(--border);border-radius:var(--r-sm);padding:14px;margin-top:8px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text);text-align:left;line-height:1.5;max-width:100%;overflow-x:auto;}
+  .preview-prompt strong{color:var(--gold);}
+
+  /* CONSENT BOX */
+  .consent-box{
+    background:rgba(224,85,85,0.08);border:1px solid rgba(224,85,85,0.3);
+    border-radius:var(--r-sm);padding:14px;margin-top:14px;
+    font-size:12px;color:var(--text);line-height:1.5;
+  }
+  .consent-box label{margin:0;display:flex;gap:8px;align-items:flex-start;cursor:pointer;text-transform:none;letter-spacing:0;font-weight:400;font-size:12px;color:var(--text);}
+  .consent-box input[type="checkbox"]{width:auto;margin-top:2px;accent-color:var(--gold);}
+
+  /* WAITLIST */
+  .waitlist-wrap{
+    background:linear-gradient(135deg,rgba(201,168,76,0.05),rgba(26,138,122,0.05));
+    border:1px solid var(--border2);border-radius:var(--r);
+    padding:28px;margin-top:18px;
+  }
+  .waitlist-wrap h3{font-family:'Playfair Display',serif;font-size:24px;color:var(--gold);margin-bottom:8px;font-weight:700;}
+  .waitlist-wrap p.sub{color:var(--dim);font-size:13px;margin-bottom:16px;line-height:1.6;}
+  .waitlist-form{display:flex;gap:8px;flex-wrap:wrap;}
+  .waitlist-form input{flex:1;min-width:180px;}
+  .waitlist-form button{
+    padding:12px 24px;background:var(--gold);color:var(--lapis);
+    border:none;border-radius:var(--r-sm);font-weight:700;font-size:13px;
+    cursor:pointer;letter-spacing:.4px;text-transform:uppercase;font-family:'Inter',sans-serif;
+  }
+  .waitlist-form button:hover{background:var(--gold2);}
+  .waitlist-msg{margin-top:12px;font-size:12px;color:var(--turq3);min-height:14px;}
+
+  /* SECTIONS */
+  .section{max-width:1200px;margin:0 auto;padding:48px 24px;}
+  .section h2{font-family:'Playfair Display',serif;font-size:34px;color:var(--ivory);margin-bottom:14px;font-weight:700;letter-spacing:-0.3px;}
+  .section h2 .accent{color:var(--gold);}
+  .section .lede{color:var(--dim);font-size:15px;max-width:680px;margin-bottom:32px;}
+
+  .feature-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px;}
+  .feature-card{background:var(--card);border:1px solid var(--border2);border-radius:var(--r);padding:22px;transition:border-color .2s,transform .15s;}
+  .feature-card:hover{border-color:var(--gold);transform:translateY(-2px);}
+  .feature-card .icon{font-size:24px;margin-bottom:12px;width:44px;height:44px;border-radius:10px;background:rgba(201,168,76,0.1);display:flex;align-items:center;justify-content:center;}
+  .feature-card h3{font-family:'Playfair Display',serif;font-size:18px;color:var(--cream);margin-bottom:8px;font-weight:700;}
+  .feature-card p{color:var(--dim);font-size:13px;line-height:1.6;}
+
+  .steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px;}
+  .step{background:var(--card);border:1px solid var(--border2);border-radius:var(--r);padding:22px;position:relative;}
+  .step-num{position:absolute;top:18px;right:20px;font-family:'Playfair Display',serif;font-size:32px;color:var(--gold3);font-weight:900;line-height:1;opacity:.7;}
+  .step h3{font-family:'Playfair Display',serif;font-size:17px;color:var(--cream);margin-bottom:8px;font-weight:700;}
+  .step p{color:var(--dim);font-size:13px;line-height:1.6;}
+
+  .faq-item{background:var(--card);border:1px solid var(--border2);border-radius:var(--r);padding:20px;margin-bottom:10px;cursor:pointer;}
+  .faq-q{display:flex;justify-content:space-between;align-items:center;font-weight:700;color:var(--cream);font-size:14px;}
+  .faq-q .toggle{color:var(--gold);font-family:'JetBrains Mono',monospace;transition:transform .2s;}
+  .faq-a{color:var(--dim);font-size:13px;line-height:1.7;margin-top:0;max-height:0;overflow:hidden;transition:max-height .3s,margin-top .3s;}
+  .faq-item.open .faq-a{max-height:340px;margin-top:14px;}
+  .faq-item.open .toggle{transform:rotate(45deg);}
+
+  footer.site{border-top:1px solid var(--border);padding:36px 40px;text-align:center;color:var(--dim2);font-size:12px;margin-top:48px;}
+  footer.site a{color:var(--dim);}
+  footer.site a:hover{color:var(--gold);}
+
+  @media(prefers-reduced-motion:reduce){*{animation-duration:0.01ms!important;transition-duration:0.01ms!important;}}
+</style>
+
+<script src="_abuz8-config.js" defer></script>
+</head>
+<body>
+<script>
+// Cloud fallback: if ComfyUI is unreachable, redirect generate calls to Workers AI
+(function(){
+  var comfyUrl = (window.ABUZ8_COMFY_BASE) || 'https://comfy.abuz8ai.com';
+  var checked = false, comfyLive = false;
+  window._checkComfy = async function(){
+    if(checked) return comfyLive;
+    try{
+      var r = await fetch(comfyUrl+'/system_stats',{signal:AbortSignal.timeout(3000)});
+      comfyLive = r.ok; checked = true;
+    }catch(_){ comfyLive = false; checked = true; }
+    return comfyLive;
+  };
+  window._cloudGenerate = async function(prompt){
+    try{
+      var r = await fetch('/api/ai-image',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt:prompt})});
+      if(!r.ok) return null;
+      var blob = await r.blob();
+      return URL.createObjectURL(blob);
+    }catch(_){ return null; }
+  };
+})();
+</script>
+
+<header class="site">
+  <a href="/" style="display:flex;align-items:center;gap:14px;text-decoration:none;">
+    <div class="logo">A</div>
+    <div>
+      <h1>ABUZ8</h1>
+      <p>AI Consistent Character Generator</p>
+    </div>
+  </a>
+  <a class="home-link" href="/tools.html">All Tools</a>
+  <span class="badge-stage">Early Access</span>
+</header>
+
+<section class="hero">
+  <span class="eyebrow">Same Identity • Infinite Scenes • IP-Adapter</span>
+  <h2>Build a character <span class="accent">once</span>. Reuse them <span class="turq-accent">forever</span>.</h2>
+  <p class="lede">Lock a character's face, hair, and core identity. Then render them in any scene, any pose, any outfit, any lighting. Webcomics. Light novels. Indie games. Brand mascots. The same character across 200 images that genuinely look like the same person.</p>
+  <div class="meta-strip">
+    <span><span class="dot">●</span> IP-Adapter face anchoring</span>
+    <span><span class="dot">●</span> Pose / scene / outfit variants</span>
+    <span><span class="dot">●</span> Reference photo OR text-only</span>
+    <span><span class="dot">●</span> 12–25 sec render</span>
+    <span><span class="dot">●</span> Royalty-free output</span>
+  </div>
+</section>
+
+<div class="container">
+  <div class="grid-main">
+
+    <!-- LEFT: Builder -->
+    <div>
+      <div class="panel">
+        <div class="panel-title">Step 1 — Define Your Character</div>
+
+        <div class="anchor-row">
+          <div>
+            <label class="first" style="margin-bottom:6px;">Reference Photo <span class="hint">optional</span></label>
+            <div class="ref-zone" id="ref-zone">
+              <div id="ref-empty">
+                <div style="font-size:24px;margin-bottom:6px;">📸</div>
+                <div>Click to upload</div>
+              </div>
+              <img id="ref-img" style="display:none;">
+              <div class="overlay" id="ref-overlay" style="display:none;">Replace</div>
+            </div>
+            <input type="file" id="ref-input" accept="image/jpeg,image/png,image/webp" style="display:none;">
+          </div>
+          <div>
+            <label class="first">Character Description <span class="hint">required</span></label>
+            <textarea id="char-desc" placeholder="Aria, a 24-year-old woman with shoulder-length silver hair, piercing teal eyes, and a small scar on her right cheek. She wears practical leather armor. Calm, focused expression. Lives in a coastal port city in a steampunk world."></textarea>
+            <p style="font-size:11px;color:var(--dim);margin-top:6px;line-height:1.5;">Be specific about face structure, hair, eyes, distinguishing marks. The more specific, the more consistent across renders.</p>
+          </div>
+        </div>
+
+        <label>Character Archetype</label>
+        <div class="pill-row" id="archetypes">
+          <span class="pill active" data-arch="custom">Custom (use desc above)</span>
+          <span class="pill" data-arch="hero">Hero / Protagonist</span>
+          <span class="pill" data-arch="mage">Mage / Wizard</span>
+          <span class="pill" data-arch="warrior">Warrior</span>
+          <span class="pill" data-arch="rogue">Rogue / Thief</span>
+          <span class="pill" data-arch="noble">Noble</span>
+          <span class="pill" data-arch="scholar">Scholar</span>
+          <span class="pill" data-arch="mascot">Brand Mascot</span>
+        </div>
+
+        <label>Art Style</label>
+        <div class="pill-row" id="styles">
+          <span class="pill active" data-style="realistic">Realistic</span>
+          <span class="pill" data-style="anime">Anime</span>
+          <span class="pill" data-style="manhwa">Manhwa</span>
+          <span class="pill" data-style="painted">Painted Illustration</span>
+          <span class="pill" data-style="3d">3D Render</span>
+          <span class="pill" data-style="cartoon">Cartoon</span>
+          <span class="pill" data-style="comic">Western Comic</span>
+          <span class="pill" data-style="watercolor">Watercolor</span>
+        </div>
+
+        <div class="consent-box" id="consent-block" style="display:none;">
+          <label>
+            <input type="checkbox" id="consent-check">
+            <span>I confirm this is my own face OR I have explicit consent from the person pictured. I will NOT upload photos of public figures, celebrities, minors, or anyone who hasn't given written consent. ABUZ8 face-detection guardrails will block known public figures.</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title">Step 2 — Place Them in a Scene</div>
+
+        <label class="first">Scene / Pose <span class="hint">where they are, what they're doing</span></label>
+        <textarea id="scene" placeholder="Standing on a stone bridge at dusk, looking back over her shoulder. Lantern light reflects in her eyes. Mist drifts low across the water below."></textarea>
+
+        <label>Mood</label>
+        <div class="pill-row" id="moods">
+          <span class="pill turq active" data-mood="cinematic">Cinematic</span>
+          <span class="pill turq" data-mood="serene">Serene</span>
+          <span class="pill turq" data-mood="dramatic">Dramatic</span>
+          <span class="pill turq" data-mood="energetic">Energetic</span>
+          <span class="pill turq" data-mood="mysterious">Mysterious</span>
+          <span class="pill turq" data-mood="heroic">Heroic</span>
+          <span class="pill turq" data-mood="contemplative">Contemplative</span>
+        </div>
+
+        <div class="field-row" style="margin-top:18px;">
+          <div>
+            <label class="first">Output Mode</label>
+            <select id="mode">
+              <option value="single">Single Scene</option>
+              <option value="sheet">Character Sheet (front + side + back)</option>
+              <option value="expressions">5 Expression Variants</option>
+              <option value="outfits">3 Outfit Variants</option>
+              <option value="poses">4 Pose Variants</option>
+            </select>
+          </div>
+          <div>
+            <label class="first">Aspect</label>
+            <select id="aspect">
+              <option value="1:1">Square — 1:1</option>
+              <option value="3:4" selected>Portrait — 3:4</option>
+              <option value="9:16">Vertical — 9:16</option>
+              <option value="16:9">Wide — 16:9</option>
+            </select>
+          </div>
+        </div>
+
+        <label>Identity Lock Strength <span class="hint">how strict is face matching</span></label>
+        <div class="slider-row">
+          <input type="range" id="lock-strength" min="50" max="100" value="85">
+          <span class="val" id="lock-val">85%</span>
+        </div>
+        <p style="font-size:11px;color:var(--dim);margin-top:6px;line-height:1.5;">Higher = more identical face but less pose flexibility. Lower = more pose variation but face may drift slightly. 80–90% is the usable sweet spot.</p>
+
+        <button class="gen-btn" id="generate">Generate Character →</button>
+        <button class="secondary-btn" id="randomize">🎲 Random Scene Idea</button>
+      </div>
+    </div>
+
+    <!-- RIGHT: Preview + Waitlist -->
+    <div>
+      <div class="panel">
+        <div class="panel-title">Live Preview</div>
+        <div class="preview-frame" id="preview">
+          <div class="preview-icon">👤</div>
+          <h3>Your character appears here</h3>
+          <p>Define your character on the left, place them in a scene, then click Generate. The render uses IP-Adapter to lock identity while letting pose, scene, and outfit vary.</p>
+        </div>
+        <div id="prompt-display" style="display:none;">
+          <div class="preview-prompt" id="prompt-text"></div>
+        </div>
+      </div>
+
+      <div class="waitlist-wrap">
+        <h3>Join Early Access</h3>
+        <p class="sub">Live identity-lock rendering is gated to Early Access. Drop your email — first 500 unlock unlimited renders, character library (save up to 50 characters), and trained-LoRA upgrade for ultimate consistency.</p>
+        <div class="waitlist-form">
+          <input id="wl-email" type="email" placeholder="you@studio.com" autocomplete="email">
+          <button id="wl-submit">Get Access</button>
+        </div>
+        <div class="waitlist-msg" id="wl-msg"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- HOW -->
+<section class="section">
+  <h2>How <span class="accent">identity lock</span> works</h2>
+  <p class="lede">Four steps from blank page to a character library you can pull from forever.</p>
+  <div class="steps">
+    <div class="step"><div class="step-num">1</div><h3>Define your character</h3><p>Upload a reference photo OR describe them in text. Be specific: face shape, hair, eyes, distinguishing features.</p></div>
+    <div class="step"><div class="step-num">2</div><h3>Pick style + archetype</h3><p>Realistic? Anime? Painted? Pick the look. Then pick an archetype that frames the prompt — hero, mage, scholar.</p></div>
+    <div class="step"><div class="step-num">3</div><h3>Place them in a scene</h3><p>Type the scene. The model varies pose, lighting, outfit, and background while preserving identity via IP-Adapter.</p></div>
+    <div class="step"><div class="step-num">4</div><h3>Generate variants</h3><p>Single scene, character sheet, expression set, outfit pack, or pose pack. Same character, every time.</p></div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="section">
+  <h2>Why this <span class="accent">isn't</span> just text-to-image</h2>
+  <p class="lede">Six things this tool does that vanilla Stable Diffusion can't, won't, or does badly.</p>
+  <div class="feature-grid">
+    <div class="feature-card"><div class="icon">🔒</div><h3>True Identity Lock</h3><p>IP-Adapter binds face structure to every render. Same character at 0.85+ lock strength is genuinely the same character — not a "pretty close" approximation.</p></div>
+    <div class="feature-card"><div class="icon">📚</div><h3>Character Library</h3><p>Early Access includes a personal library of up to 50 saved characters. Pull any of them into any scene with one click.</p></div>
+    <div class="feature-card"><div class="icon">🎭</div><h3>Expression + Pose Without Drift</h3><p>Generate a 5-expression sheet (happy, sad, angry, surprised, neutral) where every face is unmistakably the same person.</p></div>
+    <div class="feature-card"><div class="icon">👗</div><h3>Outfit Swap, Identity Intact</h3><p>Put your character in armor, a business suit, casual wear, or fantasy robes. Their face doesn't change.</p></div>
+    <div class="feature-card"><div class="icon">🎨</div><h3>Style Transfer with Identity</h3><p>Render the same character in realistic, anime, watercolor, and 3D — and they're recognizably the same person across all four.</p></div>
+    <div class="feature-card"><div class="icon">⚡</div><h3>LoRA Upgrade Path</h3><p>Premium tier trains a personalized LoRA from 10–20 of your character's renders. After that, identity lock is near-perfect at any pose / lighting.</p></div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="section">
+  <h2>Common <span class="accent">questions</span></h2>
+  <div id="faq-list">
+    <div class="faq-item"><div class="faq-q">How does character consistency actually work? <span class="toggle">+</span></div><div class="faq-a">You either upload a reference photo or describe a character. The system builds a character anchor using IP-Adapter, which conditions every subsequent render to preserve face, hair, and core features while allowing pose, scene, outfit, and expression to vary. Premium tier additionally trains a personalized LoRA on 10–20 of your character's renders for near-perfect lock at any pose.</div></div>
+    <div class="faq-item"><div class="faq-q">Can I use a real person's face? <span class="toggle">+</span></div><div class="faq-a">You may use your own face or a face you have explicit consent to use. We block known public figures via face-detection guardrails. We require an attestation checkbox before processing any photo with a real face. We never train on uploaded faces — your reference is used to build the IP-Adapter conditioning, then deleted within 60 minutes.</div></div>
+    <div class="faq-item"><div class="faq-q">How consistent is the face really? <span class="toggle">+</span></div><div class="faq-a">Very. IP-Adapter weight at 0.85 (our default) holds face structure across pose, outfit, and lighting changes. Higher weights tighten the lock at the cost of pose flexibility. Lower weights allow more variation at the cost of consistency. Realistic style holds best; heavily stylized art (cartoon, watercolor) shows more drift but stays recognizable.</div></div>
+    <div class="faq-item"><div class="faq-q">What's the use case? <span class="toggle">+</span></div><div class="faq-a">Webcomics, light novels, indie games, VTuber asset packs, D&amp;D character art, brand mascots, children's books, marketing campaigns where a recurring character matters. Any project where you need the SAME character across MANY images. This isn't general image generation — it's a character pipeline.</div></div>
+    <div class="faq-item"><div class="faq-q">Can I generate multiple consistent characters together? <span class="toggle">+</span></div><div class="faq-a">Yes — Early Access includes multi-character scenes (up to 4 characters). Each is locked via its own IP-Adapter slot. Useful for webcomic dialogue panels, group portraits, party shots in fantasy settings.</div></div>
+    <div class="faq-item"><div class="faq-q">What if I don't have a reference photo? <span class="toggle">+</span></div><div class="faq-a">Text-only mode works perfectly. The first render becomes the character anchor. Subsequent renders lock to that first generation's face. You can also generate a few candidates and pick the best one to lock as the canonical reference.</div></div>
+  </div>
+</section>
+
+<footer class="site">
+  <p>© 2026 ABUZ8 LLC. AI Consistent Character is part of the ABUZ8 AI tool suite. <a href="/">Home</a> · <a href="/tools.html">All Tools</a> · <a href="/disclaimer.html">Disclaimer</a> · <a href="/privacy.html">Privacy</a></p>
+  <p style="margin-top:8px;">Reference photos are processed and deleted within 60 minutes. We never train on your uploads.</p>
+</footer>
+
+<script src="_abuz8-live-brain.js" defer></script>
+
+<script>
+(function(){
+  'use strict';
+
+  const state = {
+    refImage: null,
+    archetype: 'custom',
+    style: 'realistic',
+    mood: 'cinematic',
+    lockStrength: 85
+  };
+
+  // REF UPLOAD
+  const refZone = document.getElementById('ref-zone');
+  const refInput = document.getElementById('ref-input');
+  const refImg = document.getElementById('ref-img');
+  const refEmpty = document.getElementById('ref-empty');
+  const refOverlay = document.getElementById('ref-overlay');
+  const consentBlock = document.getElementById('consent-block');
+
+  refZone.addEventListener('click', () => refInput.click());
+  refInput.addEventListener('change', (e) => {
+    const f = e.target.files && e.target.files[0];
+    if (!f) return;
+    if (f.size > 10 * 1024 * 1024) { alert('Max 10MB'); return; }
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      state.refImage = ev.target.result;
+      refImg.src = state.refImage;
+      refImg.style.display = 'block';
+      refEmpty.style.display = 'none';
+      refOverlay.style.display = 'flex';
+      consentBlock.style.display = 'block';
+    };
+    reader.readAsDataURL(f);
+  });
+
+  // PILLS
+  function bindPills(id, key) {
+    const ctn = document.getElementById(id);
+    if (!ctn) return;
+    ctn.querySelectorAll('.pill').forEach(p => {
+      p.addEventListener('click', () => {
+        ctn.querySelectorAll('.pill').forEach(x => x.classList.remove('active'));
+        p.classList.add('active');
+        state[key] = p.dataset[key === 'archetype' ? 'arch' : key];
+        updatePromptPreview();
+      });
+    });
+  }
+  bindPills('archetypes', 'archetype');
+  bindPills('styles', 'style');
+  bindPills('moods', 'mood');
+
+  // SLIDER
+  const lockSlider = document.getElementById('lock-strength');
+  const lockVal = document.getElementById('lock-val');
+  lockSlider.addEventListener('input', () => {
+    state.lockStrength = +lockSlider.value;
+    lockVal.textContent = state.lockStrength + '%';
+    updatePromptPreview();
+  });
+
+  // PROMPT BUILDER
+  const stylePrompts = {
+    'realistic':  'photorealistic, detailed skin texture, professional photography lighting',
+    'anime':      'anime art style, vibrant cel shading, crisp linework',
+    'manhwa':     'manhwa webtoon style, clean digital illustration, vibrant colors',
+    'painted':    'painted illustration, classical brushstrokes, rich color depth',
+    '3d':         '3D render, octane quality, physically-based materials, professional cinematic lighting',
+    'cartoon':    'modern cartoon style, bold lineart, flat colors with simple shading',
+    'comic':      'western comic book style, ink lineart, dynamic shading',
+    'watercolor': 'watercolor painting, soft washes, organic texture, hand-painted feel'
+  };
+  const moodPrompts = {
+    'cinematic':     'cinematic composition, film-grade lighting',
+    'serene':        'peaceful atmosphere, soft natural light',
+    'dramatic':      'dramatic chiaroscuro lighting, intense shadows',
+    'energetic':     'dynamic energy, motion-suggestive composition',
+    'mysterious':    'mysterious atmosphere, atmospheric haze',
+    'heroic':        'heroic stance, low-angle composition, epic lighting',
+    'contemplative': 'introspective mood, soft directional light'
+  };
+  const archetypeMods = {
+    'custom':  '',
+    'hero':    ', heroic protagonist, confident bearing, well-lit composition',
+    'mage':    ', mage / wizard, arcane attire, magical aura, mystical accoutrements',
+    'warrior': ', warrior, practical armor, weathered leather, scarred and battle-tested',
+    'rogue':   ', rogue / thief, dark practical attire, hooded, shadow-dweller',
+    'noble':   ', noble, regal attire, fine fabrics, elegant bearing',
+    'scholar': ', scholar / academic, wire-rim glasses, robes or refined attire, intelligent expression',
+    'mascot':  ', friendly brand mascot character, approachable design, marketing-ready'
+  };
+
+  function buildPrompt() {
+    const charDesc = (document.getElementById('char-desc').value || '').trim();
+    const scene = (document.getElementById('scene').value || '').trim();
+    const mode = document.getElementById('mode').value;
+    const aspect = document.getElementById('aspect').value;
+
+    if (!charDesc) return null;
+
+    const styleStr = stylePrompts[state.style] || stylePrompts.realistic;
+    const moodStr = moodPrompts[state.mood] || moodPrompts.cinematic;
+    const archStr = archetypeMods[state.archetype] || '';
+
+    let modeStr = '';
+    if (mode === 'sheet') modeStr = 'character reference sheet, three angles: front view, side profile, back view, neutral pose, ';
+    if (mode === 'expressions') modeStr = 'five expression variants in a grid: happy, sad, angry, surprised, neutral, ';
+    if (mode === 'outfits') modeStr = 'three outfit variants of the same character: casual, formal, action gear, ';
+    if (mode === 'poses') modeStr = 'four pose variants of the same character: standing, sitting, walking, dynamic action, ';
+
+    const sceneStr = scene ? scene + ', ' : '';
+    const positive = `${modeStr}${charDesc}${archStr}, ${sceneStr}${styleStr}, ${moodStr}, aspect ratio ${aspect}, ip-adapter weight ${(state.lockStrength/100).toFixed(2)}`;
+    const negative = 'inconsistent face, different person, identity drift, deformed, low quality, blurry, watermark, text';
+
+    return { positive, negative, mode, aspect };
+  }
+
+  function updatePromptPreview() {
+    const p = buildPrompt();
+    const display = document.getElementById('prompt-display');
+    const text = document.getElementById('prompt-text');
+    if (!p) { display.style.display = 'none'; return; }
+    display.style.display = 'block';
+    text.innerHTML = `<strong>POSITIVE:</strong> ${escapeHtml(p.positive)}<br><br><strong>NEGATIVE:</strong> ${escapeHtml(p.negative)}<br><br><strong>LOCK:</strong> ${state.lockStrength}%`;
+  }
+  function escapeHtml(s){ return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+  ['char-desc','scene','mode','aspect'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('input', updatePromptPreview);
+    if (el) el.addEventListener('change', updatePromptPreview);
+  });
+
+  // RANDOM SCENE
+  const sceneSeeds = [
+    "Standing on a stone bridge at dusk, looking back over her shoulder. Lantern light reflects in her eyes. Mist drifts low across the water below.",
+    "Sitting cross-legged on a moss-covered rock in a forest clearing at dawn. Reading a worn leather journal. Sunbeams filter through the canopy.",
+    "Walking through a neon-lit market street at night, hood up, hands in pockets. Stalls glow with steam and colored lanterns.",
+    "Leaning against a stone parapet overlooking a moonlit valley. The wind catches their cloak. Distant city lights below.",
+    "Crouched on a rooftop at sunset, surveying the city below. Last light catches their face from below. Determined expression.",
+    "In a cozy library at night, surrounded by floating glowing books. Candlelight on their face. Soft contemplative mood.",
+    "Walking along an empty beach at dawn, footprints in wet sand behind them. Ocean mist softens the horizon."
+  ];
+  document.getElementById('randomize').addEventListener('click', () => {
+    document.getElementById('scene').value = sceneSeeds[Math.floor(Math.random()*sceneSeeds.length)];
+    updatePromptPreview();
+  });
+
+  // GENERATE
+  document.getElementById('generate').addEventListener('click', async () => {
+    const p = buildPrompt();
+    if (!p) {
+      alert('Please describe your character first.');
+      document.getElementById('char-desc').focus();
+      return;
+    }
+    if (state.refImage && !document.getElementById('consent-check').checked) {
+      alert('Please confirm consent for the uploaded face before generating.');
+      return;
+    }
+
+    const btn = document.getElementById('generate');
+    btn.disabled = true;
+    btn.textContent = 'Checking GPU…';
+
+    let live = false;
+    try {
+      if (window.ABUZ8 && typeof window.ABUZ8.comfyHealthy === 'function') {
+        live = await window.ABUZ8.comfyHealthy();
+      }
+    } catch (_) { live = false; }
+
+    if (live && window.ABUZ8 && typeof window.ABUZ8.runTool === 'function') {
+      btn.textContent = 'Rendering on RTX 5090…';
+      const result = await window.ABUZ8.runTool('comfyui_consistent_character', {
+        prompt: p.positive,
+        negative_prompt: p.negative,
+        reference_image: state.refImage || null,
+        ip_adapter_weight: state.lockStrength / 100,
+        mode: p.mode,
+        aspect: p.aspect
+      }, { timeoutMs: 240000 });
+
+      if (result && result.images && result.images.length) showResult(result);
+      else queueToWaitlist(p, 'GPU returned no result');
+    } else {
+      queueToWaitlist(p, live ? 'API offline' : 'GPU offline');
+    }
+
+    btn.disabled = false;
+    btn.textContent = 'Generate Character →';
+  });
+
+  function showResult(result) {
+    const preview = document.getElementById('preview');
+    let imgs = '';
+    (result.images || []).forEach(url => {
+      imgs += `<img src="${url}" style="max-width:100%;border-radius:8px;margin-top:8px;">`;
+    });
+    preview.innerHTML = `
+      <div style="font-size:13px;color:var(--turq3);margin-bottom:8px;">✓ Rendered with identity lock at ${state.lockStrength}%</div>
+      ${imgs}
+      <p style="margin-top:12px;font-size:12px;color:var(--dim);">Right-click to save. Royalty-free.</p>
+    `;
+  }
+
+  function queueToWaitlist(p, reason) {
+    const preview = document.getElementById('preview');
+    preview.innerHTML = `
+      <div class="preview-icon">⏳</div>
+      <h3 style="font-family:'Playfair Display',serif;font-size:22px;color:var(--cream);">Queued for next render window</h3>
+      <p style="color:var(--dim);font-size:13px;max-width:340px;line-height:1.6;">
+        ${reason}. Drop your email below — we'll render this character the moment the live GPU is back online and email you the results within 30 minutes.
+      </p>
+      <div class="preview-prompt" style="margin-top:14px;">
+        <strong>YOUR PROMPT:</strong><br>${escapeHtml(p.positive.slice(0, 400))}${p.positive.length > 400 ? '…' : ''}
+      </div>
+    `;
+    try {
+      const queue = JSON.parse(localStorage.getItem('abuz8_render_queue') || '[]');
+      queue.push({ tool: 'consistent-character', prompt: p, ts: new Date().toISOString() });
+      localStorage.setItem('abuz8_render_queue', JSON.stringify(queue));
+    } catch (_) {}
+    document.querySelector('.waitlist-wrap').scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+  // WAITLIST
+  document.getElementById('wl-submit').addEventListener('click', async () => {
+    const email = (document.getElementById('wl-email').value || '').trim();
+    const msg = document.getElementById('wl-msg');
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      msg.style.color = '#e05555'; msg.textContent = 'Please enter a valid email address.'; return;
+    }
+    msg.style.color = 'var(--dim)'; msg.textContent = 'Saving your spot…';
+    const payload = { email, tool: 'ai-consistent-character', ts: new Date().toISOString() };
+    let saved = false;
+    try {
+      const r = await fetch('/api/waitlist', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      if (r.ok) saved = true;
+    } catch (_) {}
+    try {
+      const list = JSON.parse(localStorage.getItem('abuz8_waitlist') || '[]');
+      list.push(payload);
+      localStorage.setItem('abuz8_waitlist', JSON.stringify(list));
+    } catch (_) {}
+    msg.style.color = 'var(--turq3)';
+    msg.textContent = saved ? '✓ You\'re in. Watch your inbox.' : '✓ Saved locally. Confirmation will follow.';
+    document.getElementById('wl-email').value = '';
+  });
+
+  // FAQ
+  document.querySelectorAll('.faq-item').forEach(item => {
+    item.addEventListener('click', () => item.classList.toggle('open'));
+  });
+
+  updatePromptPreview();
+})();
+</script>
+
+
+<script src="/assets/js/dfy-banner.js" async></script>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+<script src="/tools/_tools-shared.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>
+

@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Form Builder — Build Forms in Seconds | ABUZ8</title>
+<meta name="description" content="Describe the form you need in plain English. AI builds it instantly. Copy the embed code. Free.">
+<link rel="canonical" href="https://abuz8ai.com/tools/ai-form-builder">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"AI Form Builder","url":"https://abuz8ai.com/tools/ai-form-builder","description":"Describe any form in plain English and get embed-ready HTML instantly.","applicationCategory":"DeveloperApplication","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --lapis:#0a1628;--lapis2:#0f1f3d;--lapis3:#162544;
+  --gold:#c9a84c;--gold2:#e8c96d;
+  --turq:#0e9f6e;--turq2:#22b5a0;
+  --text:#e8e4dc;--muted:#8892a4;
+  --border:rgba(201,168,76,0.18);
+  --rad:12px;
+}
+body{background:var(--lapis);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh}
+a{color:var(--gold);text-decoration:none}
+.nav{display:flex;align-items:center;justify-content:space-between;padding:18px 40px;border-bottom:1px solid var(--border)}
+.nav-logo{font-family:'Playfair Display',serif;font-size:1.4rem;color:var(--gold)}
+.nav-links{display:flex;gap:24px;font-size:.85rem}
+.nav-links a{color:var(--muted);transition:color .2s}.nav-links a:hover{color:var(--gold)}
+
+.hero{text-align:center;padding:52px 20px 32px;max-width:760px;margin:0 auto}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(26,138,122,0.15);border:1px solid rgba(26,138,122,0.3);border-radius:100px;padding:6px 16px;font-size:.78rem;color:var(--turq2);margin-bottom:20px}
+.hero h1{font-family:'Playfair Display',serif;font-size:clamp(2rem,5vw,3.2rem);line-height:1.15;margin-bottom:14px}
+.hero h1 span{color:var(--turq2)}
+.hero p{color:var(--muted);font-size:1rem;line-height:1.7;max-width:560px;margin:0 auto}
+
+.builder{max-width:1100px;margin:32px auto 60px;padding:0 20px;display:grid;grid-template-columns:1fr 1fr;gap:24px}
+@media(max-width:800px){.builder{grid-template-columns:1fr}}
+
+/* Left Panel — Config */
+.panel{background:var(--lapis2);border:1px solid var(--border);border-radius:var(--rad);overflow:hidden}
+.panel-head{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.panel-head h2{font-size:1rem;font-weight:600;flex:1}
+.panel-body{padding:20px}
+
+textarea.prompt-area{width:100%;background:var(--lapis3);border:1px solid var(--border);border-radius:8px;padding:14px;color:var(--text);font-size:.9rem;font-family:'Inter',sans-serif;resize:vertical;min-height:90px;outline:none;line-height:1.5;transition:border-color .2s}
+textarea.prompt-area:focus{border-color:var(--turq)}
+textarea.prompt-area::placeholder{color:var(--muted)}
+
+.quick-prompts{margin:12px 0}
+.qp-label{font-size:.74rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px}
+.qp-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.qp-btn{background:var(--lapis3);border:1px solid var(--border);border-radius:8px;padding:8px 10px;font-size:.75rem;color:var(--muted);cursor:pointer;text-align:left;transition:all .2s;line-height:1.3}
+.qp-btn:hover{border-color:var(--turq);color:var(--turq2)}
+
+.options-section{margin:14px 0}
+.opt-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.opt-row:last-child{margin:0}
+.opt-row label{font-size:.85rem;color:var(--text)}
+select.opt-select{background:var(--lapis3);border:1px solid var(--border);border-radius:6px;padding:6px 10px;color:var(--text);font-size:.83rem;outline:none;cursor:pointer}
+.toggle-row{display:flex;align-items:center;gap:8px;font-size:.83rem;color:var(--muted);margin-bottom:8px;cursor:pointer}
+.toggle{width:36px;height:20px;background:var(--lapis3);border:1px solid var(--border);border-radius:100px;position:relative;cursor:pointer;transition:background .2s;flex-shrink:0}
+.toggle.on{background:var(--turq)}
+.toggle::after{content:'';position:absolute;width:14px;height:14px;background:#fff;border-radius:50%;top:2px;left:2px;transition:left .2s}
+.toggle.on::after{left:18px}
+
+.build-btn{width:100%;background:var(--turq);color:#fff;border:none;border-radius:var(--rad);padding:14px;font-size:1rem;font-weight:700;cursor:pointer;transition:all .2s;margin-top:4px}
+.build-btn:hover{background:var(--turq2);transform:translateY(-1px)}
+.build-btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+
+/* Right Panel — Preview / Code */
+.panel-tabs{display:flex;border-bottom:1px solid var(--border)}
+.ptab{flex:1;padding:12px;text-align:center;font-size:.83rem;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;transition:all .2s}
+.ptab.active{color:var(--turq2);border-bottom-color:var(--turq2)}
+
+.preview-pane{padding:20px;min-height:400px;display:none}
+.preview-pane.active{display:block}
+.form-preview{background:#fff;border-radius:10px;padding:28px;font-family:'Inter',sans-serif}
+.form-preview h3{font-size:1.2rem;color:#111;margin-bottom:6px;font-family:'Inter',sans-serif}
+.form-preview p.form-desc{font-size:.85rem;color:#666;margin-bottom:20px;line-height:1.5}
+.fp-field{margin-bottom:16px}
+.fp-field label{display:block;font-size:.83rem;font-weight:600;color:#222;margin-bottom:5px}
+.fp-field .fp-req{color:#e85c2a;margin-left:2px}
+.fp-field input, .fp-field textarea, .fp-field select{width:100%;border:1.5px solid #d1d5db;border-radius:6px;padding:10px 12px;font-size:.88rem;color:#111;font-family:'Inter',sans-serif;background:#fff;outline:none;transition:border-color .2s}
+.fp-field input:focus,.fp-field textarea:focus,.fp-field select:focus{border-color:#0e9f6e}
+.fp-field textarea{resize:vertical;min-height:70px}
+.fp-field .fp-hint{font-size:.75rem;color:#888;margin-top:4px}
+.fp-submit{background:#0e9f6e;color:#fff;border:none;border-radius:6px;padding:12px 24px;font-size:.95rem;font-weight:700;cursor:pointer;width:100%;transition:background .2s}
+.fp-submit:hover{background:#22b5a0}
+
+.code-pane{padding:20px;display:none;min-height:400px}
+.code-pane.active{display:block}
+.code-area{background:#060e1a;border-radius:8px;padding:16px;font-family:'Fira Code',monospace;font-size:.75rem;color:#b8d4ff;line-height:1.7;overflow-x:auto;max-height:380px;overflow-y:auto;white-space:pre}
+.code-actions{display:flex;gap:8px;margin-top:10px}
+.code-btn{background:var(--lapis3);border:1px solid var(--border);border-radius:6px;padding:8px 14px;font-size:.8rem;color:var(--muted);cursor:pointer;transition:all .2s;font-family:'Inter',sans-serif}
+.code-btn:hover{border-color:var(--gold);color:var(--gold)}
+.code-btn.copied{border-color:var(--turq);color:var(--turq2)}
+
+.empty-preview{text-align:center;padding:60px 20px;color:var(--muted)}
+.empty-preview .ep-icon{font-size:3rem;margin-bottom:12px}
+.empty-preview p{font-size:.88rem;line-height:1.6}
+
+.footer{border-top:1px solid var(--border);padding:28px 40px;display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;align-items:center;font-size:.82rem;color:var(--muted)}
+.footer a{color:var(--muted);transition:color .2s}.footer a:hover{color:var(--gold)}
+</style>
+</head>
+<body>
+<nav class="nav">
+  <div class="nav-logo">ABUZ8</div>
+  <div class="nav-links"><a href="/tools">Tools</a><a href="/free.html">Free</a><a href="/news.html">AI Daily</a></div>
+</nav>
+
+<section class="hero">
+  <div class="hero-badge">⚡ Instant Form Generation</div>
+  <h1>Build Any <span>Form</span> in Seconds</h1>
+  <p>Describe what you need in plain English. AI generates a fully styled, embed-ready HTML form — no coding required.</p>
+</section>
+
+<div class="builder">
+  <!-- Left: Config -->
+  <div class="panel">
+    <div class="panel-head">
+      <span>⚙️</span>
+      <h2>Describe Your Form</h2>
+    </div>
+    <div class="panel-body">
+      <textarea class="prompt-area" id="promptArea" placeholder="e.g. Contact form with name, email, company, and a message field. Add a dropdown for budget range."></textarea>
+      <div class="quick-prompts">
+        <div class="qp-label">Quick prompts</div>
+        <div class="qp-grid">
+          <div class="qp-btn" onclick="setPrompt(this)">Contact form with name, email, phone, and message</div>
+          <div class="qp-btn" onclick="setPrompt(this)">Job application form with resume upload, experience level, and availability</div>
+          <div class="qp-btn" onclick="setPrompt(this)">Event registration with name, email, ticket type, and dietary requirements</div>
+          <div class="qp-btn" onclick="setPrompt(this)">Customer feedback form with star rating, category, and open comment</div>
+          <div class="qp-btn" onclick="setPrompt(this)">Lead capture with name, company, role, team size, and use case</div>
+          <div class="qp-btn" onclick="setPrompt(this)">Newsletter signup with name, email, and interest checkboxes</div>
+        </div>
+      </div>
+      <div class="options-section">
+        <div class="opt-row">
+          <label>Form style</label>
+          <select class="opt-select" id="formStyle">
+            <option value="clean">Clean / Minimal</option>
+            <option value="dark">Dark Mode</option>
+            <option value="card">Card style</option>
+            <option value="inline">Inline / Compact</option>
+          </select>
+        </div>
+        <div class="opt-row">
+          <label>Button color</label>
+          <select class="opt-select" id="btnColor">
+            <option value="teal">Teal (#0e9f6e)</option>
+            <option value="blue">Blue (#2563eb)</option>
+            <option value="violet">Violet (#7c3aed)</option>
+            <option value="gold">Gold (#c9a84c)</option>
+            <option value="red">Red (#dc2626)</option>
+            <option value="black">Black</option>
+          </select>
+        </div>
+        <div class="toggle-row" onclick="toggleOpt('reqToggle')">
+          <div class="toggle on" id="reqToggle"></div>
+          Mark required fields with asterisk
+        </div>
+        <div class="toggle-row" onclick="toggleOpt('hintToggle')">
+          <div class="toggle on" id="hintToggle"></div>
+          Add placeholder / helper text
+        </div>
+        <div class="toggle-row" onclick="toggleOpt('validToggle')">
+          <div class="toggle" id="validToggle"></div>
+          Add inline validation (JS)
+        </div>
+      </div>
+      <button class="build-btn" id="buildBtn" onclick="buildForm()">⚡ Generate Form</button>
+    </div>
+  </div>
+
+  <!-- Right: Output -->
+  <div class="panel">
+    <div class="panel-tabs">
+      <div class="ptab active" id="tab-preview" onclick="switchTab('preview')">👁 Preview</div>
+      <div class="ptab" id="tab-code" onclick="switchTab('code')">💻 HTML Code</div>
+    </div>
+    <div class="preview-pane active" id="pane-preview">
+      <div class="empty-preview" id="emptyPreview">
+        <div class="ep-icon">📋</div>
+        <p>Describe your form above and click <strong>Generate Form</strong> to see it rendered here.</p>
+      </div>
+      <div id="formPreviewContent" style="display:none"></div>
+    </div>
+    <div class="preview-pane" id="pane-code">
+      <div class="empty-preview" id="emptyCode">
+        <div class="ep-icon">💻</div>
+        <p>Generate a form first to see the embed code.</p>
+      </div>
+      <div id="codeContent" style="display:none">
+        <div class="code-area" id="codeArea"></div>
+        <div class="code-actions">
+          <button class="code-btn" id="copyBtn" onclick="copyCode()">📋 Copy HTML</button>
+          <button class="code-btn" onclick="downloadCode()">⬇ Download .html</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer class="footer">
+  <div>© 2026 ABUZ8 LLC — Free form builder</div>
+  <div style="display:flex;gap:20px">
+    <a href="/tools">All Tools</a>
+    <a href="https://github.com/abuz8studios-ship-it" target="_blank">GitHub ↗</a>
+    <a href="https://huggingface.co/abuz8studios" target="_blank">Hugging Face ↗</a>
+    <a href="/support.html">Support the work →</a>
+  </div>
+</footer>
+
+<script>
+let currentFormHTML = '';
+let currentTab = 'preview';
+
+// Field type inference from text
+const FIELD_PATTERNS = [
+  { re: /email/i, type: 'email', label: 'Email Address', ph: 'you@example.com' },
+  { re: /phone|mobile|cell/i, type: 'tel', label: 'Phone Number', ph: '+1 (555) 000-0000' },
+  { re: /name$/i, type: 'text', label: 'Full Name', ph: 'Jane Smith' },
+  { re: /first.?name/i, type: 'text', label: 'First Name', ph: 'Jane' },
+  { re: /last.?name/i, type: 'text', label: 'Last Name', ph: 'Smith' },
+  { re: /company|organization|org/i, type: 'text', label: 'Company', ph: 'Acme Inc.' },
+  { re: /website|url|domain/i, type: 'url', label: 'Website', ph: 'https://yoursite.com' },
+  { re: /message|comment|note|feedback|description|tell us/i, type: 'textarea', label: 'Message', ph: 'Write your message here...' },
+  { re: /budget/i, type: 'select', label: 'Budget Range', options: ['Under $1K','$1K–$5K','$5K–$20K','$20K–$100K','$100K+'] },
+  { re: /team.?size|company.?size|employees/i, type: 'select', label: 'Team Size', options: ['Just me','2–10','11–50','51–200','200+'] },
+  { re: /role|title|position|job/i, type: 'text', label: 'Job Title', ph: 'Product Manager' },
+  { re: /date|when|schedule/i, type: 'date', label: 'Preferred Date' },
+  { re: /subject|topic|category/i, type: 'select', label: 'Category', options: ['General','Support','Sales','Partnership','Other'] },
+  { re: /how did you|hear about|source/i, type: 'select', label: 'How did you hear about us?', options: ['Google','LinkedIn','Friend/Referral','Twitter/X','Newsletter','Other'] },
+  { re: /password/i, type: 'password', label: 'Password', ph: 'Minimum 8 characters' },
+  { re: /confirm.?password/i, type: 'password', label: 'Confirm Password', ph: 'Re-enter password' },
+  { re: /experience|years/i, type: 'select', label: 'Experience Level', options: ['Entry level','1–3 years','3–7 years','7+ years'] },
+  { re: /ticket|plan|type|tier/i, type: 'radio', label: 'Ticket Type', options: ['General','VIP','Student'] },
+  { re: /interest|interest/i, type: 'checkbox', label: 'Areas of Interest', options: ['Marketing','Product','Engineering','Design','Sales'] },
+  { re: /diet|dietary|food/i, type: 'select', label: 'Dietary Requirements', options: ['None','Vegetarian','Vegan','Gluten-free','Halal','Kosher'] },
+  { re: /rating|stars|score/i, type: 'rating', label: 'Rating' },
+  { re: /resume|cv|upload|file|attachment/i, type: 'file', label: 'Upload File' },
+  { re: /availability|available/i, type: 'select', label: 'Availability', options: ['Immediately','Within 1 month','1–3 months','3+ months'] },
+  { re: /use.?case|purpose|goal/i, type: 'textarea', label: 'Use Case', ph: 'Tell us how you plan to use this...' },
+  { re: /newsletter|subscribe|updates/i, type: 'checkbox', label: 'Preferences', options: ['Weekly newsletter','Product updates','Special offers'] },
+];
+
+const BTN_COLORS = { teal:'#0e9f6e', blue:'#2563eb', violet:'#7c3aed', gold:'#c9a84c', red:'#dc2626', black:'#111' };
+
+function setPrompt(el) {
+  document.getElementById('promptArea').value = el.textContent.trim();
+  document.getElementById('promptArea').focus();
+}
+
+function toggleOpt(id) {
+  const el = document.getElementById(id);
+  el.classList.toggle('on');
+}
+
+function switchTab(tab) {
+  currentTab = tab;
+  document.getElementById('tab-preview').classList.toggle('active', tab==='preview');
+  document.getElementById('tab-code').classList.toggle('active', tab==='code');
+  document.getElementById('pane-preview').classList.toggle('active', tab==='preview');
+  document.getElementById('pane-code').classList.toggle('active', tab==='code');
+}
+
+function inferFields(prompt) {
+  const fields = [];
+  // Extract mentioned field names
+  const lower = prompt.toLowerCase();
+  // Check each pattern
+  FIELD_PATTERNS.forEach(p => {
+    if(p.re.test(lower)) fields.push(p);
+  });
+  // If very short or no matches, try comma-split
+  if(fields.length === 0) {
+    const parts = prompt.split(/,|and|\n/).map(s=>s.trim()).filter(Boolean);
+    parts.forEach(part => {
+      const match = FIELD_PATTERNS.find(p=>p.re.test(part));
+      if(match && !fields.find(f=>f.label===match.label)) fields.push(match);
+      else if(!match) {
+        fields.push({type:'text', label: part.charAt(0).toUpperCase()+part.slice(1), ph: part.toLowerCase()+'...'});
+      }
+    });
+  }
+  // Always ensure we have something
+  if(fields.length === 0) {
+    fields.push({type:'text',label:'Name',ph:'Your name'},{type:'email',label:'Email Address',ph:'you@example.com'},{type:'textarea',label:'Message',ph:'Your message...'});
+  }
+  return fields;
+}
+
+function extractFormTitle(prompt) {
+  if(/contact/i.test(prompt)) return 'Contact Us';
+  if(/application|apply/i.test(prompt)) return 'Application Form';
+  if(/registration|register|signup|sign up/i.test(prompt)) return 'Registration';
+  if(/feedback/i.test(prompt)) return 'Share Your Feedback';
+  if(/lead|inquiry|quote/i.test(prompt)) return 'Get In Touch';
+  if(/newsletter|subscribe/i.test(prompt)) return 'Stay Updated';
+  if(/survey/i.test(prompt)) return 'Survey';
+  return 'Form';
+}
+
+function buildForm() {
+  const prompt = document.getElementById('promptArea').value.trim();
+  if(!prompt) { document.getElementById('promptArea').style.borderColor='var(--turq)'; setTimeout(()=>document.getElementById('promptArea').style.borderColor='',1000); return; }
+
+  const btn = document.getElementById('buildBtn');
+  btn.disabled = true; btn.textContent = '⚡ Generating...';
+  setTimeout(()=>{
+    const fields = inferFields(prompt);
+    const title = extractFormTitle(prompt);
+    const style = document.getElementById('formStyle').value;
+    const btnColor = BTN_COLORS[document.getElementById('btnColor').value] || '#0e9f6e';
+    const showReq = document.getElementById('reqToggle').classList.contains('on');
+    const showHints = document.getElementById('hintToggle').classList.contains('on');
+    const addValidation = document.getElementById('validToggle').classList.contains('on');
+
+    const { previewHTML, codeHTML } = generateFormHTML(fields, title, style, btnColor, showReq, showHints, addValidation);
+    currentFormHTML = codeHTML;
+
+    document.getElementById('emptyPreview').style.display = 'none';
+    document.getElementById('formPreviewContent').style.display = 'block';
+    document.getElementById('formPreviewContent').innerHTML = previewHTML;
+    document.getElementById('emptyCode').style.display = 'none';
+    document.getElementById('codeContent').style.display = 'block';
+    document.getElementById('codeArea').textContent = codeHTML;
+
+    btn.disabled = false; btn.textContent = '⚡ Regenerate';
+  }, 800);
+}
+
+function generateFormHTML(fields, title, style, btnColor, showReq, showHints, addValidation) {
+  const isDark = style === 'dark';
+  const isCard = style === 'card';
+  const isInline = style === 'inline';
+
+  const bg = isDark ? '#0f1f3d' : isCard ? '#f9fafb' : '#fff';
+  const textColor = isDark ? '#e8e4dc' : '#111';
+  const borderColor = isDark ? 'rgba(255,255,255,0.15)' : '#d1d5db';
+  const inputBg = isDark ? '#162544' : '#fff';
+  const labelColor = isDark ? '#ccc' : '#374151';
+  const padding = isCard ? '32px' : '24px';
+  const shadow = isCard ? '0 4px 24px rgba(0,0,0,0.08)' : 'none';
+  const maxWidth = isInline ? '100%' : '520px';
+
+  let fieldsHtml = '';
+  fields.forEach(f => {
+    const req = showReq ? ' *' : '';
+    const reqAttr = showReq ? ' required' : '';
+    if(f.type === 'textarea') {
+      fieldsHtml += `  <div class="field">
+    <label>${f.label}${showReq?'<span class="req"> *</span>':''}</label>
+    <textarea name="${f.label.toLowerCase().replace(/\s/g,'_')}" rows="4" placeholder="${showHints?(f.ph||''):''}":''${reqAttr}></textarea>
+  </div>\n`;
+    } else if(f.type === 'select') {
+      const opts = (f.options||[]).map(o=>`      <option value="${o.toLowerCase().replace(/\W/g,'-')}">${o}</option>`).join('\n');
+      fieldsHtml += `  <div class="field">
+    <label>${f.label}${showReq?'<span class="req"> *</span>':''}</label>
+    <select name="${f.label.toLowerCase().replace(/\s/g,'_')}"${reqAttr}>
+      <option value="">Select...</option>
+${opts}
+    </select>
+  </div>\n`;
+    } else if(f.type === 'radio') {
+      const opts = (f.options||[]).map(o=>`    <label class="radio-label"><input type="radio" name="${f.label.toLowerCase().replace(/\s/g,'_')}" value="${o.toLowerCase().replace(/\W/g,'-')}"> ${o}</label>`).join('\n');
+      fieldsHtml += `  <div class="field">
+    <label>${f.label}${showReq?'<span class="req"> *</span>':''}</label>
+    <div class="radio-group">
+${opts}
+    </div>
+  </div>\n`;
+    } else if(f.type === 'checkbox') {
+      const opts = (f.options||[]).map(o=>`    <label class="check-label"><input type="checkbox" name="${f.label.toLowerCase().replace(/\s/g,'_')}[]" value="${o.toLowerCase().replace(/\W/g,'-')}"> ${o}</label>`).join('\n');
+      fieldsHtml += `  <div class="field">
+    <label>${f.label}</label>
+    <div class="check-group">
+${opts}
+    </div>
+  </div>\n`;
+    } else if(f.type === 'rating') {
+      fieldsHtml += `  <div class="field">
+    <label>${f.label}${showReq?'<span class="req"> *</span>':''}</label>
+    <div class="star-rating" id="starRating">
+      <span class="star" data-val="1">★</span><span class="star" data-val="2">★</span><span class="star" data-val="3">★</span><span class="star" data-val="4">★</span><span class="star" data-val="5">★</span>
+    </div>
+    <input type="hidden" name="rating" id="ratingVal">
+  </div>\n`;
+    } else if(f.type === 'file') {
+      fieldsHtml += `  <div class="field">
+    <label>${f.label}${showReq?'<span class="req"> *</span>':''}</label>
+    <input type="file" name="${f.label.toLowerCase().replace(/\s/g,'_')}"${reqAttr}>
+  </div>\n`;
+    } else {
+      fieldsHtml += `  <div class="field">
+    <label>${f.label}${showReq?'<span class="req"> *</span>':''}</label>
+    <input type="${f.type}" name="${f.label.toLowerCase().replace(/\s/g,'_')}" placeholder="${showHints?(f.ph||''):''}":''${reqAttr}>
+  </div>\n`;
+    }
+  });
+
+  const validationJS = addValidation ? `
+<script>
+document.querySelector('form').addEventListener('submit',function(e){
+  e.preventDefault();
+  const errors = [];
+  this.querySelectorAll('[required]').forEach(function(el){
+    if(!el.value.trim()){errors.push(el.previousElementSibling?.textContent?.replace(' *',''));}
+    if(el.type==='email'&&el.value&&!/^[^@]+@[^@]+\\.[^@]+$/.test(el.value)){errors.push('Valid email required');}
+  });
+  if(errors.length){alert('Please fill in: '+errors.join(', '));return;}
+  const btn=this.querySelector('button[type="submit"]');
+  btn.textContent='Sending...';btn.disabled=true;
+  setTimeout(function(){btn.textContent='✓ Sent!';btn.style.background='#22c55e';},1200);
+});
+const stars=document.querySelectorAll('.star');
+stars.forEach(function(s){
+  s.addEventListener('click',function(){
+    const v=parseInt(this.dataset.val);
+    document.getElementById('ratingVal').value=v;
+    stars.forEach(function(s2,i){s2.style.color=i<v?'#f59e0b':'#d1d5db';});
+  });
+});
+<\/script>` : '';
+
+  const codeHTML = `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>${title}</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Inter',sans-serif;background:${isDark?'#0a1628':'#f3f4f6'};display:flex;justify-content:center;align-items:flex-start;min-height:100vh;padding:40px 20px}
+.form-wrap{background:${bg};border-radius:12px;padding:${padding};max-width:${maxWidth};width:100%;box-shadow:${shadow};${isDark?'border:1px solid rgba(255,255,255,0.1)':'border:1px solid #e5e7eb'}}
+h2{font-size:1.5rem;color:${textColor};margin-bottom:8px}
+.subtitle{font-size:.88rem;color:${isDark?'#8892a4':'#6b7280'};margin-bottom:24px;line-height:1.5}
+.field{margin-bottom:18px}
+.field label{display:block;font-size:.85rem;font-weight:600;color:${labelColor};margin-bottom:6px}
+.field .req{color:#ef4444}
+.field input,.field textarea,.field select{width:100%;border:1.5px solid ${borderColor};border-radius:6px;padding:10px 12px;font-size:.9rem;color:${textColor};background:${inputBg};font-family:inherit;outline:none;transition:border-color .2s}
+.field input:focus,.field textarea:focus,.field select:focus{border-color:${btnColor}}
+.field input[type="file"]{padding:8px;cursor:pointer}
+.radio-group,.check-group{display:flex;flex-direction:column;gap:8px;margin-top:4px}
+.radio-label,.check-label{display:flex;align-items:center;gap:8px;font-size:.88rem;color:${isDark?'#ccc':'#374151'};cursor:pointer}
+.radio-label input,.check-label input{width:auto;margin:0;cursor:pointer}
+.star{font-size:1.8rem;cursor:pointer;color:#d1d5db;transition:color .15s}
+button[type="submit"]{width:100%;background:${btnColor};color:#fff;border:none;border-radius:8px;padding:13px;font-size:1rem;font-weight:700;cursor:pointer;margin-top:8px;transition:opacity .2s}
+button[type="submit"]:hover{opacity:.88}
+</style>
+</head>
+<body>
+<div class="form-wrap">
+  <h2>${title}</h2>
+  <p class="subtitle">Fill in the form below and we'll get back to you shortly.</p>
+  <form action="#" method="POST">
+${fieldsHtml}    <button type="submit">Submit</button>
+  </form>
+</div>
+${validationJS}
+
+<script src="/assets/js/dfy-banner.js" async><\/script>
+<script src="/assets/js/abuz8-intent.js" defer><\/script>
+<script>(function(){var orig=window.joinWaitlist||window.joinWL;function wlPost(){var els=['wlEmail','emailInput','email'];var v='';for(var i=0;i<els.length;i++){var el=document.getElementById(els[i]);if(el&&el.value){v=el.value.trim();break;}}if(v&&v.includes('@')){fetch('/api/waitlist',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:v,product:'ai-form-builder',ts:Date.now()})}).catch(function(){});}if(orig)orig();}if(typeof joinWaitlist==='function')window.joinWaitlist=wlPost;if(typeof joinWL==='function')window.joinWL=wlPost;})()<\/script>
+<script src="/tools/_tools-shared.js" defer><\/script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>`;
+
+  // Preview version (no outer html/head, same styles via style tag)
+  const previewHTML = `
+<div class="form-preview" style="background:${isDark?'#0f1f3d':'#fff'};border-radius:10px;padding:24px;font-family:Inter,sans-serif;${isDark?'border:1px solid rgba(255,255,255,0.1)':''}">
+  <h3 style="font-size:1.3rem;color:${isDark?'#e8e4dc':'#111'};margin-bottom:6px">${title}</h3>
+  <p style="font-size:.83rem;color:${isDark?'#8892a4':'#666'};margin-bottom:20px">Fill in the form below and we'll get back to you.</p>
+  ${fields.map(f => {
+    const labelStyle = `display:block;font-size:.82rem;font-weight:600;color:${isDark?'#ccc':'#374151'};margin-bottom:5px`;
+    const inputStyle = `width:100%;border:1.5px solid ${isDark?'rgba(255,255,255,0.15)':'#d1d5db'};border-radius:6px;padding:9px 12px;font-size:.87rem;color:${isDark?'#e8e4dc':'#111'};background:${isDark?'#162544':'#fff'};font-family:inherit`;
+    const req = showReq ? '<span style="color:#ef4444"> *</span>' : '';
+    if(f.type==='textarea') return `<div style="margin-bottom:14px"><label style="${labelStyle}">${f.label}${req}</label><textarea style="${inputStyle};resize:vertical;min-height:70px" placeholder="${showHints?(f.ph||''):''}"></textarea></div>`;
+    if(f.type==='select') return `<div style="margin-bottom:14px"><label style="${labelStyle}">${f.label}${req}</label><select style="${inputStyle};cursor:pointer">${(f.options||[]).map(o=>`<option>${o}</option>`).join('')}</select></div>`;
+    if(f.type==='radio') return `<div style="margin-bottom:14px"><label style="${labelStyle}">${f.label}${req}</label><div style="display:flex;flex-direction:column;gap:6px;margin-top:4px">${(f.options||[]).map(o=>`<label style="display:flex;align-items:center;gap:8px;font-size:.85rem;color:${isDark?'#ccc':'#374151'}"><input type="radio" style="width:auto"> ${o}</label>`).join('')}</div></div>`;
+    if(f.type==='rating') return `<div style="margin-bottom:14px"><label style="${labelStyle}">${f.label}${req}</label><div style="font-size:1.8rem;cursor:pointer;color:#d1d5db">★★★★★</div></div>`;
+    if(f.type==='file') return `<div style="margin-bottom:14px"><label style="${labelStyle}">${f.label}${req}</label><input type="file" style="${inputStyle};padding:7px"></div>`;
+    if(f.type==='checkbox') return `<div style="margin-bottom:14px"><label style="${labelStyle}">${f.label}</label><div style="display:flex;flex-direction:column;gap:6px;margin-top:4px">${(f.options||[]).map(o=>`<label style="display:flex;align-items:center;gap:8px;font-size:.85rem;color:${isDark?'#ccc':'#374151'}"><input type="checkbox" style="width:auto"> ${o}</label>`).join('')}</div></div>`;
+    return `<div style="margin-bottom:14px"><label style="${labelStyle}">${f.label}${req}</label><input type="${f.type}" placeholder="${showHints?(f.ph||''):''}" style="${inputStyle}"></div>`;
+  }).join('')}
+  <button style="width:100%;background:${btnColor};color:#fff;border:none;border-radius:6px;padding:12px;font-size:.95rem;font-weight:700;cursor:pointer;margin-top:4px">Submit</button>
+</div>`;
+
+  return { previewHTML, codeHTML };
+}
+
+function copyCode() {
+  if(!currentFormHTML) return;
+  navigator.clipboard.writeText(currentFormHTML).then(()=>{
+    const btn = document.getElementById('copyBtn');
+    btn.textContent = '✓ Copied!';
+    btn.classList.add('copied');
+    setTimeout(()=>{ btn.textContent = '📋 Copy HTML'; btn.classList.remove('copied'); }, 2000);
+  });
+}
+
+function downloadCode() {
+  if(!currentFormHTML) return;
+  const blob = new Blob([currentFormHTML], {type:'text/html'});
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+  a.download = 'form.html'; a.click();
+}
+</script>
+<script src="_abuz8-live-brain.js" defer></script>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+<script>(function(){var orig=window.joinWaitlist||window.joinWL;function wlPost(){var els=['wlEmail','emailInput','email'];var v='';for(var i=0;i<els.length;i++){var el=document.getElementById(els[i]);if(el&&el.value){v=el.value.trim();break;}}if(v&&v.includes('@')){fetch('/api/waitlist',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:v,product:'ai-form-builder',ts:Date.now()})}).catch(function(){});}if(orig)orig();}if(typeof joinWaitlist==='function')window.joinWaitlist=wlPost;if(typeof joinWL==='function')window.joinWL=wlPost;})()</script>
+<script src="/tools/_tools-shared.js" defer></script>
+</body>
+</html>
+

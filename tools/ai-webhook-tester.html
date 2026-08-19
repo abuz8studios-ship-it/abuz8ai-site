@@ -1,0 +1,1063 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Webhook Tester — Build, Send &amp; Inspect Webhooks Free | ABUZ8</title>
+  <meta name="description" content="Free webhook testing tool. Build webhook payloads for Stripe, GitHub, Slack, Twilio and more. Send test requests, inspect responses, and debug integrations — all client-side." />
+  <meta name="keywords" content="webhook tester, test webhooks, webhook debugger, Stripe webhook test, GitHub webhook test, Slack webhook test, free webhook tool, HTTP request tester" />
+  <meta property="og:title" content="AI Webhook Tester — Build &amp; Debug Webhooks Free | ABUZ8" />
+  <meta property="og:description" content="Build webhook payloads for popular services, send test requests, and inspect responses. Debug your integrations instantly." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://abuz8ai.com/tools/ai-webhook-tester" />
+  <link rel="canonical" href="https://abuz8ai.com/tools/ai-webhook-tester" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "AI Webhook Tester",
+    "description": "Free client-side webhook tester. Build payloads for Stripe, GitHub, Slack, Twilio, send test requests, and inspect responses.",
+    "url": "https://abuz8ai.com/tools/ai-webhook-tester.html",
+    "applicationCategory": "DeveloperApplication",
+    "operatingSystem": "Any",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+    "author": { "@type": "Organization", "name": "ABUZ8 LLC", "url": "https://abuz8ai.com" }
+  }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --lapis: #0a1628;
+      --card: #0d1a30;
+      --card-alt: #0f1e35;
+      --gold: #c9a84c;
+      --gold-dim: #a07830;
+      --teal: #0e9f6e;
+      --teal-bright: #2fbf8f;
+      --cream: #e8dcc8;
+      --text: #cdd6f4;
+      --text-dim: #8896b0;
+      --border: #1e2d45;
+      --red: #e05c5c;
+      --green: #4caf88;
+      --blue: #5b8def;
+      --orange: #e0944c;
+      --font-heading: 'Playfair Display', Georgia, serif;
+      --font-body: 'Inter', system-ui, sans-serif;
+      --font-mono: 'JetBrains Mono', 'Courier New', monospace;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--lapis);
+      color: var(--text);
+      font-family: var(--font-body);
+      font-size: 15px;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+    a { color: var(--gold); text-decoration: none; transition: color 0.2s; }
+    a:hover { color: var(--teal-bright); }
+
+    /* NAV */
+    nav {
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      padding: 0 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 60px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .nav-logo {
+      font-family: var(--font-heading);
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--gold);
+      letter-spacing: 0.02em;
+    }
+    .nav-links { display: flex; gap: 1.5rem; }
+    .nav-links a { color: var(--text-dim); font-size: 0.85rem; font-weight: 500; }
+    .nav-links a:hover { color: var(--gold); }
+
+    /* HERO */
+    .hero {
+      text-align: center;
+      padding: 3rem 1rem 2rem;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    .hero h1 {
+      font-family: var(--font-heading);
+      font-size: 2.2rem;
+      color: var(--cream);
+      margin-bottom: 0.75rem;
+    }
+    .hero h1 span { color: var(--gold); }
+    .hero p { color: var(--text-dim); font-size: 1rem; max-width: 600px; margin: 0 auto; }
+
+    /* MAIN TOOL */
+    .tool-wrap {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 1rem 2rem;
+    }
+
+    /* METHOD + URL ROW */
+    .request-bar {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+    .request-bar select {
+      background: var(--card);
+      color: var(--gold);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 0.65rem 0.75rem;
+      font-family: var(--font-mono);
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      min-width: 110px;
+    }
+    .request-bar input {
+      flex: 1;
+      background: var(--card);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 0.65rem 1rem;
+      font-family: var(--font-mono);
+      font-size: 0.9rem;
+    }
+    .request-bar input::placeholder { color: var(--text-dim); }
+    .request-bar input:focus, .request-bar select:focus { outline: none; border-color: var(--gold); }
+
+    .btn-send {
+      background: var(--gold);
+      color: var(--lapis);
+      border: none;
+      border-radius: 6px;
+      padding: 0.65rem 1.5rem;
+      font-family: var(--font-body);
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: background 0.2s;
+      white-space: nowrap;
+    }
+    .btn-send:hover { background: var(--gold-dim); }
+    .btn-send.sending {
+      opacity: 0.6;
+      pointer-events: none;
+    }
+
+    /* TABS */
+    .tabs {
+      display: flex;
+      gap: 0;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 0;
+    }
+    .tab-btn {
+      background: transparent;
+      color: var(--text-dim);
+      border: none;
+      border-bottom: 2px solid transparent;
+      padding: 0.6rem 1.2rem;
+      font-family: var(--font-body);
+      font-size: 0.85rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: color 0.2s, border-color 0.2s;
+    }
+    .tab-btn:hover { color: var(--cream); }
+    .tab-btn.active {
+      color: var(--gold);
+      border-bottom-color: var(--gold);
+    }
+    .tab-badge {
+      background: var(--gold-dim);
+      color: var(--lapis);
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 0.1rem 0.45rem;
+      border-radius: 8px;
+      margin-left: 0.35rem;
+      vertical-align: middle;
+    }
+
+    .tab-panel {
+      display: none;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-top: none;
+      border-radius: 0 0 8px 8px;
+      padding: 1rem;
+      min-height: 200px;
+    }
+    .tab-panel.active { display: block; }
+
+    /* PAYLOAD EDITOR */
+    .payload-editor {
+      width: 100%;
+      min-height: 180px;
+      background: var(--card-alt);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 0.75rem 1rem;
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      line-height: 1.5;
+      resize: vertical;
+      tab-size: 2;
+    }
+    .payload-editor:focus { outline: none; border-color: var(--gold); }
+
+    /* HEADERS TABLE */
+    .headers-table { width: 100%; border-collapse: collapse; }
+    .headers-table th {
+      text-align: left;
+      color: var(--text-dim);
+      font-size: 0.75rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 0.4rem 0.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .headers-table td { padding: 0.3rem 0.5rem; }
+    .headers-table input {
+      width: 100%;
+      background: var(--card-alt);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 0.4rem 0.6rem;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+    }
+    .headers-table input:focus { outline: none; border-color: var(--gold); }
+    .btn-icon {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-dim);
+      border-radius: 4px;
+      width: 28px;
+      height: 28px;
+      cursor: pointer;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: color 0.2s, border-color 0.2s;
+    }
+    .btn-icon:hover { color: var(--red); border-color: var(--red); }
+    .btn-add-header {
+      background: transparent;
+      border: 1px dashed var(--border);
+      color: var(--text-dim);
+      padding: 0.4rem 0.8rem;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      margin-top: 0.5rem;
+      transition: color 0.2s, border-color 0.2s;
+    }
+    .btn-add-header:hover { color: var(--gold); border-color: var(--gold); }
+
+    /* PRESETS */
+    .presets-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+    .preset-btn {
+      background: var(--card-alt);
+      border: 1px solid var(--border);
+      color: var(--text);
+      border-radius: 6px;
+      padding: 0.55rem 0.75rem;
+      font-size: 0.8rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: border-color 0.2s, color 0.2s;
+      text-align: center;
+    }
+    .preset-btn:hover { border-color: var(--gold); color: var(--gold); }
+    .preset-btn .preset-icon { font-size: 1.1rem; display: block; margin-bottom: 0.2rem; }
+
+    /* SPLIT LAYOUT */
+    .split-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+    @media (max-width: 768px) {
+      .split-row { grid-template-columns: 1fr; }
+      .hero h1 { font-size: 1.6rem; }
+      .request-bar { flex-wrap: wrap; }
+      .request-bar select { width: 100%; }
+      .presets-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+
+    /* RESPONSE PANEL */
+    .response-panel {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .response-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.6rem 1rem;
+      background: var(--card-alt);
+      border-bottom: 1px solid var(--border);
+    }
+    .response-header h3 {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--cream);
+    }
+    .status-badge {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      font-weight: 600;
+      padding: 0.2rem 0.6rem;
+      border-radius: 4px;
+    }
+    .status-badge.s2xx { background: rgba(76,175,136,0.15); color: var(--green); }
+    .status-badge.s3xx { background: rgba(91,141,239,0.15); color: var(--blue); }
+    .status-badge.s4xx { background: rgba(224,148,76,0.15); color: var(--orange); }
+    .status-badge.s5xx { background: rgba(224,92,92,0.15); color: var(--red); }
+    .status-badge.serr { background: rgba(224,92,92,0.15); color: var(--red); }
+    .response-body {
+      padding: 0.75rem 1rem;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+    .response-body pre {
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+      line-height: 1.5;
+      white-space: pre-wrap;
+      word-break: break-all;
+      color: var(--text);
+    }
+    .response-meta {
+      display: flex;
+      gap: 1.5rem;
+      padding: 0.5rem 1rem;
+      border-top: 1px solid var(--border);
+      font-size: 0.75rem;
+      color: var(--text-dim);
+    }
+    .response-meta span strong { color: var(--text); }
+
+    /* HISTORY */
+    .history-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.5rem 0.75rem;
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .history-item:hover { background: var(--card-alt); }
+    .history-method {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      font-weight: 600;
+      min-width: 50px;
+    }
+    .history-method.m-GET { color: var(--green); }
+    .history-method.m-POST { color: var(--gold); }
+    .history-method.m-PUT { color: var(--blue); }
+    .history-method.m-PATCH { color: var(--orange); }
+    .history-method.m-DELETE { color: var(--red); }
+    .history-url {
+      flex: 1;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: var(--text);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .history-status {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+    .history-time {
+      font-size: 0.7rem;
+      color: var(--text-dim);
+      min-width: 55px;
+      text-align: right;
+    }
+    .empty-msg {
+      color: var(--text-dim);
+      font-size: 0.85rem;
+      text-align: center;
+      padding: 2rem 1rem;
+    }
+
+    /* STATS ROW */
+    .stats-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      margin: 1rem 0;
+    }
+    .stat-chip {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 0.4rem 0.8rem;
+      font-size: 0.78rem;
+      color: var(--text-dim);
+    }
+    .stat-chip strong { color: var(--gold); margin-right: 0.25rem; }
+
+    /* COPY BTN */
+    .btn-copy {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-dim);
+      border-radius: 4px;
+      padding: 0.25rem 0.6rem;
+      font-size: 0.75rem;
+      cursor: pointer;
+      transition: color 0.2s, border-color 0.2s;
+    }
+    .btn-copy:hover { color: var(--gold); border-color: var(--gold); }
+
+    /* CTA */
+    .cta-section {
+      max-width: 600px;
+      margin: 2rem auto;
+      text-align: center;
+      padding: 2rem;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+    }
+    .cta-section h2 {
+      font-family: var(--font-heading);
+      font-size: 1.4rem;
+      color: var(--cream);
+      margin-bottom: 0.5rem;
+    }
+    .cta-section p { color: var(--text-dim); font-size: 0.9rem; margin-bottom: 1rem; }
+    .cta-form { display: flex; gap: 0.5rem; max-width: 400px; margin: 0 auto; }
+    .cta-form input {
+      flex: 1;
+      background: var(--card-alt);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 0.6rem 1rem;
+      font-size: 0.9rem;
+    }
+    .cta-form input:focus { outline: none; border-color: var(--gold); }
+    .cta-form button {
+      background: var(--gold);
+      color: var(--lapis);
+      border: none;
+      border-radius: 6px;
+      padding: 0.6rem 1.2rem;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .cta-form button:hover { background: var(--gold-dim); }
+    #ctaSuccess {
+      color: var(--green);
+      font-weight: 600;
+      display: none;
+    }
+    #ctaSuccess.visible { display: block; margin-top: 0.5rem; }
+
+    /* FOOTER */
+    footer {
+      text-align: center;
+      padding: 2rem 1rem;
+      color: var(--text-dim);
+      font-size: 0.8rem;
+      border-top: 1px solid var(--border);
+      margin-top: 2rem;
+    }
+    footer a { color: var(--gold); }
+
+    /* FORMAT BTN */
+    .toolbar {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+    .toolbar button {
+      background: var(--card-alt);
+      border: 1px solid var(--border);
+      color: var(--text-dim);
+      border-radius: 4px;
+      padding: 0.3rem 0.7rem;
+      font-size: 0.75rem;
+      cursor: pointer;
+      transition: color 0.2s, border-color 0.2s;
+    }
+    .toolbar button:hover { color: var(--gold); border-color: var(--gold); }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="nav-logo">ABUZ8</a>
+  <div class="nav-links">
+    <a href="/tools.html">Tools</a>
+    <a href="/store.html">Store</a>
+    <a href="/qadir.html">Qadir OS</a>
+  </div>
+</nav>
+
+<section class="hero">
+  <h1>AI <span>Webhook Tester</span></h1>
+  <p>Build payloads for Stripe, GitHub, Slack, Twilio &amp; more. Send test requests and inspect responses — entirely in your browser.</p>
+</section>
+
+<div class="tool-wrap">
+
+  <!-- PRESET PAYLOADS -->
+  <div class="presets-grid">
+    <button class="preset-btn" onclick="loadPreset('stripe')">
+      <span class="preset-icon">💳</span> Stripe
+    </button>
+    <button class="preset-btn" onclick="loadPreset('github')">
+      <span class="preset-icon">🐙</span> GitHub
+    </button>
+    <button class="preset-btn" onclick="loadPreset('slack')">
+      <span class="preset-icon">💬</span> Slack
+    </button>
+    <button class="preset-btn" onclick="loadPreset('twilio')">
+      <span class="preset-icon">📱</span> Twilio
+    </button>
+    <button class="preset-btn" onclick="loadPreset('shopify')">
+      <span class="preset-icon">🛒</span> Shopify
+    </button>
+    <button class="preset-btn" onclick="loadPreset('sendgrid')">
+      <span class="preset-icon">📧</span> SendGrid
+    </button>
+    <button class="preset-btn" onclick="loadPreset('custom')">
+      <span class="preset-icon">✏️</span> Custom
+    </button>
+  </div>
+
+  <!-- REQUEST BAR -->
+  <div class="request-bar">
+    <select id="httpMethod">
+      <option value="POST" selected>POST</option>
+      <option value="GET">GET</option>
+      <option value="PUT">PUT</option>
+      <option value="PATCH">PATCH</option>
+      <option value="DELETE">DELETE</option>
+    </select>
+    <input type="text" id="urlInput" placeholder="https://your-server.com/webhook" spellcheck="false" />
+    <button class="btn-send" id="sendBtn" onclick="sendRequest()">Send</button>
+  </div>
+
+  <!-- STATS ROW -->
+  <div class="stats-row" id="statsRow">
+    <div class="stat-chip"><strong id="statRequests">0</strong> requests sent</div>
+    <div class="stat-chip"><strong id="statPreset">Custom</strong> preset</div>
+    <div class="stat-chip"><strong id="statHeaders">1</strong> headers</div>
+    <div class="stat-chip"><strong id="statPayloadSize">0 B</strong> payload</div>
+  </div>
+
+  <div class="split-row">
+    <!-- LEFT: REQUEST CONFIG -->
+    <div>
+      <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('body',this)">Body</button>
+        <button class="tab-btn" onclick="switchTab('headers',this)">Headers <span class="tab-badge" id="headerCount">1</span></button>
+      </div>
+
+      <div class="tab-panel active" id="panel-body">
+        <div class="toolbar">
+          <button onclick="formatPayload()">Format JSON</button>
+          <button onclick="minifyPayload()">Minify</button>
+          <button onclick="copyPayload()">Copy</button>
+          <button onclick="clearPayload()">Clear</button>
+        </div>
+        <textarea class="payload-editor" id="payloadEditor" spellcheck="false" placeholder='{"event": "test", "data": {}}'></textarea>
+      </div>
+
+      <div class="tab-panel" id="panel-headers">
+        <table class="headers-table">
+          <thead>
+            <tr><th>Key</th><th>Value</th><th></th></tr>
+          </thead>
+          <tbody id="headersBody">
+            <tr>
+              <td><input type="text" value="Content-Type" /></td>
+              <td><input type="text" value="application/json" /></td>
+              <td><button class="btn-icon" onclick="removeHeader(this)">×</button></td>
+            </tr>
+          </tbody>
+        </table>
+        <button class="btn-add-header" onclick="addHeader()">+ Add Header</button>
+      </div>
+    </div>
+
+    <!-- RIGHT: RESPONSE -->
+    <div>
+      <div class="response-panel">
+        <div class="response-header">
+          <h3>Response</h3>
+          <div style="display:flex;gap:0.5rem;align-items:center;">
+            <span class="status-badge" id="statusBadge" style="display:none;"></span>
+            <button class="btn-copy" onclick="copyResponse()">Copy</button>
+          </div>
+        </div>
+        <div class="response-body" id="responseBody">
+          <pre class="empty-msg">Send a request to see the response here.</pre>
+        </div>
+        <div class="response-meta" id="responseMeta" style="display:none;">
+          <span>Time: <strong id="metaTime">—</strong></span>
+          <span>Size: <strong id="metaSize">—</strong></span>
+          <span>Type: <strong id="metaType">—</strong></span>
+        </div>
+      </div>
+
+      <!-- HISTORY -->
+      <div class="response-panel" style="margin-top:1rem;">
+        <div class="response-header">
+          <h3>History</h3>
+          <button class="btn-copy" onclick="clearHistory()">Clear</button>
+        </div>
+        <div id="historyList">
+          <div class="empty-msg">No requests yet.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- CTA -->
+<section class="cta-section">
+  <h2>Want webhooks that <span style="color:var(--gold);">fire themselves</span>?</h2>
+  <p>ABUZ8 OS agents build, test, and monitor your webhook integrations autonomously.</p>
+  <div class="cta-form">
+    <input type="email" id="ctaEmail" placeholder="you@company.com" />
+    <button onclick="submitWaitlist()">Join Waitlist</button>
+  </div>
+  <div id="ctaSuccess">You're on the list. We'll reach out soon.</div>
+</section>
+
+<footer>
+  &copy; 2026 <a href="/">ABUZ8 LLC</a> &middot; All tools run client-side. Your data never leaves your browser.
+  <br /><a href="/tools.html">All Tools</a> &middot; <a href="/disclaimer.html">Disclaimer</a>
+</footer>
+
+<script>
+// ── PRESETS ──────────────────────────────────────────────
+const PRESETS = {
+  stripe: {
+    label: 'Stripe',
+    headers: [['Content-Type','application/json'],['Stripe-Signature','t=1234567890,v1=abc123def456...']],
+    payload: {
+      id: 'evt_1NqIXXABCDEFGHIJ',
+      object: 'event',
+      api_version: '2023-10-16',
+      created: Math.floor(Date.now()/1000),
+      type: 'checkout.session.completed',
+      data: {
+        object: {
+          id: 'cs_test_a1b2c3d4e5',
+          object: 'checkout.session',
+          amount_total: 9900,
+          currency: 'usd',
+          customer: 'cus_ABC123',
+          customer_email: 'buyer@example.com',
+          payment_status: 'paid',
+          status: 'complete',
+          mode: 'payment'
+        }
+      },
+      livemode: false
+    }
+  },
+  github: {
+    label: 'GitHub',
+    headers: [['Content-Type','application/json'],['X-GitHub-Event','push'],['X-GitHub-Delivery','abc-123-def']],
+    payload: {
+      ref: 'refs/heads/main',
+      before: '0000000000000000000000000000000000000000',
+      after: 'a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2',
+      repository: {
+        id: 123456789,
+        name: 'my-app',
+        full_name: 'user/my-app',
+        html_url: 'https://github.com/user/my-app',
+        default_branch: 'main'
+      },
+      pusher: { name: 'developer', email: 'dev@example.com' },
+      head_commit: {
+        id: 'a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2',
+        message: 'feat: add webhook handler',
+        timestamp: new Date().toISOString(),
+        author: { name: 'developer', email: 'dev@example.com' }
+      },
+      commits: []
+    }
+  },
+  slack: {
+    label: 'Slack',
+    headers: [['Content-Type','application/json'],['X-Slack-Signature','v0=abc123...'],['X-Slack-Request-Timestamp', String(Math.floor(Date.now()/1000))]],
+    payload: {
+      token: 'xoxb-sample-token',
+      team_id: 'T0ABC1DEF',
+      event: {
+        type: 'message',
+        channel: 'C024BE91L',
+        user: 'U2147483697',
+        text: 'Hello from webhook test!',
+        ts: String(Date.now()/1000)
+      },
+      type: 'event_callback',
+      event_id: 'Ev024BE91G2',
+      event_time: Math.floor(Date.now()/1000)
+    }
+  },
+  twilio: {
+    label: 'Twilio',
+    headers: [['Content-Type','application/x-www-form-urlencoded'],['X-Twilio-Signature','abc123signature']],
+    payload: {
+      MessageSid: 'SM1234567890abcdef1234567890abcdef',
+      AccountSid: 'AC1234567890abcdef1234567890abcdef',
+      From: '+15551234567',
+      To: '+15559876543',
+      Body: 'Hello from webhook test!',
+      NumMedia: '0',
+      ApiVersion: '2010-04-01'
+    }
+  },
+  shopify: {
+    label: 'Shopify',
+    headers: [['Content-Type','application/json'],['X-Shopify-Topic','orders/create'],['X-Shopify-Hmac-SHA256','abc123...'],['X-Shopify-Shop-Domain','my-store.myshopify.com']],
+    payload: {
+      id: 820982911946154508,
+      email: 'buyer@example.com',
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+      total_price: '49.99',
+      currency: 'USD',
+      financial_status: 'paid',
+      fulfillment_status: null,
+      line_items: [
+        {
+          id: 866550311766439020,
+          title: 'AI Agent Starter Pack',
+          quantity: 1,
+          price: '49.99'
+        }
+      ],
+      shipping_address: {
+        city: 'Austin',
+        province: 'Texas',
+        country: 'US'
+      }
+    }
+  },
+  sendgrid: {
+    label: 'SendGrid',
+    headers: [['Content-Type','application/json']],
+    payload: [
+      {
+        email: 'user@example.com',
+        timestamp: Math.floor(Date.now()/1000),
+        event: 'delivered',
+        sg_event_id: 'evt_abc123',
+        sg_message_id: 'msg_abc123.filter001.12345.6789AB.0'
+      },
+      {
+        email: 'user2@example.com',
+        timestamp: Math.floor(Date.now()/1000),
+        event: 'open',
+        sg_event_id: 'evt_def456',
+        sg_message_id: 'msg_def456.filter001.12345.6789AB.0',
+        useragent: 'Mozilla/5.0'
+      }
+    ]
+  },
+  custom: {
+    label: 'Custom',
+    headers: [['Content-Type','application/json']],
+    payload: { event: 'test', timestamp: new Date().toISOString(), data: {} }
+  }
+};
+
+let history = [];
+let requestCount = 0;
+let activePreset = 'custom';
+
+function loadPreset(name) {
+  const p = PRESETS[name];
+  if (!p) return;
+  activePreset = name;
+
+  // Set headers
+  const tbody = document.getElementById('headersBody');
+  tbody.innerHTML = '';
+  p.headers.forEach(([k,v]) => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td><input type="text" value="${escHtml(k)}" /></td><td><input type="text" value="${escHtml(v)}" /></td><td><button class="btn-icon" onclick="removeHeader(this)">×</button></td>`;
+    tbody.appendChild(tr);
+  });
+
+  // Set payload
+  const payload = typeof p.payload === 'string' ? p.payload : JSON.stringify(p.payload, null, 2);
+  document.getElementById('payloadEditor').value = payload;
+
+  updateStats();
+  document.querySelectorAll('.preset-btn').forEach(b => b.style.borderColor = '');
+  event.currentTarget.style.borderColor = 'var(--gold)';
+}
+
+function escHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+// ── TABS ──────────────────────────────────────────────
+function switchTab(name, btn) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('panel-' + name).classList.add('active');
+}
+
+// ── HEADERS ──────────────────────────────────────────
+function addHeader() {
+  const tbody = document.getElementById('headersBody');
+  const tr = document.createElement('tr');
+  tr.innerHTML = `<td><input type="text" placeholder="Header-Name" /></td><td><input type="text" placeholder="value" /></td><td><button class="btn-icon" onclick="removeHeader(this)">×</button></td>`;
+  tbody.appendChild(tr);
+  updateStats();
+}
+
+function removeHeader(btn) {
+  btn.closest('tr').remove();
+  updateStats();
+}
+
+function getHeaders() {
+  const rows = document.querySelectorAll('#headersBody tr');
+  const h = {};
+  rows.forEach(r => {
+    const inputs = r.querySelectorAll('input');
+    const k = inputs[0].value.trim();
+    const v = inputs[1].value.trim();
+    if (k) h[k] = v;
+  });
+  return h;
+}
+
+// ── PAYLOAD TOOLS ────────────────────────────────────
+function formatPayload() {
+  const el = document.getElementById('payloadEditor');
+  try {
+    el.value = JSON.stringify(JSON.parse(el.value), null, 2);
+  } catch(e) { /* not JSON, leave as-is */ }
+}
+
+function minifyPayload() {
+  const el = document.getElementById('payloadEditor');
+  try {
+    el.value = JSON.stringify(JSON.parse(el.value));
+  } catch(e) { /* not JSON */ }
+}
+
+function copyPayload() {
+  navigator.clipboard.writeText(document.getElementById('payloadEditor').value);
+}
+
+function clearPayload() {
+  document.getElementById('payloadEditor').value = '';
+  updateStats();
+}
+
+// ── SEND REQUEST ─────────────────────────────────────
+async function sendRequest() {
+  const url = document.getElementById('urlInput').value.trim();
+  if (!url) { document.getElementById('urlInput').focus(); return; }
+
+  const method = document.getElementById('httpMethod').value;
+  const headers = getHeaders();
+  const body = document.getElementById('payloadEditor').value.trim();
+  const sendBtn = document.getElementById('sendBtn');
+
+  sendBtn.classList.add('sending');
+  sendBtn.textContent = 'Sending…';
+
+  const startTime = performance.now();
+  let status, statusText, responseText, responseHeaders, elapsed, size, contentType;
+
+  try {
+    const opts = { method, headers, mode: 'cors' };
+    if (method !== 'GET' && method !== 'HEAD' && body) {
+      opts.body = body;
+    }
+
+    const res = await fetch(url, opts);
+    elapsed = Math.round(performance.now() - startTime);
+    status = res.status;
+    statusText = res.statusText;
+    responseText = await res.text();
+    contentType = res.headers.get('content-type') || 'unknown';
+    size = new Blob([responseText]).size;
+  } catch(err) {
+    elapsed = Math.round(performance.now() - startTime);
+    status = 0;
+    statusText = 'Error';
+    responseText = `Network Error: ${err.message}\n\nThis usually means:\n• The server is not reachable\n• CORS is blocking the request\n• The URL is invalid\n\nTip: If testing locally, make sure your server sends Access-Control-Allow-Origin headers.`;
+    contentType = 'error';
+    size = 0;
+  }
+
+  sendBtn.classList.remove('sending');
+  sendBtn.textContent = 'Send';
+  requestCount++;
+
+  // Display response
+  const badge = document.getElementById('statusBadge');
+  badge.style.display = 'inline-block';
+  badge.textContent = status === 0 ? 'ERR' : `${status} ${statusText}`;
+  badge.className = 'status-badge ' + (status === 0 ? 'serr' : status < 300 ? 's2xx' : status < 400 ? 's3xx' : status < 500 ? 's4xx' : 's5xx');
+
+  // Try to pretty-print JSON
+  let displayText = responseText;
+  try {
+    displayText = JSON.stringify(JSON.parse(responseText), null, 2);
+  } catch(e) { /* not JSON */ }
+
+  document.getElementById('responseBody').innerHTML = `<pre>${escHtml(displayText)}</pre>`;
+
+  const meta = document.getElementById('responseMeta');
+  meta.style.display = 'flex';
+  document.getElementById('metaTime').textContent = elapsed + 'ms';
+  document.getElementById('metaSize').textContent = formatBytes(size);
+  document.getElementById('metaType').textContent = contentType;
+
+  // Add to history
+  addToHistory({ method, url, status, statusText, elapsed, body, responseText, headers });
+  updateStats();
+}
+
+// ── HISTORY ──────────────────────────────────────────
+function addToHistory(entry) {
+  history.unshift(entry);
+  if (history.length > 50) history.pop();
+  renderHistory();
+}
+
+function renderHistory() {
+  const list = document.getElementById('historyList');
+  if (history.length === 0) {
+    list.innerHTML = '<div class="empty-msg">No requests yet.</div>';
+    return;
+  }
+  list.innerHTML = history.map((h, i) => `
+    <div class="history-item" onclick="replayHistory(${i})">
+      <span class="history-method m-${h.method}">${h.method}</span>
+      <span class="history-url">${escHtml(h.url)}</span>
+      <span class="history-status" style="color:${h.status === 0 ? 'var(--red)' : h.status < 300 ? 'var(--green)' : h.status < 400 ? 'var(--blue)' : h.status < 500 ? 'var(--orange)' : 'var(--red)'}">${h.status || 'ERR'}</span>
+      <span class="history-time">${h.elapsed}ms</span>
+    </div>
+  `).join('');
+}
+
+function replayHistory(i) {
+  const h = history[i];
+  document.getElementById('httpMethod').value = h.method;
+  document.getElementById('urlInput').value = h.url;
+  document.getElementById('payloadEditor').value = h.body || '';
+
+  // Restore headers
+  const tbody = document.getElementById('headersBody');
+  tbody.innerHTML = '';
+  if (h.headers && typeof h.headers === 'object') {
+    Object.entries(h.headers).forEach(([k,v]) => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td><input type="text" value="${escHtml(k)}" /></td><td><input type="text" value="${escHtml(v)}" /></td><td><button class="btn-icon" onclick="removeHeader(this)">×</button></td>`;
+      tbody.appendChild(tr);
+    });
+  }
+  updateStats();
+}
+
+function clearHistory() {
+  history = [];
+  renderHistory();
+}
+
+// ── RESPONSE COPY ────────────────────────────────────
+function copyResponse() {
+  const pre = document.querySelector('#responseBody pre');
+  if (pre) navigator.clipboard.writeText(pre.textContent);
+}
+
+// ── STATS ────────────────────────────────────────────
+function updateStats() {
+  document.getElementById('statRequests').textContent = requestCount;
+  document.getElementById('statPreset').textContent = PRESETS[activePreset]?.label || 'Custom';
+
+  const rows = document.querySelectorAll('#headersBody tr');
+  const hdrCount = rows.length;
+  document.getElementById('statHeaders').textContent = hdrCount;
+  document.getElementById('headerCount').textContent = hdrCount;
+
+  const payload = document.getElementById('payloadEditor').value;
+  document.getElementById('statPayloadSize').textContent = formatBytes(new Blob([payload]).size);
+}
+
+function formatBytes(b) {
+  if (b === 0) return '0 B';
+  if (b < 1024) return b + ' B';
+  if (b < 1048576) return (b / 1024).toFixed(1) + ' KB';
+  return (b / 1048576).toFixed(1) + ' MB';
+}
+
+// ── WAITLIST ─────────────────────────────────────────
+async function submitWaitlist() {
+  const email = document.getElementById('ctaEmail').value.trim();
+  if (!email || !email.includes('@')) { alert('Please enter a valid email address.'); return; }
+  const payload = { email, product: 'qadir-os-webhook-tester', ts: new Date().toISOString() };
+  try {
+    await fetch('/api/waitlist', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(payload) });
+  } catch(e) { /* graceful fallback */ }
+  document.getElementById('ctaEmail').style.display = 'none';
+  document.querySelector('.cta-form button').style.display = 'none';
+  document.getElementById('ctaSuccess').classList.add('visible');
+}
+
+// ── INIT ─────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  loadPreset('stripe');
+  document.getElementById('payloadEditor').addEventListener('input', updateStats);
+});
+</script>
+<script src="/tools/_tools-shared.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Polymarket Scanner — ABUZ8 AI</title>
+<meta name="description" content="Live Polymarket market scanner: real Gamma-API data, Kelly position sizing, weather market flagging, and a paper-trading framework. No real-money trading.">
+<link rel="canonical" href="https://abuz8ai.com/scanner.html">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://abuz8ai.com/scanner.html">
+<meta property="og:title" content="Polymarket Scanner — ABUZ8 AI">
+<meta property="og:description" content="Live Polymarket market scanner: real Gamma-API data, Kelly position sizing, weather market flagging, and a paper-trading framework. No real-money trading.">
+<meta property="og:site_name" content="ABUZ8 AI">
+<meta name="theme-color" content="#0a1628">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/abuz8-theme.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "name": "Polymarket Scanner",
+  "description": "Live Polymarket market scanner with Kelly position sizing and a paper-trading framework. Paper trading only — not financial advice.",
+  "url": "https://abuz8ai.com/scanner.html",
+  "publisher": { "@type": "Organization", "name": "ABUZ8 LLC", "url": "https://abuz8ai.com" }
+}
+</script>
+<style>
+/* page-specific styles ONLY — theme vars, no new hex colors */
+:root{
+  --turquoise:var(--green);--turquoise-light:var(--green-bright);--turquoise-bright:var(--green-bright);
+  --green-g:rgba(14,159,110,.12);
+  --amber:var(--gold);--amber-g:rgba(201,168,76,.12);
+  --rose:var(--blue-bright);--rose-g:rgba(46,117,182,.12);
+  --elevated:var(--lapis-3);
+  --mono:var(--font-mono);--body:var(--font-body);
+}
+.container{max-width:1100px;margin:0 auto;padding:32px 24px;position:relative;z-index:1}
+
+.hero{text-align:center;padding:48px 24px;margin-bottom:40px;max-width:none;
+  background:linear-gradient(135deg,var(--lapis-mid) 0%,rgba(4,106,56,.30) 50%,var(--lapis-mid) 100%);border-radius:12px;border:1px solid var(--border)}
+.hero h1{font-family:'Playfair Display',serif;font-size:32px;font-weight:700;margin-bottom:8px;color:var(--text)}
+.hero h1 span{color:var(--gold)}
+.hero p{font-size:14px;color:var(--dim);max-width:600px;margin:0 auto 20px}
+.hero-stats{display:flex;justify-content:center;gap:32px;flex-wrap:wrap}
+.hero-stat .n{font-family:var(--mono);font-size:24px;font-weight:700;color:var(--turquoise-bright)}
+.hero-stat .l{font-size:9px;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);font-family:var(--mono);margin-top:2px}
+
+.pulse-dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--green-bright);margin-right:6px;animation:pulse 6s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1;box-shadow:0 0 4px var(--green-glow)}50%{opacity:.55;box-shadow:none}}
+
+.section-title{font-family:var(--mono);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--gold);margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.section-title::after{content:'';flex:1;height:1px;background:var(--border)}
+
+.scanner-controls{display:flex;gap:12px;margin-bottom:24px;flex-wrap:wrap}
+.scanner-controls .btn,.kelly-calc .btn{display:inline-flex;font-family:var(--mono);font-size:11px;font-weight:600;padding:10px 20px;border-radius:6px;border:1px solid var(--border);background:var(--card);color:var(--text);cursor:pointer;transition:all .3s;letter-spacing:0}
+.scanner-controls .btn:hover,.kelly-calc .btn:hover{border-color:var(--gold);background:var(--elevated);transform:none;box-shadow:none}
+.scanner-controls .btn.active{border-color:var(--turquoise);background:var(--green-g);color:var(--turquoise-bright)}
+.btn-scan{border-color:var(--green) !important;color:var(--green-bright) !important}
+.btn-scan:hover{background:var(--green-g) !important;box-shadow:0 0 12px var(--green-glow) !important}
+
+.markets-table{width:100%;border-collapse:collapse;font-size:12px;margin-bottom:32px}
+.markets-table thead{background:var(--elevated)}
+.markets-table th{text-align:left;padding:10px 14px;font-family:var(--mono);font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);border-bottom:1px solid var(--border)}
+.markets-table td{padding:10px 14px;border-bottom:1px solid var(--border);color:var(--dim);font-size:12px}
+.markets-table tr:hover td{background:var(--elevated)}
+.markets-table .market-q{color:var(--text);font-weight:500;max-width:350px}
+.markets-table .price{font-family:var(--mono);font-weight:600}
+.markets-table .price.high{color:var(--turquoise-bright)}
+.markets-table .price.low{color:var(--gold-light)}
+.markets-table .price.mid{color:var(--dim)}
+
+.tag{display:inline-block;font-family:var(--mono);font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:1px;padding:3px 7px;border-radius:4px}
+.tag.edge{background:var(--green-g);color:var(--green-bright);border:1px solid rgba(14,159,110,.3)}
+.tag.watch{background:var(--amber-g);color:var(--gold-light);border:1px solid rgba(201,168,76,.3)}
+.tag.risky{background:var(--rose-g);color:var(--blue-bright);border:1px solid rgba(46,117,182,.3)}
+
+.card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:20px;margin-bottom:16px}
+.card h3{font-family:var(--mono);font-size:13px;font-weight:700;color:var(--text);margin-bottom:8px}
+.card p{font-size:12px;color:var(--dim);line-height:1.7}
+
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:768px){.grid-2{grid-template-columns:1fr}}
+
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:16px;text-align:center}
+.stat-card .val{font-family:var(--mono);font-size:20px;font-weight:700;color:var(--turquoise-bright);margin-bottom:4px}
+.stat-card .label{font-size:9px;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);font-family:var(--mono)}
+
+.kelly-calc{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:24px;margin-bottom:32px}
+.kelly-calc h3{font-family:var(--mono);font-size:13px;font-weight:700;color:var(--gold);margin-bottom:16px}
+.kelly-inputs{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:16px}
+.kelly-inputs label{font-family:var(--mono);font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:4px}
+.kelly-inputs input{width:100%;padding:8px 12px;background:var(--elevated);border:1px solid var(--border);border-radius:5px;color:var(--text);font-family:var(--mono);font-size:13px;outline:none;transition:border-color .3s}
+.kelly-inputs input:focus{border-color:var(--turquoise)}
+.kelly-result{font-family:var(--mono);font-size:16px;font-weight:700;color:var(--green-bright);padding:12px;background:var(--green-g);border-radius:6px;text-align:center}
+
+#scanner-status{font-family:var(--mono);font-size:11px;color:var(--dim);margin-bottom:16px}
+#market-count{color:var(--turquoise-bright);font-weight:700}
+</style>
+</head>
+<body>
+<div class="geo-bg"></div>
+<nav class="abuz8-nav">
+<div class="nav-inner">
+  <a href="/" style="text-decoration:none;">
+    <div class="logo">ABUZ8</div>
+    <div class="logo-sub">Sovereign AI</div>
+  </a>
+  <div class="nav-links">
+    <a href="/tools.html">Tools</a>
+    <a href="/store.html">Store</a>
+    
+    <a href="/agents.html">Agents</a>
+    <a href="/models.html">Models</a>
+    <a href="/news.html">News</a>
+    <a href="/roadmap.html">Roadmap</a>
+    <a href="/store.html" class="nav-cta">Get Started</a>
+  </div>
+</div>
+</nav>
+<div class="container">
+
+<div class="hero">
+  <h1>Polymarket <span>Scanner</span></h1>
+  <p>Live market scan from the Polymarket Gamma API. Kelly-optimal position sizing. Weather-market flagging. Paper trading only — you enter your own probability estimates, and no real money moves here.</p>
+  <div class="hero-stats">
+    <div class="hero-stat"><div class="n" id="market-count-hero">—</div><div class="l">Markets Scanned</div></div>
+    <div class="hero-stat"><div class="n" id="opps-count">—</div><div class="l">Opportunities</div></div>
+    <div class="hero-stat"><div class="n">$1K</div><div class="l">Paper Bankroll</div></div>
+    <div class="hero-stat"><div class="n">0.25</div><div class="l">Quarter Kelly</div></div>
+  </div>
+</div>
+
+<div class="section-title"><span class="pulse-dot"></span>Live Scanner</div>
+
+<div class="scanner-controls">
+  <button class="btn btn-scan" onclick="scanMarkets()">⚡ Scan Now</button>
+  <button class="btn active" onclick="filterMarkets('all')">All</button>
+  <button class="btn" onclick="filterMarkets('edge')">Edge &gt;7%</button>
+  <button class="btn" onclick="filterMarkets('weather')">Weather</button>
+  <button class="btn" onclick="filterMarkets('coin')">Coin Flips</button>
+</div>
+
+<div id="scanner-status"><span class="pulse-dot"></span>Ready — click Scan to fetch live markets</div>
+
+<table class="markets-table" id="markets-table">
+  <thead>
+    <tr>
+      <th>Market</th>
+      <th>YES Price</th>
+      <th>Liquidity</th>
+      <th>Hours Left</th>
+      <th>Flag</th>
+    </tr>
+  </thead>
+  <tbody id="markets-body">
+    <tr><td colspan="5" style="text-align:center;padding:40px;color:var(--muted)">Click "Scan Now" to fetch live Polymarket data</td></tr>
+  </tbody>
+</table>
+
+<div class="section-title">Kelly Position Sizer</div>
+
+<div class="kelly-calc">
+  <h3>⚡ Calculate Optimal Bet Size</h3>
+  <div class="kelly-inputs">
+    <div>
+      <label>Your Probability Estimate</label>
+      <input type="number" id="kelly-prob" value="0.75" min="0" max="1" step="0.01">
+    </div>
+    <div>
+      <label>Market Price (YES)</label>
+      <input type="number" id="kelly-price" value="0.60" min="0" max="1" step="0.01">
+    </div>
+    <div>
+      <label>Bankroll ($)</label>
+      <input type="number" id="kelly-bankroll" value="1000" min="0" step="100">
+    </div>
+    <div>
+      <label>Max Fraction</label>
+      <input type="number" id="kelly-max" value="0.25" min="0" max="1" step="0.05">
+    </div>
+  </div>
+  <button class="btn btn-scan" onclick="calcKelly()" style="margin-bottom:12px">Calculate</button>
+  <div class="kelly-result" id="kelly-result">Enter values and click Calculate</div>
+</div>
+
+<div class="section-title">Strategy Overview</div>
+
+<div class="grid-2">
+  <div class="card">
+    <h3>🌡️ Weather Markets</h3>
+    <p>Polymarket resolves by AIRPORT stations (LaGuardia, Love Field), not city centers. Checking ensemble forecasts (GFS+ECMWF+ICON+JMA) for the exact station can reveal gaps between the forecast and the market price. A gap is a signal to investigate — never a guaranteed edge.</p>
+  </div>
+  <div class="card">
+    <h3>🧠 4-Check Decision Framework</h3>
+    <p>1) Base rate historical data. 2) News in last 6h. 3) Whale wallet positions. 4) Crowd cognitive errors. Need 3/4 to pass before sizing.</p>
+  </div>
+  <div class="card">
+    <h3>📊 Kelly Criterion (Quarter)</h3>
+    <p>f* = (p×b - q) / b, then ×0.25 for safety. Never bet &gt;25% of bankroll. Negative EV = $0 bet. Proven mathematically optimal for long-run growth.</p>
+  </div>
+  <div class="card">
+    <h3>🚪 Exit Strategy</h3>
+    <p>Take profit at 85% of move. Exit on 3× volume spike. Kill stale positions (24h, &lt;2% change). The discipline: capture most of the move and move on rather than holding for the last cent.</p>
+  </div>
+</div>
+
+<div class="section-title">Paper Trading Stats</div>
+<div class="grid-2">
+  <div class="stat-card"><div class="val" id="stat-trades">0</div><div class="label">Total Trades</div></div>
+  <div class="stat-card"><div class="val" id="stat-winrate">—</div><div class="label">Win Rate</div></div>
+  <div class="stat-card"><div class="val" id="stat-pnl">$0</div><div class="label">Total P&L</div></div>
+  <div class="stat-card"><div class="val" id="stat-bankroll">$1,000</div><div class="label">Bankroll</div></div>
+</div>
+
+<div class="warn" style="margin-top:48px;text-align:center">Paper trading only. Nothing on this page is financial advice, and this tool never places real bets or moves real money. See the <a href="/polymarket.html">Polymarket Tester hub</a> and our <a href="/disclaimer.html">disclaimer</a>.</div>
+
+</div>
+
+<script>
+// Use CF Worker proxy to avoid CORS + handle deprecated endpoint
+const PROXY_API = 'https://polymarket-proxy.wireconn1.workers.dev';
+const GAMMA_DIRECT = 'https://gamma-api.polymarket.com';
+let allMarkets = [];
+
+async function scanMarkets() {
+  const status = document.getElementById('scanner-status');
+  const tbody = document.getElementById('markets-body');
+  status.innerHTML = '<span class="pulse-dot"></span>Scanning Polymarket...';
+
+  try {
+    // Try proxy first (handles CORS), fall back to direct (won't work cross-origin but useful for local dev)
+    let resp;
+    try {
+      resp = await fetch(`${PROXY_API}/markets?limit=100&active=true&closed=false`);
+    } catch(proxyErr) {
+      status.innerHTML = '<span class="pulse-dot"></span>Proxy unavailable, trying direct...';
+      resp = await fetch(`${GAMMA_DIRECT}/markets?limit=100&active=true&closed=false`);
+    }
+    const raw = await resp.json();
+    // keyset endpoint wraps in { data: [...], next_cursor: "..." }
+    const markets = Array.isArray(raw) ? raw : (raw.data || raw.markets || []);
+    
+    allMarkets = markets.map(m => {
+      let prices = m.outcomePrices;
+      if (typeof prices === 'string') { try { prices = JSON.parse(prices); } catch(e) { prices = []; } }
+      const yesPrice = prices && prices.length ? parseFloat(prices[0]) : null;
+      const liq = parseFloat(m.liquidity || 0);
+      const endDate = m.endDate ? new Date(m.endDate) : null;
+      const hoursLeft = endDate ? Math.max(0, (endDate - Date.now()) / 3600000) : 999;
+      
+      let flag = '';
+      if (m.question && m.question.toLowerCase().match(/temperature|degrees|weather|°f/)) flag = 'weather';
+      else if (yesPrice > 0.88) flag = 'high_conf';
+      else if (yesPrice < 0.12) flag = 'low_conf';
+      else if (yesPrice >= 0.43 && yesPrice <= 0.57) flag = 'coin_flip';
+      else if (liq > 100000) flag = 'deep_liq';
+      
+      return { question: m.question, yesPrice, liq, hoursLeft, flag, slug: m.slug };
+    }).filter(m => m.yesPrice !== null);
+    
+    document.getElementById('market-count-hero').textContent = allMarkets.length;
+    const opps = allMarkets.filter(m => m.flag && m.hoursLeft < 168 && m.hoursLeft > 4);
+    document.getElementById('opps-count').textContent = opps.length;
+    
+    status.innerHTML = `<span class="pulse-dot"></span>Scanned <span id="market-count">${allMarkets.length}</span> markets · ${opps.length} flagged`;
+    
+    renderMarkets(allMarkets.filter(m => m.flag));
+  } catch(e) {
+    status.innerHTML = `<span style="color:var(--rose)">Live feed offline (${e.message}). No snapshot shown — this board only displays real market data.</span>`;
+  }
+}
+
+function renderMarkets(markets) {
+  const tbody = document.getElementById('markets-body');
+  if (!markets.length) {
+    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--muted)">No markets match filter</td></tr>';
+    return;
+  }
+  
+  // Sort by liquidity
+  markets.sort((a, b) => b.liq - a.liq);
+  
+  tbody.innerHTML = markets.slice(0, 30).map(m => {
+    const priceClass = m.yesPrice > 0.7 ? 'high' : m.yesPrice < 0.3 ? 'low' : 'mid';
+    const flagTag = m.flag === 'weather' ? '<span class="tag edge">WEATHER</span>' :
+                    m.flag === 'coin_flip' ? '<span class="tag watch">COIN FLIP</span>' :
+                    m.flag === 'high_conf' ? '<span class="tag edge">HIGH CONF</span>' :
+                    m.flag === 'low_conf' ? '<span class="tag risky">LOW CONF</span>' :
+                    '<span class="tag watch">DEEP LIQ</span>';
+    return `<tr>
+      <td class="market-q">${m.question ? m.question.substring(0, 65) : '—'}</td>
+      <td class="price ${priceClass}">${m.yesPrice.toFixed(3)}</td>
+      <td style="font-family:var(--mono);font-size:11px">$${m.liq >= 1000000 ? (m.liq/1000000).toFixed(1)+'M' : m.liq >= 1000 ? (m.liq/1000).toFixed(0)+'K' : m.liq.toFixed(0)}</td>
+      <td style="font-family:var(--mono);font-size:11px">${m.hoursLeft > 999 ? '—' : m.hoursLeft < 24 ? m.hoursLeft.toFixed(0)+'h' : (m.hoursLeft/24).toFixed(0)+'d'}</td>
+      <td>${flagTag}</td>
+    </tr>`;
+  }).join('');
+}
+
+function filterMarkets(type) {
+  document.querySelectorAll('.scanner-controls .btn:not(.btn-scan)').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  
+  if (type === 'all') renderMarkets(allMarkets.filter(m => m.flag));
+  else if (type === 'edge') renderMarkets(allMarkets.filter(m => m.yesPrice > 0.88 || m.yesPrice < 0.12));
+  else if (type === 'weather') renderMarkets(allMarkets.filter(m => m.flag === 'weather'));
+  else if (type === 'coin') renderMarkets(allMarkets.filter(m => m.flag === 'coin_flip'));
+}
+
+function calcKelly() {
+  const p = parseFloat(document.getElementById('kelly-prob').value);
+  const price = parseFloat(document.getElementById('kelly-price').value);
+  const bankroll = parseFloat(document.getElementById('kelly-bankroll').value);
+  const maxF = parseFloat(document.getElementById('kelly-max').value);
+  
+  if (price <= 0 || price >= 1 || p <= 0 || p >= 1) {
+    document.getElementById('kelly-result').textContent = 'Invalid inputs (must be between 0 and 1)';
+    return;
+  }
+  
+  const b = (1/price) - 1;
+  const q = 1 - p;
+  let fStar = (p * b - q) / b;
+  
+  if (fStar <= 0) {
+    document.getElementById('kelly-result').innerHTML = 
+      `<span style="color:var(--rose)">$0 — Negative EV. Don't bet.</span><br><small style="color:var(--muted)">Edge: ${((p - price) * 100).toFixed(1)}% (wrong side)</small>`;
+    return;
+  }
+  
+  const fCapped = Math.min(fStar, maxF);
+  const quarterKelly = fCapped * 0.25;
+  const betSize = (bankroll * quarterKelly).toFixed(2);
+  const fullKelly = (bankroll * fCapped).toFixed(2);
+  const ev = (p * betSize * b - q * betSize).toFixed(2);
+  const edge = ((p - price) * 100).toFixed(1);
+  
+  document.getElementById('kelly-result').innerHTML = 
+    `Quarter Kelly: <strong>$${betSize}</strong> · Full Kelly: $${fullKelly} · Edge: ${edge}% · EV: $${ev}`;
+}
+
+// Auto-scan on load
+window.addEventListener('DOMContentLoaded', () => { setTimeout(scanMarkets, 500); });
+</script>
+
+<footer class="abuz8-footer">
+<div class="foot-grid">
+  <div class="foot-brand">
+    <div class="logo">ABUZ8</div>
+    <p>Sovereign AI for everyone. Real tools, local models, no fake claims. Built on real hardware by ABUZ8 LLC, Ohio.</p>
+  </div>
+  <div class="foot-col"><h4>Platform</h4>
+    <a href="/tools.html">Free Tools</a><a href="/store.html">Store</a><a href="/models.html">Models</a><a href="/agents.html">AI Agents</a><a href="/news.html">News</a><a href="/blog/">Blog</a>
+  </div>
+  <div class="foot-col"><h4>Mission</h4>
+    <a href="/sovereign.html">Sovereign AI</a><a href="/journey.html">Journey &amp; Goals</a><a href="/roadmap.html">Roadmap</a><a href="/audit.html">Audit &amp; Transparency</a><a href="/purpose.html">Purpose</a>
+  </div>
+  <div class="foot-col"><h4>Hubs</h4>
+    <a href="/github.html">GitHub Hub</a><a href="/huggingface.html">Hugging Face Hub</a><a href="/polymarket.html">Polymarket Tester</a><a href="/community.html">Community</a><a href="/education.html">Education</a><a href="/downloads.html">Downloads</a>
+  </div>
+  <div class="foot-col"><h4>Trust</h4>
+    <a href="/security.html">Security &amp; Compliance</a><a href="/disclaimer.html">Disclaimer</a><a href="/privacy.html">Privacy</a><a href="/terms.html">Terms</a><a href="/refund.html">Refunds</a><a href="/license.html">License</a><a href="/contact.html">Contact</a><a href="/status.html">Status</a>
+  </div>
+</div>
+<div class="foot-base">
+  <div>© <span data-year>2026</span> ABUZ8 LLC. All rights reserved.</div>
+  <div>Built local-first on real hardware · No fake claims · <a href="/sovereign.html">Sovereign AI for everyone</a></div>
+</div>
+</footer>
+
+<link rel="stylesheet" href="/assets/css/zait-chat.css">
+<script src="/assets/js/zait-chat.js"></script>
+
+<script src="/assets/js/dfy-banner.js" async></script>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+<script src="/assets/js/abuz8-ui.js" defer></script>
+<script src="/assets/js/abuz8-onboard.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>
+

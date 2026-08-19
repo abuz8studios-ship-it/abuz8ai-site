@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Prompt Caching Savings Calculator — What Prompt Caching Really Cuts Off Your LLM Bill | ABUZ8</title>
+  <meta name="description" content="Free prompt caching calculator. Enter your reusable prefix size, monthly request volume and cache hit rate and see exactly what prompt caching saves — cache-write vs cache-read vs no cache — plus the break-even hit rate where caching starts paying off. 100% client-side, every rate editable, with a $0/token local comparison." />
+  <meta name="keywords" content="prompt caching calculator, prompt cache savings, cache read cache write pricing, Anthropic prompt caching cost, OpenAI prompt caching, DeepSeek context caching, LLM cost reduction, cache hit rate break-even, context caching cost, KV cache savings" />
+  <meta property="og:title" content="Prompt Caching Savings Calculator — What Caching Really Cuts Off Your LLM Bill | ABUZ8" />
+  <meta property="og:description" content="Enter your reusable prefix, request volume and hit rate. See what prompt caching saves vs no cache — and the break-even hit rate where it starts paying off. Client-side, free, no signup." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://abuz8ai.com/tools/ai-prompt-caching-calculator" />
+  <link rel="canonical" href="https://abuz8ai.com/tools/ai-prompt-caching-calculator" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Prompt Caching Savings Calculator",
+    "description": "Free client-side tool that estimates what prompt caching saves on an LLM bill: it prices a reusable prompt prefix under no-cache, cache-write and cache-read rates at your chosen hit rate, shows the monthly savings, and computes the break-even hit rate. All pricing and cache-multiplier inputs are editable, with a self-hosted $0/token comparison.",
+    "url": "https://abuz8ai.com/tools/ai-prompt-caching-calculator.html",
+    "applicationCategory": "DeveloperApplication",
+    "operatingSystem": "Any",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+    "author": { "@type": "Organization", "name": "ABUZ8 LLC", "url": "https://abuz8ai.com" }
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "What is prompt caching and how does it save money?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Prompt caching lets an LLM provider store the processed form of a reusable prompt prefix — a long system prompt, tool definitions, few-shot examples, or a document you keep asking about — so that repeated requests do not re-charge full price for those same tokens. The first time the prefix is seen it is written to the cache (often at a small premium over the normal input rate); every later request that reuses it reads the cache at a steep discount, commonly a tenth to a half of the normal input rate. If the same large prefix rides along on many requests, caching turns most of that repeated input into cheap cache reads. This calculator prices the prefix under no-cache, cache-write and cache-read rates so you can see the actual monthly difference." }
+      },
+      {
+        "@type": "Question",
+        "name": "How is a cached token priced compared to a normal input token?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Two multipliers of the base input rate matter. The cache-write multiplier is what you pay to place tokens into the cache on a miss — some providers charge a premium (for example around 1.25x for a short time-to-live, or 2x for a longer one) while others charge no write premium at all. The cache-read multiplier is what you pay to reuse cached tokens on a hit, typically far below the base rate (often about 0.1x, sometimes 0.5x). Because these numbers differ by provider and change over time, this tool exposes both as editable fields with clearly-labeled illustrative defaults rather than asserting any single vendor's live pricing." }
+      },
+      {
+        "@type": "Question",
+        "name": "What cache hit rate do I need for caching to pay off?",
+        "acceptedAnswer": { "@type": "Answer", "text": "It depends entirely on the write premium. If reusing the prefix costs read-multiplier per hit and writing it costs write-multiplier per miss, caching breaks even when the blended per-request cost of the prefix equals the base rate — that is, at a hit rate of (1 minus write-multiplier) divided by (read-multiplier minus write-multiplier). With a 1.25x write and 0.1x read that break-even lands near a 22% hit rate: above it caching saves, below it the write premium makes it more expensive. When a provider charges no write premium, caching saves at any hit rate above zero. This calculator computes the break-even point for whatever multipliers you enter." }
+      },
+      {
+        "@type": "Question",
+        "name": "Can prompt caching ever cost more than not caching?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Yes. If your prefix is rarely reused — a low hit rate — and your provider charges a write premium, you can end up paying the premium to cache a prefix that is seldom read back, which costs more than simply paying the normal input rate every time. Caching is a bet that the same prefix will be reused enough to amortize the write. The tool flags this honestly: when your hit rate is below the break-even point the estimated savings turn negative." }
+      },
+      {
+        "@type": "Question",
+        "name": "Is my data sent to a server?",
+        "acceptedAnswer": { "@type": "Answer", "text": "No. This calculator runs entirely in your browser. Nothing you type is uploaded, logged, or stored anywhere." }
+      }
+    ]
+  }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0a1628;
+      --card: #0d1a30;
+      --card-alt: #111f38;
+      --primary: #5fa8e8;
+      --primary-dim: #2e75b6;
+      --teal: #0e9f6e;
+      --text: #e8e4d8;
+      --text-dim: #5b6b7c;
+      --border: #d8e0e8;
+      --good: #0e9f6e;
+      --good-bg: #e7f3f0;
+      --warn: #c9a84c;
+      --warn-bg: #fbf1e3;
+      --font-heading: 'Playfair Display', Georgia, serif;
+      --font-body: 'Inter', system-ui, sans-serif;
+      --font-mono: 'JetBrains Mono', 'Courier New', monospace;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      font-size: 15px;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+    a { color: var(--primary); text-decoration: none; transition: color 0.2s; }
+    a:hover { color: var(--primary-dim); }
+
+    nav {
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      padding: 0 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 60px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .nav-logo {
+      font-family: var(--font-heading);
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--primary);
+      letter-spacing: 0.02em;
+    }
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links a { color: var(--text-dim); font-size: 0.9rem; font-weight: 500; }
+    .nav-links a:hover { color: var(--primary); }
+
+    main { max-width: 980px; margin: 0 auto; padding: 3rem 1.5rem 5rem; }
+    .page-header { text-align: center; margin-bottom: 2.2rem; }
+    .page-header h1 {
+      font-family: var(--font-heading);
+      font-size: 2.4rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 0.5rem;
+      line-height: 1.18;
+    }
+    .page-header p { color: var(--text-dim); font-size: 1rem; max-width: 680px; margin: 0 auto; }
+    .privacy-note {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      margin-top: 0.9rem; padding: 0.35rem 0.9rem;
+      background: var(--good-bg); border: 1px solid #bfe0d8;
+      border-radius: 20px; font-size: 0.78rem; color: var(--good);
+    }
+
+    label { display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-dim);
+            text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.5rem; }
+    input[type="number"], select {
+      width: 100%;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      padding: 0.7rem 0.9rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    select { font-family: var(--font-body); }
+    input:focus, select:focus { border-color: var(--primary); }
+    .hint { font-size: 0.72rem; color: var(--text-dim); margin-top: 0.35rem; font-weight: 400; text-transform: none; letter-spacing: 0; }
+
+    .panel {
+      background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+      padding: 1.4rem 1.5rem; margin-bottom: 1.4rem;
+      box-shadow: 0 1px 3px rgba(44,62,80,0.04);
+    }
+    .panel h2 {
+      font-family: var(--font-heading); font-size: 1.25rem; color: var(--primary);
+      margin-bottom: 1.1rem;
+    }
+    .controls { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem 1.2rem; }
+    .controls .full { grid-column: 1 / -1; }
+
+    /* TWO RESULT CARDS */
+    .results { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; margin: 0.4rem 0 0; }
+    .rcard { border: 1px solid var(--border); border-radius: 12px; padding: 1.3rem 1.4rem; background: var(--card-alt); }
+    .rcard.build { border-top: 3px solid var(--primary); }
+    .rcard.month { border-top: 3px solid var(--teal); }
+    .rcard .rlabel { font-size: 0.74rem; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text-dim); font-weight: 600; }
+    .rcard .rbig { font-family: var(--font-heading); font-size: 2.1rem; font-weight: 700; line-height: 1.1; margin: 0.3rem 0 0.1rem; }
+    .rcard.build .rbig { color: var(--primary); }
+    .rcard.month .rbig { color: var(--teal); }
+    .rcard .rsub { font-size: 0.8rem; color: var(--text-dim); }
+
+    /* VERDICT */
+    .verdict {
+      margin: 1.4rem 0 0; padding: 1.1rem 1.3rem; border-radius: 10px;
+      font-size: 0.95rem; line-height: 1.6;
+      background: var(--good-bg); border: 1px solid #bfe0d8; color: var(--text);
+    }
+    .verdict.warn { background: var(--warn-bg); border-color: #eccf9e; }
+    .verdict strong { color: var(--primary); }
+    .verdict .big { font-family: var(--font-heading); font-weight: 700; }
+    .verdict .save { color: var(--teal); font-weight: 700; }
+    .verdict .cost { color: var(--warn); font-weight: 700; }
+
+    /* TABLE */
+    .table-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: 12px; margin-top: 1.3rem; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.86rem; min-width: 560px; background: var(--card); }
+    thead th {
+      background: var(--card-alt); color: var(--text-dim);
+      font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.06em;
+      text-align: right; padding: 0.8rem 1rem; border-bottom: 1px solid var(--border); font-weight: 600;
+    }
+    thead th:first-child { text-align: left; }
+    tbody td { padding: 0.7rem 1rem; border-bottom: 1px solid var(--border); text-align: right; font-family: var(--font-mono); }
+    tbody td:first-child { text-align: left; font-family: var(--font-body); }
+    tbody tr.subtotal td { font-weight: 700; background: var(--card-alt); }
+    tbody tr.subtotal td:first-child { box-shadow: inset 3px 0 0 var(--primary); }
+    tbody tr.local { background: #1a332d; }
+    tbody tr.local td:first-child { box-shadow: inset 3px 0 0 var(--teal); }
+    .line-name { font-weight: 600; color: var(--text); }
+    .line-tag { font-size: 0.68rem; color: var(--text-dim); display: block; font-weight: 400; margin-top: 0.1rem; }
+    .badge-local { font-size: 0.62rem; color: var(--teal); font-weight: 700; letter-spacing: 0.05em; margin-left: 0.4rem; }
+    .price-note { font-size: 0.78rem; color: var(--text-dim); margin-top: 0.9rem; line-height: 1.7; }
+    .price-note strong { color: var(--text); }
+    .price-note a { color: var(--text-dim); text-decoration: underline; }
+    .price-note a:hover { color: var(--primary); }
+
+    /* CTA */
+    .cta-section {
+      background: linear-gradient(135deg, #eef5fb 0%, #e7f3f0 100%);
+      border: 1px solid #cfe0ef; border-radius: 12px;
+      padding: 2.2rem 2rem; text-align: center; margin-top: 3rem;
+    }
+    .cta-section h2 { font-family: var(--font-heading); font-size: 1.5rem; color: var(--primary); margin-bottom: 0.5rem; }
+    .cta-section p { color: var(--text-dim); font-size: 0.95rem; margin-bottom: 1.2rem; max-width: 600px; margin-left: auto; margin-right: auto; }
+    .cta-form { display: flex; gap: 0.6rem; justify-content: center; flex-wrap: wrap; }
+    .cta-form input[type="email"] {
+      flex: 1; max-width: 300px; min-width: 200px;
+      background: var(--card); border: 1px solid var(--border); border-radius: 6px;
+      color: var(--text); font-family: var(--font-body); font-size: 0.9rem; padding: 0.6rem 1rem; outline: none;
+    }
+    .cta-form input[type="email"]:focus { border-color: var(--primary); }
+    button {
+      padding: 0.6rem 1.4rem; border-radius: 6px; border: none; cursor: pointer;
+      font-family: var(--font-body); font-size: 0.88rem; font-weight: 600; transition: background 0.2s;
+    }
+    .btn-primary { background: var(--primary); color: #0d1a30; }
+    .btn-primary:hover { background: var(--primary-dim); }
+    .cta-success { display: none; color: var(--teal); font-size: 0.9rem; margin-top: 0.8rem; font-weight: 600; }
+    .cta-success.visible { display: block; }
+
+    .content { margin-top: 3rem; }
+    .content h2 { font-family: var(--font-heading); font-size: 1.5rem; color: var(--primary); margin: 0 0 1rem; padding-top: 1rem; }
+    .content > p { color: var(--text-dim); font-size: 0.92rem; margin-bottom: 1rem; }
+    .content > p a { text-decoration: underline; }
+    .faq-item { border-top: 1px solid var(--border); padding: 1.1rem 0; }
+    .faq-item h3 { font-size: 1rem; color: var(--text); margin-bottom: 0.4rem; font-weight: 600; }
+    .faq-item p { color: var(--text-dim); font-size: 0.9rem; }
+
+    footer {
+      background: var(--card); border-top: 1px solid var(--border);
+      text-align: center; padding: 1.5rem; font-size: 0.82rem; color: var(--text-dim);
+    }
+    footer a { color: var(--text-dim); }
+    footer a:hover { color: var(--primary); }
+
+    @media (max-width: 720px) {
+      .controls { grid-template-columns: 1fr; }
+      .results { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 600px) {
+      .page-header h1 { font-size: 1.8rem; }
+      nav { padding: 0 1rem; }
+      .nav-links { gap: 1rem; }
+      main { padding: 2rem 1rem 4rem; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="nav-logo">ABUZ8</a>
+  <ul class="nav-links">
+    <li><a href="/tools.html">Tools</a></li>
+    <li><a href="/store.html">Store</a></li>
+  </ul>
+</nav>
+
+<main>
+  <div class="page-header">
+    <h1>Prompt Caching Savings Calculator</h1>
+    <p>Prompt caching is the single biggest lever on a repeated-prompt LLM bill. Enter your reusable prefix, request volume and hit rate to see what caching actually saves — priced as cache-write on a miss and cache-read on a hit — plus the <strong>break-even hit rate</strong> where it starts paying off. Every rate is editable, so it works for any provider, and a self-hosted <strong>$0/token</strong> row shows the sovereign floor.</p>
+    <span class="privacy-note">&#128274; 100% in-browser — nothing you enter is uploaded</span>
+  </div>
+
+  <div class="panel">
+    <h2>Your workload &amp; caching</h2>
+    <div class="controls">
+      <div>
+        <label for="requests">Requests / month</label>
+        <input type="number" id="requests" min="0" value="100000" oninput="recalc()" />
+        <div class="hint">API calls that reuse the same prefix.</div>
+      </div>
+      <div>
+        <label for="cachedTokens">Cached prefix tokens</label>
+        <input type="number" id="cachedTokens" min="0" value="2000" oninput="recalc()" />
+        <div class="hint">Reusable part: system prompt, tools, context.</div>
+      </div>
+      <div>
+        <label for="freshTokens">Fresh input tokens</label>
+        <input type="number" id="freshTokens" min="0" value="200" oninput="recalc()" />
+        <div class="hint">The changing part of each request (never cached).</div>
+      </div>
+      <div>
+        <label for="outputTokens">Output tokens / request</label>
+        <input type="number" id="outputTokens" min="0" value="300" oninput="recalc()" />
+        <div class="hint">Generated tokens (caching never touches output).</div>
+      </div>
+      <div>
+        <label for="inPrice">Input rate ($/1M tokens)</label>
+        <input type="number" id="inPrice" min="0" step="0.01" value="3.00" oninput="recalc()" />
+        <div class="hint">Base uncached input price — edit to your model.</div>
+      </div>
+      <div>
+        <label for="outPrice">Output rate ($/1M tokens)</label>
+        <input type="number" id="outPrice" min="0" step="0.01" value="15.00" oninput="recalc()" />
+        <div class="hint">Base output price — edit to your model.</div>
+      </div>
+      <div>
+        <label for="cacheProfile">Cache profile</label>
+        <select id="cacheProfile" onchange="applyCacheProfile()"></select>
+        <div class="hint">Sets the two multipliers below — both editable.</div>
+      </div>
+      <div>
+        <label for="writeMult">Cache-write &times; input</label>
+        <input type="number" id="writeMult" min="0" step="0.05" value="1.25" oninput="markCustomProfile(); recalc()" />
+        <div class="hint">Cost to cache on a miss, vs base rate.</div>
+      </div>
+      <div>
+        <label for="readMult">Cache-read &times; input</label>
+        <input type="number" id="readMult" min="0" step="0.05" value="0.10" oninput="markCustomProfile(); recalc()" />
+        <div class="hint">Cost to reuse on a hit, vs base rate.</div>
+      </div>
+      <div class="full">
+        <label for="hitRate">Cache hit rate (% of requests that reuse the prefix)</label>
+        <input type="number" id="hitRate" min="0" max="100" step="1" value="90" oninput="recalc()" />
+        <div class="hint">Share of requests that find the prefix already cached. Below the break-even rate, a write premium makes caching cost more.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="verdict" id="verdict"></div>
+
+  <div class="results">
+    <div class="rcard build">
+      <div class="rlabel">Without caching / month</div>
+      <div class="rbig" id="noCacheCost">$0</div>
+      <div class="rsub" id="noCacheSub">&mdash;</div>
+    </div>
+    <div class="rcard month">
+      <div class="rlabel">With caching / month</div>
+      <div class="rbig" id="withCacheCost">$0</div>
+      <div class="rsub" id="withCacheSub">&mdash;</div>
+    </div>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Cost component</th>
+          <th>Without caching</th>
+          <th>With caching</th>
+        </tr>
+      </thead>
+      <tbody id="costTable"></tbody>
+    </table>
+  </div>
+
+  <p class="price-note">
+    Cache multipliers default to an <strong>illustrative Anthropic-style profile (write 1.25&times;, read 0.10&times;) for reference only</strong> &mdash; providers differ and pricing changes, so pick a profile or edit the two multiplier fields to match your provider. Confirm live rates at
+    <a href="https://www.anthropic.com/pricing" target="_blank" rel="noopener">Anthropic</a>,
+    <a href="https://openai.com/api/pricing/" target="_blank" rel="noopener">OpenAI</a>, and
+    <a href="https://api-docs.deepseek.com/quick_start/pricing" target="_blank" rel="noopener">DeepSeek</a>.
+    Only the <strong>reusable prefix</strong> is affected by caching &mdash; fresh input and all output are billed the same either way, so they appear unchanged in both columns.
+    Break-even hit rate is <span style="font-family:var(--font-mono)">(1 &minus; write&times;) &divide; (read&times; &minus; write&times;)</span>: below it a write premium makes caching more expensive; a provider with no write premium saves at any hit rate.
+    The <strong>Local (ABUZ8&nbsp;OS)</strong> row is $0 per token &mdash; a model on hardware you own has no per-token charge to cache or read; the fixed hardware is covered in the
+    <a href="/tools/ai-self-host-calculator.html">self-host vs cloud calculator</a>.
+    Sizing the whole retrieval layer instead? See the
+    <a href="/tools/ai-rag-cost-calculator.html">RAG cost calculator</a>.
+  </p>
+
+  <div class="cta-section">
+    <h2>Stop renting the same tokens over and over.</h2>
+    <p>Caching only discounts the prompt you keep resending — you are still paying to rent it. ABUZ8&nbsp;OS runs the model on hardware you own, where the reusable prefix, the fresh input and the output are all $0 per token and your data never leaves the machine. Sovereign by default, cloud only when it genuinely wins.</p>
+    <div class="cta-form">
+      <input type="email" id="ctaEmail" placeholder="you@company.com" />
+      <button class="btn-primary" onclick="submitWaitlist()">Join early access</button>
+    </div>
+    <div id="ctaSuccess" class="cta-success">&#10003; You're on the list. We'll be in touch.</div>
+  </div>
+
+  <div class="content">
+    <h2>How prompt caching economics actually work</h2>
+    <p>Related: <a href="/tools/ai-token-counter.html">Token counter</a> &middot; <a href="/tools/ai-llm-price-comparison.html">LLM API price comparison</a> &middot; <a href="/tools/ai-rag-cost-calculator.html">RAG cost calculator</a> &middot; <a href="/tools/ai-agent-cost-calculator.html">AI agent cost calculator</a></p>
+    <div class="faq-item">
+      <h3>Only the reusable prefix moves</h3>
+      <p>Caching discounts one thing: the identical prefix that rides along on many requests — a long system prompt, tool schemas, few-shot examples, or a document you keep querying. Your fresh per-request input and every output token are billed at the normal rate whether or not you cache, which is why this tool leaves those two rows the same across both columns. The whole savings story lives in the prefix line.</p>
+    </div>
+    <div class="faq-item">
+      <h3>Write premium vs read discount</h3>
+      <p>A cache miss <em>writes</em> the prefix — some providers charge a small premium over the base input rate for that, others charge nothing extra. Every cache hit <em>reads</em> the prefix at a deep discount, often around a tenth of the base rate. Your blended prefix cost is therefore a mix of cheap reads on hits and premium-priced writes on misses, weighted by your hit rate. The more you reuse the same prefix, the more the cheap reads dominate.</p>
+    </div>
+    <div class="faq-item">
+      <h3>The break-even hit rate</h3>
+      <p>Caching pays off once the blended prefix cost drops below the base rate. Solving for that gives a break-even hit rate of (1 &minus; write-multiplier) &divide; (read-multiplier &minus; write-multiplier). With a 1.25&times; write and a 0.10&times; read it lands near 22% — reuse the prefix on more than roughly a fifth of requests and you save; less than that and the write premium costs you. When a provider charges no write premium, that break-even is zero and caching helps at any reuse above nothing. The calculator recomputes this line for whatever multipliers you enter.</p>
+    </div>
+    <div class="faq-item">
+      <h3>The sovereign floor: $0 per token</h3>
+      <p>Prompt caching is a discount on tokens you are still renting. A model running locally on a GPU you own has no per-token bill at all — prefix, fresh input, and output are all free at the margin, with only electricity as the variable cost. Above a modest scale, owning the model beats caching a rented one, and the gap widens as volume grows. ABUZ8&nbsp;OS runs locally by default and only reaches for a paid API when a hosted model clearly beats your local one.</p>
+    </div>
+    <div class="faq-item">
+      <h3>Is my data sent anywhere?</h3>
+      <p>No. This calculator runs entirely in your browser. Nothing you enter is uploaded, logged, or stored.</p>
+    </div>
+  </div>
+</main>
+
+<footer>
+  ABUZ8 LLC &middot; Free AI Tools &middot; <a href="mailto:ahmad@abuz8ai.com">ahmad@abuz8ai.com</a>
+</footer>
+
+<script>
+// ── CACHE PROFILES (multipliers of the base input rate) ────────────────────────
+// Defaults are ILLUSTRATIVE reference values, not a live price feed — providers
+// differ and change pricing, so every field is editable. The math, not the table,
+// is the product here. write = cost to cache on a miss; read = cost to reuse on a hit.
+const CACHE_PROFILES = [
+  { name: 'Anthropic-style (write 1.25×, read 0.10×)', write: 1.25, read: 0.10 },
+  { name: 'Anthropic 1-hour TTL (write 2.0×, read 0.10×)', write: 2.00, read: 0.10 },
+  { name: 'OpenAI-style auto-cache (write 1.0×, read 0.50×)', write: 1.00, read: 0.50 },
+  { name: 'DeepSeek-style (write 1.0×, read 0.10×)', write: 1.00, read: 0.10 },
+  { name: 'Local (ABUZ8 OS) — no per-token charge', write: 0.00, read: 0.00 },
+  { name: 'Custom (edit fields)', write: null, read: null }
+];
+
+// ── POPULATE SELECT ─────────────────────────────────────────────────────────────
+(function initSelects() {
+  const cs = document.getElementById('cacheProfile');
+  CACHE_PROFILES.forEach((p, i) => { const o = document.createElement('option'); o.value = i; o.textContent = p.name; cs.appendChild(o); });
+  cs.value = '0';
+})();
+
+// ── PROFILE → FIELD WIRING ──────────────────────────────────────────────────────
+function applyCacheProfile() {
+  const p = CACHE_PROFILES[+document.getElementById('cacheProfile').value];
+  if (p && p.write !== null) {
+    document.getElementById('writeMult').value = p.write;
+    document.getElementById('readMult').value = p.read;
+  }
+  recalc();
+}
+// If the user hand-edits a multiplier, flip the select to "Custom" so the UI never lies.
+function markCustomProfile() { document.getElementById('cacheProfile').value = String(CACHE_PROFILES.length - 1); }
+
+// ── FORMAT ──────────────────────────────────────────────────────────────────────
+function fmtUSD(v) {
+  if (!isFinite(v)) return '—';
+  const n = Math.abs(v);
+  if (n >= 1)  return (v < 0 ? '-$' : '$') + n.toLocaleString('en-US', { maximumFractionDigits: 2 });
+  if (n > 0)   return (v < 0 ? '-$' : '$') + n.toFixed(3);
+  return '$0';
+}
+function fmtNum(v) { return Math.round(v).toLocaleString('en-US'); }
+function fmtPct(v) { return (v * 100).toLocaleString('en-US', { maximumFractionDigits: 1 }) + '%'; }
+
+// ── READ INPUTS ─────────────────────────────────────────────────────────────────
+function inputs() {
+  const num = (id) => Math.max(0, parseFloat(document.getElementById(id).value) || 0);
+  return {
+    requests:     Math.floor(num('requests')),
+    cachedTokens: Math.floor(num('cachedTokens')),
+    freshTokens:  Math.floor(num('freshTokens')),
+    outputTokens: Math.floor(num('outputTokens')),
+    inPrice:      num('inPrice'),                              // $/1M input
+    outPrice:     num('outPrice'),                             // $/1M output
+    writeMult:    num('writeMult'),                            // × base input, on a miss
+    readMult:     num('readMult'),                             // × base input, on a hit
+    hitRate:      Math.min(1, Math.max(0, num('hitRate') / 100))
+  };
+}
+
+// ── CORE COST MATH (all transparent, no hidden factors) ──────────────────────────
+function compute(i) {
+  const M = 1e6;
+  const reqs = i.requests;
+  const hits = reqs * i.hitRate;
+  const misses = reqs * (1 - i.hitRate);
+
+  // Prefix — the only line caching changes.
+  const prefixNoCache   = (reqs * i.cachedTokens / M) * i.inPrice;                       // full rate, every request
+  const prefixWithCache = ((hits * i.cachedTokens * i.readMult
+                          + misses * i.cachedTokens * i.writeMult) / M) * i.inPrice;      // blended read/write
+
+  // Fresh input and output — identical in both scenarios.
+  const freshCost  = (reqs * i.freshTokens  / M) * i.inPrice;
+  const outputCost = (reqs * i.outputTokens / M) * i.outPrice;
+
+  const totalNoCache   = prefixNoCache   + freshCost + outputCost;
+  const totalWithCache = prefixWithCache + freshCost + outputCost;
+  const savings = totalNoCache - totalWithCache;
+  const savingsPct = totalNoCache > 0 ? savings / totalNoCache : 0;
+
+  // Break-even hit rate on the prefix: h·read + (1−h)·write = 1  →  h = (1−write)/(read−write)
+  const denom = i.readMult - i.writeMult;
+  let breakeven = null;
+  if (i.cachedTokens > 0 && Math.abs(denom) > 1e-9) breakeven = (1 - i.writeMult) / denom;
+
+  return { hits, misses, prefixNoCache, prefixWithCache, freshCost, outputCost,
+           totalNoCache, totalWithCache, savings, savingsPct, breakeven };
+}
+
+// ── MAIN RECALC ───────────────────────────────────────────────────────────────
+function recalc() {
+  const i = inputs();
+  const r = compute(i);
+
+  // summary cards
+  document.getElementById('noCacheCost').textContent = fmtUSD(r.totalNoCache);
+  document.getElementById('noCacheSub').textContent  = fmtNum(i.requests) + ' req/mo · full rate on ' + fmtNum(i.cachedTokens) + ' cached tokens each';
+  document.getElementById('withCacheCost').textContent = fmtUSD(r.totalWithCache);
+  document.getElementById('withCacheSub').textContent  = fmtPct(i.hitRate) + ' hit rate · prefix blended read/write';
+
+  // verdict
+  const v = document.getElementById('verdict');
+  v.classList.remove('warn');
+  if (i.requests <= 0 || i.cachedTokens <= 0) {
+    v.innerHTML = 'Enter your request volume and a reusable prefix size above to estimate what prompt caching saves.';
+  } else if (r.savings >= 0) {
+    let be = '';
+    if (r.breakeven !== null && r.breakeven > 0 && r.breakeven < 1)
+      be = ` You are above the <strong>${fmtPct(r.breakeven)} break-even hit rate</strong>, so caching pays off.`;
+    else if (r.breakeven !== null && r.breakeven <= 0)
+      be = ` This profile has no write premium, so caching saves at <strong>any</strong> hit rate.`;
+    v.innerHTML =
+      `<span class="big">Prompt caching saves about <span class="save">${fmtUSD(r.savings)}/mo</span> ` +
+      `(${fmtPct(r.savingsPct)} off your bill)</span> at a ${fmtPct(i.hitRate)} hit rate — ` +
+      `the reusable prefix drops from <strong>${fmtUSD(r.prefixNoCache)}</strong> to <strong>${fmtUSD(r.prefixWithCache)}</strong>.${be} ` +
+      `Run the same model locally and the prefix, the fresh input and the output are all <span class="save">$0</span> per token.`;
+  } else {
+    v.classList.add('warn');
+    const beTxt = (r.breakeven !== null && r.breakeven > 0 && r.breakeven < 1)
+      ? ` You need at least a <strong>${fmtPct(r.breakeven)} hit rate</strong> to break even with these multipliers.`
+      : ` With this write premium, caching does not pay off at your reuse level.`;
+    v.innerHTML =
+      `<span class="big">At a ${fmtPct(i.hitRate)} hit rate, caching costs you about <span class="cost">${fmtUSD(-r.savings)}/mo more</span></span> — ` +
+      `the write premium on rarely-reused prefixes outweighs the read discount.${beTxt} ` +
+      `A model you own has no per-token charge at all, so there is no premium to pay.`;
+  }
+
+  // breakdown table (without vs with) + pinned local $0 row
+  const body = document.getElementById('costTable');
+  body.innerHTML =
+    `<tr>
+       <td><span class="line-name">Cached prefix</span><span class="line-tag">${fmtNum(i.cachedTokens)} tok × ${fmtNum(i.requests)} req · the reusable part</span></td>
+       <td>${fmtUSD(r.prefixNoCache)}</td>
+       <td>${fmtUSD(r.prefixWithCache)}</td>
+     </tr>
+     <tr>
+       <td><span class="line-name">Fresh input</span><span class="line-tag">${fmtNum(i.freshTokens)} tok × ${fmtNum(i.requests)} req · never cached</span></td>
+       <td>${fmtUSD(r.freshCost)}</td>
+       <td>${fmtUSD(r.freshCost)}</td>
+     </tr>
+     <tr>
+       <td><span class="line-name">Output</span><span class="line-tag">${fmtNum(i.outputTokens)} tok × ${fmtNum(i.requests)} req · caching never applies</span></td>
+       <td>${fmtUSD(r.outputCost)}</td>
+       <td>${fmtUSD(r.outputCost)}</td>
+     </tr>
+     <tr class="subtotal">
+       <td><span class="line-name">Total / month</span><span class="line-tag">at ${fmtPct(i.hitRate)} hit rate</span></td>
+       <td>${fmtUSD(r.totalNoCache)}</td>
+       <td>${fmtUSD(r.totalWithCache)}</td>
+     </tr>
+     <tr class="local">
+       <td><span class="line-name">Local (ABUZ8 OS)</span><span class="badge-local">SOVEREIGN</span><span class="line-tag">model on hardware you own · $0 per token</span></td>
+       <td>$0*</td>
+       <td>$0*</td>
+     </tr>`;
+}
+
+// ── WAITLIST ──────────────────────────────────────────────────────────────────
+async function submitWaitlist() {
+  const email = document.getElementById('ctaEmail').value.trim();
+  if (!email || !email.includes('@')) { alert('Please enter a valid email address.'); return; }
+  const payload = { email, product: 'qadir-os-prompt-caching-calculator', ts: new Date().toISOString() };
+  try {
+    await fetch('/api/waitlist', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+  } catch (e) { /* graceful fallback — never block the confirmation */ }
+  document.getElementById('ctaEmail').style.display = 'none';
+  document.querySelector('.cta-form button').style.display = 'none';
+  document.getElementById('ctaSuccess').classList.add('visible');
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+recalc();
+</script>
+<script src="/tools/_tools-shared.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>

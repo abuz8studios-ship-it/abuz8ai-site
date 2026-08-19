@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Lipsync Pro — Talking Head Videos from One Photo | ABUZ8</title>
+<meta name="description" content="Upload a photo and audio — get a photorealistic talking-head video with perfect lip sync. SadTalker + MultiTalk on local RTX 5090. Join early access.">
+<meta name="keywords" content="ai lip sync, talking head generator, ai avatar video, sadtalker, lipsync ai, ai spokesperson, deepfake alternative, ai presenter">
+<link rel="canonical" href="https://abuz8ai.com/tools/ai-lipsync-pro">
+<meta property="og:title" content="AI Lipsync Pro — Talking Head Videos | ABUZ8">
+<meta property="og:description" content="Turn any portrait into a talking-head video with studio-grade lip sync. Local GPU rendering, zero cloud dependency.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://abuz8ai.com/tools/ai-lipsync-pro">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="AI Lipsync Pro — Talking Head Videos | ABUZ8">
+<meta name="twitter:description" content="Upload a photo + audio. Get a photorealistic talking-head video with perfect lip sync.">
+<link rel="stylesheet" href="/assets/css/abuz8-mach3.css">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@300;400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"SoftwareApplication","name":"AI Lipsync Pro","applicationCategory":"MultimediaApplication","operatingSystem":"Web","description":"Generate photorealistic talking-head videos from a single photo and audio clip using SadTalker and MultiTalk AI on local RTX 5090 GPU.","offers":{"@type":"Offer","price":"0","priceCurrency":"USD","availability":"https://schema.org/PreOrder"},"creator":{"@type":"Organization","name":"ABUZ8 LLC","url":"https://abuz8ai.com"}}
+</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"HowTo","name":"Create a Talking Head Video with AI","step":[{"@type":"HowToStep","name":"Upload portrait","text":"Upload a clear front-facing photo of the speaker."},{"@type":"HowToStep","name":"Add audio","text":"Upload speech audio or paste text for AI voice generation."},{"@type":"HowToStep","name":"Choose engine","text":"Select SadTalker for speed or MultiTalk for cinematic quality."},{"@type":"HowToStep","name":"Generate","text":"Click generate and receive your talking-head video in under 60 seconds."}]}
+</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is AI lip sync?","acceptedAnswer":{"@type":"Answer","text":"AI lip sync uses deep learning to animate a still photo so the mouth movements match an audio track, creating a realistic talking-head video."}},{"@type":"Question","name":"What's the difference between SadTalker and MultiTalk?","acceptedAnswer":{"@type":"Answer","text":"SadTalker is optimized for speed (~15s per clip) with natural head motion. MultiTalk uses WanVideo for higher fidelity cinematic output (~45s per clip)."}},{"@type":"Question","name":"Do I need my own GPU?","acceptedAnswer":{"@type":"Answer","text":"No. Early access renders on our local RTX 5090 infrastructure. When QADIR OS ships, you can run it on your own hardware or use our cloud."}},{"@type":"Question","name":"Can I use any language?","acceptedAnswer":{"@type":"Answer","text":"Yes. The lip sync engine works with any language audio. TTS supports 40+ languages and voice styles."}},{"@type":"Question","name":"Is this a deepfake tool?","acceptedAnswer":{"@type":"Answer","text":"This tool is designed for creating AI presenters, spokespeople, and content from YOUR OWN likeness. We do not support impersonation of others."}},{"@type":"Question","name":"What resolution is the output?","acceptedAnswer":{"@type":"Answer","text":"SadTalker outputs 256x256 face crops composited onto the original. MultiTalk outputs full 512x512 or 768x768 video frames."}},{"@type":"Question","name":"How long can the audio be?","acceptedAnswer":{"@type":"Answer","text":"Up to 2 minutes per clip. For longer content, use our long-video stitcher to chain clips seamlessly."}},{"@type":"Question","name":"Can I clone my own voice?","acceptedAnswer":{"@type":"Answer","text":"Voice cloning is on the QADIR OS roadmap. Currently you can upload pre-recorded audio or use our built-in TTS with 20+ voice presets."}}]}
+</script>
+<style>
+:root{
+  --lapis:#0a1628; --lapis-2:#0d1a30; --lapis-3:#111f38;
+  --gold:#c9a84c; --gold-2:#e6c879;
+  --turq:#0e9f6e; --turq-2:#2bb39e;
+  --cream:#f5f0e8; --text:#e8e4d8; --dim:#8a9aaa; --border:#1a2e50;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{background:var(--lapis);color:var(--text);font-family:'Inter',sans-serif;line-height:1.6;min-height:100vh;-webkit-font-smoothing:antialiased}
+a{color:var(--gold);text-decoration:none}
+.mono{font-family:'JetBrains Mono',monospace}
+.wrap{max-width:1200px;margin:0 auto;padding:32px 24px}
+
+/* NAV */
+.nav{display:flex;justify-content:space-between;align-items:center;padding-bottom:20px;border-bottom:1px solid var(--border);margin-bottom:40px}
+.brand{font-family:'Playfair Display',serif;font-size:22px;color:var(--cream);letter-spacing:.5px}
+.brand .acc{color:var(--gold)}
+.back{font-size:11px;color:var(--dim);letter-spacing:2px;text-transform:uppercase}
+.back:hover{color:var(--gold)}
+
+/* HERO */
+.hero{display:grid;grid-template-columns:1.1fr .9fr;gap:48px;align-items:center;margin-bottom:56px}
+@media(max-width:880px){.hero{grid-template-columns:1fr}}
+.eyebrow{color:var(--turq-2);font-size:11px;letter-spacing:3px;text-transform:uppercase;margin-bottom:18px;font-weight:600}
+h1{font-family:'Playfair Display',serif;font-size:clamp(2.2rem,5vw,3.6rem);color:var(--cream);line-height:1.05;margin-bottom:20px;font-weight:900}
+h1 .gold{color:var(--gold)}
+.lede{color:var(--dim);font-size:18px;font-weight:300;max-width:540px;margin-bottom:28px}
+.row-stats{display:flex;gap:32px;margin-top:20px;flex-wrap:wrap}
+.stat{border-left:2px solid var(--gold);padding-left:14px}
+.stat .n{font-family:'Playfair Display',serif;font-size:28px;color:var(--cream);font-weight:700;line-height:1}
+.stat .l{font-size:10px;color:var(--dim);letter-spacing:2px;text-transform:uppercase;margin-top:6px}
+
+/* DEMO STRIP */
+.demo-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;border-radius:18px;overflow:hidden;border:1px solid var(--border);background:var(--lapis-2);padding:12px}
+.demo-card{aspect-ratio:4/5;border-radius:12px;background:linear-gradient(135deg,#1a2e50,#0d1a30);position:relative;overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:14px;gap:8px}
+.demo-card::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 40% 30%,rgba(26,138,122,0.18),transparent 60%)}
+.demo-card .ico{font-size:32px;position:relative}
+.demo-card .tag{position:relative;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--turq-2);font-weight:600;text-align:center}
+
+/* WORKBENCH */
+.bench{display:grid;grid-template-columns:1fr 1fr;gap:32px;background:var(--lapis-2);border:1px solid var(--border);border-radius:22px;padding:36px;margin-bottom:56px}
+@media(max-width:880px){.bench{grid-template-columns:1fr}}
+.panel h3{font-family:'Playfair Display',serif;font-size:24px;color:var(--cream);margin-bottom:6px}
+.panel .pre{color:var(--turq-2);font-size:10px;letter-spacing:3px;text-transform:uppercase;margin-bottom:18px;font-weight:600}
+
+.drop{border:2px dashed var(--border);border-radius:14px;padding:44px 20px;text-align:center;cursor:pointer;transition:.2s;background:rgba(255,255,255,0.02)}
+.drop:hover,.drop.hot{border-color:var(--gold);background:rgba(201,168,76,0.06)}
+.drop .ico{font-size:36px;margin-bottom:8px;color:var(--gold)}
+.drop .t{font-weight:600;color:var(--cream)}
+.drop .h{font-size:12px;color:var(--dim);margin-top:6px}
+.thumb{display:none;margin-top:14px;border-radius:12px;overflow:hidden;border:1px solid var(--border)}
+.thumb img{width:100%;display:block}
+.audio-drop{border:2px dashed var(--border);border-radius:14px;padding:28px 20px;text-align:center;cursor:pointer;transition:.2s;background:rgba(255,255,255,0.02);margin-top:14px}
+.audio-drop:hover,.audio-drop.hot{border-color:var(--turq-2);background:rgba(26,138,122,0.06)}
+.audio-info{display:none;margin-top:10px;padding:10px 14px;border-radius:10px;background:#0f2040;border:1px solid var(--border);font-size:13px;color:var(--turq-2)}
+
+.tts-box{margin-top:14px;display:none}
+.tts-box.show{display:block}
+.tts-box textarea{width:100%;padding:13px 14px;background:#0f2040;border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:inherit;font-size:14px;resize:vertical;min-height:80px}
+.tts-box textarea:focus{outline:none;border-color:var(--gold)}
+
+.field{margin-bottom:18px}
+.field label{display:block;font-size:10px;color:var(--gold);letter-spacing:2.5px;text-transform:uppercase;margin-bottom:8px;font-weight:700}
+.input,.select{width:100%;padding:13px 14px;background:#0f2040;border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:inherit;font-size:14px}
+.input:focus,.select:focus{outline:none;border-color:var(--gold)}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
+.chip{padding:8px 14px;border:1px solid var(--border);border-radius:999px;font-size:12px;cursor:pointer;color:var(--dim);background:transparent;transition:.15s}
+.chip:hover{border-color:var(--turq-2);color:var(--text)}
+.chip.on{background:var(--gold);color:var(--lapis);border-color:var(--gold);font-weight:600}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:16px 20px;border-radius:12px;font-weight:700;font-size:14px;text-transform:uppercase;letter-spacing:2px;cursor:pointer;border:none;transition:.2s}
+.btn-gold{background:linear-gradient(180deg,var(--gold-2),var(--gold));color:var(--lapis)}
+.btn-gold:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(201,168,76,0.28)}
+.btn[disabled]{opacity:.5;cursor:not-allowed;transform:none;box-shadow:none}
+
+/* STATUS + RESULTS */
+.status{margin-top:18px;padding:14px 16px;border-radius:10px;background:#0f2040;border:1px solid var(--border);font-size:13px;display:none}
+.status.show{display:block}
+.status.ok{border-color:var(--turq-2)}
+.status.err{border-color:#c95a4c}
+.bar{height:6px;background:var(--lapis);border-radius:99px;overflow:hidden;margin-top:10px}
+.bar > i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--turq),var(--gold));transition:width .4s}
+.result-video{margin-top:18px;border-radius:14px;overflow:hidden;border:1px solid var(--border);background:#0d1a30;display:none}
+.result-video video{width:100%;display:block}
+.result-video .placeholder{padding:48px 20px;text-align:center;color:var(--dim);font-size:12px;letter-spacing:2px;text-transform:uppercase}
+
+/* COMPARISON */
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:56px}
+@media(max-width:700px){.compare{grid-template-columns:1fr}}
+.compare-card{background:var(--lapis-2);border:1px solid var(--border);border-radius:18px;padding:28px}
+.compare-card.highlight{border-color:var(--gold)}
+.compare-card h4{font-family:'Playfair Display',serif;font-size:20px;color:var(--cream);margin-bottom:12px}
+.compare-card .price{font-family:'Playfair Display',serif;font-size:32px;color:var(--gold);margin-bottom:16px}
+.compare-card ul{list-style:none;padding:0}
+.compare-card li{padding:8px 0;border-bottom:1px solid var(--border);font-size:14px;color:var(--dim)}
+.compare-card li::before{content:'';display:inline-block;width:6px;height:6px;border-radius:50%;margin-right:10px;vertical-align:middle}
+.compare-card li.yes::before{background:var(--turq-2)}
+.compare-card li.no::before{background:#c95a4c}
+
+/* STEPS + FEATURES */
+.section-title{font-family:'Playfair Display',serif;font-size:32px;color:var(--cream);margin-bottom:28px}
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-bottom:56px}
+@media(max-width:880px){.steps{grid-template-columns:repeat(2,1fr)}}
+.step{background:var(--lapis-2);border:1px solid var(--border);border-radius:16px;padding:22px}
+.step .num{font-family:'Playfair Display',serif;font-size:34px;color:var(--gold);font-weight:900;line-height:1}
+.step h4{font-size:14px;color:var(--cream);margin:10px 0 6px;letter-spacing:.5px}
+.step p{font-size:13px;color:var(--dim)}
+
+.features{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-bottom:56px}
+@media(max-width:880px){.features{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:560px){.features{grid-template-columns:1fr}}
+.feat{background:var(--lapis-2);border:1px solid var(--border);border-radius:16px;padding:22px}
+.feat .fico{font-size:28px;margin-bottom:10px}
+.feat h4{font-size:14px;color:var(--cream);margin-bottom:6px}
+.feat p{font-size:13px;color:var(--dim)}
+
+/* USE CASES */
+.use-cases{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-bottom:56px}
+@media(max-width:880px){.use-cases{grid-template-columns:repeat(2,1fr)}}
+.uc{background:var(--lapis-2);border:1px solid var(--border);border-radius:16px;padding:22px;text-align:center}
+.uc .uico{font-size:32px;margin-bottom:10px}
+.uc h4{font-size:14px;color:var(--cream);margin-bottom:6px}
+.uc p{font-size:12px;color:var(--dim)}
+
+/* FAQ */
+.faq{margin-bottom:56px}
+.faq-item{border-bottom:1px solid var(--border);padding:18px 0}
+.faq-q{font-weight:600;color:var(--cream);cursor:pointer;display:flex;justify-content:space-between;align-items:center}
+.faq-q::after{content:'+';font-size:20px;color:var(--gold);transition:.2s}
+.faq-item.open .faq-q::after{content:'-'}
+.faq-a{max-height:0;overflow:hidden;transition:max-height .3s ease;color:var(--dim);font-size:14px;line-height:1.7}
+.faq-item.open .faq-a{max-height:300px;padding-top:12px}
+
+/* CTA */
+.cta{background:linear-gradient(135deg,var(--lapis-3),var(--lapis-2));border:1px solid var(--gold);border-radius:24px;padding:48px;text-align:center;margin-bottom:48px;position:relative;overflow:hidden}
+.cta::before{content:'';position:absolute;inset:-1px;background:radial-gradient(circle at 80% 0%,rgba(201,168,76,0.16),transparent 50%);pointer-events:none}
+.cta h2{font-family:'Playfair Display',serif;font-size:clamp(1.8rem,4vw,2.8rem);color:var(--cream);margin-bottom:14px;position:relative}
+.cta p{color:var(--dim);max-width:540px;margin:0 auto 28px;position:relative}
+.waitform{display:flex;gap:10px;max-width:520px;margin:0 auto;position:relative;flex-wrap:wrap}
+.waitform .input{flex:1;min-width:240px}
+.waitform .btn{width:auto;padding:13px 24px}
+.tinynote{margin-top:14px;font-size:11px;color:var(--dim);letter-spacing:1px;position:relative}
+
+.foot{padding:32px 0;border-top:1px solid var(--border);color:var(--dim);font-size:12px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px}
+
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<script>
+// Cloud fallback: if ComfyUI is unreachable, redirect generate calls to Workers AI
+(function(){
+  var comfyUrl = (window.ABUZ8_COMFY_BASE) || 'https://comfy.abuz8ai.com';
+  var checked = false, comfyLive = false;
+  window._checkComfy = async function(){
+    if(checked) return comfyLive;
+    try{
+      var r = await fetch(comfyUrl+'/system_stats',{signal:AbortSignal.timeout(3000)});
+      comfyLive = r.ok; checked = true;
+    }catch(_){ comfyLive = false; checked = true; }
+    return comfyLive;
+  };
+  window._cloudGenerate = async function(prompt){
+    try{
+      var r = await fetch('/api/ai-image',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt:prompt})});
+      if(!r.ok) return null;
+      var blob = await r.blob();
+      return URL.createObjectURL(blob);
+    }catch(_){ return null; }
+  };
+})();
+</script>
+<div class="wrap">
+
+  <nav class="nav">
+    <a href="/index.html" class="brand">ABUZ8</a>
+    <a href="../tools.html" class="back">&larr; All Tools</a>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div>
+      <div class="eyebrow">AI Lipsync Pro &middot; Tier A &middot; Talking Head</div>
+      <h1>One photo speaks.<br><span class="gold">Every word.</span></h1>
+      <p class="lede">Upload a portrait and an audio clip. Our dual-engine pipeline (SadTalker for speed, MultiTalk for cinematic fidelity) generates a photorealistic talking-head video with frame-perfect lip sync. All on local RTX 5090 -- your face never touches the cloud.</p>
+      <div class="row-stats">
+        <div class="stat"><div class="n">2</div><div class="l">Render engines</div></div>
+        <div class="stat"><div class="n">~15s</div><div class="l">SadTalker clip</div></div>
+        <div class="stat"><div class="n">30fps</div><div class="l">Output quality</div></div>
+      </div>
+    </div>
+    <div class="demo-strip" aria-hidden="true">
+      <div class="demo-card"><span class="ico">&#x1F5E3;</span><span class="tag">Spokesperson</span></div>
+      <div class="demo-card"><span class="ico">&#x1F3AC;</span><span class="tag">Presenter</span></div>
+      <div class="demo-card"><span class="ico">&#x1F4F9;</span><span class="tag">UGC Creator</span></div>
+    </div>
+  </section>
+
+  <!-- WORKBENCH -->
+  <section class="bench" id="bench">
+    <div class="panel">
+      <div class="pre">Step 01 &middot; Inputs</div>
+      <h3>Upload photo + audio</h3>
+      <p style="color:var(--dim);font-size:13px;margin:8px 0 14px">Front-facing, well-lit portrait. JPG or PNG up to 10MB.</p>
+
+      <label class="drop" id="drop">
+        <div class="ico">&#x2B21;</div>
+        <div class="t">Drop a portrait or click to browse</div>
+        <div class="h">PNG &middot; JPG &middot; &le; 10MB</div>
+        <input id="file" type="file" accept="image/png,image/jpeg" hidden>
+      </label>
+      <div class="thumb" id="thumb"><img id="thumb-img" alt="Portrait preview"></div>
+
+      <label class="audio-drop" id="audio-drop">
+        <div class="t">Drop audio or click to browse</div>
+        <div class="h">WAV &middot; MP3 &middot; &le; 30MB &middot; Up to 2 min</div>
+        <input id="audio-file" type="file" accept="audio/wav,audio/mpeg,audio/mp3" hidden>
+      </label>
+      <div class="audio-info" id="audio-info"></div>
+
+      <div style="margin-top:14px">
+        <label style="font-size:12px;color:var(--dim);cursor:pointer;display:flex;align-items:center;gap:8px">
+          <input type="checkbox" id="use-tts"> Or use AI text-to-speech instead
+        </label>
+      </div>
+      <div class="tts-box" id="tts-box">
+        <div class="field">
+          <label>Script</label>
+          <textarea id="tts-text" placeholder="Type what the avatar should say..."></textarea>
+        </div>
+        <div class="field">
+          <label>Voice</label>
+          <select class="select" id="tts-voice">
+            <option value="en-US-GuyNeural">Guy (US Male)</option>
+            <option value="en-US-JennyNeural">Jenny (US Female)</option>
+            <option value="en-GB-RyanNeural">Ryan (UK Male)</option>
+            <option value="en-GB-SoniaNeural">Sonia (UK Female)</option>
+            <option value="en-AU-WilliamNeural">William (AU Male)</option>
+            <option value="ar-SA-HamedNeural">Hamed (Arabic Male)</option>
+            <option value="es-ES-AlvaroNeural">Alvaro (Spanish Male)</option>
+            <option value="fr-FR-HenriNeural">Henri (French Male)</option>
+            <option value="de-DE-ConradNeural">Conrad (German Male)</option>
+            <option value="ja-JP-KeitaNeural">Keita (Japanese Male)</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="pre">Step 02 &middot; Configure</div>
+      <h3>Choose engine + settings</h3>
+
+      <div style="margin-top:16px">
+        <label style="font-size:13px;color:var(--dim);margin-bottom:8px;display:block">Engine</label>
+        <div class="chips" id="engine-chips">
+          <button class="chip active" data-v="sadtalker">SadTalker &middot; Fast</button>
+          <button class="chip" data-v="multitalk">MultiTalk &middot; Cinema</button>
+        </div>
+      </div>
+      <div style="margin-top:16px">
+        <label style="font-size:13px;color:var(--dim);margin-bottom:8px;display:block">Expression</label>
+        <div class="chips" id="expr-chips">
+          <button class="chip active" data-v="neutral">Neutral</button>
+          <button class="chip" data-v="smile">Smile</button>
+          <button class="chip" data-v="serious">Serious</button>
+          <button class="chip" data-v="surprised">Surprised</button>
+        </div>
+      </div>
+      <div class="field" style="margin-top:16px">
+        <label>Head Motion</label>
+        <select class="select" id="head-motion">
+          <option value="natural">Natural</option>
+          <option value="still">Still</option>
+          <option value="nod">Nod</option>
+          <option value="shake">Shake</option>
+        </select>
+      </div>
+      <button class="btn" id="gen-btn" disabled>Generate Talking Head</button>
+      <div class="status" id="status">
+        <div class="bar"><div class="fill" id="fill"></div></div>
+        <span id="status-text">Upload a photo + audio to begin</span>
+      </div>
+      <div id="result" style="margin-top:24px;display:none">
+        <video id="result-video" controls autoplay loop style="width:100%;border-radius:12px;border:1px solid var(--edge)"></video>
+        <a id="dl-btn" class="btn" style="margin-top:12px;display:inline-flex;text-decoration:none" download>Download MP4</a>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- Comparison -->
+<section class="section" style="padding:80px 0">
+  <div class="wrap">
+    <div class="pre" style="text-align:center">Why ABUZ8</div>
+    <h2 class="sec-title" style="text-align:center">Skip the film crew</h2>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;max-width:800px;margin:40px auto 0">
+      <div class="compare-card" style="border-color:var(--gold)">
+        <h4 style="color:var(--gold);margin-bottom:16px">ABUZ8 Lip Sync</h4>
+        <ul style="list-style:none;padding:0;color:var(--dim);font-size:14px;line-height:2">
+          <li>&#10003; 15-45 seconds per clip</li>
+          <li>&#10003; $0 marginal cost</li>
+          <li>&#10003; Any language, any voice</li>
+          <li>&#10003; Change script instantly</li>
+          <li>&#10003; No scheduling needed</li>
+          <li>&#10003; Unlimited revisions</li>
+        </ul>
+      </div>
+      <div class="compare-card">
+        <h4 style="color:var(--dim);margin-bottom:16px">Hiring a Presenter</h4>
+        <ul style="list-style:none;padding:0;color:var(--dim);font-size:14px;line-height:2">
+          <li>&#10007; 2-4 weeks turnaround</li>
+          <li>&#10007; $500-$5,000 per video</li>
+          <li>&#10007; Limited to one language</li>
+          <li>&#10007; Re-shoot for every edit</li>
+          <li>&#10007; Calendar coordination</li>
+          <li>&#10007; Pay per revision</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- How It Works -->
+<section class="section" style="padding:80px 0;background:rgba(26,138,122,.04)">
+  <div class="wrap">
+    <div class="pre" style="text-align:center">How It Works</div>
+    <h2 class="sec-title" style="text-align:center">Four steps to a talking head</h2>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">01</div>
+        <h4>Upload a face</h4>
+        <p>Drop any portrait photo &mdash; headshot, selfie, or AI-generated character. One clear face is all you need.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">02</div>
+        <h4>Add your audio</h4>
+        <p>Upload a voice recording, podcast clip, or use our built-in AI text-to-speech with 10+ voice options.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">03</div>
+        <h4>Pick your engine</h4>
+        <p>SadTalker for speed (~15 s) or MultiTalk for cinematic quality (~45 s). Choose expression and head motion.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">04</div>
+        <h4>Download &amp; share</h4>
+        <p>Get an MP4 with perfectly synced lips, natural expressions, and smooth head movement. Ready for any platform.</p>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- Features -->
+<section class="section" style="padding:80px 0">
+  <div class="wrap">
+    <div class="pre" style="text-align:center">Features</div>
+    <h2 class="sec-title" style="text-align:center">Built for production</h2>
+    <div class="features">
+      <div class="feat">
+        <div style="font-size:28px;margin-bottom:12px">&#9889;</div>
+        <h4>Dual Engine</h4>
+        <p>SadTalker for fast previews, MultiTalk (WanVideo) for cinematic lip sync at 512px+.</p>
+      </div>
+      <div class="feat">
+        <div style="font-size:28px;margin-bottom:12px">&#127908;</div>
+        <h4>TTS Built In</h4>
+        <p>10 neural voices across 7 languages. Type your script, pick a voice, generate.</p>
+      </div>
+      <div class="feat">
+        <div style="font-size:28px;margin-bottom:12px">&#127912;</div>
+        <h4>Expression Control</h4>
+        <p>Neutral, smile, serious, surprised. Match the avatar's emotion to your content.</p>
+      </div>
+      <div class="feat">
+        <div style="font-size:28px;margin-bottom:12px">&#128640;</div>
+        <h4>15-Second Delivery</h4>
+        <p>SadTalker renders a talking head in ~15 seconds. MultiTalk in ~45 seconds.</p>
+      </div>
+      <div class="feat">
+        <div style="font-size:28px;margin-bottom:12px">&#127760;</div>
+        <h4>Any Language</h4>
+        <p>Lip sync works with any audio language. Pair with multilingual TTS for global reach.</p>
+      </div>
+      <div class="feat">
+        <div style="font-size:28px;margin-bottom:12px">&#128274;</div>
+        <h4>100% Local</h4>
+        <p>Runs on your GPU. No cloud uploads, no per-clip fees, no data leaving your machine.</p>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- Use Cases -->
+<section class="section" style="padding:80px 0;background:rgba(201,168,76,.04)">
+  <div class="wrap">
+    <div class="pre" style="text-align:center">Use Cases</div>
+    <h2 class="sec-title" style="text-align:center">Who uses this</h2>
+    <div class="uses">
+      <div class="use-card">
+        <h4>Course Creators</h4>
+        <p>Turn slide decks into talking-head lessons without being on camera.</p>
+      </div>
+      <div class="use-card">
+        <h4>Marketing Teams</h4>
+        <p>Localize spokesperson videos into 10+ languages from a single take.</p>
+      </div>
+      <div class="use-card">
+        <h4>Podcasters</h4>
+        <p>Add a visual avatar to audio-only episodes for YouTube and social.</p>
+      </div>
+      <div class="use-card">
+        <h4>Real Estate</h4>
+        <p>AI presenter walks through property listings in any language 24/7.</p>
+      </div>
+      <div class="use-card">
+        <h4>SaaS Demos</h4>
+        <p>Narrated product walkthroughs that update when features change.</p>
+      </div>
+      <div class="use-card">
+        <h4>Healthcare</h4>
+        <p>Patient education videos with consistent, professional delivery.</p>
+      </div>
+      <div class="use-card">
+        <h4>E-Commerce</h4>
+        <p>Product explainer videos at scale &mdash; one avatar, unlimited SKUs.</p>
+      </div>
+      <div class="use-card">
+        <h4>Internal Comms</h4>
+        <p>CEO updates, onboarding videos, and training without booking a studio.</p>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- FAQ -->
+<section class="section" style="padding:80px 0">
+  <div class="wrap">
+    <div class="pre" style="text-align:center">FAQ</div>
+    <h2 class="sec-title" style="text-align:center">Common questions</h2>
+    <div class="faq-list" style="max-width:720px;margin:40px auto 0">
+      <details class="faq-item"><summary>What is AI lip sync?</summary><p>AI lip sync uses deep learning to animate a still photo so the mouth moves in sync with any audio track, producing a realistic talking-head video.</p></details>
+      <details class="faq-item"><summary>What's the difference between SadTalker and MultiTalk?</summary><p>SadTalker renders in ~15 seconds at 256px &mdash; great for previews and fast iterations. MultiTalk uses WanVideo for cinematic 512px+ output in ~45 seconds.</p></details>
+      <details class="faq-item"><summary>What photo formats are supported?</summary><p>JPG, PNG, and WebP. The photo should contain one clearly visible face. AI-generated portraits work great too.</p></details>
+      <details class="faq-item"><summary>What audio formats work?</summary><p>MP3, WAV, M4A, and OGG. Or skip the upload and use our built-in text-to-speech with 10 neural voices.</p></details>
+      <details class="faq-item"><summary>Is it really free?</summary><p>During early access, yes. The tool runs locally on your GPU with no per-clip fees. Join the waitlist to lock in early access pricing.</p></details>
+      <details class="faq-item"><summary>Does it work with any language?</summary><p>Yes. The lip sync engine works with any spoken language. Our TTS supports English, Arabic, Spanish, French, German, and Japanese.</p></details>
+      <details class="faq-item"><summary>What hardware do I need?</summary><p>An NVIDIA GPU with 8 GB+ VRAM (RTX 3060 or higher). SadTalker can run on 4 GB for basic output.</p></details>
+      <details class="faq-item"><summary>Can I use it for commercial projects?</summary><p>Absolutely. All output is yours. No watermarks, no attribution required, no usage limits.</p></details>
+    </div>
+  </div>
+</section>
+<!-- CTA / Waitlist -->
+<section class="section" style="padding:100px 0;background:linear-gradient(135deg,var(--lapis),#0f2440)">
+  <div class="wrap" style="text-align:center">
+    <div class="pre">Early Access</div>
+    <h2 style="font-family:'Playfair Display',serif;font-size:clamp(28px,4vw,44px);color:#fff;margin:16px 0">Get lip sync before everyone else</h2>
+    <p style="color:var(--dim);max-width:520px;margin:0 auto 32px;font-size:16px">Join 2,400+ creators on the ABUZ8 waitlist. Early access members get priority GPU time and founding-member pricing.</p>
+    <form class="waitlist-form" id="waitlist-form" style="max-width:440px;margin:0 auto;display:flex;gap:12px">
+      <input type="email" id="wl-email" placeholder="you@company.com" required style="flex:1;padding:14px 20px;border-radius:10px;border:1px solid var(--edge);background:rgba(255,255,255,.06);color:#fff;font-size:15px">
+      <button type="submit" class="btn" style="white-space:nowrap">Join Waitlist</button>
+    </form>
+    <p id="wl-msg" style="color:var(--gold);margin-top:12px;font-size:14px;display:none"></p>
+  </div>
+</section>
+<!-- Footer -->
+<footer style="padding:40px 0;border-top:1px solid var(--edge);text-align:center">
+  <div class="wrap">
+    <a href="/" style="color:var(--gold);text-decoration:none;font-family:'Playfair Display',serif;font-size:20px;font-weight:700">ABUZ8</a>
+    <p style="color:var(--dim);font-size:13px;margin-top:8px">&copy; 2026 ABUZ8 LLC. All rights reserved.</p>
+    <div style="margin-top:12px;display:flex;justify-content:center;gap:24px;font-size:13px">
+      <a href="/tools" style="color:var(--dim);text-decoration:none">All Tools</a>
+      <a href="/pricing.html" style="color:var(--dim);text-decoration:none">Pricing</a>
+      <a href="/blog" style="color:var(--dim);text-decoration:none">Blog</a>
+      <a href="mailto:ahmad@abuz8ai.com" style="color:var(--dim);text-decoration:none">Contact</a>
+    </div>
+  </div>
+</footer>
+</div><!-- /wrap -->
+<script>
+(function(){
+  const API = 'https://comfy.abuz8ai.com';
+  const QADIR = 'https://api.abuz8ai.com';
+
+  // State
+  let photoFile = null, audioFile = null;
+  let engine = 'sadtalker', expression = 'neutral', headMotion = 'natural';
+
+  // DOM refs
+  const photoZone = document.getElementById('photo-zone');
+  const photoInput = document.getElementById('photo-input');
+  const photoThumb = document.getElementById('photo-thumb');
+  const audioZone = document.getElementById('audio-zone');
+  const audioInput = document.getElementById('audio-input');
+  const audioThumb = document.getElementById('audio-thumb');
+  const useTts = document.getElementById('use-tts');
+  const ttsBox = document.getElementById('tts-box');
+  const genBtn = document.getElementById('gen-btn');
+  const statusEl = document.getElementById('status');
+  const statusText = document.getElementById('status-text');
+  const fill = document.getElementById('fill');
+  const resultDiv = document.getElementById('result');
+  const resultVideo = document.getElementById('result-video');
+  const dlBtn = document.getElementById('dl-btn');
+  // Chip selection
+  function initChips(containerId, setter){
+    const box = document.getElementById(containerId);
+    if(!box) return;
+    box.querySelectorAll('.chip').forEach(c=>{
+      c.addEventListener('click',()=>{
+        box.querySelectorAll('.chip').forEach(x=>x.classList.remove('active'));
+        c.classList.add('active');
+        setter(c.dataset.v);
+      });
+    });
+  }
+  initChips('engine-chips', v=>{ engine=v; });
+  initChips('expr-chips', v=>{ expression=v; });
+
+  // Head motion select
+  const motionSel = document.getElementById('head-motion');
+  if(motionSel) motionSel.addEventListener('change', ()=>{ headMotion=motionSel.value; });
+
+  // TTS toggle
+  useTts.addEventListener('change',()=>{
+    ttsBox.classList.toggle('visible', useTts.checked);
+    checkReady();
+  });
+
+  // Photo upload
+  function handlePhotoDrop(file){
+    if(!file||!file.type.startsWith('image/')) return;
+    photoFile = file;
+    const r = new FileReader();
+    r.onload = e=>{
+      photoThumb.innerHTML = '<img src="'+e.target.result+'" style="max-width:100%;max-height:200px;border-radius:8px">';
+    };
+    r.readAsDataURL(file);
+    checkReady();
+  }
+  photoZone.addEventListener('click',()=>photoInput.click());
+  photoZone.addEventListener('dragover',e=>{e.preventDefault();photoZone.style.borderColor='var(--gold)';});
+  photoZone.addEventListener('dragleave',()=>{photoZone.style.borderColor='var(--edge)';});
+  photoZone.addEventListener('drop',e=>{e.preventDefault();photoZone.style.borderColor='var(--edge)';handlePhotoDrop(e.dataTransfer.files[0]);});
+  photoInput.addEventListener('change',()=>{if(photoInput.files[0]) handlePhotoDrop(photoInput.files[0]);});
+  // Audio upload
+  function handleAudioDrop(file){
+    if(!file) return;
+    audioFile = file;
+    audioThumb.innerHTML = '<span style="color:var(--gold)">&#9835; '+file.name+'</span>';
+    checkReady();
+  }
+  audioZone.addEventListener('click',()=>audioInput.click());
+  audioZone.addEventListener('dragover',e=>{e.preventDefault();audioZone.style.borderColor='var(--gold)';});
+  audioZone.addEventListener('dragleave',()=>{audioZone.style.borderColor='var(--edge)';});
+  audioZone.addEventListener('drop',e=>{e.preventDefault();audioZone.style.borderColor='var(--edge)';handleAudioDrop(e.dataTransfer.files[0]);});
+  audioInput.addEventListener('change',()=>{if(audioInput.files[0]) handleAudioDrop(audioInput.files[0]);});
+
+  // Ready check
+  function checkReady(){
+    const hasPhoto = !!photoFile;
+    const hasAudio = useTts.checked ? !!document.getElementById('tts-text').value.trim() : !!audioFile;
+    genBtn.disabled = !(hasPhoto && hasAudio);
+  }
+  document.getElementById('tts-text').addEventListener('input', checkReady);
+
+  // Progress helper
+  function setProgress(pct, msg){
+    fill.style.width = pct+'%';
+    statusText.textContent = msg;
+  }
+  // Upload file to ComfyUI
+  async function uploadFile(file, subfolder){
+    const fd = new FormData();
+    fd.append('image', file);
+    if(subfolder) fd.append('subfolder', subfolder);
+    const res = await fetch(API+'/upload/image', {method:'POST', body:fd});
+    if(!res.ok) throw new Error('Upload failed: '+res.status);
+    return await res.json();
+  }
+
+  // Poll ComfyUI history
+  async function pollResult(promptId, timeout){
+    const deadline = Date.now() + (timeout||120000);
+    while(Date.now() < deadline){
+      const res = await fetch(API+'/history/'+promptId);
+      if(res.ok){
+        const data = await res.json();
+        if(data[promptId] && data[promptId].outputs){
+          return data[promptId].outputs;
+        }
+      }
+      await new Promise(r=>setTimeout(r, 2000));
+    }
+    throw new Error('Generation timed out');
+  }
+  // Generate via Qadir MCP (avatar_speak for SadTalker, comfyui_lipsync for MultiTalk)
+  async function generateViaQadir(photoName, audioName){
+    const tool = engine === 'sadtalker' ? 'avatar_speak' : 'comfyui_lipsync';
+    const body = {
+      name: tool,
+      args: {
+        image: photoName,
+        audio: audioName,
+        expression: expression,
+        head_motion: headMotion
+      }
+    };
+    const res = await fetch(QADIR+'/api/tools/run', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify(body)
+    });
+    if(!res.ok) throw new Error('Qadir API error: '+res.status);
+    return await res.json();
+  }
+
+  // Main generate flow
+  genBtn.addEventListener('click', async ()=>{
+    genBtn.disabled = true;
+    resultDiv.style.display = 'none';
+    setProgress(5, 'Uploading photo...');
+    try {
+      // 1. Upload photo
+      const photoRes = await uploadFile(photoFile, 'lipsync');
+      const photoName = photoRes.name;
+      setProgress(20, 'Photo uploaded');
+
+      // 2. Handle audio
+      let audioName;
+      if(useTts.checked){
+        setProgress(30, 'Generating speech...');
+        const ttsRes = await fetch(QADIR+'/api/tts', {
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          body: JSON.stringify({
+            text: document.getElementById('tts-text').value,
+            voice: document.getElementById('tts-voice').value
+          })
+        });
+        if(!ttsRes.ok) throw new Error('TTS failed');
+        const ttsData = await ttsRes.json();
+        audioName = ttsData.url || ttsData.filename || ttsData.result;
+        setProgress(45, 'Speech generated');
+      } else {
+        setProgress(30, 'Uploading audio...');
+        const audioRes = await uploadFile(audioFile, 'lipsync');
+        audioName = audioRes.name;
+        setProgress(45, 'Audio uploaded');
+      }
+      // 3. Generate talking head
+      const engineLabel = engine === 'sadtalker' ? 'SadTalker (~15s)' : 'MultiTalk (~45s)';
+      setProgress(50, 'Generating with '+engineLabel+'...');
+
+      const result = await generateViaQadir(photoName, audioName);
+
+      // 4. Show result
+      setProgress(90, 'Rendering result...');
+      let videoUrl = '';
+      if(result.video_url){
+        videoUrl = result.video_url;
+      } else if(result.result && result.result.video){
+        videoUrl = API+'/view?filename='+encodeURIComponent(result.result.video)+'&type=output';
+      } else if(result.outputs){
+        const keys = Object.keys(result.outputs);
+        for(const k of keys){
+          const node = result.outputs[k];
+          if(node.gifs && node.gifs[0]){
+            videoUrl = API+'/view?filename='+encodeURIComponent(node.gifs[0].filename)+'&subfolder='+encodeURIComponent(node.gifs[0].subfolder||'')+'&type=output';
+            break;
+          }
+          if(node.videos && node.videos[0]){
+            videoUrl = API+'/view?filename='+encodeURIComponent(node.videos[0].filename)+'&subfolder='+encodeURIComponent(node.videos[0].subfolder||'')+'&type=output';
+            break;
+          }
+        }
+      }
+
+      if(!videoUrl) throw new Error('No video in response');
+
+      resultVideo.src = videoUrl;
+      dlBtn.href = videoUrl;
+      resultDiv.style.display = 'block';
+      setProgress(100, 'Done! Your talking head is ready.');
+
+    } catch(err){
+      setProgress(0, 'Error: '+err.message);
+      console.error(err);
+    }
+    checkReady();
+  });
+  // Waitlist
+  const wlForm = document.getElementById('waitlist-form');
+  const wlMsg = document.getElementById('wl-msg');
+  if(wlForm){
+    wlForm.addEventListener('submit', async e=>{
+      e.preventDefault();
+      const email = document.getElementById('wl-email').value;
+      const endpoints = ['/api/waitlist', '/functions/waitlist'];
+      let ok = false;
+      for(const ep of endpoints){
+        try{
+          const res = await fetch(ep, {
+            method:'POST',
+            headers:{'Content-Type':'application/json'},
+            body: JSON.stringify({email:email, tool:'ai-lipsync-pro', source:'tool-page'})
+          });
+          if(res.ok){ ok=true; break; }
+        }catch(e){}
+      }
+      wlMsg.style.display='block';
+      wlMsg.textContent = ok ? 'You\'re on the list! We\'ll be in touch.' : 'Saved locally. We\'ll sync when back online.';
+      wlForm.reset();
+    });
+  }
+
+  // FAQ accordion
+  document.querySelectorAll('.faq-item').forEach(d=>{
+    d.querySelector('summary').addEventListener('click',()=>{
+      document.querySelectorAll('.faq-item').forEach(x=>{ if(x!==d) x.removeAttribute('open'); });
+    });
+  });
+})();
+</script>
+<script src="/tools/_abuz8-live-brain.js" defer></script>
+<script src="/tools/_tools-shared.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>
+

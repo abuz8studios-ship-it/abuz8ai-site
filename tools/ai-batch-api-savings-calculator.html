@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Batch API Savings Calculator — What Async Batch Processing Really Cuts Off Your LLM Bill | ABUZ8</title>
+  <meta name="description" content="Free batch API savings calculator. Enter your monthly volume, token mix and how much of the workload tolerates async, and see exactly what a batch tier (typically ~50% off input and output) saves versus real-time — plus an honest flag that batch only applies to async-tolerant jobs. 100% client-side, every rate editable, with a $0/token local comparison." />
+  <meta name="keywords" content="batch API calculator, OpenAI batch API savings, Anthropic message batches cost, Gemini batch pricing, LLM batch processing discount, async API 50 percent off, batch vs realtime cost, bulk inference cost, offline LLM job pricing, batch token savings" />
+  <meta property="og:title" content="Batch API Savings Calculator — What Async Batch Processing Really Cuts Off Your LLM Bill | ABUZ8" />
+  <meta property="og:description" content="Enter your volume, token mix and async-tolerant share. See what a ~50% batch tier saves vs real-time — and when batch does not apply. Client-side, free, no signup." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://abuz8ai.com/tools/ai-batch-api-savings-calculator" />
+  <link rel="canonical" href="https://abuz8ai.com/tools/ai-batch-api-savings-calculator" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Batch API Savings Calculator",
+    "description": "Free client-side tool that estimates what an asynchronous batch API tier saves on an LLM bill: it prices your token mix under real-time rates versus a batch discount applied only to the async-tolerant share of the workload, shows the monthly savings, and flags when batch does not apply. All pricing and discount inputs are editable, with a self-hosted $0/token comparison.",
+    "url": "https://abuz8ai.com/tools/ai-batch-api-savings-calculator.html",
+    "applicationCategory": "DeveloperApplication",
+    "operatingSystem": "Any",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+    "author": { "@type": "Organization", "name": "ABUZ8 LLC", "url": "https://abuz8ai.com" }
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "What is a batch API and how does it save money?",
+        "acceptedAnswer": { "@type": "Answer", "text": "A batch (or asynchronous) API lets you submit a large set of requests as one job and collect the results later, within a turnaround window rather than instantly. In exchange for giving up real-time responses, providers charge a lower rate — commonly about half the normal price on both input and output tokens. The work runs on the provider's spare capacity, so they pass the discount on. It is the same model answering; the only difference is that you wait for a queue instead of a live response. This calculator prices your token mix at the normal real-time rate and again at the batch rate, so you can see the actual monthly difference for the part of your workload that can tolerate the wait." }
+      },
+      {
+        "@type": "Question",
+        "name": "How much does batch processing typically save?",
+        "acceptedAnswer": { "@type": "Answer", "text": "The common batch discount across the major providers is around 50% off both input and output tokens, though the exact figure varies by provider and changes over time, so this tool exposes the discount as an editable field with an illustrative 50% default. Crucially, the discount only applies to the requests you actually route through the batch queue — anything that must answer in real time still pays full price. That is why the calculator asks what share of your workload is async-tolerant: the blended saving is the discount multiplied by that share, not a blanket 50% off your whole bill." }
+      },
+      {
+        "@type": "Question",
+        "name": "When should I NOT use a batch API?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Any workload where a human or another system is waiting on the answer. Interactive chat, live agents, autocomplete, and anything user-facing needs a response in seconds, and a batch tier can take minutes to as long as roughly 24 hours to return. Batch is for offline, async-tolerant jobs: bulk classification and tagging, embedding a corpus, generating content in advance, evaluations and test suites, data enrichment, and overnight report generation. The honest tradeoff is latency for money — you are never charged more in dollars for batch, but you pay in turnaround time, so only the part of your workload that can wait should be counted as batchable." }
+      },
+      {
+        "@type": "Question",
+        "name": "Which providers offer batch pricing?",
+        "acceptedAnswer": { "@type": "Answer", "text": "The major hosted providers offer an asynchronous batch tier — for example OpenAI's Batch API, Anthropic's Message Batches, and Google's Gemini batch mode — and each has historically landed near a 50% discount versus its synchronous rate. Because the precise discount and per-token prices differ by provider and are updated over time, this calculator ships editable fields with clearly-labeled illustrative defaults rather than asserting any single vendor's live pricing. Confirm the current numbers on each provider's pricing page before you rely on them." }
+      },
+      {
+        "@type": "Question",
+        "name": "Is my data sent to a server?",
+        "acceptedAnswer": { "@type": "Answer", "text": "No. This calculator runs entirely in your browser. Nothing you type is uploaded, logged, or stored anywhere." }
+      }
+    ]
+  }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0a1628;
+      --card: #0d1a30;
+      --card-alt: #111f38;
+      --primary: #5fa8e8;
+      --primary-dim: #2e75b6;
+      --teal: #0e9f6e;
+      --text: #e8e4d8;
+      --text-dim: #5b6b7c;
+      --border: #d8e0e8;
+      --good: #0e9f6e;
+      --good-bg: #e7f3f0;
+      --warn: #c9a84c;
+      --warn-bg: #fbf1e3;
+      --font-heading: 'Playfair Display', Georgia, serif;
+      --font-body: 'Inter', system-ui, sans-serif;
+      --font-mono: 'JetBrains Mono', 'Courier New', monospace;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      font-size: 15px;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+    a { color: var(--primary); text-decoration: none; transition: color 0.2s; }
+    a:hover { color: var(--primary-dim); }
+
+    nav {
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      padding: 0 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 60px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .nav-logo {
+      font-family: var(--font-heading);
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--primary);
+      letter-spacing: 0.02em;
+    }
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links a { color: var(--text-dim); font-size: 0.9rem; font-weight: 500; }
+    .nav-links a:hover { color: var(--primary); }
+
+    main { max-width: 980px; margin: 0 auto; padding: 3rem 1.5rem 5rem; }
+    .page-header { text-align: center; margin-bottom: 2.2rem; }
+    .page-header h1 {
+      font-family: var(--font-heading);
+      font-size: 2.4rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 0.5rem;
+      line-height: 1.18;
+    }
+    .page-header p { color: var(--text-dim); font-size: 1rem; max-width: 680px; margin: 0 auto; }
+    .privacy-note {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      margin-top: 0.9rem; padding: 0.35rem 0.9rem;
+      background: var(--good-bg); border: 1px solid #bfe0d8;
+      border-radius: 20px; font-size: 0.78rem; color: var(--good);
+    }
+
+    label { display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-dim);
+            text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.5rem; }
+    input[type="number"], select {
+      width: 100%;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      padding: 0.7rem 0.9rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    select { font-family: var(--font-body); }
+    input:focus, select:focus { border-color: var(--primary); }
+    .hint { font-size: 0.72rem; color: var(--text-dim); margin-top: 0.35rem; font-weight: 400; text-transform: none; letter-spacing: 0; }
+
+    .panel {
+      background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+      padding: 1.4rem 1.5rem; margin-bottom: 1.4rem;
+      box-shadow: 0 1px 3px rgba(44,62,80,0.04);
+    }
+    .panel h2 {
+      font-family: var(--font-heading); font-size: 1.25rem; color: var(--primary);
+      margin-bottom: 1.1rem;
+    }
+    .controls { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem 1.2rem; }
+    .controls .full { grid-column: 1 / -1; }
+
+    /* TWO RESULT CARDS */
+    .results { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; margin: 0.4rem 0 0; }
+    .rcard { border: 1px solid var(--border); border-radius: 12px; padding: 1.3rem 1.4rem; background: var(--card-alt); }
+    .rcard.build { border-top: 3px solid var(--primary); }
+    .rcard.month { border-top: 3px solid var(--teal); }
+    .rcard .rlabel { font-size: 0.74rem; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text-dim); font-weight: 600; }
+    .rcard .rbig { font-family: var(--font-heading); font-size: 2.1rem; font-weight: 700; line-height: 1.1; margin: 0.3rem 0 0.1rem; }
+    .rcard.build .rbig { color: var(--primary); }
+    .rcard.month .rbig { color: var(--teal); }
+    .rcard .rsub { font-size: 0.8rem; color: var(--text-dim); }
+
+    /* VERDICT */
+    .verdict {
+      margin: 1.4rem 0 0; padding: 1.1rem 1.3rem; border-radius: 10px;
+      font-size: 0.95rem; line-height: 1.6;
+      background: var(--good-bg); border: 1px solid #bfe0d8; color: var(--text);
+    }
+    .verdict.warn { background: var(--warn-bg); border-color: #eccf9e; }
+    .verdict strong { color: var(--primary); }
+    .verdict .big { font-family: var(--font-heading); font-weight: 700; }
+    .verdict .save { color: var(--teal); font-weight: 700; }
+    .verdict .cost { color: var(--warn); font-weight: 700; }
+
+    /* TABLE */
+    .table-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: 12px; margin-top: 1.3rem; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.86rem; min-width: 560px; background: var(--card); }
+    thead th {
+      background: var(--card-alt); color: var(--text-dim);
+      font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.06em;
+      text-align: right; padding: 0.8rem 1rem; border-bottom: 1px solid var(--border); font-weight: 600;
+    }
+    thead th:first-child { text-align: left; }
+    tbody td { padding: 0.7rem 1rem; border-bottom: 1px solid var(--border); text-align: right; font-family: var(--font-mono); }
+    tbody td:first-child { text-align: left; font-family: var(--font-body); }
+    tbody tr.subtotal td { font-weight: 700; background: var(--card-alt); }
+    tbody tr.subtotal td:first-child { box-shadow: inset 3px 0 0 var(--primary); }
+    tbody tr.local { background: #1a332d; }
+    tbody tr.local td:first-child { box-shadow: inset 3px 0 0 var(--teal); }
+    .line-name { font-weight: 600; color: var(--text); }
+    .line-tag { font-size: 0.68rem; color: var(--text-dim); display: block; font-weight: 400; margin-top: 0.1rem; }
+    .badge-local { font-size: 0.62rem; color: var(--teal); font-weight: 700; letter-spacing: 0.05em; margin-left: 0.4rem; }
+    .price-note { font-size: 0.78rem; color: var(--text-dim); margin-top: 0.9rem; line-height: 1.7; }
+    .price-note strong { color: var(--text); }
+    .price-note a { color: var(--text-dim); text-decoration: underline; }
+    .price-note a:hover { color: var(--primary); }
+
+    /* CTA */
+    .cta-section {
+      background: linear-gradient(135deg, #eef5fb 0%, #e7f3f0 100%);
+      border: 1px solid #cfe0ef; border-radius: 12px;
+      padding: 2.2rem 2rem; text-align: center; margin-top: 3rem;
+    }
+    .cta-section h2 { font-family: var(--font-heading); font-size: 1.5rem; color: var(--primary); margin-bottom: 0.5rem; }
+    .cta-section p { color: var(--text-dim); font-size: 0.95rem; margin-bottom: 1.2rem; max-width: 600px; margin-left: auto; margin-right: auto; }
+    .cta-form { display: flex; gap: 0.6rem; justify-content: center; flex-wrap: wrap; }
+    .cta-form input[type="email"] {
+      flex: 1; max-width: 300px; min-width: 200px;
+      background: var(--card); border: 1px solid var(--border); border-radius: 6px;
+      color: var(--text); font-family: var(--font-body); font-size: 0.9rem; padding: 0.6rem 1rem; outline: none;
+    }
+    .cta-form input[type="email"]:focus { border-color: var(--primary); }
+    button {
+      padding: 0.6rem 1.4rem; border-radius: 6px; border: none; cursor: pointer;
+      font-family: var(--font-body); font-size: 0.88rem; font-weight: 600; transition: background 0.2s;
+    }
+    .btn-primary { background: var(--primary); color: #0d1a30; }
+    .btn-primary:hover { background: var(--primary-dim); }
+    .cta-success { display: none; color: var(--teal); font-size: 0.9rem; margin-top: 0.8rem; font-weight: 600; }
+    .cta-success.visible { display: block; }
+
+    .content { margin-top: 3rem; }
+    .content h2 { font-family: var(--font-heading); font-size: 1.5rem; color: var(--primary); margin: 0 0 1rem; padding-top: 1rem; }
+    .content > p { color: var(--text-dim); font-size: 0.92rem; margin-bottom: 1rem; }
+    .content > p a { text-decoration: underline; }
+    .faq-item { border-top: 1px solid var(--border); padding: 1.1rem 0; }
+    .faq-item h3 { font-size: 1rem; color: var(--text); margin-bottom: 0.4rem; font-weight: 600; }
+    .faq-item p { color: var(--text-dim); font-size: 0.9rem; }
+
+    footer {
+      background: var(--card); border-top: 1px solid var(--border);
+      text-align: center; padding: 1.5rem; font-size: 0.82rem; color: var(--text-dim);
+    }
+    footer a { color: var(--text-dim); }
+    footer a:hover { color: var(--primary); }
+
+    @media (max-width: 720px) {
+      .controls { grid-template-columns: 1fr; }
+      .results { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 600px) {
+      .page-header h1 { font-size: 1.8rem; }
+      nav { padding: 0 1rem; }
+      .nav-links { gap: 1rem; }
+      main { padding: 2rem 1rem 4rem; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="nav-logo">ABUZ8</a>
+  <ul class="nav-links">
+    <li><a href="/tools.html">Tools</a></li>
+    <li><a href="/store.html">Store</a></li>
+  </ul>
+</nav>
+
+<main>
+  <div class="page-header">
+    <h1>Batch API Savings Calculator</h1>
+    <p>A batch (async) API tier is usually the cheapest way to run work that can wait — commonly about <strong>half price</strong> on input and output in exchange for queued turnaround. Enter your volume, token mix, and how much of your workload tolerates async, and see what batching actually saves versus real-time. Every rate is editable, and a self-hosted <strong>$0/token</strong> row shows the sovereign floor. The one honest catch — latency — is built into the math.</p>
+    <span class="privacy-note">&#128274; 100% in-browser — nothing you enter is uploaded</span>
+  </div>
+
+  <div class="panel">
+    <h2>Your workload &amp; batch tier</h2>
+    <div class="controls">
+      <div>
+        <label for="requests">Requests / month</label>
+        <input type="number" id="requests" min="0" value="1000000" oninput="recalc()" />
+        <div class="hint">Total API calls you run in a month.</div>
+      </div>
+      <div>
+        <label for="inTokens">Input tokens / request</label>
+        <input type="number" id="inTokens" min="0" value="800" oninput="recalc()" />
+        <div class="hint">Prompt sent per request.</div>
+      </div>
+      <div>
+        <label for="outTokens">Output tokens / request</label>
+        <input type="number" id="outTokens" min="0" value="400" oninput="recalc()" />
+        <div class="hint">Generated tokens per request.</div>
+      </div>
+      <div>
+        <label for="inPrice">Input rate ($/1M tokens)</label>
+        <input type="number" id="inPrice" min="0" step="0.01" value="3.00" oninput="recalc()" />
+        <div class="hint">Base real-time input price — edit to your model.</div>
+      </div>
+      <div>
+        <label for="outPrice">Output rate ($/1M tokens)</label>
+        <input type="number" id="outPrice" min="0" step="0.01" value="15.00" oninput="recalc()" />
+        <div class="hint">Base real-time output price — edit to your model.</div>
+      </div>
+      <div>
+        <label for="batchProfile">Batch profile</label>
+        <select id="batchProfile" onchange="applyBatchProfile()"></select>
+        <div class="hint">Sets the discount below — editable.</div>
+      </div>
+      <div>
+        <label for="discount">Batch discount (% off both input &amp; output)</label>
+        <input type="number" id="discount" min="0" max="100" step="1" value="50" oninput="markCustomProfile(); recalc()" />
+        <div class="hint">Async-tier discount vs the real-time rate.</div>
+      </div>
+      <div class="full">
+        <label for="batchShare">Async-tolerant share (% of requests that can wait for a batch queue)</label>
+        <input type="number" id="batchShare" min="0" max="100" step="1" value="100" oninput="recalc()" />
+        <div class="hint">Only offline / non-interactive work qualifies. Anything a user waits on in real time stays full price — set this to the share that can tolerate up to ~24h turnaround.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="verdict" id="verdict"></div>
+
+  <div class="results">
+    <div class="rcard build">
+      <div class="rlabel">All real-time / month</div>
+      <div class="rbig" id="syncCost">$0</div>
+      <div class="rsub" id="syncSub">&mdash;</div>
+    </div>
+    <div class="rcard month">
+      <div class="rlabel">With batch tier / month</div>
+      <div class="rbig" id="batchCost">$0</div>
+      <div class="rsub" id="batchSub">&mdash;</div>
+    </div>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Cost component</th>
+          <th>All real-time</th>
+          <th>With batch tier</th>
+        </tr>
+      </thead>
+      <tbody id="costTable"></tbody>
+    </table>
+  </div>
+
+  <p class="price-note">
+    The discount defaults to an <strong>illustrative 50% — the common batch-tier discount — for reference only</strong>; providers differ and pricing changes, so pick a profile or edit the field to match yours. Confirm live rates at
+    <a href="https://openai.com/api/pricing/" target="_blank" rel="noopener">OpenAI</a>,
+    <a href="https://www.anthropic.com/pricing" target="_blank" rel="noopener">Anthropic</a>, and
+    <a href="https://ai.google.dev/pricing" target="_blank" rel="noopener">Google Gemini</a>.
+    The discount only applies to the <strong>async-tolerant share</strong> you enter — real-time requests stay full price, which is why the blended saving is the discount times that share, not a blanket 50% off.
+    Batch trades <strong>turnaround time</strong> (minutes to ~24h) for the price cut; it never costs more in dollars, so this tool never shows a negative — it shows $0 saved when nothing is batchable.
+    The <strong>Local (ABUZ8&nbsp;OS)</strong> row is $0 per token &mdash; a model on hardware you own has no per-token charge at any speed; the fixed hardware is covered in the
+    <a href="/tools/ai-self-host-calculator.html">self-host vs cloud calculator</a>.
+    Reusing the same prefix instead? See the
+    <a href="/tools/ai-prompt-caching-calculator.html">prompt caching calculator</a>.
+  </p>
+
+  <div class="cta-section">
+    <h2>Batch is a discount on tokens you are still renting.</h2>
+    <p>The async tier trims the bill for work that can wait — but you are still paying per token, and still shipping your data to someone else's queue. ABUZ8&nbsp;OS runs the model on hardware you own: real-time or bulk, input and output are $0 per token, no 24-hour wait, and nothing leaves the machine. Sovereign by default, cloud only when it genuinely wins.</p>
+    <div class="cta-form">
+      <input type="email" id="ctaEmail" placeholder="you@company.com" />
+      <button class="btn-primary" onclick="submitWaitlist()">Join early access</button>
+    </div>
+    <div id="ctaSuccess" class="cta-success">&#10003; You're on the list. We'll be in touch.</div>
+  </div>
+
+  <div class="content">
+    <h2>How batch API economics actually work</h2>
+    <p>Related: <a href="/tools/ai-token-counter.html">Token counter</a> &middot; <a href="/tools/ai-llm-price-comparison.html">LLM API price comparison</a> &middot; <a href="/tools/ai-prompt-caching-calculator.html">Prompt caching calculator</a> &middot; <a href="/tools/ai-agent-cost-calculator.html">AI agent cost calculator</a></p>
+    <div class="faq-item">
+      <h3>Same model, cheaper because you wait</h3>
+      <p>A batch tier is not a smaller or worse model — it is the exact same model, run on the provider's spare capacity and returned within a window instead of instantly. That flexibility is what earns the discount, commonly around half off both input and output. If your job does not need an answer this second, batching is usually the single biggest lever on the bill short of leaving the cloud entirely.</p>
+    </div>
+    <div class="faq-item">
+      <h3>The discount only touches what can wait</h3>
+      <p>The saving is never a flat 50% off your whole bill — it is the discount applied only to the requests you actually route through the queue. A product that is half real-time chat and half overnight batch jobs saves the discount on that half, not the whole. This calculator makes you name the async-tolerant share on purpose, so the number it shows is the honest blended saving rather than a best-case headline.</p>
+    </div>
+    <div class="faq-item">
+      <h3>The one cost is latency, not dollars</h3>
+      <p>Batch never costs more money than real-time — that is why this tool never shows a negative saving. What it costs is time: results can take minutes, and providers reserve the right to take up to roughly a day. So batch is right for bulk classification, embedding a corpus, generating content ahead of time, evaluations, and enrichment — and wrong for anything a person is sitting there waiting on.</p>
+    </div>
+    <div class="faq-item">
+      <h3>The sovereign floor: $0 per token</h3>
+      <p>Batch pricing is still a per-token rental — a cheaper rental, but a rental, and your data still goes to someone else's queue. A model running locally on a GPU you own has no per-token bill at all, real-time or bulk, with only electricity as the variable cost. Above a modest scale, owning the model beats even the batch rate, and you keep both the speed and the data. ABUZ8&nbsp;OS runs locally by default and only reaches for a paid API when a hosted model clearly wins.</p>
+    </div>
+    <div class="faq-item">
+      <h3>Is my data sent anywhere?</h3>
+      <p>No. This calculator runs entirely in your browser. Nothing you enter is uploaded, logged, or stored.</p>
+    </div>
+  </div>
+</main>
+
+<footer>
+  ABUZ8 LLC &middot; Free AI Tools &middot; <a href="mailto:ahmad@abuz8ai.com">ahmad@abuz8ai.com</a>
+</footer>
+
+<script>
+// ── BATCH PROFILES (discount % off the real-time rate) ─────────────────────────
+// Defaults are ILLUSTRATIVE reference values, not a live price feed — providers
+// differ and change pricing, so the discount field is editable. The math, not the
+// table, is the product here. All three major async tiers have historically sat
+// near 50% off; the field lets you dial in your provider's exact number.
+const BATCH_PROFILES = [
+  { name: 'Standard async batch (50% off)', discount: 50 },
+  { name: 'OpenAI Batch API (~50% off)',    discount: 50 },
+  { name: 'Anthropic Message Batches (~50% off)', discount: 50 },
+  { name: 'Google Gemini batch (~50% off)', discount: 50 },
+  { name: 'No batch tier (0% — real-time only)', discount: 0 },
+  { name: 'Custom (edit field)',            discount: null }
+];
+
+// ── POPULATE SELECT ─────────────────────────────────────────────────────────────
+(function initSelects() {
+  const bs = document.getElementById('batchProfile');
+  BATCH_PROFILES.forEach((p, i) => { const o = document.createElement('option'); o.value = i; o.textContent = p.name; bs.appendChild(o); });
+  bs.value = '0';
+})();
+
+// ── PROFILE → FIELD WIRING ──────────────────────────────────────────────────────
+function applyBatchProfile() {
+  const p = BATCH_PROFILES[+document.getElementById('batchProfile').value];
+  if (p && p.discount !== null) document.getElementById('discount').value = p.discount;
+  recalc();
+}
+// If the user hand-edits the discount, flip the select to "Custom" so the UI never lies.
+function markCustomProfile() { document.getElementById('batchProfile').value = String(BATCH_PROFILES.length - 1); }
+
+// ── FORMAT ──────────────────────────────────────────────────────────────────────
+function fmtUSD(v) {
+  if (!isFinite(v)) return '—';
+  const n = Math.abs(v);
+  if (n >= 1)  return (v < 0 ? '-$' : '$') + n.toLocaleString('en-US', { maximumFractionDigits: 2 });
+  if (n > 0)   return (v < 0 ? '-$' : '$') + n.toFixed(3);
+  return '$0';
+}
+function fmtNum(v) { return Math.round(v).toLocaleString('en-US'); }
+function fmtPct(v) { return (v * 100).toLocaleString('en-US', { maximumFractionDigits: 1 }) + '%'; }
+
+// ── READ INPUTS ─────────────────────────────────────────────────────────────────
+function inputs() {
+  const num = (id) => Math.max(0, parseFloat(document.getElementById(id).value) || 0);
+  return {
+    requests:   Math.floor(num('requests')),
+    inTokens:   Math.floor(num('inTokens')),
+    outTokens:  Math.floor(num('outTokens')),
+    inPrice:    num('inPrice'),                                  // $/1M input
+    outPrice:   num('outPrice'),                                 // $/1M output
+    discount:   Math.min(1, Math.max(0, num('discount') / 100)), // fraction off, batch tier
+    batchShare: Math.min(1, Math.max(0, num('batchShare') / 100))// share of requests that are async-tolerant
+  };
+}
+
+// ── CORE COST MATH (all transparent, no hidden factors) ──────────────────────────
+function compute(i) {
+  const M = 1e6;
+  const reqs = i.requests;
+
+  // Real-time (sync) cost per component — full rate on every request.
+  const inputSync  = (reqs * i.inTokens  / M) * i.inPrice;
+  const outputSync = (reqs * i.outTokens / M) * i.outPrice;
+
+  // Batch tier: discount applies ONLY to the async-tolerant share; the rest stays full price.
+  // Effective multiplier on the base cost = (1 − batchShare × discount).
+  const eff = 1 - i.batchShare * i.discount;
+  const inputBatch  = inputSync  * eff;
+  const outputBatch = outputSync * eff;
+
+  const totalSync  = inputSync  + outputSync;
+  const totalBatch = inputBatch + outputBatch;
+  const savings = totalSync - totalBatch;                        // ≥ 0 by construction (never negative)
+  const savingsPct = totalSync > 0 ? savings / totalSync : 0;
+
+  const batchableReqs = reqs * i.batchShare;
+
+  return { inputSync, outputSync, inputBatch, outputBatch,
+           totalSync, totalBatch, savings, savingsPct, batchableReqs, eff };
+}
+
+// ── MAIN RECALC ───────────────────────────────────────────────────────────────
+function recalc() {
+  const i = inputs();
+  const r = compute(i);
+
+  // summary cards
+  document.getElementById('syncCost').textContent = fmtUSD(r.totalSync);
+  document.getElementById('syncSub').textContent  = fmtNum(i.requests) + ' req/mo · full real-time rate';
+  document.getElementById('batchCost').textContent = fmtUSD(r.totalBatch);
+  document.getElementById('batchSub').textContent  = fmtPct(i.batchShare) + ' async-tolerant · ' + fmtPct(i.discount) + ' off that share';
+
+  // verdict
+  const v = document.getElementById('verdict');
+  v.classList.remove('warn');
+  if (i.requests <= 0 || (i.inTokens <= 0 && i.outTokens <= 0)) {
+    v.innerHTML = 'Enter your monthly request volume and token mix above to estimate what a batch tier saves.';
+  } else if (i.batchShare <= 0 || i.discount <= 0) {
+    v.classList.add('warn');
+    v.innerHTML =
+      `<span class="big">No batch saving at these settings.</span> ` +
+      (i.batchShare <= 0
+        ? `None of this workload is marked async-tolerant, so the batch tier does not apply. Batch trades up to ~24h turnaround for the discount — real-time chat, agents and autocomplete cannot use it; only offline jobs (bulk classification, embeddings, evals, pre-generated content) qualify. `
+        : `The discount is set to 0%. Pick a batch profile or enter your provider's async discount to see the saving. `) +
+      `Either way, a model you own is <span class="save">$0</span> per token, real-time or bulk.`;
+  } else {
+    v.innerHTML =
+      `<span class="big">A batch tier saves about <span class="save">${fmtUSD(r.savings)}/mo</span> ` +
+      `(${fmtPct(r.savingsPct)} off your bill)</span> — ${fmtPct(i.discount)} off the ${fmtPct(i.batchShare)} of requests that can wait ` +
+      `(${fmtNum(r.batchableReqs)} req/mo). The tradeoff is turnaround, not dollars: batched jobs return within a window, up to ~24h. ` +
+      `Run the same model locally and every request is <span class="save">$0</span> per token, in real time.`;
+  }
+
+  // breakdown table (real-time vs batch) + pinned local $0 row
+  const body = document.getElementById('costTable');
+  body.innerHTML =
+    `<tr>
+       <td><span class="line-name">Input tokens</span><span class="line-tag">${fmtNum(i.inTokens)} tok × ${fmtNum(i.requests)} req</span></td>
+       <td>${fmtUSD(r.inputSync)}</td>
+       <td>${fmtUSD(r.inputBatch)}</td>
+     </tr>
+     <tr>
+       <td><span class="line-name">Output tokens</span><span class="line-tag">${fmtNum(i.outTokens)} tok × ${fmtNum(i.requests)} req</span></td>
+       <td>${fmtUSD(r.outputSync)}</td>
+       <td>${fmtUSD(r.outputBatch)}</td>
+     </tr>
+     <tr class="subtotal">
+       <td><span class="line-name">Total / month</span><span class="line-tag">${fmtPct(i.batchShare)} async-tolerant @ ${fmtPct(i.discount)} off</span></td>
+       <td>${fmtUSD(r.totalSync)}</td>
+       <td>${fmtUSD(r.totalBatch)}</td>
+     </tr>
+     <tr class="local">
+       <td><span class="line-name">Local (ABUZ8 OS)</span><span class="badge-local">SOVEREIGN</span><span class="line-tag">model on hardware you own · $0 per token, real-time or bulk</span></td>
+       <td>$0*</td>
+       <td>$0*</td>
+     </tr>`;
+}
+
+// ── WAITLIST ──────────────────────────────────────────────────────────────────
+async function submitWaitlist() {
+  const email = document.getElementById('ctaEmail').value.trim();
+  if (!email || !email.includes('@')) { alert('Please enter a valid email address.'); return; }
+  const payload = { email, product: 'qadir-os-batch-api-savings-calculator', ts: new Date().toISOString() };
+  try {
+    await fetch('/api/waitlist', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+  } catch (e) { /* graceful fallback — never block the confirmation */ }
+  document.getElementById('ctaEmail').style.display = 'none';
+  document.querySelector('.cta-form button').style.display = 'none';
+  document.getElementById('ctaSuccess').classList.add('visible');
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+recalc();
+</script>
+<script src="/tools/_tools-shared.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>

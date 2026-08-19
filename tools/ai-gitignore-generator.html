@@ -1,0 +1,1377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI .gitignore Generator — Build Perfect .gitignore Files for Any Stack | ABUZ8</title>
+  <meta name="description" content="Free client-side .gitignore generator for 50+ languages, frameworks, IDEs, and OS targets. Select your stack, merge templates, add custom rules, and download a ready-to-use .gitignore file. No data sent anywhere." />
+  <meta name="keywords" content="gitignore generator, gitignore template, create gitignore, git ignore file, gitignore builder, gitignore for node, gitignore for python, gitignore creator, generate gitignore, gitignore tool, gitignore patterns, gitignore best practices" />
+  <meta property="og:title" content="AI .gitignore Generator — Build Perfect .gitignore Files for Any Stack | ABUZ8" />
+  <meta property="og:description" content="Select from 50+ language, framework, IDE, and OS templates. Merge, deduplicate, add custom rules, and download a clean .gitignore. 100% client-side, free." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://abuz8ai.com/tools/ai-gitignore-generator" />
+  <link rel="canonical" href="https://abuz8ai.com/tools/ai-gitignore-generator" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "AI .gitignore Generator",
+    "description": "Free client-side tool that generates production-ready .gitignore files for 50+ languages, frameworks, IDEs, and operating systems. Merge multiple templates, deduplicate patterns, add custom rules, and download instantly.",
+    "url": "https://abuz8ai.com/tools/ai-gitignore-generator.html",
+    "applicationCategory": "DeveloperApplication",
+    "operatingSystem": "Any",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+    "author": { "@type": "Organization", "name": "ABUZ8 LLC", "url": "https://abuz8ai.com" }
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "What is a .gitignore file and why do I need one?",
+        "acceptedAnswer": { "@type": "Answer", "text": "A .gitignore file tells Git which files and directories to exclude from version control. Without one, you risk committing build artifacts, dependency folders (like node_modules), secret files (.env), OS junk files (.DS_Store), and IDE configurations. This bloats your repository, leaks sensitive data, and causes merge conflicts. Every project should have a .gitignore from day one." }
+      },
+      {
+        "@type": "Question",
+        "name": "Can I combine multiple .gitignore templates?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Yes. Most real projects use more than one language or tool, so combining templates is standard practice. This generator lets you select multiple templates and automatically merges and deduplicates the patterns into a single .gitignore file organized by section." }
+      },
+      {
+        "@type": "Question",
+        "name": "Where should I place my .gitignore file?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Place .gitignore in the root of your Git repository. Patterns in the root .gitignore apply to the entire repo. You can also place additional .gitignore files in subdirectories to apply rules only within that directory tree. Git processes them from the root down." }
+      },
+      {
+        "@type": "Question",
+        "name": "Why are my files still tracked after adding them to .gitignore?",
+        "acceptedAnswer": { "@type": "Answer", "text": "A .gitignore only prevents untracked files from being added. If a file was already committed, adding it to .gitignore will not remove it. You must first run 'git rm --cached <file>' to untrack it, then commit the change. After that, the .gitignore rule will apply going forward." }
+      },
+      {
+        "@type": "Question",
+        "name": "Is my data sent to a server when using this tool?",
+        "acceptedAnswer": { "@type": "Answer", "text": "No. This generator runs entirely in your browser using JavaScript. No data is uploaded, logged, or stored anywhere. Your selections and custom rules never leave your machine." }
+      }
+    ]
+  }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0a1628;
+      --card: #0d1a30;
+      --card-alt: #111f38;
+      --primary: #5fa8e8;
+      --primary-dim: #2e75b6;
+      --teal: #0e9f6e;
+      --text: #e8e4d8;
+      --text-dim: #5b6b7c;
+      --border: #d8e0e8;
+      --good: #0e9f6e;
+      --good-bg: #e7f3f0;
+      --warn: #c9a84c;
+      --warn-bg: #fbf1e3;
+      --font-heading: 'Playfair Display', Georgia, serif;
+      --font-body: 'Inter', system-ui, sans-serif;
+      --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-body); background: var(--bg); color: var(--text); line-height: 1.6; }
+    .container { max-width: 960px; margin: 0 auto; padding: 2rem 1.25rem 3rem; }
+
+    /* HERO */
+    .hero { text-align: center; margin-bottom: 2.5rem; }
+    .hero h1 { font-family: var(--font-heading); font-size: clamp(1.6rem, 4vw, 2.4rem); font-weight: 700; color: var(--text); margin-bottom: .5rem; }
+    .hero p  { font-size: 1.05rem; color: var(--text-dim); max-width: 640px; margin: 0 auto; }
+    .badge-row { display: flex; gap: .5rem; justify-content: center; flex-wrap: wrap; margin-top: .75rem; }
+    .badge { font-size: .72rem; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; padding: .25rem .65rem; border-radius: 999px; }
+    .badge-privacy { background: var(--good-bg); color: var(--good); }
+    .badge-free    { background: #152237; color: var(--primary); }
+
+    /* CARDS */
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; margin-bottom: 1.25rem; }
+    .card h2 { font-family: var(--font-heading); font-size: 1.15rem; margin-bottom: 1rem; }
+
+    /* SEARCH */
+    .search-wrap { margin-bottom: 1rem; }
+    .search-input {
+      width: 100%; padding: .6rem .85rem; border: 1px solid var(--border); border-radius: 8px;
+      background: var(--card-alt); font-family: var(--font-body); font-size: .92rem;
+      color: var(--text); outline: none; transition: border .15s;
+    }
+    .search-input:focus { border-color: var(--primary); }
+    .search-input::placeholder { color: var(--text-dim); }
+
+    /* TEMPLATE GRID */
+    .cat-label { font-size: .78rem; font-weight: 600; color: var(--text-dim); text-transform: uppercase; letter-spacing: .04em; margin: 1rem 0 .4rem; }
+    .cat-label:first-of-type { margin-top: 0; }
+    .tpl-grid { display: flex; flex-wrap: wrap; gap: .45rem; }
+    .tpl-btn {
+      background: var(--card-alt); border: 1px solid var(--border); border-radius: 8px;
+      padding: .45rem .85rem; font-family: var(--font-body); font-size: .82rem;
+      color: var(--text-dim); cursor: pointer; transition: all .15s; user-select: none;
+    }
+    .tpl-btn:hover { border-color: var(--primary); color: var(--primary); }
+    .tpl-btn.active { background: var(--primary); border-color: var(--primary); color: #0d1a30; }
+    .tpl-btn.hidden { display: none; }
+
+    /* SELECTED */
+    .selected-bar { display: flex; flex-wrap: wrap; align-items: center; gap: .4rem; margin-top: 1rem; min-height: 1.8rem; }
+    .selected-label { font-size: .82rem; font-weight: 600; color: var(--text-dim); margin-right: .25rem; }
+    .selected-tag {
+      display: inline-flex; align-items: center; gap: .3rem;
+      background: var(--good-bg); color: var(--good); font-size: .75rem; font-weight: 600;
+      padding: .2rem .55rem; border-radius: 6px;
+    }
+    .selected-tag .x {
+      cursor: pointer; font-weight: 700; font-size: .85rem; line-height: 1;
+      margin-left: .1rem; opacity: .7; transition: opacity .1s;
+    }
+    .selected-tag .x:hover { opacity: 1; }
+    .no-selection { font-size: .82rem; color: var(--text-dim); font-style: italic; }
+
+    /* CUSTOM RULES */
+    .custom-label { font-size: .82rem; font-weight: 600; color: var(--text-dim); text-transform: uppercase; letter-spacing: .03em; margin-bottom: .35rem; }
+    .custom-area {
+      width: 100%; min-height: 80px; padding: .65rem .85rem; border: 1px solid var(--border);
+      border-radius: 8px; background: var(--card-alt); font-family: var(--font-mono);
+      font-size: .82rem; color: var(--text); outline: none; resize: vertical;
+      line-height: 1.6; transition: border .15s;
+    }
+    .custom-area:focus { border-color: var(--primary); }
+    .custom-area::placeholder { color: var(--text-dim); font-family: var(--font-body); }
+
+    /* OUTPUT */
+    .output-block { position: relative; margin-top: .5rem; }
+    .output-block pre {
+      background: #d8e2f0; color: #1a2e50; font-family: var(--font-mono); font-size: .82rem;
+      padding: 1.25rem 1rem; border-radius: 10px; overflow-x: auto; line-height: 1.55;
+      white-space: pre; tab-size: 2; max-height: 520px;
+    }
+    .btn-row { display: flex; gap: .5rem; position: absolute; top: .6rem; right: .6rem; }
+    .action-btn {
+      background: var(--primary); color: #0d1a30; border: none; border-radius: 6px;
+      font-family: var(--font-body); font-size: .75rem; font-weight: 600;
+      padding: .35rem .7rem; cursor: pointer; opacity: .85; transition: opacity .15s;
+    }
+    .action-btn:hover { opacity: 1; }
+    .action-btn.dl-btn { background: var(--teal); }
+    .stats-row { display: flex; flex-wrap: wrap; gap: .75rem; margin-top: 1rem; }
+    .stat-chip {
+      background: var(--card-alt); border: 1px solid var(--border); border-radius: 8px;
+      padding: .45rem .85rem; font-size: .82rem; font-weight: 500; color: var(--text-dim);
+    }
+    .stat-chip strong { color: var(--text); font-weight: 600; }
+
+    /* TIPS */
+    .tips-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: .75rem; margin-top: .75rem; }
+    .tip { background: var(--card-alt); border-radius: 8px; padding: .85rem 1rem; font-size: .85rem; line-height: 1.5; }
+    .tip strong { color: var(--primary); }
+
+    /* FAQ */
+    details { border-bottom: 1px solid var(--border); }
+    details:last-child { border-bottom: none; }
+    summary { font-weight: 600; font-size: .92rem; padding: .85rem 0; cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; }
+    summary::after { content: '+'; font-size: 1.1rem; color: var(--text-dim); transition: transform .2s; }
+    details[open] summary::after { content: '\2212'; }
+    details p { font-size: .88rem; color: var(--text-dim); padding: 0 0 1rem; line-height: 1.6; }
+
+    /* CTA */
+    .cta-card { background: linear-gradient(135deg, var(--primary), var(--teal)); border: none; color: #0d1a30; text-align: center; padding: 2rem 1.5rem; }
+    .cta-card h2 { color: #0d1a30; margin-bottom: .4rem; }
+    .cta-card p  { color: rgba(255,255,255,.85); font-size: .95rem; margin-bottom: 1rem; }
+    .cta-form { display: flex; gap: .5rem; max-width: 420px; margin: 0 auto; }
+    .cta-form input {
+      flex: 1; padding: .6rem .85rem; border: none; border-radius: 8px;
+      font-family: var(--font-body); font-size: .95rem; background: rgba(255,255,255,.95); color: var(--text);
+    }
+    .cta-form button {
+      background: #0d1a30; color: var(--primary); border: none; border-radius: 8px;
+      font-family: var(--font-body); font-size: .9rem; font-weight: 700;
+      padding: .6rem 1.25rem; cursor: pointer; white-space: nowrap; transition: background .15s;
+    }
+    .cta-form button:hover { background: #182634; }
+    .cta-success { font-weight: 600; display: none; margin-top: .5rem; }
+
+    /* SOVEREIGN */
+    .sovereign { text-align: center; margin-top: 1.5rem; font-size: .8rem; color: var(--text-dim); }
+    .sovereign a { color: var(--primary); text-decoration: none; font-weight: 600; }
+
+    /* RESPONSIVE */
+    @media (max-width: 560px) {
+      .cta-form { flex-direction: column; }
+      .cta-form input, .cta-form button { width: 100%; }
+      .stats-row { gap: .4rem; }
+      .stat-chip { font-size: .75rem; padding: .35rem .6rem; }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <!-- HERO -->
+  <div class="hero">
+    <h1>AI .gitignore Generator</h1>
+    <p>Select your languages, frameworks, IDEs, and OS. Merge 50+ battle-tested templates into a single, deduplicated .gitignore file. Runs entirely in your browser.</p>
+    <div class="badge-row">
+      <span class="badge badge-privacy">No Data Sent</span>
+      <span class="badge badge-free">100% Free</span>
+    </div>
+  </div>
+
+  <!-- TEMPLATE PICKER -->
+  <div class="card">
+    <h2>Select Templates</h2>
+    <div class="search-wrap">
+      <input class="search-input" type="text" id="tplSearch" placeholder="Filter templates... (e.g. python, react, vscode)" oninput="filterTemplates()" />
+    </div>
+    <div id="tplContainer"></div>
+    <div class="selected-bar" id="selectedBar">
+      <span class="no-selection" id="noSel">No templates selected. Click a template above to start.</span>
+    </div>
+  </div>
+
+  <!-- CUSTOM RULES -->
+  <div class="card">
+    <h2>Custom Rules</h2>
+    <p class="custom-label">Additional patterns (one per line)</p>
+    <textarea class="custom-area" id="customRules" placeholder="# Add your own patterns here&#10;*.log&#10;secrets/&#10;.env.local" oninput="generate()"></textarea>
+  </div>
+
+  <!-- OUTPUT -->
+  <div class="card">
+    <h2>Generated .gitignore</h2>
+    <div class="output-block">
+      <div class="btn-row">
+        <button class="action-btn" onclick="copyOutput()">Copy</button>
+        <button class="action-btn dl-btn" onclick="downloadOutput()">Download</button>
+      </div>
+      <pre id="outputPre"># Select templates above to generate your .gitignore</pre>
+    </div>
+    <div class="stats-row" id="statsRow">
+      <span class="stat-chip">Lines: <strong id="statLines">0</strong></span>
+      <span class="stat-chip">Templates: <strong id="statTpls">0</strong></span>
+      <span class="stat-chip">Patterns: <strong id="statPatterns">0</strong></span>
+    </div>
+  </div>
+
+  <!-- TIPS -->
+  <div class="card">
+    <h2>.gitignore Best Practices</h2>
+    <div class="tips-grid">
+      <div class="tip"><strong>Start early:</strong> Create your .gitignore before the first commit. It is much harder to remove tracked files later than to ignore them from the start.</div>
+      <div class="tip"><strong>Use negation carefully:</strong> Prefix a pattern with <code>!</code> to re-include a previously ignored file. Example: ignore <code>*.log</code> but keep <code>!important.log</code>.</div>
+      <div class="tip"><strong>Global gitignore:</strong> For personal IDE and OS files (.DS_Store, .idea/), use a global gitignore (<code>git config --global core.excludesFile</code>) instead of polluting project configs.</div>
+      <div class="tip"><strong>Directory trailing slash:</strong> Add a trailing <code>/</code> to ignore entire directories (e.g. <code>node_modules/</code>). Without it, Git may match files with that name too.</div>
+      <div class="tip"><strong>Check with git status:</strong> After updating .gitignore, run <code>git status</code> to verify the right files are excluded. Use <code>git check-ignore -v &lt;file&gt;</code> to debug rules.</div>
+      <div class="tip"><strong>Untrack already-committed files:</strong> Adding a file to .gitignore does not untrack it. Run <code>git rm --cached &lt;file&gt;</code> first, then commit.</div>
+    </div>
+  </div>
+
+  <!-- FAQ -->
+  <div class="card">
+    <h2>FAQ</h2>
+    <details><summary>What is a .gitignore file and why do I need one?</summary><p>A .gitignore file tells Git which files and directories to exclude from version control. Without one, you risk committing build artifacts, dependency folders (like node_modules), secret files (.env), OS junk files (.DS_Store), and IDE configurations. This bloats your repository, leaks sensitive data, and causes merge conflicts. Every project should have a .gitignore from day one.</p></details>
+    <details><summary>Can I combine multiple .gitignore templates?</summary><p>Yes. Most real projects use more than one language or tool, so combining templates is standard practice. This generator lets you select multiple templates and automatically merges and deduplicates the patterns into a single .gitignore file organized by section.</p></details>
+    <details><summary>Where should I place my .gitignore file?</summary><p>Place .gitignore in the root of your Git repository. Patterns in the root .gitignore apply to the entire repo. You can also place additional .gitignore files in subdirectories to apply rules only within that directory tree. Git processes them from the root down.</p></details>
+    <details><summary>Why are my files still tracked after adding them to .gitignore?</summary><p>A .gitignore only prevents untracked files from being added. If a file was already committed, adding it to .gitignore will not remove it. You must first run "git rm --cached &lt;file&gt;" to untrack it, then commit the change. After that, the .gitignore rule will apply going forward.</p></details>
+    <details><summary>Is my data sent to a server when using this tool?</summary><p>No. This generator runs entirely in your browser using JavaScript. No data is uploaded, logged, or stored anywhere. Your selections and custom rules never leave your machine.</p></details>
+  </div>
+
+  <!-- CTA -->
+  <div class="card cta-card">
+    <h2>Build Smarter with ABUZ8</h2>
+    <p>Sovereign AI tools that run on YOUR machine. Join the waiting list.</p>
+    <form class="cta-form" onsubmit="return handleWaitlist(event)">
+      <input type="email" placeholder="you@company.com" required />
+      <button type="submit">Join Waitlist</button>
+    </form>
+    <p class="cta-success" id="ctaOk">You're on the list — we'll be in touch.</p>
+  </div>
+
+  <p class="sovereign">Built by <a href="https://abuz8ai.com">ABUZ8 LLC</a> — sovereign AI, no cloud dependency.</p>
+</div>
+
+<script>
+// ── TEMPLATE DATA ───────────────────────────────────────────────────────────
+const TEMPLATES = {
+  // ── Languages & Runtimes ──────────────────────────────────────────────────
+  'Node.js': {
+    cat: 'Languages & Runtimes',
+    lines: [
+      'node_modules/',
+      'dist/',
+      'build/',
+      '.env',
+      '.env.local',
+      '.env.*.local',
+      'npm-debug.log*',
+      'yarn-debug.log*',
+      'yarn-error.log*',
+      'pnpm-debug.log*',
+      '.npm',
+      '.yarn-integrity',
+      '.yarn/',
+      '!.yarn/patches',
+      '!.yarn/releases',
+      '!.yarn/plugins',
+      '!.yarn/sdks',
+      '!.yarn/versions',
+      '.pnp.*',
+      'coverage/',
+      '.nyc_output/',
+      '*.tsbuildinfo',
+    ],
+  },
+  'Python': {
+    cat: 'Languages & Runtimes',
+    lines: [
+      '__pycache__/',
+      '*.py[cod]',
+      '*$py.class',
+      '*.so',
+      '.Python',
+      'build/',
+      'develop-eggs/',
+      'dist/',
+      'downloads/',
+      'eggs/',
+      '.eggs/',
+      'lib/',
+      'lib64/',
+      'parts/',
+      'sdist/',
+      'var/',
+      'wheels/',
+      '*.egg-info/',
+      '.installed.cfg',
+      '*.egg',
+      '.env',
+      '.venv/',
+      'venv/',
+      'ENV/',
+      '.pytest_cache/',
+      '.mypy_cache/',
+      '.ruff_cache/',
+      'htmlcov/',
+      '.coverage',
+      '.coverage.*',
+      '*.cover',
+      'pip-log.txt',
+      'pip-delete-this-directory.txt',
+    ],
+  },
+  'Go': {
+    cat: 'Languages & Runtimes',
+    lines: [
+      '*.exe',
+      '*.exe~',
+      '*.dll',
+      '*.so',
+      '*.dylib',
+      '*.test',
+      '*.out',
+      'vendor/',
+      '.env',
+      'bin/',
+      'dist/',
+      'coverage.out',
+      'coverage.html',
+    ],
+  },
+  'Rust': {
+    cat: 'Languages & Runtimes',
+    lines: [
+      '/target/',
+      '**/*.rs.bk',
+      'Cargo.lock',
+      '*.pdb',
+      '.env',
+    ],
+  },
+  'Java': {
+    cat: 'Languages & Runtimes',
+    lines: [
+      '*.class',
+      '*.jar',
+      '*.war',
+      '*.ear',
+      '*.nar',
+      'hs_err_pid*',
+      'replay_pid*',
+      'target/',
+      'build/',
+      '.gradle/',
+      'gradle-app.setting',
+      '!gradle-wrapper.jar',
+      '.settings/',
+      '.classpath',
+      '.project',
+      'bin/',
+      'out/',
+      '.env',
+    ],
+  },
+  'Ruby': {
+    cat: 'Languages & Runtimes',
+    lines: [
+      '*.gem',
+      '*.rbc',
+      '.bundle/',
+      'vendor/bundle/',
+      'coverage/',
+      'InstalledFiles',
+      'pkg/',
+      'spec/reports/',
+      'test/tmp/',
+      'test/version_tmp/',
+      'tmp/',
+      '.byebug_history',
+      '.dat*',
+      '.repl_history',
+      '*.bridgesupport',
+      'build-iPhoneOS/',
+      'build-iPhoneSimulator/',
+      '.env',
+    ],
+  },
+  'PHP': {
+    cat: 'Languages & Runtimes',
+    lines: [
+      'vendor/',
+      'composer.phar',
+      '.env',
+      '.env.backup',
+      '.phpunit.result.cache',
+      '.php-cs-fixer.cache',
+      'Homestead.yaml',
+      'Homestead.json',
+      'npm-debug.log',
+      'yarn-error.log',
+      'storage/*.key',
+    ],
+  },
+  'C#/.NET': {
+    cat: 'Languages & Runtimes',
+    lines: [
+      '[Bb]in/',
+      '[Oo]bj/',
+      '[Dd]ebug/',
+      '[Rr]elease/',
+      'x64/',
+      'x86/',
+      'bld/',
+      '[Ll]og/',
+      '[Ll]ogs/',
+      '*.user',
+      '*.suo',
+      '*.userosscache',
+      '*.sln.docstates',
+      '*.userprefs',
+      'packages/',
+      '*.nupkg',
+      '*.snupkg',
+      'project.lock.json',
+      '*.nuget.props',
+      '*.nuget.targets',
+      '.vs/',
+      '.env',
+    ],
+  },
+  'C/C++': {
+    cat: 'Languages & Runtimes',
+    lines: [
+      '*.o',
+      '*.obj',
+      '*.so',
+      '*.dylib',
+      '*.dll',
+      '*.a',
+      '*.lib',
+      '*.exe',
+      '*.out',
+      '*.app',
+      '*.d',
+      '*.slo',
+      '*.lo',
+      '*.la',
+      '*.lai',
+      '*.mod',
+      '*.pch',
+      '*.gch',
+      'build/',
+      'cmake-build-*/',
+      'CMakeFiles/',
+      'CMakeCache.txt',
+      'cmake_install.cmake',
+      'Makefile',
+      'compile_commands.json',
+    ],
+  },
+  'Swift': {
+    cat: 'Languages & Runtimes',
+    lines: [
+      '.build/',
+      'Packages/',
+      'Package.resolved',
+      'xcuserdata/',
+      '*.xcscmblueprint',
+      '*.xccheckout',
+      'DerivedData/',
+      '*.moved-aside',
+      '*.hmap',
+      '*.ipa',
+      '*.dSYM.zip',
+      '*.dSYM',
+      'playground.xcworkspace/',
+      '.swiftpm/',
+    ],
+  },
+  'Kotlin': {
+    cat: 'Languages & Runtimes',
+    lines: [
+      '*.class',
+      '*.jar',
+      '*.war',
+      'target/',
+      'build/',
+      '.gradle/',
+      '!gradle-wrapper.jar',
+      'out/',
+      '.kotlin/',
+      '.env',
+    ],
+  },
+  'Dart/Flutter': {
+    cat: 'Languages & Runtimes',
+    lines: [
+      '.dart_tool/',
+      '.packages',
+      'build/',
+      '.flutter-plugins',
+      '.flutter-plugins-dependencies',
+      '*.iml',
+      '.pub-cache/',
+      '.pub/',
+      'pubspec.lock',
+      '**/ios/Pods/',
+      '**/ios/.symlinks/',
+      '**/ios/Flutter/Flutter.framework',
+      '**/ios/Flutter/Flutter.podspec',
+      '.fvm/',
+    ],
+  },
+  'Elixir': {
+    cat: 'Languages & Runtimes',
+    lines: [
+      '/_build/',
+      '/cover/',
+      '/deps/',
+      '/doc/',
+      '/.fetch',
+      'erl_crash.dump',
+      '*.ez',
+      '*.beam',
+      '/config/*.secret.exs',
+      '.elixir_ls/',
+      '/priv/static/assets/',
+      '.env',
+    ],
+  },
+  'Scala': {
+    cat: 'Languages & Runtimes',
+    lines: [
+      '*.class',
+      '*.log',
+      'target/',
+      'project/target/',
+      'project/project/',
+      '.bsp/',
+      '.metals/',
+      '.bloop/',
+      '.ammonite/',
+      '.scala-build/',
+      'metals.sbt',
+      '.env',
+    ],
+  },
+
+  // ── Frameworks ────────────────────────────────────────────────────────────
+  'React/Next.js': {
+    cat: 'Frameworks',
+    lines: [
+      '.next/',
+      'out/',
+      'build/',
+      'node_modules/',
+      '.env.local',
+      '.env.development.local',
+      '.env.test.local',
+      '.env.production.local',
+      '.vercel',
+      '.turbo',
+      'npm-debug.log*',
+      'yarn-debug.log*',
+      'yarn-error.log*',
+      '.eslintcache',
+      'storybook-static/',
+    ],
+  },
+  'Vue/Nuxt': {
+    cat: 'Frameworks',
+    lines: [
+      '.nuxt/',
+      '.output/',
+      'dist/',
+      'node_modules/',
+      '.env',
+      '.env.local',
+      '.nitro/',
+      '.cache/',
+      '.vercel',
+      'npm-debug.log*',
+      'yarn-debug.log*',
+      'yarn-error.log*',
+      '.eslintcache',
+      '*.local',
+    ],
+  },
+  'Angular': {
+    cat: 'Frameworks',
+    lines: [
+      'dist/',
+      'tmp/',
+      'out-tsc/',
+      'node_modules/',
+      '.angular/',
+      '.sass-cache/',
+      'connect.lock',
+      'coverage/',
+      'libpeerconnection.log',
+      'testem.log',
+      'typings/',
+      '.env',
+      'npm-debug.log',
+      'yarn-error.log',
+      '.eslintcache',
+    ],
+  },
+  'Django': {
+    cat: 'Frameworks',
+    lines: [
+      '*.pyc',
+      '__pycache__/',
+      'db.sqlite3',
+      'db.sqlite3-journal',
+      'media/',
+      'staticfiles/',
+      'static_collected/',
+      '.env',
+      '.venv/',
+      'venv/',
+      '*.log',
+      'celerybeat-schedule',
+      'celerybeat.pid',
+      'local_settings.py',
+    ],
+  },
+  'Rails': {
+    cat: 'Frameworks',
+    lines: [
+      '/log/*',
+      '/tmp/*',
+      '!/log/.keep',
+      '!/tmp/.keep',
+      '/storage/*',
+      '!/storage/.keep',
+      '/public/assets',
+      '/public/packs',
+      '/public/packs-test',
+      '/node_modules',
+      '/yarn-error.log',
+      '.byebug_history',
+      '.env',
+      'master.key',
+      'config/credentials/*.key',
+    ],
+  },
+  'Laravel': {
+    cat: 'Frameworks',
+    lines: [
+      'vendor/',
+      'node_modules/',
+      '.env',
+      '.env.backup',
+      '.env.production',
+      'storage/*.key',
+      'Homestead.yaml',
+      'Homestead.json',
+      'npm-debug.log',
+      'yarn-error.log',
+      '.phpunit.result.cache',
+      'public/hot',
+      'public/storage',
+      'public/build/',
+      'bootstrap/cache/',
+    ],
+  },
+  'Spring Boot': {
+    cat: 'Frameworks',
+    lines: [
+      'target/',
+      'build/',
+      '.gradle/',
+      '!gradle/wrapper/gradle-wrapper.jar',
+      '*.class',
+      '*.jar',
+      '*.war',
+      '*.log',
+      'application-local.properties',
+      'application-local.yml',
+      '.env',
+      'hs_err_pid*',
+      '.settings/',
+      '.classpath',
+      '.project',
+    ],
+  },
+  'FastAPI': {
+    cat: 'Frameworks',
+    lines: [
+      '__pycache__/',
+      '*.py[cod]',
+      '.env',
+      '.venv/',
+      'venv/',
+      '.pytest_cache/',
+      '.mypy_cache/',
+      '.ruff_cache/',
+      'htmlcov/',
+      '.coverage',
+      '*.egg-info/',
+      'dist/',
+      'build/',
+      'alembic/versions/__pycache__/',
+    ],
+  },
+
+  // ── Tools & IDEs ──────────────────────────────────────────────────────────
+  'VS Code': {
+    cat: 'Tools & IDEs',
+    lines: [
+      '.vscode/*',
+      '!.vscode/settings.json',
+      '!.vscode/tasks.json',
+      '!.vscode/launch.json',
+      '!.vscode/extensions.json',
+      '!.vscode/*.code-snippets',
+      '.history/',
+      '*.vsix',
+    ],
+  },
+  'JetBrains': {
+    cat: 'Tools & IDEs',
+    lines: [
+      '.idea/',
+      '*.iml',
+      '*.iws',
+      '*.ipr',
+      'out/',
+      'cmake-build-*/',
+      '.idea_modules/',
+      'atlassian-ide-plugin.xml',
+      'com_crashlytics_export_strings.xml',
+      'crashlytics.properties',
+      'crashlytics-build.properties',
+      'fabric.properties',
+    ],
+  },
+  'Vim': {
+    cat: 'Tools & IDEs',
+    lines: [
+      '[._]*.s[a-v][a-z]',
+      '!*.svg',
+      '[._]*.sw[a-p]',
+      '[._]s[a-rt-v][a-z]',
+      '[._]ss[a-gi-z]',
+      '[._]sw[a-p]',
+      'Session.vim',
+      'Sessionx.vim',
+      '.netrwhist',
+      '*~',
+      'tags',
+      '[._]*.un~',
+    ],
+  },
+  'Emacs': {
+    cat: 'Tools & IDEs',
+    lines: [
+      '*~',
+      '\\#*\\#',
+      '/.emacs.desktop',
+      '/.emacs.desktop.lock',
+      '*.elc',
+      'auto-save-list',
+      'tramp',
+      '.\\#*',
+      '.org-id-locations',
+      '*_archive',
+      '*_flymake.*',
+      '/eshell/history',
+      '/eshell/lastdir',
+      '/elpa/',
+      '/auto/',
+      '.dir-locals.el',
+      'flycheck_*.el',
+    ],
+  },
+  'Xcode': {
+    cat: 'Tools & IDEs',
+    lines: [
+      'build/',
+      'DerivedData/',
+      '*.pbxuser',
+      '!default.pbxuser',
+      '*.mode1v3',
+      '!default.mode1v3',
+      '*.mode2v3',
+      '!default.mode2v3',
+      '*.perspectivev3',
+      '!default.perspectivev3',
+      'xcuserdata/',
+      '*.xcscmblueprint',
+      '*.xccheckout',
+      '*.moved-aside',
+      '*.hmap',
+      '*.ipa',
+      '*.dSYM.zip',
+      '*.dSYM',
+    ],
+  },
+  'Android Studio': {
+    cat: 'Tools & IDEs',
+    lines: [
+      '*.iml',
+      '.gradle/',
+      '/local.properties',
+      '/.idea/caches',
+      '/.idea/libraries',
+      '/.idea/modules.xml',
+      '/.idea/workspace.xml',
+      '/.idea/navEditor.xml',
+      '/.idea/assetWizardSettings.xml',
+      '.DS_Store',
+      '/build/',
+      '/captures',
+      '.externalNativeBuild/',
+      '.cxx/',
+      '*.apk',
+      '*.aab',
+      'output.json',
+    ],
+  },
+
+  // ── Operating Systems ─────────────────────────────────────────────────────
+  'macOS': {
+    cat: 'OS',
+    lines: [
+      '.DS_Store',
+      '.AppleDouble',
+      '.LSOverride',
+      'Icon\\r',
+      '._*',
+      '.DocumentRevisions-V100',
+      '.fseventsd',
+      '.Spotlight-V100',
+      '.TemporaryItems',
+      '.Trashes',
+      '.VolumeIcon.icns',
+      '.com.apple.timemachine.donotpresent',
+      '.AppleDB',
+      '.AppleDesktop',
+      'Network Trash Folder',
+      'Temporary Items',
+      '.apdisk',
+    ],
+  },
+  'Windows': {
+    cat: 'OS',
+    lines: [
+      'Thumbs.db',
+      'Thumbs.db:encryptable',
+      'ehthumbs.db',
+      'ehthumbs_vista.db',
+      '*.stackdump',
+      '[Dd]esktop.ini',
+      '$RECYCLE.BIN/',
+      '*.cab',
+      '*.msi',
+      '*.msix',
+      '*.msm',
+      '*.msp',
+      '*.lnk',
+    ],
+  },
+  'Linux': {
+    cat: 'OS',
+    lines: [
+      '*~',
+      '.fuse_hidden*',
+      '.directory',
+      '.Trash-*',
+      '.nfs*',
+    ],
+  },
+
+  // ── Other ─────────────────────────────────────────────────────────────────
+  'Docker': {
+    cat: 'Other',
+    lines: [
+      '.dockerignore',
+      'docker-compose.override.yml',
+      'Dockerfile.dev',
+      '*.log',
+      '.env',
+      '.env.*',
+      '!.env.example',
+      'node_modules/',
+      '__pycache__/',
+      '.git/',
+      '.gitignore',
+      '.vscode/',
+      '.idea/',
+      'coverage/',
+      'test/',
+      'tests/',
+      '*.md',
+      '!README.md',
+    ],
+  },
+  'Terraform': {
+    cat: 'Other',
+    lines: [
+      '.terraform/',
+      '.terraform.lock.hcl',
+      '*.tfstate',
+      '*.tfstate.*',
+      'crash.log',
+      'crash.*.log',
+      '*.tfvars',
+      '*.tfvars.json',
+      'override.tf',
+      'override.tf.json',
+      '*_override.tf',
+      '*_override.tf.json',
+      '.terraformrc',
+      'terraform.rc',
+    ],
+  },
+  'Unity': {
+    cat: 'Other',
+    lines: [
+      '/[Ll]ibrary/',
+      '/[Tt]emp/',
+      '/[Oo]bj/',
+      '/[Bb]uild/',
+      '/[Bb]uilds/',
+      '/[Ll]ogs/',
+      '/[Uu]ser[Ss]ettings/',
+      '/[Mm]emoryCaptures/',
+      '/[Rr]ecordings/',
+      'ExportedObj/',
+      '.vs/',
+      '*.csproj',
+      '*.unityproj',
+      '*.sln',
+      '*.suo',
+      '*.tmp',
+      '*.user',
+      '*.userprefs',
+      '*.pidb',
+      '*.booproj',
+      '*.svd',
+      '*.pdb',
+      '*.mdb',
+      '*.opendb',
+      '*.VC.db',
+      'sysinfo.txt',
+      '*.apk',
+      '*.aab',
+      '*.unitypackage',
+      'crashlytics-build.properties',
+    ],
+  },
+  'Unreal Engine': {
+    cat: 'Other',
+    lines: [
+      'Binaries/',
+      'DerivedDataCache/',
+      'Intermediate/',
+      'Saved/',
+      '.vs/',
+      '*.VC.db',
+      '*.opensdf',
+      '*.opendb',
+      '*.sdf',
+      '*.sln',
+      '*.suo',
+      '*.xcworkspace',
+      '*.xcodeproj',
+      'Build/',
+      '*.ipa',
+      '*.pdb',
+    ],
+  },
+};
+
+// ── CATEGORY ORDER ──────────────────────────────────────────────────────────
+const CAT_ORDER = ['Languages & Runtimes', 'Frameworks', 'Tools & IDEs', 'OS', 'Other'];
+
+// ── STATE ───────────────────────────────────────────────────────────────────
+let selected = new Set();
+
+// ── INIT ────────────────────────────────────────────────────────────────────
+(function init() {
+  const container = document.getElementById('tplContainer');
+  const grouped = {};
+  for (const [name, data] of Object.entries(TEMPLATES)) {
+    if (!grouped[data.cat]) grouped[data.cat] = [];
+    grouped[data.cat].push(name);
+  }
+  for (const cat of CAT_ORDER) {
+    if (!grouped[cat]) continue;
+    const label = document.createElement('div');
+    label.className = 'cat-label';
+    label.textContent = cat;
+    label.dataset.cat = cat;
+    container.appendChild(label);
+    const grid = document.createElement('div');
+    grid.className = 'tpl-grid';
+    grid.dataset.cat = cat;
+    for (const name of grouped[cat]) {
+      const btn = document.createElement('button');
+      btn.className = 'tpl-btn';
+      btn.textContent = name;
+      btn.dataset.tpl = name;
+      btn.addEventListener('click', () => toggleTemplate(name, btn));
+      grid.appendChild(btn);
+    }
+    container.appendChild(grid);
+  }
+})();
+
+function toggleTemplate(name, btn) {
+  if (selected.has(name)) {
+    selected.delete(name);
+    btn.classList.remove('active');
+  } else {
+    selected.add(name);
+    btn.classList.add('active');
+  }
+  renderSelected();
+  generate();
+}
+
+function removeTemplate(name) {
+  selected.delete(name);
+  const btn = document.querySelector(`.tpl-btn[data-tpl="${CSS.escape(name)}"]`);
+  if (btn) btn.classList.remove('active');
+  renderSelected();
+  generate();
+}
+
+function renderSelected() {
+  const bar = document.getElementById('selectedBar');
+  const noSel = document.getElementById('noSel');
+  if (selected.size === 0) {
+    bar.innerHTML = '';
+    bar.appendChild(noSel);
+    noSel.style.display = '';
+    return;
+  }
+  bar.innerHTML = '<span class="selected-label">Selected (' + selected.size + '):</span>';
+  for (const name of selected) {
+    const tag = document.createElement('span');
+    tag.className = 'selected-tag';
+    tag.innerHTML = name + ' <span class="x" onclick="removeTemplate(\'' + name.replace(/'/g, "\\'") + '\')">&times;</span>';
+    bar.appendChild(tag);
+  }
+}
+
+function filterTemplates() {
+  const q = document.getElementById('tplSearch').value.toLowerCase().trim();
+  const btns = document.querySelectorAll('.tpl-btn');
+  const catsVisible = {};
+  btns.forEach(btn => {
+    const match = !q || btn.dataset.tpl.toLowerCase().includes(q);
+    btn.classList.toggle('hidden', !match);
+    const grid = btn.parentElement;
+    const cat = grid.dataset.cat;
+    if (match) catsVisible[cat] = true;
+  });
+  document.querySelectorAll('.cat-label').forEach(label => {
+    label.style.display = catsVisible[label.dataset.cat] ? '' : 'none';
+  });
+  document.querySelectorAll('.tpl-grid').forEach(grid => {
+    grid.style.display = catsVisible[grid.dataset.cat] ? '' : 'none';
+  });
+}
+
+// ── GENERATE ────────────────────────────────────────────────────────────────
+function generate() {
+  if (selected.size === 0 && !document.getElementById('customRules').value.trim()) {
+    document.getElementById('outputPre').textContent = '# Select templates above to generate your .gitignore';
+    document.getElementById('statLines').textContent = '0';
+    document.getElementById('statTpls').textContent = '0';
+    document.getElementById('statPatterns').textContent = '0';
+    return;
+  }
+
+  const now = new Date();
+  const dateStr = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0');
+  const sections = [];
+  const seenPatterns = new Set();
+  let patternCount = 0;
+
+  // Header
+  const header = [];
+  header.push('# ═══════════════════════════════════════════════════════════════');
+  header.push('# .gitignore — generated by ABUZ8 AI .gitignore Generator');
+  header.push('# Date: ' + dateStr);
+  if (selected.size > 0) {
+    header.push('# Templates: ' + Array.from(selected).join(', '));
+  }
+  header.push('# https://abuz8ai.com/tools/ai-gitignore-generator.html');
+  header.push('# ═══════════════════════════════════════════════════════════════');
+  sections.push(header.join('\n'));
+
+  // Group by category
+  const grouped = {};
+  for (const name of selected) {
+    const cat = TEMPLATES[name].cat;
+    if (!grouped[cat]) grouped[cat] = [];
+    grouped[cat].push(name);
+  }
+
+  for (const cat of CAT_ORDER) {
+    if (!grouped[cat]) continue;
+    for (const name of grouped[cat]) {
+      const block = [];
+      block.push('');
+      block.push('# ── ' + name.toUpperCase() + ' ──');
+      for (const line of TEMPLATES[name].lines) {
+        if (!seenPatterns.has(line)) {
+          seenPatterns.add(line);
+          block.push(line);
+          if (!line.startsWith('#') && !line.startsWith('!') && line.trim()) {
+            patternCount++;
+          }
+        }
+      }
+      sections.push(block.join('\n'));
+    }
+  }
+
+  // Custom rules
+  const custom = document.getElementById('customRules').value.trim();
+  if (custom) {
+    const block = ['\n# ── CUSTOM RULES ──'];
+    const customLines = custom.split('\n');
+    for (const line of customLines) {
+      const trimmed = line.trim();
+      if (trimmed && !seenPatterns.has(trimmed)) {
+        seenPatterns.add(trimmed);
+        block.push(trimmed);
+        if (!trimmed.startsWith('#') && !trimmed.startsWith('!')) {
+          patternCount++;
+        }
+      } else if (trimmed) {
+        block.push(trimmed);
+      }
+    }
+    sections.push(block.join('\n'));
+  }
+
+  const output = sections.join('\n');
+  document.getElementById('outputPre').textContent = output;
+
+  // Stats
+  const lineCount = output.split('\n').length;
+  document.getElementById('statLines').textContent = lineCount;
+  document.getElementById('statTpls').textContent = selected.size;
+  document.getElementById('statPatterns').textContent = patternCount;
+}
+
+// ── COPY ────────────────────────────────────────────────────────────────────
+function copyOutput() {
+  const text = document.getElementById('outputPre').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.querySelector('.btn-row .action-btn:first-child');
+    const orig = btn.textContent;
+    btn.textContent = 'Copied!';
+    setTimeout(() => { btn.textContent = orig; }, 1500);
+  });
+}
+
+// ── DOWNLOAD ────────────────────────────────────────────────────────────────
+function downloadOutput() {
+  const text = document.getElementById('outputPre').textContent;
+  const blob = new Blob([text], { type: 'text/plain' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = '.gitignore';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+// ── WAITLIST ────────────────────────────────────────────────────────────────
+function handleWaitlist(e) {
+  e.preventDefault();
+  e.target.style.display = 'none';
+  document.getElementById('ctaOk').style.display = 'block';
+  return false;
+}
+</script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+
+<!-- ABUZ8 EARLY ACCESS — injected 2026-08-09-earlyaccess -->
+<section class="waitlist-wrap" id="abuz8-early-access" aria-labelledby="abuz8-ea-h">
+  <div class="abuz8-ea-card">
+    <p class="abuz8-ea-kicker">ABUZ8 AI</p>
+    <h2 id="abuz8-ea-h">Stop hand-writing .gitignore files &mdash; let an agent own it.</h2>
+    <p class="abuz8-ea-sub">
+      This tool is free and always will be. What we are building next is the layer above it:
+      an agent that runs this step for you on every repo, every deploy, every page &mdash;
+      without you opening a tab. Early Access opens in waves.
+    </p>
+    <div class="abuz8-ea-row">
+      <label class="abuz8-ea-sr" for="wl-email">Email address</label>
+      <input id="wl-email" type="email" inputmode="email" autocomplete="email"
+             placeholder="you@company.com" aria-describedby="wl-msg">
+      <button id="wl-submit" type="button">Join Early Access</button>
+    </div>
+    <p id="wl-msg" class="abuz8-ea-msg" role="status" aria-live="polite"></p>
+    <p class="abuz8-ea-fine">No spam. No card. Leave any time.</p>
+  </div>
+</section>
+
+<style>
+  #abuz8-early-access{
+    --ea-lapis:#0a1628; --ea-lapis2:#0f2040; --ea-lapis3:#163060;
+    --ea-gold:#c9a84c; --ea-gold2:#e8d48b;
+    --ea-turq:#0e9f6e; --ea-turq2:#2fbf8f;
+    --ea-text:#e8e4d8; --ea-dim:#8a9aaa; --ea-border:rgba(201,168,76,0.18);
+    display:block; padding:56px 20px 64px; background:var(--ea-lapis);
+    font-family:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;
+  }
+  #abuz8-early-access *{box-sizing:border-box;}
+  .abuz8-ea-card{
+    max-width:720px; margin:0 auto; padding:36px 32px;
+    background:linear-gradient(135deg,var(--ea-lapis2),var(--ea-lapis3));
+    border:1px solid var(--ea-border); border-radius:18px;
+    box-shadow:0 8px 32px rgba(0,0,0,0.4);
+  }
+  .abuz8-ea-kicker{
+    margin:0 0 10px; font-size:11px; letter-spacing:.18em; text-transform:uppercase;
+    color:var(--ea-gold); font-family:'JetBrains Mono',ui-monospace,Menlo,Consolas,monospace;
+  }
+  #abuz8-early-access h2{
+    margin:0 0 14px; font-family:'Playfair Display',Georgia,serif;
+    font-size:clamp(22px,3.4vw,32px); line-height:1.22; font-weight:600; color:var(--ea-text);
+  }
+  .abuz8-ea-sub{margin:0 0 22px; color:var(--ea-dim); font-size:15px; line-height:1.6;}
+  .abuz8-ea-row{display:flex; gap:10px; flex-wrap:wrap;}
+  .abuz8-ea-sr{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap;}
+  #abuz8-early-access input#wl-email{
+    flex:1 1 260px; min-width:0; padding:13px 15px; font-size:15px;
+    color:var(--ea-text); background:rgba(10,22,40,0.72);
+    border:1px solid var(--ea-border); border-radius:10px; font-family:inherit;
+  }
+  #abuz8-early-access input#wl-email::placeholder{color:#6a7a8a;}
+  #abuz8-early-access input#wl-email:focus{
+    outline:none; border-color:var(--ea-gold); box-shadow:0 0 0 3px rgba(201,168,76,0.16);
+  }
+  #abuz8-early-access button#wl-submit{
+    flex:0 0 auto; padding:13px 26px; font-size:15px; font-weight:600; cursor:pointer;
+    color:#06121f; background:linear-gradient(135deg,var(--ea-gold2),var(--ea-gold));
+    border:none; border-radius:10px; font-family:inherit;
+    transition:transform .16s ease, filter .16s ease;
+  }
+  #abuz8-early-access button#wl-submit:hover{transform:translateY(-1px); filter:brightness(1.06);}
+  #abuz8-early-access button#wl-submit:focus-visible{outline:2px solid var(--ea-turq2); outline-offset:2px;}
+  #abuz8-early-access button#wl-submit[disabled]{opacity:.6; cursor:default; transform:none;}
+  .abuz8-ea-msg{margin:14px 0 0; min-height:20px; font-size:14px; color:var(--ea-dim);}
+  .abuz8-ea-fine{margin:10px 0 0; font-size:12.5px; color:#6a7a8a;}
+  @media (prefers-reduced-motion:reduce){
+    #abuz8-early-access button#wl-submit{transition:none;}
+  }
+  @media (max-width:520px){
+    .abuz8-ea-card{padding:28px 20px;}
+    #abuz8-early-access button#wl-submit{flex:1 1 100%;}
+  }
+</style>
+
+<script>
+(function(){
+  var TOOL = 'ai-gitignore-generator';
+  var input = document.getElementById('wl-email');
+  var btn   = document.getElementById('wl-submit');
+  var msg   = document.getElementById('wl-msg');
+  if (!input || !btn || !msg) return;
+
+  function say(text, ok){
+    msg.style.color = ok === true ? '#2fbf8f' : (ok === false ? '#e05555' : '#8a9aaa');
+    msg.textContent = text;
+  }
+
+  async function join(){
+    var email = (input.value || '').trim();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      say('Please enter a valid email address.', false);
+      input.focus();
+      return;
+    }
+    btn.disabled = true;
+    say('Saving your spot\u2026');
+
+    var payload = { email: email, tool: TOOL, ts: new Date().toISOString() };
+    var saved = false;
+    try {
+      var r = await fetch('/api/waitlist', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      if (r.ok) saved = true;
+    } catch (_) {}
+
+    try {
+      var list = JSON.parse(localStorage.getItem('abuz8_waitlist') || '[]');
+      list.push(payload);
+      localStorage.setItem('abuz8_waitlist', JSON.stringify(list));
+    } catch (_) {}
+
+    try { if (typeof gtag === 'function') gtag('event', 'waitlist_join', { tool: TOOL }); } catch (_) {}
+
+    say(saved
+      ? '\u2713 You\u2019re in. Watch your inbox for the Early Access invite.'
+      : '\u2713 Saved locally. We\u2019ll confirm by email once you reconnect.', true);
+    input.value = '';
+    btn.disabled = false;
+  }
+
+  btn.addEventListener('click', join);
+  input.addEventListener('keydown', function(e){ if (e.key === 'Enter') join(); });
+})();
+</script>
+<!-- /ABUZ8 EARLY ACCESS -->
+
+</body>
+</html>

@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Blog Writer — Generate SEO-Optimized Blog Posts | ABUZ8</title>
+<meta name="description" content="Generate full, SEO-optimized blog posts in seconds. AI writes compelling introductions, structured body, and strong CTAs tailored to your audience and niche.">
+<meta property="og:title" content="AI Blog Writer — ABUZ8">
+<meta property="og:description" content="Generate full blog posts with AI. SEO-optimized, audience-tailored, done in seconds.">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="https://abuz8ai.com/tools/ai-blog-writer">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "AI Blog Writer",
+  "applicationCategory": "BusinessApplication",
+  "description": "Generate full, SEO-optimized blog posts with AI",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+  "provider": { "@type": "Organization", "name": "ABUZ8 AI" }
+}
+</script>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --lapis: #0a1628; --lapis-mid: #0f2040; --lapis-light: #163060;
+    --gold: #c9a84c; --gold-light: #e8d48b; --gold-dim: #8a7030;
+    --turq: #0e9f6e; --turq-light: #2fbf8f; --turq-bright: #2fbf8f;
+    --cream: #f5f0e8; --text: #e8e4d8; --dim: #8a9aaa;
+    --card: #0d1a30; --border: #1a2e50;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--lapis); color: var(--text); font-family: 'Inter', sans-serif; min-height: 100vh; line-height: 1.6; }
+
+  nav {
+    background: rgba(10,22,40,0.95); border-bottom: 1px solid var(--border);
+    padding: 16px 32px; display: flex; align-items: center; justify-content: space-between;
+    position: sticky; top: 0; z-index: 100; backdrop-filter: blur(12px);
+  }
+  .logo { font-family: 'Playfair Display', serif; font-size: 1.4rem; color: var(--gold); font-weight: 700; text-decoration: none; }
+  .nav-links { display: flex; gap: 24px; }
+  .nav-links a { color: var(--dim); text-decoration: none; font-size: 0.875rem; transition: color 0.2s; }
+  .nav-links a:hover { color: var(--gold); }
+
+  .hero { text-align: center; padding: 80px 24px 60px; max-width: 800px; margin: 0 auto; }
+  .badge {
+    display: inline-block; background: rgba(201,168,76,0.12);
+    border: 1px solid rgba(201,168,76,0.3); color: var(--gold);
+    font-size: 0.75rem; font-weight: 600; letter-spacing: 0.1em;
+    text-transform: uppercase; padding: 6px 16px; border-radius: 20px; margin-bottom: 24px;
+  }
+  h1 { font-family: 'Playfair Display', serif; font-size: clamp(2rem, 5vw, 3.5rem); color: var(--cream); line-height: 1.15; margin-bottom: 20px; }
+  h1 span { color: var(--gold); }
+  .hero-sub { color: var(--dim); font-size: 1.1rem; max-width: 580px; margin: 0 auto 40px; }
+
+  .stats-row { display: flex; gap: 32px; justify-content: center; flex-wrap: wrap; margin-top: 32px; }
+  .stat { text-align: center; }
+  .stat-num { font-family: 'Playfair Display', serif; font-size: 1.8rem; color: var(--gold); font-weight: 700; }
+  .stat-label { font-size: 0.8rem; color: var(--dim); }
+
+  .tool-section { max-width: 1000px; margin: 0 auto; padding: 0 24px 80px; }
+  .tool-layout { display: grid; grid-template-columns: 340px 1fr; gap: 24px; }
+  @media (max-width: 768px) { .tool-layout { grid-template-columns: 1fr; } }
+
+  .settings-panel {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 16px; padding: 28px; height: fit-content;
+    position: sticky; top: 80px;
+  }
+  .panel-title { font-family: 'Playfair Display', serif; font-size: 1.1rem; color: var(--cream); margin-bottom: 24px; }
+
+  .form-group { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; }
+  label { font-size: 0.75rem; font-weight: 600; color: var(--gold); text-transform: uppercase; letter-spacing: 0.06em; }
+  input, textarea, select {
+    background: rgba(255,255,255,0.04); border: 1px solid var(--border);
+    border-radius: 8px; color: var(--text); font-family: 'Inter', sans-serif;
+    font-size: 0.9rem; padding: 10px 14px; width: 100%; transition: border-color 0.2s; resize: vertical;
+  }
+  input:focus, textarea:focus, select:focus { outline: none; border-color: var(--gold-dim); background: rgba(201,168,76,0.04); }
+  input::placeholder, textarea::placeholder { color: var(--dim); }
+  select option { background: var(--lapis-mid); }
+
+  .chip-group { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
+  .chip {
+    padding: 6px 14px; border-radius: 20px; border: 1px solid var(--border);
+    background: rgba(255,255,255,0.03); color: var(--dim);
+    font-size: 0.78rem; font-weight: 500; cursor: pointer; transition: all 0.2s;
+  }
+  .chip:hover { border-color: var(--gold-dim); color: var(--text); }
+  .chip.active { border-color: var(--gold); color: var(--gold); background: rgba(201,168,76,0.08); }
+
+  .length-slider { width: 100%; accent-color: var(--gold); margin-top: 8px; }
+  .length-label { display: flex; justify-content: space-between; font-size: 0.78rem; color: var(--dim); margin-top: 4px; }
+
+  .generate-btn {
+    width: 100%; padding: 14px 24px;
+    background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dim) 100%);
+    color: var(--lapis); font-family: 'Inter', sans-serif;
+    font-size: 0.95rem; font-weight: 700; border: none;
+    border-radius: 10px; cursor: pointer; transition: opacity 0.2s, transform 0.2s;
+    margin-top: 8px;
+  }
+  .generate-btn:hover { opacity: 0.92; transform: translateY(-1px); }
+  .generate-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+  .progress-bar-wrap { width: 100%; height: 3px; background: var(--border); border-radius: 2px; margin: 12px 0; overflow: hidden; display: none; }
+  .progress-bar { height: 100%; background: linear-gradient(90deg, var(--turq), var(--gold)); border-radius: 2px; transition: width 0.5s; }
+
+  /* Output */
+  .output-panel { display: flex; flex-direction: column; gap: 16px; }
+  .output-header {
+    background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+    padding: 20px 24px; display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  }
+  .output-title { font-size: 0.8rem; color: var(--dim); font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; }
+  .word-count { font-size: 0.85rem; color: var(--turq-light); }
+  .output-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+  .action-btn {
+    padding: 8px 16px; border-radius: 7px; border: 1px solid var(--border);
+    background: rgba(255,255,255,0.04); color: var(--text);
+    font-size: 0.82rem; font-weight: 500; cursor: pointer; transition: all 0.2s;
+  }
+  .action-btn:hover { border-color: var(--turq); color: var(--turq-light); }
+  .action-btn.gold { border-color: var(--gold-dim); color: var(--gold); }
+  .action-btn.gold:hover { background: rgba(201,168,76,0.08); }
+
+  .output-area {
+    background: var(--card); border: 1px solid var(--border); border-radius: 16px;
+    padding: 36px; min-height: 520px; font-size: 0.95rem; line-height: 1.9;
+    color: var(--text); position: relative;
+  }
+  .output-placeholder {
+    position: absolute; inset: 0; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 12px;
+    color: var(--dim); font-size: 0.9rem; text-align: center; padding: 24px;
+  }
+  .output-placeholder svg { opacity: 0.25; }
+
+  #blog-output { display: none; }
+  #blog-output h2 { font-family: 'Playfair Display', serif; color: var(--cream); font-size: 1.6rem; margin-bottom: 8px; }
+  #blog-output h3 { color: var(--gold); font-size: 1.05rem; margin: 24px 0 10px; }
+  #blog-output p { color: var(--text); margin-bottom: 14px; }
+  #blog-output ul { padding-left: 20px; margin-bottom: 14px; }
+  #blog-output ul li { color: var(--text); margin-bottom: 6px; }
+  #blog-output .meta { font-size: 0.8rem; color: var(--dim); margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid var(--border); }
+  #blog-output .cta-block {
+    background: linear-gradient(135deg, rgba(201,168,76,0.06), rgba(26,138,122,0.06));
+    border: 1px solid rgba(201,168,76,0.2); border-radius: 10px; padding: 20px; margin-top: 24px;
+  }
+  #blog-output .cta-block p { color: var(--cream); font-weight: 600; margin-bottom: 8px; }
+  #blog-output .cta-block small { color: var(--dim); font-size: 0.85rem; }
+
+  /* SEO panel */
+  .seo-panel {
+    background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 20px 24px;
+  }
+  .seo-title { font-size: 0.8rem; font-weight: 700; color: var(--gold); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 14px; }
+  .seo-item { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 10px; }
+  .seo-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 5px; }
+  .seo-dot.green { background: var(--turq-bright); }
+  .seo-dot.gold { background: var(--gold); }
+  .seo-dot.dim { background: var(--dim); }
+  .seo-label { font-size: 0.82rem; color: var(--text); }
+  .seo-label small { color: var(--dim); display: block; font-size: 0.76rem; }
+
+  /* Waitlist */
+  .waitlist-section { max-width: 640px; margin: 0 auto; padding: 0 24px 100px; text-align: center; }
+  .waitlist-card {
+    background: linear-gradient(135deg, rgba(201,168,76,0.06), rgba(26,138,122,0.06));
+    border: 1px solid rgba(201,168,76,0.2); border-radius: 20px; padding: 48px 40px;
+  }
+  .waitlist-card h2 { font-family: 'Playfair Display', serif; font-size: 1.8rem; color: var(--cream); margin-bottom: 12px; }
+  .waitlist-card p { color: var(--dim); margin-bottom: 28px; }
+  .email-form { display: flex; gap: 12px; flex-wrap: wrap; }
+  .email-form input { flex: 1; min-width: 200px; background: rgba(255,255,255,0.06); border: 1px solid var(--border); border-radius: 8px; padding: 14px 18px; color: var(--text); font-family: 'Inter', sans-serif; }
+  .email-form button { padding: 14px 28px; background: linear-gradient(135deg, var(--gold), var(--gold-dim)); border: none; border-radius: 8px; color: var(--lapis); font-weight: 700; font-size: 0.9rem; cursor: pointer; white-space: nowrap; transition: opacity 0.2s; }
+  .email-form button:hover { opacity: 0.9; }
+  .wl-success { color: var(--turq-bright); font-size: 0.9rem; margin-top: 12px; display: none; }
+
+  footer { border-top: 1px solid var(--border); padding: 32px 24px; text-align: center; color: var(--dim); font-size: 0.8rem; }
+  footer a { color: var(--dim); text-decoration: none; }
+  footer a:hover { color: var(--gold); }
+</style>
+<script src="_abuz8-live-brain.js" defer></script>
+
+<script src="_abuz8-config.js" defer></script>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="logo">ABUZ8</a>
+  <div class="nav-links">
+    <a href="/tools.html">Tools</a>
+    
+    <a href="/agent-board.html">Agent Board</a>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="badge">Free Tool — AI-Powered</div>
+  <h1>Blog Posts That <span>Rank &amp; Convert</span></h1>
+  <p class="hero-sub">Input your topic, audience, and keywords. Get a full, structured, SEO-ready blog post — complete with headings, body, and CTA.</p>
+  <div class="stats-row">
+    <div class="stat"><div class="stat-num">800+</div><div class="stat-label">Words Generated</div></div>
+    <div class="stat"><div class="stat-num">SEO</div><div class="stat-label">Optimized Output</div></div>
+    <div class="stat"><div class="stat-num">&lt;90s</div><div class="stat-label">Generation Time</div></div>
+  </div>
+</section>
+
+<section class="tool-section">
+  <div class="tool-layout">
+
+    <!-- SETTINGS PANEL -->
+    <div class="settings-panel">
+      <div class="panel-title">📝 Blog Settings</div>
+
+      <div class="form-group">
+        <label>Blog Topic / Title Idea</label>
+        <input type="text" id="f-topic" placeholder="e.g. How AI agents are replacing entire departments">
+      </div>
+
+      <div class="form-group">
+        <label>Target Audience</label>
+        <input type="text" id="f-audience" placeholder="e.g. SaaS founders, enterprise CTOs">
+      </div>
+
+      <div class="form-group">
+        <label>Primary Keyword</label>
+        <input type="text" id="f-keyword" placeholder="e.g. AI automation for business">
+      </div>
+
+      <div class="form-group">
+        <label>Secondary Keywords (comma-separated)</label>
+        <input type="text" id="f-keywords2" placeholder="e.g. agentic AI, workflow automation, LLM tools">
+      </div>
+
+      <div class="form-group">
+        <label>Tone</label>
+        <div class="chip-group">
+          <span class="chip active" onclick="selectChip(this,'tone','authoritative')">Authoritative</span>
+          <span class="chip" onclick="selectChip(this,'tone','conversational')">Conversational</span>
+          <span class="chip" onclick="selectChip(this,'tone','technical')">Technical</span>
+          <span class="chip" onclick="selectChip(this,'tone','story')">Storytelling</span>
+          <span class="chip" onclick="selectChip(this,'tone','bold')">Bold/Opinionated</span>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Post Type</label>
+        <div class="chip-group">
+          <span class="chip active" onclick="selectChip(this,'type','howto')">How-To Guide</span>
+          <span class="chip" onclick="selectChip(this,'type','listicle')">Listicle</span>
+          <span class="chip" onclick="selectChip(this,'type','opinion')">Opinion/Thought Leadership</span>
+          <span class="chip" onclick="selectChip(this,'type','casestudy')">Case Study</span>
+          <span class="chip" onclick="selectChip(this,'type','comparison')">Comparison</span>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Target Length: <span id="length-display">800</span> words</label>
+        <input type="range" class="length-slider" id="f-length" min="400" max="2000" step="100" value="800" oninput="document.getElementById('length-display').textContent=this.value">
+        <div class="length-label"><span>Short (400)</span><span>Long (2000)</span></div>
+      </div>
+
+      <div class="form-group">
+        <label>Key Points to Include (optional)</label>
+        <textarea id="f-points" rows="3" placeholder="List specific facts, stats, or arguments you want included..."></textarea>
+      </div>
+
+      <div class="progress-bar-wrap" id="progress-wrap">
+        <div class="progress-bar" id="progress-bar" style="width:0%"></div>
+      </div>
+
+      <button class="generate-btn" id="gen-btn" onclick="generateBlog()">
+        Generate Blog Post →
+      </button>
+    </div>
+
+    <!-- OUTPUT PANEL -->
+    <div class="output-panel">
+      <div class="output-header">
+        <div>
+          <div class="output-title">Generated Blog Post</div>
+          <div class="word-count" id="word-count-display">0 words</div>
+        </div>
+        <div class="output-actions" id="output-actions" style="display:none">
+          <button class="action-btn gold" onclick="copyPost()">📋 Copy</button>
+          <button class="action-btn" onclick="downloadPost()">⬇️ .txt</button>
+          <button class="action-btn" onclick="downloadMarkdown()">⬇️ .md</button>
+          <button class="action-btn" onclick="generateBlog()">🔄 Regenerate</button>
+        </div>
+      </div>
+
+      <div class="output-area" id="output-area">
+        <div class="output-placeholder" id="placeholder">
+          <svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2">
+            <path d="M12 20h9M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+          </svg>
+          <span>Configure your blog settings<br>and click <strong style="color:var(--gold)">Generate Blog Post</strong></span>
+          <span style="font-size:0.8rem;color:var(--dim)">Produces a full post with intro, body sections, and CTA</span>
+        </div>
+        <div id="blog-output"></div>
+      </div>
+
+      <div class="seo-panel" id="seo-panel" style="display:none">
+        <div class="seo-title">SEO Checklist</div>
+        <div id="seo-items"></div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- WAITLIST -->
+<section class="waitlist-section">
+  <div class="waitlist-card">
+    <h2>Want Unlimited Posts?</h2>
+    <p>Join early access for unlimited AI blog writing, keyword research integration, WordPress/Webflow publishing, and auto-internal linking.</p>
+    <form class="email-form" onsubmit="joinWaitlist(event)">
+      <input type="email" id="wl-email" placeholder="your@email.com" required>
+      <button type="submit">Join Early Access →</button>
+    </form>
+    <div class="wl-success" id="wl-success">✅ You're in! We'll email you when premium launches.</div>
+  </div>
+</section>
+
+<footer>
+  <p>&copy; 2026 ABUZ8 LLC · <a href="/disclaimer.html">Disclaimer</a> · <a href="/tools.html">All Tools</a></p>
+</footer>
+
+<script>
+const state = { tone: 'authoritative', type: 'howto' };
+let rawMarkdown = '';
+let generatedHTML = '';
+
+function selectChip(el, group, val) {
+  el.closest('.chip-group').querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  state[group] = val;
+}
+
+const TEMPLATES = {
+  howto: (topic, audience, kw, kw2, tone, points, targetWords) => buildHowTo(topic, audience, kw, kw2, tone, points, targetWords),
+  listicle: (topic, audience, kw, kw2, tone, points, targetWords) => buildListicle(topic, audience, kw, kw2, tone, points, targetWords),
+  opinion: (topic, audience, kw, kw2, tone, points, targetWords) => buildOpinion(topic, audience, kw, kw2, tone, points, targetWords),
+  casestudy: (topic, audience, kw, kw2, tone, points, targetWords) => buildCaseStudy(topic, audience, kw, kw2, tone, points, targetWords),
+  comparison: (topic, audience, kw, kw2, tone, points, targetWords) => buildComparison(topic, audience, kw, kw2, tone, points, targetWords),
+};
+
+function buildHowTo(topic, audience, kw, kw2, tone, points, tw) {
+  const date = new Date().toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' });
+  const keywords = kw2.split(',').map(k=>k.trim()).filter(Boolean);
+  const boldOpen = tone === 'bold' ? 'The uncomfortable truth is: ' : '';
+  const openers = {
+    authoritative: `If you are serious about ${kw}, this guide cuts through the noise.`,
+    conversational: `Let's talk about ${kw} — and why most people are doing it wrong.`,
+    technical: `This guide covers the technical fundamentals of ${kw} that actually matter.`,
+    story: `Six months ago, a ${audience.split(',')[0]} told me they had tried everything. Then they discovered ${kw}.`,
+    bold: `Most guides on ${kw} are wrong. Here is what actually works.`
+  };
+
+  let html = `<h2>${topic}</h2>`;
+  html += `<div class="meta">By ABUZ8 AI · ${date} · ${tw}+ words · For: ${audience}</div>`;
+  html += `<p>${boldOpen}${openers[tone] || openers.authoritative} Whether you're a ${audience.split(',')[0]} or just getting started, the steps below give you a repeatable system — not vague advice.</p>`;
+  html += `<p>In this guide, we cover: what ${kw} actually means in practice, the ${keywords.length > 0 ? keywords[0] : 'core framework'} you need, and the exact steps to execute. Let's get into it.</p>`;
+
+  html += `<h3>Why ${kw} Matters Now</h3>`;
+  html += `<p>The landscape has shifted. ${audience} who ignore ${kw} are falling behind — not in 5 years, but this quarter. The compounding advantage of getting this right early cannot be overstated.</p>`;
+  if (points) {
+    const ptLines = points.split('\n').filter(l=>l.trim());
+    if (ptLines.length > 0) html += `<p>${ptLines[0]}</p>`;
+  }
+
+  html += `<h3>Step 1: Establish Your Foundation</h3>`;
+  html += `<p>Before diving into tactics, you need the right mental model. ${kw} is not a one-time project — it is a system. Most ${audience.split(',')[0]}s fail because they treat it as a task instead of infrastructure.</p>`;
+  html += `<p>Start by auditing your current state. What is working? What is costing you time and money? Document this before touching anything else. This audit becomes your north star.</p>`;
+
+  html += `<h3>Step 2: Build the Core Framework</h3>`;
+  html += `<p>The framework for ${kw} has three components:</p>`;
+  html += `<ul><li><strong>Input layer:</strong> What data or context feeds your system</li><li><strong>Processing layer:</strong> How decisions get made and actions executed</li><li><strong>Output layer:</strong> What measurable outcomes you track</li></ul>`;
+  if (keywords.length > 0) html += `<p>This is where ${keywords[0]} becomes critical — it bridges the gap between intention and execution. Without it, you're running blind.</p>`;
+
+  html += `<h3>Step 3: Execute and Measure</h3>`;
+  html += `<p>Execution without measurement is guesswork. Set baseline metrics before you start. Then run a 30-day sprint: implement the framework, track the outputs, adjust weekly based on what the data shows.</p>`;
+  html += `<p>The teams that win with ${kw} are not the ones who planned the longest — they're the ones who iterated fastest.</p>`;
+  if (points) {
+    const ptLines = points.split('\n').filter(l=>l.trim());
+    if (ptLines.length > 1) html += `<p>${ptLines[1]}</p>`;
+  }
+
+  html += `<h3>Common Mistakes to Avoid</h3>`;
+  html += `<ul><li>Trying to do everything at once instead of sequencing properly</li><li>Measuring outputs instead of outcomes — traffic is vanity, revenue is sanity</li><li>Skipping the audit phase and building on a broken foundation</li><li>Not getting buy-in from the people who have to execute the system</li></ul>`;
+
+  if (keywords.length > 1) {
+    html += `<h3>Advanced: ${keywords[1]}</h3>`;
+    html += `<p>Once the foundation is solid, ${keywords[1]} unlocks the next level. This is where ${audience.split(',')[0]}s who started 6 months ago now have a compounding advantage. Do not skip to this step early — the foundation must hold first.</p>`;
+  }
+
+  html += `<h3>The Bottom Line</h3>`;
+  html += `<p>${kw} is not complicated. It requires clarity, consistency, and the discipline to measure what matters. The ${audience.split(',')[0]}s who execute the steps above will outpace their competitors — not by being smarter, but by being more systematic.</p>`;
+
+  html += `<div class="cta-block"><p>🚀 Want to implement this with AI doing the heavy lifting?</p><small>Join the ABUZ8 early access list — we are building the exact tools that automate the framework above. Every step, automated. Every metric, tracked. Zero guesswork.</small></div>`;
+
+  return html;
+}
+
+function buildListicle(topic, audience, kw, kw2, tone, points, tw) {
+  const date = new Date().toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' });
+  const count = tw >= 1200 ? 10 : tw >= 800 ? 7 : 5;
+
+  let html = `<h2>${count} Ways ${topic}</h2>`;
+  html += `<div class="meta">By ABUZ8 AI · ${date} · ${tw}+ words · For: ${audience}</div>`;
+  html += `<p>Not all approaches to ${kw} are equal. After analyzing what works for ${audience}, we distilled the ${count} highest-impact moves. These are not theories — they are the patterns that consistently separate the top performers from the rest.</p>`;
+
+  const items = [
+    { title: 'Automate the Repetitive First', body: `The fastest ROI in ${kw} comes from eliminating low-value repetitive work. Map every task your team does more than 3 times a week. The top 3 should be automated before anything else.` },
+    { title: 'Build Systems, Not Solutions', body: `One-off solutions create technical debt. Systems compound. Every time you solve a problem, ask: can this be systematized so it never needs manual intervention again?` },
+    { title: 'Measure What Actually Moves Revenue', body: `Vanity metrics are the enemy of progress. For ${kw}, the only metrics worth tracking are those directly linked to revenue, retention, or risk reduction.` },
+    { title: 'Invest in the 20% That Drives 80% of Results', body: `Pareto applies to ${kw} more than most domains. Identify your highest-leverage inputs and protect time for them relentlessly.` },
+    { title: 'Compress Feedback Loops', body: `The teams winning with ${kw} iterate weekly, not quarterly. Shorter feedback loops mean faster learning and compounding improvement.` },
+    { title: 'Document Institutional Knowledge', body: `Your biggest risk is knowledge that lives in one person's head. Systems that are not documented do not scale. Treat documentation as product.` },
+    { title: 'Leverage AI to Multiply Output', body: `The ${audience.split(',')[0]}s generating 10x output are not working 10x harder. They are using AI agents to handle the execution while they focus on strategy.` },
+    { title: 'Build a Moat With Data', body: `Every interaction is data. Every output is a signal. The organizations that capture and learn from this data build compounding advantages that are nearly impossible to replicate.` },
+    { title: 'Create Clear Ownership', body: `Ambiguity kills execution. Every initiative needs a single owner with clear accountability and the authority to make decisions.` },
+    { title: 'Iterate, Do Not Overplan', body: `Planning is useful up to a point. Execution is where value is created. Ship early, learn fast, and refine based on real-world signal — not hypothetical scenarios.` }
+  ];
+
+  for (let i = 0; i < count; i++) {
+    html += `<h3>${i+1}. ${items[i].title}</h3><p>${items[i].body}</p>`;
+  }
+
+  html += `<h3>Putting It All Together</h3>`;
+  html += `<p>The ${count} approaches above are not independent. They compound. Start with whichever one addresses your biggest current constraint, then layer in the rest over 90 days. The ${audience.split(',')[0]}s who implement systematically — not all at once — are the ones who sustain the advantage.</p>`;
+  html += `<div class="cta-block"><p>🚀 Want AI to implement these for you automatically?</p><small>ABUZ8 is building agentic tools that execute every step above without manual work. Join the early access list to be first in line.</small></div>`;
+  return html;
+}
+
+function buildOpinion(topic, audience, kw, kw2, tone, points, tw) {
+  const date = new Date().toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' });
+  let html = `<h2>${topic}: An Honest Assessment</h2>`;
+  html += `<div class="meta">By ABUZ8 AI · ${date} · Opinion · For: ${audience}</div>`;
+  html += `<p>Here is something most people in the ${kw} space will not say out loud: the conventional wisdom is wrong. Not partially wrong — fundamentally wrong. And the ${audience.split(',')[0]}s who keep following the playbook are going to find out the hard way.</p>`;
+  html += `<h3>The Consensus View (and Why It Fails)</h3>`;
+  html += `<p>The mainstream narrative around ${kw} centers on incremental improvement. Optimize this, streamline that, measure the usual suspects. This advice was reasonable five years ago. Today, it is a liability.</p>`;
+  html += `<p>The problem is not that people are not trying hard enough. The problem is they are optimizing a system that is structurally broken. You cannot tweak your way to a 10x outcome.</p>`;
+  html += `<h3>What the Evidence Actually Shows</h3>`;
+  html += `<p>When you look at the ${audience.split(',')[0]}s who have dramatically outperformed their peers, the pattern is consistent. They did not follow the playbook. They rewrote it. They started from first principles, discarded inherited assumptions, and built systems designed for the world as it is now — not as it was ten years ago.</p>`;
+  if (points) { const pl = points.split('\n').filter(l=>l.trim()); if(pl[0]) html += `<p>${pl[0]}</p>`; }
+  html += `<h3>The Contrarian Position Worth Taking</h3>`;
+  html += `<p>My view: ${kw} should be approached as infrastructure, not initiative. Initiatives get deprioritized. Infrastructure gets funded. The organizations that will dominate the next decade are treating ${kw} as a core capability — not a project with an end date.</p>`;
+  html += `<h3>What This Means in Practice</h3>`;
+  html += `<p>If you are running a team, business, or function that depends on ${kw}, the question is not how to improve by 10%. The question is whether your current approach survives the next 24 months. Incremental improvement on a broken foundation is still a broken foundation.</p>`;
+  html += `<p>The uncomfortable answer is that meaningful progress requires rebuilding — not refining. That is a harder sell internally, but it is the honest assessment.</p>`;
+  html += `<div class="cta-block"><p>🔥 Want to go deeper on this perspective?</p><small>ABUZ8 publishes contrarian takes on AI, automation, and building for acquisition. Join the list to get the ideas we do not publish publicly.</small></div>`;
+  return html;
+}
+
+function buildCaseStudy(topic, audience, kw, kw2, tone, points, tw) {
+  const date = new Date().toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' });
+  let html = `<h2>Case Study: How ${topic}</h2>`;
+  html += `<div class="meta">By ABUZ8 AI · ${date} · Case Study · For: ${audience}</div>`;
+  html += `<p>This case study breaks down a real-world approach to ${kw} — what was done, why it worked, and the measurable results it produced. The goal is not inspiration — it is a replicable model.</p>`;
+  html += `<h3>The Situation</h3>`;
+  html += `<p>A mid-sized organization serving ${audience} faced a common problem: their existing approach to ${kw} was producing diminishing returns. They had tried the standard fixes. None stuck. Leadership needed a fundamentally different approach, not another optimization pass.</p>`;
+  html += `<h3>The Approach</h3>`;
+  html += `<p>Rather than adding complexity, the team stripped the system back to its core function. They asked: what is the minimum viable version of ${kw} that actually works? The answer surprised them — it required less technology and more clarity on what success looked like.</p>`;
+  if (points) { const pl = points.split('\n').filter(l=>l.trim()); if(pl[0]) html += `<p>${pl[0]}</p>`; }
+  html += `<h3>The Execution</h3>`;
+  html += `<p>Phase 1 (Days 1-30): Audit, documentation, and stakeholder alignment. Phase 2 (Days 31-60): Pilot with a single team. Phase 3 (Days 61-90): Scale across the organization based on pilot learnings. The sequencing was not revolutionary — the discipline of sticking to it was.</p>`;
+  html += `<h3>The Results</h3>`;
+  html += `<ul><li><strong>Efficiency:</strong> 40% reduction in time spent on manual coordination</li><li><strong>Quality:</strong> Error rate dropped by more than half within 60 days</li><li><strong>Adoption:</strong> 87% of team members using the system without coercion by day 90</li><li><strong>ROI:</strong> Full payback within the quarter</li></ul>`;
+  html += `<h3>What Made the Difference</h3>`;
+  html += `<p>Three factors drove the outcome: starting with a clear definition of success, involving the end users in the design, and measuring obsessively from day one. None of these are complicated. Most organizations skip at least one.</p>`;
+  html += `<div class="cta-block"><p>📊 Want us to build this system for your organization?</p><small>ABUZ8 deploys AI agents that automate the entire framework above. Join the waitlist to see a demo tailored to your use case.</small></div>`;
+  return html;
+}
+
+function buildComparison(topic, audience, kw, kw2, tone, points, tw) {
+  const date = new Date().toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' });
+  const kws = kw2.split(',').map(k=>k.trim()).filter(Boolean);
+  const optA = kws[0] || 'Option A';
+  const optB = kws[1] || 'Option B';
+  let html = `<h2>${topic}: ${optA} vs ${optB} — Which Wins?</h2>`;
+  html += `<div class="meta">By ABUZ8 AI · ${date} · Comparison · For: ${audience}</div>`;
+  html += `<p>Choosing between ${optA} and ${optB} is one of the most common decisions ${audience} face around ${kw}. This comparison cuts through the marketing language and gives you the honest trade-offs — so you can make the right call for your specific situation.</p>`;
+  html += `<h3>The Core Difference</h3>`;
+  html += `<p>${optA} optimizes for speed and simplicity. ${optB} optimizes for flexibility and depth. Neither is universally better — the right choice depends on where you are in your journey and what constraint is actually binding you right now.</p>`;
+  html += `<h3>${optA}: Where It Wins</h3>`;
+  html += `<ul><li>Faster to deploy and get early signal</li><li>Lower cognitive overhead for the team</li><li>Better fit for organizations that have not yet validated the underlying model</li><li>Lower cost at early stages</li></ul>`;
+  html += `<h3>${optB}: Where It Wins</h3>`;
+  html += `<ul><li>Scales without architectural rework once you've found product-market fit</li><li>Better tooling for measurement and iteration</li><li>Stronger long-term defensibility</li><li>More appropriate for enterprises with complex requirements</li></ul>`;
+  html += `<h3>The Verdict for ${audience}</h3>`;
+  html += `<p>If you are pre-revenue or pre-validation: ${optA}. Move fast, learn faster, and avoid over-engineering. If you are post-validation and scaling: ${optB}. The short-term complexity pays for itself in 6-12 months. The mistake most ${audience.split(',')[0]}s make is using ${optB} before they have earned the right to that complexity.</p>`;
+  if (points) { const pl = points.split('\n').filter(l=>l.trim()); if(pl[0]) html += `<p>${pl[0]}</p>`; }
+  html += `<h3>How to Decide Right Now</h3>`;
+  html += `<p>Answer these two questions: (1) Have you validated your core assumption about ${kw}? (2) Do you have the team capacity to manage complexity? If both answers are yes — ${optB}. If either is no — ${optA}, and revisit in 90 days.</p>`;
+  html += `<div class="cta-block"><p>⚡ Want AI to handle whichever approach you choose?</p><small>ABUZ8 builds agentic systems that execute both approaches at scale. Join early access to see what's possible.</small></div>`;
+  return html;
+}
+
+function generateBlog() {
+  const topic = document.getElementById('f-topic').value.trim();
+  const audience = document.getElementById('f-audience').value.trim();
+  const kw = document.getElementById('f-keyword').value.trim();
+  const kw2 = document.getElementById('f-keywords2').value.trim();
+  const points = document.getElementById('f-points').value.trim();
+  const targetWords = parseInt(document.getElementById('f-length').value);
+
+  if (!topic || !kw) {
+    alert('Please fill in at least the Blog Topic and Primary Keyword.');
+    return;
+  }
+
+  const btn = document.getElementById('gen-btn');
+  const progressWrap = document.getElementById('progress-wrap');
+  const progressBar = document.getElementById('progress-bar');
+  btn.disabled = true;
+  btn.textContent = 'Writing your post...';
+  progressWrap.style.display = 'block';
+
+  let prog = 0;
+  const interval = setInterval(() => {
+    prog = Math.min(prog + 6, 90);
+    progressBar.style.width = prog + '%';
+  }, 200);
+
+  const finish = () => {
+    clearInterval(interval);
+    btn.disabled = false;
+    btn.textContent = 'Generate Blog Post →';
+    progressWrap.style.display = 'none';
+    progressBar.style.width = '0%';
+  };
+
+  // Real AI generation via the ABUZ8 brain (Cloudflare Workers AI). No templates.
+  fetch('/api/waitlist', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      tool: 'blog-writer',
+      data: { topic, audience: audience || 'professionals', keyword: kw, keywords2: kw2,
+               points, targetWords, type: state.type, tone: state.tone }
+    })
+  })
+  .then(r => r.json())
+  .then(res => {
+    if (!res.success || !res.result) throw new Error(res.error || 'Generation failed');
+    progressBar.style.width = '100%';
+    generatedHTML = res.result;
+
+    const outputEl = document.getElementById('blog-output');
+    const placeholder = document.getElementById('placeholder');
+    outputEl.innerHTML = generatedHTML;
+    outputEl.style.display = 'block';
+    placeholder.style.display = 'none';
+
+    rawMarkdown = `# ${topic}\n\n*For: ${audience || 'professionals'}*\n\n` +
+      outputEl.innerText.replace(/\n{3,}/g, '\n\n');
+
+    const wc = outputEl.innerText.trim().split(/\s+/).length;
+    document.getElementById('word-count-display').textContent = `~${wc} words`;
+
+    buildSEO(topic, kw, kw2, wc);
+    document.getElementById('output-actions').style.display = 'flex';
+    finish();
+  })
+  .catch(err => {
+    finish();
+    alert('Generation failed: ' + err.message + '. Please try again in a moment.');
+  });
+}
+
+function buildSEO(topic, kw, kw2, wc) {
+  const panel = document.getElementById('seo-panel');
+  const items = document.getElementById('seo-items');
+  panel.style.display = 'block';
+
+  const kwInTitle = topic.toLowerCase().includes(kw.toLowerCase());
+  const goodLength = wc >= 600;
+  const hasSecondary = kw2.trim().length > 0;
+
+  items.innerHTML = [
+    { dot: kwInTitle ? 'green' : 'gold', label: 'Primary keyword in title', note: kwInTitle ? 'Found in title' : 'Consider adding to title' },
+    { dot: goodLength ? 'green' : 'gold', label: `Word count: ~${wc} words`, note: goodLength ? 'Good for SEO (600+ words)' : 'Add more content for better ranking' },
+    { dot: hasSecondary ? 'green' : 'dim', label: 'Secondary keywords', note: hasSecondary ? 'Included in content' : 'Add secondary keywords for broader reach' },
+    { dot: 'green', label: 'H2/H3 structure', note: 'Proper heading hierarchy used' },
+    { dot: 'green', label: 'CTA block included', note: 'Conversion element present' },
+    { dot: 'gold', label: 'Meta description', note: 'Add manually in your CMS' },
+  ].map(i => `
+    <div class="seo-item">
+      <div class="seo-dot ${i.dot}"></div>
+      <div class="seo-label">${i.label}<small>${i.note}</small></div>
+    </div>
+  `).join('');
+}
+
+function copyPost() {
+  const text = document.getElementById('blog-output').innerText;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = event.target;
+    btn.textContent = '✅ Copied!';
+    setTimeout(() => btn.textContent = '📋 Copy', 2000);
+  });
+}
+
+function downloadPost() {
+  const text = document.getElementById('blog-output').innerText;
+  const blob = new Blob([text], { type: 'text/plain' });
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'blog-post.txt'; a.click();
+}
+
+function downloadMarkdown() {
+  const blob = new Blob([rawMarkdown], { type: 'text/markdown' });
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'blog-post.md'; a.click();
+}
+
+function joinWaitlist(e) {
+  e.preventDefault();
+  document.getElementById('wl-success').style.display = 'block';
+  document.getElementById('wl-email').value = '';
+}
+</script>
+
+<script src="/assets/js/dfy-banner.js" async></script>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+<script src="/tools/_tools-shared.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>
+

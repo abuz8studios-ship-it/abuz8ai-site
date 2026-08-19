@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ABUZ8 Weekly — How agents actually work in production</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:#E8EEF4; font-family:Arial, Helvetica, sans-serif; }
+  .wrapper { max-width:620px; margin:0 auto; background:#F8FAFC; }
+  .header { padding:36px 48px 28px; text-align:center; border-bottom:1px solid #D6E0EC; }
+  .logo { color:#2E75B6; font-family:Georgia, serif; font-size:24px; font-weight:bold; letter-spacing:4px; text-transform:uppercase; }
+  .logo-sub { color:#6B7C8F; font-size:11px; letter-spacing:2px; text-transform:uppercase; margin-top:6px; }
+  .body { padding:44px 48px; }
+  .badge { display:inline-block; background:#E3EEF8; color:#2E75B6; font-size:11px; letter-spacing:2px; text-transform:uppercase; padding:6px 14px; border-radius:20px; border:1px solid #2E75B6; margin-bottom:26px; }
+  h1 { color:#2C3E50; font-family:Georgia, serif; font-size:26px; line-height:1.35; margin-bottom:22px; }
+  h2 { color:#2C3E50; font-family:Georgia, serif; font-size:19px; line-height:1.4; margin:28px 0 14px; }
+  p { color:#2C3E50; font-size:16px; line-height:1.8; margin-bottom:18px; }
+  .highlight { color:#2E75B6; font-weight:bold; }
+  .divider { border:0; border-top:1px solid #D6E0EC; margin:30px 0; }
+  .section-label { color:#2E75B6; font-size:11px; letter-spacing:2px; text-transform:uppercase; margin-bottom:14px; font-weight:bold; }
+  .post-row { background:#FFFFFF; border:1px solid #D6E0EC; border-radius:8px; padding:18px 20px; margin-bottom:12px; }
+  .post-row a { color:#2C3E50; font-size:16px; font-weight:bold; text-decoration:none; }
+  .post-row .post-desc { color:#6B7C8F; font-size:14px; line-height:1.6; margin-top:6px; }
+  .cta-wrap { text-align:center; margin:34px 0; }
+  .btn-primary { display:inline-block; padding:18px 44px; background:#2E75B6; color:#FFFFFF; font-weight:bold; font-size:14px; letter-spacing:1.5px; text-transform:uppercase; text-decoration:none; border-radius:8px; }
+  .btn-secondary { display:inline-block; margin-top:14px; color:#2E75B6; font-size:14px; text-decoration:none; }
+  .quote-block { background:#FFFFFF; border-left:3px solid #2E75B6; border-radius:0 8px 8px 0; padding:22px 26px; margin:26px 0; }
+  .quote-block p { color:#2C3E50; font-family:Georgia, serif; font-size:18px; font-style:italic; line-height:1.6; margin-bottom:10px; }
+  .quote-attr { color:#6B7C8F; font-size:13px; }
+  .footer { padding:30px 48px; border-top:1px solid #D6E0EC; text-align:center; }
+  .footer p { color:#6B7C8F; font-size:13px; line-height:1.7; margin-bottom:8px; }
+  .footer a { color:#2E75B6; text-decoration:none; }
+  @media (max-width:480px){ .body,.header,.footer{padding:30px 24px;} }
+</style>
+</head>
+<body>
+<div class="wrapper">
+  <div class="header">
+    <div class="logo">ABUZ8</div>
+    <div class="logo-sub">The Sovereign Agentic OS</div>
+  </div>
+  <div class="body">
+    <div class="badge">Weekly &middot; Jun 7</div>
+    <h1>This week: how AI agents actually work in production.</h1>
+    <p>Hey {{first_name|default:"builder"}} &mdash; most "AI agent" content is demos and hype. This week I wrote down the unglamorous stuff that decides whether an agent survives contact with the real world: deployment, cost, grounding, and where the whole thing lives. Seven new pieces, all from things that broke (or worked) while building <span class="highlight">QADIR OS</span>.</p>
+
+    <div class="section-label">New on the blog</div>
+
+    <div class="post-row">
+      <a href="https://abuz8ai.com/blog/how-to-deploy-an-ai-agent.html">How to Deploy an AI Agent</a>
+      <div class="post-desc">The real checklist. The easy 10% is pushing code; the hard 90% is permissions, memory, monitoring, and a kill switch you've actually tested.</div>
+    </div>
+    <div class="post-row">
+      <a href="https://abuz8ai.com/blog/ai-model-routing-explained.html">AI Model Routing Explained</a>
+      <div class="post-desc">Send each task to the cheapest model that can do it. Local for the routine 90%, frontier for the hard 10%. The biggest lever on agent cost &mdash; and almost nobody uses it.</div>
+    </div>
+    <div class="post-row">
+      <a href="https://abuz8ai.com/blog/rag-explained-for-ai-agents.html">RAG Explained (No Jargon)</a>
+      <div class="post-desc">The open-book exam that stops your agent confidently making things up about your business. Chunk, embed, retrieve, generate &mdash; in plain English.</div>
+    </div>
+    <div class="post-row">
+      <a href="https://abuz8ai.com/blog/agentic-loop-explained.html">The Agentic Loop Explained</a>
+      <div class="post-desc">The one idea that separates a real agent from a chatbot: perceive, plan, act, observe, repeat &mdash; until the job is actually done.</div>
+    </div>
+    <div class="post-row">
+      <a href="https://abuz8ai.com/blog/self-improving-ai-agents.html">Self-Improving AI Agents: Real vs. Hype</a>
+      <div class="post-desc">They don't get smarter &mdash; they get wiser. And the experience only compounds for you if you own the memory it's built on.</div>
+    </div>
+    <div class="post-row">
+      <a href="https://abuz8ai.com/blog/run-ai-agents-on-rtx-5090.html">Run AI Agents on an RTX 5090</a>
+      <div class="post-desc">Local models, local memory, local video &mdash; on one machine, near-zero running cost, nothing leaving your desk.</div>
+    </div>
+    <div class="post-row">
+      <a href="https://abuz8ai.com/blog/ai-agents-for-lead-generation.html">AI Agents for Lead Generation</a>
+      <div class="post-desc">What works (research, personalization, follow-up) and the spam trap that gets your domain blacklisted. Patience beats volume.</div>
+    </div>
+
+    <hr class="divider">
+    <div class="section-label">The thread running through all of it</div>
+    <p>The hype is always in what an agent <em>can</em> do. The value is in the constraints &mdash; what it's allowed to do, what it costs to run, where its memory lives, how you stop it. Capabilities make the demo. Constraints make it trustable.</p>
+
+    <div class="cta-wrap">
+      <a href="https://abuz8ai.com/tools/" class="btn-primary">Explore the Free Tools</a>
+      <br><a href="https://abuz8ai.com/blog/" class="btn-secondary">Read the full blog &rarr;</a>
+    </div>
+
+    <div class="quote-block">
+      <p>"What an agent can do is the demo. What it's allowed to do is the product."</p>
+      <div class="quote-attr">&mdash; Ahmad, founder, ABUZ8</div>
+    </div>
+
+    <p>Building in public, one proven piece at a time. Hit reply with the one thing you want covered next &mdash; it comes straight to me.</p>
+    <p><span class="highlight">Ahmad</span></p>
+  </div>
+  <div class="footer">
+    <p>ABUZ8 LLC &middot; Building QADIR OS &mdash; your agents, your data, your machine.</p>
+    <p><a href="https://abuz8ai.com">abuz8ai.com</a> &middot; <a href="mailto:ahmad@abuz8ai.com">ahmad@abuz8ai.com</a></p>
+    <p style="font-size:11px;color:#9AA8B6;">You're getting this because you joined the ABUZ8 early-access list. <a href="{unsubscribe_url}">Unsubscribe</a>.</p>
+  </div>
+</div>
+</body>
+</html>

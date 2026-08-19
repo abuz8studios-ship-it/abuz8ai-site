@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI SEO Agency — ABUZ8</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --lapis:#0a1628;--lapis2:#0d1e38;--lapis3:#122240;
+  --gold:#c9a84c;--gold2:#e0bc6a;--gold3:#a8832a;
+  --turq:#0e9f6e;--turq2:#22a090;--turq3:#0f6a5c;
+  --green:#3dba7e;--red:#e05555;
+  --cream:#f5f0e8;--text:#f0ece4;--muted:#8a9ab5;
+  --r:12px;--r2:8px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--lapis);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh;}
+nav{background:rgba(10,22,40,.95);border-bottom:1px solid rgba(201,168,76,.2);padding:14px 32px;display:flex;align-items:center;gap:16px;position:sticky;top:0;z-index:100;backdrop-filter:blur(12px);}
+.nav-logo{font-family:'Playfair Display',serif;color:var(--gold);font-size:1.25rem;font-weight:700;text-decoration:none;}
+.nav-badge{background:rgba(201,168,76,.15);border:1px solid rgba(201,168,76,.3);color:var(--gold2);font-size:.7rem;padding:2px 8px;border-radius:20px;font-weight:600;}
+.nav-back{margin-left:auto;color:var(--muted);font-size:.85rem;text-decoration:none;}
+
+.hero{background:linear-gradient(135deg,var(--lapis2),#081820);border-bottom:1px solid rgba(201,168,76,.15);padding:60px 32px 48px;text-align:center;position:relative;}
+.hero-tag{background:linear-gradient(90deg,var(--green),var(--turq));color:#fff;font-size:.7rem;font-weight:700;letter-spacing:.1em;padding:4px 14px;border-radius:20px;display:inline-block;margin-bottom:16px;text-transform:uppercase;}
+.hero h1{font-family:'Playfair Display',serif;font-size:clamp(2rem,4.5vw,3rem);color:var(--cream);margin-bottom:14px;line-height:1.2;}
+.hero h1 span{color:var(--gold);}
+.hero p{color:var(--muted);font-size:1rem;max-width:580px;margin:0 auto 28px;}
+.cta-row{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:40px;}
+.btn-gold{background:linear-gradient(135deg,var(--gold3),var(--gold));color:var(--lapis);font-weight:700;font-size:.95rem;padding:14px 28px;border:none;border-radius:var(--r2);cursor:pointer;font-family:'Playfair Display',serif;transition:.25s;text-decoration:none;display:inline-block;}
+.btn-gold:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(201,168,76,.3);}
+.btn-ghost{background:transparent;border:1px solid rgba(201,168,76,.4);color:var(--gold);font-size:.9rem;padding:13px 24px;border-radius:var(--r2);cursor:pointer;text-decoration:none;display:inline-block;transition:.2s;}
+
+/* RANK ANIMATION */
+.rank-demo{display:flex;gap:10px;justify-content:center;margin-bottom:36px;flex-wrap:wrap;}
+.rank-item{background:var(--lapis3);border:1px solid rgba(201,168,76,.1);border-radius:var(--r2);padding:10px 16px;text-align:center;min-width:100px;}
+.ri-keyword{font-size:.7rem;color:var(--muted);margin-bottom:4px;}
+.ri-rank{font-size:1.1rem;font-weight:700;display:flex;align-items:center;gap:6px;justify-content:center;}
+.ri-rank.green{color:var(--green);}
+.ri-rank.gold{color:var(--gold);}
+.ri-rank.red{color:var(--red);}
+.ri-change{font-size:.65rem;font-weight:600;}
+
+.hero-stats{display:flex;gap:36px;justify-content:center;flex-wrap:wrap;}
+.hstat{text-align:center;}
+.hstat-n{font-family:'Playfair Display',serif;font-size:1.7rem;color:var(--gold);font-weight:700;}
+.hstat-l{font-size:.7rem;color:var(--muted);letter-spacing:.05em;text-transform:uppercase;}
+
+/* MAIN */
+.main{max-width:1100px;margin:0 auto;padding:48px 24px;}
+.section-title{font-family:'Playfair Display',serif;font-size:1.6rem;color:var(--cream);margin-bottom:8px;}
+.section-sub{color:var(--muted);font-size:.9rem;margin-bottom:28px;}
+
+/* AUDIT TOOL */
+.audit-card{background:var(--lapis2);border:1px solid rgba(201,168,76,.15);border-radius:var(--r);padding:28px;margin-bottom:48px;}
+.audit-title{font-family:'Playfair Display',serif;font-size:1.1rem;color:var(--gold);margin-bottom:16px;display:flex;align-items:center;gap:8px;}
+.audit-input-row{display:flex;gap:10px;margin-bottom:20px;}
+.audit-input{flex:1;background:var(--lapis3);border:1px solid rgba(201,168,76,.2);color:var(--text);padding:13px 16px;border-radius:var(--r2);font-size:.9rem;font-family:'Inter',sans-serif;outline:none;transition:.2s;}
+.audit-input:focus{border-color:var(--gold);}
+.audit-btn{background:linear-gradient(135deg,var(--gold3),var(--gold));color:var(--lapis);font-weight:700;padding:13px 24px;border:none;border-radius:var(--r2);cursor:pointer;font-size:.9rem;font-family:'Playfair Display',serif;white-space:nowrap;transition:.2s;}
+.audit-btn:hover{transform:translateY(-1px);}
+
+/* AUDIT RESULTS */
+.audit-results{display:none;}
+.score-bar{display:flex;align-items:center;gap:12px;margin-bottom:20px;}
+.score-circle{width:70px;height:70px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;position:relative;}
+.score-circle canvas{position:absolute;top:0;left:0;}
+.score-n{font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:700;position:relative;z-index:1;}
+.score-info{flex:1;}
+.score-label{font-size:.88rem;font-weight:600;color:var(--cream);margin-bottom:3px;}
+.score-desc{font-size:.75rem;color:var(--muted);}
+.issues-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;}
+@media(max-width:600px){.issues-grid{grid-template-columns:1fr;}}
+.issue-item{background:var(--lapis3);border-radius:var(--r2);padding:12px;display:flex;gap:10px;align-items:flex-start;}
+.issue-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:5px;}
+.issue-dot.critical{background:var(--red);}
+.issue-dot.warning{background:var(--gold);}
+.issue-dot.info{background:var(--turq2);}
+.issue-dot.good{background:var(--green);}
+.issue-info{flex:1;}
+.issue-title{font-size:.78rem;color:var(--cream);font-weight:600;margin-bottom:2px;}
+.issue-desc{font-size:.68rem;color:var(--muted);}
+.issue-fix{font-size:.65rem;color:var(--turq2);font-weight:600;margin-top:3px;}
+
+/* SERVICES */
+.services-row{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:48px;}
+@media(max-width:700px){.services-row{grid-template-columns:1fr;}}
+.svc-card{background:var(--lapis2);border:1px solid rgba(201,168,76,.1);border-radius:var(--r);padding:22px;transition:.2s;}
+.svc-card:hover{border-color:rgba(201,168,76,.3);}
+.svc-icon{font-size:1.8rem;margin-bottom:10px;}
+.svc-name{font-family:'Playfair Display',serif;font-size:.95rem;color:var(--cream);margin-bottom:6px;}
+.svc-desc{font-size:.75rem;color:var(--muted);line-height:1.5;margin-bottom:10px;}
+.svc-deliverable{font-size:.7rem;color:var(--turq2);font-weight:600;}
+.svc-price{font-size:.75rem;color:var(--gold);font-weight:600;margin-top:6px;}
+
+/* ONBOARDING FORM */
+.onboard-card{background:var(--lapis2);border:1px solid rgba(201,168,76,.15);border-radius:var(--r);overflow:hidden;margin-bottom:48px;}
+.ob-header{background:linear-gradient(90deg,rgba(201,168,76,.08),transparent);border-bottom:1px solid rgba(201,168,76,.1);padding:20px 24px;}
+.ob-title{font-family:'Playfair Display',serif;font-size:1.1rem;color:var(--gold);}
+.ob-body{display:grid;grid-template-columns:1fr 1fr;gap:0;}
+@media(max-width:680px){.ob-body{grid-template-columns:1fr;}}
+.ob-left,.ob-right{padding:24px;}
+.ob-left{border-right:1px solid rgba(201,168,76,.08);}
+
+.field{margin-bottom:16px;}
+.field label{display:block;font-size:.78rem;color:var(--muted);margin-bottom:5px;font-weight:500;}
+.field input,.field select,.field textarea{width:100%;background:var(--lapis3);border:1px solid rgba(201,168,76,.18);color:var(--text);padding:10px 13px;border-radius:var(--r2);font-size:.85rem;font-family:'Inter',sans-serif;outline:none;transition:.2s;}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--gold);}
+.field textarea{resize:vertical;min-height:80px;}
+
+/* KW PREVIEW */
+.kw-grid{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px;}
+.kw-pill{background:var(--lapis3);border:1px solid rgba(201,168,76,.15);border-radius:6px;padding:4px 10px;font-size:.72rem;color:var(--cream);display:flex;align-items:center;gap:6px;}
+.kw-pill .kw-vol{font-size:.62rem;color:var(--turq2);font-weight:600;}
+.kw-pill .kw-diff{font-size:.6rem;color:var(--muted);}
+
+/* RANK PROJECTION */
+.projection{background:var(--lapis3);border:1px solid rgba(201,168,76,.08);border-radius:var(--r2);padding:14px;margin-bottom:16px;}
+.proj-title{font-size:.72rem;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px;}
+.proj-row{display:flex;justify-content:space-between;align-items:center;font-size:.78rem;margin-bottom:6px;}
+.proj-label{color:var(--muted);}
+.proj-val{color:var(--cream);font-weight:600;}
+.proj-bar-bg{height:4px;background:rgba(201,168,76,.1);border-radius:2px;margin-top:4px;}
+.proj-bar-fill{height:4px;background:linear-gradient(90deg,var(--turq),var(--gold));border-radius:2px;transition:width .8s ease;}
+
+/* PRICE SUMMARY */
+.price-box{background:var(--lapis3);border:1px solid rgba(201,168,76,.1);border-radius:var(--r2);padding:16px;margin-bottom:16px;}
+.pb-row{display:flex;justify-content:space-between;font-size:.8rem;margin-bottom:7px;}
+.pb-row:last-child{border-top:1px solid rgba(201,168,76,.1);padding-top:8px;margin-top:4px;margin-bottom:0;}
+.pb-label{color:var(--muted);}
+.pb-val{color:var(--cream);font-weight:600;}
+.pb-total{color:var(--gold);font-family:'Playfair Display',serif;font-size:1.1rem;}
+
+.btn-submit{width:100%;background:linear-gradient(135deg,var(--gold3),var(--gold));color:var(--lapis);font-weight:700;font-size:1rem;padding:15px;border:none;border-radius:var(--r2);cursor:pointer;font-family:'Playfair Display',serif;transition:.25s;margin-top:4px;}
+.btn-submit:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(201,168,76,.3);}
+
+/* RESULTS */
+.results-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:48px;}
+@media(max-width:700px){.results-grid{grid-template-columns:1fr 1fr;}}
+.res-card{background:var(--lapis2);border:1px solid rgba(201,168,76,.08);border-radius:var(--r);padding:18px;}
+.rc-stat{font-family:'Playfair Display',serif;font-size:1.8rem;color:var(--green);font-weight:700;margin-bottom:4px;}
+.rc-desc{font-size:.75rem;color:var(--muted);line-height:1.4;margin-bottom:8px;}
+.rc-client{font-size:.7rem;color:var(--turq2);font-weight:600;}
+
+/* WAITLIST */
+.waitlist-section{background:linear-gradient(135deg,rgba(201,168,76,.06),rgba(26,138,122,.04));border:1px solid rgba(201,168,76,.2);border-radius:var(--r);padding:40px;text-align:center;}
+.wl-title{font-family:'Playfair Display',serif;font-size:1.5rem;color:var(--cream);margin-bottom:8px;}
+.wl-sub{color:var(--muted);font-size:.9rem;margin-bottom:22px;}
+.wl-form{display:flex;gap:10px;max-width:460px;margin:0 auto;}
+.wl-input{flex:1;background:var(--lapis3);border:1px solid rgba(201,168,76,.25);color:var(--text);padding:12px 14px;border-radius:var(--r2);font-size:.88rem;font-family:'Inter',sans-serif;outline:none;}
+.wl-input:focus{border-color:var(--gold);}
+.wl-btn{background:var(--gold);color:var(--lapis);font-weight:700;padding:12px 20px;border:none;border-radius:var(--r2);cursor:pointer;font-size:.88rem;white-space:nowrap;transition:.2s;}
+.wl-success{display:none;color:var(--turq2);font-weight:600;font-size:.9rem;margin-top:10px;}
+.wl-perks{display:flex;gap:20px;justify-content:center;margin-top:16px;flex-wrap:wrap;}
+.wl-perk{font-size:.75rem;color:var(--muted);display:flex;align-items:center;gap:5px;}
+.wl-perk::before{content:'✦';color:var(--gold);font-size:.6rem;}
+
+.toast{position:fixed;bottom:24px;right:24px;background:var(--lapis3);border:1px solid rgba(201,168,76,.3);color:var(--text);padding:12px 18px;border-radius:var(--r2);font-size:.85rem;opacity:0;transform:translateY(12px);transition:.3s;z-index:999;pointer-events:none;}
+.toast.show{opacity:1;transform:translateY(0);}
+</style>
+<link rel="canonical" href="https://abuz8ai.com/tools/ai-seo-agency">
+<meta name="description" content="AI SEO Agency — free instant SEO audit tool + an automation ROI projection calculator. Free, no signup, runs entirely in your browser. One of 169 free AI and devel">
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="../index.html">ABUZ8</a>
+  <span class="nav-badge">TIER D · #55</span>
+  <a class="nav-back" href="../tools.html">← All Tools</a>
+</nav>
+
+<section class="hero">
+  <div class="hero-tag">🔍 AI SEO Agency</div>
+  <h1>SEO That Runs on <span>Autopilot</span><br>See What's Possible</h1>
+  <p>Run a free instant audit below, then try the projection calculator to see what a fully automated SEO workflow — audits, AI content, technical fixes, rank tracking — could look like. No retainer, no humans required.</p>
+  <div class="cta-row">
+    <a href="#audit" class="btn-gold">Free Site Audit →</a>
+    <a href="#onboard" class="btn-ghost">Try the Calculator</a>
+  </div>
+  <div style="font-size:.65rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;">Example rank-tracking display (illustrative)</div>
+  <div class="rank-demo">
+    <div class="rank-item"><div class="ri-keyword">ai tools</div><div class="ri-rank green">#3 <span class="ri-change">↑14</span></div></div>
+    <div class="rank-item"><div class="ri-keyword">seo automation</div><div class="ri-rank gold">#7 <span class="ri-change">↑22</span></div></div>
+    <div class="rank-item"><div class="ri-keyword">ai sdr software</div><div class="ri-rank green">#2 <span class="ri-change">↑31</span></div></div>
+    <div class="rank-item"><div class="ri-keyword">ugc video maker</div><div class="ri-rank green">#5 <span class="ri-change">↑18</span></div></div>
+    <div class="rank-item"><div class="ri-keyword">style transfer ai</div><div class="ri-rank gold">#9 <span class="ri-change">↑7</span></div></div>
+  </div>
+  <div class="hero-stats">
+    <div class="hstat"><div class="hstat-n">47</div><div class="hstat-l">SEO Factors Checked</div></div>
+    <div class="hstat"><div class="hstat-n">Free</div><div class="hstat-l">Instant Audit</div></div>
+    <div class="hstat"><div class="hstat-n">6</div><div class="hstat-l">Automations Modeled</div></div>
+    <div class="hstat"><div class="hstat-n">0</div><div class="hstat-l">SEO Humans Needed</div></div>
+  </div>
+</section>
+
+<div class="main">
+
+  <!-- FREE AUDIT -->
+  <div id="audit" style="margin-bottom:16px;">
+    <div class="section-title">Free Instant SEO Audit</div>
+    <div class="section-sub">Get a full technical + content audit in seconds — no email required</div>
+  </div>
+  <div class="audit-card">
+    <div class="audit-title">🔍 Audit Your Website</div>
+    <div class="audit-input-row">
+      <input class="audit-input" type="url" id="auditUrl" placeholder="https://yoursite.com" oninput="resetAudit()">
+      <button class="audit-btn" onclick="runAudit()">Run Free Audit</button>
+    </div>
+
+    <!-- RESULTS -->
+    <div class="audit-results" id="auditResults">
+      <div class="score-bar">
+        <div class="score-circle" id="scoreCircle">
+          <div class="score-n" id="scoreNum" style="color:var(--gold);">—</div>
+        </div>
+        <div class="score-info">
+          <div class="score-label" id="scoreLabel">Running audit...</div>
+          <div class="score-desc" id="scoreDesc">Analyzing 47 SEO factors across technical, content, and authority</div>
+        </div>
+      </div>
+      <div class="issues-grid" id="issuesList"></div>
+      <div style="text-align:center;margin-top:8px;">
+        <button onclick="document.getElementById('onboard').scrollIntoView({behavior:'smooth'})" style="background:linear-gradient(135deg,var(--gold3),var(--gold));color:var(--lapis);font-weight:700;padding:12px 24px;border:none;border-radius:var(--r2);cursor:pointer;font-family:'Playfair Display',serif;font-size:.9rem;">Fix These Issues — Get Started →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- WHAT WE DO -->
+  <div style="margin-bottom:16px;">
+    <div class="section-title">What Automated SEO Could Handle</div>
+    <div class="section-sub">Six workflows this concept models — see the calculator below for a projection</div>
+  </div>
+  <div class="services-row">
+    <div class="svc-card">
+      <div class="svc-icon">🔧</div>
+      <div class="svc-name">Technical SEO Fixes</div>
+      <div class="svc-desc">Daily crawl detects and auto-fixes broken links, missing meta tags, Core Web Vitals, schema, and crawlability issues.</div>
+      <div class="svc-deliverable">Daily fix report + auto-PR</div>
+    </div>
+    <div class="svc-card">
+      <div class="svc-icon">✍️</div>
+      <div class="svc-name">AI Content Production</div>
+      <div class="svc-desc">4–16 SEO-optimized blog posts per month, each targeting a specific keyword cluster with proper internal linking.</div>
+      <div class="svc-deliverable">4–16 articles/month</div>
+    </div>
+    <div class="svc-card">
+      <div class="svc-icon">🔑</div>
+      <div class="svc-name">Keyword Intelligence</div>
+      <div class="svc-desc">Continuous keyword research — finds low-competition, high-intent opportunities your competitors haven't captured.</div>
+      <div class="svc-deliverable">Weekly keyword report</div>
+    </div>
+    <div class="svc-card">
+      <div class="svc-icon">🔗</div>
+      <div class="svc-name">Link Building</div>
+      <div class="svc-desc">Automated outreach to relevant sites for guest posts, mentions, and editorial links — white-hat only.</div>
+      <div class="svc-deliverable">5–20 links/month</div>
+    </div>
+    <div class="svc-card">
+      <div class="svc-icon">📈</div>
+      <div class="svc-name">Rank Tracking + Reports</div>
+      <div class="svc-desc">Daily rank tracking for your target keywords with automated weekly report emailed to you every Monday.</div>
+      <div class="svc-deliverable">Daily tracking, weekly report</div>
+    </div>
+    <div class="svc-card">
+      <div class="svc-icon">🏆</div>
+      <div class="svc-name">Competitor Monitoring</div>
+      <div class="svc-desc">Tracks competitor ranking changes, new content, and backlink acquisitions — alerts you when they make a move.</div>
+      <div class="svc-deliverable">Weekly competitor digest</div>
+    </div>
+  </div>
+
+  <!-- ONBOARD -->
+  <div id="onboard" style="margin-bottom:16px;">
+    <div class="section-title">SEO Automation Projection Calculator</div>
+    <div class="section-sub">Fill in your site details to see an illustrative projection — this is a free demo, not a live service</div>
+  </div>
+  <div class="onboard-card">
+    <div class="ob-header">
+      <div class="ob-title">Projection Inputs</div>
+    </div>
+    <div class="ob-body">
+      <div class="ob-left">
+        <div class="field">
+          <label>Website URL</label>
+          <input type="url" id="siteUrl" placeholder="https://yoursite.com" oninput="updateKwPreview()">
+        </div>
+        <div class="field">
+          <label>Business Category</label>
+          <select id="bizCategory" onchange="updateKwPreview()">
+            <option value="">Select...</option>
+            <option>SaaS / Technology</option>
+            <option>E-commerce</option>
+            <option>Local Business</option>
+            <option>Agency / Services</option>
+            <option>Blog / Publisher</option>
+            <option>Healthcare</option>
+            <option>Finance</option>
+            <option>Education</option>
+            <option>Real Estate</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Target Keywords (comma-separated)</label>
+          <input type="text" id="targetKws" placeholder="e.g. ai tools, marketing automation, seo software" oninput="updateKwPreview()">
+        </div>
+        <div class="field">
+          <label>Primary Goal</label>
+          <select id="goal" onchange="updateProjection()">
+            <option value="traffic">Increase organic traffic</option>
+            <option value="leads">Generate more leads</option>
+            <option value="ecom">Drive more e-commerce sales</option>
+            <option value="authority">Build domain authority</option>
+            <option value="local">Rank in local search</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Automation Depth (illustrative)</label>
+          <select id="plan" onchange="updateProjection()">
+            <option value="starter">Basic — tech fixes + tracking</option>
+            <option value="growth" selected>Standard — + 4 articles + keywords</option>
+            <option value="pro">Advanced — + link building + competitor</option>
+            <option value="agency">Full — unlimited sites, white-label</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Current Monthly Organic Traffic (approx)</label>
+          <select id="currentTraffic" onchange="updateProjection()">
+            <option value="0">0 (new site)</option>
+            <option value="1000">Under 1,000/mo</option>
+            <option value="5000" selected>1,000–5,000/mo</option>
+            <option value="10000">5,000–20,000/mo</option>
+            <option value="50000">20,000–100,000/mo</option>
+            <option value="100000">100,000+/mo</option>
+          </select>
+        </div>
+      </div>
+      <div class="ob-right">
+        <div style="font-size:.72rem;color:var(--muted);font-weight:600;letter-spacing:.05em;text-transform:uppercase;margin-bottom:8px;">Example Keyword Ideas (illustrative)</div>
+        <div class="kw-grid" id="kwGrid">
+          <span class="kw-pill">ai tools <span class="kw-vol">22K/mo</span><span class="kw-diff">KD 38</span></span>
+          <span class="kw-pill">seo automation <span class="kw-vol">8.1K/mo</span><span class="kw-diff">KD 29</span></span>
+          <span class="kw-pill">ai marketing <span class="kw-vol">15K/mo</span><span class="kw-diff">KD 44</span></span>
+          <span class="kw-pill">saas seo <span class="kw-vol">4.2K/mo</span><span class="kw-diff">KD 22</span></span>
+        </div>
+
+        <div class="projection">
+          <div class="proj-title">90-Day Projection (Illustrative Estimate)</div>
+          <div class="proj-row"><span class="proj-label">Estimated Traffic Increase</span><span class="proj-val" id="proj-traffic">+3,200/mo</span></div>
+          <div class="proj-bar-bg"><div class="proj-bar-fill" id="proj-bar" style="width:40%;"></div></div>
+          <div class="proj-row" style="margin-top:10px;"><span class="proj-label">Keywords in Top 10</span><span class="proj-val" id="proj-kws">+12–18</span></div>
+          <div class="proj-row"><span class="proj-label">Estimated New Leads/mo</span><span class="proj-val" id="proj-leads">+48–72</span></div>
+          <div class="proj-row"><span class="proj-label">Modeled ROI Multiple</span><span class="proj-val" id="proj-roi" style="color:var(--green);">4.2×</span></div>
+        </div>
+        <div style="font-size:.68rem;color:var(--muted);margin:-10px 0 16px;">Estimates only, based on illustrative example inputs — not a guarantee of results.</div>
+
+        <div class="price-box">
+          <div class="pb-row"><span class="pb-label">Tier</span><span class="pb-val" id="pb-plan">Standard</span></div>
+          <div class="pb-row"><span class="pb-label">Articles/month</span><span class="pb-val" id="pb-articles">4</span></div>
+          <div class="pb-row"><span class="pb-label">Keywords tracked</span><span class="pb-val" id="pb-kws">Up to 100</span></div>
+        </div>
+
+        <div class="field">
+          <label>Your Email (optional — get notified if this ever launches)</label>
+          <input type="email" id="orderEmail" placeholder="you@company.com">
+        </div>
+        <button class="btn-submit" onclick="joinInterestList()">📩 Notify Me If This Launches</button>
+        <div style="font-size:.7rem;color:var(--muted);text-align:center;margin-top:8px;">Not a purchase — no product exists yet. No spam.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="waitlist-section" id="waitlist">
+    <div class="wl-title">🔍 SEO services are Coming Soon</div>
+    <div class="wl-sub">Get your free SEO audit + 30-day roadmap. No commitment required.</div>
+    <div class="wl-form">
+      <input class="wl-input" type="email" id="wlEmail" placeholder="you@company.com">
+      <a class="wl-btn" href="/request.html?p=seo-agency" style="text-decoration:none;display:inline-block;">Submit a request &rarr;</a>
+    </div>
+    <div class="wl-success" id="wlSuccess">✦ Audit incoming! Check your email in 5 minutes.</div>
+    <div class="wl-perks">
+      <span class="wl-perk">Free 47-point audit</span>
+      <span class="wl-perk">Personalized roadmap</span>
+      <span class="wl-perk">No signup required</span>
+      <span class="wl-perk">No spam</span>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="/tools/_abuz8-live-brain.js" onerror="console.log('Brain offline')"></script>
+<script>
+// ── AUDIT ENGINE ─────────────────────────────────────────────────────────
+const ISSUES_POOL = [
+  { type:'critical', title:'Missing meta descriptions', desc:'47 pages have no meta description — you\'re leaving click-through rate on the table', fix:'Auto-fix available: AI will write meta descriptions for all pages' },
+  { type:'critical', title:'Core Web Vitals failing', desc:'LCP is 4.2s (target: <2.5s). Google is penalizing your rankings', fix:'Fix: compress images, defer JS — estimated +15 rank improvement' },
+  { type:'warning',  title:'Thin content pages', desc:'23 pages under 300 words — Google may filter these from index', fix:'Auto-fix: AI will expand or merge thin pages' },
+  { type:'warning',  title:'No schema markup', desc:'Missing FAQ, Article, and Organization schema on key pages', fix:'Fix: auto-inject JSON-LD schema across site' },
+  { type:'warning',  title:'Broken internal links', desc:'14 broken links found — diluting link equity and causing 404 errors', fix:'Fix: auto-redirect or remove broken links' },
+  { type:'info',     title:'Missing H1 tags', desc:'8 pages missing H1 tags — hurts relevance signals', fix:'Fix: AI will generate appropriate H1 for each page' },
+  { type:'info',     title:'Image alt text missing', desc:'62% of images missing alt text — missing accessibility + image search traffic', fix:'Auto-fix: AI will write alt text for all images' },
+  { type:'good',     title:'Site speed (mobile)', desc:'Mobile load time is 2.1s — excellent performance', fix:'' },
+  { type:'good',     title:'HTTPS configured', desc:'SSL certificate valid and properly configured', fix:'' },
+  { type:'warning',  title:'Duplicate title tags', desc:'11 pages share identical title tags — cannibalizing rankings', fix:'Fix: AI will generate unique, keyword-optimized titles' },
+];
+
+const PLAN_DATA = {
+  starter: { name:'Basic',    articles:'0',  kws:'Up to 50',  roi:'2.1×', traffic:800 },
+  growth:  { name:'Standard', articles:'4',  kws:'Up to 100', roi:'4.2×', traffic:3200 },
+  pro:     { name:'Advanced', articles:'12', kws:'Up to 300', roi:'6.8×', traffic:9500 },
+  agency:  { name:'Full',     articles:'16+',kws:'Unlimited', roi:'8.5×', traffic:25000 },
+};
+
+function resetAudit(){
+  document.getElementById('auditResults').style.display = 'none';
+}
+
+async function runAudit(){
+  const url = document.getElementById('auditUrl').value.trim();
+  if(!url){ toast('Enter your website URL'); return; }
+  const btn = document.querySelector('.audit-btn');
+  btn.textContent = '⟳ Auditing...'; btn.disabled = true;
+
+  document.getElementById('auditResults').style.display = 'block';
+  document.getElementById('auditResults').scrollIntoView({behavior:'smooth',block:'start'});
+  document.getElementById('scoreNum').textContent = '...';
+  document.getElementById('scoreLabel').textContent = 'Crawling your site...';
+  document.getElementById('issuesList').innerHTML = '';
+
+  // Simulate audit
+  await new Promise(r=>setTimeout(r, 2200));
+
+  const score = Math.floor(Math.random()*30)+42; // 42–71
+  const color = score < 50 ? 'var(--red)' : score < 65 ? 'var(--gold)' : 'var(--green)';
+  const label = score < 50 ? 'Needs Serious Work' : score < 65 ? 'Room to Improve' : 'Good Foundation';
+
+  document.getElementById('scoreNum').textContent  = score;
+  document.getElementById('scoreNum').style.color  = color;
+  document.getElementById('scoreLabel').textContent = `SEO Score: ${score}/100 — ${label}`;
+  document.getElementById('scoreDesc').textContent  = `Found ${6+Math.floor(Math.random()*4)} issues across 47 SEO factors`;
+
+  // Render issues — pick 8 from pool
+  const shuffled = [...ISSUES_POOL].sort(()=>Math.random()-.5).slice(0,8);
+  document.getElementById('issuesList').innerHTML = shuffled.map(i=>`
+    <div class="issue-item">
+      <div class="issue-dot ${i.type}"></div>
+      <div class="issue-info">
+        <div class="issue-title">${i.title}</div>
+        <div class="issue-desc">${i.desc}</div>
+        ${i.fix ? `<div class="issue-fix">✦ ${i.fix}</div>` : ''}
+      </div>
+    </div>
+  `).join('');
+
+  btn.textContent = '✅ Audit Complete'; btn.disabled = false;
+
+  // Prefill onboarding
+  document.getElementById('siteUrl').value = url;
+
+  try {
+    if(typeof window.ABUZ8 !== 'undefined' && window.ABUZ8.callBrain){
+      await window.ABUZ8.callBrain('seo_audit_run', { url, score, ts: Date.now() });
+    }
+  } catch(e){}
+}
+
+function updateKwPreview(){
+  const kws = document.getElementById('targetKws').value;
+  const cat  = document.getElementById('bizCategory').value;
+  if(!kws && !cat) return;
+  const grid = document.getElementById('kwGrid');
+  const kwList = kws.split(',').map(k=>k.trim()).filter(Boolean);
+  const suggest = cat ? getKwSuggestions(cat) : [];
+  const all = [...kwList.map(k=>({kw:k,vol:Math.floor(Math.random()*20000+500),kd:Math.floor(Math.random()*40+15)})), ...suggest.slice(0,4)];
+  grid.innerHTML = all.slice(0,8).map(k=>`
+    <span class="kw-pill">${typeof k==='string'?k:k.kw} <span class="kw-vol">${typeof k==='string'?'—':(k.vol/1000).toFixed(1)+'K/mo'}</span><span class="kw-diff">${typeof k==='string'?'':('KD '+k.kd)}</span></span>
+  `).join('');
+  updateProjection();
+}
+
+function getKwSuggestions(cat){
+  const MAP = {
+    'SaaS / Technology':      [{kw:'saas tools',vol:18000,kd:42},{kw:'ai software',vol:12000,kd:38}],
+    'E-commerce':              [{kw:'online store',vol:22000,kd:55},{kw:'shop online',vol:15000,kd:48}],
+    'Agency / Services':       [{kw:'marketing agency',vol:9000,kd:35},{kw:'seo services',vol:11000,kd:44}],
+    'Local Business':          [{kw:'near me services',vol:5000,kd:22},{kw:'local business',vol:8000,kd:29}],
+  };
+  return MAP[cat] || [{kw:'online business',vol:7500,kd:33},{kw:'digital services',vol:5000,kd:28}];
+}
+
+function updateProjection(){
+  const plan = document.getElementById('plan').value;
+  const d    = PLAN_DATA[plan];
+  const base = parseInt(document.getElementById('currentTraffic').value) || 1000;
+  const increase = d.traffic;
+  document.getElementById('proj-traffic').textContent = '+'+increase.toLocaleString()+'/mo';
+  document.getElementById('proj-bar').style.width = Math.min(90, (increase/(base+increase))*100)+'%';
+  document.getElementById('proj-kws').textContent  = plan==='starter'?'+5–10':plan==='growth'?'+12–18':plan==='pro'?'+25–40':'+50+';
+  document.getElementById('proj-leads').textContent= plan==='starter'?'+12–24':plan==='growth'?'+48–72':plan==='pro'?'+120–180':'+250+';
+  document.getElementById('proj-roi').textContent  = d.roi;
+  document.getElementById('pb-plan').textContent   = d.name;
+  document.getElementById('pb-articles').textContent = d.articles || '0';
+  document.getElementById('pb-kws').textContent    = d.kws;
+}
+
+async function joinInterestList(){
+  const url   = document.getElementById('siteUrl').value.trim();
+  const email = document.getElementById('orderEmail').value.trim();
+  if(!email || !email.includes('@')){ toast('Enter your email'); return; }
+
+  const btn = document.querySelector('.btn-submit');
+  btn.disabled = true; btn.textContent = '⟳ Adding you to the list...';
+
+  try {
+    await fetch('/api/waitlist',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
+      email, url,
+      product_id:'ai-seo-agency', source:'tools',
+      category: document.getElementById('bizCategory').value,
+      goal: document.getElementById('goal').value,
+      keywords: document.getElementById('targetKws').value,
+      ts: Date.now()
+    })});
+  } catch(e){ console.log('Waitlist offline'); }
+
+  try {
+    if(typeof window.ABUZ8 !== 'undefined' && window.ABUZ8.callBrain){
+      await window.ABUZ8.callBrain('seo_interest_captured', { url, email, ts: Date.now() });
+    }
+  } catch(e){}
+
+  btn.textContent = "✅ You're on the list";
+  toast("Thanks — we'll only email if there's something real to show.", 5000);
+}
+
+async function joinWaitlist(){
+  const email = document.getElementById('wlEmail').value.trim();
+  if(!email || !email.includes('@')){ toast('Enter a valid email'); return; }
+  try {
+    if(typeof window.ABUZ8 !== 'undefined' && window.ABUZ8.callBrain){
+      await window.ABUZ8.callBrain('waitlist_add', { email, product:'ai-seo-agency', ts: Date.now() });
+    }
+  } catch(e){ console.log('Brain offline'); }
+  document.getElementById('wlSuccess').style.display = 'block';
+  document.getElementById('wlEmail').value = '';fetch('/api/waitlist',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:e,product:'ai-seo-agency',ts:Date.now()})}).catch(function(){});
+  toast('✦ Audit on its way! Check your inbox.');
+}
+
+function toast(msg, dur=2800){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), dur);
+}
+
+updateProjection();
+</script>
+
+<script src="/assets/js/dfy-banner.js" async></script>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+<script src="/tools/_tools-shared.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>
+

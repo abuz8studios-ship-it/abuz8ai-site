@@ -1,0 +1,262 @@
+/* ABUZ8 MACH 3 — Sovereign UI Design System */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@300;400;600&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  --lapis: #0a1628;
+  --lapis-deep: #050b18;
+  --lapis-glass: rgba(10, 22, 40, 0.85);
+  --gold: #c9a84c;
+  --gold-glow: rgba(201, 168, 76, 0.25);
+  --turq: #0e9f6e;
+  --turq-bright: #2fbf8f;
+  --text: #e8e4d8;
+  --dim: #8a9aaa;
+  --border: rgba(201, 168, 76, 0.15);
+  --card: #0d1a30;
+  --elevated: #111f38;
+  
+  /* Glassmorphism */
+  --blur: 12px;
+  --glass-border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+body {
+  background-color: var(--lapis-deep);
+  color: var(--text);
+  font-family: 'Inter', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  background-image: 
+    radial-gradient(circle at 0% 0%, rgba(201, 168, 76, 0.03) 0%, transparent 50%),
+    radial-gradient(circle at 100% 100%, rgba(26, 138, 122, 0.05) 0%, transparent 50%);
+}
+
+h1, h2, h3 {
+  font-family: 'Playfair Display', serif;
+  letter-spacing: -0.02em;
+}
+
+.glass-panel {
+  background: var(--lapis-glass);
+  backdrop-filter: blur(var(--blur));
+  -webkit-backdrop-filter: blur(var(--blur));
+  border: var(--glass-border);
+  border-radius: 24px;
+}
+
+.gold-gradient-text {
+  background: linear-gradient(135deg, #f5f0e8 0%, var(--gold) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.btn-billionaire {
+  background: var(--gold);
+  color: var(--lapis);
+  padding: 16px 32px;
+  border-radius: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+}
+
+.btn-billionaire:hover {
+  transform: translateY(-2px);
+  background: #f5f0e8;
+  box-shadow: 0 15px 30px var(--gold-glow);
+}
+
+/* Tool Grid Premium Overhaul */
+.tool-card-premium {
+  padding: 40px;
+  transition: all 0.4s ease;
+}
+
+.tool-card-premium:hover {
+  border-color: var(--gold);
+  box-shadow: 0 30px 60px rgba(0,0,0,0.6);
+  transform: scale(1.02);
+}
+
+/* ===================================================================
+   MOBILE RESPONSIVE LAYER — ABUZ8 2026-05-12
+   Global, defensive rules. Designed to work across pages that link
+   this stylesheet OR include it as a fallback. Uses broad selectors
+   and !important sparingly where needed to override inline styles.
+   =================================================================== */
+
+/* Universal: kill horizontal scroll, scope all media */
+html, body {
+  overflow-x: hidden;
+  max-width: 100vw;
+}
+img, video, iframe, svg, canvas {
+  max-width: 100%;
+  height: auto;
+}
+pre, code {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  overflow-x: auto;
+  max-width: 100%;
+}
+table {
+  max-width: 100%;
+  display: block;
+  overflow-x: auto;
+}
+
+/* Tablet and below: ≤968px */
+@media (max-width: 968px) {
+  /* Collapse 3+ column grids to 2 */
+  [style*="grid-template-columns: repeat(3"],
+  [style*="grid-template-columns: repeat(4"],
+  [style*="grid-template-columns: repeat(5"],
+  [style*="grid-template-columns: repeat(6"],
+  .grid-3, .grid-4, .three-col, .four-col {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+  /* Reduce excessive section padding */
+  section, .section, header, footer, main {
+    padding-left: clamp(16px, 4vw, 32px) !important;
+    padding-right: clamp(16px, 4vw, 32px) !important;
+  }
+}
+
+/* Phone: ≤768px — the real mobile breakpoint */
+@media (max-width: 768px) {
+  /* Force all multi-column grids and flex rows to stack */
+  [style*="display: grid"],
+  [style*="display:grid"],
+  .grid, .grid-2, .grid-3, .grid-4,
+  .two-col, .three-col, .four-col,
+  .row, .columns, .cards, .features,
+  .tool-grid, .product-grid, .pricing-grid {
+    grid-template-columns: 1fr !important;
+    display: grid !important;
+    gap: 16px !important;
+  }
+  /* Stack flex rows */
+  .flex-row, .row-flex, .hero-row, .nav-links, .footer-cols {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    width: 100% !important;
+  }
+  /* Typography scales */
+  h1 {
+    font-size: clamp(1.75rem, 7vw, 2.4rem) !important;
+    line-height: 1.15 !important;
+    word-wrap: break-word;
+  }
+  h2 {
+    font-size: clamp(1.4rem, 5.5vw, 1.9rem) !important;
+    line-height: 1.2 !important;
+  }
+  h3 {
+    font-size: clamp(1.15rem, 4.5vw, 1.4rem) !important;
+  }
+  p, li, label, input, textarea, select, button {
+    font-size: 16px !important; /* prevents iOS zoom on focus */
+  }
+  /* Containers shrink */
+  .container, .wrap, .wrapper, .content, main {
+    max-width: 100% !important;
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+  /* Touch targets ≥ 44px */
+  a.btn, button, .btn, .cta, .btn-billionaire, .cta-btn, .btn-gold {
+    min-height: 44px !important;
+    padding: 12px 22px !important;
+    display: inline-block !important;
+    line-height: 1.4 !important;
+  }
+  /* Hero sections shrink */
+  .hero, .hero-section {
+    min-height: auto !important;
+    padding: 60px 20px !important;
+  }
+  /* Tool/product cards full width */
+  .tool-card, .product-card, .tool-card-premium, .card, .panel, .feature {
+    width: 100% !important;
+    padding: 24px !important;
+    margin: 0 !important;
+  }
+  /* Nav: hide desktop nav, show menu toggle if present */
+  .nav-desktop, .desktop-nav, .nav-links-desktop {
+    display: none !important;
+  }
+  .nav-mobile, .mobile-nav-toggle, .hamburger {
+    display: block !important;
+  }
+  /* Fix common fixed widths */
+  [style*="width: 1200px"],
+  [style*="width: 1100px"],
+  [style*="width: 1000px"],
+  [style*="width: 900px"],
+  [style*="width: 800px"],
+  [style*="min-width: 800px"],
+  [style*="min-width: 1000px"] {
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+  /* Forms */
+  input, textarea, select {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+  /* Tables become scrollable cards */
+  table {
+    font-size: 14px !important;
+  }
+  /* Kill heavy hover transforms that don't make sense on mobile */
+  *:hover {
+    transform: none !important;
+  }
+  /* Reduce decorative padding on common page-wrapper patterns */
+  body > div, body > main, body > section {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+}
+
+/* Small phone: ≤480px */
+@media (max-width: 480px) {
+  h1 {
+    font-size: clamp(1.5rem, 8vw, 2rem) !important;
+  }
+  .hero, .hero-section {
+    padding: 40px 16px !important;
+  }
+  .container, .wrap, .wrapper {
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+  }
+  .tool-card, .card, .panel {
+    padding: 18px !important;
+  }
+  a.btn, button, .btn, .cta-btn, .btn-gold, .btn-billionaire {
+    width: 100% !important;
+    text-align: center !important;
+  }
+  /* Reduce decorative animations on small screens for perf */
+  .reveal, .reveal-left, .reveal-right, .reveal-scale {
+    transition-duration: 0.4s !important;
+  }
+}
+
+/* Respect reduced-motion users */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

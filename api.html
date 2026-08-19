@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>API — ABUZ8 AI</title>
+<meta name="description" content="The real ABUZ8 API surface: the live endpoints this site runs on today (status, GitHub trending, Polymarket data, waitlist) and the public developer API on the roadmap.">
+<meta name="robots" content="index,follow">
+<link rel="canonical" href="https://abuz8ai.com/api.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="API — ABUZ8 AI">
+<meta property="og:description" content="The real ABUZ8 API surface: the live endpoints this site runs on today, and the public developer API on the roadmap.">
+<meta property="og:url" content="https://abuz8ai.com/api.html">
+<meta name="theme-color" content="#0a1628">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/abuz8-theme.css">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","name":"API — ABUZ8 AI","url":"https://abuz8ai.com/api.html","description":"The live endpoints abuz8ai.com runs on today, and the public developer API on the ABUZ8 roadmap.","publisher":{"@type":"Organization","name":"ABUZ8 LLC"}}
+</script>
+<style>
+/* page-specific styles ONLY — theme vars, no new hex colors */
+.api-wrap{max-width:var(--wrap);margin:0 auto;padding:0 24px 40px;position:relative;z-index:1}
+.endpoint-card h3{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.endpoint-card .method{font-family:var(--font-mono);font-size:10px;font-weight:700;letter-spacing:1px;
+  color:var(--green-bright);border:1px solid var(--green);border-radius:5px;padding:2px 7px}
+.endpoint-card pre.code{margin-top:12px;margin-bottom:0}
+.section-block{margin:56px 0}
+</style>
+</head>
+<body>
+<div class="geo-bg"></div>
+<nav class="abuz8-nav">
+<div class="nav-inner">
+  <a href="/" style="text-decoration:none;">
+    <div class="logo">ABUZ8</div>
+    <div class="logo-sub">Sovereign AI</div>
+  </a>
+  <div class="nav-links">
+    <a href="/tools.html">Tools</a>
+    <a href="/store.html">Store</a>
+    
+    <a href="/agents.html">Agents</a>
+    <a href="/models.html">Models</a>
+    <a href="/news.html">News</a>
+    <a href="/roadmap.html">Roadmap</a>
+    <a href="/store.html" class="nav-cta">Get Started</a>
+  </div>
+</div>
+</nav>
+
+<section class="hero">
+  <div class="hero-eyebrow">Developers · Honest Status</div>
+  <h1>The <span class="gold">ABUZ8 API</span></h1>
+  <p>Here's the truth about our API surface, in two parts: the endpoints that are <strong>live right now</strong> powering this site, and the public developer API that is <strong>planned but not yet shipped</strong>. No fake SDKs, no invented tiers.</p>
+  <div class="hero-btns">
+    <a class="btn btn-gold" href="/roadmap.html">See the Roadmap</a>
+    <a class="btn btn-outline" href="/tools.html">Use the Free Tools</a>
+  </div>
+</section>
+
+<div class="api-wrap">
+
+<section class="section-block">
+  <div class="section-head">
+    <h2>Live today — the endpoints this site runs on</h2>
+    <p><span class="badge badge-live"><span class="badge-dot"></span>LIVE</span> These are real Cloudflare edge endpoints serving abuz8ai.com right now. They are site infrastructure — open to read, no API key — but they are not a versioned public API: no uptime contract, and they may change without notice.</p>
+  </div>
+  <div class="grid-2">
+    <div class="card endpoint-card">
+      <h3><span class="method">GET</span> Site Status</h3>
+      <p>Powers the <a href="/status.html">live status dashboard</a>: deployment timestamp plus edge-reachable signals.</p>
+      <pre class="code">curl https://abuz8ai.com/api/status<button class="code-copy" type="button">Copy</button></pre>
+    </div>
+    <div class="card endpoint-card">
+      <h3><span class="method">GET</span> GitHub Trending</h3>
+      <p>The fastest-growing GitHub repos this week (weekly list topped up with monthly risers), parsed server-side and credited with direct links. Edge-cached 1 hour; serves a labeled snapshot if the source is unreachable.</p>
+      <pre class="code">curl "https://abuz8ai.com/api/github-trending?limit=20"<button class="code-copy" type="button">Copy</button></pre>
+    </div>
+    <div class="card endpoint-card">
+      <h3><span class="method">GET</span> Polymarket Data</h3>
+      <p>Read-only market-data proxy for the <a href="/polymarket.html">Polymarket paper tester</a> (educational — no trading). Strict whitelist: <code class="inline">type=markets</code> or <code class="inline">type=events</code>, limit 1–50. Edge-cached 5 minutes; falls back to a labeled real snapshot.</p>
+      <pre class="code">curl "https://abuz8ai.com/api/polymarket?type=markets&amp;limit=10"<button class="code-copy" type="button">Copy</button></pre>
+    </div>
+    <div class="card endpoint-card">
+      <h3><span class="method">POST</span> Waitlist</h3>
+      <p>The early-access signup endpoint used by the forms across this site. Stores your email and the product you asked about — nothing else. See <a href="/privacy.html">Privacy</a>.</p>
+      <pre class="code">curl -X POST https://abuz8ai.com/api/waitlist \
+  -H "Content-Type: application/json" \
+  -d '{"email":"you@example.com","product":"abuz8-os","referrer":"api-page"}'<button class="code-copy" type="button">Copy</button></pre>
+    </div>
+  </div>
+  <div class="note-gold note">These endpoints exist to serve the pages on this site. You're welcome to look at what they return, but don't build production systems on them yet — the stable, documented contract is what the roadmap API below is for.</div>
+</section>
+
+<hr class="divider">
+
+<section class="section-block">
+  <div class="section-head">
+    <h2>On the roadmap — the public developer API</h2>
+    <p><span class="badge badge-roadmap">ROADMAP</span> Planned, not built. Nothing here is for sale, and there is nothing to install today.</p>
+  </div>
+  <div class="grid-3">
+    <div class="card">
+      <div class="icon-chip">🔑</div>
+      <h3>Versioned REST API with keys</h3>
+      <p>A documented, versioned public API with authentication, so you can call ABUZ8 capabilities from your own code with a stable contract.</p>
+    </div>
+    <div class="card">
+      <div class="icon-chip">📦</div>
+      <h3>SDKs &amp; CLI</h3>
+      <p>Official client libraries and a command-line tool. There are currently <strong>no published ABUZ8 packages</strong> on npm or PyPI — anything claiming to be one is not ours.</p>
+    </div>
+    <div class="card">
+      <div class="icon-chip">🐙</div>
+      <h3>Public repos</h3>
+      <p>Open-sourcing parts of the stack on GitHub and Hugging Face is planned. There are <strong>no public ABUZ8 repos yet</strong> — follow the <a href="/github.html">GitHub Hub</a> and <a href="/huggingface.html">Hugging Face Hub</a> for when that changes.</p>
+    </div>
+  </div>
+  <div class="note-blue note">Honest pricing note: there are <strong>no subscription plans and no API tiers</strong> today — nothing on this site is a subscription. When the public API ships, its pricing will be published plainly before anything is sold. Track it on the <a href="/roadmap.html">Roadmap</a>.</div>
+</section>
+
+<hr class="divider">
+
+<section class="section-block">
+  <div class="section-head">
+    <h2>Want in early?</h2>
+    <p><span class="badge badge-early">EARLY ACCESS</span> ABUZ8 OS — the local-first AI operating system behind this site — is in early access. There is no public download; access is granted by request.</p>
+  </div>
+  <div class="panel panel-gold" style="text-align:center;">
+    <p style="color:var(--dim);max-width:640px;margin:0 auto 20px;">Tell us what you'd build and we'll reach out when a seat opens. Developers who want to shape the public API get priority.</p>
+    <a class="btn btn-green" href="/request.html">Request Early Access</a>
+    <a class="btn btn-outline" href="/contact.html" style="margin-left:10px;">Ask a Question</a>
+  </div>
+</section>
+
+</div>
+
+<footer class="abuz8-footer">
+<div class="foot-grid">
+  <div class="foot-brand">
+    <div class="logo">ABUZ8</div>
+    <p>Sovereign AI for everyone. Real tools, local models, no fake claims. Built on real hardware by ABUZ8 LLC, Ohio.</p>
+  </div>
+  <div class="foot-col"><h4>Platform</h4>
+    <a href="/tools.html">Free Tools</a><a href="/store.html">Store</a><a href="/models.html">Models</a><a href="/agents.html">AI Agents</a><a href="/news.html">News</a><a href="/blog/">Blog</a>
+  </div>
+  <div class="foot-col"><h4>Mission</h4>
+    <a href="/sovereign.html">Sovereign AI</a><a href="/journey.html">Journey &amp; Goals</a><a href="/roadmap.html">Roadmap</a><a href="/audit.html">Audit &amp; Transparency</a><a href="/purpose.html">Purpose</a>
+  </div>
+  <div class="foot-col"><h4>Hubs</h4>
+    <a href="/github.html">GitHub Hub</a><a href="/huggingface.html">Hugging Face Hub</a><a href="/polymarket.html">Polymarket Tester</a><a href="/community.html">Community</a><a href="/education.html">Education</a><a href="/downloads.html">Downloads</a>
+  </div>
+  <div class="foot-col"><h4>Trust</h4>
+    <a href="/security.html">Security &amp; Compliance</a><a href="/disclaimer.html">Disclaimer</a><a href="/privacy.html">Privacy</a><a href="/terms.html">Terms</a><a href="/refund.html">Refunds</a><a href="/license.html">License</a><a href="/contact.html">Contact</a><a href="/status.html">Status</a>
+  </div>
+</div>
+<div class="foot-base">
+  <div>© <span data-year>2026</span> ABUZ8 LLC. All rights reserved.</div>
+  <div>Built local-first on real hardware · No fake claims · <a href="/sovereign.html">Sovereign AI for everyone</a></div>
+</div>
+</footer>
+<script src="/assets/js/abuz8-ui.js" defer></script>
+<script src="/assets/js/abuz8-onboard.js" defer></script>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>

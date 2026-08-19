@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<!-- Published 2026-08-15. ABUZ8 LLC. -->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How to Verify AI Cost Savings Claims — A Buyer's Method | ABUZ8</title>
+<meta name="description" content="How to verify AI cost savings claims before you sign. Five questions that separate a measured number from a marketing number, and the artifacts a vendor should hand you.">
+<meta name="keywords" content="how to verify ai cost savings claims, ai vendor cost claims, llm cost benchmark, ai roi verification, ai savings proof">
+<link rel="canonical" href="https://abuz8ai.com/blog/how-to-verify-ai-cost-savings-claims">
+<meta property="og:title" content="How to Verify AI Cost Savings Claims — A Buyer's Method">
+<meta property="og:type" content="article">
+<link rel="stylesheet" href="/blog/_blog-base.css">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@300;400;600;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
+<script type="application/ld+json">
+{"@context": "https://schema.org", "@type": "BlogPosting", "headline": "How to Verify AI Cost Savings Claims — A Buyer's Method", "datePublished": "2026-08-15", "author": {"@type": "Organization", "name": "ABUZ8 AI"}}
+</script>
+</head>
+<body>
+<div class="container">
+  <a href="/blog/" class="back">&larr; ABUZ8 BLOG</a>
+  <h1>How to Verify AI Cost Savings Claims — A Buyer's Method</h1>
+  <div class="meta-row"><span>DILIGENCE</span><span class="dot"></span><span>AUGUST 15, 2026</span><span class="dot"></span><span>5 MIN READ</span></div>
+
+  <p>Every AI infrastructure company on earth claims cost savings. "90% cheaper." "10x reduction." "Opus quality at Haiku prices." If you want to know <strong>how to verify AI cost savings claims</strong> rather than absorb them, the method is short and it is uncomfortable for most vendors: ask for the query, not the number. A savings figure is a conclusion. The thing you are buying is the process that produced it, and a process either survives being reproduced or it does not.</p>
+
+  <h2>Why the number itself is worthless</h2>
+  <p>A cost-savings percentage has at least four hidden variables, and a vendor controls all of them. What was the baseline — the most expensive model in the catalog, run on every request, including the ones that never needed it? What workload was measured — a curated demo set, or messy production traffic? Over what window — a good week, or a quarter? And what counts as a success — did the cheap lane actually do the job, or did it fail and get quietly retried on the expensive one, with only the cheap call's price appearing in the total?</p>
+  <p>Change any one of those and the same system can honestly report 40% savings or 99% savings. That is not fraud. That is the ordinary elasticity of a metric nobody is required to define. Your job as a buyer is to pin down the definitions before you compare anyone to anyone.</p>
+
+  <h2>The five questions</h2>
+  <p><strong>1. What is the baseline, stated as a specific model and a specific call count?</strong> "Versus cloud AI" is not a baseline. "1,469 calls, all routed to Opus at list price" is. If the vendor cannot name the counterfactual in units you could recompute, the savings number is decorative.</p>
+  <p><strong>2. Is the measurement window disclosed, and is it long enough to include a bad week?</strong> Anything under a month is a demo. Model providers change pricing, rate limits and availability constantly; a routing system that looks brilliant across seven cherry-picked days tells you nothing about the quarter you are buying.</p>
+  <p><strong>3. Where is the failure rate?</strong> This is the question that ends most sales conversations, so ask it early. A system that routes cheaply and fails often is not saving you money, it is deferring the cost to retries, to your engineers, and to your customers. Any cost claim published without a companion success rate is incomplete by construction — see our walkthrough of <a href="/blog/ai-agent-reliability-metrics.html" class="in">the reliability metrics that actually matter</a>.</p>
+  <p><strong>4. Can you reproduce it in one command, against the same data store the product writes to?</strong> Not a dashboard. Not a PDF. A script, a database, and an exit code. Dashboards are rendered by the same people who wrote the claim.</p>
+  <p><strong>5. Does the evidence include something unflattering?</strong> A metrics document containing only good news is marketing wearing a lab coat. Real telemetry is lumpy — there is always an ugly provider, a dead lane, a tranche of unlabelled errors. A vendor who shows you theirs is telling you the rest of the numbers were not curated either.</p>
+
+  <div class="callout">
+    <p><strong>The tell:</strong> ask "can I run the query myself?" and watch what happens next. Vendors with measured numbers hand you a script. Vendors with modelled numbers hand you a call with a solutions architect. Both answers are informative.</p>
+  </div>
+
+  <h2>What a credible artifact looks like</h2>
+  <p>We hold ourselves to this, so here is ours in the open. QADIR OS routes model calls across 31 configured lanes — 10 local, 9 cheap-tier commercial, 12 premium — and logs every call to a local SQLite database. Over an 89.9-day window from 11 May to 9 August 2026, that log holds <strong>1,469 calls</strong>. Of those, 21 went to a premium lane: 1.4% of traffic. Actual spend across the window was <strong>$0.14</strong>. The same 1,469 calls sent entirely to Opus at list price would have cost <strong>$65.28</strong>.</p>
+  <p>Now the unflattering half, which belongs in the same paragraph and not in a footnote: across that window the overall call success rate was <strong>19.9%</strong>, dominated by 345 HTTP 403 responses from one provider and 756 failures that were never labelled with an error class at all. That is a real defect, it is ours, and the fix — a transport-layer failure classifier plus an auth circuit breaker so authentication errors stop poisoning the router's quality estimates — is scoped in the same document as the wins.</p>
+  <p>Both halves come from one command reading one database. That is the standard we are arguing for, and it is the standard we would like applied to us.</p>
+
+  <h2>How to run this on a vendor you are evaluating</h2>
+  <p>Send four sentences. Ask for: the raw call log or an export of it, the exact counterfactual pricing assumption, the success rate over the same window, and the query that produces the headline number. You are not being difficult — you are asking a software company for software. If the answer is a case study, you have learned that the number was assembled by the marketing team from data the engineering team has not been asked to defend.</p>
+  <p>Then do one thing more: run your own workload for two weeks before you commit. Cost behaviour is workload-shaped. A router tuned on short classification calls behaves differently on long agentic loops with big contexts, which is why our breakdown of <a href="/blog/how-much-does-an-ai-agent-cost.html" class="in">what an AI agent actually costs</a> insists on per-workload measurement rather than a blanket rate. Your traffic is the only benchmark that predicts your bill.</p>
+
+  <h2>The cheapest verification of all</h2>
+  <p>Run the work on hardware you already own and the savings question partly dissolves — there is no per-call meter to audit because there is no per-call bill. That is the architecture behind QADIR OS: local-first inference with commercial lanes available when a task genuinely needs them, and a router that has to earn the decision from measured outcomes rather than a static price table. The mechanism is explained in <a href="/blog/thompson-sampling-llm-routing.html" class="in">how Thompson sampling picks the lane</a>, and the economics of owning the compute in <a href="/blog/self-hosting-ai-costs-2026.html" class="in">self-hosting AI costs</a>.</p>
+
+  <h2>Frequently asked questions</h2>
+  <p><strong>Is a vendor refusing to share raw logs automatically a red flag?</strong> Not automatically — multi-tenant logs contain other customers' data, and a serious company will say exactly that. The reasonable middle ground is an aggregate export over a named window plus the query definition, or a reproduction against your own trial traffic. What is a red flag is a refusal with no alternative offered.</p>
+  <p><strong>What baseline should I insist on?</strong> The one that matches what you would otherwise do. If you would realistically run a mid-tier model on everything, then comparing against the flagship model inflates the savings dramatically. Ask for the comparison against your actual fallback plan, not against the most expensive option in the price list.</p>
+  <p><strong>How long a window is enough?</strong> Long enough to contain a provider incident, a price change, and a slow week — in practice at least 30 days, and 90 is far better. Short windows systematically flatter routing systems because they exclude the failure modes that only appear at volume.</p>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Is refusing to share raw logs a red flag?","acceptedAnswer":{"@type":"Answer","text":"Not automatically — multi-tenant logs contain other customers' data. The reasonable middle ground is an aggregate export over a named window plus the query definition. A refusal with no alternative offered is the red flag."}},{"@type":"Question","name":"What baseline should I insist on for AI cost comparisons?","acceptedAnswer":{"@type":"Answer","text":"The one matching what you would otherwise do. Comparing against the most expensive flagship model inflates savings. Ask for the comparison against your actual fallback plan."}},{"@type":"Question","name":"How long should the measurement window be?","acceptedAnswer":{"@type":"Answer","text":"At least 30 days and preferably 90 — long enough to contain a provider incident, a price change and a slow week. Short windows flatter routing systems."}}]}
+  </script>
+
+  <div class="callout cta">
+    <p><strong>Apply the method:</strong> take the five questions to your next AI vendor call and see how far you get. Then look at how a local-first router answers them — <a href="/" class="in">join the QADIR OS early-access list</a> and we will hand you the query alongside the claim.</p>
+  </div>
+
+  <div class="foot">Built by <a href="/">ABUZ8 LLC</a> — we're building QADIR OS, the sovereign agentic operating system. This article is general information, not legal or financial advice.</div>
+</div>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+<script src="/blog/_blog-shared.js" defer></script>
+<script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>

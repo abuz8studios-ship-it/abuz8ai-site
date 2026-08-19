@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AI Crisis Comms Writer — ABUZ8</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--lapis:#0a1628;--lapis2:#0f1f3d;--lapis3:#162544;--gold:#c9a84c;--turq:#0e9f6e;--turq2:#22b5a0;--cream:#f5f0e8;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--lapis);color:var(--cream);font-family:'Inter',sans-serif;min-height:100vh;}
+header{background:var(--lapis2);border-bottom:1px solid var(--gold);padding:18px 32px;display:flex;align-items:center;gap:16px;}
+.logo{font-family:'Playfair Display',serif;color:var(--gold);font-size:1.4rem;}
+.badge{background:var(--gold);color:var(--lapis);font-size:.65rem;font-weight:700;padding:2px 8px;border-radius:10px;}
+.urgent-badge{background:#f87171;color:#fff;font-size:.65rem;font-weight:700;padding:2px 10px;border-radius:10px;animation:pulse 1.5s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.6;}}
+h1{font-family:'Playfair Display',serif;font-size:1.8rem;color:var(--gold);margin-bottom:6px;}
+.sub{color:#8899aa;font-size:.9rem;}
+main{max-width:1100px;margin:0 auto;padding:32px 24px;}
+.layout{display:grid;grid-template-columns:300px 1fr;gap:24px;margin-top:24px;}
+.panel{background:var(--lapis2);border:1px solid #1e3a5f;border-radius:12px;padding:24px;}
+.panel h2{font-family:'Playfair Display',serif;color:var(--gold);font-size:1.1rem;margin-bottom:16px;}
+label{display:block;font-size:.8rem;color:#8899aa;margin-bottom:4px;margin-top:14px;}
+label:first-of-type{margin-top:0;}
+input,select,textarea{width:100%;background:var(--lapis3);border:1px solid #1e3a5f;border-radius:6px;color:var(--cream);padding:8px 12px;font-size:.85rem;font-family:'Inter',sans-serif;}
+textarea{resize:vertical;min-height:70px;}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--gold);}
+.btn{background:#f87171;color:#fff;border:none;border-radius:8px;padding:12px 24px;font-weight:700;cursor:pointer;width:100%;margin-top:16px;}
+.btn:hover{opacity:.85;}
+.btn-sm{background:transparent;border:1px solid var(--turq2);color:var(--turq2);border-radius:6px;padding:6px 14px;font-size:.78rem;cursor:pointer;margin-right:6px;}
+#output{display:none;}
+.crisis-tabs{display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap;}
+.ctab{background:var(--lapis3);border:1px solid #1e3a5f;border-radius:6px;padding:7px 14px;font-size:.8rem;cursor:pointer;}
+.ctab.active{border-color:#f87171;color:#f87171;}
+.comm-card{background:var(--lapis3);border:1px solid #1e3a5f;border-radius:10px;padding:20px;margin-bottom:12px;}
+.comm-card h3{font-size:.85rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#f87171;margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+.comm-body{font-size:.88rem;line-height:1.8;color:#d0dde8;white-space:pre-wrap;}
+.timeline-item{display:flex;gap:14px;padding:10px 0;border-bottom:1px solid #1e3a5f;}
+.timeline-item:last-child{border:none;}
+.ttime{font-size:.75rem;color:var(--gold);font-weight:700;white-space:nowrap;width:80px;flex-shrink:0;}
+.tcontent{font-size:.83rem;color:#aabbcc;line-height:1.5;}
+.tcontent strong{color:var(--cream);}
+.severity-banner{border-radius:8px;padding:14px 18px;margin-bottom:16px;display:flex;align-items:center;gap:12px;}
+.sev-icon{font-size:1.5rem;}
+.sev-title{font-weight:700;font-size:.95rem;}
+.sev-sub{font-size:.78rem;opacity:.8;margin-top:2px;}
+.dont-item{background:rgba(248,113,113,.08);border:1px solid rgba(248,113,113,.2);border-radius:6px;padding:10px 14px;margin-bottom:6px;font-size:.82rem;color:#aabbcc;display:flex;gap:10px;}
+.do-item{background:rgba(34,181,160,.08);border:1px solid rgba(34,181,160,.2);border-radius:6px;padding:10px 14px;margin-bottom:6px;font-size:.82rem;color:#aabbcc;display:flex;gap:10px;}
+.waitlist{background:linear-gradient(135deg,var(--lapis2),var(--lapis3));border:1px solid var(--gold);border-radius:12px;padding:24px;text-align:center;margin-top:20px;}
+.waitlist h3{font-family:'Playfair Display',serif;color:var(--gold);margin-bottom:8px;}
+.wl-form{display:flex;gap:8px;max-width:360px;margin:10px auto 0;}
+.wl-form input{border-radius:6px;padding:9px 12px;}
+.wl-form button{background:var(--gold);color:var(--lapis);border:none;border-radius:6px;padding:9px 18px;font-weight:700;cursor:pointer;white-space:nowrap;}
+</style>
+<link rel="canonical" href="https://abuz8ai.com/tools/ai-crisis-comms-writer">
+<meta name="description" content="AI Crisis Comms Writer — Calm, clear crisis messaging. Free, no signup, runs entirely in your browser. One of 169 free AI and developer tools by ABUZ8.">
+</head>
+<body>
+<header>
+  <div class="logo">ABUZ8</div>
+  <div style="flex:1">
+    <div style="font-size:.85rem;font-weight:600;">AI Crisis Comms Writer</div>
+    <div style="font-size:.72rem;color:#8899aa;">Draft every communication in minutes, not hours</div>
+  </div>
+  <span class="urgent-badge">URGENT MODE</span>
+</header>
+<main>
+  <h1>AI Crisis Comms Writer</h1>
+  <p class="sub">When something goes wrong, every minute counts. Generate customer emails, press statements, internal memos, and social responses — all in one place.</p>
+
+  <div class="layout">
+    <div class="panel">
+      <h2>🚨 Incident Details</h2>
+      <label>Company Name</label>
+      <input id="company" value="Nexus AI" placeholder="Company name">
+      <label>Crisis Type</label>
+      <select id="crisisType" onchange="updateDefaults()">
+        <option>Data Breach / Security Incident</option>
+        <option selected>Service Outage</option>
+        <option>Product Bug (Data Loss)</option>
+        <option>Executive Misconduct</option>
+        <option>Regulatory / Legal Issue</option>
+        <option>Pricing / Business Model Change</option>
+        <option>Layoffs / Restructuring</option>
+        <option>PR / Reputational Crisis</option>
+      </select>
+      <label>Severity</label>
+      <select id="severity">
+        <option>P1 — Critical (complete outage / breach)</option>
+        <option selected>P2 — High (major impact, workaround exists)</option>
+        <option>P3 — Medium (partial impact)</option>
+        <option>P4 — Low (minor, cosmetic)</option>
+      </select>
+      <label>What Happened (plain language)</label>
+      <textarea id="what" placeholder="What happened...">A database failover issue caused our primary production environment to become unavailable starting at 2:14 AM UTC. Approximately 40% of customers experienced failed API requests and dashboard timeouts for 87 minutes.</textarea>
+      <label>Root Cause (if known)</label>
+      <textarea id="rootCause" placeholder="Root cause...">A misconfigured database replica promotion script failed to complete the failover correctly after a scheduled maintenance update.</textarea>
+      <label>What You've Done / Are Doing</label>
+      <textarea id="action" placeholder="Actions taken...">Engineering team restored full service at 3:41 AM UTC. Root cause identified and patched. Post-mortem underway. Monitoring expanded.</textarea>
+      <label>Customer Impact</label>
+      <input id="impact" value="40% of customers, 87 minutes" placeholder="40% of customers, 87 minutes">
+      <label>CEO / Spokesperson Name</label>
+      <input id="ceo" value="Jane Smith" placeholder="CEO Name">
+      <button class="btn" onclick="generateComms()">⚡ Generate Crisis Comms</button>
+    </div>
+
+    <div>
+      <div id="inputPrompt" class="panel" style="text-align:center;padding:48px 24px;">
+        <div style="font-size:3rem;margin-bottom:16px;">🚨</div>
+        <div style="font-family:'Playfair Display',serif;color:#f87171;font-size:1.2rem;margin-bottom:8px;">Crisis Comms Engine</div>
+        <div style="font-size:.85rem;color:#8899aa;max-width:320px;margin:0 auto;">Enter incident details to generate customer email, press statement, internal memo, social posts, and a response timeline — all pre-written and ready to send.</div>
+      </div>
+      <div id="output">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+          <div style="font-family:'Playfair Display',serif;color:#f87171;" id="crisisTitle">Crisis Response</div>
+          <div><button class="btn-sm" onclick="copyAll()">📋 Copy All</button></div>
+        </div>
+        <div class="crisis-tabs">
+          <div class="ctab active" onclick="switchCTab(this,'customer')">Customer Email</div>
+          <div class="ctab" onclick="switchCTab(this,'press')">Press Statement</div>
+          <div class="ctab" onclick="switchCTab(this,'internal')">Internal Memo</div>
+          <div class="ctab" onclick="switchCTab(this,'social')">Social / Status</div>
+          <div class="ctab" onclick="switchCTab(this,'timeline')">Response Timeline</div>
+          <div class="ctab" onclick="switchCTab(this,'playbook')">Do's & Don'ts</div>
+        </div>
+        <div id="crisisContent"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="waitlist">
+    <h3>🚀 Pro: Crisis War Room — Real-Time Collaboration</h3>
+    <p>Draft, approve, and send communications across teams in real-time. Integrated with Slack, email, and your status page.</p>
+    <div class="wl-form">
+      <input type="email" id="wlEmail" placeholder="ceo@company.com">
+      <button onclick="joinWL()">Get Pro Access</button>
+    </div>
+  </div>
+</main>
+<script src="_abuz8-live-brain.js" defer></script>
+<script>
+let crisisTabs={};
+
+function updateDefaults(){
+  const type=document.getElementById('crisisType').value;
+  if(type.includes('Data Breach')){
+    document.getElementById('what').value='Unauthorized access to our database was detected by our security team. An investigation is underway to determine the scope of any data accessed.';
+    document.getElementById('action').value='We immediately revoked all active sessions, rotated credentials, engaged external forensics firm, and notified relevant authorities per regulatory requirements.';
+    document.getElementById('impact').value='Potentially up to X customer records. No financial data affected.';
+  } else if(type.includes('Layoffs')){
+    document.getElementById('what').value='We made the difficult decision to reduce our team by approximately X% as part of a strategic restructuring to extend runway and focus on core product.';
+    document.getElementById('action').value='Affected employees will receive X months severance, healthcare continuation, and career support. Leadership team has taken pay cuts.';
+    document.getElementById('impact').value='X employees across Y departments';
+  }
+}
+
+function generateComms(){
+  const company=document.getElementById('company').value||'Our Company';
+  const type=document.getElementById('crisisType').value;
+  const severity=document.getElementById('severity').value;
+  const what=document.getElementById('what').value;
+  const rootCause=document.getElementById('rootCause').value;
+  const action=document.getElementById('action').value;
+  const impact=document.getElementById('impact').value;
+  const ceo=document.getElementById('ceo').value||'CEO';
+
+  const btn=document.querySelector('.btn');
+  if(btn){btn.disabled=true;btn.dataset.label=btn.dataset.label||btn.textContent;btn.textContent='⏳ Drafting…';}
+
+  document.getElementById('inputPrompt').style.display='none';
+  document.getElementById('output').style.display='block';
+  document.getElementById('crisisTitle').textContent=`${company} Crisis Response — ${type.split(' ')[0]}`;
+  document.getElementById('crisisContent').innerHTML=`
+    <div class="comm-card" style="text-align:center;padding:40px 24px">
+      <div style="font-size:2.4rem;margin-bottom:12px">🚨</div>
+      <div style="color:#f87171;font-family:'Playfair Display',serif;font-size:1.1rem;margin-bottom:8px">Drafting your crisis communications…</div>
+      <div style="font-size:.85rem;color:#8899aa;max-width:340px;margin:0 auto">Live AI on an RTX 5090. The first call cold-loads the model, so this can take 20–90s.</div>
+    </div>`;
+
+  // Real AI crisis comms via the ABUZ8 brain (Cloudflare Workers AI). No templates.
+  fetch('/api/waitlist',{
+    method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({tool:'crisis-comms-writer',data:{company,crisisType:type,severity,whatHappened:what,rootCause,actionsTaken:action,customerImpact:impact,spokesperson:ceo}})
+  })
+  .then(r=>r.json())
+  .then(res=>{
+    if(btn){btn.disabled=false;btn.textContent=btn.dataset.label;}
+    if(!res.success||!res.result) throw new Error(res.error||'Generation failed');
+    const out=`<div class="comm-card" style="line-height:1.7">${ABUZ8.formatResult(res.result)}</div>`;
+    // Every tab shows the full real comms package — no fake template copy behind any tab.
+    crisisTabs={customer:out,press:out,internal:out,social:out,timeline:out,playbook:out};
+    document.getElementById('crisisContent').innerHTML=out;
+  })
+  .catch(err=>{
+    if(btn){btn.disabled=false;btn.textContent=btn.dataset.label;}
+    crisisTabs={};
+    document.getElementById('crisisContent').innerHTML=`
+      <div class="comm-card" style="text-align:center;padding:40px 24px">
+        <div style="font-size:2.4rem;margin-bottom:12px">⚠️</div>
+        <div style="color:#f87171;font-family:'Playfair Display',serif;font-size:1.1rem;margin-bottom:8px">Generation failed</div>
+        <div style="font-size:.85rem;color:#8899aa;max-width:360px;margin:0 auto 14px">${err.message}. The live AI may be cold-starting — please try again in a moment.</div>
+        <button class="btn" style="max-width:220px;margin:0 auto" onclick="generateComms()">↺ Try Again</button>
+      </div>`;
+    alert('Generation failed: '+err.message+'. Please try again in a moment.');
+  });
+}
+
+function generateCommsTemplatesUNUSED(){
+  const company=document.getElementById('company').value||'Our Company';
+  const type=document.getElementById('crisisType').value;
+  const severity=document.getElementById('severity').value;
+  const what=document.getElementById('what').value;
+  const rootCause=document.getElementById('rootCause').value;
+  const action=document.getElementById('action').value;
+  const impact=document.getElementById('impact').value;
+  const ceo=document.getElementById('ceo').value||'CEO';
+  const date=new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
+  const isOutage=type.includes('Outage');
+  const isBreach=type.includes('Breach');
+  const isLayoff=type.includes('Layoff');
+
+  const sevColor=severity.includes('P1')?'#f87171':severity.includes('P2')?'#fb923c':severity.includes('P3')?'var(--gold)':'var(--turq2)';
+  const sevBg=severity.includes('P1')?'rgba(248,113,113,.1)':severity.includes('P2')?'rgba(251,146,60,.1)':severity.includes('P3')?'rgba(201,168,76,.1)':'rgba(34,181,160,.1)';
+
+  const banner=`<div class="severity-banner" style="background:${sevBg};border:1px solid ${sevColor}30;">
+    <div class="sev-icon">${severity.includes('P1')?'🔴':severity.includes('P2')?'🟠':'🟡'}</div>
+    <div><div class="sev-title" style="color:${sevColor}">${severity.split(' — ')[0]} — ${type}</div>
+    <div class="sev-sub" style="color:${sevColor}">Impact: ${impact} · ${date}</div></div>
+  </div>`;
+
+  crisisTabs = {
+    customer:banner+`<div class="comm-card">
+      <h3>✉️ Customer Email</h3>
+      <div class="comm-body">Subject: ${isOutage?'[Resolved] Service Disruption — '+date:isBreach?'Important Security Notice — Action Required':isLayoff?'A message from '+ceo+', CEO of '+company:'Important Update from '+company}
+
+Dear [Customer Name / valued customers],
+
+${isOutage?`We want to be transparent with you about a service disruption that affected ${company} ${impact}.
+
+What happened:
+${what}
+
+Root cause:
+${rootCause||'Our engineering team has identified the root cause and deployed a fix.'}
+
+What we did:
+${action}
+
+We understand the trust you place in us, and we take any disruption to your work seriously. ${severity.includes('P1')||severity.includes('P2')?'We are offering all affected accounts a credit of [X days/amount] — you will see this reflected in your next billing cycle.':''}
+
+We are publishing a full post-mortem at [status page URL] within 48 hours.`:isBreach?`We are writing to inform you of a security incident that may have affected your data.
+
+What happened:
+${what}
+
+What information was involved:
+${impact}
+
+What we are doing:
+${action}
+
+What you should do:
+- Change your ${company} password immediately
+- Enable two-factor authentication if you haven't already
+- Monitor your accounts for any suspicious activity
+
+We sincerely apologize for this incident. We are committed to earning back your trust through our actions.`:isLayoff?`I'm writing to share some difficult news about changes at ${company}.
+
+${what}
+
+This was one of the hardest decisions we've made. These are talented people who have contributed enormously to what we've built together. We are doing everything we can to support them through this transition.
+
+${action}
+
+Our product roadmap and commitment to customers remains unchanged. [Specific reassurance about service continuity].`:`${what}
+
+${action}`}
+
+We are committed to keeping you informed. Follow [status page URL] for real-time updates.
+
+With transparency and accountability,
+${ceo}
+CEO, ${company}
+
+— 
+Questions? Reply to this email or reach us at support@${company.toLowerCase().replace(/\s/g,'')}.com</div>
+    </div>`,
+
+    press:banner+`<div class="comm-card">
+      <h3>📰 Press Statement</h3>
+      <div class="comm-body">FOR IMMEDIATE RELEASE
+${date}
+
+${company.toUpperCase()} ${isOutage?'ADDRESSES SERVICE DISRUPTION':isBreach?'NOTIFIES CUSTOMERS OF SECURITY INCIDENT':isLayoff?'ANNOUNCES ORGANIZATIONAL RESTRUCTURING':'RESPONDS TO '+type.toUpperCase()}
+
+[CITY] — ${company} today issued the following statement regarding ${type.toLowerCase()}:
+
+"${what}
+
+We take this matter extremely seriously. ${action}
+
+${isOutage?`Our commitment to 99.9% uptime is a core promise to our customers, and we fell short of that standard today. We are implementing additional safeguards to ensure this does not recur.`:isBreach?`We are cooperating fully with authorities and have engaged leading cybersecurity experts to assist in our investigation. We will notify all affected individuals as required by applicable law.`:isLayoff?`These changes are necessary to ensure the long-term success of our mission and our ability to serve customers for years to come.`:`We remain committed to our customers and stakeholders.`}
+
+We will provide updates as the situation develops." — ${ceo}, CEO
+
+ABOUT ${company.toUpperCase()}
+${company} is [brief company description]. For more information, visit [website].
+
+MEDIA CONTACT
+[PR Contact Name]
+[Email]
+[Phone]</div>
+    </div>`,
+
+    internal:banner+`<div class="comm-card">
+      <h3>📣 Internal Memo (All Hands)</h3>
+      <div class="comm-body">TO: All ${company} Employees
+FROM: ${ceo}, CEO
+DATE: ${date}
+RE: ${type} — Internal Update
+
+Team,
+
+I want to make sure you hear directly from me about what's happening.
+
+WHAT HAPPENED:
+${what}
+
+IMPACT:
+${impact}
+
+WHAT WE'VE DONE:
+${action}
+
+ROOT CAUSE:
+${rootCause||'Investigation is ongoing. We will share findings with the team.'}
+
+WHAT THIS MEANS FOR YOU:
+${isLayoff?`- If you have been directly impacted, your manager will reach out to you today
+- If you have not received a call, your role is not affected
+- We will hold an all-hands at [time] today — all questions welcome`:`- Customer-facing teams: use the approved external messaging only (do not speculate or go off-script)
+- Engineering: continue with the post-mortem — timeline to be published within 48hrs
+- Sales / CS: flag any customer concerns to your manager immediately — do not make commitments without approval`}
+
+THE BIGGER PICTURE:
+${isLayoff?`This decision was not made lightly. I take full responsibility. We are doing this now so that ${company} can survive and serve customers for the long term.`:`Every company faces setbacks. What defines us is how we respond. I am proud of how the team responded today — fast, coordinated, and customer-first.`}
+
+I will hold an all-hands at [TIME] today. Come with questions.
+
+${ceo}
+CEO, ${company}</div>
+    </div>`,
+
+    social:banner+`<div class="comm-card">
+      <h3>📱 Status Page Update</h3>
+      <div class="comm-body">[INVESTIGATING] — ${date} ${new Date().toLocaleTimeString()}
+We are ${isOutage?'investigating reports of service degradation':'aware of an issue'} affecting ${impact}. Our team is actively working on a resolution. We will update this page every 30 minutes.
+
+---
+
+[UPDATE] — +30 minutes
+Our engineering team has identified the root cause: ${rootCause||'issue identified, fix in progress'}. We are deploying a fix now. ETA: 20–30 minutes.
+
+---
+
+[RESOLVED] — +87 minutes  
+✅ This incident has been resolved. Full service restored. All systems operational.
+
+Root cause summary: ${rootCause||'Details in post-mortem (48hrs).'}
+Impact: ${impact}
+Duration: [X minutes]
+
+A full post-mortem will be published within 48 hours. Thank you for your patience.</div>
+    </div>
+    <div class="comm-card">
+      <h3>🐦 Twitter / X Posts</h3>
+      <div class="comm-body">Post 1 (initial, within 15 min):
+"We're aware of an issue affecting some customers. Our team is on it. Updates: [status page URL]"
+
+Post 2 (update, every 30 min):
+"Update: Root cause identified. Fix deploying now. ETA ~20 min. We'll update when resolved."
+
+Post 3 (resolved):
+"✅ Resolved. We apologize for the disruption to ${impact}. Full post-mortem in 48hrs. DMs open for any questions."</div>
+    </div>`,
+
+    timeline:`${banner}
+      <div style="background:var(--lapis3);border:1px solid #1e3a5f;border-radius:10px;padding:18px;">
+        ${[
+          {t:'T+0 min',c:'<strong>Incident detected.</strong> On-call engineer paged. Start incident Slack channel. Assign IC (Incident Commander).'},
+          {t:'T+5 min',c:'<strong>Initial assessment.</strong> Confirm scope of impact. Assign P-level (P1/P2/P3). Begin stakeholder notifications.'},
+          {t:'T+15 min',c:'<strong>First external update.</strong> Post to status page and Twitter: "We are aware and investigating." Do NOT over-promise resolution time.'},
+          {t:'T+30 min',c:'<strong>Internal briefing.</strong> CEO + leadership team updated. Customer-facing teams briefed on approved messaging. Prepare customer email draft.'},
+          {t:'T+45 min',c:'<strong>Mitigation in progress.</strong> Engineering actively applying fix. Update status page. Brief Sales/CS on talking points for inbound customer calls.'},
+          {t:'T+90 min',c:'<strong>Resolution or milestone.</strong> If resolved: post resolution update. If ongoing: send customer email with honest ETA. Do not stay silent.'},
+          {t:'T+4 hrs',c:'<strong>CEO message.</strong> If P1/P2: send CEO email to all affected customers. Acknowledge, apologize, explain remediation, offer credits if appropriate.'},
+          {t:'T+24 hrs',c:'<strong>Post-mortem draft shared internally.</strong> Engineering + product review timeline, root cause, contributing factors. No blame — focus on systems.'},
+          {t:'T+48 hrs',c:'<strong>Public post-mortem published.</strong> Transparent write-up: what happened, root cause, impact, fix, and preventive measures. Link from status page and email.'},
+          {t:'T+1 week',c:'<strong>Follow-through review.</strong> Were all prevention items shipped? Customer retention check (churn from incident). Update runbooks and playbooks.'}
+        ].map(i=>`<div class="timeline-item"><div class="ttime">${i.t}</div><div class="tcontent">${i.c}</div></div>`).join('')}
+      </div>`,
+
+    playbook:`${banner}
+      <div style="margin-bottom:10px;font-weight:600;color:#f87171;font-size:.88rem;">❌ NEVER DO THESE</div>
+      ${[
+        '"No comment." — It reads as guilt. Always say something, even if it\'s just "we\'re investigating."',
+        'Speculate on cause before you know it. State only confirmed facts.',
+        'Promise a timeline you cannot keep. "Resolved within 30 minutes" and then 3 hours = trust destruction.',
+        'Blame employees publicly. Blameless culture internally; unified front externally.',
+        'Go dark. Silence during a crisis is the fastest way to lose customers.',
+        'Minimize: "Only a few customers were affected." If it was you, "a few" feels like a dismissal.',
+        'Delete posts or try to hide the issue. Screenshots live forever.'
+      ].map(d=>`<div class="dont-item"><span>❌</span>${d}</div>`).join('')}
+      <div style="margin-top:14px;margin-bottom:10px;font-weight:600;color:var(--turq2);font-size:.88rem;">✅ ALWAYS DO THESE</div>
+      ${[
+        'Acknowledge fast — even before you have answers. Speed signals you care.',
+        'Be human. Bureaucratic language ("we apologize for any inconvenience") feels hollow. Say it like a person.',
+        'Own it fully. Do not hedge with "if you were affected." You know they were.',
+        'Explain what you\'re doing RIGHT NOW. Active tense, specific actions.',
+        'Set clear next-update time. "We will update at 3 PM ET." Then update, no matter what.',
+        'Offer concrete remediation (credits, extensions, refunds) for significant P1/P2 incidents.',
+        'Publish a post-mortem within 48 hours. It builds more trust than if the incident never happened.'
+      ].map(d=>`<div class="do-item"><span>✅</span>${d}</div>`).join('')}`
+  };
+
+  document.getElementById('inputPrompt').style.display='none';
+  document.getElementById('output').style.display='block';
+  document.getElementById('crisisTitle').textContent=`${company} Crisis Response — ${type.split(' ')[0]}`;
+  switchCTab(document.querySelector('.ctab.active'),'customer');
+}
+
+function switchCTab(el,tab){
+  document.querySelectorAll('.ctab').forEach(t=>t.classList.remove('active'));
+  if(el) el.classList.add('active');
+  document.getElementById('crisisContent').innerHTML=crisisTabs[tab]||'';
+}
+
+function copyAll(){
+  const texts=Object.values(crisisTabs).map(t=>t.replace(/<[^>]+>/g,'').replace(/\s+/g,' ')).join('\n\n---\n\n');
+  navigator.clipboard.writeText(texts).then(()=>alert('All crisis comms copied!'));
+}
+
+function joinWL(){
+  const e=document.getElementById('wlEmail').value.trim();
+  if(!e||!e.includes('@')){alert('Valid email required');return;}
+  fetch('/api/waitlist',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:e,tool:'ai-crisis-comms-writer',ts:Date.now()})}).catch(()=>{});
+  localStorage.setItem('wl_crisis_comms',e);
+  document.querySelector('.waitlist').innerHTML='<h3 style="color:var(--gold);font-family:Playfair Display,serif">✅ On the list!</h3><p style="color:#8899aa;margin-top:8px;">Pro access within 24h.</p>';
+}
+</script>
+
+<script src="/assets/js/dfy-banner.js" async></script>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+<script src="/tools/_tools-shared.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>
+

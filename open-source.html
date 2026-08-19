@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Open Source &mdash; ABUZ8 AI</title>
+<meta name="description" content="Honest open-source inventory: no public ABUZ8 repos exist today. This is the roadmap of what we plan to publish — each item gets a real link only when it ships.">
+<link rel="canonical" href="https://abuz8ai.com/open-source.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Open Source &mdash; ABUZ8 AI">
+<meta property="og:description" content="Honest open-source inventory: no public ABUZ8 repos exist today. This is the roadmap of what we plan to publish — each item gets a real link only when it ships.">
+<meta property="og:url" content="https://abuz8ai.com/open-source.html">
+<meta name="theme-color" content="#0a1628">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/abuz8-theme.css">
+<style>
+/* page-specific styles ONLY — theme vars, no new hex colors */
+.oss-grid{max-width:1000px;margin:40px auto 0;padding:0 32px;display:grid;gap:18px;position:relative;z-index:1}
+.oss-card{background:var(--glass-soft);border:1px solid var(--border);border-radius:var(--r-md);
+  padding:26px 30px;display:grid;grid-template-columns:1fr auto;align-items:center;gap:24px;
+  transition:border-color .3s,transform .3s,box-shadow .3s;
+  box-shadow:inset 0 1px 0 rgba(245,240,232,.04)}
+.oss-card:hover{border-color:var(--gold);transform:translateY(-3px);
+  box-shadow:0 18px 44px rgba(4,10,22,.5),0 0 30px rgba(201,168,76,.10)}
+.oss-info h3{font-family:var(--font-mono);font-size:17px;color:var(--cream);margin-bottom:6px;font-weight:600}
+.oss-info p{font-size:14px;color:var(--dim);line-height:1.6}
+.oss-info p strong{color:var(--cream)}
+.oss-tags{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+.oss-tag{font-size:10px;padding:3px 9px;background:rgba(14,159,110,.08);color:var(--green-bright);
+  border:1px solid rgba(14,159,110,.25);border-radius:4px;letter-spacing:.5px}
+.oss-actions{display:flex;flex-direction:column;gap:8px;align-items:flex-end;white-space:nowrap}
+.philosophy{max-width:800px;margin:80px auto 0;padding:0 32px;text-align:center;position:relative;z-index:1}
+.philosophy h2{font-family:var(--font-display);font-size:28px;color:var(--gold-light);margin-bottom:16px}
+.philosophy p{font-size:15px;color:var(--dim);line-height:1.8}
+.philosophy p strong{color:var(--cream)}
+.request-section{max-width:760px;margin:60px auto 0;padding:0 32px;text-align:center;position:relative;z-index:1}
+.request-section h2{font-family:var(--font-display);font-size:22px;color:var(--cream);margin-bottom:10px}
+.request-section p{font-size:14px;color:var(--dim);line-height:1.7;margin-bottom:18px}
+.oss-note{max-width:1000px;margin:8px auto 0;padding:0 32px;position:relative;z-index:1}
+@media(max-width:768px){.oss-card{grid-template-columns:1fr}.oss-actions{flex-direction:row;align-items:flex-start}}
+</style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebPage",
+      "name": "Open Source",
+      "url": "https://abuz8ai.com/open-source.html",
+      "description": "Honest open-source inventory: no public ABUZ8 repos exist today. This is the roadmap of what we plan to publish — each item gets a real link only when it ships.",
+      "isPartOf": { "@type": "WebSite", "name": "ABUZ8 AI", "url": "https://abuz8ai.com" }
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://abuz8ai.com/" },
+        { "@type": "ListItem", "position": 2, "name": "Open Source", "item": "https://abuz8ai.com/open-source.html" }
+      ]
+    }
+  ]
+}
+</script>
+</head>
+<body>
+<div class="geo-bg"></div>
+<nav class="abuz8-nav">
+<div class="nav-inner">
+  <a href="/" style="text-decoration:none;">
+    <div class="logo">ABUZ8</div>
+    <div class="logo-sub">Sovereign AI</div>
+  </a>
+  <div class="nav-links">
+    <a href="/tools.html">Tools</a>
+    <a href="/store.html">Store</a>
+    
+    <a href="/agents.html">Agents</a>
+    <a href="/models.html">Models</a>
+    <a href="/news.html">News</a>
+    <a href="/roadmap.html">Roadmap</a>
+    <a href="/store.html" class="nav-cta">Get Started</a>
+  </div>
+</div>
+</nav>
+
+<section class="hero" style="padding-bottom:24px;">
+  <div class="hero-eyebrow">Truth-Status: Roadmap</div>
+  <h1>Open <span class="gold">Source</span></h1>
+  <p style="margin-bottom:0;">The honest version: <strong style="color:var(--cream);">there is no public ABUZ8 GitHub organization today, and nothing on this page is clonable yet.</strong> Below is the inventory of what we intend to publish. Each item gets a real repository link here only when it actually ships &mdash; never before.</p>
+</section>
+
+<div class="oss-note">
+  <div class="note-gold note"><strong style="color:var(--cream);">How to read this page:</strong> every card is <span class="badge badge-roadmap">ROADMAP</span> &mdash; planned, not published. Descriptions reflect the internal codebases as they stand today; published scope and licensing are finalized at release. Live GitHub data (other people's projects, credited) lives on the <a href="/github.html">GitHub Hub</a>.</div>
+</div>
+
+<div class="oss-grid">
+
+  <div class="oss-card">
+    <div class="oss-info">
+      <h3>project-rescue-os</h3>
+      <p>Early project-rescue toolkit &mdash; the first release candidate on the open-source queue.</p>
+      <div class="oss-tags"><span class="oss-tag">HTML</span></div>
+    </div>
+    <div class="oss-actions"><span class="badge badge-roadmap">ROADMAP</span></div>
+  </div>
+
+  <div class="oss-card">
+    <div class="oss-info">
+      <h3>desktop-automation-toolkit</h3>
+      <p>Give your AI agent a physical body. Python scripts for mouse, keyboard, screenshots, window management, plus a beginner guide.</p>
+      <div class="oss-tags"><span class="oss-tag">Python</span><span class="oss-tag">Windows</span></div>
+    </div>
+    <div class="oss-actions"><span class="badge badge-roadmap">ROADMAP</span></div>
+  </div>
+
+  <div class="oss-card">
+    <div class="oss-info">
+      <h3>agent-router</h3>
+      <p>The Bayesian cost router behind <a href="/routing-demo.html">the routing demo</a>. Classifies query difficulty, filters lanes by tier floor, Thompson-samples Beta posteriors, picks the cheapest model that can handle it. Pure JS &mdash; runs in browser or Node.</p>
+      <div class="oss-tags"><span class="oss-tag">JavaScript</span><span class="oss-tag">Bayesian</span></div>
+    </div>
+    <div class="oss-actions"><span class="badge badge-roadmap">ROADMAP</span></div>
+  </div>
+
+  <div class="oss-card">
+    <div class="oss-info">
+      <h3>comfyui-workflows</h3>
+      <p>Production-tested ComfyUI workflows: WAN 2.2 i2v, Flux 1 dev, Hunyuan3D, lipsync, poster layers, prompt-weight harness. Drop a JSON into ComfyUI.</p>
+      <div class="oss-tags"><span class="oss-tag">JSON</span><span class="oss-tag">ComfyUI</span></div>
+    </div>
+    <div class="oss-actions"><span class="badge badge-roadmap">ROADMAP</span></div>
+  </div>
+
+  <div class="oss-card">
+    <div class="oss-info">
+      <h3>cold-email-templates</h3>
+      <p>Value-first cold sequence + LinkedIn outreach templates with variable placeholders. Pure markdown &mdash; paste into any sequencer.</p>
+      <div class="oss-tags"><span class="oss-tag">Markdown</span><span class="oss-tag">Sales</span></div>
+    </div>
+    <div class="oss-actions"><span class="badge badge-roadmap">ROADMAP</span></div>
+  </div>
+
+  <div class="oss-card">
+    <div class="oss-info">
+      <h3>polymarket-scanner</h3>
+      <p>Market scanner with probability estimation, Kelly-style sizing math, and weather arbitrage detection. Pure HTML/JS, no backend. A live demo runs on this site at <a href="/scanner.html">/scanner.html</a> (paper trading only &mdash; no real money).</p>
+      <div class="oss-tags"><span class="oss-tag">JavaScript</span><span class="oss-tag">HTML</span></div>
+    </div>
+    <div class="oss-actions"><span class="badge badge-roadmap">ROADMAP</span></div>
+  </div>
+
+  <div class="oss-card">
+    <div class="oss-info">
+      <h3>abuz8-tools</h3>
+      <p>Dozens of browser-side AI / dev / business tools from abuz8ai.com &mdash; resume builder, regex tester, color tools, persona generator, ad copy, SEO meta, and more. You can use them free right now at <a href="/tools.html">/tools</a>; the source release is planned.</p>
+      <div class="oss-tags"><span class="oss-tag">HTML</span><span class="oss-tag">JavaScript</span></div>
+    </div>
+    <div class="oss-actions"><span class="badge badge-roadmap">ROADMAP</span></div>
+  </div>
+
+  <div class="oss-card">
+    <div class="oss-info">
+      <h3>abuz8-blog</h3>
+      <p>Long-form posts from <a href="/blog/">the blog</a> &mdash; open-source model deep-dives (BiRefNet, XTTS-v2, SadTalker, WAN 2.2), MCP / agent framework explainers, ComfyUI vs Midjourney, practical guides.</p>
+      <div class="oss-tags"><span class="oss-tag">HTML</span><span class="oss-tag">Content</span></div>
+    </div>
+    <div class="oss-actions"><span class="badge badge-roadmap">ROADMAP</span></div>
+  </div>
+
+  <div class="oss-card">
+    <div class="oss-info">
+      <h3>abuz8-cloudflare-workers</h3>
+      <p>The production Workers behind abuz8ai.com &mdash; D1 waiting-list with admin endpoints, Polymarket CORS proxy, Stripe webhook handler, AI-tools backend.</p>
+      <div class="oss-tags"><span class="oss-tag">JavaScript</span><span class="oss-tag">Cloudflare</span></div>
+    </div>
+    <div class="oss-actions"><span class="badge badge-roadmap">ROADMAP</span></div>
+  </div>
+
+  <div class="oss-card">
+    <div class="oss-info">
+      <h3>abuz8ai-website</h3>
+      <p>Full source of abuz8ai.com itself &mdash; the HTML pages, Workers, demos, email templates, request flow, admin stats. Deployable to Cloudflare Pages.</p>
+      <div class="oss-tags"><span class="oss-tag">HTML</span><span class="oss-tag">Cloudflare Pages</span></div>
+    </div>
+    <div class="oss-actions"><span class="badge badge-roadmap">ROADMAP</span></div>
+  </div>
+
+  <div class="oss-card">
+    <div class="oss-info">
+      <h3>ai-agent-skills-pack</h3>
+      <p>Production-tested skill modules for AI agents: body control (mouse/keyboard/screen), Chrome control via CDP, ComfyUI orchestrator, feedback-loop journal, RustDesk control. Drop into any framework.</p>
+      <div class="oss-tags"><span class="oss-tag">Python</span><span class="oss-tag">Skills</span></div>
+    </div>
+    <div class="oss-actions"><span class="badge badge-roadmap">ROADMAP</span></div>
+  </div>
+
+  <div class="oss-card">
+    <div class="oss-info">
+      <h3>abu365-content-machine</h3>
+      <p>7-agent content automation: intel, script writer, blog, social, newsletter, poster, thumbnail. Native Electron + Svelte UI. Works with local Ollama or cloud APIs.</p>
+      <div class="oss-tags"><span class="oss-tag">Python</span><span class="oss-tag">Electron</span></div>
+    </div>
+    <div class="oss-actions"><span class="badge badge-roadmap">ROADMAP</span></div>
+  </div>
+
+  <div class="oss-card">
+    <div class="oss-info">
+      <h3>abuz8-agent-market</h3>
+      <p>Launch kit &mdash; X (Twitter) threads, Reddit launch posts, AI Daily newsletter intro, 7-day tweet schedule. Copy, swap placeholders, ship.</p>
+      <div class="oss-tags"><span class="oss-tag">Markdown</span><span class="oss-tag">Launch</span></div>
+    </div>
+    <div class="oss-actions"><span class="badge badge-roadmap">ROADMAP</span></div>
+  </div>
+
+  <div class="oss-card">
+    <div class="oss-info">
+      <h3>abuz8-plays-live</h3>
+      <p>Complete revenue plays &mdash; PM Workflow Rescue, AI SDR Agent, PM Cert Fast-Track, Fiverr Success Score, LinkedIn Service Audit, Sovereign AI Workforce. Landing pages + cold outreach + delivery runbooks.</p>
+      <div class="oss-tags"><span class="oss-tag">Markdown</span><span class="oss-tag">Sales</span></div>
+    </div>
+    <div class="oss-actions"><span class="badge badge-roadmap">ROADMAP</span></div>
+  </div>
+
+  <div class="oss-card">
+    <div class="oss-info">
+      <h3>abuz8-shared</h3>
+      <p>Shared infra &mdash; URF math engine, brain conductor, mission control, dreaming consolidator, persona YAMLs, skill engine. The plumbing behind our internal agents.</p>
+      <div class="oss-tags"><span class="oss-tag">JavaScript</span><span class="oss-tag">Python</span></div>
+    </div>
+    <div class="oss-actions"><span class="badge badge-roadmap">ROADMAP</span></div>
+  </div>
+
+  <div class="oss-card">
+    <div class="oss-info">
+      <h3>abuz8-html-vault</h3>
+      <p>HTML showcase artifacts &mdash; master dashboard, mission control mockups, command center, agent UIs, eval dashboard. Real working HTML, no build step.</p>
+      <div class="oss-tags"><span class="oss-tag">HTML</span><span class="oss-tag">Dashboards</span></div>
+    </div>
+    <div class="oss-actions"><span class="badge badge-roadmap">ROADMAP</span></div>
+  </div>
+
+  <div class="oss-card">
+    <div class="oss-info">
+      <h3>qadir-core</h3>
+      <p><strong>The brain.</strong> Python FastAPI agentic runtime &mdash; large tool surface, role souls (CEO/CMO/CFO/CTO etc), skill library, dreaming/memory consolidation, telephony, GPU bridge, security layer. Model weights would be excluded; bring your own.</p>
+      <div class="oss-tags"><span class="oss-tag">Python</span><span class="oss-tag">FastAPI</span></div>
+    </div>
+    <div class="oss-actions"><span class="badge badge-roadmap">ROADMAP</span></div>
+  </div>
+
+  <div class="oss-card">
+    <div class="oss-info">
+      <h3>soloman-agent-os</h3>
+      <p><strong>Portable agentic desktop OS</strong> (archived lineage). Python FastAPI backend + Electron frontend. Desktop/browser/filesystem/terminal/voice/avatar tools, soul runtime, multi-mind council, neural router. Model weights would be excluded.</p>
+      <div class="oss-tags"><span class="oss-tag">Python</span><span class="oss-tag">Electron</span></div>
+    </div>
+    <div class="oss-actions"><span class="badge badge-roadmap">ROADMAP</span></div>
+  </div>
+
+  <div class="oss-card">
+    <div class="oss-info">
+      <h3>abuz8-cinematic-pdfs</h3>
+      <p>Cinematic-formatted reference PDFs &mdash; agent frameworks, content factories, trading math, voice cloning, workforce playbooks, and more. Built with the cinematic-PDF tooling.</p>
+      <div class="oss-tags"><span class="oss-tag">PDF</span><span class="oss-tag">Content</span></div>
+    </div>
+    <div class="oss-actions"><span class="badge badge-roadmap">ROADMAP</span></div>
+  </div>
+
+  <div class="oss-card">
+    <div class="oss-info">
+      <h3>abuz8-agent-souls</h3>
+      <p>Telegram-native agent souls (Qadir, Zait, Almaas, Hareer, Thahab, Zaytoona). Each is a JSON config with brain routing + personality + tool surface. All tokens would be redacted before any release.</p>
+      <div class="oss-tags"><span class="oss-tag">JSON</span><span class="oss-tag">Agents</span></div>
+    </div>
+    <div class="oss-actions"><span class="badge badge-roadmap">ROADMAP</span></div>
+  </div>
+
+  <div class="oss-card">
+    <div class="oss-info">
+      <h3>abuz8-reference</h3>
+      <p>Foundational ABUZ8 documents &mdash; Master Blueprint, AI Tech Meets Purpose, NZT Constitution, Rebuild Sahara, Solo Company Revolution, Emotion Concepts for LLMs, QADIR framework.</p>
+      <div class="oss-tags"><span class="oss-tag">PDF</span><span class="oss-tag">HTML</span></div>
+    </div>
+    <div class="oss-actions"><span class="badge badge-roadmap">ROADMAP</span></div>
+  </div>
+
+  <div class="oss-card">
+    <div class="oss-info">
+      <h3>malki-os</h3>
+      <p><strong>Portable AI desktop app.</strong> Cross-platform, installer-ready. Electron + Vite/React + FastAPI + SQLite. Loadable minds, persistent local memory, integrations adapter pattern (no live tokens shipped &mdash; bring your own).</p>
+      <div class="oss-tags"><span class="oss-tag">Electron</span><span class="oss-tag">React</span></div>
+    </div>
+    <div class="oss-actions"><span class="badge badge-roadmap">ROADMAP</span></div>
+  </div>
+
+</div>
+
+<section class="philosophy">
+  <h2>Why nothing here links to GitHub</h2>
+  <p>We could list twenty repos with dead or empty links and call it open source. Plenty of sites do. Instead we tell you the truth: <strong>zero public ABUZ8 repos exist today.</strong> This page is the queue, labeled honestly as <em>roadmap</em>. As each repo actually ships, its card gets a real GitHub link. Not before. In the meantime, our <a href="/github.html">GitHub Hub</a> tracks live trending data on <em>other people's</em> open-source projects &mdash; credited and linked to their authors.</p>
+  <div style="margin-top:20px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+    <a class="btn btn-gold" href="/github.html">Visit the GitHub Hub</a>
+    <a class="btn btn-outline" href="/roadmap.html">See the full roadmap</a>
+  </div>
+</section>
+
+<section class="request-section">
+  <h2>Want a repo published first?</h2>
+  <p>Submit a request and tell us what you'd open-source next. We log every entry and ship the most-asked-for ones first.</p>
+  <a href="/request.html?p=open-source-priority" class="btn btn-outline">Submit a request &rarr;</a>
+</section>
+
+<footer class="abuz8-footer">
+<div class="foot-grid">
+  <div class="foot-brand">
+    <div class="logo">ABUZ8</div>
+    <p>Sovereign AI for everyone. Real tools, local models, no fake claims. Built on real hardware by ABUZ8 LLC, Ohio.</p>
+  </div>
+  <div class="foot-col"><h4>Platform</h4>
+    <a href="/tools.html">Free Tools</a><a href="/store.html">Store</a><a href="/models.html">Models</a><a href="/agents.html">AI Agents</a><a href="/news.html">News</a><a href="/blog/">Blog</a>
+  </div>
+  <div class="foot-col"><h4>Mission</h4>
+    <a href="/sovereign.html">Sovereign AI</a><a href="/journey.html">Journey &amp; Goals</a><a href="/roadmap.html">Roadmap</a><a href="/audit.html">Audit &amp; Transparency</a><a href="/purpose.html">Purpose</a>
+  </div>
+  <div class="foot-col"><h4>Hubs</h4>
+    <a href="/github.html">GitHub Hub</a><a href="/huggingface.html">Hugging Face Hub</a><a href="/polymarket.html">Polymarket Tester</a><a href="/community.html">Community</a><a href="/education.html">Education</a><a href="/downloads.html">Downloads</a>
+  </div>
+  <div class="foot-col"><h4>Trust</h4>
+    <a href="/security.html">Security &amp; Compliance</a><a href="/disclaimer.html">Disclaimer</a><a href="/privacy.html">Privacy</a><a href="/terms.html">Terms</a><a href="/refund.html">Refunds</a><a href="/license.html">License</a><a href="/contact.html">Contact</a><a href="/status.html">Status</a>
+  </div>
+</div>
+<div class="foot-base">
+  <div>© <span data-year>2026</span> ABUZ8 LLC. All rights reserved.</div>
+  <div>Built local-first on real hardware · No fake claims · <a href="/sovereign.html">Sovereign AI for everyone</a></div>
+</div>
+</footer>
+<script src="/assets/js/abuz8-ui.js" defer></script>
+<script src="/assets/js/abuz8-onboard.js" defer></script>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>

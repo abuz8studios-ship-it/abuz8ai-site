@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How to Build a Jarvis: The Five Layers Behind a Real Personal AI | ABUZ8</title>
+<meta name="description" content="A real Jarvis is five systems wired together — voice, perception, memory, tools, and a goal-pursuing loop. Here's how each one works and the order to build them.">
+<meta name="keywords" content="how to build a jarvis, build your own jarvis, personal ai assistant, build ai assistant, iron man jarvis ai">
+<link rel="canonical" href="https://abuz8ai.com/blog/how-to-build-a-jarvis">
+<meta property="og:title" content="How to Build a Jarvis: The Five Layers Behind a Real Personal AI">
+<meta property="og:type" content="article">
+<link rel="stylesheet" href="/blog/_blog-base.css">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@300;400;600;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","headline":"How to Build a Jarvis: The Five Layers Behind a Real Personal AI","datePublished":"2026-05-18","author":{"@type":"Organization","name":"ABUZ8 AI"}}
+</script>
+</head>
+<body>
+<div class="container">
+  <a href="/blog/" class="back">&larr; ABUZ8 BLOG</a>
+  <h1>How to Build a Jarvis: The Five Layers Behind a Real Personal AI</h1>
+  <div class="meta-row"><span>AGENT ARCHITECTURE</span><span class="dot"></span><span>MAY 18, 2026</span><span class="dot"></span><span>10 MIN READ</span></div>
+
+  <p>"<strong>How to build a Jarvis</strong>" is the question every builder asks once they've used an LLM long enough to see what's missing. The Iron Man fantasy isn't actually about a smart chatbot — it's about a system that <em>knows you</em>, <em>watches the world</em>, <em>does things</em>, and <em>improves itself</em>. That's five distinct systems wired together, and in 2026 every component is shippable on consumer hardware.</p>
+
+  <p>This is the architecture. Not the marketing version — the engineering version.</p>
+
+  <h2>The five layers</h2>
+
+  <p>A real Jarvis is:</p>
+  <ol>
+    <li><strong>Voice</strong> — the interface. Speech in, speech out, with a face if you want it.</li>
+    <li><strong>Perception</strong> — the senses. Screen, camera, calendar, email, notifications.</li>
+    <li><strong>Memory</strong> — what it knows about you and the world.</li>
+    <li><strong>Tools</strong> — the hands. Everything it can actually do.</li>
+    <li><strong>Loop</strong> — the agentic engine that pursues goals between your messages.</li>
+  </ol>
+
+  <p>Most "personal AI" products in 2026 ship two or three of these. The reason they feel underwhelming is the missing layers. Skip one and the whole thing collapses back into a chatbot.</p>
+
+  <h2>Layer 1: Voice — the interface</h2>
+
+  <p>Voice is the highest-ROI layer to build first because it shifts the entire feel of the system. Typing to AI is utility. Talking to AI is presence.</p>
+
+  <p>The components:</p>
+  <ul>
+    <li><strong>Speech-to-text:</strong> Whisper.cpp running locally — under 100ms latency for short utterances, free, no cloud round-trip.</li>
+    <li><strong>Text-to-speech:</strong> Edge TTS, ElevenLabs, or XTTS-v2 if you want voice cloning. Local options are now within 95% of paid services.</li>
+    <li><strong>Wake word (optional):</strong> "Hey Jarvis" detection runs on a few hundred KB of RAM. Picovoice or openWakeWord.</li>
+    <li><strong>Face (optional):</strong> SadTalker or similar lip-sync engine on a reference portrait. The agent looks at you while it speaks.</li>
+  </ul>
+
+  <p>Build order: STT first (so you can talk to it), TTS second (so it can talk back), wake word third (so you can stop pressing buttons), face last (cosmetic but huge perceived-quality boost).</p>
+
+  <h2>Layer 2: Perception — the senses</h2>
+
+  <p>A chatbot only knows what you type into it. A Jarvis knows what's on your screen, what's on your calendar, who emailed you, and what just happened on your phone. That's the line between an assistant and an actual partner.</p>
+
+  <p>What each sense costs to build:</p>
+  <ul>
+    <li><strong>Screen perception:</strong> Periodic screenshots + a vision-capable model (Qwen-VL, LLaVA, or cloud equivalent). The agent can see what app you're in, what document you're reading, what notification just popped up.</li>
+    <li><strong>Calendar:</strong> Google Calendar API, Outlook Graph API. Read-only is enough to start.</li>
+    <li><strong>Email:</strong> Gmail / Outlook IMAP or API. Filtered to "new since last check" + sender priority.</li>
+    <li><strong>File system:</strong> Watch a working folder for new files (downloads, screenshots, exports).</li>
+    <li><strong>Audio (optional):</strong> Always-on microphone with on-device wake-word + speaker diarization. Powerful and creepy — opt-in only.</li>
+  </ul>
+
+  <p>The mistake everyone makes: building all the senses at once. Pick one. Wire it deeply. Add the next one only when the first is stable.</p>
+
+  <h2>Layer 3: Memory — what it knows</h2>
+
+  <p>Memory is the layer that separates a Jarvis from a stateless chatbot pretending to be one. There are seven kinds of memory worth implementing, in rough order of priority:</p>
+
+  <ol>
+    <li><strong>Working memory (L1):</strong> the current conversation. Already in your LLM's context window.</li>
+    <li><strong>Session memory (L2):</strong> what happened in this work session, summarized at the end.</li>
+    <li><strong>Long-term semantic (L3):</strong> facts about you, your preferences, your relationships. Vector DB or structured JSON.</li>
+    <li><strong>Episodic (L4):</strong> "what did we talk about on Tuesday." Time-indexed.</li>
+    <li><strong>Reflexive (R1):</strong> patterns the agent has noticed about itself — what works, what fails.</li>
+    <li><strong>Mission memory:</strong> long-term goals you've stated.</li>
+    <li><strong>Docket memory:</strong> open tasks and commitments.</li>
+  </ol>
+
+  <p>For a first build, ship L1, L2, and L3. Skip the rest until the basics work. Most memory systems break not from the storage layer but from the <em>retrieval</em> layer — too much is recalled, the context window fills with junk, the model gets distracted. Tight retrieval rules matter more than fancy storage.</p>
+
+  <div class="callout">
+    <p><strong>The retrieval rule that works:</strong> at each turn, fetch (a) the last 6 messages, (b) the top 3 semantically-relevant long-term facts, (c) any pinned mission items, (d) anything currently on the docket. Cap total injected context at ~20% of the model's window. Anything more crowds out the actual reasoning.</p>
+  </div>
+
+  <h2>Layer 4: Tools — the hands</h2>
+
+  <p>This is where every Jarvis project stalls. Voice and memory are tractable. Tools are infinite. A real Jarvis needs at least:</p>
+  <ul>
+    <li>Desktop control (mouse, keyboard, screenshot, window management)</li>
+    <li>Browser automation (Playwright or similar)</li>
+    <li>Email (read + send)</li>
+    <li>Calendar (read + write events)</li>
+    <li>File system (read, write, search)</li>
+    <li>Shell / code execution (sandboxed)</li>
+    <li>HTTP fetch (read web pages)</li>
+    <li>Search (Google, Tavily, or scraping)</li>
+  </ul>
+
+  <p>That's the minimum. A serious Jarvis ships dozens more: CRM, social, telephony, smart home, money movement.</p>
+
+  <p>The right pattern in 2026 is MCP — the <strong>Model Context Protocol</strong>. It's a standard that lets your agent talk to tools through a single interface, with the tools being plug-and-play servers. Instead of writing one-off integrations, you wire your agent to MCP once and add any of hundreds of pre-built tool servers.</p>
+
+  <h2>Layer 5: The loop — the agentic engine</h2>
+
+  <p>Everything above is dead without a loop that pursues goals between your messages. The loop pattern that works:</p>
+
+  <ol>
+    <li><strong>PERCEIVE</strong> — pull current state from senses and memory.</li>
+    <li><strong>PLAN</strong> — decide the next 1–3 actions.</li>
+    <li><strong>GATE</strong> — run a permission check (don't send irreversible actions without confirmation).</li>
+    <li><strong>ACT</strong> — execute the action via tools.</li>
+    <li><strong>VERIFY</strong> — check the result matches intent.</li>
+    <li><strong>REFLECT</strong> — log what happened, update memory.</li>
+    <li><strong>LEARN</strong> — adjust future planning based on what worked.</li>
+  </ol>
+
+  <p>The loop runs every time the agent has a goal in flight. It does <em>not</em> run forever — there's a budget (max iterations, max tokens, max time) and a stop condition (goal reached, blocked on user input, or error escalation).</p>
+
+  <h2>Build order — first 30 days</h2>
+
+  <p>If you start today with no infrastructure:</p>
+
+  <ul>
+    <li><strong>Week 1:</strong> wire up STT + TTS + an LLM. Get to "I talk, it talks back" with the basic chat loop.</li>
+    <li><strong>Week 2:</strong> add memory L1+L2+L3. Make it remember preferences across sessions.</li>
+    <li><strong>Week 3:</strong> add 5 tools (email, calendar, file system, browser, shell). Wire MCP if available.</li>
+    <li><strong>Week 4:</strong> wrap the PERCEIVE → ACT → VERIFY loop. First end-to-end autonomous task.</li>
+  </ul>
+
+  <p>Month two is when perception gets serious. Month three is when you stop talking to the agent and start <em>working with it</em>.</p>
+
+  <h2>The shortcut</h2>
+
+  <p>You can build this yourself. It's a several-month project for a competent solo engineer.</p>
+
+  <p>Or you can use QADIR OS, which is exactly this architecture — agentic-loop-first, local-brain-first, 192+ tools shipped, voice and face built in, 7-layer memory implemented. It's the platform we built because we wanted a real Jarvis and the existing options were either toy chatbots or enterprise sales funnels with no soul.</p>
+
+  <div class="callout cta">
+    <p><strong>Join early access.</strong> QADIR OS desktop ships soon. Sovereign engine, your hardware, your data, your agent. <a href="/" class="in">Reserve your slot</a>.</p>
+  </div>
+
+</div>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+<script src="/blog/_blog-shared.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>
+

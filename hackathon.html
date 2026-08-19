@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hackathon Demo — Autonomous Earn Loop — ABUZ8 AI</title>
+<meta name="description" content="Live demo dashboard of the ABUZ8 OS autonomous earn loop: Stripe payment → webhook → agent action → revenue log. Real feed, real numbers, no simulation.">
+<link rel="canonical" href="https://abuz8ai.com/hackathon.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Hackathon Demo — Autonomous Earn Loop — ABUZ8 AI">
+<meta property="og:description" content="Live demo dashboard of the ABUZ8 OS autonomous earn loop: Stripe payment → webhook → agent action → revenue log. Real feed, real numbers, no simulation.">
+<meta property="og:url" content="https://abuz8ai.com/hackathon.html">
+<meta name="theme-color" content="#0a1628">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/abuz8-theme.css">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","name":"Hackathon Demo — Autonomous Earn Loop","url":"https://abuz8ai.com/hackathon.html","description":"Live demo dashboard of the ABUZ8 OS autonomous earn loop reading real Stripe webhook events.","isPartOf":{"@type":"WebSite","name":"ABUZ8 AI","url":"https://abuz8ai.com/"}}
+</script>
+<style>
+/* page-specific styles ONLY — theme vars */
+.demo-wrap{max-width:900px;margin:0 auto;padding:48px 24px 60px;position:relative;z-index:1}
+.demo-wrap h1{font-family:var(--font-display);font-size:clamp(1.7rem,4.5vw,2.4rem);color:var(--white);margin-bottom:8px;line-height:1.2}
+.subtitle{color:var(--dim);margin-bottom:24px;font-size:15px}
+.demo-card{background:var(--glass-soft);border:1px solid var(--border);border-radius:var(--r-md);padding:24px;margin-bottom:16px;box-shadow:inset 0 1px 0 rgba(245,240,232,.04)}
+.metric{font-family:var(--font-mono);font-size:3rem;font-weight:700;color:var(--gold);text-shadow:0 0 30px var(--gold-glow)}
+.metric-label{color:var(--dim);margin-top:8px;font-size:12px;text-transform:uppercase;letter-spacing:1px}
+.log{font-family:var(--font-mono);font-size:.85rem;line-height:1.6}
+.log-entry{padding:8px 0;border-bottom:1px solid rgba(26,46,80,.5)}
+.log-entry:last-child{border-bottom:none}
+.timestamp{color:var(--dim)}
+.event{color:var(--gold-light)}
+.status-ok{color:var(--green-bright)}
+.status-off{color:var(--gold-light)}
+.loop-diagram{display:flex;align-items:center;gap:14px;margin:28px 0;flex-wrap:wrap}
+.loop-step{background:var(--glass);padding:12px 22px;border-radius:var(--r-sm);border:1px solid var(--border-gold);font-weight:600;color:var(--text);font-size:14px}
+.loop-arrow{color:var(--gold);font-size:1.4rem}
+</style>
+</head>
+<body>
+<div class="geo-bg"></div>
+<nav class="abuz8-nav">
+<div class="nav-inner">
+  <a href="/" style="text-decoration:none;">
+    <div class="logo">ABUZ8</div>
+    <div class="logo-sub">Sovereign AI</div>
+  </a>
+  <div class="nav-links">
+    <a href="/tools.html">Tools</a>
+    <a href="/store.html">Store</a>
+    
+    <a href="/agents.html">Agents</a>
+    <a href="/models.html">Models</a>
+    <a href="/news.html">News</a>
+    <a href="/roadmap.html">Roadmap</a>
+    <a href="/store.html" class="nav-cta">Get Started</a>
+  </div>
+</div>
+</nav>
+
+<div class="demo-wrap">
+  <h1>ABUZ8 OS — Autonomous Earn Loop <span class="badge badge-beta" id="feed-badge">CHECKING…</span></h1>
+  <p class="subtitle">Stripe → Webhook → Agent Action → Revenue Log (no user input in the loop)</p>
+
+  <div class="note-gold note">This is a hackathon demo dashboard. Every number on this page comes from the real <code class="inline">/api/hackathon-log</code> feed — nothing is simulated or pre-filled. If the feed is unreachable, the status below says so honestly.</div>
+
+  <div class="loop-diagram">
+    <div class="loop-step">💰 Payment</div>
+    <div class="loop-arrow">→</div>
+    <div class="loop-step">🔗 Webhook</div>
+    <div class="loop-arrow">→</div>
+    <div class="loop-step">🤖 Agent</div>
+    <div class="loop-arrow">→</div>
+    <div class="loop-step">📊 Revenue Log</div>
+  </div>
+
+  <div class="demo-card">
+    <div class="metric" id="revenue">—</div>
+    <div class="metric-label">Total Revenue (USD) — from live feed</div>
+  </div>
+
+  <div class="demo-card">
+    <div class="metric" id="transactions">—</div>
+    <div class="metric-label">Transactions — from live feed</div>
+  </div>
+
+  <div class="demo-card">
+    <div class="metric-label" style="margin-bottom:12px">Event Log</div>
+    <div class="log" id="log">
+      <div class="log-entry" id="log-empty"><span class="timestamp">—</span> <span class="event">No events yet</span>: the log fills only with real feed events.</div>
+    </div>
+  </div>
+
+  <div class="demo-card">
+    <div class="metric-label" style="margin-bottom:8px">Feed Status</div>
+    <div id="status" class="status-ok">● Checking…</div>
+  </div>
+</div>
+
+<footer class="abuz8-footer">
+<div class="foot-grid">
+  <div class="foot-brand">
+    <div class="logo">ABUZ8</div>
+    <p>Sovereign AI for everyone. Real tools, local models, no fake claims. Built on real hardware by ABUZ8 LLC, Ohio.</p>
+  </div>
+  <div class="foot-col"><h4>Platform</h4>
+    <a href="/tools.html">Free Tools</a><a href="/store.html">Store</a><a href="/models.html">Models</a><a href="/agents.html">AI Agents</a><a href="/news.html">News</a><a href="/blog/">Blog</a>
+  </div>
+  <div class="foot-col"><h4>Mission</h4>
+    <a href="/sovereign.html">Sovereign AI</a><a href="/journey.html">Journey &amp; Goals</a><a href="/roadmap.html">Roadmap</a><a href="/audit.html">Audit &amp; Transparency</a><a href="/purpose.html">Purpose</a>
+  </div>
+  <div class="foot-col"><h4>Hubs</h4>
+    <a href="/github.html">GitHub Hub</a><a href="/huggingface.html">Hugging Face Hub</a><a href="/polymarket.html">Polymarket Tester</a><a href="/community.html">Community</a><a href="/education.html">Education</a><a href="/downloads.html">Downloads</a>
+  </div>
+  <div class="foot-col"><h4>Trust</h4>
+    <a href="/security.html">Security &amp; Compliance</a><a href="/disclaimer.html">Disclaimer</a><a href="/privacy.html">Privacy</a><a href="/terms.html">Terms</a><a href="/refund.html">Refunds</a><a href="/license.html">License</a><a href="/contact.html">Contact</a><a href="/status.html">Status</a>
+  </div>
+</div>
+<div class="foot-base">
+  <div>© <span data-year>2026</span> ABUZ8 LLC. All rights reserved.</div>
+  <div>Built local-first on real hardware · No fake claims · <a href="/sovereign.html">Sovereign AI for everyone</a></div>
+</div>
+</footer>
+
+<script>
+(function(){
+  var log = document.getElementById('log');
+  var logEmpty = document.getElementById('log-empty');
+  var revenueEl = document.getElementById('revenue');
+  var transactionsEl = document.getElementById('transactions');
+  var statusEl = document.getElementById('status');
+  var badgeEl = document.getElementById('feed-badge');
+  var seen = {};
+
+  function addLogEntry(event, message){
+    if (logEmpty && logEmpty.parentNode) { logEmpty.parentNode.removeChild(logEmpty); logEmpty = null; }
+    var now = new Date().toISOString().replace('T', ' ').substring(0, 19);
+    var entry = document.createElement('div');
+    entry.className = 'log-entry';
+    var t = document.createElement('span'); t.className = 'timestamp'; t.textContent = '[' + now + ']';
+    var e = document.createElement('span'); e.className = 'event'; e.textContent = event;
+    entry.appendChild(t);
+    entry.appendChild(document.createTextNode(' '));
+    entry.appendChild(e);
+    entry.appendChild(document.createTextNode(': ' + message));
+    log.insertBefore(entry, log.firstChild);
+  }
+
+  function setOnline(ok){
+    if (ok) {
+      statusEl.textContent = '● Connected — live feed';
+      statusEl.className = 'status-ok';
+      badgeEl.textContent = 'LIVE FEED';
+      badgeEl.className = 'badge badge-live';
+    } else {
+      statusEl.textContent = '● Feed offline — no data shown is fabricated; the dashboard simply has nothing to report';
+      statusEl.className = 'status-off';
+      badgeEl.textContent = 'FEED OFFLINE';
+      badgeEl.className = 'badge badge-beta';
+    }
+  }
+
+  function fetchStatus(){
+    fetch('/api/hackathon-log')
+      .then(function(res){
+        if (!res.ok) { throw new Error('HTTP ' + res.status); }
+        return res.json();
+      })
+      .then(function(data){
+        // Totals come straight from the feed — never accumulated client-side,
+        // so re-polling can never inflate the numbers.
+        var total = (data && typeof data.total_revenue === 'number') ? data.total_revenue : 0;
+        var count = (data && typeof data.transaction_count === 'number') ? data.transaction_count : 0;
+        revenueEl.textContent = '$' + total.toFixed(2);
+        transactionsEl.textContent = String(count);
+        if (data && Array.isArray(data.logs)) {
+          for (var i = 0; i < data.logs.length; i++) {
+            var entry = data.logs[i];
+            var key = (entry.timestamp || '') + '|' + (entry.type || '') + '|' + (entry.charge_id || entry.event || '');
+            if (seen[key]) { continue; }
+            seen[key] = true;
+            if (entry.type === 'charge') {
+              addLogEntry('charge', '$' + Number(entry.amount_usd || 0).toFixed(2) + ' — ' + (entry.status || 'unknown'));
+            } else if (entry.type === 'webhook') {
+              addLogEntry('webhook', 'Received ' + (entry.event || 'event'));
+            }
+          }
+        }
+        setOnline(true);
+      })
+      .catch(function(){
+        setOnline(false);
+      });
+  }
+
+  fetchStatus();
+  setInterval(fetchStatus, 15000);
+})();
+</script>
+<script src="/assets/js/abuz8-ui.js" defer></script>
+<script src="/assets/js/abuz8-onboard.js" defer></script>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>

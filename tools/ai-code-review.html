@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Code Review — ABUZ8</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--lapis:#0a1628;--lapis2:#0f1f3d;--lapis3:#162544;--gold:#c9a84c;--turq:#0e9f6e;--turq2:#22b5a0;--cream:#f5f0e8;--red:#ef4444;--orange:#f97316;--yellow:#eab308;--green:#22c55e;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--lapis);color:var(--cream);font-family:'Inter',sans-serif;min-height:100vh;}
+.hero{background:linear-gradient(135deg,var(--lapis2) 0%,var(--lapis3) 100%);padding:48px 24px 36px;text-align:center;border-bottom:1px solid rgba(201,168,76,.15);}
+.hero h1{font-family:'Playfair Display',serif;font-size:clamp(2rem,5vw,3rem);color:var(--gold);margin-bottom:8px;}
+.hero p{color:rgba(245,240,232,.7);font-size:1.05rem;max-width:600px;margin:0 auto;}
+.main{max-width:1100px;margin:0 auto;padding:32px 20px;}
+.input-panel{background:var(--lapis2);border:1px solid rgba(201,168,76,.12);border-radius:12px;overflow:hidden;margin-bottom:28px;}
+.ip-top{display:flex;align-items:center;gap:16px;padding:16px 20px;border-bottom:1px solid rgba(201,168,76,.1);}
+.lang-select{background:var(--lapis3);border:1px solid rgba(201,168,76,.15);border-radius:6px;color:var(--cream);padding:8px 12px;font-size:.88rem;outline:none;}
+.review-focus{display:flex;flex-wrap:wrap;gap:8px;}
+.focus-pill{background:var(--lapis3);border:1px solid rgba(201,168,76,.12);border-radius:20px;padding:5px 14px;font-size:.78rem;cursor:pointer;color:rgba(245,240,232,.5);transition:all .2s;}
+.focus-pill.active{background:rgba(201,168,76,.12);border-color:var(--gold);color:var(--gold);}
+.code-input{background:var(--lapis3);border:none;color:var(--cream);font-family:'JetBrains Mono',monospace;font-size:.8rem;padding:20px;width:100%;min-height:320px;resize:vertical;outline:none;line-height:1.7;tab-size:2;}
+.code-input:focus{background:var(--lapis2);}
+.ip-bottom{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;border-top:1px solid rgba(201,168,76,.1);}
+.char-count{font-size:.78rem;color:rgba(245,240,232,.3);}
+.review-btn{background:var(--gold);color:var(--lapis);border:none;border-radius:8px;padding:11px 28px;font-weight:700;font-size:.95rem;cursor:pointer;transition:opacity .2s;}
+.review-btn:hover{opacity:.88;}
+.review-btn:disabled{opacity:.5;cursor:not-allowed;}
+.score-bar{display:flex;gap:12px;margin-bottom:24px;flex-wrap:wrap;}
+.score-card{background:var(--lapis2);border:1px solid rgba(201,168,76,.12);border-radius:10px;padding:16px 20px;flex:1;min-width:140px;text-align:center;}
+.score-num{font-size:2rem;font-weight:700;font-family:'Playfair Display',serif;margin-bottom:4px;}
+.score-label{font-size:.75rem;color:rgba(245,240,232,.4);text-transform:uppercase;letter-spacing:.07em;}
+.s-excellent{color:var(--green);}
+.s-good{color:var(--turq2);}
+.s-fair{color:var(--yellow);}
+.s-poor{color:var(--orange);}
+.s-critical{color:var(--red);}
+.issues-list{display:flex;flex-direction:column;gap:12px;}
+.issue-card{background:var(--lapis2);border-radius:10px;overflow:hidden;border-left:4px solid;}
+.sev-critical{border-color:var(--red);}
+.sev-major{border-color:var(--orange);}
+.sev-minor{border-color:var(--yellow);}
+.sev-suggestion{border-color:var(--turq2);}
+.sev-praise{border-color:var(--green);}
+.issue-header{display:flex;align-items:center;gap:10px;padding:12px 16px;cursor:pointer;user-select:none;}
+.sev-badge{padding:3px 10px;border-radius:4px;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;}
+.sb-critical{background:rgba(239,68,68,.15);color:var(--red);}
+.sb-major{background:rgba(249,115,22,.15);color:var(--orange);}
+.sb-minor{background:rgba(234,179,8,.15);color:var(--yellow);}
+.sb-suggestion{background:rgba(34,181,160,.15);color:var(--turq2);}
+.sb-praise{background:rgba(34,197,94,.15);color:var(--green);}
+.issue-title{font-size:.9rem;font-weight:600;flex:1;}
+.issue-cat{font-size:.75rem;color:rgba(245,240,232,.35);background:var(--lapis3);padding:2px 8px;border-radius:4px;}
+.issue-arrow{color:rgba(245,240,232,.3);transition:transform .2s;}
+.issue-arrow.open{transform:rotate(180deg);}
+.issue-body{display:none;padding:0 16px 16px;}
+.issue-body.open{display:block;}
+.code-snippet{background:var(--lapis3);border-radius:6px;padding:12px;font-family:'JetBrains Mono',monospace;font-size:.75rem;color:rgba(245,240,232,.7);margin:10px 0;white-space:pre-wrap;line-height:1.6;}
+.code-snippet.bad{border-left:2px solid var(--red);}
+.code-snippet.good{border-left:2px solid var(--green);}
+.fix-label{font-size:.75rem;font-weight:600;color:rgba(245,240,232,.35);text-transform:uppercase;margin-bottom:4px;}
+.issue-desc{font-size:.87rem;color:rgba(245,240,232,.7);line-height:1.6;margin-bottom:10px;}
+.summary-block{background:var(--lapis2);border:1px solid rgba(201,168,76,.12);border-radius:12px;padding:24px;margin-bottom:24px;}
+.summary-block h3{font-family:'Playfair Display',serif;color:var(--gold);font-size:1.2rem;margin-bottom:14px;}
+.summary-text{font-size:.9rem;color:rgba(245,240,232,.75);line-height:1.8;}
+.section-h{font-size:.82rem;font-weight:700;color:rgba(245,240,232,.4);text-transform:uppercase;letter-spacing:.08em;margin:20px 0 10px;}
+.empty-state{text-align:center;padding:64px;color:rgba(245,240,232,.2);}
+.empty-icon{font-size:3rem;margin-bottom:12px;}
+.loading-wrap{text-align:center;padding:60px;}
+.spinner{display:inline-block;width:36px;height:36px;border:3px solid rgba(201,168,76,.15);border-top-color:var(--gold);border-radius:50%;animation:spin .7s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.loading-steps{margin-top:20px;display:flex;flex-direction:column;gap:8px;max-width:300px;margin:20px auto 0;}
+.ls-step{display:flex;align-items:center;gap:10px;font-size:.85rem;color:rgba(245,240,232,.4);}
+.ls-dot{width:8px;height:8px;border-radius:50%;background:rgba(201,168,76,.2);}
+.ls-dot.active{background:var(--gold);animation:pulse .8s ease infinite alternate;}
+@keyframes pulse{to{opacity:.4;}}
+.waitlist{background:linear-gradient(135deg,var(--lapis3),var(--lapis2));border:1px solid rgba(201,168,76,.2);border-radius:12px;padding:32px;text-align:center;margin-top:40px;}
+.waitlist h3{font-family:'Playfair Display',serif;color:var(--gold);font-size:1.5rem;margin-bottom:8px;}
+.wl-form{display:flex;gap:10px;max-width:440px;margin:0 auto;}
+.wl-input{flex:1;background:var(--lapis);border:1px solid rgba(201,168,76,.25);border-radius:8px;color:var(--cream);padding:11px 16px;font-size:.92rem;outline:none;}
+.wl-btn{background:var(--gold);color:var(--lapis);border:none;border-radius:8px;padding:11px 22px;font-weight:600;cursor:pointer;}
+</style>
+<link rel="canonical" href="https://abuz8ai.com/tools/ai-code-review">
+<meta name="description" content="AI Code Review — Spot bugs, smells, and risks. Free, no signup, runs entirely in your browser. One of 169 free AI and developer tools by ABUZ8.">
+</head>
+<body>
+<div class="hero">
+  <h1>🔍 AI Code Review</h1>
+  <p>Paste your code. Get a severity-ranked review covering security, performance, correctness, style, and architecture.</p>
+</div>
+<div class="main">
+  <div class="input-panel">
+    <div class="ip-top">
+      <select class="lang-select" id="langSelect">
+        <option value="javascript">JavaScript</option>
+        <option value="typescript">TypeScript</option>
+        <option value="python">Python</option>
+        <option value="go">Go</option>
+        <option value="rust">Rust</option>
+        <option value="java">Java</option>
+        <option value="sql">SQL</option>
+        <option value="bash">Bash</option>
+      </select>
+      <div class="review-focus">
+        <div class="focus-pill active" onclick="toggleFocus(this,'security')">🔒 Security</div>
+        <div class="focus-pill active" onclick="toggleFocus(this,'performance')">⚡ Performance</div>
+        <div class="focus-pill active" onclick="toggleFocus(this,'correctness')">✅ Correctness</div>
+        <div class="focus-pill active" onclick="toggleFocus(this,'style')">🎨 Style</div>
+        <div class="focus-pill active" onclick="toggleFocus(this,'architecture')">🏛 Architecture</div>
+      </div>
+    </div>
+    <textarea class="code-input" id="codeInput" placeholder="Paste your code here…&#10;&#10;// Example:&#10;app.get('/users', (req, res) => {&#10;  const id = req.query.id;&#10;  const query = 'SELECT * FROM users WHERE id = ' + id;&#10;  db.query(query, (err, rows) => {&#10;    res.json(rows);&#10;  });&#10;});" oninput="updateCount()"></textarea>
+    <div class="ip-bottom">
+      <span class="char-count" id="charCount">0 characters</span>
+      <button class="review-btn" id="reviewBtn" onclick="runReview()">🔍 Review Code</button>
+    </div>
+  </div>
+
+  <div id="emptyState" class="empty-state">
+    <div class="empty-icon">🔍</div>
+    <div>Paste code above and click Review</div>
+    <div style="font-size:.82rem;margin-top:8px;">Supports 8+ languages — finds security issues, bugs, and optimization opportunities</div>
+  </div>
+
+  <div id="loadingState" style="display:none;" class="loading-wrap">
+    <div class="spinner"></div>
+    <div style="margin-top:16px;color:rgba(245,240,232,.5);">Analyzing your code…</div>
+    <div class="loading-steps">
+      <div class="ls-step"><div class="ls-dot active" id="ld1"></div>Scanning for security vulnerabilities</div>
+      <div class="ls-step"><div class="ls-dot" id="ld2"></div>Checking performance patterns</div>
+      <div class="ls-step"><div class="ls-dot" id="ld3"></div>Reviewing correctness & edge cases</div>
+      <div class="ls-step"><div class="ls-dot" id="ld4"></div>Generating fix suggestions</div>
+    </div>
+  </div>
+
+  <div id="reviewResult" style="display:none;">
+    <div class="score-bar" id="scoreBar"></div>
+    <div class="summary-block" id="summaryBlock"></div>
+    <div class="section-h">Issues Found</div>
+    <div class="issues-list" id="issuesList"></div>
+  </div>
+
+  <div class="waitlist">
+    <h3>Code Review Pro</h3>
+    <p>GitHub PR integration, team annotations, issue tracking sync, and custom ruleset enforcement.</p>
+    <div class="wl-form">
+      <input class="wl-input" id="wlEmail" type="email" placeholder="your@email.com">
+      <button class="wl-btn" onclick="joinWaitlist()">Join Waitlist</button>
+    </div>
+    <div id="wlMsg" style="margin-top:12px;font-size:.85rem;color:var(--turq2);"></div>
+  </div>
+</div>
+<script src="_abuz8-live-brain.js" defer></script>
+<script>
+const focusSet = new Set(['security','performance','correctness','style','architecture']);
+
+function toggleFocus(el, key){
+  if(focusSet.has(key)){ focusSet.delete(key); el.classList.remove('active'); }
+  else { focusSet.add(key); el.classList.add('active'); }
+}
+function updateCount(){
+  const n = document.getElementById('codeInput').value.length;
+  document.getElementById('charCount').textContent = n.toLocaleString()+' characters';
+}
+
+// Issue templates per language/pattern
+const PATTERNS = {
+  sql_injection:{
+    title:'SQL Injection Vulnerability',sev:'critical',cat:'Security',
+    desc:'String concatenation in SQL queries allows attackers to inject arbitrary SQL. An attacker could pass id=1 OR 1=1-- to return all rows, or DROP TABLE users; to destroy data.',
+    bad:"const query = 'SELECT * FROM users WHERE id = ' + id;\ndb.query(query, callback);",
+    good:"const query = 'SELECT * FROM users WHERE id = $1';\ndb.query(query, [id], callback);\n// Or with an ORM:\nawait User.findByPk(id);"
+  },
+  no_error_handling:{
+    title:'Missing Error Handling',sev:'major',cat:'Correctness',
+    desc:'Errors from async operations are ignored. If db.query fails, the error is silently swallowed and the request hangs or crashes the process.',
+    bad:"db.query(query, (err, rows) => {\n  res.json(rows); // err ignored\n});",
+    good:"db.query(query, [id], (err, rows) => {\n  if (err) {\n    console.error('DB error:', err);\n    return res.status(500).json({ error: 'Internal server error' });\n  }\n  res.json(rows);\n});"
+  },
+  no_input_validation:{
+    title:'No Input Validation',sev:'major',cat:'Security',
+    desc:'req.query.id is used directly without validation. An attacker could pass non-numeric IDs, extremely large numbers, or null values.',
+    bad:"const id = req.query.id;",
+    good:"const id = parseInt(req.query.id, 10);\nif (isNaN(id) || id <= 0) {\n  return res.status(400).json({ error: 'Invalid ID' });\n}"
+  },
+  no_auth:{
+    title:'No Authentication Check',sev:'critical',cat:'Security',
+    desc:'The endpoint has no authentication middleware. Any unauthenticated request can query user data, exposing PII and sensitive records.',
+    bad:"app.get('/users', (req, res) => {",
+    good:"app.get('/users', requireAuth, async (req, res) => {\n// or use middleware:\nrouter.use(authMiddleware);"
+  },
+  select_star:{
+    title:'SELECT * — Over-fetching Data',sev:'minor',cat:'Performance',
+    desc:'Selecting all columns sends unnecessary data over the network and prevents the database from using covering indexes. Specify only the columns you need.',
+    bad:"const query = 'SELECT * FROM users WHERE id = $1';",
+    good:"const query = 'SELECT id, name, email, role FROM users WHERE id = $1';"
+  },
+  callback_hell:{
+    title:'Callback Nesting — Use async/await',sev:'suggestion',cat:'Style',
+    desc:'Nested callbacks are harder to read, debug, and handle errors in. Modern Node.js supports async/await natively.',
+    bad:"db.query(q, (err, rows) => {\n  sendEmail(rows[0].email, (err2, result) => {\n    // deeply nested\n  });\n});",
+    good:"try {\n  const { rows } = await db.query(q, [id]);\n  await sendEmail(rows[0].email);\n} catch (err) {\n  handleError(err);\n}"
+  },
+  expose_stack:{
+    title:'Error Message Leaks Stack Traces',sev:'major',cat:'Security',
+    desc:'Sending raw error objects to clients can expose internal file paths, database schemas, and library versions, aiding attackers.',
+    bad:"res.status(500).json({ error: err.message, stack: err.stack });",
+    good:"// Log internally, send generic message externally\nlogger.error(err);\nres.status(500).json({ error: 'Something went wrong' });"
+  },
+  missing_rate_limit:{
+    title:'No Rate Limiting',sev:'major',cat:'Security',
+    desc:'Without rate limiting, this endpoint can be abused for brute-force attacks or scraping. Add express-rate-limit or similar middleware.',
+    bad:"app.get('/users', (req, res) => {",
+    good:"const rateLimit = require('express-rate-limit');\nconst limiter = rateLimit({ windowMs: 15*60*1000, max: 100 });\napp.get('/users', limiter, requireAuth, handler);"
+  },
+  // Python patterns
+  py_sql:{
+    title:'Python SQL Injection',sev:'critical',cat:'Security',
+    desc:'Using f-strings or % formatting in SQL is equivalent to string concatenation — equally vulnerable.',
+    bad:"cursor.execute(f\"SELECT * FROM users WHERE id = {user_id}\")",
+    good:"cursor.execute(\"SELECT * FROM users WHERE id = %s\", (user_id,))\n# or with SQLAlchemy:\ndb.query(User).filter(User.id == user_id).first()"
+  },
+  py_bare_except:{
+    title:'Bare except Clause',sev:'minor',cat:'Correctness',
+    desc:'Bare except: catches ALL exceptions including SystemExit and KeyboardInterrupt. Always catch specific exception types.',
+    bad:"try:\n    do_something()\nexcept:\n    pass",
+    good:"try:\n    do_something()\nexcept ValueError as e:\n    logger.error(f'Value error: {e}')\n    raise"
+  },
+  // Generic good patterns
+  clean_structure:{
+    title:'Clean Separation of Concerns',sev:'praise',cat:'Architecture',
+    desc:'Good use of modular structure. Route handlers delegate to service functions, keeping business logic separate from HTTP handling.',
+    bad:'',good:''
+  },
+  meaningful_names:{
+    title:'Descriptive Variable Names',sev:'praise',cat:'Style',
+    desc:'Variable and function names clearly describe their purpose. This improves readability and reduces the need for comments.',
+    bad:'',good:''
+  }
+};
+
+function detectIssues(code, lang){
+  const issues = [];
+  const c = code.toLowerCase();
+  const focus = focusSet;
+
+  if(lang==='javascript'||lang==='typescript'){
+    if(c.includes("' + ") && c.includes('select') || c.includes("\" + ") && c.includes('select')) issues.push(PATTERNS.sql_injection);
+    else if(c.includes('select') && c.includes('query')) issues.push(PATTERNS.sql_injection);
+    if(c.includes('req.query')||c.includes('req.params')||c.includes('req.body')) issues.push(PATTERNS.no_input_validation);
+    if(!c.includes('requireauth')&&!c.includes('authmiddleware')&&!c.includes('verify')&&c.includes('app.get')) issues.push(PATTERNS.no_auth);
+    if(c.includes('select *')) issues.push(PATTERNS.select_star);
+    if(c.includes('callback')||c.includes('(err,')&&c.includes('(err2,')) issues.push(PATTERNS.callback_hell);
+    if((c.includes('res.status(500)')||c.includes('res.json({error'))&&c.includes('err.stack')) issues.push(PATTERNS.expose_stack);
+    if(!c.includes('ratelimit')&&!c.includes('rate_limit')&&c.includes('app.')) issues.push(PATTERNS.missing_rate_limit);
+    if(c.includes('(err,')&&!c.includes('if (err)')&&!c.includes('if(err)')) issues.push(PATTERNS.no_error_handling);
+  }
+  if(lang==='python'){
+    if(c.includes('f"select')||c.includes("f'select")||c.includes('% user')||c.includes('% id')) issues.push(PATTERNS.py_sql);
+    if(c.includes('except:')) issues.push(PATTERNS.py_bare_except);
+    if(!c.includes('try:')) issues.push({title:'No Exception Handling',sev:'major',cat:'Correctness',desc:'No try/except blocks found. I/O operations, network calls, and parsing should be wrapped in error handling.',bad:'result = json.loads(data)',good:'try:\n    result = json.loads(data)\nexcept json.JSONDecodeError as e:\n    logger.error(f\'Invalid JSON: {e}\')\n    return None'});
+  }
+
+  // Always add some praise if code is non-trivial
+  if(code.length > 100){
+    if(c.includes('async ')||c.includes('await ')||c.includes('async def')) issues.push(PATTERNS.clean_structure);
+    if(c.includes('const ')||c.includes('let ')||c.split('\n').length > 5) issues.push(PATTERNS.meaningful_names);
+  }
+
+  // Filter by focus
+  return issues.filter(i=>{
+    if(i.sev==='praise') return true;
+    const cat = (i.cat||'').toLowerCase();
+    return focusSet.has(cat) || focusSet.has('correctness');
+  });
+}
+
+function sevOrder(sev){ return {critical:0,major:1,minor:2,suggestion:3,praise:4}[sev]??5; }
+
+function scoreCode(issues){
+  let score = 100;
+  issues.forEach(i=>{
+    if(i.sev==='critical') score-=25;
+    else if(i.sev==='major') score-=12;
+    else if(i.sev==='minor') score-=4;
+    else if(i.sev==='suggestion') score-=1;
+    else score+=3;
+  });
+  return Math.max(0,Math.min(100,score));
+}
+
+function scoreCls(n){
+  if(n>=85) return 's-excellent';
+  if(n>=70) return 's-good';
+  if(n>=50) return 's-fair';
+  if(n>=30) return 's-poor';
+  return 's-critical';
+}
+function scoreLabel(n){
+  if(n>=85) return 'Excellent';
+  if(n>=70) return 'Good';
+  if(n>=50) return 'Fair';
+  if(n>=30) return 'Needs Work';
+  return 'Critical Issues';
+}
+
+function runReview(){
+  const code = document.getElementById('codeInput').value.trim();
+  if(!code){alert('Paste some code to review');return;}
+  const lang = document.getElementById('langSelect').value;
+  const focusAreas = Array.from(focusSet);
+
+  document.getElementById('emptyState').style.display='none';
+  document.getElementById('reviewResult').style.display='none';
+  document.getElementById('loadingState').style.display='block';
+  const reviewBtn = document.getElementById('reviewBtn');
+  reviewBtn.disabled = true;
+
+  // Animate loading steps
+  const dots=['ld1','ld2','ld3','ld4'];
+  let step=0;
+  const stepTimer = setInterval(()=>{
+    if(step>0) document.getElementById(dots[step-1]).classList.remove('active');
+    if(step<dots.length) document.getElementById(dots[step]).classList.add('active');
+    step++;
+    if(step>dots.length) clearInterval(stepTimer);
+  },400);
+
+  const finish = () => {
+    clearInterval(stepTimer);
+    document.getElementById('loadingState').style.display='none';
+    reviewBtn.disabled = false;
+  };
+
+  // Real AI code review via the ABUZ8 brain (Cloudflare Workers AI). No templates / fabricated scores.
+  fetch('/api/waitlist', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      tool: 'code-review',
+      data: { code, language: lang, focusAreas: focusAreas.join(', ') }
+    })
+  })
+  .then(r => r.json())
+  .then(res => {
+    if (!res.success || !res.result) throw new Error(res.error || 'Review failed');
+    finish();
+
+    // Render the real review into the summary block (brain returns markdown).
+    document.getElementById('scoreBar').innerHTML = '';
+    document.getElementById('summaryBlock').innerHTML =
+      `<h3>Review Summary</h3><div class="summary-text">${mdToHtml(res.result)}</div>`;
+    document.getElementById('summaryBlock').style.display='block';
+    document.getElementById('issuesList').innerHTML = '';
+
+    document.getElementById('reviewResult').style.display='block';
+  })
+  .catch(err => {
+    finish();
+    document.getElementById('emptyState').style.display='block';
+    alert('Review failed: ' + err.message + '. Please try again in a moment.');
+  });
+}
+
+function toggleIssue(i){
+  const body = document.getElementById('ib-'+i);
+  const arrow = document.getElementById('arr-'+i);
+  const open = body.classList.toggle('open');
+  arrow.classList.toggle('open', open);
+}
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+// Minimal, safe markdown → HTML renderer for AI brain output (escapes HTML first).
+function mdToHtml(md){
+  let s = esc(String(md));
+  const blocks = [];
+  s = s.replace(/```(\w*)\n?([\s\S]*?)```/g, (m, lang, code) => {
+    blocks.push('<pre style="background:var(--lapis3);border-radius:8px;padding:14px;overflow-x:auto;font-family:JetBrains Mono,monospace;font-size:.78rem;line-height:1.6;white-space:pre;margin:10px 0">' + code.replace(/\n$/,'') + '</pre>');
+    return 'ABZBLOCK' + (blocks.length - 1) + 'ENDABZ';
+  });
+  s = s.replace(/`([^`\n]+)`/g, '<code style="background:var(--lapis3);padding:1px 5px;border-radius:4px;font-family:JetBrains Mono,monospace;font-size:.85em">$1</code>');
+  s = s.replace(/^######\s+(.*)$/gm, '<h6>$1</h6>')
+       .replace(/^#####\s+(.*)$/gm, '<h5>$1</h5>')
+       .replace(/^####\s+(.*)$/gm, '<h4>$1</h4>')
+       .replace(/^###\s+(.*)$/gm, '<h3 style="color:var(--gold);margin:16px 0 8px">$1</h3>')
+       .replace(/^##\s+(.*)$/gm, '<h3 style="color:var(--gold);margin:16px 0 8px">$1</h3>')
+       .replace(/^#\s+(.*)$/gm, '<h3 style="color:var(--gold);margin:16px 0 8px">$1</h3>');
+  s = s.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+       .replace(/(^|[^*])\*([^*\n]+)\*/g, '$1<em>$2</em>');
+  // lists
+  s = s.replace(/(?:^[ \t]*(?:[-*]|\d+\.)\s+.*(?:\n|$))+/gm, (block) => {
+    const ordered = /^\s*\d+\.\s/.test(block);
+    const items = block.trim().split(/\n/).map(l => l.replace(/^\s*(?:[-*]|\d+\.)\s+/, '').trim()).filter(Boolean);
+    return '<' + (ordered?'ol':'ul') + ' style="padding-left:20px;margin:8px 0">' + items.map(i=>'<li style="margin-bottom:4px">'+i+'</li>').join('') + '</' + (ordered?'ol':'ul') + '>';
+  });
+  s = s.split(/\n{2,}/).map(p => {
+    p = p.trim();
+    if (!p) return '';
+    if (/^ABZBLOCK\d+ENDABZ$/.test(p)) return p;
+    if (/^\s*<(h\d|ul|ol|pre)/.test(p)) return p;
+    return '<p style="margin-bottom:10px">' + p.replace(/\n/g, '<br>') + '</p>';
+  }).join('\n');
+  s = s.replace(/(?:<p[^>]*>)?\s*ABZBLOCK(\d+)ENDABZ\s*(?:<\/p>)?/g, (m, i) => blocks[+i]);
+  return s;
+}
+
+async function joinWaitlist(){
+  const email = document.getElementById('wlEmail').value.trim();
+  if(!email||!email.includes('@')){document.getElementById('wlMsg').textContent='Enter a valid email.';return;}
+  try{
+    await fetch('/api/waitlist',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,product:'ai-code-review',source:'abuz8'})});
+  }catch(e){localStorage.setItem('wl_code_review',email);}
+  document.getElementById('wlMsg').textContent='✓ On the list!';
+  document.getElementById('wlEmail').value='';
+}
+</script>
+
+<script src="/assets/js/dfy-banner.js" async></script>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+<script src="/tools/_tools-shared.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>
+

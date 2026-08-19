@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Roast My Website — Brutal Honest Feedback | ABUZ8</title>
+<meta name="description" content="Get a savage, brutally honest AI roast of your website. No sugar-coating. Real issues, real fixes. Free.">
+<link rel="canonical" href="https://abuz8ai.com/tools/ai-roast-my-website">
+<meta property="og:title" content="AI Roast My Website — Brutal Honest Feedback">
+<meta property="og:description" content="Your website has problems. We'll tell you exactly what they are. Brutally.">
+<meta property="og:type" content="website">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"AI Roast My Website","url":"https://abuz8ai.com/tools/ai-roast-my-website","description":"Brutal honest AI analysis of your website — design, copy, UX, SEO, conversion issues.","applicationCategory":"BusinessApplication","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --lapis:#0a1628;--lapis2:#0f1f3d;--lapis3:#162544;
+  --gold:#c9a84c;--gold2:#e8c96d;
+  --turq:#0e9f6e;--turq2:#22b5a0;
+  --cream:#f5f0e8;--cream2:#ede6d8;
+  --flame:#e85c2a;--flame2:#ff7a4a;
+  --text:#e8e4dc;--muted:#8892a4;
+  --border:rgba(201,168,76,0.18);
+  --rad:12px;
+}
+body{background:var(--lapis);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh}
+a{color:var(--gold);text-decoration:none}
+.nav{display:flex;align-items:center;justify-content:space-between;padding:18px 40px;border-bottom:1px solid var(--border)}
+.nav-logo{font-family:'Playfair Display',serif;font-size:1.4rem;color:var(--gold)}
+.nav-links{display:flex;gap:24px;font-size:.85rem;color:var(--muted)}
+.nav-links a{color:var(--muted);transition:color .2s}.nav-links a:hover{color:var(--gold)}
+
+.hero{text-align:center;padding:64px 20px 40px;max-width:800px;margin:0 auto}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(232,92,42,0.15);border:1px solid rgba(232,92,42,0.35);border-radius:100px;padding:6px 16px;font-size:.78rem;color:var(--flame2);margin-bottom:20px}
+.hero h1{font-family:'Playfair Display',serif;font-size:clamp(2.2rem,5vw,3.6rem);line-height:1.15;margin-bottom:16px}
+.hero h1 span{color:var(--flame2)}
+.hero p{color:var(--muted);font-size:1.05rem;line-height:1.7;max-width:580px;margin:0 auto}
+
+.input-section{max-width:720px;margin:40px auto;padding:0 20px}
+.url-row{display:flex;gap:12px;margin-bottom:16px}
+.url-input{flex:1;background:var(--lapis3);border:1px solid var(--border);border-radius:var(--rad);padding:14px 18px;color:var(--text);font-size:1rem;outline:none;transition:border-color .2s}
+.url-input:focus{border-color:var(--flame)}
+.url-input::placeholder{color:var(--muted)}
+.roast-btn{background:var(--flame);color:#fff;border:none;border-radius:var(--rad);padding:14px 28px;font-size:1rem;font-weight:700;cursor:pointer;white-space:nowrap;transition:all .2s}
+.roast-btn:hover{background:var(--flame2);transform:translateY(-1px)}
+.roast-btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+
+.options-row{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:8px}
+.opt-chip{background:var(--lapis3);border:1px solid var(--border);border-radius:100px;padding:6px 14px;font-size:.8rem;color:var(--muted);cursor:pointer;transition:all .2s;user-select:none}
+.opt-chip.active{border-color:var(--flame);color:var(--flame2);background:rgba(232,92,42,0.1)}
+.opt-label{font-size:.78rem;color:var(--muted);margin-bottom:8px}
+
+/* Scanner */
+.scanner{max-width:720px;margin:0 auto;padding:0 20px;display:none}
+.scanner.visible{display:block}
+.scan-bar{background:var(--lapis3);border:1px solid var(--border);border-radius:var(--rad);padding:20px;margin-bottom:16px}
+.scan-line{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+.scan-line:last-child{margin:0}
+.scan-dot{width:8px;height:8px;border-radius:50%;background:var(--muted);flex-shrink:0;transition:background .3s}
+.scan-dot.active{background:var(--flame2);box-shadow:0 0 8px rgba(255,122,74,.5)}
+.scan-dot.done{background:var(--turq)}
+.scan-label{font-size:.88rem;color:var(--muted)}
+.scan-label.active{color:var(--text)}
+.scan-progress{height:4px;background:var(--lapis2);border-radius:2px;margin-top:12px;overflow:hidden}
+.scan-fill{height:100%;background:linear-gradient(90deg,var(--flame),var(--gold));border-radius:2px;width:0%;transition:width .4s ease}
+
+/* Roast Result */
+.roast-result{max-width:720px;margin:0 auto 40px;padding:0 20px;display:none}
+.roast-result.visible{display:block}
+
+.roast-header{background:linear-gradient(135deg,rgba(232,92,42,0.2),rgba(232,92,42,0.05));border:1px solid rgba(232,92,42,0.35);border-radius:var(--rad);padding:24px;margin-bottom:20px;display:flex;align-items:center;gap:20px}
+.roast-score-wrap{text-align:center;flex-shrink:0}
+.roast-score{font-family:'Playfair Display',serif;font-size:3.2rem;color:var(--flame2);line-height:1}
+.roast-score-label{font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-top:4px}
+.roast-verdict{flex:1}
+.roast-verdict h2{font-family:'Playfair Display',serif;font-size:1.5rem;color:var(--flame2);margin-bottom:8px}
+.roast-verdict p{color:var(--muted);font-size:.9rem;line-height:1.6}
+
+.roast-section{background:var(--lapis2);border:1px solid var(--border);border-radius:var(--rad);margin-bottom:16px;overflow:hidden}
+.roast-section-head{padding:16px 20px;display:flex;align-items:center;gap:12px;cursor:pointer;user-select:none;border-bottom:1px solid transparent;transition:border-color .2s}
+.roast-section-head:hover{border-bottom-color:var(--border)}
+.roast-section-icon{font-size:1.3rem;flex-shrink:0}
+.roast-section-title{font-weight:600;font-size:.95rem;flex:1}
+.roast-section-score{font-size:.8rem;font-weight:700;padding:4px 10px;border-radius:100px}
+.score-bad{background:rgba(232,92,42,0.2);color:var(--flame2)}
+.score-mid{background:rgba(201,168,76,0.2);color:var(--gold2)}
+.score-ok{background:rgba(26,138,122,0.2);color:var(--turq2)}
+.roast-section-chevron{color:var(--muted);font-size:.8rem;transition:transform .2s}
+.roast-section.open .roast-section-chevron{transform:rotate(180deg)}
+.roast-section-body{padding:0 20px;max-height:0;overflow:hidden;transition:max-height .35s ease, padding .2s}
+.roast-section.open .roast-section-body{max-height:600px;padding:16px 20px}
+
+.roast-item{display:flex;gap:10px;margin-bottom:14px;align-items:flex-start}
+.roast-item:last-child{margin:0}
+.roast-item-sev{font-size:.7rem;font-weight:700;padding:3px 8px;border-radius:100px;flex-shrink:0;margin-top:2px}
+.sev-fire{background:rgba(232,92,42,0.25);color:var(--flame2)}
+.sev-warn{background:rgba(201,168,76,0.25);color:var(--gold2)}
+.sev-ok{background:rgba(26,138,122,0.25);color:var(--turq2)}
+.roast-item-text{flex:1}
+.roast-item-text strong{display:block;font-size:.9rem;margin-bottom:3px}
+.roast-item-text span{font-size:.83rem;color:var(--muted);line-height:1.5}
+.roast-item-fix{font-size:.78rem;color:var(--turq2);margin-top:4px;font-style:italic}
+
+.summary-cta{background:var(--lapis3);border:1px solid var(--border);border-radius:var(--rad);padding:28px;text-align:center;margin-bottom:20px}
+.summary-cta h3{font-family:'Playfair Display',serif;font-size:1.4rem;margin-bottom:8px}
+.summary-cta p{color:var(--muted);font-size:.9rem;margin-bottom:20px}
+.cta-form{display:flex;gap:10px;max-width:420px;margin:0 auto}
+.cta-email{flex:1;background:var(--lapis2);border:1px solid var(--border);border-radius:8px;padding:12px 16px;color:var(--text);font-size:.9rem;outline:none}
+.cta-email:focus{border-color:var(--gold)}
+.cta-submit{background:var(--gold);color:var(--lapis);border:none;border-radius:8px;padding:12px 20px;font-weight:700;font-size:.9rem;cursor:pointer;white-space:nowrap;transition:background .2s}
+.cta-submit:hover{background:var(--gold2)}
+.cta-submitted{color:var(--turq2);font-size:.9rem;display:none}
+
+/* Examples */
+.examples{max-width:720px;margin:0 auto 60px;padding:0 20px}
+.examples h2{font-family:'Playfair Display',serif;font-size:1.5rem;margin-bottom:20px;text-align:center}
+.example-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.example-card{background:var(--lapis2);border:1px solid var(--border);border-radius:var(--rad);padding:16px;cursor:pointer;transition:border-color .2s}
+.example-card:hover{border-color:var(--flame)}
+.example-card .ex-score{font-size:1.8rem;font-weight:900;color:var(--flame2);margin-bottom:4px}
+.example-card .ex-site{font-size:.85rem;font-weight:600;margin-bottom:4px}
+.example-card .ex-verdict{font-size:.78rem;color:var(--muted);line-height:1.5}
+
+.footer{border-top:1px solid var(--border);padding:32px 40px;display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;align-items:center;font-size:.82rem;color:var(--muted)}
+.footer a{color:var(--muted);transition:color .2s}.footer a:hover{color:var(--gold)}
+
+@media(max-width:640px){
+  .nav{padding:14px 20px}.url-row{flex-direction:column}
+  .roast-header{flex-direction:column;text-align:center}
+  .cta-form{flex-direction:column}
+  .footer{padding:24px 20px}
+}
+</style>
+</head>
+<body>
+<nav class="nav">
+  <div class="nav-logo">ABUZ8</div>
+  <div class="nav-links">
+    <a href="/tools">Tools</a>
+    <a href="/free.html">Free</a>
+    <a href="/news.html">AI Daily</a>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="hero-badge">🔥 No Sugar-Coating</div>
+  <h1>AI <span>Roasts</span> Your Website</h1>
+  <p>Enter any URL. Get a brutally honest breakdown of every design, copy, UX, SEO, and conversion problem — with exactly how to fix each one.</p>
+</section>
+
+<div class="input-section">
+  <div class="url-row">
+    <input type="url" class="url-input" id="urlInput" placeholder="https://yourwebsite.com" value="">
+    <button class="roast-btn" id="roastBtn" onclick="startRoast()">🔥 Roast It</button>
+  </div>
+  <div class="opt-label">Roast intensity:</div>
+  <div class="options-row" id="intensityOpts">
+    <div class="opt-chip" data-val="gentle" onclick="setOpt(this,'intensity')">😬 Gentle</div>
+    <div class="opt-chip active" data-val="brutal" onclick="setOpt(this,'intensity')">🔥 Brutal</div>
+    <div class="opt-chip" data-val="savage" onclick="setOpt(this,'intensity')">💀 Savage</div>
+  </div>
+</div>
+
+<div class="scanner" id="scanner">
+  <div class="scan-bar">
+    <div class="scan-line"><div class="scan-dot" id="sd1"></div><span class="scan-label" id="sl1">Loading page structure...</span></div>
+    <div class="scan-line"><div class="scan-dot" id="sd2"></div><span class="scan-label" id="sl2">Analyzing design & typography...</span></div>
+    <div class="scan-line"><div class="scan-dot" id="sd3"></div><span class="scan-label" id="sl3">Evaluating copy & messaging...</span></div>
+    <div class="scan-line"><div class="scan-dot" id="sd4"></div><span class="scan-label" id="sl4">Checking SEO signals...</span></div>
+    <div class="scan-line"><div class="scan-dot" id="sd5"></div><span class="scan-label" id="sl5">Scoring conversion funnel...</span></div>
+    <div class="scan-line"><div class="scan-dot" id="sd6"></div><span class="scan-label" id="sl6">Writing the roast...</span></div>
+    <div class="scan-progress"><div class="scan-fill" id="scanFill"></div></div>
+  </div>
+</div>
+
+<div class="roast-result" id="roastResult"></div>
+
+<div class="examples" id="examplesSection">
+  <h2>Sample Roasts</h2>
+  <div class="example-grid">
+    <div class="example-card" onclick="loadExample('saas')">
+      <div class="ex-score">34/100</div>
+      <div class="ex-site">typical-saas.io</div>
+      <div class="ex-verdict">"Your hero section says 'AI-powered solutions' and nothing else. You've described literally every SaaS made in 2023."</div>
+    </div>
+    <div class="example-card" onclick="loadExample('agency')">
+      <div class="ex-score">41/100</div>
+      <div class="ex-site">creative-agency.com</div>
+      <div class="ex-verdict">"The homepage has 6 different fonts and calls itself 'boutique.' The only thing boutique here is the client budget."</div>
+    </div>
+    <div class="example-card" onclick="loadExample('ecom')">
+      <div class="ex-score">52/100</div>
+      <div class="ex-site">shopexample.store</div>
+      <div class="ex-verdict">"Your 'Add to Cart' button is grey. Grey. Do you want them to buy or are you just collecting page views?"</div>
+    </div>
+    <div class="example-card" onclick="loadExample('portfolio')">
+      <div class="ex-score">28/100</div>
+      <div class="ex-site">janes-portfolio.me</div>
+      <div class="ex-verdict">"The hero text says 'passionate developer.' 94% of dev portfolios say the same thing. What makes you different?"</div>
+    </div>
+  </div>
+</div>
+
+<footer class="footer">
+  <div>© 2026 ABUZ8 LLC — All tools free, no account needed</div>
+  <div style="display:flex;gap:20px">
+    <a href="/tools">All Tools</a>
+    <a href="https://github.com/abuz8studios-ship-it" target="_blank">GitHub ↗</a>
+    <a href="https://huggingface.co/abuz8studios" target="_blank">Hugging Face ↗</a>
+    <a href="/support.html">Support the work →</a>
+  </div>
+</footer>
+
+<script>
+const ROAST_DATA = {
+  saas: {
+    url: 'typical-saas.io',
+    score: 34,
+    intensity: 'brutal',
+    verdict: "Your website is what happens when someone reads a SaaS landing page template and thought 'yeah, that's good enough.' It's not. Here's every problem.",
+    sections: [
+      { icon:'🎨', title:'Design & Visual Hierarchy', score:28, tag:'bad',
+        items:[
+          {sev:'fire',title:'Hero section has no visual hierarchy',desc:"Everything is the same size. The H1, the subtext, and the CTA are competing for attention equally. The eye doesn't know where to go.",fix:"Make the H1 3× bigger. Make the CTA visually dominant with a high-contrast button."},
+          {sev:'fire',title:'Color palette uses 7 different shades of blue',desc:"Consistency is the first principle of design trust. You have cornflower, navy, sky, cobalt, slate, steel, and 'whatever-that-is' blue.",fix:"Pick 2 blues max. One primary, one accent."},
+          {sev:'warn',title:'CTA button blends into background',desc:"Your primary CTA is the same color as the section background. It's invisible to 30% of visitors.",fix:"Use a high-contrast color like orange, green, or white — something that pops against your lapis background."},
+        ]
+      },
+      { icon:'✍️', title:'Copy & Messaging', score:22, tag:'bad',
+        items:[
+          {sev:'fire',title:"Hero says 'AI-powered solutions for modern businesses'",desc:"This describes 40,000 other companies. It says nothing about what you specifically do, for whom, or what outcome they get.",fix:"Replace with: '[Specific outcome] for [specific customer] in [specific time]. Example: 'Hire 10× faster — AI screens 500 resumes in 2 minutes.'"},
+          {sev:'fire',title:'No proof above the fold',desc:"Zero logos, numbers, or testimonials in the first screen. Trust starts at zero for new visitors.",fix:"Add 3 customer logos or one specific metric ('Used by 2,400 teams') in the hero."},
+          {sev:'warn',title:"Features page says 'robust' and 'scalable' 8 times",desc:"These are meaningless filler words. Every feature page on the internet uses them.",fix:"Replace every 'robust' with what it actually means. 'Robust' → '99.99% uptime, backed by SLA.'"},
+        ]
+      },
+      { icon:'🔍', title:'SEO & Discoverability', score:41, tag:'mid',
+        items:[
+          {sev:'warn',title:'Title tag is just your brand name',desc:"'Acme Inc' — great for people who already know you. Zero help for people searching for what you do.",fix:"Format: '[Primary keyword] | [Secondary benefit] — [Brand]'. E.g. 'AI Resume Screening | Hire Faster — Acme'"},
+          {sev:'warn',title:'No structured data',desc:"Google can't generate rich snippets for your pages. Missing FAQ, Product, and Organization schema.",fix:"Add JSON-LD schema for your homepage (Organization) and product pages (SoftwareApplication)."},
+          {sev:'ok',title:'Page speed is acceptable',desc:"3.2s load time. Not great, not catastrophic. Images could be WebP.",fix:"Convert hero images to WebP. Lazy-load below-fold content."},
+        ]
+      },
+      { icon:'⚡', title:'Conversion & UX', score:31, tag:'bad',
+        items:[
+          {sev:'fire',title:'Pricing page has 5 tiers',desc:"5 options cause decision paralysis. Visitors compare prices instead of buying. The confused mind does not buy.",fix:"Cut to 3 tiers maximum. Name them by persona, not features: Starter / Growth / Enterprise."},
+          {sev:'fire',title:'Demo form has 9 fields',desc:"Name, company, role, size, revenue, budget, timeline, use case, how-did-you-hear. You're asking for a marriage proposal on a first date.",fix:"Cut to 3: name, email, company. Get the rest on the call."},
+          {sev:'warn',title:'No live chat or chatbot',desc:"3% of visitors convert. The other 97% have questions you're not answering. They leave.",fix:"Add a simple chatbot (try Zait at abuz8ai.com/tools/ai-chatbot-agency) or Intercom widget."},
+        ]
+      },
+    ]
+  },
+  agency: {
+    url: 'creative-agency.com', score:41, intensity:'brutal',
+    verdict:"A creative agency with an uncreative website. The irony is loud. Let's fix that.",
+    sections:[
+      {icon:'🎨',title:'Design & Visual Hierarchy',score:38,tag:'mid',items:[
+        {sev:'fire',title:'6 different fonts detected',desc:"Playfair, Georgia, Helvetica, Arial, 'Cursive', and Impact. You're not layering personality, you're broadcasting chaos.",fix:"Use 2 fonts only: one serif for headlines, one sans-serif for body."},
+        {sev:'warn',title:"'Boutique' positioning with no proof",desc:"Boutique implies exclusive, curated, premium. Your portfolio shows 3 projects, two of which are 'concept work.'",fix:"Feature 5 real client projects with outcomes ('+40% conversions', '$2M campaign') front and center."},
+      ]},
+      {icon:'✍️',title:'Copy & Messaging',score:35,tag:'bad',items:[
+        {sev:'fire',title:"'We tell stories' — everyone says this",desc:"Every agency from Portland to Pune says they 'tell stories.' It's not a differentiator anymore.",fix:"Say what kind of stories, for what type of brands, and what the result is. Be specific."},
+        {sev:'warn',title:'No case study results on homepage',desc:"Homepage has beautiful imagery but zero numbers. Clients care about outcomes, not aesthetics.",fix:"Add one hero case study with a metric: 'Rebranded [Client] — traffic up 3× in 6 months.'"},
+      ]},
+    ]
+  },
+  ecom: {
+    url:'shopexample.store', score:52, intensity:'brutal',
+    verdict:"You're losing sales on every page. Not because your product is bad — because your site is fighting you.",
+    sections:[
+      {icon:'🛒',title:'Product & Conversion',score:45,tag:'mid',items:[
+        {sev:'fire',title:'Grey Add to Cart button',desc:"The most important button on your site is the least visible. Conversion killers hide in plain sight.",fix:"Make it high-contrast: bright orange, green, or your brand's most vivid color. Test it."},
+        {sev:'warn',title:'No urgency or scarcity signals',desc:"'In stock' tells me everything is available forever. No reason to buy now.",fix:"'Only 7 left' or '200 sold today' adds urgency. Be honest — don't fake it."},
+      ]},
+      {icon:'📸',title:'Product Photography',score:61,tag:'ok',items:[
+        {sev:'ok',title:'Multiple angles present',desc:"You have front/back/side shots. Good baseline.",fix:"Add lifestyle shots (product in use) and a size comparison reference."},
+        {sev:'warn',title:'No video on top sellers',desc:"Pages with video convert 80% better for physical products. Your top 3 SKUs have none.",fix:"30-second unboxing or demo video per top product. iPhone + good lighting is enough."},
+      ]},
+    ]
+  },
+  portfolio: {
+    url:"janes-portfolio.me", score:28, intensity:'brutal',
+    verdict:"This portfolio is doing everything right for 2018 and everything wrong for 2026. Let's update it.",
+    sections:[
+      {icon:'✍️',title:'Positioning & Copy',score:18,tag:'bad',items:[
+        {sev:'fire',title:"'Passionate developer' hero text",desc:"'Passionate' is the most overused word in developer portfolios. It signals nothing about your skills.",fix:"Replace with what you build and for whom: 'I build fast, accessible React apps for SaaS companies.'"},
+        {sev:'fire',title:'No specific outcomes in project descriptions',desc:"'Built a todo app with React and Firebase' tells me nothing about what you can do for me.",fix:"'Built a task app used by 4,000 users, 98 Lighthouse score, shipped in 3 weeks.' Show impact."},
+      ]},
+      {icon:'🔗',title:'Social Proof & Credibility',score:22,tag:'bad',items:[
+        {sev:'fire',title:'GitHub link goes to empty profile',desc:"7 repos, 3 with 'first commit' as the only activity. GitHub is a live portfolio.",fix:"Pin 3 repos. Write READMEs with screenshots. Show commit history."},
+        {sev:'warn',title:'No testimonials or references',desc:"One sentence from a past employer or professor beats ten self-descriptions.",fix:"Ask 2 people for a 1-sentence quote about working with you."},
+      ]},
+    ]
+  }
+};
+
+const GENERIC_ROASTS = {
+  brutal: [
+    {score:37,verdict:"This website is confidently mediocre. It exists, it loads, and it convinces absolutely no one to do anything. Let's count the ways.",
+     sections:[
+      {icon:'🎨',title:'Design & Visual Hierarchy',score:31,tag:'bad',items:[
+        {sev:'fire',title:'No clear visual hierarchy',desc:"Everything on this page has equal visual weight. The headline, the subtext, the CTAs — all fighting for attention.",fix:"Apply the 60-30-10 rule: 60% neutral background, 30% secondary color, 10% accent for CTAs."},
+        {sev:'warn',title:'Typography inconsistency',desc:"3+ font sizes in the body copy with no clear system. Readers subconsciously distrust inconsistent typography.",fix:"Set a type scale: H1 / H2 / H3 / body / caption. Use it everywhere."},
+        {sev:'ok',title:'Images are present and relevant',desc:"You have imagery that relates to your product. That's the baseline, and you've cleared it.",fix:"Upgrade to higher-res images and add alt text to all of them."},
+      ]},
+      {icon:'✍️',title:'Copy & Messaging',score:28,tag:'bad',items:[
+        {sev:'fire',title:'Value proposition is vague',desc:"Your headline doesn't tell me what you do, who it's for, or what I get. That's three failures in one sentence.",fix:"Formula: '[Do X] for [persona] without [pain]. Get [outcome] in [timeframe].'"},
+        {sev:'fire',title:'No social proof above the fold',desc:"First impression trust is zero for new visitors. Logos, numbers, or quotes are the fastest trust accelerators.",fix:"Add 1 metric or 3 logos in the hero section. Even 'used by 100+ teams' is better than nothing."},
+        {sev:'warn',title:'CTAs are weak and unclear',desc:"'Learn More' and 'Get Started' are placeholder CTAs. They tell visitors nothing about what happens next.",fix:"'Book a 15-min demo' or 'See your score in 60 seconds' — specific, outcome-oriented CTAs convert 30-40% better."},
+      ]},
+      {icon:'🔍',title:'SEO & Discoverability',score:44,tag:'mid',items:[
+        {sev:'warn',title:'Title tag is generic',desc:"Your page title likely matches your brand name only, missing keyword opportunity.",fix:"Format: '[Main keyword] | [Differentiator] — [Brand Name]'"},
+        {sev:'warn',title:'Missing meta description',desc:"Auto-generated snippets in Google look unprofessional and reduce click-through rates.",fix:"Write a 155-character meta description with your main keyword and a call to action."},
+        {sev:'ok',title:'Site appears to be indexable',desc:"No obvious robots.txt blocking and the page renders with content.",fix:"Add an XML sitemap and submit it to Google Search Console."},
+      ]},
+      {icon:'⚡',title:'Conversion & UX',score:35,tag:'bad',items:[
+        {sev:'fire',title:'No live chat or support widget',desc:"97% of visitors leave without converting. Most have a question you didn't answer on the page.",fix:"Add a chatbot or live chat. Even a simple 'Message us on WhatsApp' CTA captures intent."},
+        {sev:'warn',title:'Form is too long',desc:"Every additional field in a form reduces conversion by ~10%. Count your fields and cut half of them.",fix:"Only ask for what you need to follow up. Name + Email is enough for most lead forms."},
+        {sev:'warn',title:'Mobile experience untested',desc:"62% of web traffic is mobile. If your site wasn't designed mobile-first, it's broken for most visitors.",fix:"Test on a real iPhone and Android. Fix the hamburger menu, button tap targets (min 44×44px), and font sizes (min 16px)."},
+      ]},
+    ]},
+  ],
+  gentle: [
+    {score:58,verdict:"Your site has a solid foundation. With some targeted improvements, you could significantly increase conversions. Here's where to focus.",
+     sections:[
+      {icon:'🎨',title:'Design',score:55,tag:'mid',items:[
+        {sev:'warn',title:'Contrast could be stronger',desc:"Some text/background combos may not meet WCAG AA standards.",fix:"Use a contrast checker and ensure 4.5:1 ratio for body text."},
+        {sev:'ok',title:'Layout is clean and organized',desc:"Good use of whitespace and consistent spacing.",fix:"Minor: increase visual hierarchy between H1 and H2 sizes."},
+      ]},
+      {icon:'✍️',title:'Copy',score:52,tag:'mid',items:[
+        {sev:'warn',title:'Value prop could be sharper',desc:"The main headline is descriptive but not compelling.",fix:"Add the specific outcome the customer gets."},
+        {sev:'ok',title:'Writing is clear and readable',desc:"Good sentence length and no jargon overload.",fix:"Add 1-2 specific proof points."},
+      ]},
+    ]},
+  ],
+  savage: [
+    {score:19,verdict:"This website doesn't just need improvement — it needs therapy. It's actively hurting you. Every day it stays like this, you're leaving money on the table.",
+     sections:[
+      {icon:'🎨',title:'Design — It\'s Not Fine',score:12,tag:'bad',items:[
+        {sev:'fire',title:"The design screams 'I used a free template in 2019 and never touched it'",desc:"This is not a compliment. The web has moved on. Your competitors have moved on. Your site is standing still.",fix:"Hire a designer for a day ($500-800) or use Framer/Webflow with a modern template. The ROI is immediate."},
+        {sev:'fire',title:'Your color scheme has 8 colors',desc:"This isn't a website, it's a color sample booklet. Consistency is the foundation of visual trust.",fix:"Three colors. That's it. Primary, accent, neutral. Everything else is noise."},
+      ]},
+      {icon:'✍️',title:'Copy — It\'s Painful',score:14,tag:'bad',items:[
+        {sev:'fire',title:'Every headline is a cliché',desc:"'Innovating for tomorrow.' 'Your success is our mission.' 'Empowering businesses.' These words have been bled dry.",fix:"Say what you actually do. 'We build sales pipelines for B2B SaaS companies.' That's it."},
+        {sev:'fire',title:'Zero proof, anywhere',desc:"Not one number. Not one customer name. Not one testimonial. You're asking people to trust you with their business and you've given them nothing.",fix:"One real customer quote with their name and company beats 1,000 words of marketing copy."},
+      ]},
+    ]},
+  ]
+};
+
+let intensity = 'brutal';
+let roastData = null;
+
+function setOpt(el, group) {
+  document.querySelectorAll(`[data-val]`).forEach(c => {
+    if(c.closest('#intensityOpts')) c.classList.remove('active');
+  });
+  el.classList.add('active');
+  intensity = el.dataset.val;
+}
+
+function startRoast() {
+  const url = document.getElementById('urlInput').value.trim();
+  if(!url) {
+    document.getElementById('urlInput').style.borderColor = 'var(--flame)';
+    setTimeout(()=>document.getElementById('urlInput').style.borderColor='',1000);
+    return;
+  }
+  document.getElementById('roastBtn').disabled = true;
+  document.getElementById('roastBtn').textContent = '🔥 Roasting...';
+  document.getElementById('scanner').classList.add('visible');
+  document.getElementById('roastResult').classList.remove('visible');
+  document.getElementById('examplesSection').style.display = 'none';
+
+  const steps = [
+    {d:400,dot:0,lbl:0,fill:12},
+    {d:900,dot:1,lbl:1,fill:28},
+    {d:1500,dot:2,lbl:2,fill:45},
+    {d:2100,dot:3,lbl:3,fill:62},
+    {d:2700,dot:4,lbl:4,fill:78},
+    {d:3400,dot:5,lbl:5,fill:90},
+  ];
+  const scanTimers = steps.map(({d,dot,lbl,fill}) => setTimeout(()=>{
+    for(let i=0;i<dot;i++){
+      document.getElementById(`sd${i+1}`).className='scan-dot done';
+    }
+    document.getElementById(`sd${dot+1}`).className='scan-dot active';
+    document.getElementById(`sl${lbl+1}`).className='scan-label active';
+    document.getElementById('scanFill').style.width=fill+'%';
+  }, d));
+
+  const finish = () => {
+    scanTimers.forEach(clearTimeout);
+    document.getElementById('scanner').classList.remove('visible');
+    document.getElementById('roastBtn').disabled = false;
+    document.getElementById('roastBtn').textContent = '🔥 Roast Again';
+  };
+
+  // Real AI roast via the ABUZ8 brain (Cloudflare Workers AI). No canned roasts.
+  fetch('/api/waitlist', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ tool: 'roast-my-website', data: { url, intensity } })
+  })
+  .then(r => r.json())
+  .then(res => {
+    if(!res.success || !res.result) throw new Error(res.error || 'Generation failed');
+    document.getElementById('scanFill').style.width = '100%';
+    roastData = { url, intensity };
+    showRoastText(res.result, url);
+    finish();
+    document.getElementById('roastResult').classList.add('visible');
+  })
+  .catch(err => {
+    finish();
+    document.getElementById('examplesSection').style.display = '';
+    alert('Roast failed: ' + err.message + '. Please try again in a moment.');
+  });
+}
+
+// Render the REAL AI roast (free-form HTML/text) into the result panel, with the email-capture CTA preserved.
+function showRoastText(result, urlStr) {
+  const res = document.getElementById('roastResult');
+  res.innerHTML = `
+    <div class="roast-header">
+      <div class="roast-verdict">
+        <h2>🔥 Roast of ${urlStr.replace(/</g,'&lt;')}</h2>
+        <p>Intensity: ${intensity}. Brutally honest, AI-generated feedback below.</p>
+      </div>
+    </div>
+    <div class="roast-section open">
+      <div class="roast-section-body" style="max-height:none;padding:20px;line-height:1.7;">${result}</div>
+    </div>
+    <div class="summary-cta">
+      <h3>Want the full fix list?</h3>
+      <p>Get a detailed report with prioritized fixes and code snippets sent to your inbox.</p>
+      <div class="cta-form">
+        <input type="email" class="cta-email" id="ctaEmail" placeholder="your@email.com">
+        <button class="cta-submit" onclick="submitReport()">Send Report</button>
+      </div>
+      <div class="cta-submitted" id="ctaSubmitted">✓ Report queued — check your inbox in a few minutes.</div>
+    </div>`;
+}
+
+function scoreTag(score) {
+  if(score < 40) return 'bad';
+  if(score < 65) return 'mid';
+  return 'ok';
+}
+
+function scoreClass(score) {
+  if(score < 40) return 'score-bad';
+  if(score < 65) return 'score-mid';
+  return 'score-ok';
+}
+
+function scoreEmoji(score) {
+  if(score < 30) return '💀';
+  if(score < 45) return '🔥';
+  if(score < 65) return '😬';
+  return '😐';
+}
+
+function showRoast(data, urlStr) {
+  const res = document.getElementById('roastResult');
+  const scoreEmoji_ = scoreEmoji(data.score);
+  let html = `
+    <div class="roast-header">
+      <div class="roast-score-wrap">
+        <div class="roast-score">${data.score}<span style="font-size:1.2rem">/100</span></div>
+        <div class="roast-score-label">${scoreEmoji_} Roast Score</div>
+      </div>
+      <div class="roast-verdict">
+        <h2>${urlStr}</h2>
+        <p>${data.verdict}</p>
+      </div>
+    </div>`;
+
+  data.sections.forEach((sec, si) => {
+    const sTag = scoreTag(sec.score);
+    const sCls = scoreClass(sec.score);
+    html += `
+    <div class="roast-section" id="rs${si}">
+      <div class="roast-section-head" onclick="toggleSection(${si})">
+        <span class="roast-section-icon">${sec.icon}</span>
+        <span class="roast-section-title">${sec.title}</span>
+        <span class="roast-section-score ${sCls}">${sec.score}/100</span>
+        <span class="roast-section-chevron">▼</span>
+      </div>
+      <div class="roast-section-body">
+        ${sec.items.map(item => `
+          <div class="roast-item">
+            <span class="roast-item-sev ${item.sev==='fire'?'sev-fire':item.sev==='warn'?'sev-warn':'sev-ok'}">${item.sev==='fire'?'🔥 FIRE':item.sev==='warn'?'⚠️ WARN':'✓ OK'}</span>
+            <div class="roast-item-text">
+              <strong>${item.title}</strong>
+              <span>${item.desc}</span>
+              <div class="roast-item-fix">→ Fix: ${item.fix}</div>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    </div>`;
+  });
+
+  const fireCount = data.sections.flatMap(s=>s.items).filter(i=>i.sev==='fire').length;
+  html += `
+    <div class="summary-cta">
+      <h3>Want the full fix list?</h3>
+      <p>${fireCount} critical issues found. Get a detailed PDF report with prioritized fixes and code snippets sent to your inbox.</p>
+      <div class="cta-form">
+        <input type="email" class="cta-email" id="ctaEmail" placeholder="your@email.com">
+        <button class="cta-submit" onclick="submitReport()">Send Report</button>
+      </div>
+      <div class="cta-submitted" id="ctaSubmitted">✓ Report queued — check your inbox in a few minutes.</div>
+    </div>`;
+
+  res.innerHTML = html;
+
+  // Auto-open first section
+  setTimeout(() => toggleSection(0), 100);
+}
+
+function toggleSection(idx) {
+  const sec = document.getElementById(`rs${idx}`);
+  const wasOpen = sec.classList.contains('open');
+  document.querySelectorAll('.roast-section').forEach(s => s.classList.remove('open'));
+  if(!wasOpen) sec.classList.add('open');
+}
+
+function submitReport() {
+  const email = document.getElementById('ctaEmail').value.trim();
+  if(!email || !email.includes('@')) return;
+  const btn = document.querySelector('.cta-submit');
+  btn.disabled = true;
+  btn.textContent = 'Sending...';
+  fetch('/api/waitlist', {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({email, product:'ai-roast-my-website', url: roastData?.url, score: roastData?.score, ts: new Date().toISOString()})
+  }).catch(()=>{});
+  const stored = JSON.parse(localStorage.getItem('abuz8_waitlist')||'[]');
+  stored.push({email, product:'ai-roast-my-website', ts:new Date().toISOString()});
+  localStorage.setItem('abuz8_waitlist', JSON.stringify(stored));
+  document.querySelector('.cta-form').style.display = 'none';
+  document.getElementById('ctaSubmitted').style.display = 'block';
+}
+
+function loadExample(key) {
+  const data = ROAST_DATA[key];
+  document.getElementById('urlInput').value = data.url;
+  intensity = data.intensity || 'brutal';
+  document.querySelectorAll('#intensityOpts .opt-chip').forEach(c=>{
+    c.classList.toggle('active', c.dataset.val === intensity);
+  });
+  startRoast();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+</script>
+<script src="_abuz8-live-brain.js" defer></script>
+
+<script src="/assets/js/dfy-banner.js" async></script>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+<script src="/tools/_tools-shared.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>
+

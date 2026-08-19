@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Slogan Generator — ABUZ8</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{--lapis:#0a1628;--lapis2:#0f2040;--gold:#c9a84c;--gold2:#e6c876;--turq:#0e9f6e;--cream:#f5f0e8;--cream2:#ede7d9;--text:#1a1a2e;--muted:#5a6070;--r:12px;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'Inter',sans-serif;background:var(--cream);color:var(--text);min-height:100vh;}
+  header{background:var(--lapis);padding:18px 32px;display:flex;align-items:center;justify-content:space-between;}
+  header .brand{font-family:'Playfair Display',serif;font-size:22px;color:#fff;}
+  header .brand span{color:var(--gold);}
+  .subtitle{color:rgba(255,255,255,0.5);font-size:12px;margin-top:2px;}
+  .main{max-width:1000px;margin:0 auto;padding:32px 20px;}
+  h1{font-family:'Playfair Display',serif;font-size:32px;color:var(--lapis);margin-bottom:6px;}
+  .hero-sub{color:var(--muted);font-size:15px;margin-bottom:32px;}
+  .layout{display:grid;grid-template-columns:340px 1fr;gap:28px;}
+  @media(max-width:700px){.layout{grid-template-columns:1fr;}}
+  .panel{background:#fff;border-radius:var(--r);padding:24px;box-shadow:0 2px 16px rgba(10,22,40,0.07);}
+  label{display:block;font-size:12px;font-weight:600;color:var(--lapis);text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px;}
+  input,textarea,select{width:100%;border:1.5px solid var(--cream2);border-radius:8px;padding:10px 13px;font-size:14px;font-family:'Inter',sans-serif;color:var(--text);background:#fff;transition:border-color .2s;outline:none;margin-bottom:18px;}
+  input:focus,textarea:focus{border-color:var(--gold);}
+  .tone-row{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:18px;}
+  .chip{border:1.5px solid var(--cream2);background:#fff;border-radius:20px;padding:6px 13px;font-size:12px;font-weight:500;color:var(--muted);cursor:pointer;transition:all .2s;}
+  .chip.active{background:var(--lapis);border-color:var(--lapis);color:#fff;}
+  .gen-btn{width:100%;background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--lapis);font-size:15px;font-weight:700;border:none;border-radius:8px;padding:14px;cursor:pointer;transition:opacity .2s;font-family:'Inter',sans-serif;}
+  .gen-btn:hover{opacity:.9;}
+  .gen-btn:disabled{opacity:.5;cursor:not-allowed;}
+  .section-label{font-family:'Playfair Display',serif;font-size:16px;font-weight:600;color:var(--lapis);margin-bottom:14px;padding-bottom:8px;border-bottom:2px solid var(--gold);}
+  .prog-bar{width:100%;height:3px;background:var(--cream2);border-radius:2px;overflow:hidden;margin-bottom:18px;display:none;}
+  .prog-fill{height:100%;width:0;background:linear-gradient(90deg,var(--turq),var(--gold));transition:width 1.5s ease;}
+  .slogans-grid{display:flex;flex-direction:column;gap:10px;}
+  .slogan-card{background:var(--cream);border:1.5px solid var(--cream2);border-radius:10px;padding:16px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;transition:border-color .2s;cursor:pointer;}
+  .slogan-card:hover{border-color:var(--gold);}
+  .slogan-card.fav{border-color:var(--gold);background:rgba(201,168,76,0.06);}
+  .slogan-text{font-size:15px;font-weight:500;color:var(--lapis);flex:1;line-height:1.4;}
+  .slogan-actions{display:flex;gap:6px;flex-shrink:0;}
+  .s-btn{border:1.5px solid var(--cream2);background:#fff;border-radius:6px;padding:5px 10px;font-size:12px;cursor:pointer;color:var(--muted);transition:all .2s;}
+  .s-btn:hover{border-color:var(--gold);color:var(--gold);}
+  .s-btn.fav{color:var(--gold);border-color:var(--gold);}
+  .empty-state{text-align:center;padding:60px 20px;color:var(--muted);font-size:14px;}
+  .empty-state .icon{font-size:40px;margin-bottom:12px;}
+  .favorites-list{display:flex;flex-direction:column;gap:8px;margin-top:4px;}
+  .fav-item{background:linear-gradient(135deg,var(--lapis),var(--lapis2));border-radius:8px;padding:14px 18px;color:#fff;font-size:14px;line-height:1.4;display:flex;align-items:center;justify-content:space-between;gap:10px;}
+  .fav-item .remove{cursor:pointer;color:rgba(255,255,255,0.4);font-size:12px;}
+  .fav-item .remove:hover{color:var(--gold);}
+  .tabs{display:flex;gap:0;margin-bottom:18px;border:1.5px solid var(--cream2);border-radius:8px;overflow:hidden;}
+  .tab{flex:1;padding:9px 0;text-align:center;font-size:13px;font-weight:500;cursor:pointer;background:#fff;color:var(--muted);border:none;transition:all .2s;}
+  .tab.active{background:var(--lapis);color:#fff;}
+  .count-badge{background:var(--gold);color:var(--lapis);font-size:10px;font-weight:700;border-radius:10px;padding:2px 6px;margin-left:4px;}
+</style>
+<script src="_abuz8-live-brain.js" defer></script>
+
+<script src="_abuz8-config.js" defer></script>
+<link rel="canonical" href="https://abuz8ai.com/tools/ai-slogan-generator">
+<meta name="description" content="AI Slogan Generator — Memorable taglines and slogans. Free, no signup, runs entirely in your browser. One of 169 free AI and developer tools by ABUZ8.">
+</head>
+<body>
+
+<header>
+  <div>
+    <div class="brand">ABU<span>Z8</span></div>
+    <div class="subtitle">AI Slogan Generator</div>
+  </div>
+  <div style="color:rgba(255,255,255,0.4);font-size:12px;">Free · No login required</div>
+</header>
+
+<div class="main">
+  <h1>AI Slogan Generator</h1>
+  <p class="hero-sub">Create memorable, punchy slogans for your brand, campaign, product, or event — instantly.</p>
+
+  <div class="layout">
+
+    <!-- LEFT -->
+    <div class="panel">
+      <div class="section-label">Brand Details</div>
+
+      <label>Brand / Product Name</label>
+      <input type="text" id="brand" placeholder="e.g. Luminary Coffee">
+
+      <label>What It Does / Value Prop</label>
+      <textarea id="desc" rows="3" placeholder="e.g. Premium cold brew coffee delivered to your door every week. Helps busy professionals stay sharp."></textarea>
+
+      <label>Target Audience</label>
+      <input type="text" id="audience" placeholder="e.g. Remote workers, entrepreneurs, Gen Z">
+
+      <label>Style / Vibe</label>
+      <div class="tone-row">
+        <button class="chip active" onclick="setChip('style',this,'Bold')">Bold</button>
+        <button class="chip" onclick="setChip('style',this,'Witty')">Witty</button>
+        <button class="chip" onclick="setChip('style',this,'Inspiring')">Inspiring</button>
+        <button class="chip" onclick="setChip('style',this,'Minimalist')">Minimalist</button>
+        <button class="chip" onclick="setChip('style',this,'Playful')">Playful</button>
+        <button class="chip" onclick="setChip('style',this,'Premium')">Premium</button>
+      </div>
+
+      <label>Count</label>
+      <div class="tone-row">
+        <button class="chip" onclick="setChip('count',this,'5')">5</button>
+        <button class="chip active" onclick="setChip('count',this,'10')">10</button>
+        <button class="chip" onclick="setChip('count',this,'20')">20</button>
+      </div>
+
+      <div class="prog-bar" id="prog"><div class="prog-fill" id="progFill"></div></div>
+      <button class="gen-btn" id="genBtn" onclick="generate()">✦ Generate Slogans</button>
+    </div>
+
+    <!-- RIGHT -->
+    <div class="panel">
+      <div class="tabs">
+        <button class="tab active" onclick="showTab('results',this)">Results</button>
+        <button class="tab" onclick="showTab('favorites',this)">Favorites <span class="count-badge" id="favCount">0</span></button>
+      </div>
+
+      <div id="tab-results">
+        <div id="slogansContainer">
+          <div class="empty-state">
+            <div class="icon">✨</div>
+            <p>Your slogans will appear here.</p>
+            <p style="margin-top:6px;font-size:12px;">Fill in your brand details and click Generate.</p>
+          </div>
+        </div>
+      </div>
+
+      <div id="tab-favorites" style="display:none">
+        <div id="favContainer">
+          <div class="empty-state" id="favEmpty">
+            <div class="icon">⭐</div>
+            <p>No favorites yet. Click ★ on any slogan to save it.</p>
+          </div>
+          <div class="favorites-list" id="favList"></div>
+        </div>
+        <div style="margin-top:14px;display:flex;gap:10px;">
+          <button class="gen-btn" style="font-size:13px;padding:10px" onclick="copyAllFavorites()">📋 Copy All Favorites</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+let selectedStyle = 'Bold';
+let selectedCount = '10';
+let favorites = [];
+
+function setChip(group, el, val) {
+  if (group === 'style') selectedStyle = val;
+  if (group === 'count') selectedCount = val;
+  el.closest('.tone-row').querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+}
+
+function showTab(tab, el) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('tab-results').style.display = tab === 'results' ? '' : 'none';
+  document.getElementById('tab-favorites').style.display = tab === 'favorites' ? '' : 'none';
+}
+
+const SLOGAN_TEMPLATES = {
+  Bold: [
+    (b,v) => `${b}: ${v.split(' ').slice(0,3).join(' ')} — or nothing.`,
+    (b,v) => `We built ${b} for people who don't settle.`,
+    (b,v) => `This is what ${v.toLowerCase().includes('coffee')?'fuel':'progress'} looks like.`,
+    (b,v) => `${b}. Because average was never the goal.`,
+    (b,v) => `The bold choice. ${b}.`,
+    (b,v) => `${b}: Own it.`,
+    (b,v) => `Different by design. ${b}.`,
+    (b,v) => `${b} — the standard just changed.`,
+    (b,v) => `Why blend in when ${b} exists?`,
+    (b,v) => `${b}: No compromises. No exceptions.`,
+    (b,v) => `Built for the ones who lead. ${b}.`,
+    (b,v) => `${b}: Your edge. Your move.`,
+    (b,v) => `Power your next chapter with ${b}.`,
+    (b,v) => `${b}: Where ambition meets execution.`,
+    (b,v) => `The world moves fast. Move with ${b}.`,
+    (b,v) => `${b}: Nothing less than extraordinary.`,
+    (b,v) => `Stop waiting. Start ${b}.`,
+    (b,v) => `${b}: Redefining ${v.split(' ').slice(0,2).join(' ')}.`,
+    (b,v) => `With ${b}, the bar keeps rising.`,
+    (b,v) => `${b}. For those who know.`,
+  ],
+  Witty: [
+    (b,v) => `${b}: Because your competition won't.`,
+    (b,v) => `We make ${v.split(' ').slice(0,3).join(' ')} look easy. (It's not.)`,
+    (b,v) => `${b}: Adults only. (Kidding. Kind of.)`,
+    (b,v) => `Finally, something that actually works. ${b}.`,
+    (b,v) => `${b}: 90% genius, 10% coffee.`,
+    (b,v) => `The secret? ${b}. You're welcome.`,
+    (b,v) => `${b}: More impressive than your last resume.`,
+    (b,v) => `Life's short. ${b} isn't.`,
+    (b,v) => `${b}: Your boss will wonder. We'll know.`,
+    (b,v) => `${b}. Smarter than the average answer.`,
+    (b,v) => `${b}: We thought about it so you don't have to.`,
+    (b,v) => `Less talking. More ${b}.`,
+    (b,v) => `${b}: It's not cheating. It's strategy.`,
+    (b,v) => `Some people meditate. Some use ${b}.`,
+    (b,v) => `${b}: Proof that good things come to those who ship.`,
+    (b,v) => `${b}: The side effect is results.`,
+    (b,v) => `Warning: ${b} may cause excessive productivity.`,
+    (b,v) => `${b}: Making "good enough" obsolete since day one.`,
+    (b,v) => `${b} — because winging it is overrated.`,
+    (b,v) => `Your new unfair advantage: ${b}.`,
+  ],
+  Inspiring: [
+    (b,v) => `${b}: Fueling the people changing the world.`,
+    (b,v) => `Every great journey starts with ${b}.`,
+    (b,v) => `${b}: Built by dreamers. Used by achievers.`,
+    (b,v) => `What you build today shapes tomorrow. ${b}.`,
+    (b,v) => `${b}: Empowering you to do more.`,
+    (b,v) => `The future belongs to those who start. ${b}.`,
+    (b,v) => `${b}: For the moments that matter.`,
+    (b,v) => `Small steps. Big vision. ${b}.`,
+    (b,v) => `${b}: Where your potential meets its match.`,
+    (b,v) => `You were made for this. ${b} agrees.`,
+    (b,v) => `${b}: Progress, not perfection.`,
+    (b,v) => `Every version of you deserves the best. ${b}.`,
+    (b,v) => `${b}: The bridge between where you are and who you'll become.`,
+    (b,v) => `Purpose-built for the purposeful. ${b}.`,
+    (b,v) => `${b}: Your best is still ahead.`,
+    (b,v) => `${b}: Believe the build.`,
+    (b,v) => `Start strong. Finish stronger. ${b}.`,
+    (b,v) => `${b}: Rise with every challenge.`,
+    (b,v) => `Not just a product. A movement. ${b}.`,
+    (b,v) => `${b}: The best investment is in yourself.`,
+  ],
+  Minimalist: [
+    (b,v) => `${b}.`,
+    (b,v) => `${b}: Less, better.`,
+    (b,v) => `${b}: Simply better.`,
+    (b,v) => `Simple. Powerful. ${b}.`,
+    (b,v) => `${b}: Do one thing perfectly.`,
+    (b,v) => `Clarity. ${b}.`,
+    (b,v) => `Less noise. More ${b}.`,
+    (b,v) => `${b}: Stripped of everything unnecessary.`,
+    (b,v) => `Form follows function. ${b}.`,
+    (b,v) => `${b}: Where enough is enough.`,
+    (b,v) => `One tool. Infinite use. ${b}.`,
+    (b,v) => `${b}: Only what matters.`,
+    (b,v) => `${b}: Not more. Just right.`,
+    (b,v) => `The essentials, perfected. ${b}.`,
+    (b,v) => `${b}: Quiet confidence.`,
+    (b,v) => `${b}: Signal over noise.`,
+    (b,v) => `${b}: Edit ruthlessly. Deliver perfectly.`,
+    (b,v) => `${b}: Precision. Always.`,
+    (b,v) => `Clean lines. Clear mind. ${b}.`,
+    (b,v) => `${b}: Nothing added. Nothing missing.`,
+  ],
+  Playful: [
+    (b,v) => `${b}: Let's go!`,
+    (b,v) => `${b} makes everything better. Science agrees.`,
+    (b,v) => `Life's too short for bad ${v.split(' ')[0].toLowerCase()}. Hello, ${b}!`,
+    (b,v) => `${b}: Making Mondays less terrible.`,
+    (b,v) => `Happy inside. Made with ${b}.`,
+    (b,v) => `${b}: The one your friends will ask about.`,
+    (b,v) => `${b}: Now with 100% more awesome.`,
+    (b,v) => `${b}: You deserve nice things.`,
+    (b,v) => `${b}: The glow-up is real.`,
+    (b,v) => `Treat yourself. ${b} said it's fine.`,
+    (b,v) => `${b}: Plot twist — it works.`,
+    (b,v) => `${b}: Your daily dose of delight.`,
+    (b,v) => `${b}: The antidote to ordinary.`,
+    (b,v) => `Spoiler: ${b} is everything.`,
+    (b,v) => `${b}: Adulting made less awful.`,
+    (b,v) => `Do more fun things with ${b}.`,
+    (b,v) => `${b}: Because "meh" is not a vibe.`,
+    (b,v) => `${b}: The upgrade you didn't know you needed.`,
+    (b,v) => `${b}: Main character energy.`,
+    (b,v) => `${b}: Life just got better.`,
+  ],
+  Premium: [
+    (b,v) => `${b}: Crafted for those who know the difference.`,
+    (b,v) => `The finest ${v.split(' ').slice(0,2).join(' ')}, perfected. ${b}.`,
+    (b,v) => `${b}: Where excellence is the baseline.`,
+    (b,v) => `Uncompromising quality. ${b}.`,
+    (b,v) => `${b}: Reserved for the discerning few.`,
+    (b,v) => `${b}: Luxury without apology.`,
+    (b,v) => `Masterfully made. ${b}.`,
+    (b,v) => `${b}: The mark of distinction.`,
+    (b,v) => `Curated. Refined. ${b}.`,
+    (b,v) => `${b}: Above the ordinary, always.`,
+    (b,v) => `${b}: Where precision meets prestige.`,
+    (b,v) => `For those who accept nothing less than the best. ${b}.`,
+    (b,v) => `${b}: Heritage meets innovation.`,
+    (b,v) => `Timeless. ${b}.`,
+    (b,v) => `${b}: The art of the exceptional.`,
+    (b,v) => `${b}: Elevated. Always.`,
+    (b,v) => `${b}: Because you've earned the best.`,
+    (b,v) => `The pinnacle of ${v.split(' ')[0].toLowerCase()}. ${b}.`,
+    (b,v) => `${b}: Where craft meets character.`,
+    (b,v) => `${b}: Built to last. Designed to impress.`,
+  ],
+};
+
+function generate() {
+  const brand = document.getElementById('brand').value.trim();
+  const desc = document.getElementById('desc').value.trim();
+  const audience = document.getElementById('audience').value.trim();
+
+  if (!brand) { alert('Enter your brand name.'); return; }
+
+  const btn = document.getElementById('genBtn');
+  btn.disabled = true;
+  btn.textContent = '✦ Generating...';
+  const prog = document.getElementById('prog');
+  const fill = document.getElementById('progFill');
+  prog.style.display = 'block';
+  fill.style.width = '0';
+  setTimeout(() => fill.style.width = '90%', 50);
+
+  const finish = () => {
+    prog.style.display = 'none';
+    fill.style.width = '0';
+    btn.disabled = false;
+    btn.textContent = '✦ Generate Slogans';
+  };
+
+  // Real AI generation via the ABUZ8 brain (Cloudflare Workers AI). No templates.
+  fetch('/api/waitlist', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      tool: 'slogan-generator',
+      data: { brand, description: desc, audience, style: selectedStyle, count: parseInt(selectedCount) }
+    })
+  })
+  .then(r => r.json())
+  .then(res => {
+    if (!res.success || !res.result) throw new Error(res.error || 'Generation failed');
+    fill.style.width = '100%';
+    setTimeout(() => {
+      finish();
+      // Parse the AI output into individual slogan lines (strip list markers / numbering).
+      const slogans = res.result
+        .split('\n')
+        .map(l => l.replace(/<[^>]+>/g, '').trim())
+        .map(l => l.replace(/^\s*(?:\d+[\.\)]|[-*•])\s*/, '').trim())
+        .filter(l => l.length > 0);
+      renderSlogans(slogans.length ? slogans : [res.result.replace(/<[^>]+>/g, '').trim()]);
+    }, 250);
+  })
+  .catch(err => {
+    finish();
+    alert('Generation failed: ' + err.message + '. Please try again in a moment.');
+  });
+}
+
+function renderSlogans(slogans) {
+  const container = document.getElementById('slogansContainer');
+  container.innerHTML = '';
+  const grid = document.createElement('div');
+  grid.className = 'slogans-grid';
+  slogans.forEach((s, i) => {
+    const isFav = favorites.includes(s);
+    const card = document.createElement('div');
+    card.className = 'slogan-card' + (isFav ? ' fav' : '');
+    card.innerHTML = `
+      <div class="slogan-text">${s}</div>
+      <div class="slogan-actions">
+        <button class="s-btn ${isFav ? 'fav' : ''}" onclick="toggleFav('${s.replace(/'/g,"\\'")}', this)">★</button>
+        <button class="s-btn" onclick="copySingle('${s.replace(/'/g,"\\'")}', this)">Copy</button>
+      </div>`;
+    grid.appendChild(card);
+  });
+  container.appendChild(grid);
+}
+
+function toggleFav(text, btn) {
+  const idx = favorites.indexOf(text);
+  if (idx === -1) {
+    favorites.push(text);
+    btn.classList.add('fav');
+    btn.closest('.slogan-card').classList.add('fav');
+  } else {
+    favorites.splice(idx, 1);
+    btn.classList.remove('fav');
+    btn.closest('.slogan-card').classList.remove('fav');
+  }
+  document.getElementById('favCount').textContent = favorites.length;
+  renderFavorites();
+}
+
+function renderFavorites() {
+  const list = document.getElementById('favList');
+  const empty = document.getElementById('favEmpty');
+  empty.style.display = favorites.length ? 'none' : '';
+  list.innerHTML = '';
+  favorites.forEach((s, i) => {
+    const item = document.createElement('div');
+    item.className = 'fav-item';
+    item.innerHTML = `<span>${s}</span><span class="remove" onclick="removeFav(${i})">✕</span>`;
+    list.appendChild(item);
+  });
+}
+
+function removeFav(i) {
+  favorites.splice(i, 1);
+  document.getElementById('favCount').textContent = favorites.length;
+  renderFavorites();
+}
+
+function copySingle(text, btn) {
+  navigator.clipboard.writeText(text);
+  const orig = btn.textContent;
+  btn.textContent = '✓';
+  setTimeout(() => btn.textContent = orig, 1200);
+}
+
+function copyAllFavorites() {
+  if (!favorites.length) { alert('No favorites saved.'); return; }
+  navigator.clipboard.writeText(favorites.join('\n')).then(() => alert('All favorites copied!'));
+}
+</script>
+
+<script src="/assets/js/dfy-banner.js" async></script>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+<script src="/tools/_tools-shared.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>
+

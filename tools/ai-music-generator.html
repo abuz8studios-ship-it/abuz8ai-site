@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Music Generator — Original Tracks from Text Prompts | ABUZ8</title>
+<meta name="description" content="AI music generator powered by AudioCraft. Describe your vibe — get original instrumental tracks. Lo-fi, cinematic, hip-hop, ambient, score. Royalty-free. Early access.">
+<meta name="keywords" content="ai music generator, audiocraft music, royalty free ai music, ai song generator, instrumental ai, ai composer, text to music">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://abuz8ai.com/tools/ai-music-generator-pro">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://abuz8ai.com/tools/ai-music-generator">
+<meta property="og:title" content="AI Music Generator — Text-to-Track">
+<meta property="og:description" content="Describe a vibe. Get an original royalty-free track. Powered by AudioCraft.">
+<meta property="og:image" content="https://abuz8ai.com/og/ai-music-generator.png">
+<meta property="og:site_name" content="ABUZ8">
+<meta name="twitter:card" content="summary_large_image">
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebApplication","name":"AI Music Generator","url":"https://abuz8ai.com/tools/ai-music-generator.html","description":"AI music generator powered by AudioCraft. Generate original royalty-free instrumental tracks from text descriptions.","applicationCategory":"MultimediaApplication","operatingSystem":"Web","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"publisher":{"@type":"Organization","name":"ABUZ8 AI","url":"https://abuz8ai.com"}}
+</script>
+
+<style>
+  :root{--lapis:#0a1628;--lapis2:#0f2040;--lapis3:#163060;--gold:#c9a84c;--gold2:#e8d48b;--turq:#0e9f6e;--turq2:#2fbf8f;--turq3:#2fbf8f;--ivory:#faf8f2;--text:#e8e4d8;--dim:#8a9aaa;--dim2:#6a7a8a;--card:#0d1a30;--border:#1a2e50;--border2:rgba(201,168,76,0.18);--r:12px;--r-sm:8px;}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--lapis);color:var(--text);font-family:'Inter',system-ui,sans-serif;min-height:100vh;line-height:1.55;}
+  header{background:linear-gradient(135deg,var(--lapis2),var(--lapis3));border-bottom:1px solid var(--border2);padding:24px 40px;display:flex;align-items:center;gap:20px;}
+  .logo{width:44px;height:44px;background:linear-gradient(135deg,var(--gold),var(--turq));border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:18px;color:var(--lapis);}
+  header h1{font-family:'Playfair Display',serif;font-size:26px;color:var(--gold);font-weight:700;}
+  header p{font-size:13px;color:var(--dim);margin-top:2px;}
+  header a.home-link{color:var(--dim);text-decoration:none;font-size:13px;}
+  header a.home-link:hover{color:var(--gold);}
+  .badge{margin-left:auto;background:rgba(201,168,76,0.12);border:1px solid var(--border2);padding:6px 14px;border-radius:20px;font-size:12px;color:var(--gold);}
+  .hero{max-width:1200px;margin:0 auto;padding:40px 24px 24px;}
+  .hero h2{font-family:'Playfair Display',serif;font-size:40px;line-height:1.15;color:var(--ivory);margin-bottom:14px;font-weight:700;}
+  .hero h2 .accent{color:var(--gold);}
+  .hero p.lede{color:var(--dim);font-size:16px;max-width:720px;}
+  .hero .meta-strip{display:flex;gap:16px;flex-wrap:wrap;margin-top:18px;font-size:12px;color:var(--dim2);}
+  .hero .meta-strip .dot{color:var(--turq2);}
+  .container{max-width:1200px;margin:0 auto;padding:24px;}
+  .panel{background:var(--card);border:1px solid var(--border2);border-radius:var(--r);padding:24px;margin-bottom:18px;}
+  .panel-title{font-size:11px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--gold);margin-bottom:18px;}
+  label{display:block;font-size:12px;font-weight:600;color:var(--text);text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px;margin-top:14px;}
+  label.first{margin-top:0;}
+  input,textarea,select{width:100%;background:var(--lapis2);border:1px solid var(--border);border-radius:var(--r-sm);padding:11px 13px;font-size:14px;color:var(--text);font-family:'Inter',sans-serif;outline:none;transition:border-color .2s;}
+  textarea{resize:vertical;min-height:80px;line-height:1.55;}
+  input:focus,textarea:focus,select:focus{border-color:var(--gold);}
+  .pill-row{display:flex;flex-wrap:wrap;gap:6px;}
+  .pill{background:var(--lapis2);border:1px solid var(--border);color:var(--dim);border-radius:16px;padding:5px 12px;font-size:11px;font-weight:500;cursor:pointer;}
+  .pill.active{background:rgba(201,168,76,0.12);border-color:var(--gold);color:var(--gold);}
+  .pill:hover:not(.active){color:var(--text);border-color:var(--dim2);}
+  .field-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  .gen-btn{width:100%;margin-top:18px;background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--lapis);font-size:15px;font-weight:800;border:none;border-radius:var(--r-sm);padding:14px;cursor:pointer;}
+  .prompt-preview{background:var(--lapis2);border:1px solid var(--border);border-radius:var(--r-sm);padding:14px 16px;margin-top:14px;font-family:monospace;font-size:13px;color:var(--gold);line-height:1.6;}
+  .prompt-preview b{color:var(--turq3);}
+  .vibe-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+  @media(max-width:600px){.vibe-grid{grid-template-columns:repeat(2,1fr);}}
+  .vibe-card{background:var(--lapis2);border:1px solid var(--border);border-radius:var(--r-sm);padding:14px 12px;cursor:pointer;text-align:left;}
+  .vibe-card.active{border-color:var(--gold);background:rgba(201,168,76,0.06);}
+  .vibe-card .name{font-size:13px;font-weight:600;color:var(--text);}
+  .vibe-card .desc{font-size:11px;color:var(--dim2);margin-top:3px;line-height:1.4;}
+  .queued{background:linear-gradient(135deg,rgba(26,138,122,0.08),rgba(52,212,176,0.04));border:1px solid var(--border2);border-left:4px solid var(--turq2);border-radius:var(--r);padding:20px;margin-top:18px;display:none;}
+  .queued.show{display:block;}
+  .queued h3{color:var(--turq3);font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;margin-bottom:8px;}
+  .queued p{font-size:14px;color:var(--text);line-height:1.6;}
+  .waitlist{background:linear-gradient(135deg,var(--lapis2),var(--lapis3));border:1px solid var(--gold);border-radius:var(--r);padding:32px;margin-top:32px;position:relative;overflow:hidden;}
+  .waitlist::before{content:'';position:absolute;top:-50%;right:-20%;width:400px;height:400px;background:radial-gradient(circle,rgba(201,168,76,0.08),transparent 70%);pointer-events:none;}
+  .wl-tag{display:inline-block;background:rgba(201,168,76,0.15);color:var(--gold);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;padding:5px 12px;border-radius:20px;margin-bottom:14px;border:1px solid var(--border2);}
+  .waitlist h3{font-family:'Playfair Display',serif;font-size:28px;color:var(--ivory);margin-bottom:10px;}
+  .waitlist h3 span{color:var(--gold);}
+  .waitlist p{color:var(--dim);font-size:14px;line-height:1.6;margin-bottom:18px;max-width:580px;}
+  .wl-form{display:flex;gap:10px;flex-wrap:wrap;position:relative;z-index:1;}
+  .wl-form input{flex:1;min-width:240px;background:var(--lapis);border:1px solid var(--border2);color:var(--ivory);padding:13px 16px;font-size:14px;border-radius:var(--r-sm);outline:none;}
+  .wl-form input:focus{border-color:var(--gold);}
+  .wl-form button{background:var(--gold);color:var(--lapis);border:none;padding:13px 24px;font-size:14px;font-weight:700;border-radius:var(--r-sm);cursor:pointer;}
+  .wl-msg{margin-top:14px;font-size:13px;color:var(--turq3);display:none;}
+  .wl-perks{display:flex;gap:18px;flex-wrap:wrap;margin-top:18px;font-size:12px;color:var(--dim);}
+  .wl-perks span::before{content:'✓ ';color:var(--turq3);font-weight:700;}
+  footer{border-top:1px solid var(--border2);padding:28px 40px;margin-top:60px;color:var(--dim2);font-size:12px;text-align:center;}
+  footer a{color:var(--dim);text-decoration:none;margin:0 10px;}
+  footer a:hover{color:var(--gold);}
+</style>
+<script src="_abuz8-live-brain.js" defer></script>
+
+<script src="_abuz8-config.js" defer></script>
+</head>
+<body>
+<script>
+// Cloud fallback: if ComfyUI is unreachable, redirect generate calls to Workers AI
+(function(){
+  var comfyUrl = (window.ABUZ8_COMFY_BASE) || 'https://comfy.abuz8ai.com';
+  var checked = false, comfyLive = false;
+  window._checkComfy = async function(){
+    if(checked) return comfyLive;
+    try{
+      var r = await fetch(comfyUrl+'/system_stats',{signal:AbortSignal.timeout(3000)});
+      comfyLive = r.ok; checked = true;
+    }catch(_){ comfyLive = false; checked = true; }
+    return comfyLive;
+  };
+  window._cloudGenerate = async function(prompt){
+    try{
+      var r = await fetch('/api/ai-image',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt:prompt})});
+      if(!r.ok) return null;
+      var blob = await r.blob();
+      return URL.createObjectURL(blob);
+    }catch(_){ return null; }
+  };
+})();
+</script>
+
+<header>
+  <div class="logo">A8</div>
+  <div><h1>AI Music Generator</h1><p>AudioCraft-powered original tracks · Royalty-free</p></div>
+  <a href="/tools.html" class="home-link">← All Tools</a>
+  <span class="badge">Early Access</span>
+</header>
+
+<section class="hero">
+  <h2>Describe a vibe. <span class="accent">Get an original track.</span></h2>
+  <p class="lede">Powered by Meta's AudioCraft running on our ComfyUI engine. No samples, no loops — original instrumentals you own. Lo-fi for studying, cinematic for trailers, hip-hop for your podcast intro, ambient for your meditation app. Early access opens in waves.</p>
+  <div class="meta-strip">
+    <span><span class="dot">●</span> 30s — 4min tracks</span>
+    <span><span class="dot">●</span> Royalty-free output</span>
+    <span><span class="dot">●</span> 12 vibe presets + custom</span>
+    <span><span class="dot">●</span> WAV / MP3 export</span>
+  </div>
+</section>
+
+<div class="container">
+
+  <div class="panel">
+    <div class="panel-title">⚙ Track Builder</div>
+
+    <label class="first">Vibe / Genre</label>
+    <div class="vibe-grid" id="vibeGrid">
+      <div class="vibe-card active" data-v="lofi"><div class="name">Lo-Fi Hip-Hop</div><div class="desc">Chill beats, vinyl crackle, study</div></div>
+      <div class="vibe-card" data-v="cinematic"><div class="name">Cinematic Score</div><div class="desc">Orchestral, swelling, trailer</div></div>
+      <div class="vibe-card" data-v="hiphop"><div class="name">Hip-Hop Beat</div><div class="desc">808s, hi-hats, modern boom-bap</div></div>
+      <div class="vibe-card" data-v="ambient"><div class="name">Ambient / Drone</div><div class="desc">Atmospheric, meditation, sleep</div></div>
+      <div class="vibe-card" data-v="electronic"><div class="name">Electronic / EDM</div><div class="desc">Synth-driven, club, festival</div></div>
+      <div class="vibe-card" data-v="jazz"><div class="name">Jazz</div><div class="desc">Smooth, brass, classic standards</div></div>
+      <div class="vibe-card" data-v="rock"><div class="name">Rock / Indie</div><div class="desc">Guitar-driven, live energy</div></div>
+      <div class="vibe-card" data-v="pop"><div class="name">Pop / Synth-Pop</div><div class="desc">Upbeat, hooks, radio-friendly</div></div>
+      <div class="vibe-card" data-v="folk"><div class="name">Folk / Acoustic</div><div class="desc">Strings, organic, intimate</div></div>
+      <div class="vibe-card" data-v="trap"><div class="name">Trap</div><div class="desc">Heavy 808s, dark, modern</div></div>
+      <div class="vibe-card" data-v="classical"><div class="name">Classical</div><div class="desc">Strings, piano, formal composition</div></div>
+      <div class="vibe-card" data-v="world"><div class="name">World / Ethnic</div><div class="desc">Tribal, percussive, global flavors</div></div>
+    </div>
+
+    <label>Mood</label>
+    <div class="pill-row" id="moodPills">
+      <button class="pill active" data-v="uplifting">Uplifting</button>
+      <button class="pill" data-v="dark">Dark / Brooding</button>
+      <button class="pill" data-v="energetic">Energetic</button>
+      <button class="pill" data-v="melancholic">Melancholic</button>
+      <button class="pill" data-v="suspense">Suspenseful</button>
+      <button class="pill" data-v="dreamy">Dreamy</button>
+      <button class="pill" data-v="aggressive">Aggressive</button>
+      <button class="pill" data-v="peaceful">Peaceful</button>
+    </div>
+
+    <div class="field-row">
+      <div>
+        <label>Tempo (BPM)</label>
+        <input type="number" id="bpm" placeholder="90" value="90" min="40" max="200">
+      </div>
+      <div>
+        <label>Length (seconds)</label>
+        <input type="number" id="length" placeholder="60" value="60" min="15" max="240">
+      </div>
+    </div>
+
+    <label>Use Case</label>
+    <div class="pill-row" id="usePills">
+      <button class="pill active" data-v="podcast">Podcast intro/outro</button>
+      <button class="pill" data-v="video">Video background</button>
+      <button class="pill" data-v="ad">Commercial / ad</button>
+      <button class="pill" data-v="game">Game soundtrack</button>
+      <button class="pill" data-v="meditation">Meditation / focus</button>
+      <button class="pill" data-v="podcast-bed">Podcast bed (looping)</button>
+    </div>
+
+    <label>Custom Description (optional)</label>
+    <textarea id="custom" rows="2" placeholder="e.g. Slow building cinematic with cello and gentle strings, climax at 45s with full orchestral hit"></textarea>
+
+    <label>Generated Prompt (sent to AudioCraft)</label>
+    <div class="prompt-preview" id="promptPreview">—</div>
+
+    <button class="gen-btn" onclick="queueRender()">✦ Queue Music Render (early access)</button>
+
+    <div class="queued" id="queued">
+      <h3>✓ Track queued</h3>
+      <p>Your music generation is queued. Early-access slots fill in waves — we'll email when your track is rendered. Skip the queue with priority access below.</p>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-title">🎯 What you get</div>
+    <div style="font-size:14px;color:var(--text);line-height:1.7">
+      • <b style="color:var(--gold)">Original output</b> — no sampling, no loops. Generated by AudioCraft, owned by you.<br>
+      • <b style="color:var(--gold)">Royalty-free commercial license</b> — use in YouTube, TikTok, podcasts, ads, products. Yours forever.<br>
+      • <b style="color:var(--gold)">WAV + MP3 export</b> — broadcast-quality WAV (44.1kHz / 24-bit) and compressed MP3.<br>
+      • <b style="color:var(--gold)">Multi-version output</b> — 3 variations per prompt so you can pick the best take.<br>
+      • <b style="color:var(--gold)">Stem support (Pro)</b> — separate drums, bass, melody, harmony for editing.
+    </div>
+  </div>
+
+  <div class="waitlist">
+    <span class="wl-tag">Priority Access</span>
+    <h3>The full <span>QADIR OS Music Studio</span> opens soon.</h3>
+    <p>Generate, regenerate, blend, and stem-separate. Match track length to your video automatically. Variation generator for A/B testing. SFX library access. Voice-over auto-ducking. Skip the early-access queue with the priority pass — 70% off life.</p>
+    <form class="wl-form" id="wlForm" onsubmit="joinWaitlist(event)">
+      <input type="email" id="wlEmail" placeholder="creator@yourstudio.com" required>
+      <button type="submit">Join Priority List →</button>
+    </form>
+    <div class="wl-msg" id="wlMsg">✓ You're on the priority list.</div>
+    <div class="wl-perks"><span>Unlimited renders</span><span>Stem separation</span><span>Auto-length matching</span></div>
+  </div>
+
+</div>
+
+<footer>
+  <div><a href="/">Home</a>·<a href="/tools.html">Tools</a>·<a href="/products.html">Products</a>·<a href="/about.html">About</a>·<a href="/disclaimer.html">Disclaimer</a></div>
+  <div style="margin-top:10px">© 2026 ABUZ8 LLC · QADIR OS · AudioCraft + ComfyUI native.</div>
+</footer>
+
+<script>
+let vibe='lofi', mood='uplifting', useCase='podcast';
+
+document.querySelectorAll('#vibeGrid .vibe-card').forEach(p=>p.addEventListener('click',()=>{document.querySelectorAll('#vibeGrid .vibe-card').forEach(x=>x.classList.remove('active'));p.classList.add('active');vibe=p.dataset.v;updatePrompt();}));
+document.querySelectorAll('#moodPills .pill').forEach(p=>p.addEventListener('click',()=>{document.querySelectorAll('#moodPills .pill').forEach(x=>x.classList.remove('active'));p.classList.add('active');mood=p.dataset.v;updatePrompt();}));
+document.querySelectorAll('#usePills .pill').forEach(p=>p.addEventListener('click',()=>{document.querySelectorAll('#usePills .pill').forEach(x=>x.classList.remove('active'));p.classList.add('active');useCase=p.dataset.v;updatePrompt();}));
+['bpm','length','custom'].forEach(id=>document.getElementById(id).addEventListener('input',updatePrompt));
+
+const VIBE_DESC={
+  lofi:'lo-fi hip-hop with vinyl crackle, dusty drums, soft Rhodes piano',
+  cinematic:'cinematic orchestral score with swelling strings and brass hits',
+  hiphop:'modern hip-hop beat with 808s, crisp hi-hats, and a melodic loop',
+  ambient:'ambient drone with evolving textures and atmospheric pads',
+  electronic:'electronic dance track with driving synths and four-on-the-floor kick',
+  jazz:'smooth jazz with upright bass, brushed drums, and warm saxophone',
+  rock:'indie rock with electric guitars, live drums, and emotional dynamics',
+  pop:'upbeat pop with bright synths, catchy melody, and vocal-friendly arrangement',
+  folk:'acoustic folk with fingerpicked guitar, soft strings, and intimate feel',
+  trap:'dark trap beat with heavy 808 sub-bass, rolling hi-hats, and minor melody',
+  classical:'classical chamber piece with piano and string ensemble',
+  world:'world music with tribal percussion, ethnic instruments, and global rhythms'
+};
+const USE_DESC={
+  podcast:'suitable for a 30s podcast intro, builds quickly, broadcast-ready',
+  video:'background music for video, supports voice-over without competing',
+  ad:'commercial-grade with strong opening hook and memorable motif',
+  game:'video game soundtrack feel, loopable, atmospheric',
+  meditation:'meditative and calm, gradual evolution, no jarring transitions',
+  'podcast-bed':'looping podcast bed, low-key, designed to sit under voice'
+};
+
+function updatePrompt(){
+  const bpm=document.getElementById('bpm').value;
+  const length=document.getElementById('length').value;
+  const custom=document.getElementById('custom').value.trim();
+  const parts=[VIBE_DESC[vibe], `${mood} mood`, `${bpm} BPM`, USE_DESC[useCase]];
+  if (custom) parts.push(custom);
+  parts.push(`approximately ${length}s long`);
+  document.getElementById('promptPreview').innerHTML=`<b>Prompt:</b> ${parts.join('. ')}.`;
+}
+
+function queueRender(){
+  document.getElementById('queued').classList.add('show');
+  try{
+    const queue=JSON.parse(localStorage.getItem('abuz8_music_queue')||'[]');
+    queue.push({vibe,mood,useCase,bpm:document.getElementById('bpm').value,length:document.getElementById('length').value,custom:document.getElementById('custom').value,ts:Date.now()});
+    localStorage.setItem('abuz8_music_queue',JSON.stringify(queue));
+  }catch(_){}
+}
+
+function joinWaitlist(e){
+  e.preventDefault();
+  const email=document.getElementById('wlEmail').value.trim();
+  if (!email) return;
+  fetch('/api/waitlist',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,product_id:'ai-music-generator',source:'tool-page'})}).catch(function(){});
+  document.getElementById('wlForm').style.display='none';
+  document.getElementById('wlMsg').style.display='block';
+}
+
+updatePrompt();
+</script>
+
+
+<script src="/assets/js/dfy-banner.js" async></script>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+<script src="/tools/_tools-shared.js" defer></script>
+
+  <section style="background:var(--lapis-2);border:1px solid var(--gold);border-radius:16px;padding:24px 32px;margin-top:24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;">
+    <div>
+      <h3 style="font-family:'Playfair Display',serif;font-size:22px;color:var(--cream);margin-bottom:4px;">Ready for the next level?</h3>
+      <p style="color:var(--dim);font-size:14px;">28 premium toolkits, real deliverables. From $17 to $97.</p>
+    </div>
+    <a href="/store.html" style="background:var(--gold);color:var(--lapis);font-weight:700;padding:12px 28px;border-radius:999px;font-size:14px;letter-spacing:.5px;">Browse the Store →</a>
+  </section>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>
+

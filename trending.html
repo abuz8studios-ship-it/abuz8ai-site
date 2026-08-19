@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trending This Week — The 20 Fastest-Growing GitHub Repos, Live | ABUZ8 AI</title>
+<meta name="description" content="The 20 fastest-growing open-source projects on GitHub this week — ranked live by star velocity, with a plain-English read on WHY each one is trending, plus language, totals, and a direct link to each repo. Aggregated and credited, never copied.">
+<link rel="canonical" href="https://abuz8ai.com/trending.html">
+<meta property="og:title" content="Trending This Week — The 20 Fastest-Growing GitHub Repos">
+<meta property="og:description" content="See the 20 repos exploding on GitHub this week before everyone else — ranked live by star velocity, with WHY each one is blowing up. Aggregated, credited, linked — never copied.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://abuz8ai.com/trending.html">
+<meta property="og:image" content="https://abuz8ai.com/assets/images/hero.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="The 20 Fastest-Growing GitHub Repos This Week — and Why">
+<meta name="twitter:description" content="Ranked live by star velocity, with a plain-English read on why each repo is blowing up. Refreshed about hourly. Aggregated and credited, never copied.">
+<meta name="twitter:image" content="https://abuz8ai.com/assets/images/hero.png">
+<meta name="theme-color" content="#0a1628">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/abuz8-theme.css">
+<style>
+/* page-specific styles ONLY — theme vars, no new hex colors */
+.page-wrap{max-width:1180px;margin:0 auto;padding:16px 24px 40px;position:relative;z-index:1}
+.mono{font-family:var(--font-mono)}
+
+.t-hero{padding:44px 0 26px}
+.t-hero .eyebrow{margin-bottom:14px}
+.t-hero h1{font-family:var(--font-display);font-size:clamp(2.2rem,5vw,3.6rem);color:var(--white);font-weight:900;line-height:1.05;margin-bottom:16px}
+.t-hero h1 .g{background:linear-gradient(135deg,var(--gold-light),var(--gold),var(--green-bright));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.t-hero p{color:var(--dim);font-size:17px;font-weight:300;max-width:700px}
+.hero-share{display:flex;align-items:center;gap:10px;margin-top:22px;flex-wrap:wrap}
+.hero-share .hs-label{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--dim)}
+.hs-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 15px;border:1px solid var(--border);border-radius:8px;background:var(--lapis-2);color:var(--cream);font-family:inherit;font-size:12px;font-weight:600;letter-spacing:.3px;cursor:pointer;transition:border-color .3s,color .3s;text-decoration:none}
+.hs-btn:hover{border-color:var(--gold);color:var(--gold)}
+
+/* LIVE TICKER */
+.ticker{margin:8px 0 6px;border:1px solid var(--border);border-radius:14px;background:var(--glass-soft);overflow:hidden}
+.ticker-head{display:flex;justify-content:space-between;align-items:center;padding:12px 18px;border-bottom:1px solid var(--border);font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--dim)}
+.live-dot{display:inline-flex;align-items:center;gap:7px;color:var(--green-bright);font-weight:700}
+.live-dot::before{content:'';width:8px;height:8px;border-radius:50%;background:var(--green-bright);box-shadow:0 0 0 3px var(--green-glow);animation:tpulse 6s ease-in-out infinite}
+@keyframes tpulse{0%,100%{opacity:1}50%{opacity:.55}}
+.ticker-track{display:flex;gap:26px;padding:14px 18px;overflow-x:auto;white-space:nowrap;scrollbar-width:thin}
+.tick{display:inline-flex;align-items:baseline;gap:8px;font-size:13px;flex:none}
+.tick .nm{color:var(--cream);font-weight:600}
+.tick .st{font-family:var(--font-mono);color:var(--green-bright)}
+.tick .st::before{content:'▲ +'}
+
+.how-note{display:flex;gap:12px;align-items:flex-start;background:rgba(14,159,110,.07);border:1px solid var(--border);border-left:3px solid var(--green);border-radius:12px;padding:14px 18px;margin:20px 0 8px;font-size:13px;color:var(--dim)}
+.how-note b{color:var(--cream)}
+.stale{display:none;gap:12px;align-items:flex-start;background:rgba(201,168,76,.08);border:1px solid var(--border);border-left:3px solid var(--gold);border-radius:12px;padding:14px 18px;margin:14px 0 0;font-size:13px;color:var(--dim)}
+.stale b{color:var(--gold-light)}
+
+.toggle{display:inline-flex;gap:4px;padding:4px;background:var(--lapis-2);border:1px solid var(--border);border-radius:12px;margin:22px 0 0}
+.toggle button{padding:9px 20px;border:0;background:transparent;color:var(--dim);font-family:inherit;font-size:13px;font-weight:600;letter-spacing:.4px;border-radius:9px;cursor:pointer;transition:background .3s,color .3s}
+.toggle button.active{background:var(--gold);color:var(--lapis)}
+.toggle button:not(.active):hover{color:var(--cream)}
+.board{display:grid;grid-template-columns:1fr;gap:14px;margin-top:18px}
+.row{background:var(--glass-soft);border:1px solid var(--border);border-radius:16px;padding:22px;transition:border-color .3s,transform .3s;box-shadow:inset 0 1px 0 rgba(245,240,232,.04)}
+.row:hover{border-color:var(--gold);transform:translateY(-2px)}
+.row-top{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap}
+.rank{font-family:var(--font-display);font-size:34px;color:var(--gold);font-weight:900;line-height:1;flex:none;width:50px}
+.row-id{flex:1;min-width:240px}
+.row-id h3{font-family:var(--font-display);font-size:21px;color:var(--cream);font-weight:700;word-break:break-word}
+.row-id .repo{font-family:var(--font-mono);font-size:12px;color:var(--green-bright);margin-top:2px;word-break:break-all}
+.row-id .what{font-size:14px;color:var(--text);margin-top:8px}
+.grow{flex:none;text-align:right;min-width:140px}
+.grow .v{font-family:var(--font-mono);font-size:26px;color:var(--green-bright);font-weight:600;white-space:nowrap}
+.grow .v::before{content:'▲ +'}
+.grow .l{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--dim);margin-top:2px}
+
+.bar{height:5px;border-radius:4px;background:rgba(14,159,110,.15);margin-top:16px;overflow:hidden}
+.bar > i{display:block;height:100%;border-radius:4px;background:linear-gradient(90deg,var(--green),var(--green-bright));width:0;transition:width .9s cubic-bezier(.2,.7,.2,1)}
+
+.meta{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:14px}
+.tag{display:inline-flex;align-items:center;gap:6px;font-size:11px;letter-spacing:.5px;color:var(--dim);border:1px solid var(--border);border-radius:6px;padding:3px 9px}
+.tag .dot{width:9px;height:9px;border-radius:50%;background:var(--dim);flex:none}
+.tag.lang{color:var(--green-bright);border-color:rgba(14,159,110,.35)}
+.tag .mono{color:var(--gold)}
+.row-cta{margin-left:auto;display:inline-flex;gap:16px;align-items:center}
+.row-cta a.src{font-size:12px;color:var(--green-bright);letter-spacing:.5px}
+.row-cta a.src:hover{color:var(--gold)}
+.row-cta a.shr{font-size:12px;color:var(--dim);letter-spacing:.5px}
+.row-cta a.shr:hover{color:var(--gold)}
+
+.why{margin-top:16px;padding:13px 15px;background:rgba(245,240,232,.02);border:1px solid var(--border);border-left:3px solid var(--green);border-radius:10px;font-size:13.5px;color:var(--text);line-height:1.55}
+.why .lead{display:block;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--dim);font-weight:700;margin-bottom:7px}
+.m-badge{display:inline-block;font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:3px 8px;border-radius:5px;margin-right:9px;transform:translateY(-1px)}
+.m-badge.breakout{background:rgba(14,159,110,.18);color:var(--green-bright);border:1px solid rgba(47,191,143,.4)}
+.m-badge.riser{background:rgba(14,159,110,.12);color:var(--green-bright);border:1px solid rgba(14,159,110,.35)}
+.m-badge.surge{background:rgba(201,168,76,.14);color:var(--gold);border:1px solid rgba(201,168,76,.32)}
+.m-badge.heavy{background:rgba(138,154,170,.12);color:var(--dim);border:1px solid var(--border)}
+.period-tag{font-size:9px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--dim);border:1px solid var(--border);border-radius:4px;padding:2px 7px;margin-left:10px;vertical-align:middle;white-space:nowrap}
+.skeleton{height:150px;border-radius:16px;background:var(--glass-soft);border:1px solid var(--border)}
+
+.capture{margin-top:40px;background:linear-gradient(135deg,rgba(14,159,110,.10),rgba(201,168,76,.06));border:1px solid var(--border);border-radius:16px;padding:32px 26px;text-align:center}
+.capture h3{font-family:var(--font-display);color:var(--cream);font-size:23px;font-weight:700;margin-bottom:8px}
+.capture .sub{color:var(--dim);font-size:14px;max-width:580px;margin:0 auto 20px;line-height:1.6}
+.capture form{display:flex;gap:10px;max-width:480px;margin:0 auto;flex-wrap:wrap}
+.capture input{flex:1;min-width:220px;padding:13px 16px;background:var(--lapis);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:inherit;font-size:14px}
+.capture input:focus{outline:none;border-color:var(--gold)}
+.capture button{padding:13px 26px;border:0;border-radius:10px;background:var(--gold);color:var(--lapis);font-family:inherit;font-weight:700;font-size:14px;cursor:pointer;transition:background .3s}
+.capture button:hover{background:var(--gold-light)}
+.capture button:disabled{opacity:.55;cursor:default}
+.capture .msg{margin-top:14px;font-size:13px;min-height:17px}
+.capture .msg.ok{color:var(--green-bright)}
+.capture .msg.err{color:var(--gold-light)}
+.capture .fine{margin-top:12px;font-size:11px;color:var(--dim);opacity:.85}
+.next-cta{margin-top:24px;background:var(--glass);border:1px solid var(--border);border-radius:16px;padding:26px 24px;display:flex;justify-content:space-between;align-items:center;gap:18px;flex-wrap:wrap}
+.next-cta h4{font-family:var(--font-display);color:var(--cream);font-size:19px;font-weight:700}
+.next-cta p{color:var(--dim);font-size:13px;margin-top:4px;max-width:560px}
+.next-cta .btns{display:flex;gap:12px;flex-wrap:wrap}
+.credit-line{margin-top:40px;font-size:12px;color:var(--dim)}
+</style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebPage",
+      "name": "Trending This Week — The 20 Fastest-Growing GitHub Repos",
+      "url": "https://abuz8ai.com/trending.html",
+      "description": "The 20 fastest-growing open-source projects on GitHub this week — ranked live by star velocity, with a plain-English read on why each one is trending. Aggregated and credited, never copied.",
+      "isPartOf": { "@type": "WebSite", "name": "ABUZ8 AI", "url": "https://abuz8ai.com" }
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://abuz8ai.com/" },
+        { "@type": "ListItem", "position": 2, "name": "Trending", "item": "https://abuz8ai.com/trending.html" }
+      ]
+    }
+  ]
+}
+</script>
+</head>
+<body>
+<div class="geo-bg"></div>
+<nav class="abuz8-nav">
+<div class="nav-inner">
+  <a href="/" style="text-decoration:none;">
+    <div class="logo">ABUZ8</div>
+    <div class="logo-sub">Sovereign AI</div>
+  </a>
+  <div class="nav-links">
+    <a href="/tools.html">Tools</a>
+    <a href="/store.html">Store</a>
+    
+    <a href="/agents.html">Agents</a>
+    <a href="/models.html">Models</a>
+    <a href="/news.html">News</a>
+    <a href="/roadmap.html">Roadmap</a>
+    <a href="/store.html" class="nav-cta">Get Started</a>
+  </div>
+</div>
+</nav>
+
+<div class="page-wrap">
+  <header class="t-hero">
+    <div class="eyebrow" data-i18n="t.eyebrow">Trending This Week · Live from GitHub</div>
+    <h1 data-i18n="t.h1">The 20 repos <span class="g">exploding</span> on GitHub<br>this week — and <span class="g">why</span>.</h1>
+    <p data-i18n="t.sub">Ranked by GitHub's own trending signal — star <em>velocity and acceleration</em>, not raw totals. Each card tells you in plain English <em>why</em> it's blowing up: a brand-new breakout, a fast riser, or a heavyweight surging on a fresh release. This is where you see what's catching fire <em>before</em> it's on everyone's feed.</p>
+    <div class="hero-share">
+      <span class="hs-label" data-i18n="t.shareList">Share the list</span>
+      <a class="hs-btn" id="share-x" href="#" target="_blank" rel="noopener">on X</a>
+      <a class="hs-btn" id="share-li" href="#" target="_blank" rel="noopener">on LinkedIn</a>
+      <button class="hs-btn" id="share-copy" type="button">Copy link</button>
+    </div>
+  </header>
+
+  <div class="ticker">
+    <div class="ticker-head">
+      <span class="live-dot" id="live-label">Live · stars gained this week</span>
+      <span class="mono" id="ticker-updated">loading…</span>
+    </div>
+    <div class="ticker-track" id="ticker"></div>
+  </div>
+
+  <div class="how-note">
+    <span style="color:var(--green-bright);font-size:18px;line-height:1">▲</span>
+    <div><b>How the ranking works:</b> GitHub ranks trending by <b>star velocity and acceleration</b> — how fast a repo is gaining and how fast that rate is rising — <i>not</i> by total size. That's why a small project can outrank a giant, and why #1 may show fewer weekly stars than #2. The big green number is <b>net new stars in its window</b>. We list <b>this week's</b> risers first; when GitHub's weekly list runs short, we top up with the biggest <b>30-day</b> risers (tagged on each card). Every project is open-source and links to its own repo and license — pulled live from GitHub about once an hour. We aggregate and credit, never rebrand.</div>
+  </div>
+
+  <div class="stale" id="stale">
+    <span style="color:var(--gold);font-size:18px;line-height:1">⚠</span>
+    <div><b>Showing last-known snapshot.</b> GitHub's live trending page wasn't reachable just now, so these are the most recently captured rankings. They'll refresh automatically on the next successful pull.</div>
+  </div>
+
+  <div class="toggle" role="tablist" aria-label="Trending window">
+    <button id="tab-week" class="active" role="tab" aria-selected="true" data-i18n="t.tabWeek">This Week</button>
+    <button id="tab-month" role="tab" aria-selected="false" data-i18n="t.tabMonth">This Month</button>
+  </div>
+
+  <div class="board" id="board">
+    <div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div>
+  </div>
+
+  <section class="capture" id="early">
+    <h3 data-i18n="t.capH3">Never miss a breakout</h3>
+    <p class="sub" data-i18n="t.capSub">Join the early-access list for the ABUZ8 weekly trending drop — the 20 fastest-growing repos and the “why” behind each, straight to your inbox. We’ll email you the moment it launches.</p>
+    <form id="waitForm" novalidate>
+      <input id="waitEmail" type="email" inputmode="email" autocomplete="email" placeholder="you@company.com" aria-label="Email address" required>
+      <button type="submit" id="waitBtn" data-i18n="t.capBtn">Join the list</button>
+    </form>
+    <div class="msg" id="waitMsg" role="status" aria-live="polite"></div>
+    <div class="fine">Free. No spam. Unsubscribe anytime. We aggregate &amp; credit — we never sell your email.</div>
+  </section>
+
+  <div class="next-cta">
+    <div>
+      <h4>Spotting the trend is step one. Riding it is step two.</h4>
+      <p>Our curated Agent Board tracks live star counts for 20 open-source agent systems, with guides on deploying them yourself on local hardware.</p>
+    </div>
+    <div class="btns">
+      <a class="btn btn-gold" href="/agent-board.html">See the Agent Board →</a>
+      <a class="btn btn-outline" href="/">Explore ABUZ8</a>
+    </div>
+  </div>
+
+  <div class="credit-line">Repo data © their respective projects, pulled live from GitHub's public trending page · We aggregate, credit, and link — never copy.</div>
+</div>
+
+<footer class="abuz8-footer">
+<div class="foot-grid">
+  <div class="foot-brand">
+    <div class="logo">ABUZ8</div>
+    <p>Sovereign AI for everyone. Real tools, local models, no fake claims. Built on real hardware by ABUZ8 LLC, Ohio.</p>
+  </div>
+  <div class="foot-col"><h4>Platform</h4>
+    <a href="/tools.html">Free Tools</a><a href="/store.html">Store</a><a href="/models.html">Models</a><a href="/agents.html">AI Agents</a><a href="/news.html">News</a><a href="/blog/">Blog</a>
+  </div>
+  <div class="foot-col"><h4>Mission</h4>
+    <a href="/sovereign.html">Sovereign AI</a><a href="/journey.html">Journey &amp; Goals</a><a href="/roadmap.html">Roadmap</a><a href="/audit.html">Audit &amp; Transparency</a><a href="/purpose.html">Purpose</a>
+  </div>
+  <div class="foot-col"><h4>Hubs</h4>
+    <a href="/github.html">GitHub Hub</a><a href="/huggingface.html">Hugging Face Hub</a><a href="/polymarket.html">Polymarket Tester</a><a href="/community.html">Community</a><a href="/education.html">Education</a><a href="/downloads.html">Downloads</a>
+  </div>
+  <div class="foot-col"><h4>Trust</h4>
+    <a href="/security.html">Security &amp; Compliance</a><a href="/disclaimer.html">Disclaimer</a><a href="/privacy.html">Privacy</a><a href="/terms.html">Terms</a><a href="/refund.html">Refunds</a><a href="/license.html">License</a><a href="/contact.html">Contact</a><a href="/status.html">Status</a>
+  </div>
+</div>
+<div class="foot-base">
+  <div>© <span data-year>2026</span> ABUZ8 LLC. All rights reserved.</div>
+  <div>Built local-first on real hardware · No fake claims · <a href="/sovereign.html">Sovereign AI for everyone</a></div>
+</div>
+</footer>
+
+<script>
+var $ = function(s){ return document.querySelector(s); };
+function esc(s){ return (s==null?'':String(s)).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+function fmt(n){ if(n==null) return '—'; return n>=1000 ? (Math.round(n/100)/10)+'k' : String(n); }
+function full(n){ return n==null ? '—' : n.toLocaleString('en-US'); }
+
+function renderTicker(repos){
+  $('#ticker').innerHTML = repos.map(function(r){
+    var nm = r.full_name.split('/')[1] || r.full_name;
+    return '<span class="tick"><span class="nm">'+esc(nm)+'</span><span class="st">'+fmt(r.gained)+'</span></span>';
+  }).join('');
+}
+
+// The honest "why it's trending": derived purely from real numbers — what share of a
+// repo's all-time stars were earned in its trending window. No invented narratives.
+function T(k, fb){ return (window.ABUZ8I18N && window.ABUZ8I18N.t) ? window.ABUZ8I18N.t(k) : fb; }
+function momentum(r){
+  var g = r.gained, t = r.stars, monthly = r.period === 'month';
+  var win = monthly ? 'this month' : 'this week';
+  if(!g || !t) return { cls:'riser', label:T('m.trending','TRENDING'), why:'On GitHub’s '+(monthly?'30-day':'weekly')+' trending board right now.' };
+  var pct = Math.round(g / t * 100);
+  if(pct >= 60) return { cls:'breakout', label:T('m.breakout','BREAKOUT'), why:'Exploding right now — '+pct+'% of all its '+full(t)+' stars were earned '+win+'.' };
+  if(pct >= 25) return { cls:'riser', label:T('m.riser','FAST RISER'), why:pct+'% of all its stars landed '+win+' — growth is accelerating hard.' };
+  if(pct >= 8)  return { cls:'surge', label:T('m.surge','SURGING'), why:'+'+pct+'% '+win+' on a '+full(t)+'-star base — a real spike, usually a launch, release, or viral post.' };
+  return { cls:'heavy', label:T('m.heavy','HEAVYWEIGHT'), why:'Already huge at '+full(t)+' stars and still added '+full(g)+' '+win+' — sustained, broad demand.' };
+}
+
+function renderBoard(repos){
+  $('#board').innerHTML = repos.map(function(r, i){
+    var m = momentum(r), monthly = r.period === 'month';
+    var pct = (r.gained && r.stars) ? Math.max(6, Math.min(100, Math.round(r.gained / r.stars * 100))) : 6;
+    var shareText = (r.full_name.split('/')[1] || r.full_name) + ' gained ' + full(r.gained) + ' stars ' + (monthly ? 'in the last 30 days' : 'this week') + ' on GitHub — ' + m.label + '. The 20 fastest-growing repos (and why) on ABUZ8:';
+    var xUrl = 'https://twitter.com/intent/tweet?text=' + encodeURIComponent(shareText) + '&url=' + encodeURIComponent('https://abuz8ai.com/trending');
+    var lang = r.language
+      ? '<span class="tag lang"><span class="dot" style="background:'+esc(r.langColor||'#8a9aaa')+'"></span>'+esc(r.language)+'</span>'
+      : '';
+    var stars = '<span class="tag">★ <span class="mono">'+full(r.stars)+'</span> '+esc(T('c.total','total'))+'</span>';
+    var forks = r.forks!=null ? '<span class="tag">⑂ <span class="mono">'+full(r.forks)+'</span> '+esc(T('c.forks','forks'))+'</span>' : '';
+    var periodTag = '<span class="period-tag">'+esc(monthly ? T('c.tag30','30-day riser') : T('c.tagWeek','this week'))+'</span>';
+    var metricLabel = esc(monthly ? T('c.stars30','stars · 30-day') : T('c.starsWeek','stars this week'));
+    return '<div class="row">'
+      + '<div class="row-top">'
+        + '<div class="rank">'+(i+1)+'</div>'
+        + '<div class="row-id"><h3>'+esc(r.full_name.split('/')[1]||r.full_name)+periodTag+'</h3>'
+          + '<div class="repo">'+esc(r.full_name)+'</div>'
+          + (r.description ? '<div class="what">'+esc(r.description)+'</div>' : '')
+        + '</div>'
+        + '<div class="grow"><div class="v">'+full(r.gained)+'</div><div class="l">'+metricLabel+'</div></div>'
+      + '</div>'
+      + '<div class="bar"><i data-w="'+pct+'"></i></div>'
+      + '<div class="why"><span class="lead">'+esc(T('c.why','Why it’s trending'))+'</span><span class="m-badge '+m.cls+'">'+esc(m.label)+'</span>'+esc(m.why)+'</div>'
+      + '<div class="meta">'+lang+stars+forks
+        + '<span class="row-cta">'
+          + '<a class="shr" href="'+xUrl+'" target="_blank" rel="noopener" title="Share this on X">'+esc(T('c.share','Share ↗'))+'</a>'
+          + '<a class="src" href="'+esc(r.url)+'" target="_blank" rel="noopener">'+esc(T('c.view','↗ View & credit on GitHub'))+'</a>'
+        + '</span>'
+      + '</div>'
+      + '</div>';
+  }).join('');
+  // Fill velocity bars to their true width. setTimeout (not rAF) so the bars are
+  // correct even if the page loaded in a backgrounded tab, where rAF is paused.
+  setTimeout(function(){
+    document.querySelectorAll('.bar > i').forEach(function(el){ el.style.width = el.getAttribute('data-w')+'%'; });
+  }, 80);
+}
+
+var DATA = { week: [], month: [] }, current = 'week', isLive = true;
+
+function show(win){
+  current = win;
+  var wk = win === 'week';
+  $('#tab-week').classList.toggle('active', wk);
+  $('#tab-month').classList.toggle('active', !wk);
+  $('#tab-week').setAttribute('aria-selected', wk ? 'true' : 'false');
+  $('#tab-month').setAttribute('aria-selected', wk ? 'false' : 'true');
+  $('#live-label').textContent = (isLive ? 'Live · ' : 'Last-known · ') + (wk ? 'stars gained this week' : 'stars gained in 30 days');
+  renderTicker(DATA[win]);
+  renderBoard(DATA[win]);
+}
+$('#tab-week').addEventListener('click', function(){ show('week'); });
+$('#tab-month').addEventListener('click', function(){ show('month'); });
+// Re-render the board in the new language when the shared i18n engine switches.
+document.addEventListener('abuz8:i18n', function(){
+  if(DATA[current] && DATA[current].length){ renderTicker(DATA[current]); renderBoard(DATA[current]); }
+});
+
+async function load(){
+  try{
+    var r = await fetch('/api/github-trending?limit=20', { cache:'no-store' });
+    var j = await r.json();
+    if(!j || !j.repos || !j.repos.length) throw new Error('empty');
+    isLive = j.source !== 'snapshot';
+    DATA.week = j.repos;
+    DATA.month = (j.monthly && j.monthly.length) ? j.monthly : j.repos;
+    show(current);
+    $('#ticker-updated').textContent = 'updated ' + new Date(j.ts).toLocaleTimeString();
+    if(!isLive){ $('#stale').style.display = 'flex'; }
+  }catch(e){
+    $('#board').innerHTML = '<p style="color:var(--dim);font-style:italic;padding:24px 0">Couldn\'t reach the trending feed right now. Refresh in a moment.</p>';
+    $('#ticker-updated').textContent = 'unavailable';
+  }
+}
+load();
+
+// Early-access capture → existing /api/waitlist (D1), segmented as product:"trending-weekly".
+(function(){
+  var f = $('#waitForm'); if(!f) return;
+  f.addEventListener('submit', async function(e){
+    e.preventDefault();
+    var email = ($('#waitEmail').value || '').trim();
+    var msg = $('#waitMsg'), btn = $('#waitBtn');
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ msg.className='msg err'; msg.textContent='Enter a valid email.'; return; }
+    btn.disabled = true; msg.className='msg'; msg.textContent='Adding you…';
+    try{
+      var r = await fetch('/api/waitlist', {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ email: email, product: 'trending-weekly', ts: Date.now(), referrer: document.referrer || null })
+      });
+      if(!r.ok) throw new Error('status '+r.status);
+      msg.className='msg ok'; msg.textContent='You’re on the list. We’ll email you when the weekly drop goes live.';
+      f.reset();
+    }catch(err){
+      msg.className='msg err'; msg.textContent='Something glitched — please try again in a moment.';
+    }finally{ btn.disabled = false; }
+  });
+})();
+
+// Page-level share → drives traffic back to /trending.
+(function(){
+  var pageUrl = 'https://abuz8ai.com/trending';
+  var pageText = 'The 20 fastest-growing GitHub repos this week — and why each is blowing up:';
+  var x = $('#share-x'), li = $('#share-li'), cp = $('#share-copy');
+  if(x) x.href = 'https://twitter.com/intent/tweet?text=' + encodeURIComponent(pageText) + '&url=' + encodeURIComponent(pageUrl);
+  if(li) li.href = 'https://www.linkedin.com/sharing/share-offsite/?url=' + encodeURIComponent(pageUrl);
+  if(cp) cp.addEventListener('click', async function(){
+    try{ await navigator.clipboard.writeText(pageUrl); var t = cp.textContent; cp.textContent = 'Copied!'; setTimeout(function(){ cp.textContent = t; }, 1500); }
+    catch(_){ window.prompt('Copy this link:', pageUrl); }
+  });
+})();
+</script>
+<script src="/assets/js/site-i18n.js" defer></script>
+<script src="/assets/js/abuz8-ui.js" defer></script>
+<script src="/assets/js/abuz8-onboard.js" defer></script>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>

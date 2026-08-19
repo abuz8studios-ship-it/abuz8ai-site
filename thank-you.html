@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Order Confirmed — ABUZ8 AI</title>
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#0a1628">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/abuz8-theme.css">
+<style>
+/* page-specific styles ONLY — theme vars, no new hex colors */
+body{display:flex;flex-direction:column;min-height:100vh;}
+main{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:60px 20px;position:relative;z-index:1;}
+.check{width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,var(--green-deep),var(--green-bright));display:flex;align-items:center;justify-content:center;font-size:2.5rem;margin:0 auto 24px;color:var(--white);box-shadow:0 0 30px var(--green-glow);}
+main h1{font-family:var(--font-display);font-size:2rem;font-weight:800;color:var(--white);margin-bottom:12px;}
+main h1 span{color:var(--green-bright);}
+main p{color:var(--dim);font-size:1rem;line-height:1.7;max-width:500px;margin:0 auto 8px;}
+.next{background:var(--glass-soft);border:1px solid var(--border);border-radius:16px;padding:28px 32px;margin:32px auto;max-width:480px;text-align:left;}
+.next h3{color:var(--white);font-size:1rem;margin-bottom:12px;}
+.next ol{padding-left:20px;color:var(--dim);font-size:.9rem;line-height:2;}
+.cta{display:inline-block;margin-top:8px;padding:16px 36px;background:var(--gold);color:var(--lapis);font-weight:700;border-radius:8px;text-decoration:none;font-size:1.05rem;transition:background .3s,transform .3s;}
+.cta:hover{background:var(--gold-light);transform:translateY(-1px);color:var(--lapis);}
+.cta.turq{background:linear-gradient(135deg,var(--green-deep),var(--green));color:var(--white);}
+.cta.turq:hover{box-shadow:0 8px 24px var(--green-glow);color:var(--white);}
+.back{display:inline-block;margin-top:24px;padding:12px 28px;background:transparent;border:1px solid var(--border);color:var(--dim);font-weight:600;border-radius:8px;text-decoration:none;transition:border-color .3s,color .3s;}
+.back:hover{border-color:var(--green);color:var(--green-bright);}
+.hint{font-size:.82rem;color:var(--dim);margin-top:14px;}
+.hint a{color:var(--green-bright);text-decoration:none;}
+#cal-embed{width:100%;max-width:480px;margin:24px auto 0;border:1px solid var(--border);border-radius:16px;overflow:hidden;background:var(--lapis-2);min-height:520px;}
+#cal-embed iframe{width:100%;min-height:520px;border:0;display:block;}
+.spin{width:12px;height:12px;border-radius:50%;background:var(--green-bright);margin:12px auto 0;animation:softpulse 6s ease-in-out infinite;}
+@keyframes softpulse{0%,100%{opacity:.35;}50%{opacity:1;}}
+[hidden]{display:none!important;}
+</style>
+</head>
+<body>
+<div class="geo-bg"></div>
+<nav class="abuz8-nav">
+<div class="nav-inner">
+  <a href="/" style="text-decoration:none;">
+    <div class="logo">ABUZ8</div>
+    <div class="logo-sub">Sovereign AI</div>
+  </a>
+  <div class="nav-links">
+    <a href="/tools.html">Tools</a>
+    <a href="/store.html">Store</a>
+    
+    <a href="/agents.html">Agents</a>
+    <a href="/models.html">Models</a>
+    <a href="/news.html">News</a>
+    <a href="/roadmap.html">Roadmap</a>
+    <a href="/store.html" class="nav-cta">Get Started</a>
+  </div>
+</div>
+</nav>
+
+<main>
+<div class="check">&#10003;</div>
+<h1 id="headline">Order <span>confirmed.</span></h1>
+<p id="lede">Pulling up your order&hellip;</p>
+<div class="spin" id="spin" aria-hidden="true"></div>
+
+<!-- DIGITAL: instant signed download -->
+<div id="digital" hidden>
+  <a id="dl-btn" class="cta turq" href="#" rel="noopener">&#11015;&nbsp; Download your files</a>
+  <!-- No email claim here. RESEND_API_KEY has never been set on this project, so
+       the webhook's delivery email does not send. Promising an inbox copy would be
+       a lie told at the exact moment the buyer is deciding whether to trust us.
+       Delivery is this page; the receipt comes from Stripe. -->
+  <p class="hint">Your secure link is valid for 48 hours. Bookmark this page, or email
+    <a href="mailto:ahmad@abuz8ai.com">ahmad@abuz8ai.com</a> if you need it re-issued
+    &mdash; we can always re-send it for <span id="dl-email">your order</span>.</p>
+</div>
+
+<!-- SERVICE: book your call -->
+<div id="service" hidden>
+  <div class="next">
+    <h3>Last step &mdash; book your kickoff call:</h3>
+    <ol>
+      <li>Pick a time that works for you below</li>
+      <li>You'll get a calendar invite + video link instantly</li>
+      <li>Come ready with your goals &mdash; we map the build live</li>
+    </ol>
+  </div>
+  <a id="cal-btn" class="cta" href="#" target="_blank" rel="noopener">&#128197;&nbsp; Book your call</a>
+  <div id="cal-embed" hidden></div>
+  <p class="hint" id="cal-fallback" hidden>
+    Reply to your receipt or email <a href="mailto:ahmad@abuz8ai.com">ahmad@abuz8ai.com</a> and we'll lock in a time within 24 hours.
+  </p>
+</div>
+
+<!-- PENDING / generic -->
+<div id="pending" hidden>
+  <div class="next">
+    <h3>What happens next:</h3>
+    <ol>
+      <li>We confirm your order (within 24 hours)</li>
+      <li>Your access + onboarding lands in your inbox</li>
+      <li>Install it and put it to work</li>
+    </ol>
+  </div>
+  <p class="hint">Check your inbox (and spam folder). Need help? <a href="mailto:ahmad@abuz8ai.com">ahmad@abuz8ai.com</a></p>
+</div>
+
+<p class="hint">Everything we sell is tested before it's sold. If something is broken, we'll make it right &mdash; see our <a href="/refund.html">refund policy</a>.</p>
+
+<a href="/" class="back">&larr; Back to ABUZ8 AI</a>
+</main>
+
+<script>
+(function(){
+  var qs = new URLSearchParams(location.search);
+  var sid = qs.get('session_id') || '';
+  var $ = function(id){ return document.getElementById(id); };
+  function show(id){ var el=$(id); if(el) el.hidden=false; }
+  function hide(id){ var el=$(id); if(el) el.hidden=true; }
+
+  function renderPending(){
+    $('headline').innerHTML = 'Order <span>received.</span>';
+    $('lede').textContent = "We're processing your order and will follow up within 24 hours.";
+    hide('spin'); show('pending');
+  }
+
+  function safeUrl(u){ try{ var p=new URL(u, location.origin); return (p.protocol==='https:'||p.protocol==='http:')?p.href:null; }catch(e){ return null; } }
+
+  if(!sid){ renderPending(); return; }
+
+  fetch('/api/checkout-session?session_id=' + encodeURIComponent(sid), {headers:{'Accept':'application/json'}})
+    .then(function(r){ return r.ok ? r.json() : Promise.reject(); })
+    .then(function(d){
+      hide('spin');
+      if(d && d.status==='paid' && d.kind==='digital'){
+        $('headline').innerHTML = 'Thank you &mdash; <span>here it is.</span>';
+        $('lede').textContent = 'Your purchase is ready. Download below.';
+        if(d.email){ $('dl-email').textContent = d.email; }
+        var du = d.download_url ? safeUrl(d.download_url) : null;
+        if(du){ $('dl-btn').setAttribute('href', du); }
+        else {
+          // Paid, but the signed link could not be minted. Do NOT claim an email
+          // is coming - nothing sends one. Say what is true and give a human route.
+          $('dl-btn').style.display='none';
+          $('lede').innerHTML = 'Your payment went through, but we could not generate your ' +
+            'download link automatically. Email <a href="mailto:ahmad@abuz8ai.com">' +
+            'ahmad@abuz8ai.com</a> with this page open and we will send the file directly.';
+        }
+        show('digital');
+      } else if(d && d.status==='paid' && d.kind==='service'){
+        $('headline').innerHTML = 'Payment in &mdash; <span>let&rsquo;s build.</span>';
+        $('lede').textContent = 'One step left: pick a time for your kickoff call.';
+        var cu = d.cal_url ? safeUrl(d.cal_url) : null;
+        if(cu){
+          $('cal-btn').setAttribute('href', cu);
+          var box=$('cal-embed');
+          box.innerHTML = '<iframe src="'+cu+'?embed=true" title="Book your call" loading="lazy"></iframe>';
+          box.hidden=false;
+        } else {
+          $('cal-btn').style.display='none';
+          $('cal-fallback').hidden=false;
+        }
+        show('service');
+      } else {
+        renderPending();
+      }
+    })
+    .catch(function(){ renderPending(); });
+})();
+</script>
+
+<footer class="abuz8-footer">
+<div class="foot-grid">
+  <div class="foot-brand">
+    <div class="logo">ABUZ8</div>
+    <p>Sovereign AI for everyone. Real tools, local models, no fake claims. Built on real hardware by ABUZ8 LLC, Ohio.</p>
+  </div>
+  <div class="foot-col"><h4>Platform</h4>
+    <a href="/tools.html">Free Tools</a><a href="/store.html">Store</a><a href="/models.html">Models</a><a href="/agents.html">AI Agents</a><a href="/news.html">News</a><a href="/blog/">Blog</a>
+  </div>
+  <div class="foot-col"><h4>Mission</h4>
+    <a href="/sovereign.html">Sovereign AI</a><a href="/journey.html">Journey &amp; Goals</a><a href="/roadmap.html">Roadmap</a><a href="/audit.html">Audit &amp; Transparency</a><a href="/purpose.html">Purpose</a>
+  </div>
+  <div class="foot-col"><h4>Hubs</h4>
+    <a href="/github.html">GitHub Hub</a><a href="/huggingface.html">Hugging Face Hub</a><a href="/polymarket.html">Polymarket Tester</a><a href="/community.html">Community</a><a href="/education.html">Education</a><a href="/downloads.html">Downloads</a>
+  </div>
+  <div class="foot-col"><h4>Trust</h4>
+    <a href="/security.html">Security &amp; Compliance</a><a href="/disclaimer.html">Disclaimer</a><a href="/privacy.html">Privacy</a><a href="/terms.html">Terms</a><a href="/refund.html">Refunds</a><a href="/license.html">License</a><a href="/contact.html">Contact</a><a href="/status.html">Status</a>
+  </div>
+</div>
+<div class="foot-base">
+  <div>© <span data-year>2026</span> ABUZ8 LLC. All rights reserved.</div>
+  <div>Built local-first on real hardware · No fake claims · <a href="/sovereign.html">Sovereign AI for everyone</a></div>
+</div>
+</footer>
+
+<link rel="stylesheet" href="/assets/css/zait-chat.css">
+<script src="/assets/js/zait-chat.js"></script>
+<script src="/assets/js/dfy-banner.js" async></script>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+<script src="/assets/js/abuz8-ui.js" defer></script>
+<script src="/assets/js/abuz8-onboard.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>

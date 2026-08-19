@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<!-- Published 2026-08-15. ABUZ8 LLC. -->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Vendor Due Diligence Checklist — 12 Questions Before You Sign | ABUZ8</title>
+<meta name="description" content="An AI vendor due diligence checklist covering data residency, model provenance, exit rights, measured performance, subprocessors and what happens when the vendor shuts down.">
+<meta name="keywords" content="ai vendor due diligence checklist, ai procurement questions, ai vendor security review, llm vendor evaluation, ai data residency questions">
+<link rel="canonical" href="https://abuz8ai.com/blog/ai-vendor-due-diligence-checklist">
+<meta property="og:title" content="AI Vendor Due Diligence Checklist — 12 Questions Before You Sign">
+<meta property="og:type" content="article">
+<link rel="stylesheet" href="/blog/_blog-base.css">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@300;400;600;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
+<script type="application/ld+json">
+{"@context": "https://schema.org", "@type": "BlogPosting", "headline": "AI Vendor Due Diligence Checklist — 12 Questions Before You Sign", "datePublished": "2026-08-15", "author": {"@type": "Organization", "name": "ABUZ8 AI"}}
+</script>
+</head>
+<body>
+<div class="container">
+  <a href="/blog/" class="back">&larr; ABUZ8 BLOG</a>
+  <h1>AI Vendor Due Diligence Checklist — 12 Questions Before You Sign</h1>
+  <div class="meta-row"><span>DILIGENCE</span><span class="dot"></span><span>AUGUST 15, 2026</span><span class="dot"></span><span>6 MIN READ</span></div>
+
+  <p>Most AI procurement runs on a demo and a reference call. That was defensible when the software was a feature; it is not defensible when the software reads your customer data, makes decisions on your behalf, and depends on four subprocessors you have never heard of. This <strong>AI vendor due diligence checklist</strong> is the set of questions worth asking before signature — organised so you can send them as an email and judge the vendor as much by how they answer as by what they answer.</p>
+
+  <h2>Data: where it goes and how long it stays</h2>
+  <p><strong>1. Which model providers see our data, by name?</strong> Many AI products are a thin layer over two or three foundation-model APIs plus a vector database and an aggregator gateway. You are not onboarding one vendor, you are onboarding a chain. Ask for the full subprocessor list, and ask whether it can change without notice.</p>
+  <p><strong>2. Is our data used for training, by the vendor or anyone downstream?</strong> The vendor's own answer is the easy half. The harder half is whether their upstream providers' enterprise terms carry the same guarantee, and whether that survives a plan downgrade or a provider swap.</p>
+  <p><strong>3. What is the retention period for prompts, outputs and logs — and can we set it to zero?</strong> Prompt logs are the most under-governed data store in the industry. They contain whatever your staff pasted in, which in practice is everything.</p>
+  <p><strong>4. Where is data processed geographically?</strong> If you have regional obligations, "our servers are in the EU" is insufficient when the model call itself leaves the region. Ask about the inference endpoint, not the application.</p>
+
+  <h2>Performance: measured, not asserted</h2>
+  <p><strong>5. What is the measured task success rate on a workload like ours, and how was success defined?</strong> A definition written after the measurement is not a definition. The metrics worth insisting on are laid out in <a href="/blog/ai-agent-reliability-metrics.html" class="in">agent reliability metrics</a>.</p>
+  <p><strong>6. Show us the failure breakdown by class.</strong> Auth, rate-limit, timeout, provider 5xx, malformed output, refusal. A vendor who cannot produce this either does not instrument it or does not want to. Both are findings.</p>
+  <p><strong>7. Can we reproduce your headline cost or performance claim ourselves, in one command, against real data?</strong> This is the single highest-yield question in the list. The method for pressing it is in <a href="/blog/how-to-verify-ai-cost-savings-claims.html" class="in">how to verify AI cost savings claims</a>.</p>
+  <p><strong>8. What happens on a provider outage?</strong> Failover to another lane, degraded mode, or a full stop? Ask for the last incident and what the blast radius was.</p>
+
+  <div class="callout">
+    <p><strong>Grade the answering behaviour, not just the answers.</strong> A vendor who says "we do not measure that yet, here is when we will" is more trustworthy than one who produces a confident number with no methodology attached. The first has a process. The second has a slide.</p>
+  </div>
+
+  <h2>Exit: the questions nobody asks until it is too late</h2>
+  <p><strong>9. What exactly can we export, in what format, and how long does it take?</strong> Conversation history, agent configurations, evaluation results, embeddings, fine-tuned artifacts. "You can export your data" means nothing until you have seen the file. Ask for a sample export during the trial — not a description of one.</p>
+  <p><strong>10. If you are acquired or shut down, what happens to our deployment?</strong> The honest answers range from a source-escrow arrangement to "you would have thirty days." Both are workable if you know which one you are buying. AI tooling is in a consolidation phase; a two-year contract routinely outlives the company that signed it.</p>
+  <p><strong>11. Can this run on infrastructure we control?</strong> Self-hosted, VPC-deployed, or local. This is the exit question that answers itself — if the software runs on your hardware, vendor failure is an inconvenience rather than an outage. It is the entire premise behind local-first architecture, discussed in <a href="/blog/local-ai-vs-cloud-ai.html" class="in">local AI vs. cloud AI</a>.</p>
+  <p><strong>12. What is the total cost at 3x our current volume?</strong> Per-seat pricing and per-call pricing diverge violently as usage grows, and agentic workloads grow faster than human ones because a loop makes many calls per human action. Model the bill at the volume you hope to have, not the one you have today — the arithmetic is in <a href="/blog/how-much-does-an-ai-agent-cost.html" class="in">how much an AI agent costs</a>.</p>
+
+  <h2>Two things worth doing beyond the questionnaire</h2>
+  <p>First, run a real workload during the trial, not the vendor's demo dataset. Send your ugliest documents, your ambiguous tickets, the edge cases your team argues about. Demos are built from the happy path; your business is not.</p>
+  <p>Second, ask the vendor to name their worst number and what they are doing about it. This is a character test with a technical payload. We publish ours for exactly this reason: our routing telemetry shows a 19.9% overall call success rate across 1,469 logged calls, driven by 345 HTTP 403 responses from one provider and 756 failures that were never labelled with an error class — sitting in the same document as the finding that only 1.4% of traffic went to premium lanes and the window cost $0.14 against a $65.28 all-flagship counterfactual. A vendor willing to hand you the ugly half is a vendor whose good half was probably not curated either.</p>
+
+  <h2>Frequently asked questions</h2>
+  <p><strong>Is a SOC 2 report enough for AI vendor diligence?</strong> It is necessary and not sufficient. SOC 2 speaks to security controls and says nothing about model provenance, training-data use, prompt retention, failure behaviour, or what happens to your agents if the company disappears. Treat it as one input among twelve.</p>
+  <p><strong>What if the vendor is a small startup with no formal answers?</strong> Small is not disqualifying — vagueness is. A two-person company that answers precisely about subprocessors, retention and exit is a lower risk than a well-funded one that deflects. Where the startup is genuinely early, ask for contractual commitments in place of documentation.</p>
+  <p><strong>How much of this applies to self-hosted tools?</strong> Roughly half, and the half that matters most gets easier. Data residency, retention and exit largely resolve themselves when the software runs on your infrastructure. The performance, failure-behaviour and cost questions still apply in full.</p>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Is a SOC 2 report enough for AI vendor due diligence?","acceptedAnswer":{"@type":"Answer","text":"Necessary but not sufficient. SOC 2 covers security controls, not model provenance, training-data use, prompt retention, failure behaviour or exit rights. Treat it as one input among many."}},{"@type":"Question","name":"What if an AI vendor is too small to have formal answers?","acceptedAnswer":{"@type":"Answer","text":"Small is not disqualifying; vagueness is. A precise answer about subprocessors, retention and exit from a tiny company beats deflection from a large one. Ask for contractual commitments where documentation is missing."}},{"@type":"Question","name":"Does this checklist apply to self-hosted AI tools?","acceptedAnswer":{"@type":"Answer","text":"About half applies, and the hardest half gets easier — data residency, retention and exit largely resolve when the software runs on your own infrastructure. Performance and cost questions still apply fully."}}]}
+  </script>
+
+  <div class="callout cta">
+    <p><strong>Take the twelve to your next vendor call.</strong> If question 11 keeps coming back as a no, look at the local-first alternative — QADIR OS runs on hardware you own, so exit is a non-event. <a href="/" class="in">Join the early-access list</a>.</p>
+  </div>
+
+  <div class="foot">Built by <a href="/">ABUZ8 LLC</a> — we're building QADIR OS, the sovereign agentic operating system. This article is general information, not legal advice; consult your own counsel on contract terms.</div>
+</div>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+<script src="/blog/_blog-shared.js" defer></script>
+<script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Meal Planner — ABUZ8</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--lapis:#0a1628;--lapis2:#0f1f3d;--lapis3:#162544;--gold:#c9a84c;--turq:#0e9f6e;--turq2:#22b5a0;--cream:#f5f0e8;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--lapis);color:var(--cream);font-family:'Inter',sans-serif;min-height:100vh;}
+header{background:var(--lapis2);border-bottom:1px solid rgba(201,168,76,.15);padding:16px 32px;display:flex;align-items:center;gap:12px;}
+header h1{font-family:'Playfair Display',serif;font-size:1.4rem;color:var(--gold);}
+header span{background:var(--turq);color:#fff;font-size:11px;font-weight:600;padding:2px 8px;border-radius:20px;}
+.hero{text-align:center;padding:48px 20px 32px;}
+.hero h2{font-family:'Playfair Display',serif;font-size:2.2rem;color:var(--cream);margin-bottom:12px;}
+.hero p{color:rgba(245,240,232,.7);font-size:1rem;max-width:520px;margin:0 auto;}
+.main{max-width:1000px;margin:0 auto;padding:0 20px 80px;}
+.card{background:var(--lapis2);border:1px solid rgba(201,168,76,.12);border-radius:12px;padding:28px;}
+.card+.card{margin-top:20px;}
+label{display:block;font-size:13px;font-weight:600;color:var(--gold);margin-bottom:6px;letter-spacing:.04em;}
+input,select{width:100%;background:var(--lapis3);border:1px solid rgba(201,168,76,.2);border-radius:8px;padding:11px 14px;color:var(--cream);font-family:'Inter',sans-serif;font-size:14px;outline:none;transition:border .2s;}
+input:focus,select:focus{border-color:var(--gold);}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px;}
+.tags-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;}
+.tag{padding:6px 14px;border-radius:20px;border:1px solid rgba(201,168,76,.25);cursor:pointer;font-size:13px;color:rgba(245,240,232,.7);transition:all .2s;user-select:none;}
+.tag.active{background:var(--gold);border-color:var(--gold);color:var(--lapis);font-weight:600;}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:12px 28px;border-radius:8px;border:none;cursor:pointer;font-family:'Inter',sans-serif;font-size:14px;font-weight:600;transition:all .2s;}
+.btn-gold{background:var(--gold);color:var(--lapis);}
+.btn-gold:hover{background:#e0bc5a;}
+.btn-outline{background:transparent;border:1px solid rgba(201,168,76,.35);color:var(--cream);}
+.btn-outline:hover{border-color:var(--gold);color:var(--gold);}
+.actions{margin-top:20px;display:flex;gap:12px;flex-wrap:wrap;}
+/* Plan output */
+#planArea{display:none;}
+.plan-summary{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:24px;}
+.sum-box{flex:1;min-width:100px;background:var(--lapis3);border:1px solid rgba(201,168,76,.15);border-radius:10px;padding:14px;text-align:center;}
+.sum-box .val{font-size:1.5rem;font-weight:700;color:var(--gold);}
+.sum-box .lbl{font-size:11px;color:rgba(245,240,232,.5);margin-top:2px;text-transform:uppercase;letter-spacing:.05em;}
+/* Day columns */
+.week-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;overflow-x:auto;}
+.day-col{min-width:120px;}
+.day-header{background:var(--gold);color:var(--lapis);text-align:center;padding:7px 4px;border-radius:8px 8px 0 0;font-size:12px;font-weight:700;}
+.meal-slot{background:var(--lapis3);border:1px solid rgba(201,168,76,.1);border-bottom:none;padding:10px 8px;}
+.meal-slot:last-child{border-bottom:1px solid rgba(201,168,76,.1);border-radius:0 0 8px 8px;}
+.meal-type{font-size:10px;font-weight:700;color:var(--gold);letter-spacing:.07em;text-transform:uppercase;margin-bottom:3px;}
+.meal-name{font-size:12px;color:var(--cream);line-height:1.4;font-weight:500;}
+.meal-cals{font-size:11px;color:rgba(245,240,232,.45);margin-top:2px;}
+/* Shopping list */
+#shopList{display:none;}
+.shop-category{margin-bottom:16px;}
+.shop-category h4{font-size:13px;font-weight:700;color:var(--gold);margin-bottom:8px;letter-spacing:.04em;}
+.shop-items{display:flex;flex-wrap:wrap;gap:8px;}
+.shop-item{background:var(--lapis3);border:1px solid rgba(201,168,76,.15);border-radius:20px;padding:5px 12px;font-size:13px;color:var(--cream);cursor:pointer;transition:all .2s;user-select:none;}
+.shop-item.checked{background:rgba(34,181,160,.15);border-color:var(--turq2);color:var(--turq2);text-decoration:line-through;opacity:.6;}
+/* Tab nav */
+.tabs{display:flex;gap:0;margin-bottom:20px;border-bottom:1px solid rgba(201,168,76,.15);}
+.tab{padding:10px 20px;cursor:pointer;font-size:13px;font-weight:600;color:rgba(245,240,232,.5);border-bottom:2px solid transparent;transition:all .2s;}
+.tab.active{color:var(--gold);border-bottom-color:var(--gold);}
+.tab-pane{display:none;}
+.tab-pane.active{display:block;}
+/* Waitlist */
+.waitlist{background:linear-gradient(135deg,var(--lapis2),var(--lapis3));border:1px solid rgba(201,168,76,.2);border-radius:12px;padding:32px;text-align:center;margin-top:20px;}
+.waitlist h3{font-family:'Playfair Display',serif;font-size:1.4rem;color:var(--gold);margin-bottom:8px;}
+.waitlist p{color:rgba(245,240,232,.7);margin-bottom:20px;font-size:14px;}
+.wl-form{display:flex;gap:10px;max-width:400px;margin:0 auto;flex-wrap:wrap;}
+.wl-form input{flex:1;min-width:200px;}
+.wl-success{color:var(--turq2);font-weight:600;display:none;}
+</style>
+<link rel="canonical" href="https://abuz8ai.com/tools/ai-meal-planner">
+<meta name="description" content="AI Meal Planner — Weekly meal plans. Free, no signup, runs entirely in your browser. One of 169 free AI and developer tools by ABUZ8.">
+</head>
+<body>
+<header>
+  <h1>⚡ ABUZ8</h1>
+  <span>AI MEAL PLANNER</span>
+</header>
+<div class="hero">
+  <h2>Your Personal AI Nutritionist</h2>
+  <p>Generate a complete 7-day meal plan with calorie targets, macros, and a shopping list — personalized to your goals.</p>
+</div>
+<div class="main">
+  <div class="card" id="inputArea">
+    <div class="grid-3">
+      <div>
+        <label>Goal</label>
+        <select id="goalSel">
+          <option value="lose">🔥 Lose Weight</option>
+          <option value="maintain" selected>⚖️ Maintain Weight</option>
+          <option value="gain">💪 Build Muscle / Gain</option>
+          <option value="energy">⚡ Boost Energy</option>
+        </select>
+      </div>
+      <div>
+        <label>Calorie Target / Day</label>
+        <input type="number" id="calsInput" value="2000" min="1000" max="4000" step="50">
+      </div>
+      <div>
+        <label>Meals per Day</label>
+        <select id="mealCount">
+          <option value="3" selected>3 meals</option>
+          <option value="4">4 meals</option>
+          <option value="5">5 meals</option>
+          <option value="6">6 meals (incl. snacks)</option>
+        </select>
+      </div>
+    </div>
+    <div class="grid-2">
+      <div>
+        <label>Diet Type</label>
+        <div class="tags-row" id="dietTags">
+          <span class="tag active" data-v="any">Any / Omnivore</span>
+          <span class="tag" data-v="vegetarian">Vegetarian</span>
+          <span class="tag" data-v="vegan">Vegan</span>
+          <span class="tag" data-v="keto">Keto</span>
+          <span class="tag" data-v="paleo">Paleo</span>
+          <span class="tag" data-v="mediterranean">Mediterranean</span>
+          <span class="tag" data-v="highprotein">High Protein</span>
+        </div>
+      </div>
+      <div>
+        <label>Allergies / Avoid</label>
+        <div class="tags-row" id="avoidTags">
+          <span class="tag" data-v="gluten">Gluten-Free</span>
+          <span class="tag" data-v="dairy">Dairy-Free</span>
+          <span class="tag" data-v="nuts">No Nuts</span>
+          <span class="tag" data-v="soy">No Soy</span>
+          <span class="tag" data-v="shellfish">No Shellfish</span>
+          <span class="tag" data-v="eggs">No Eggs</span>
+        </div>
+      </div>
+    </div>
+    <div class="actions">
+      <button class="btn btn-gold" onclick="generatePlan()">🍽 Generate Meal Plan</button>
+    </div>
+  </div>
+
+  <div class="card" id="planArea">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:10px;">
+      <h2 style="font-family:'Playfair Display',serif;font-size:1.4rem;color:var(--gold);">Your 7-Day Meal Plan</h2>
+      <div style="display:flex;gap:8px;">
+        <button class="btn btn-outline" onclick="generatePlan()" style="padding:8px 16px;font-size:12px;">🔀 Regenerate</button>
+        <button class="btn btn-gold" onclick="exportPlan()" style="padding:8px 16px;font-size:12px;">⬇ Export</button>
+      </div>
+    </div>
+
+    <div class="plan-summary" id="planSummary"></div>
+
+    <div class="tabs">
+      <div class="tab active" onclick="setTab('week',this)">📅 Week View</div>
+      <div class="tab" onclick="setTab('shopping',this)">🛒 Shopping List</div>
+    </div>
+
+    <div class="tab-pane active" id="pane-week">
+      <div class="week-grid" id="weekGrid"></div>
+    </div>
+    <div class="tab-pane" id="pane-shopping">
+      <div id="shopList"></div>
+    </div>
+  </div>
+
+  <div class="waitlist">
+    <h3>🚀 Personalized Nutrition Coaching</h3>
+    <p>Join for AI-powered grocery ordering, recipe videos, and weekly adaptation based on your progress.</p>
+    <div class="wl-form">
+      <input type="email" id="wlEmail" placeholder="your@email.com">
+      <button class="btn btn-gold" onclick="joinWaitlist()">Join Waitlist</button>
+    </div>
+    <div class="wl-success" id="wlSuccess">✓ You're on the list!</div>
+  </div>
+</div>
+
+<script src="_abuz8-live-brain.js" defer></script>
+<script>
+// Tag toggles (single-select for diet, multi for avoid)
+document.querySelectorAll('#dietTags .tag').forEach(t => {
+  t.addEventListener('click', () => {
+    document.querySelectorAll('#dietTags .tag').forEach(x=>x.classList.remove('active'));
+    t.classList.add('active');
+  });
+});
+document.querySelectorAll('#avoidTags .tag').forEach(t => {
+  t.addEventListener('click', () => t.classList.toggle('active'));
+});
+
+const DAYS = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+const MEAL_LABELS = {3:['Breakfast','Lunch','Dinner'],4:['Breakfast','Lunch','Snack','Dinner'],5:['Breakfast','Snack','Lunch','Snack','Dinner'],6:['Breakfast','Mid-Morning','Lunch','Afternoon Snack','Dinner','Evening Snack']};
+
+const MEALS = {
+  breakfast: {
+    any:['Scrambled Eggs & Toast','Greek Yogurt Parfait','Oatmeal with Berries','Avocado Toast + Eggs','Smoothie Bowl','Overnight Oats','Breakfast Burrito','Banana Pancakes'],
+    vegetarian:['Veggie Omelette','Chia Pudding','Avocado Toast','Greek Yogurt Bowl','Smoothie','Oatmeal with Nuts','Fruit & Granola'],
+    vegan:['Tofu Scramble','Acai Bowl','Overnight Oats','Peanut Butter Toast','Smoothie Bowl','Granola with Oat Milk','Chia Pudding'],
+    keto:['Bacon & Eggs','Keto Pancakes','Avocado + Bacon','Greek Yogurt (plain)','Cheese Omelette','Smoked Salmon Plate'],
+    paleo:['Eggs & Sweet Potato','Fruit & Nuts','Paleo Pancakes','Turkey Bacon + Eggs','Berry Smoothie'],
+    mediterranean:['Greek Yogurt + Honey','Eggs + Whole Grain Toast','Fruit & Nuts','Shakshuka','Oatmeal with Walnuts'],
+    highprotein:['Protein Oatmeal','Egg White Omelette','Cottage Cheese Bowl','Protein Shake + Banana','Greek Yogurt + Granola'],
+  },
+  lunch: {
+    any:['Chicken Caesar Salad','Turkey Wrap','Grilled Salmon + Rice','Burrito Bowl','Tuna Sandwich','Quinoa Power Bowl','Soup + Salad','Pasta Primavera'],
+    vegetarian:['Caprese Sandwich','Lentil Soup','Veggie Buddha Bowl','Cheese Quesadilla','Tomato Basil Pasta','Falafel Wrap'],
+    vegan:['Chickpea Salad','Lentil Dal','Tofu Stir-Fry Bowl','Black Bean Burrito','Quinoa Tabbouleh'],
+    keto:['Cobb Salad','Lettuce Wrap','Tuna Avocado Salad','Chicken + Greens','Zucchini Noodles'],
+    paleo:['Grilled Chicken Salad','Turkey Lettuce Wraps','Sweet Potato + Chicken','Egg Salad (lettuce)'],
+    mediterranean:['Greek Salad + Grilled Fish','Hummus Wrap','Fattoush + Chicken','Lentil Soup','Tabbouleh Bowl'],
+    highprotein:['Grilled Chicken Rice Bowl','Tuna Wrap','Steak Salad','Chicken + Quinoa','Egg + Chickpea Bowl'],
+  },
+  dinner: {
+    any:['Grilled Salmon + Veggies','Pasta Bolognese','Chicken Stir-Fry','Beef Tacos','Pork Tenderloin + Mash','Shrimp Fried Rice','Sheet Pan Chicken','Lamb Chops + Salad'],
+    vegetarian:['Eggplant Parmesan','Veggie Curry + Rice','Black Bean Tacos','Mushroom Risotto','Spinach Pasta'],
+    vegan:['Lentil Curry','Tofu Tikka Masala','Vegan Burgers','Stuffed Peppers','Mushroom Stew'],
+    keto:['Steak + Asparagus','Chicken Thighs + Broccoli','Salmon + Cauliflower','Pork Belly + Greens','Ground Beef Skillet'],
+    paleo:['Baked Salmon + Veggies','Chicken Thighs + Sweet Potato','Grass-Fed Burger (no bun)','Turkey Meatballs'],
+    mediterranean:['Baked Cod + Lemon','Moussaka','Grilled Lamb + Tabbouleh','Shrimp Saganaki','Chicken Souvlaki'],
+    highprotein:['Grilled Chicken Breast + Rice','Tuna Steak + Greens','Turkey Meatballs','Lean Beef + Veg','Salmon + Quinoa'],
+  },
+  snack: {
+    any:['Apple + Peanut Butter','Trail Mix','Hard-Boiled Eggs','Rice Cakes','Cheese & Crackers','Hummus + Veggies'],
+    vegan:['Mixed Nuts','Fruit Salad','Edamame','Peanut Butter Rice Cakes'],
+    keto:['Cheese Cubes','Nuts','Avocado','Celery + Almond Butter'],
+    highprotein:['Protein Bar','Greek Yogurt','Beef Jerky','Cottage Cheese'],
+  }
+};
+
+const SHOPPING = {
+  'Proteins':['Chicken breast','Salmon fillet','Ground beef','Turkey','Eggs','Tuna (canned)','Greek yogurt','Cottage cheese'],
+  'Produce':['Spinach','Mixed greens','Broccoli','Sweet potato','Tomatoes','Avocado','Bell peppers','Zucchini','Onions','Garlic','Lemon'],
+  'Grains & Carbs':['Brown rice','Quinoa','Whole grain bread','Oats','Pasta','Tortillas'],
+  'Dairy & Alternatives':['Milk / oat milk','Butter','Parmesan cheese','Cheddar'],
+  'Pantry':['Olive oil','Soy sauce','Honey','Peanut butter','Canned chickpeas','Canned tomatoes','Spices (cumin, paprika, oregano)'],
+  'Snacks':['Mixed nuts','Fruit (banana, apple, berries)','Rice cakes','Protein bars'],
+};
+
+let currentPlan = null;
+
+function generatePlan() {
+  const goal = document.getElementById('goalSel').value;
+  const cals = parseInt(document.getElementById('calsInput').value) || 2000;
+  const mealCnt = parseInt(document.getElementById('mealCount').value);
+  const diet = document.querySelector('#dietTags .tag.active')?.dataset.v || 'any';
+  const avoid = [...document.querySelectorAll('#avoidTags .tag.active')].map(t=>t.dataset.v);
+
+  const btn = document.querySelector('.btn-gold');
+  btn.textContent = '🍽 Generating...';
+  btn.disabled = true;
+
+  // The AI returns one combined plan; hide the legacy tabs/summary and render into
+  // the week pane (kept as the single output target).
+  const tabs = document.querySelector('.tabs'); if(tabs) tabs.style.display='none';
+  const shopPane = document.getElementById('pane-shopping'); if(shopPane) shopPane.style.display='none';
+  document.getElementById('planSummary').innerHTML = '';
+  const weekGrid = document.getElementById('weekGrid');
+  weekGrid.style.display = 'block';
+  weekGrid.innerHTML = '<div style="color:rgba(245,240,232,.5);font-size:13px;padding:32px;text-align:center;">🍽 Building your 7-day meal plan with AI…</div>';
+  document.getElementById('planArea').style.display = 'block';
+  document.getElementById('planArea').scrollIntoView({behavior:'smooth',block:'start'});
+
+  // Real AI generation via the ABUZ8 brain (Cloudflare Workers AI). No templates.
+  fetch('/api/waitlist', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      tool: 'meal-planner',
+      data: {
+        goal: goal,
+        caloriesPerDay: cals,
+        mealsPerDay: mealCnt,
+        dietType: diet,
+        avoid: avoid.join(', ') || 'none',
+        format: 'Return a complete 7-day meal plan as clean HTML. For each day (Monday–Sunday) use an <h3> heading and a <ul> of the meals with approximate calories. End with an <h3>Shopping List</h3> grouped by category as <ul> lists.'
+      }
+    })
+  })
+  .then(r => r.json())
+  .then(res => {
+    if (!res.success || !res.result) throw new Error(res.error || 'Generation failed');
+    btn.textContent = '🍽 Generate Meal Plan'; btn.disabled = false;
+    currentPlan = res.result;
+    weekGrid.innerHTML = ABUZ8md(res.result);
+  })
+  .catch(err => {
+    btn.textContent = '🍽 Generate Meal Plan'; btn.disabled = false;
+    weekGrid.innerHTML = '<div style="color:#e05555;font-size:13px;padding:32px;text-align:center;">Generation failed. Please try again in a moment.</div>';
+    alert('Generation failed: ' + err.message + '. Please try again in a moment.');
+  });
+}
+
+function getMeals(type, diet) {
+  const cat = MEALS[type] || MEALS.snack;
+  return cat[diet] || cat.any || cat.any;
+}
+
+function buildPlan(goal, cals, mealCnt, diet, avoid) {
+  const labels = MEAL_LABELS[mealCnt];
+  const mealTypeMap = {
+    3:['breakfast','lunch','dinner'],
+    4:['breakfast','lunch','snack','dinner'],
+    5:['breakfast','snack','lunch','snack','dinner'],
+    6:['breakfast','snack','lunch','snack','dinner','snack']
+  };
+  const types = mealTypeMap[mealCnt];
+  // Cal split
+  const splits = {
+    3:[.3,.35,.35], 4:[.25,.3,.1,.35], 5:[.2,.1,.3,.1,.3], 6:[.2,.08,.28,.1,.27,.07]
+  };
+  const calSplit = splits[mealCnt];
+
+  return DAYS.map((day, di) => ({
+    day,
+    meals: labels.map((lbl, li) => {
+      const type = types[li];
+      const src = type==='snack' ? getMeals('snack', diet) : getMeals(type==='dinner'?'dinner':type==='lunch'?'lunch':'breakfast', diet);
+      const idx = (di * 7 + li * 3 + li) % src.length;
+      const mealCals = Math.round(cals * calSplit[li]);
+      return { label:lbl, name:src[idx], cals:mealCals };
+    })
+  }));
+}
+
+function renderPlan(plan, totalCals, goal) {
+  // Summary boxes
+  const macros = {
+    lose:{p:'35%',c:'35%',f:'30%',note:'Deficit ~300 kcal'},
+    maintain:{p:'25%',c:'50%',f:'25%',note:'Maintenance'},
+    gain:{p:'30%',c:'45%',f:'25%',note:'Surplus ~250 kcal'},
+    energy:{p:'20%',c:'55%',f:'25%',note:'High complex carbs'},
+  };
+  const m = macros[goal];
+  document.getElementById('planSummary').innerHTML = `
+    <div class="sum-box"><div class="val">${totalCals}</div><div class="lbl">Calories/Day</div></div>
+    <div class="sum-box"><div class="val">${Math.round(totalCals*.001*m.p.replace('%','')*10)}g</div><div class="lbl">Protein</div></div>
+    <div class="sum-box"><div class="val">${Math.round(totalCals*.001*m.c.replace('%','')*10)}g</div><div class="lbl">Carbs</div></div>
+    <div class="sum-box"><div class="val">${Math.round(totalCals*.001*m.f.replace('%','')*10*.11)}g</div><div class="lbl">Fat</div></div>
+    <div class="sum-box"><div class="val">7</div><div class="lbl">Days Planned</div></div>
+  `;
+
+  // Week grid
+  const wg = document.getElementById('weekGrid');
+  wg.innerHTML = plan.map(day => `
+    <div class="day-col">
+      <div class="day-header">${day.day}</div>
+      ${day.meals.map(m=>`
+        <div class="meal-slot">
+          <div class="meal-type">${m.label}</div>
+          <div class="meal-name">${m.name}</div>
+          <div class="meal-cals">${m.cals} kcal</div>
+        </div>
+      `).join('')}
+    </div>
+  `).join('');
+
+  // Shopping list
+  const sl = document.getElementById('shopList');
+  sl.innerHTML = Object.entries(SHOPPING).map(([cat, items]) => `
+    <div class="shop-category">
+      <h4>${cat}</h4>
+      <div class="shop-items">
+        ${items.map(item=>`<span class="shop-item" onclick="this.classList.toggle('checked')">${item}</span>`).join('')}
+      </div>
+    </div>
+  `).join('');
+  sl.style.display = 'block';
+
+  document.getElementById('planArea').style.display = 'block';
+  document.getElementById('planArea').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function setTab(id, el) {
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tab-pane').forEach(p=>p.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('pane-'+id).classList.add('active');
+}
+
+function exportPlan() {
+  const text = document.getElementById('weekGrid').innerText.trim();
+  if(!text) { alert('Generate a meal plan first.'); return; }
+  const out = '7-Day Meal Plan — Generated by ABUZ8 AI Meal Planner\n\n' + text;
+  const blob = new Blob([out], {type:'text/plain'});
+  const a = document.createElement('a'); a.href=URL.createObjectURL(blob);
+  a.download='meal-plan.txt'; a.click();
+}
+
+function joinWaitlist() {
+  const email = document.getElementById('wlEmail').value.trim();
+  if(!email||!email.includes('@')) { alert('Please enter a valid email.'); return; }
+  fetch('/api/waitlist',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,product:'ai-meal-planner',ts:Date.now()})}).catch(()=>{});
+  try{const s=JSON.parse(localStorage.getItem('abuz8_wl')||'[]');s.push({email,product:'ai-meal-planner',ts:Date.now()});localStorage.setItem('abuz8_wl',JSON.stringify(s));}catch(e){}
+  document.getElementById('wlEmail').value='';
+  document.querySelector('.wl-form').style.display='none';
+  document.getElementById('wlSuccess').style.display='block';
+}
+</script>
+
+<script src="/assets/js/dfy-banner.js" async></script>
+<script src="/tools/_abuz8-md.js"></script>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+<script src="/tools/_tools-shared.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>
+

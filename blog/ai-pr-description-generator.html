@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI PR Description Generator: From Git Diff to a Review Reviewers Actually Read | ABUZ8</title>
+<meta name="description" content="An AI PR description generator turns a git diff into a pull request summary that gets reviewed faster. The four-section structure, what to feed it, and the one line that cuts review time in half.">
+<meta name="keywords" content="ai pr description generator, pull request description, github pr template, git diff summary, code review">
+<link rel="canonical" href="https://abuz8ai.com/blog/ai-pr-description-generator">
+<meta property="og:title" content="AI PR Description Generator: From Git Diff to a Review Reviewers Actually Read">
+<meta property="og:type" content="article">
+<link rel="stylesheet" href="/blog/_blog-base.css">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@300;400;600;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","headline":"AI PR Description Generator: From Git Diff to a Review Reviewers Actually Read","datePublished":"2026-05-22","author":{"@type":"Organization","name":"ABUZ8 AI"}}
+</script>
+</head>
+<body>
+<div class="container">
+  <a href="/blog/" class="back">&larr; ABUZ8 BLOG</a>
+  <h1>AI PR Description Generator: From Git Diff to a Review Reviewers Actually Read</h1>
+  <div class="meta-row"><span>DEVELOPER TOOLS</span><span class="dot"></span><span>MAY 22, 2026</span><span class="dot"></span><span>6 MIN READ</span></div>
+
+  <p>An <strong>AI PR description generator</strong> takes your git diff and writes the pull request summary you were going to skip. And you were going to skip it — "fixed bug" is still the most common PR description in the world. The cost of that empty box isn't laziness; it's the reviewer who opens 40 changed files with zero context, guesses at intent, and either rubber-stamps it or sits on it for two days. A good description is the highest-leverage thing you can do to make your own code ship faster.</p>
+
+  <p>Here's what a generated PR description should contain, what to feed the tool so it doesn't hallucinate, and the structure that turns a 30-minute review into a 5-minute one.</p>
+
+  <h2>Why "fixed bug" costs more than it saves</h2>
+
+  <p>A pull request is a request. You are asking another engineer to spend their attention validating your work. The description is the brief for that work. When the brief is empty, the reviewer has to reconstruct three things from the diff alone:</p>
+
+  <ul>
+    <li><strong>What changed</strong> — they can read this from the diff, slowly.</li>
+    <li><strong>Why it changed</strong> — they cannot read this from the diff at all. It lives in your head.</li>
+    <li><strong>What they should scrutinize</strong> — the one risky line in 400 safe ones.</li>
+  </ul>
+
+  <p>The "why" and the "what to scrutinize" are invisible in the code. That's the entire value of the description, and it's exactly the part people leave blank.</p>
+
+  <h2>The four-section structure that works</h2>
+
+  <p>Every PR description that gets reviewed fast follows roughly this shape. A generator should produce all four from the diff plus a one-line intent from you.</p>
+
+  <h3>1. Summary — one paragraph, the why</h3>
+  <p>Two or three sentences: what problem this solves and the approach taken. Not a restatement of the file list — the reviewer can see the files. The summary answers "why are we doing this and why this way."</p>
+
+  <h3>2. Changes — grouped by intent, not by file</h3>
+  <p>The diff is organized by file. The reader thinks in changes. Group the diff into logical buckets: "Added rate limiting to the auth endpoint," "Refactored the token parser to remove the duplicate validation," "Updated tests." This is where AI is genuinely good — it reads the diff and clusters it into intent groups a human would have to do by hand.</p>
+
+  <h3>3. Review focus — where to look hard</h3>
+  <p>The single most underused section. "The retry logic in <code>client.ts</code> is the risky part — I'm not certain the backoff is correct under concurrent failures." This tells the reviewer where to spend their scarce attention. A reviewer who knows where to look gives you a better review in less time.</p>
+
+  <h3>4. Testing — what you verified</h3>
+  <p>What did you actually run? Unit tests, manual steps, the edge cases you checked. This is the line that lets a reviewer trust the change without re-running everything themselves.</p>
+
+  <div class="callout">
+    <p><strong>The one line that halves review time:</strong> a "Review focus" section that names the riskiest change and says why you're unsure about it. Reviewers reward honesty about uncertainty with faster, better feedback. Pretending everything is solid invites a slow, suspicious read of the whole diff.</p>
+  </div>
+
+  <h2>What to feed the generator</h2>
+
+  <p>A PR description generator that only sees the diff produces accurate-but-shallow output — it can describe what changed, but it has to guess at why. Feed it three things and the output gets sharp:</p>
+
+  <ul>
+    <li><strong>The diff</strong> — obviously. The full diff, not just the file names.</li>
+    <li><strong>The linked issue or one-line intent</strong> — "fixes the 500 on expired tokens." This anchors the "why" so the model doesn't invent a plausible-but-wrong motivation.</li>
+    <li><strong>Your repo's PR template</strong> — if you have a house format, paste it. The model fills your structure instead of imposing its own.</li>
+  </ul>
+
+  <h2>Where it goes wrong</h2>
+
+  <h3>Confident hallucination of intent</h3>
+  <p>Without the linked issue, the model will guess why you made a change and state the guess as fact. The fix is mechanical: always give it the one-line intent. Never let a generated "why" ship unread.</p>
+
+  <h3>Padding</h3>
+  <p>Left to its own devices, the model writes a paragraph where a sentence would do. The best output is short. If the generated description is longer than the diff is interesting, trim it — a reviewer who has to read a wall of generated prose is no better off than one staring at a blank box.</p>
+
+  <h3>Restating the obvious</h3>
+  <p>"This PR changes 12 files in the auth module" is not information — the reviewer can see that. Cut anything the diff already says clearly. Keep only what the diff can't tell them: the why and the where-to-look.</p>
+
+  <h2>The workflow</h2>
+
+  <ol>
+    <li>Open the PR, paste the diff and the one-line intent.</li>
+    <li>Generate the four-section draft.</li>
+    <li><strong>Edit the "Review focus" by hand.</strong> Only you know which line you're unsure about. This is the section worth your 60 seconds.</li>
+    <li>Trim anything that restates the diff.</li>
+    <li>Ship. A good description pays for itself the first time a reviewer approves in five minutes instead of sitting on it overnight.</li>
+  </ol>
+
+  <h2>The bottom line</h2>
+
+  <p>The PR description is a brief for the reviewer's attention, and most engineers leave it blank because writing it feels like overhead. A generator removes the friction: it clusters the diff into intent, drafts the summary, and leaves you one section — review focus — worth editing by hand. The result is faster reviews, fewer rubber stamps, and a git history that explains itself a year later when you've forgotten why any of it happened.</p>
+
+  <div class="callout cta">
+    <p><strong>ABUZ8 ships tools for the whole shipping pipeline:</strong> <a href="/tools/ai-pr-description-generator.html" class="in">PR description generator</a>, <a href="/tools/ai-code-review.html" class="in">code review</a>, <a href="/tools/ai-error-explainer.html" class="in">error explainer</a>, <a href="/tools/ai-dependency-auditor.html" class="in">dependency auditor</a>. <a href="/" class="in">Join early access</a> — no card, no watermark.</p>
+  </div>
+
+  <div class="foot">Built by <a href="/">ABUZ8 LLC</a> — we're building QADIR OS, the sovereign agentic operating system.</div>
+</div>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+<script src="/blog/_blog-shared.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>
+

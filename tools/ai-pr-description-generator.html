@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI PR Description Generator — ABUZ8</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--lapis:#0a1628;--lapis2:#0f1f3d;--lapis3:#162544;--gold:#c9a84c;--turq:#0e9f6e;--turq2:#22b5a0;--cream:#f5f0e8;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--lapis);color:var(--cream);font-family:'Inter',sans-serif;min-height:100vh;}
+.hero{background:linear-gradient(135deg,var(--lapis2) 0%,var(--lapis3) 100%);padding:48px 24px 36px;text-align:center;border-bottom:1px solid rgba(201,168,76,.15);}
+.hero h1{font-family:'Playfair Display',serif;font-size:clamp(2rem,5vw,3rem);color:var(--gold);margin-bottom:8px;}
+.hero p{color:rgba(245,240,232,.7);font-size:1.05rem;max-width:580px;margin:0 auto;}
+.main{max-width:1000px;margin:0 auto;padding:32px 20px;}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:24px;}
+@media(max-width:700px){.grid{grid-template-columns:1fr;}}
+.card{background:var(--lapis2);border:1px solid rgba(201,168,76,.12);border-radius:12px;padding:20px;}
+.card-title{font-size:.8rem;font-weight:600;color:rgba(245,240,232,.35);text-transform:uppercase;letter-spacing:.08em;margin-bottom:14px;}
+label{display:block;font-size:.82rem;color:rgba(245,240,232,.45);margin:12px 0 6px;}
+.form-input{background:var(--lapis3);border:1px solid rgba(201,168,76,.12);border-radius:6px;color:var(--cream);font-family:'Inter',sans-serif;font-size:.88rem;padding:9px 12px;width:100%;outline:none;}
+.form-input:focus{border-color:rgba(201,168,76,.35);}
+textarea.form-input{resize:vertical;line-height:1.6;font-family:'JetBrains Mono',monospace;font-size:.78rem;}
+.type-pills{display:flex;flex-wrap:wrap;gap:6px;}
+.type-pill{background:var(--lapis3);border:1px solid rgba(201,168,76,.1);border-radius:6px;padding:6px 13px;font-size:.8rem;cursor:pointer;color:rgba(245,240,232,.4);}
+.type-pill.active{background:rgba(201,168,76,.1);border-color:var(--gold);color:var(--gold);}
+.template-pills{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px;}
+.tpl-pill{background:var(--lapis3);border:1px solid rgba(201,168,76,.1);border-radius:20px;padding:5px 13px;font-size:.78rem;cursor:pointer;color:rgba(245,240,232,.4);}
+.tpl-pill.active{background:rgba(201,168,76,.1);border-color:var(--gold);color:var(--gold);}
+.gen-btn{background:var(--gold);color:var(--lapis);border:none;border-radius:8px;padding:13px;font-weight:700;font-size:1rem;cursor:pointer;width:100%;margin-bottom:24px;}
+.gen-btn:hover{opacity:.88;}
+.out-panel{background:var(--lapis2);border:1px solid rgba(201,168,76,.12);border-radius:12px;overflow:hidden;}
+.out-header{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid rgba(201,168,76,.1);flex-wrap:wrap;gap:8px;}
+.out-title{font-family:'Playfair Display',serif;color:var(--gold);font-size:1.2rem;}
+.out-btn{background:var(--lapis3);border:1px solid rgba(201,168,76,.15);border-radius:6px;color:rgba(245,240,232,.5);padding:6px 14px;font-size:.8rem;cursor:pointer;}
+.out-btn:hover{border-color:var(--gold);color:var(--gold);}
+.pr-preview{background:var(--lapis3);margin:16px;border-radius:8px;padding:24px;font-family:'Inter',sans-serif;font-size:.88rem;line-height:1.8;max-height:600px;overflow-y:auto;}
+.pr-preview h2{font-family:'JetBrains Mono',monospace;font-size:1rem;color:var(--gold);margin:16px 0 8px;}
+.pr-preview h2:first-child{margin-top:0;}
+.pr-preview p{color:rgba(245,240,232,.8);margin-bottom:10px;}
+.pr-preview ul{padding-left:20px;color:rgba(245,240,232,.7);margin-bottom:10px;}
+.pr-preview li{margin-bottom:4px;}
+.pr-preview code{background:rgba(201,168,76,.08);border-radius:3px;padding:1px 5px;font-family:'JetBrains Mono',monospace;font-size:.82rem;color:var(--gold);}
+.pr-preview .checklist{list-style:none;padding:0;}
+.pr-preview .checklist li{display:flex;gap:8px;margin-bottom:4px;}
+.pr-preview .checklist li::before{content:'☐';color:rgba(245,240,232,.3);}
+.pr-preview hr{border:none;border-top:1px solid rgba(201,168,76,.1);margin:16px 0;}
+.md-raw{background:var(--lapis3);margin:16px;border-radius:8px;padding:16px;font-family:'JetBrains Mono',monospace;font-size:.77rem;line-height:1.8;white-space:pre-wrap;overflow-x:auto;max-height:500px;overflow-y:auto;display:none;}
+.view-toggle{display:flex;gap:4px;background:var(--lapis3);border-radius:6px;padding:3px;}
+.vt-btn{padding:5px 12px;border-radius:4px;font-size:.77rem;cursor:pointer;border:none;color:rgba(245,240,232,.4);background:none;}
+.vt-btn.active{background:rgba(201,168,76,.12);color:var(--gold);}
+.empty-out{text-align:center;padding:48px;color:rgba(245,240,232,.2);}
+.spinner{display:inline-block;width:28px;height:28px;border:3px solid rgba(201,168,76,.15);border-top-color:var(--gold);border-radius:50%;animation:spin .7s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.waitlist{background:linear-gradient(135deg,var(--lapis3),var(--lapis2));border:1px solid rgba(201,168,76,.2);border-radius:12px;padding:32px;text-align:center;margin-top:40px;}
+.waitlist h3{font-family:'Playfair Display',serif;color:var(--gold);font-size:1.5rem;margin-bottom:8px;}
+.wl-form{display:flex;gap:10px;max-width:440px;margin:0 auto;}
+.wl-input{flex:1;background:var(--lapis);border:1px solid rgba(201,168,76,.25);border-radius:8px;color:var(--cream);padding:11px 16px;font-size:.92rem;outline:none;}
+.wl-btn{background:var(--gold);color:var(--lapis);border:none;border-radius:8px;padding:11px 22px;font-weight:600;cursor:pointer;}
+</style>
+<link rel="canonical" href="https://abuz8ai.com/tools/ai-pr-description-generator">
+<meta name="description" content="AI PR Description — Clear pull-request write-ups. Free, no signup, runs entirely in your browser. One of 169 free AI and developer tools by ABUZ8.">
+</head>
+<body>
+<div class="hero">
+  <h1>📝 AI PR Description Generator</h1>
+  <p>Fill in what you changed. Get a professional PR description with context, testing notes, and checklist — ready to paste into GitHub.</p>
+</div>
+<div class="main">
+  <div class="grid">
+    <div class="card">
+      <div class="card-title">Change Details</div>
+      <label>Branch / PR Title</label>
+      <input class="form-input" id="prTitle" placeholder="feat/add-stripe-payment-webhook" value="feat/add-stripe-payment-webhook">
+      <label>What did you change? (brief summary)</label>
+      <textarea class="form-input" id="summary" rows="3" placeholder="Implemented Stripe webhook handler for payment events…">Implemented Stripe webhook handler to process payment_intent.succeeded and payment_intent.payment_failed events. Updates order status in DB and sends email notifications.</textarea>
+      <label>Why? (motivation / problem solved)</label>
+      <textarea class="form-input" id="motivation" rows="2" placeholder="Users were not receiving order confirmations…">Customers were not getting order confirmation emails after checkout. Orders also stayed in 'pending' state indefinitely.</textarea>
+      <label>Linked Issues / Tickets</label>
+      <input class="form-input" id="tickets" placeholder="Closes #142, Fixes #150" value="Closes #142">
+    </div>
+    <div class="card">
+      <div class="card-title">PR Type & Context</div>
+      <label>Change Type</label>
+      <div class="type-pills">
+        <div class="type-pill active" onclick="setType(this,'feat')">✨ Feature</div>
+        <div class="type-pill" onclick="setType(this,'fix')">🐛 Bug Fix</div>
+        <div class="type-pill" onclick="setType(this,'refactor')">♻️ Refactor</div>
+        <div class="type-pill" onclick="setType(this,'perf')">⚡ Performance</div>
+        <div class="type-pill" onclick="setType(this,'docs')">📝 Docs</div>
+        <div class="type-pill" onclick="setType(this,'test')">🧪 Tests</div>
+        <div class="type-pill" onclick="setType(this,'chore')">🔧 Chore</div>
+        <div class="type-pill" onclick="setType(this,'breaking')">💥 Breaking</div>
+      </div>
+      <label>Files Changed (optional)</label>
+      <textarea class="form-input" id="filesChanged" rows="3" placeholder="src/webhooks/stripe.js&#10;src/services/orderService.js&#10;src/emails/orderConfirmation.js">src/webhooks/stripe.js (new)
+src/services/orderService.js
+src/emails/orderConfirmation.js
+tests/webhooks/stripe.test.js</textarea>
+      <label>How was it tested?</label>
+      <textarea class="form-input" id="testing" rows="2" placeholder="Tested with Stripe CLI…">Tested with Stripe CLI (stripe trigger payment_intent.succeeded). Added unit tests for both success and failure paths. Manually verified email delivery in staging.</textarea>
+      <label>Template Style</label>
+      <div class="template-pills">
+        <div class="tpl-pill active" onclick="setTemplate(this,'standard')">Standard</div>
+        <div class="tpl-pill" onclick="setTemplate(this,'minimal')">Minimal</div>
+        <div class="tpl-pill" onclick="setTemplate(this,'detailed')">Detailed</div>
+        <div class="tpl-pill" onclick="setTemplate(this,'github')">GitHub Issue Style</div>
+      </div>
+    </div>
+  </div>
+
+  <button class="gen-btn" onclick="generatePR()">📝 Generate PR Description</button>
+
+  <div class="out-panel" id="outPanel">
+    <div class="empty-out" id="emptyOut">
+      <div style="font-size:2.5rem;margin-bottom:10px;">📝</div>
+      <div>Fill in the form above and generate</div>
+    </div>
+    <div id="loadingOut" style="display:none;text-align:center;padding:48px;">
+      <div class="spinner"></div>
+      <div style="margin-top:12px;color:rgba(245,240,232,.4);">Generating PR description…</div>
+    </div>
+    <div id="outResult" style="display:none;">
+      <div class="out-header">
+        <span class="out-title">PR Description</span>
+        <div class="view-toggle">
+          <button class="vt-btn active" onclick="switchView(this,'preview')">Preview</button>
+          <button class="vt-btn" onclick="switchView(this,'raw')">Markdown</button>
+        </div>
+        <div style="display:flex;gap:8px;">
+          <button class="out-btn" onclick="copyPR()">📋 Copy Markdown</button>
+          <button class="out-btn" onclick="openGitHub()">🐙 Open GitHub</button>
+        </div>
+      </div>
+      <div class="pr-preview" id="prPreview"></div>
+      <pre class="md-raw" id="mdRaw"></pre>
+    </div>
+  </div>
+
+  <div class="waitlist">
+    <h3>PR Generator Pro</h3>
+    <p>GitHub integration — auto-fill from actual git diff, link Jira/Linear tickets, and enforce team PR templates.</p>
+    <div class="wl-form">
+      <input class="wl-input" id="wlEmail" type="email" placeholder="your@email.com">
+      <button class="wl-btn" onclick="joinWaitlist()">Join Waitlist</button>
+    </div>
+    <div id="wlMsg" style="margin-top:12px;font-size:.85rem;color:var(--turq2);"></div>
+  </div>
+</div>
+<script src="_abuz8-live-brain.js" defer></script>
+<script>
+let prType='feat', template='standard';
+let generatedMd='';
+
+function setType(el,type){
+  document.querySelectorAll('.type-pill').forEach(p=>p.classList.remove('active'));
+  el.classList.add('active'); prType=type;
+}
+function setTemplate(el,tpl){
+  document.querySelectorAll('.tpl-pill').forEach(p=>p.classList.remove('active'));
+  el.classList.add('active'); template=tpl;
+}
+function switchView(el,mode){
+  document.querySelectorAll('.vt-btn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('prPreview').style.display=mode==='preview'?'block':'none';
+  document.getElementById('mdRaw').style.display=mode==='raw'?'block':'none';
+}
+
+const TYPE_EMOJI={'feat':'✨','fix':'🐛','refactor':'♻️','perf':'⚡','docs':'📝','test':'🧪','chore':'🔧','breaking':'💥'};
+const TYPE_LABEL={'feat':'Feature','fix':'Bug Fix','refactor':'Refactor','perf':'Performance Improvement','docs':'Documentation','test':'Tests','chore':'Chore / Maintenance','breaking':'Breaking Change'};
+
+function generatePR(){
+  const title=document.getElementById('prTitle').value.trim();
+  const summary=document.getElementById('summary').value.trim();
+  const motivation=document.getElementById('motivation').value.trim();
+  const tickets=document.getElementById('tickets').value.trim();
+  const files=document.getElementById('filesChanged').value.trim();
+  const testing=document.getElementById('testing').value.trim();
+
+  if(!summary){alert('Add a summary of what you changed');return;}
+
+  document.getElementById('emptyOut').style.display='none';
+  document.getElementById('outResult').style.display='none';
+  document.getElementById('loadingOut').style.display='block';
+
+  // Real AI PR description via the ABUZ8 brain (Cloudflare Workers AI). No string-template mad-libs.
+  fetch('/api/waitlist', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      tool: 'pr-description-generator',
+      data: { prTitle: title, summary, motivation, linkedIssues: tickets,
+               filesChanged: files, testing, changeType: prType, template }
+    })
+  })
+  .then(r => r.json())
+  .then(res => {
+    if (!res.success || !res.result) throw new Error(res.error || 'Generation failed');
+    document.getElementById('loadingOut').style.display='none';
+
+    generatedMd = res.result;
+    document.getElementById('mdRaw').textContent = generatedMd;
+    document.getElementById('prPreview').innerHTML = renderMarkdown(generatedMd);
+    document.getElementById('outResult').style.display='block';
+    document.getElementById('prPreview').style.display='block';
+    document.getElementById('mdRaw').style.display='none';
+  })
+  .catch(err => {
+    document.getElementById('loadingOut').style.display='none';
+    document.getElementById('emptyOut').style.display='block';
+    alert('Generation failed: ' + err.message + '. Please try again in a moment.');
+  });
+}
+
+function renderMarkdown(md){
+  return md
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/^## (.+)$/gm,'<h2>$1</h2>')
+    .replace(/^### (.+)$/gm,'<h2 style="font-size:.9rem;color:rgba(245,240,232,.6);margin-top:16px;">$1</h2>')
+    .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
+    .replace(/`([^`]+)`/g,'<code>$1</code>')
+    .replace(/^- \[ \] (.+)$/gm,'<li class="checklist-item">$1</li>')
+    .replace(/^- (.+)$/gm,'<li>$1</li>')
+    .replace(/(<li.*<\/li>\n?)+/g,s=>`<ul>${s.includes('checklist-item')?'':''}${s}</ul>`)
+    .replace(/^(?!<[h|u|p])(.+)$/gm,'<p>$1</p>')
+    .replace(/⚠️/g,'<span style="color:#f97316">⚠️</span>')
+    ;
+}
+
+function copyPR(){
+  navigator.clipboard.writeText(generatedMd).then(()=>{
+    event.target.textContent='✓ Copied!';
+    setTimeout(()=>event.target.textContent='📋 Copy Markdown',2000);
+  });
+}
+function openGitHub(){
+  const encoded=encodeURIComponent(generatedMd);
+  window.open('https://github.com/new/pull?body='+encoded,'_blank');
+}
+
+async function joinWaitlist(){
+  const email=document.getElementById('wlEmail').value.trim();
+  if(!email||!email.includes('@')){document.getElementById('wlMsg').textContent='Enter a valid email.';return;}
+  try{await fetch('/api/waitlist',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,product:'ai-pr-description-gen',source:'abuz8'})});}
+  catch(e){localStorage.setItem('wl_pr_gen',email);}
+  document.getElementById('wlMsg').textContent='✓ On the list!';
+  document.getElementById('wlEmail').value='';
+}
+</script>
+
+<script src="/assets/js/dfy-banner.js" async></script>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+<script src="/tools/_tools-shared.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>
+

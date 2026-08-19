@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QADIR OS Technical Architecture — ABUZ8 AI</title>
+<meta name="description" content="QADIR OS technical architecture: 7-layer memory, Bayesian brain router, soul runtime, 192+ MCP tools, 8 LoRA adapters, 23 media tools. Confidential deep dive.">
+<meta name="robots" content="noindex, nofollow">
+<link rel="canonical" href="https://abuz8ai.com/qadir-os-architecture.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="QADIR OS Technical Architecture — ABUZ8 AI">
+<meta property="og:description" content="QADIR OS technical architecture: 7-layer memory, Bayesian brain router, soul runtime, MCP tools, LoRA adapters, media engine.">
+<meta property="og:url" content="https://abuz8ai.com/qadir-os-architecture.html">
+<meta name="theme-color" content="#0a1628">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/abuz8-theme.css">
+<style>
+/* page-specific styles ONLY — theme vars, no new hex (071020 = theme code bg) */
+.container{max-width:980px;margin:0 auto;padding:0 2rem;position:relative;z-index:1}
+.section{padding:4rem 0}
+.section--alt{background:rgba(13,26,48,.45);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.conf-banner{background:rgba(46,117,182,.08);border:1px solid var(--blue-deep);border-radius:6px;padding:.6rem 1rem;font-size:.78rem;color:var(--blue-bright);margin-bottom:2rem;letter-spacing:.02em}
+.tag{font-family:var(--font-mono);font-size:.7rem;letter-spacing:.15em;text-transform:uppercase;color:var(--green-bright);margin-bottom:.5rem}
+h1{font-family:var(--font-display);font-size:clamp(2rem,4.5vw,3.2rem);font-weight:700;color:var(--white);line-height:1.15;margin-bottom:1rem}
+h1 span{background:linear-gradient(135deg,var(--gold-light),var(--gold),var(--green-bright));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.container h2{font-family:var(--font-display);font-size:clamp(1.5rem,3vw,2rem);font-weight:700;color:var(--white);margin-bottom:1rem;line-height:1.2}
+.container h3{font-size:1.05rem;font-weight:600;color:var(--white);margin-bottom:.5rem;font-family:var(--font-body)}
+.sub{font-size:1.02rem;color:var(--dim);max-width:680px;margin-bottom:2rem}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.25rem;margin-top:1.5rem}
+.card{position:relative;overflow:hidden;padding:1.5rem}
+.card-top{height:3px;border-radius:var(--r-md) var(--r-md) 0 0;position:absolute;top:0;left:0;right:0;background:linear-gradient(90deg,var(--blue),var(--green-bright))}
+.card h3{margin-top:.25rem}
+.card p{font-size:.875rem;color:var(--dim);line-height:1.65}
+.stat-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:1px;background:var(--border);border:1px solid var(--border);border-radius:var(--r-md);overflow:hidden;margin:1.5rem 0}
+.stat-cell{background:var(--lapis-2);padding:1.25rem;text-align:center}
+.stat-cell .n{font-family:var(--font-mono);font-size:1.7rem;font-weight:700;color:var(--gold);text-shadow:0 0 24px var(--gold-glow)}
+.stat-cell .label{font-size:.72rem;color:var(--dim);text-transform:uppercase;letter-spacing:.08em;margin-top:.2rem}
+.arch{background:#071020;color:var(--green-bright);border:1px solid var(--border);border-radius:var(--r-md);padding:1.75rem;font-family:var(--font-mono);font-size:.75rem;line-height:1.9;overflow-x:auto;margin:1.5rem 0;box-shadow:inset 0 2px 14px rgba(0,0,0,.5)}
+.arch .h1{color:var(--gold-light)}.arch .h2{color:var(--gold)}.arch .h3{color:var(--blue-bright)}.arch .h4{color:var(--green-bright)}
+.container table{width:100%;border-collapse:collapse;margin:1.5rem 0;font-size:.85rem}
+.container th{text-align:left;padding:.6rem .8rem;color:var(--gold);font-weight:600;text-transform:uppercase;letter-spacing:.06em;font-size:.7rem;border-bottom:2px solid var(--border)}
+.container td{padding:.65rem .8rem;border-bottom:1px solid var(--border);color:var(--text)}
+.container tr:hover td{background:rgba(201,168,76,.03)}
+.badge--live{background:var(--green-deep);color:var(--white)}
+.badge--built{background:var(--blue-deep);color:var(--white)}
+.badge--partial{background:linear-gradient(135deg,var(--gold),var(--gold-light));color:var(--lapis)}
+.closing{text-align:center;padding:3rem 0}
+@media(max-width:640px){.stat-row{grid-template-columns:repeat(2,1fr)}.grid{grid-template-columns:1fr}}
+</style>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","name":"QADIR OS Technical Architecture — ABUZ8 AI","description":"QADIR OS technical architecture deep dive: memory layers, brain router, soul runtime, MCP tools, media engine.","url":"https://abuz8ai.com/qadir-os-architecture.html","publisher":{"@type":"Organization","name":"ABUZ8 LLC","url":"https://abuz8ai.com"}}
+</script>
+</head>
+<body>
+<div class="geo-bg"></div>
+<nav class="abuz8-nav">
+<div class="nav-inner">
+  <a href="/" style="text-decoration:none;">
+    <div class="logo">ABUZ8</div>
+    <div class="logo-sub">Sovereign AI</div>
+  </a>
+  <div class="nav-links">
+    <a href="/tools.html">Tools</a>
+    <a href="/store.html">Store</a>
+    
+    <a href="/agents.html">Agents</a>
+    <a href="/models.html">Models</a>
+    <a href="/news.html">News</a>
+    <a href="/roadmap.html">Roadmap</a>
+    <a href="/store.html" class="nav-cta">Get Started</a>
+  </div>
+</div>
+</nav>
+
+<!-- ── HERO ── -->
+<section class="section">
+<div class="container">
+<div class="conf-banner">CONFIDENTIAL — Technical Architecture Document — For authorized recipients only. &copy; 2026 ABUZ8 LLC</div>
+<div class="tag">Technical Architecture · July 2026</div>
+<h1>QADIR OS —<br><span>Technical Deep Dive</span></h1>
+<p class="sub">What we built. How it works. Why it's non-trivial to replicate. Claims below come from internal disk-state and endpoint audits of the system.</p>
+
+<div class="stat-row">
+<div class="stat-cell"><div class="n">192+</div><div class="label">MCP Tools</div></div>
+<div class="stat-cell"><div class="n">8</div><div class="label">LoRA Adapters</div></div>
+<div class="stat-cell"><div class="n">8</div><div class="label">Native Brain Models</div></div>
+<div class="stat-cell"><div class="n">7</div><div class="label">Memory Layers</div></div>
+<div class="stat-cell"><div class="n">23</div><div class="label">Media Tools</div></div>
+<div class="stat-cell"><div class="n">28</div><div class="label">Routing Lanes</div></div>
+</div>
+</div>
+</section>
+<!-- ── SYSTEM ARCHITECTURE ── -->
+<section class="section section--alt">
+<div class="container">
+<div class="tag">01 · System Architecture</div>
+<h2>Four-layer sovereign stack</h2>
+<p class="sub">Built in Go, C++, Python, JSON. Every layer is independently deployable, testable, and replaceable.</p>
+<div class="arch">
+<span class="h1">QADIR OS (The Sovereign Agentic Operating System) v2.46.0</span>
+│
+├── <span class="h2">LAYER 1: SHELL</span> — Electron/Tauri Desktop · React Native Mobile
+│   ├── Chat interface + Avatar display (face + lip-sync)
+│   ├── Department dashboard · Tool status monitor
+│   ├── Soul selector (hot-swap agent personas at runtime)
+│   └── Packaged: QadirOS-v1.0.0-Setup.exe + ABUZ8 OS v2.46.0
+│
+├── <span class="h2">LAYER 2: BRAIN</span> — FastAPI Python Backend :8900
+│   ├── <span class="h3">Brain Router</span> — 28 lanes, Bayesian Thompson sampling
+│   │   ├── Cost optimizer (cheapest capable model wins)
+│   │   ├── Local: Qwen, LLaMA, Mistral (GGUF) via Ollama :11434
+│   │   └── Cloud: Claude, Gemini, GPT, Perplexity, OpenRouter, Bedrock
+│   ├── <span class="h3">Soul Runtime</span> — YAML personality, hot-swap, voice corpus
+│   ├── <span class="h3">Memory Engine</span> — 7 layers (L1–L4, R1, Mission, Docket)
+│   │   ├── Active Memory (pre-reply context injection)
+│   │   └── Dreaming (idle consolidation pass)
+│   ├── <span class="h3">Self-Learning</span> — skill capture → eval → LoRA trigger
+│   ├── URF Gate + Budget Manager (no runaway spend)
+│   └── MCP Server Bridge (universal tool protocol)
+│
+├── <span class="h2">LAYER 3: HANDS</span> — Tool Ecosystem (192+ MCP tools)
+│   ├── Desktop: mouse, keyboard, screenshot, OCR
+│   ├── Browser: Playwright persistent Chrome
+│   ├── Comms: Gmail, Telegram, SMS, voice calls
+│   ├── Productivity: Google Drive/Cal/Docs, Stripe, CRM
+│   ├── Dev: Git, Docker, Python/Node/Go exec, Cloudflare
+│   └── Social: X posting, content scheduling
+│
+└── <span class="h2">LAYER 3.5: MEDIA ENGINE</span> — 23 native tools
+    ├── Avatar: character_reference, consistent_character
+    ├── Voice: TTS · avatar_speak (lip-sync) · voice_update
+    ├── Video: video_gen, ltx_t2v, ltx_av_t2v, img2vid, stitch_long
+    ├── Image: generate, img2img, anime, upscale, inpaint, fun_control
+    └── Audio: music, sfx, score_clip
+</div>
+</div>
+</section>
+<!-- ── BRAIN ROUTER ── -->
+<section class="section">
+<div class="container">
+<div class="tag">02 · Brain Router</div>
+<h2>Bayesian Thompson Sampling across 28 routing lanes</h2>
+<p class="sub">Every query is routed to the cheapest model capable of handling it. Maintains per-model performance priors updated after every request.</p>
+
+<div class="grid">
+<div class="card"><div class="card-top"></div>
+<h3>Multi-Provider Architecture</h3>
+<p>Simultaneously connects to local models (Qwen 2.5, LLaMA 3.3, Mistral via Ollama) and cloud APIs (Claude, Gemini, GPT-4, Perplexity, OpenRouter, Amazon Bedrock). The router treats them all as interchangeable brains with different cost/capability profiles.</p>
+</div>
+<div class="card"><div class="card-top"></div>
+<h3>Thompson Sampling Engine</h3>
+<p>Each model maintains a Beta distribution prior (α, β) tracking success/failure at each complexity tier. The router samples from these distributions, naturally balancing exploration of cheaper models with exploitation of proven performers. No hardcoded routing rules.</p>
+</div>
+<div class="card"><div class="card-top"></div>
+<h3>Cost Optimization Layer</h3>
+<p>Real-time token pricing across all providers. Budget gate prevents runaway spend. The system escalates from free local models to paid API calls only when task complexity demands it — that escalation discipline is the whole point of the router.</p>
+</div>
+</div>
+
+<table>
+<thead><tr><th>Component</th><th>File</th><th>Size</th><th>Status</th></tr></thead>
+<tbody>
+<tr><td>Bayesian Neural Router</td><td>bayesian_router.py</td><td>18 KB</td><td><span class="badge badge--live">LIVE</span></td></tr>
+<tr><td>Brain Router v2 (main)</td><td>brain_router_v2.py</td><td>45 KB</td><td><span class="badge badge--live">LIVE</span></td></tr>
+<tr><td>Brain Adapter (multi-provider)</td><td>brain_adapter.py</td><td>28 KB</td><td><span class="badge badge--live">LIVE</span></td></tr>
+<tr><td>Mercury Permission Gate</td><td>mercury_gate.py</td><td>12 KB</td><td><span class="badge badge--live">LIVE</span></td></tr>
+<tr><td>Brain Council (multi-brain consensus)</td><td>brain_council.py</td><td>15 KB</td><td><span class="badge badge--built">BUILT</span></td></tr>
+</tbody>
+</table>
+</div>
+</section>
+<!-- ── MEMORY SYSTEM ── -->
+<section class="section section--alt">
+<div class="container">
+<div class="tag">03 · 7-Layer Active Memory Architecture</div>
+<h2>From scratch memory to permanent knowledge</h2>
+<p class="sub">Not a vector database bolt-on. A layered cognitive architecture where memories promote, consolidate, and get injected before every response.</p>
+
+<div class="grid">
+<div class="card"><div class="card-top"></div>
+<h3>L1 — Working Memory (Scratch)</h3>
+<p>Current conversation context. Ephemeral. Cleared after each session. Holds the immediate reasoning chain, tool results, and intermediate computations.</p>
+</div>
+<div class="card"><div class="card-top"></div>
+<h3>L2 — Session Memory</h3>
+<p>Persists across turns within a session. Tracks user preferences discovered mid-conversation, correction patterns, and task context. Promotes key insights to L3 on session end.</p>
+</div>
+<div class="card"><div class="card-top"></div>
+<h3>L3 — Long-Term Memory</h3>
+<p>Cross-session persistent facts about the user, their projects, preferences, and behavioral patterns. Indexed by semantic similarity. Survives restarts.</p>
+</div>
+<div class="card"><div class="card-top"></div>
+<h3>L4 — Episodic Memory</h3>
+<p>Timestamped records of significant events: deployments, errors, decisions, milestones. Enables temporal reasoning ("what did we do last Tuesday?") and pattern detection across weeks/months.</p>
+</div>
+<div class="card"><div class="card-top"></div>
+<h3>R1 — Reflexive Memory</h3>
+<p>Meta-cognitive layer. Records what the system learned about its own performance: which tool combinations work, which routing decisions were suboptimal, which explanation styles the user prefers. Self-improvement signal.</p>
+</div>
+<div class="card"><div class="card-top"></div>
+<h3>Mission Layer</h3>
+<p>Immutable mission context. Constitutional values (Preserve Life), organizational goals, non-negotiable constraints. Injected into every decision but never modified by the system.</p>
+</div>
+</div>
+
+<div class="grid" style="grid-template-columns:1fr 1fr">
+<div class="card"><div class="card-top"></div>
+<h3>Active Memory (Pre-Reply Injection)</h3>
+<p>Before every response, the system queries all memory layers for relevant context and injects it into the prompt. The model sees remembered facts, user preferences, and prior decisions — not just the current message. This is what makes QADIR feel like it "knows" you.</p>
+</div>
+<div class="card"><div class="card-top"></div>
+<h3>Dreaming (Idle Consolidation)</h3>
+<p>When the system is idle, a background process reviews recent memories, merges duplicates, identifies patterns, and promotes insights from short-term to long-term storage. Inspired by biological memory consolidation during sleep.</p>
+</div>
+</div>
+
+<table>
+<thead><tr><th>Component</th><th>File</th><th>Size</th><th>Status</th></tr></thead>
+<tbody>
+<tr><td>Active Memory Engine</td><td>active_memory.py</td><td>17.9 KB</td><td><span class="badge badge--live">LIVE</span></td></tr>
+<tr><td>Memory Manager (L1-L4)</td><td>memory_manager.py</td><td>22 KB</td><td><span class="badge badge--live">LIVE</span></td></tr>
+<tr><td>Dreaming/Consolidation</td><td>dreaming.py</td><td>11 KB</td><td><span class="badge badge--built">BUILT</span></td></tr>
+<tr><td>Docket (task queue)</td><td>docket.py</td><td>8 KB</td><td><span class="badge badge--live">LIVE</span></td></tr>
+</tbody>
+</table>
+</div>
+</section>
+<!-- ── SOUL RUNTIME ── -->
+<section class="section">
+<div class="container">
+<div class="tag">04 · Soul Runtime</div>
+<h2>Dynamic personality — not a system prompt</h2>
+<p class="sub">YAML-based personality files loaded at runtime. Hot-swappable without restart. Each agent has a name, voice, avatar, moral framework, and behavioral fingerprint.</p>
+
+<div class="arch">
+<span class="h1"># qadir.soul.yaml — Example Soul Definition</span>
+
+<span class="h2">identity:</span>
+  name: Qadir
+  role: "Sovereign AI partner and operator"
+  voice: "Direct, surgical, zero sycophancy"
+
+<span class="h2">heartbeat:</span>
+  tempo: measured     <span class="h3"># pacing of responses</span>
+  warmth: 0.3         <span class="h3"># emotional register (0=clinical, 1=empathetic)</span>
+  humor: 0.15         <span class="h3"># dry wit frequency</span>
+
+<span class="h2">moral_framework:</span>
+  prime_directive: "Preserve life"
+  hard_stops:
+    - "Never harm children"
+    - "Never move/spend owner's money"
+    - "Never bind owner to agreements"
+
+<span class="h2">taste:</span>
+  admires: ["precision", "speed", "revenue impact"]
+  avoids: ["sycophancy", "filler", "permission theater"]
+
+<span class="h2">voice_corpus:</span>
+  tts_model: "elevenlabs_qadir_v2"
+  avatar_ref: "qadir_consistent_character_v3"
+</div>
+
+<div class="grid">
+<div class="card"><div class="card-top"></div>
+<h3>5 Soul Personas Built</h3>
+<p>Qadir (operator), Zait (customer support), Scholar (research), Creator (media), Commander (DevOps). Each has distinct voice, behavioral profile, and tool preferences. Swappable at runtime via a single API call.</p>
+</div>
+<div class="card"><div class="card-top"></div>
+<h3>Why This Matters</h3>
+<p>Competitors use system prompts — static text pasted into every API call. QADIR's soul is a live runtime state that affects routing decisions, tool selection, response formatting, and even which memory layers get priority. The agent doesn't just talk differently — it thinks differently.</p>
+</div>
+</div>
+</div>
+</section>
+<!-- ── SELF-LEARNING ── -->
+<section class="section section--alt">
+<div class="container">
+<div class="tag">05 · Self-Learning Loop</div>
+<h2>The system generates its own training data</h2>
+<p class="sub">Successful action patterns are captured, scored by the URF engine, and automatically trigger LoRA fine-tuning. 8 adapters trained to date — no human curation required.</p>
+
+<div class="grid">
+<div class="card"><div class="card-top"></div>
+<h3>URF Scoring Engine</h3>
+<p>Every agent output is scored on Utility (did it help?), Risk (could it cause harm?), and Feasibility (was it actionable?). High-scoring patterns are promoted to the training pipeline. Low-scoring patterns generate negative examples.</p>
+</div>
+<div class="card"><div class="card-top"></div>
+<h3>LoRA Fine-Tuning Pipeline</h3>
+<p>finetune_qlora.py orchestrates QLoRA training on curated data. 8 specialized adapters: memory_micro, personality, tools, humble variants, home_assistant, shellper, voice_banking. Each adapter tunes a specific capability without catastrophic forgetting.</p>
+</div>
+<div class="card"><div class="card-top"></div>
+<h3>8 Custom LoRA Adapters</h3>
+<p>Trained on real usage data from QADIR's own sessions. These adapters encode behavioral patterns that cannot be replicated by prompting alone — rebuilding them would require the same months of captured, labeled usage.</p>
+</div>
+</div>
+
+<table>
+<thead><tr><th>Adapter</th><th>Purpose</th><th>Base Model</th><th>Status</th></tr></thead>
+<tbody>
+<tr><td>qadir_v1</td><td>Core reasoning + operator personality</td><td>Qwen 2.5 7B</td><td><span class="badge badge--live">TRAINED</span></td></tr>
+<tr><td>qadir_v2_humble</td><td>Calibrated confidence, reduced sycophancy</td><td>Qwen 2.5 7B</td><td><span class="badge badge--live">TRAINED</span></td></tr>
+<tr><td>memory_micro</td><td>Memory extraction and summarization</td><td>Qwen 2.5 3B</td><td><span class="badge badge--live">TRAINED</span></td></tr>
+<tr><td>personality</td><td>Soul-aware response generation</td><td>LLaMA 3.3 8B</td><td><span class="badge badge--live">TRAINED</span></td></tr>
+<tr><td>tools</td><td>Tool selection and parameter generation</td><td>Qwen 2.5 7B</td><td><span class="badge badge--live">TRAINED</span></td></tr>
+<tr><td>home_assistant</td><td>Smart home control and automation</td><td>Mistral 7B</td><td><span class="badge badge--built">TRAINED</span></td></tr>
+<tr><td>shellper</td><td>Shell command generation and safety</td><td>Qwen 2.5 3B</td><td><span class="badge badge--built">TRAINED</span></td></tr>
+<tr><td>voice_banking</td><td>Voice-first financial operations</td><td>Qwen 2.5 7B</td><td><span class="badge badge--built">TRAINED</span></td></tr>
+</tbody>
+</table>
+</div>
+</section>
+<!-- ── TOOL ECOSYSTEM ── -->
+<section class="section">
+<div class="container">
+<div class="tag">06 · MCP Tool Ecosystem</div>
+<h2>192+ tools across 18 categories</h2>
+<p class="sub">Every tool follows the Model Context Protocol standard. Self-discovering registration. The MCP 2.0 stateless audit (July 2026) mapped all 180 tools to statefulness tiers: 74 fully stateless, 47 session-scoped, 20 cross-call state breakers identified and documented.</p>
+
+<table>
+<thead><tr><th>Category</th><th>Tools</th><th>Examples</th></tr></thead>
+<tbody>
+<tr><td>Desktop Control</td><td>8</td><td>mouse, keyboard, screenshot, OCR, window_manager</td></tr>
+<tr><td>Browser Automation</td><td>15</td><td>Playwright persistent Chrome, navigate, click, fill, extract</td></tr>
+<tr><td>Email &amp; Comms</td><td>12</td><td>Gmail send/read/search, Telegram, SMS, voice calls</td></tr>
+<tr><td>Google Workspace</td><td>14</td><td>Drive CRUD, Calendar events, Docs read/write, Sheets</td></tr>
+<tr><td>Payments &amp; Commerce</td><td>10</td><td>Stripe charges/products, checkout links, webhooks</td></tr>
+<tr><td>CRM &amp; Sales</td><td>8</td><td>contact management, pipeline, deal tracking</td></tr>
+<tr><td>Infrastructure</td><td>12</td><td>Cloudflare Workers/D1/R2/KV, Docker, server management</td></tr>
+<tr><td>Code Execution</td><td>10</td><td>Python, Node.js, Go, shell, sandbox eval</td></tr>
+<tr><td>Git &amp; DevOps</td><td>9</td><td>commit, push, branch, PR, diff, status</td></tr>
+<tr><td>File System</td><td>8</td><td>read, write, search, move, watch, archive</td></tr>
+<tr><td>ComfyUI Media</td><td>35</td><td>image gen, video, lip-sync, music, SFX, upscale, anime</td></tr>
+<tr><td>Social Media</td><td>6</td><td>X posting, scheduling, content formatting</td></tr>
+<tr><td>Research &amp; Web</td><td>10</td><td>web search, fetch, scrape, summarize, PDF extract</td></tr>
+<tr><td>Memory &amp; Knowledge</td><td>8</td><td>recall, store, search, consolidate, dream</td></tr>
+<tr><td>Audio &amp; Voice</td><td>7</td><td>TTS, STT, voice clone, lip-sync, audio effects</td></tr>
+<tr><td>Analytics</td><td>5</td><td>visitor tracking, conversion, funnel, revenue</td></tr>
+<tr><td>Security &amp; Auth</td><td>5</td><td>HMAC verify, JWT, API key management, rate limit</td></tr>
+<tr><td>System &amp; Config</td><td>10</td><td>health check, restart, config, logging, diagnostics</td></tr>
+</tbody>
+</table>
+</div>
+</section>
+<!-- ── AGENTIC LOOP ── -->
+<section class="section section--alt">
+<div class="container">
+<div class="tag">07 · Agentic Loop Engine</div>
+<h2>PERCEIVE → PLAN → GATE → ACT → VERIFY → REFLECT → LEARN</h2>
+<p class="sub">Not a prompt chain. A self-correcting, self-improving execution loop with budget gating, verification steps, and training signal generation at every iteration.</p>
+
+<div class="arch">
+<span class="h1">The Agentic Loop (Hermes Engine)</span>
+
+<span class="h2">PERCEIVE</span>  — Parse input, inject Active Memory context, classify intent
+     │         └── Memory layers queried: L1 (working) + L3 (long-term) + Mission
+     ▼
+<span class="h2">PLAN</span>     — Decompose into sub-tasks, select tools, estimate cost
+     │         └── Value Dissector ranks plans by URF score
+     ▼
+<span class="h2">GATE</span>     — Mercury permission check + budget approval
+     │         └── Blocks: cost > budget, destructive ops, outward comms
+     ▼
+<span class="h2">ACT</span>      — Execute via MCP tools, Brain Router, or sub-agents
+     │         └── Multi-agent: call_subordinate() for parallel work
+     ▼
+<span class="h2">VERIFY</span>   — Check result against expected outcome
+     │         └── Retry with escalated model if verification fails
+     ▼
+<span class="h2">REFLECT</span>  — Score the action (URF), update memory, log episode
+     │         └── R1 reflexive memory captures meta-learning
+     ▼
+<span class="h2">LEARN</span>   — Promote high-URF patterns to training pipeline
+              └── Triggers LoRA fine-tuning when pattern threshold met
+</div>
+
+<div class="grid">
+<div class="card"><div class="card-top"></div>
+<h3>Mercury Gate (Budget + Safety)</h3>
+<p>Every action passes through Mercury before execution. It checks: (1) does the user's budget allow this API call? (2) is this a destructive operation requiring confirmation? (3) does this violate hard-stop constraints? Actions that fail the gate are blocked with explanation, not silently dropped.</p>
+</div>
+<div class="card"><div class="card-top"></div>
+<h3>Multi-Agent Orchestration</h3>
+<p>The loop supports spawning sub-agents (call_subordinate) for parallel work. A Brain Council can run the same query through multiple models and synthesize consensus. Department-level routing sends DevOps tasks to the Commander soul, creative tasks to the Creator soul.</p>
+</div>
+</div>
+</div>
+</section>
+
+<!-- ── INFRASTRUCTURE ── -->
+<section class="section">
+<div class="container">
+<div class="tag">08 · Deployment &amp; Infrastructure</div>
+<h2>Production stack — zero cloud lock-in</h2>
+
+<div class="grid">
+<div class="card"><div class="card-top"></div>
+<h3>Local-First Architecture</h3>
+<p>All inference can run fully local via Ollama (Llama 3.x, Mistral, Phi-3, Qwen-2.5). Cloud providers (OpenAI, Anthropic, Google, Groq, Cerebras) are optional accelerators, not dependencies. The Brain Router picks the cheapest provider that meets the task's quality threshold.</p>
+</div>
+<div class="card"><div class="card-top"></div>
+<h3>ABUZ8 OS Desktop App <span class="badge badge-early" style="vertical-align:middle">Early Access</span></h3>
+<p>Electron + React + Python backend, packaged for Windows with a self-hosted update-and-rollback channel. There is no public download yet — early access is by invitation via the <a href="/request.html">request page</a>.</p>
+</div>
+<div class="card"><div class="card-top"></div>
+<h3>Site &amp; Content Pipeline</h3>
+<p>Static HTML on Cloudflare Pages. D1 database for waitlist. 180 free tool pages and 440+ blog pages on disk. Stripe checkout on the <a href="/store.html">store</a> — one-time purchases only, no subscriptions.</p>
+</div>
+<div class="card"><div class="card-top"></div>
+<h3>Agent Army Framework</h3>
+<p>A framework of 100 agent definitions for scheduled work — content generation, SEO, site maintenance, code builds, memory consolidation — all sharing the 7-layer Active Memory system. Runs are operator-triggered on local hardware.</p>
+</div>
+</div>
+</div>
+</section>
+
+<!-- ── CLOSING ── -->
+<section class="section section--alt closing">
+<div class="container">
+<p style="font-size:1.1rem;color:var(--text);margin-bottom:.5rem;"><strong>QADIR OS</strong> — Sovereign Agentic Operating System</p>
+<p style="font-size:.9rem;color:var(--dim);">Built by ABUZ8 LLC · Solo-founder, zero funding · July 2026</p>
+<p style="font-size:.9rem;color:var(--dim);margin-top:.5rem;">
+<a href="/investor.html">Investor One-Pager</a> &nbsp;·&nbsp;
+<a href="/">ABUZ8.com</a> &nbsp;·&nbsp;
+<a href="/tools.html">169 Free AI Tools</a>
+</p>
+</div>
+</section>
+
+<footer class="abuz8-footer">
+<div class="foot-grid">
+  <div class="foot-brand">
+    <div class="logo">ABUZ8</div>
+    <p>Sovereign AI for everyone. Real tools, local models, no fake claims. Built on real hardware by ABUZ8 LLC, Ohio.</p>
+  </div>
+  <div class="foot-col"><h4>Platform</h4>
+    <a href="/tools.html">Free Tools</a><a href="/store.html">Store</a><a href="/models.html">Models</a><a href="/agents.html">AI Agents</a><a href="/news.html">News</a><a href="/blog/">Blog</a>
+  </div>
+  <div class="foot-col"><h4>Mission</h4>
+    <a href="/sovereign.html">Sovereign AI</a><a href="/journey.html">Journey &amp; Goals</a><a href="/roadmap.html">Roadmap</a><a href="/audit.html">Audit &amp; Transparency</a><a href="/purpose.html">Purpose</a>
+  </div>
+  <div class="foot-col"><h4>Hubs</h4>
+    <a href="/github.html">GitHub Hub</a><a href="/huggingface.html">Hugging Face Hub</a><a href="/polymarket.html">Polymarket Tester</a><a href="/community.html">Community</a><a href="/education.html">Education</a><a href="/downloads.html">Downloads</a>
+  </div>
+  <div class="foot-col"><h4>Trust</h4>
+    <a href="/security.html">Security &amp; Compliance</a><a href="/disclaimer.html">Disclaimer</a><a href="/privacy.html">Privacy</a><a href="/terms.html">Terms</a><a href="/refund.html">Refunds</a><a href="/license.html">License</a><a href="/contact.html">Contact</a><a href="/status.html">Status</a>
+  </div>
+</div>
+<div class="foot-base">
+  <div>© <span data-year>2026</span> ABUZ8 LLC. All rights reserved.</div>
+  <div>Built local-first on real hardware · No fake claims · <a href="/sovereign.html">Sovereign AI for everyone</a></div>
+</div>
+</footer>
+<script src="/assets/js/abuz8-ui.js" defer></script>
+<script src="/assets/js/abuz8-onboard.js" defer></script>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>

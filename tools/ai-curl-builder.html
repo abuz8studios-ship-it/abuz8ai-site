@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI cURL Command Builder — Generate cURL Requests Visually | ABUZ8</title>
+  <meta name="description" content="Free visual cURL command builder. Set method, URL, headers, auth, body, and options — get a ready-to-paste curl command. Supports GET, POST, PUT, PATCH, DELETE with JSON, form-data, and raw body." />
+  <meta name="keywords" content="curl command builder, curl generator, curl command generator, build curl request, curl POST generator, curl header builder, REST API curl, free curl tool" />
+  <meta property="og:title" content="AI cURL Command Builder — Generate cURL Requests Visually | ABUZ8" />
+  <meta property="og:description" content="Build curl commands visually. Set method, URL, headers, auth, body and get a ready-to-paste curl command." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://abuz8ai.com/tools/ai-curl-builder" />
+  <link rel="canonical" href="https://abuz8ai.com/tools/ai-curl-builder" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "AI cURL Command Builder",
+    "description": "Free visual cURL command builder. Generate curl commands for GET, POST, PUT, PATCH, DELETE with headers, auth, JSON body, form-data, and advanced options.",
+    "url": "https://abuz8ai.com/tools/ai-curl-builder.html",
+    "applicationCategory": "DeveloperApplication",
+    "operatingSystem": "Any",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+    "author": { "@type": "Organization", "name": "ABUZ8 LLC", "url": "https://abuz8ai.com" }
+  }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --lapis: #0a1628;
+      --card: #0d1a30;
+      --card-alt: #0f1e35;
+      --gold: #c9a84c;
+      --gold-dim: #a07830;
+      --teal: #0e9f6e;
+      --teal-bright: #2fbf8f;
+      --cream: #e8dcc8;
+      --text: #cdd6f4;
+      --text-dim: #8896b0;
+      --border: #1e2d45;
+      --red: #e05c5c;
+      --green: #4caf88;
+      --blue: #5b8def;
+      --orange: #e0944c;
+      --font-heading: 'Playfair Display', Georgia, serif;
+      --font-body: 'Inter', system-ui, sans-serif;
+      --font-mono: 'JetBrains Mono', 'Courier New', monospace;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--lapis);
+      color: var(--text);
+      font-family: var(--font-body);
+      font-size: 15px;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+    a { color: var(--gold); text-decoration: none; transition: color 0.2s; }
+    a:hover { color: var(--teal-bright); }
+
+    /* ── NAV ─────────────────────────────────────────── */
+    nav {
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      padding: 0 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 60px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .nav-logo {
+      font-family: var(--font-heading);
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--gold);
+    }
+    .nav-links { display: flex; gap: 1.5rem; align-items: center; }
+    .nav-links a { font-size: 0.85rem; color: var(--text-dim); font-weight: 500; }
+    .nav-links a:hover { color: var(--gold); }
+
+    /* ── LAYOUT ──────────────────────────────────────── */
+    .container { max-width: 960px; margin: 0 auto; padding: 2rem 1.5rem; }
+    h1 {
+      font-family: var(--font-heading);
+      font-size: 2rem;
+      color: var(--cream);
+      margin-bottom: 0.5rem;
+    }
+    .subtitle { color: var(--text-dim); font-size: 0.95rem; margin-bottom: 2rem; }
+
+    /* ── SECTIONS ────────────────────────────────────── */
+    .section {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 1rem;
+    }
+    .section-title {
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--gold);
+      margin-bottom: 0.75rem;
+    }
+
+    /* ── FORM ELEMENTS ───────────────────────────────── */
+    label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--text-dim);
+      margin-bottom: 0.3rem;
+    }
+    input[type="text"], input[type="url"], input[type="password"],
+    select, textarea {
+      width: 100%;
+      background: var(--card-alt);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text);
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      padding: 0.55rem 0.75rem;
+      transition: border-color 0.2s;
+    }
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--gold-dim);
+    }
+    textarea { resize: vertical; min-height: 80px; }
+
+    .row { display: flex; gap: 0.75rem; margin-bottom: 0.75rem; }
+    .row > * { flex: 1; }
+    .row-tight { display: flex; gap: 0.5rem; align-items: flex-end; }
+
+    /* ── METHOD PILLS ────────────────────────────────── */
+    .method-bar { display: flex; gap: 0.4rem; flex-wrap: wrap; margin-bottom: 0.75rem; }
+    .method-btn {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      font-weight: 500;
+      padding: 0.4rem 0.9rem;
+      border-radius: 5px;
+      border: 1px solid var(--border);
+      background: var(--card-alt);
+      color: var(--text-dim);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .method-btn.active { border-color: var(--gold); color: var(--gold); background: rgba(201,168,76,0.08); }
+    .method-btn[data-m="GET"].active { border-color: var(--green); color: var(--green); background: rgba(76,175,136,0.08); }
+    .method-btn[data-m="POST"].active { border-color: var(--blue); color: var(--blue); background: rgba(91,141,237,0.08); }
+    .method-btn[data-m="PUT"].active { border-color: var(--orange); color: var(--orange); background: rgba(224,148,76,0.08); }
+    .method-btn[data-m="PATCH"].active { border-color: var(--teal-bright); color: var(--teal-bright); background: rgba(52,212,176,0.08); }
+    .method-btn[data-m="DELETE"].active { border-color: var(--red); color: var(--red); background: rgba(224,92,92,0.08); }
+    .method-btn[data-m="HEAD"].active { border-color: var(--text-dim); color: var(--text); background: rgba(136,150,176,0.08); }
+    .method-btn[data-m="OPTIONS"].active { border-color: var(--text-dim); color: var(--text); background: rgba(136,150,176,0.08); }
+
+    /* ── HEADERS TABLE ───────────────────────────────── */
+    .headers-table { width: 100%; border-collapse: collapse; margin-bottom: 0.5rem; }
+    .headers-table th {
+      text-align: left;
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: var(--text-dim);
+      padding: 0.3rem 0.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .headers-table td { padding: 0.25rem 0.25rem; }
+    .headers-table input {
+      width: 100%;
+      background: var(--card-alt);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      color: var(--text);
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      padding: 0.4rem 0.5rem;
+    }
+    .headers-table input:focus { outline: none; border-color: var(--gold-dim); }
+
+    /* ── BUTTONS ──────────────────────────────────────── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-family: var(--font-body);
+      font-size: 0.8rem;
+      font-weight: 500;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: var(--card-alt);
+      color: var(--text-dim);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .btn:hover { border-color: var(--gold-dim); color: var(--text); }
+    .btn-gold { background: var(--gold); color: var(--lapis); border-color: var(--gold); font-weight: 600; }
+    .btn-gold:hover { background: var(--gold-dim); border-color: var(--gold-dim); color: var(--cream); }
+    .btn-sm { font-size: 0.75rem; padding: 0.35rem 0.65rem; }
+    .btn-icon {
+      background: none;
+      border: none;
+      color: var(--red);
+      font-size: 1.1rem;
+      cursor: pointer;
+      padding: 0.2rem;
+      line-height: 1;
+    }
+    .btn-icon:hover { color: #ff7070; }
+    .btn-row { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+
+    /* ── OUTPUT ───────────────────────────────────────── */
+    .output-box {
+      background: #060e1a;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem 1.25rem;
+      position: relative;
+      margin-top: 0.5rem;
+    }
+    .output-box pre {
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      color: var(--teal-bright);
+      white-space: pre-wrap;
+      word-break: break-all;
+      line-height: 1.6;
+      margin: 0;
+    }
+    .copy-btn {
+      position: absolute;
+      top: 0.6rem;
+      right: 0.6rem;
+      font-family: var(--font-body);
+      font-size: 0.75rem;
+      padding: 0.3rem 0.7rem;
+      border-radius: 5px;
+      border: 1px solid var(--border);
+      background: var(--card);
+      color: var(--text-dim);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .copy-btn:hover { border-color: var(--gold); color: var(--gold); }
+
+    /* ── PRESETS ──────────────────────────────────────── */
+    .preset-bar { display: flex; gap: 0.4rem; flex-wrap: wrap; margin-bottom: 0.75rem; }
+    .preset-btn {
+      font-size: 0.75rem;
+      padding: 0.3rem 0.7rem;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      background: var(--card-alt);
+      color: var(--text-dim);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .preset-btn:hover { border-color: var(--gold-dim); color: var(--text); }
+    .preset-btn.active { border-color: var(--gold); color: var(--gold); background: rgba(201,168,76,0.06); }
+
+    /* ── STATS BAR ───────────────────────────────────── */
+    .stats {
+      display: flex;
+      gap: 1.5rem;
+      font-size: 0.75rem;
+      color: var(--text-dim);
+      padding: 0.5rem 0;
+      margin-bottom: 1rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .stat-val { color: var(--gold); font-weight: 600; font-family: var(--font-mono); }
+
+    /* ── TOGGLE ───────────────────────────────────────── */
+    .toggle-row { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem; }
+    .toggle-row label { margin: 0; cursor: pointer; }
+    .toggle {
+      position: relative;
+      width: 36px;
+      height: 20px;
+      -webkit-appearance: none;
+      appearance: none;
+      background: var(--card-alt);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .toggle::before {
+      content: '';
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 14px;
+      height: 14px;
+      background: var(--text-dim);
+      border-radius: 50%;
+      transition: all 0.2s;
+    }
+    .toggle:checked { background: var(--teal); border-color: var(--teal); }
+    .toggle:checked::before { left: 18px; background: white; }
+
+    /* ── CTA ──────────────────────────────────────────── */
+    .cta-section {
+      background: linear-gradient(135deg, rgba(201,168,76,0.06), rgba(26,138,122,0.06));
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.5rem;
+      text-align: center;
+      margin-top: 2rem;
+    }
+    .cta-section h2 {
+      font-family: var(--font-heading);
+      font-size: 1.3rem;
+      color: var(--cream);
+      margin-bottom: 0.5rem;
+    }
+    .cta-section p { color: var(--text-dim); font-size: 0.9rem; margin-bottom: 1rem; }
+    .cta-form { display: flex; gap: 0.5rem; justify-content: center; max-width: 420px; margin: 0 auto; }
+    .cta-form input {
+      flex: 1;
+      background: var(--card-alt);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text);
+      font-size: 0.85rem;
+      padding: 0.55rem 0.75rem;
+    }
+    .cta-form input:focus { outline: none; border-color: var(--gold-dim); }
+    .cta-form button {
+      background: var(--gold);
+      color: var(--lapis);
+      border: none;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      padding: 0.55rem 1.2rem;
+      cursor: pointer;
+      transition: background 0.2s;
+      white-space: nowrap;
+    }
+    .cta-form button:hover { background: var(--gold-dim); }
+    .cta-success {
+      color: var(--green);
+      font-weight: 500;
+      font-size: 0.9rem;
+      display: none;
+    }
+    .cta-success.visible { display: block; }
+
+    /* ── FOOTER ───────────────────────────────────────── */
+    footer {
+      text-align: center;
+      color: var(--text-dim);
+      font-size: 0.75rem;
+      padding: 2rem 1rem;
+      border-top: 1px solid var(--border);
+      margin-top: 2rem;
+    }
+
+    /* ── RESPONSIVE ───────────────────────────────────── */
+    @media (max-width: 640px) {
+      .container { padding: 1rem; }
+      h1 { font-size: 1.5rem; }
+      .row { flex-direction: column; }
+      .stats { flex-wrap: wrap; gap: 0.75rem; }
+      .cta-form { flex-direction: column; }
+      nav { padding: 0 1rem; }
+      .nav-links { gap: 0.75rem; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="nav-logo">ABUZ8</a>
+  <div class="nav-links">
+    <a href="/tools.html">Tools</a>
+    <a href="/store.html">Store</a>
+    <a href="/qadir.html">QADIR OS</a>
+  </div>
+</nav>
+
+<div class="container">
+  <h1>cURL Command Builder</h1>
+  <p class="subtitle">Build curl commands visually. Set method, URL, headers, auth, body, and options — copy the ready-to-paste command.</p>
+
+  <!-- Stats -->
+  <div class="stats">
+    <span>Method: <span class="stat-val" id="statMethod">GET</span></span>
+    <span>Headers: <span class="stat-val" id="statHeaders">0</span></span>
+    <span>Body: <span class="stat-val" id="statBody">—</span></span>
+    <span>Length: <span class="stat-val" id="statLen">0</span> chars</span>
+  </div>
+
+  <!-- PRESETS -->
+  <div class="section">
+    <div class="section-title">Quick Presets</div>
+    <div class="preset-bar">
+      <button class="preset-btn" onclick="loadPreset('get-json')">GET JSON</button>
+      <button class="preset-btn" onclick="loadPreset('post-json')">POST JSON</button>
+      <button class="preset-btn" onclick="loadPreset('bearer-auth')">Bearer Auth</button>
+      <button class="preset-btn" onclick="loadPreset('form-upload')">Form Upload</button>
+      <button class="preset-btn" onclick="loadPreset('graphql')">GraphQL</button>
+      <button class="preset-btn" onclick="loadPreset('stripe')">Stripe API</button>
+      <button class="preset-btn" onclick="loadPreset('github')">GitHub API</button>
+      <button class="preset-btn" onclick="loadPreset('slack')">Slack Webhook</button>
+    </div>
+  </div>
+
+  <!-- METHOD + URL -->
+  <div class="section">
+    <div class="section-title">Request</div>
+    <div class="method-bar" id="methodBar">
+      <button class="method-btn active" data-m="GET" onclick="setMethod('GET')">GET</button>
+      <button class="method-btn" data-m="POST" onclick="setMethod('POST')">POST</button>
+      <button class="method-btn" data-m="PUT" onclick="setMethod('PUT')">PUT</button>
+      <button class="method-btn" data-m="PATCH" onclick="setMethod('PATCH')">PATCH</button>
+      <button class="method-btn" data-m="DELETE" onclick="setMethod('DELETE')">DELETE</button>
+      <button class="method-btn" data-m="HEAD" onclick="setMethod('HEAD')">HEAD</button>
+      <button class="method-btn" data-m="OPTIONS" onclick="setMethod('OPTIONS')">OPTIONS</button>
+    </div>
+    <label for="urlInput">URL</label>
+    <input type="url" id="urlInput" placeholder="https://api.example.com/v1/resource" oninput="generate()" />
+  </div>
+
+  <!-- HEADERS -->
+  <div class="section">
+    <div class="section-title">Headers</div>
+    <table class="headers-table">
+      <thead><tr><th style="width:40%">Key</th><th>Value</th><th style="width:32px"></th></tr></thead>
+      <tbody id="headersBody"></tbody>
+    </table>
+    <div class="btn-row">
+      <button class="btn btn-sm" onclick="addHeader()">+ Add Header</button>
+      <button class="btn btn-sm" onclick="addHeader('Content-Type','application/json')">+ JSON</button>
+      <button class="btn btn-sm" onclick="addHeader('Accept','application/json')">+ Accept</button>
+      <button class="btn btn-sm" onclick="addHeader('User-Agent','ABUZ8-CLI/1.0')">+ User-Agent</button>
+    </div>
+  </div>
+
+  <!-- AUTH -->
+  <div class="section">
+    <div class="section-title">Authentication</div>
+    <div class="row">
+      <div>
+        <label for="authType">Type</label>
+        <select id="authType" onchange="toggleAuth(); generate();">
+          <option value="none">None</option>
+          <option value="bearer">Bearer Token</option>
+          <option value="basic">Basic Auth</option>
+          <option value="api-key">API Key Header</option>
+        </select>
+      </div>
+      <div id="authField1Wrap" style="display:none">
+        <label id="authLabel1">Token</label>
+        <input type="text" id="authField1" placeholder="" oninput="generate()" />
+      </div>
+      <div id="authField2Wrap" style="display:none">
+        <label id="authLabel2">Password</label>
+        <input type="password" id="authField2" placeholder="" oninput="generate()" />
+      </div>
+    </div>
+  </div>
+
+  <!-- BODY -->
+  <div class="section" id="bodySection">
+    <div class="section-title">Body</div>
+    <div class="row" style="margin-bottom:0.5rem">
+      <div>
+        <label for="bodyType">Content Type</label>
+        <select id="bodyType" onchange="toggleBody(); generate();">
+          <option value="none">No Body</option>
+          <option value="json">JSON</option>
+          <option value="form">Form URL-Encoded</option>
+          <option value="raw">Raw</option>
+        </select>
+      </div>
+    </div>
+    <div id="jsonBodyWrap" style="display:none">
+      <label>JSON Body</label>
+      <textarea id="jsonBody" rows="5" placeholder='{"key": "value"}' oninput="generate()"></textarea>
+    </div>
+    <div id="formBodyWrap" style="display:none">
+      <table class="headers-table">
+        <thead><tr><th style="width:40%">Field</th><th>Value</th><th style="width:32px"></th></tr></thead>
+        <tbody id="formBody"></tbody>
+      </table>
+      <button class="btn btn-sm" onclick="addFormField()">+ Add Field</button>
+    </div>
+    <div id="rawBodyWrap" style="display:none">
+      <label>Raw Body</label>
+      <textarea id="rawBody" rows="4" placeholder="raw request body" oninput="generate()"></textarea>
+    </div>
+  </div>
+
+  <!-- OPTIONS -->
+  <div class="section">
+    <div class="section-title">Options</div>
+    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:0.5rem 1.5rem;">
+      <div class="toggle-row">
+        <input type="checkbox" class="toggle" id="optVerbose" onchange="generate()" />
+        <label for="optVerbose">Verbose (-v)</label>
+      </div>
+      <div class="toggle-row">
+        <input type="checkbox" class="toggle" id="optInsecure" onchange="generate()" />
+        <label for="optInsecure">Insecure (-k)</label>
+      </div>
+      <div class="toggle-row">
+        <input type="checkbox" class="toggle" id="optFollow" onchange="generate()" checked />
+        <label for="optFollow">Follow redirects (-L)</label>
+      </div>
+      <div class="toggle-row">
+        <input type="checkbox" class="toggle" id="optSilent" onchange="generate()" />
+        <label for="optSilent">Silent (-s)</label>
+      </div>
+      <div class="toggle-row">
+        <input type="checkbox" class="toggle" id="optCompressed" onchange="generate()" />
+        <label for="optCompressed">Compressed (--compressed)</label>
+      </div>
+      <div class="toggle-row">
+        <input type="checkbox" class="toggle" id="optInclude" onchange="generate()" />
+        <label for="optInclude">Include headers (-i)</label>
+      </div>
+    </div>
+    <div class="row" style="margin-top:0.75rem">
+      <div>
+        <label for="optTimeout">Timeout (seconds)</label>
+        <input type="text" id="optTimeout" placeholder="e.g. 30" oninput="generate()" />
+      </div>
+      <div>
+        <label for="optOutput">Output file (-o)</label>
+        <input type="text" id="optOutput" placeholder="e.g. response.json" oninput="generate()" />
+      </div>
+    </div>
+  </div>
+
+  <!-- OUTPUT -->
+  <div class="section">
+    <div class="section-title">Generated cURL Command</div>
+    <div class="btn-row" style="margin-bottom:0.75rem">
+      <button class="btn btn-gold" onclick="copyCmd()">Copy Command</button>
+      <button class="btn" onclick="copyOneLine()">Copy (one-line)</button>
+      <button class="btn" onclick="resetAll()">Reset</button>
+    </div>
+    <div class="output-box">
+      <button class="copy-btn" onclick="copyCmd()">Copy</button>
+      <pre id="curlOutput">curl https://api.example.com</pre>
+    </div>
+  </div>
+
+  <!-- HISTORY -->
+  <div class="section">
+    <div class="section-title">History <span style="font-size:0.7rem;color:var(--text-dim);font-weight:400">(session only)</span></div>
+    <div id="historyList" style="font-size:0.8rem;color:var(--text-dim);">No commands generated yet.</div>
+  </div>
+
+  <!-- CTA -->
+  <div class="cta-section">
+    <h2>Build with QADIR OS</h2>
+    <p>100+ AI tools, agentic automation, and a sovereign AI engine — all in one desktop app.</p>
+    <div class="cta-form">
+      <input type="email" id="ctaEmail" placeholder="your@email.com" />
+      <button onclick="submitWaitlist()">Join Waitlist</button>
+    </div>
+    <p class="cta-success" id="ctaSuccess">You're on the list. We'll notify you at launch.</p>
+  </div>
+</div>
+
+<footer>
+  &copy; 2026 ABUZ8 LLC &middot; <a href="/disclaimer.html">Disclaimer</a> &middot; <a href="/privacy.html">Privacy</a>
+</footer>
+
+<script>
+// ── STATE ─────────────────────────────────────────────
+let method = 'GET';
+let history = [];
+
+// ── METHOD ────────────────────────────────────────────
+function setMethod(m) {
+  method = m;
+  document.querySelectorAll('.method-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.m === m);
+  });
+  generate();
+}
+
+// ── HEADERS ───────────────────────────────────────────
+function addHeader(key, val) {
+  const tbody = document.getElementById('headersBody');
+  const tr = document.createElement('tr');
+  tr.innerHTML = `<td><input type="text" value="${esc(key||'')}" placeholder="Header-Name" oninput="generate()" /></td>
+    <td><input type="text" value="${esc(val||'')}" placeholder="value" oninput="generate()" /></td>
+    <td><button class="btn-icon" onclick="this.closest('tr').remove();generate();">&times;</button></td>`;
+  tbody.appendChild(tr);
+  generate();
+}
+
+function getHeaders() {
+  const rows = document.querySelectorAll('#headersBody tr');
+  const hdrs = [];
+  rows.forEach(r => {
+    const inputs = r.querySelectorAll('input');
+    const k = inputs[0].value.trim();
+    const v = inputs[1].value.trim();
+    if (k) hdrs.push([k, v]);
+  });
+  return hdrs;
+}
+
+// ── AUTH ──────────────────────────────────────────────
+function toggleAuth() {
+  const t = document.getElementById('authType').value;
+  const f1 = document.getElementById('authField1Wrap');
+  const f2 = document.getElementById('authField2Wrap');
+  const l1 = document.getElementById('authLabel1');
+  const l2 = document.getElementById('authLabel2');
+  f1.style.display = 'none';
+  f2.style.display = 'none';
+  if (t === 'bearer') {
+    f1.style.display = '';
+    l1.textContent = 'Token';
+    document.getElementById('authField1').placeholder = 'eyJhbGci...';
+  } else if (t === 'basic') {
+    f1.style.display = '';
+    f2.style.display = '';
+    l1.textContent = 'Username';
+    l2.textContent = 'Password';
+    document.getElementById('authField1').placeholder = 'user';
+    document.getElementById('authField2').placeholder = 'pass';
+  } else if (t === 'api-key') {
+    f1.style.display = '';
+    f2.style.display = '';
+    l1.textContent = 'Header Name';
+    l2.textContent = 'API Key';
+    document.getElementById('authField1').placeholder = 'X-API-Key';
+    document.getElementById('authField2').placeholder = 'sk_live_...';
+  }
+}
+
+// ── BODY ─────────────────────────────────────────────
+function toggleBody() {
+  const t = document.getElementById('bodyType').value;
+  document.getElementById('jsonBodyWrap').style.display = t === 'json' ? '' : 'none';
+  document.getElementById('formBodyWrap').style.display = t === 'form' ? '' : 'none';
+  document.getElementById('rawBodyWrap').style.display = t === 'raw' ? '' : 'none';
+}
+
+function addFormField(k, v) {
+  const tbody = document.getElementById('formBody');
+  const tr = document.createElement('tr');
+  tr.innerHTML = `<td><input type="text" value="${esc(k||'')}" placeholder="field" oninput="generate()" /></td>
+    <td><input type="text" value="${esc(v||'')}" placeholder="value" oninput="generate()" /></td>
+    <td><button class="btn-icon" onclick="this.closest('tr').remove();generate();">&times;</button></td>`;
+  tbody.appendChild(tr);
+  generate();
+}
+
+function getFormFields() {
+  const rows = document.querySelectorAll('#formBody tr');
+  const fields = [];
+  rows.forEach(r => {
+    const inputs = r.querySelectorAll('input');
+    const k = inputs[0].value.trim();
+    const v = inputs[1].value.trim();
+    if (k) fields.push([k, v]);
+  });
+  return fields;
+}
+
+// ── GENERATE ─────────────────────────────────────────
+function generate() {
+  const parts = ['curl'];
+
+  // Method (skip -X GET — it's default)
+  if (method !== 'GET') parts.push(`-X ${method}`);
+
+  // URL
+  const url = document.getElementById('urlInput').value.trim();
+
+  // Options
+  if (document.getElementById('optVerbose').checked) parts.push('-v');
+  if (document.getElementById('optSilent').checked) parts.push('-s');
+  if (document.getElementById('optInsecure').checked) parts.push('-k');
+  if (document.getElementById('optFollow').checked) parts.push('-L');
+  if (document.getElementById('optCompressed').checked) parts.push('--compressed');
+  if (document.getElementById('optInclude').checked) parts.push('-i');
+
+  const timeout = document.getElementById('optTimeout').value.trim();
+  if (timeout) parts.push(`--max-time ${timeout}`);
+
+  const output = document.getElementById('optOutput').value.trim();
+  if (output) parts.push(`-o ${shellQuote(output)}`);
+
+  // Headers
+  const hdrs = getHeaders();
+  hdrs.forEach(([k, v]) => {
+    parts.push(`-H ${shellQuote(k + ': ' + v)}`);
+  });
+
+  // Auth
+  const authType = document.getElementById('authType').value;
+  const a1 = document.getElementById('authField1').value.trim();
+  const a2 = document.getElementById('authField2').value.trim();
+  if (authType === 'bearer' && a1) {
+    parts.push(`-H ${shellQuote('Authorization: Bearer ' + a1)}`);
+  } else if (authType === 'basic' && a1) {
+    parts.push(`-u ${shellQuote(a1 + ':' + a2)}`);
+  } else if (authType === 'api-key' && a1 && a2) {
+    parts.push(`-H ${shellQuote(a1 + ': ' + a2)}`);
+  }
+
+  // Body
+  const bodyType = document.getElementById('bodyType').value;
+  let bodyStr = '';
+  if (bodyType === 'json') {
+    bodyStr = document.getElementById('jsonBody').value.trim();
+    if (bodyStr) {
+      // Auto-add Content-Type if not already set
+      const hasContentType = hdrs.some(([k]) => k.toLowerCase() === 'content-type');
+      if (!hasContentType) parts.push(`-H ${shellQuote('Content-Type: application/json')}`);
+      parts.push(`-d ${shellQuote(bodyStr)}`);
+    }
+  } else if (bodyType === 'form') {
+    const fields = getFormFields();
+    fields.forEach(([k, v]) => {
+      parts.push(`--data-urlencode ${shellQuote(k + '=' + v)}`);
+    });
+    bodyStr = fields.map(([k,v]) => k+'='+v).join('&');
+  } else if (bodyType === 'raw') {
+    bodyStr = document.getElementById('rawBody').value.trim();
+    if (bodyStr) parts.push(`-d ${shellQuote(bodyStr)}`);
+  }
+
+  // URL goes last
+  if (url) parts.push(shellQuote(url));
+  else parts.push("'https://api.example.com'");
+
+  const cmd = parts.join(' \\\n  ');
+  document.getElementById('curlOutput').textContent = cmd;
+
+  // Stats
+  document.getElementById('statMethod').textContent = method;
+  document.getElementById('statHeaders').textContent = hdrs.length + (authType !== 'none' ? 1 : 0);
+  document.getElementById('statBody').textContent = bodyStr ? formatBytes(new Blob([bodyStr]).size) : '—';
+  document.getElementById('statLen').textContent = cmd.length;
+}
+
+// ── COPY ─────────────────────────────────────────────
+function copyCmd() {
+  const text = document.getElementById('curlOutput').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    saveHistory(text);
+  });
+}
+
+function copyOneLine() {
+  const text = document.getElementById('curlOutput').textContent;
+  const oneLine = text.replace(/\s*\\\n\s*/g, ' ');
+  navigator.clipboard.writeText(oneLine).then(() => {
+    saveHistory(oneLine);
+  });
+}
+
+// ── HISTORY ──────────────────────────────────────────
+function saveHistory(cmd) {
+  history.unshift({ cmd, time: new Date().toLocaleTimeString(), method });
+  if (history.length > 20) history.pop();
+  renderHistory();
+}
+
+function renderHistory() {
+  const el = document.getElementById('historyList');
+  if (history.length === 0) { el.innerHTML = 'No commands generated yet.'; return; }
+  el.innerHTML = history.map((h, i) =>
+    `<div style="display:flex;align-items:center;gap:0.5rem;padding:0.35rem 0;border-bottom:1px solid var(--border);cursor:pointer" onclick="replayHistory(${i})">
+      <span style="font-family:var(--font-mono);font-size:0.7rem;color:${methodColor(h.method)};min-width:50px">${h.method}</span>
+      <span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-family:var(--font-mono);font-size:0.75rem">${esc(h.cmd.substring(0, 120))}</span>
+      <span style="font-size:0.7rem;color:var(--text-dim)">${h.time}</span>
+    </div>`
+  ).join('');
+}
+
+function replayHistory(i) {
+  const cmd = history[i].cmd;
+  navigator.clipboard.writeText(cmd);
+}
+
+function methodColor(m) {
+  const c = {GET:'var(--green)',POST:'var(--blue)',PUT:'var(--orange)',PATCH:'var(--teal-bright)',DELETE:'var(--red)'};
+  return c[m] || 'var(--text-dim)';
+}
+
+// ── PRESETS ──────────────────────────────────────────
+const PRESETS = {
+  'get-json': {
+    method: 'GET',
+    url: 'https://api.example.com/v1/users',
+    headers: [['Accept', 'application/json']],
+    auth: 'none', body: 'none'
+  },
+  'post-json': {
+    method: 'POST',
+    url: 'https://api.example.com/v1/users',
+    headers: [['Content-Type', 'application/json']],
+    auth: 'none', body: 'json',
+    jsonBody: '{\n  "name": "Ahmad",\n  "email": "ahmad@example.com",\n  "role": "admin"\n}'
+  },
+  'bearer-auth': {
+    method: 'GET',
+    url: 'https://api.example.com/v1/me',
+    headers: [],
+    auth: 'bearer', authVal1: 'your_token_here',
+    body: 'none'
+  },
+  'form-upload': {
+    method: 'POST',
+    url: 'https://api.example.com/v1/upload',
+    headers: [],
+    auth: 'none', body: 'form',
+    formFields: [['file', '@/path/to/file.pdf'], ['description', 'My document']]
+  },
+  'graphql': {
+    method: 'POST',
+    url: 'https://api.example.com/graphql',
+    headers: [['Content-Type', 'application/json']],
+    auth: 'none', body: 'json',
+    jsonBody: '{\n  "query": "{ users { id name email } }",\n  "variables": {}\n}'
+  },
+  'stripe': {
+    method: 'GET',
+    url: 'https://api.stripe.com/v1/charges?limit=3',
+    headers: [],
+    auth: 'basic', authVal1: 'sk_test_...', authVal2: '',
+    body: 'none'
+  },
+  'github': {
+    method: 'GET',
+    url: 'https://api.github.com/user/repos?per_page=5',
+    headers: [['Accept', 'application/vnd.github+json'], ['X-GitHub-Api-Version', '2022-11-28']],
+    auth: 'bearer', authVal1: 'ghp_your_token',
+    body: 'none'
+  },
+  'slack': {
+    method: 'POST',
+    url: 'https://hooks.slack.com/services/T00/B00/xxxx',
+    headers: [['Content-Type', 'application/json']],
+    auth: 'none', body: 'json',
+    jsonBody: '{\n  "text": "Deployment complete :rocket:",\n  "channel": "#deploys"\n}'
+  }
+};
+
+function loadPreset(name) {
+  const p = PRESETS[name];
+  if (!p) return;
+
+  // Highlight
+  document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+
+  // Method
+  setMethod(p.method);
+
+  // URL
+  document.getElementById('urlInput').value = p.url;
+
+  // Headers
+  document.getElementById('headersBody').innerHTML = '';
+  (p.headers || []).forEach(([k,v]) => addHeader(k, v));
+
+  // Auth
+  document.getElementById('authType').value = p.auth || 'none';
+  toggleAuth();
+  document.getElementById('authField1').value = p.authVal1 || '';
+  document.getElementById('authField2').value = p.authVal2 || '';
+
+  // Body
+  document.getElementById('bodyType').value = p.body || 'none';
+  toggleBody();
+  document.getElementById('jsonBody').value = p.jsonBody || '';
+  document.getElementById('rawBody').value = '';
+  document.getElementById('formBody').innerHTML = '';
+  if (p.formFields) p.formFields.forEach(([k,v]) => addFormField(k, v));
+
+  generate();
+}
+
+// ── RESET ───────────────────────────────────────────
+function resetAll() {
+  setMethod('GET');
+  document.getElementById('urlInput').value = '';
+  document.getElementById('headersBody').innerHTML = '';
+  document.getElementById('authType').value = 'none';
+  toggleAuth();
+  document.getElementById('authField1').value = '';
+  document.getElementById('authField2').value = '';
+  document.getElementById('bodyType').value = 'none';
+  toggleBody();
+  document.getElementById('jsonBody').value = '';
+  document.getElementById('rawBody').value = '';
+  document.getElementById('formBody').innerHTML = '';
+  document.getElementById('optVerbose').checked = false;
+  document.getElementById('optInsecure').checked = false;
+  document.getElementById('optFollow').checked = true;
+  document.getElementById('optSilent').checked = false;
+  document.getElementById('optCompressed').checked = false;
+  document.getElementById('optInclude').checked = false;
+  document.getElementById('optTimeout').value = '';
+  document.getElementById('optOutput').value = '';
+  document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+  generate();
+}
+
+// ── UTILITIES ───────────────────────────────────────
+function shellQuote(s) {
+  if (!s) return "''";
+  // Use single quotes; escape embedded single quotes
+  return "'" + s.replace(/'/g, "'\\''") + "'";
+}
+
+function esc(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function formatBytes(b) {
+  if (b === 0) return '0 B';
+  if (b < 1024) return b + ' B';
+  if (b < 1048576) return (b / 1024).toFixed(1) + ' KB';
+  return (b / 1048576).toFixed(1) + ' MB';
+}
+
+// ── WAITLIST ────────────────────────────────────────
+async function submitWaitlist() {
+  const email = document.getElementById('ctaEmail').value.trim();
+  if (!email || !email.includes('@')) { alert('Please enter a valid email address.'); return; }
+  const payload = { email, product: 'qadir-os-curl-builder', ts: new Date().toISOString() };
+  try {
+    await fetch('/api/waitlist', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(payload) });
+  } catch(e) { /* graceful fallback */ }
+  document.getElementById('ctaEmail').style.display = 'none';
+  document.querySelector('.cta-form button').style.display = 'none';
+  document.getElementById('ctaSuccess').classList.add('visible');
+}
+
+// ── INIT ────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  generate();
+});
+</script>
+<script src="/tools/_tools-shared.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LLM API Price Comparison — Cost Per 1M Tokens Across GPT, Claude, Gemini &amp; DeepSeek | ABUZ8</title>
+  <meta name="description" content="Free LLM API price comparison. Enter your monthly token usage and see the exact cost per model — GPT-5.5, GPT-5.4, Claude Opus 4.8, Sonnet 4.6, Haiku 4.5, Gemini 2.5 Pro/Flash, DeepSeek-V3 — ranked cheapest first, with your effective blended cost per 1M tokens. 100% client-side." />
+  <meta name="keywords" content="LLM API price comparison, cost per 1M tokens, GPT vs Claude pricing, cheapest LLM API, Gemini pricing, DeepSeek price, Claude Opus cost, token cost calculator, AI API cost comparison, LLM pricing calculator" />
+  <meta property="og:title" content="LLM API Price Comparison — Cheapest Cost Per 1M Tokens | ABUZ8" />
+  <meta property="og:description" content="Enter your monthly token usage. See every major LLM API ranked cheapest first, with your real blended cost per 1M tokens. Client-side, free, no signup." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://abuz8ai.com/tools/ai-llm-price-comparison" />
+  <link rel="canonical" href="https://abuz8ai.com/tools/ai-llm-price-comparison" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "LLM API Price Comparison Calculator",
+    "description": "Free client-side tool that compares the cost of major LLM APIs (GPT, Claude, Gemini, DeepSeek) for your monthly token usage, ranked cheapest first with effective blended cost per 1M tokens.",
+    "url": "https://abuz8ai.com/tools/ai-llm-price-comparison.html",
+    "applicationCategory": "DeveloperApplication",
+    "operatingSystem": "Any",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+    "author": { "@type": "Organization", "name": "ABUZ8 LLC", "url": "https://abuz8ai.com" }
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "How do I compare LLM API prices?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Prices are quoted per 1M tokens and split into input (your prompt) and output (the reply), which are usually priced differently — output is typically more expensive. To compare fairly you need your own token mix: average input tokens per call, average output tokens per call, and calls per month. This tool takes those three numbers and computes each model's real monthly cost, then ranks them cheapest first." }
+      },
+      {
+        "@type": "Question",
+        "name": "What is the cheapest LLM API?",
+        "acceptedAnswer": { "@type": "Answer", "text": "It depends on your input/output mix, but among frontier and near-frontier models DeepSeek-V3 and Gemini 2.5 Flash are usually the lowest cost per token, while GPT-5.5 and Claude Opus 4.8 sit at the premium end. Because output tokens cost more, a workload that generates long replies shifts the ranking. This calculator finds the cheapest option for your exact usage rather than a generic list." }
+      },
+      {
+        "@type": "Question",
+        "name": "Why is output priced higher than input?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Generating output tokens is sequential and compute-heavy — each new token requires a full forward pass — while input tokens are processed in parallel during the prefill stage. Providers price the two separately, and output is commonly 2x to 6x the input rate, so a chatbot that writes long answers can cost far more per call than the input price alone suggests." }
+      },
+      {
+        "@type": "Question",
+        "name": "Is running a model locally cheaper than an API?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Local inference has no per-token charge at all — the marginal cost of a request is just electricity. The trade is a fixed hardware cost up front. Above a certain monthly volume, owning a GPU and running an open model (Llama, Qwen, DeepSeek) beats paying per token, and the savings compound. The cost-smart pattern is to run everything you can locally and only call a paid API when a local model can't clear the task." }
+      },
+      {
+        "@type": "Question",
+        "name": "Is my data sent to a server?",
+        "acceptedAnswer": { "@type": "Answer", "text": "No. This calculator runs entirely in your browser. Nothing you type is uploaded, logged, or stored anywhere." }
+      }
+    ]
+  }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0a1628;
+      --card: #0d1a30;
+      --card-alt: #111f38;
+      --primary: #c9a84c;
+      --primary-dim: #8a7030;
+      --teal: #2fbf8f;
+      --text: #e8e4d8;
+      --text-dim: #8a9aaa;
+      --border: #1a2e50;
+      --good: #2fbf8f;
+      --good-bg: rgba(14,159,110,.15);
+      --warn: #e8d48b;
+      --warn-bg: rgba(180,83,9,.15);
+      --font-heading: 'Playfair Display', Georgia, serif;
+      --font-body: 'Inter', system-ui, sans-serif;
+      --font-mono: 'JetBrains Mono', 'Courier New', monospace;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      font-size: 15px;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+    a { color: var(--primary); text-decoration: none; transition: color 0.2s; }
+    a:hover { color: var(--primary-dim); }
+
+    nav {
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      padding: 0 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 60px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .nav-logo {
+      font-family: var(--font-heading);
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--primary);
+      letter-spacing: 0.02em;
+    }
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links a { color: var(--text-dim); font-size: 0.9rem; font-weight: 500; }
+    .nav-links a:hover { color: var(--primary); }
+
+    main { max-width: 980px; margin: 0 auto; padding: 3rem 1.5rem 5rem; }
+    .page-header { text-align: center; margin-bottom: 2.2rem; }
+    .page-header h1 {
+      font-family: var(--font-heading);
+      font-size: 2.4rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 0.5rem;
+      line-height: 1.18;
+    }
+    .page-header p { color: var(--text-dim); font-size: 1rem; max-width: 660px; margin: 0 auto; }
+    .privacy-note {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      margin-top: 0.9rem; padding: 0.35rem 0.9rem;
+      background: var(--good-bg); border: 1px solid #bfe0d8;
+      border-radius: 20px; font-size: 0.78rem; color: var(--good);
+    }
+
+    label { display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-dim);
+            text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.5rem; }
+    input[type="number"] {
+      width: 100%;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      padding: 0.7rem 0.9rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    input:focus { border-color: var(--primary); }
+    .hint { font-size: 0.72rem; color: var(--text-dim); margin-top: 0.35rem; font-weight: 400; text-transform: none; letter-spacing: 0; }
+
+    .panel {
+      background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+      padding: 1.4rem 1.5rem; margin-bottom: 1.4rem;
+      box-shadow: 0 1px 3px rgba(44,62,80,0.04);
+    }
+    .panel h2 {
+      font-family: var(--font-heading); font-size: 1.25rem; color: var(--primary);
+      margin-bottom: 1.1rem;
+    }
+    .controls { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+
+    /* TWO RESULT CARDS */
+    .results { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; margin: 0.4rem 0 0; }
+    .rcard { border: 1px solid var(--border); border-radius: 12px; padding: 1.3rem 1.4rem; background: var(--card-alt); }
+    .rcard.cheap { border-top: 3px solid var(--teal); }
+    .rcard.dear  { border-top: 3px solid var(--primary); }
+    .rcard .rlabel { font-size: 0.74rem; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text-dim); font-weight: 600; }
+    .rcard .rbig { font-family: var(--font-heading); font-size: 2.1rem; font-weight: 700; line-height: 1.1; margin: 0.3rem 0 0.1rem; }
+    .rcard.cheap .rbig { color: var(--teal); }
+    .rcard.dear .rbig { color: var(--primary); }
+    .rcard .rsub { font-size: 0.8rem; color: var(--text-dim); }
+
+    /* VERDICT */
+    .verdict {
+      margin: 1.4rem 0 0; padding: 1.1rem 1.3rem; border-radius: 10px;
+      font-size: 0.95rem; line-height: 1.6;
+      background: var(--good-bg); border: 1px solid #bfe0d8; color: var(--text);
+    }
+    .verdict strong { color: var(--primary); }
+    .verdict .big { font-family: var(--font-heading); font-weight: 700; }
+    .verdict .save { color: var(--teal); font-weight: 700; }
+
+    /* TABLE */
+    .table-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: 12px; margin-top: 1.3rem; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.86rem; min-width: 620px; background: var(--card); }
+    thead th {
+      background: var(--card-alt); color: var(--text-dim);
+      font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.06em;
+      text-align: right; padding: 0.8rem 1rem; border-bottom: 1px solid var(--border); font-weight: 600;
+    }
+    thead th:first-child { text-align: left; }
+    tbody td { padding: 0.7rem 1rem; border-bottom: 1px solid var(--border); text-align: right; font-family: var(--font-mono); }
+    tbody td:first-child { text-align: left; font-family: var(--font-body); }
+    tbody tr:last-child td { border-bottom: none; }
+    tbody tr.best { background: var(--good-bg); }
+    tbody tr.best td:first-child { box-shadow: inset 3px 0 0 var(--teal); }
+    tbody tr.local { background: #152837; }
+    tbody tr.local td:first-child { box-shadow: inset 3px 0 0 var(--primary); }
+    .model-name { font-weight: 600; color: var(--text); }
+    .vendor-tag { font-size: 0.68rem; color: var(--text-dim); display: block; font-weight: 400; margin-top: 0.1rem; }
+    .badge-best { font-size: 0.62rem; color: var(--teal); font-weight: 700; letter-spacing: 0.05em; margin-left: 0.4rem; }
+    .badge-local { font-size: 0.62rem; color: var(--primary); font-weight: 700; letter-spacing: 0.05em; margin-left: 0.4rem; }
+    .price-note { font-size: 0.78rem; color: var(--text-dim); margin-top: 0.9rem; line-height: 1.7; }
+    .price-note strong { color: var(--text); }
+    .price-note a { color: var(--text-dim); text-decoration: underline; }
+    .price-note a:hover { color: var(--primary); }
+
+    /* CTA */
+    .cta-section {
+      background: linear-gradient(135deg, #eef5fb 0%, #e7f3f0 100%);
+      border: 1px solid #cfe0ef; border-radius: 12px;
+      padding: 2.2rem 2rem; text-align: center; margin-top: 3rem;
+    }
+    .cta-section h2 { font-family: var(--font-heading); font-size: 1.5rem; color: var(--primary); margin-bottom: 0.5rem; }
+    .cta-section p { color: var(--text-dim); font-size: 0.95rem; margin-bottom: 1.2rem; max-width: 600px; margin-left: auto; margin-right: auto; }
+    .cta-form { display: flex; gap: 0.6rem; justify-content: center; flex-wrap: wrap; }
+    .cta-form input[type="email"] {
+      flex: 1; max-width: 300px; min-width: 200px;
+      background: var(--card); border: 1px solid var(--border); border-radius: 6px;
+      color: var(--text); font-family: var(--font-body); font-size: 0.9rem; padding: 0.6rem 1rem; outline: none;
+    }
+    .cta-form input[type="email"]:focus { border-color: var(--primary); }
+    button {
+      padding: 0.6rem 1.4rem; border-radius: 6px; border: none; cursor: pointer;
+      font-family: var(--font-body); font-size: 0.88rem; font-weight: 600; transition: background 0.2s;
+    }
+    .btn-primary { background: var(--primary); color: #fff; }
+    .btn-primary:hover { background: var(--primary-dim); }
+    .cta-success { display: none; color: var(--teal); font-size: 0.9rem; margin-top: 0.8rem; font-weight: 600; }
+    .cta-success.visible { display: block; }
+
+    .content { margin-top: 3rem; }
+    .content h2 { font-family: var(--font-heading); font-size: 1.5rem; color: var(--primary); margin: 0 0 1rem; padding-top: 1rem; }
+    .content > p { color: var(--text-dim); font-size: 0.92rem; margin-bottom: 1rem; }
+    .content > p a { text-decoration: underline; }
+    .faq-item { border-top: 1px solid var(--border); padding: 1.1rem 0; }
+    .faq-item h3 { font-size: 1rem; color: var(--text); margin-bottom: 0.4rem; font-weight: 600; }
+    .faq-item p { color: var(--text-dim); font-size: 0.9rem; }
+
+    footer {
+      background: var(--card); border-top: 1px solid var(--border);
+      text-align: center; padding: 1.5rem; font-size: 0.82rem; color: var(--text-dim);
+    }
+    footer a { color: var(--text-dim); }
+    footer a:hover { color: var(--primary); }
+
+    @media (max-width: 720px) {
+      .controls { grid-template-columns: 1fr; }
+      .results { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 600px) {
+      .page-header h1 { font-size: 1.8rem; }
+      nav { padding: 0 1rem; }
+      .nav-links { gap: 1rem; }
+      main { padding: 2rem 1rem 4rem; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="nav-logo">ABUZ8</a>
+  <ul class="nav-links">
+    <li><a href="/tools.html">Tools</a></li>
+    <li><a href="/store.html">Store</a></li>
+  </ul>
+</nav>
+
+<main>
+  <div class="page-header">
+    <h1>LLM API Price Comparison</h1>
+    <p>Enter your monthly token usage and see every major LLM API ranked cheapest first — GPT, Claude, Gemini, DeepSeek — with your real, blended cost per 1M tokens. The list changes with your input/output mix, so you get the cheapest model for <em>your</em> workload, not a generic chart.</p>
+    <span class="privacy-note">&#128274; 100% in-browser — nothing you enter is uploaded</span>
+  </div>
+
+  <div class="panel">
+    <h2>Your monthly usage</h2>
+    <div class="controls">
+      <div>
+        <label for="inTokens">Input tokens / call</label>
+        <input type="number" id="inTokens" min="0" value="1500" oninput="recalc()" />
+        <div class="hint">Avg prompt size per request.</div>
+      </div>
+      <div>
+        <label for="outTokens">Output tokens / call</label>
+        <input type="number" id="outTokens" min="0" value="800" oninput="recalc()" />
+        <div class="hint">Avg reply length per request.</div>
+      </div>
+      <div>
+        <label for="reqs">Requests / month</label>
+        <input type="number" id="reqs" min="0" value="30000" oninput="recalc()" />
+        <div class="hint">Total calls across your app.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="verdict" id="verdict"></div>
+
+  <div class="results">
+    <div class="rcard cheap">
+      <div class="rlabel">Cheapest for you</div>
+      <div class="rbig" id="cheapMonthly">$0</div>
+      <div class="rsub" id="cheapName">&mdash;</div>
+    </div>
+    <div class="rcard dear">
+      <div class="rlabel">Priciest listed</div>
+      <div class="rbig" id="dearMonthly">$0</div>
+      <div class="rsub" id="dearName">&mdash;</div>
+    </div>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Model</th>
+          <th>$/1M in</th>
+          <th>$/1M out</th>
+          <th>Eff. $/1M<br>(your mix)</th>
+          <th>Your $/mo</th>
+        </tr>
+      </thead>
+      <tbody id="priceTable"></tbody>
+    </table>
+  </div>
+
+  <p class="price-note">
+    Prices are per 1M tokens, standard (non-cached, non-batch) tier, <strong>verified June&nbsp;2026</strong> &mdash; always confirm live rates at
+    <a href="https://openai.com/api/pricing/" target="_blank" rel="noopener">OpenAI</a>,
+    <a href="https://platform.claude.com/docs/en/about-claude/pricing" target="_blank" rel="noopener">Anthropic</a>,
+    <a href="https://ai.google.dev/gemini-api/docs/pricing" target="_blank" rel="noopener">Google</a>, and
+    <a href="https://api-docs.deepseek.com/quick_start/pricing" target="_blank" rel="noopener">DeepSeek</a>.
+    <strong>Effective $/1M</strong> blends input and output at <em>your</em> ratio, so it reflects what you'd actually pay per million tokens, not the headline input price.
+    The <strong>Local (ABUZ8&nbsp;OS)</strong> row is $0 per token &mdash; marginal cost is electricity only; the fixed hardware cost is covered in the
+    <a href="/tools/ai-self-host-calculator.html">self-host vs cloud calculator</a>.
+  </p>
+
+  <div class="cta-section">
+    <h2>The cheapest token is the one you don't rent.</h2>
+    <p>Every row above is a bill that scales with your usage. ABUZ8&nbsp;OS runs open models on hardware you own for $0 per token, and routes to a paid API only for the few calls a local model can't clear &mdash; sovereign by default, cloud only when it has to be.</p>
+    <div class="cta-form">
+      <input type="email" id="ctaEmail" placeholder="you@company.com" />
+      <button class="btn-primary" onclick="submitWaitlist()">Join early access</button>
+    </div>
+    <div id="ctaSuccess" class="cta-success">&#10003; You're on the list. We'll be in touch.</div>
+  </div>
+
+  <div class="content">
+    <h2>How to compare LLM API prices honestly</h2>
+    <p>Related: <a href="/tools/ai-self-host-calculator.html">Self-host vs cloud calculator</a> &middot; <a href="/tools/ai-vram-calculator.html">Local LLM VRAM calculator</a> &middot; <a href="/tools/ai-token-counter.html">Token counter</a></p>
+    <div class="faq-item">
+      <h3>Why the cheapest model changes with your usage</h3>
+      <p>Every provider charges two prices: one for the tokens you send (input) and a higher one for the tokens the model writes back (output). A summarizer with long prompts and short answers is input-heavy; a chatbot that writes essays is output-heavy. Because the two rates differ by up to 6&times;, the cheapest model for a summarizer may not be the cheapest for a writer. This tool weights both by your actual mix and re-ranks the field live.</p>
+    </div>
+    <div class="faq-item">
+      <h3>What is "effective cost per 1M tokens"?</h3>
+      <p>It's the single number that matters: <span style="font-family:var(--font-mono)">(input&nbsp;tokens &times; input&nbsp;price + output&nbsp;tokens &times; output&nbsp;price) &divide; total&nbsp;tokens</span>. It collapses the two headline prices into what you'd truly pay per million tokens at your ratio &mdash; the honest apples-to-apples figure for comparing vendors.</p>
+    </div>
+    <div class="faq-item">
+      <h3>When does owning hardware beat renting an API?</h3>
+      <p>Local inference costs nothing per token — only electricity — against a fixed hardware cost up front. Past a break-even monthly volume, owning a GPU and running an open model wins, and the savings compound. The cost-smart pattern is to run everything you can locally and escalate to a paid API only when a local model misses your quality bar, which is exactly what ABUZ8&nbsp;OS automates with cost-aware routing. See the <a href="/tools/ai-self-host-calculator.html">break-even calculator</a> for your numbers.</p>
+    </div>
+    <div class="faq-item">
+      <h3>Is my data sent anywhere?</h3>
+      <p>No. This calculator runs entirely in your browser. Nothing you enter is uploaded, logged, or stored.</p>
+    </div>
+  </div>
+</main>
+
+<footer>
+  ABUZ8 LLC &middot; Free AI Tools &middot; <a href="mailto:ahmad@abuz8ai.com">ahmad@abuz8ai.com</a>
+</footer>
+
+<script>
+// ── LLM API PRICING (USD per 1M tokens) — standard tier, verified June 2026 ───
+// Same verified dataset the site ships in ai-self-host-calculator.html — kept in
+// sync on purpose so the two tools never contradict each other.
+const MODELS = [
+  { name:'GPT-5.5',           vendor:'OpenAI',   in:5.00, out:30.00 },
+  { name:'GPT-5.4',           vendor:'OpenAI',   in:2.50, out:15.00 },
+  { name:'Claude Opus 4.8',   vendor:'Anthropic',in:5.00, out:25.00 },
+  { name:'Claude Sonnet 4.6', vendor:'Anthropic',in:3.00, out:15.00 },
+  { name:'Claude Haiku 4.5',  vendor:'Anthropic',in:1.00, out:5.00  },
+  { name:'Gemini 2.5 Pro',    vendor:'Google',   in:1.25, out:10.00 },
+  { name:'Gemini 2.5 Flash',  vendor:'Google',   in:0.30, out:2.50  },
+  { name:'DeepSeek-V3',       vendor:'DeepSeek', in:0.14, out:0.28  }
+];
+
+// ── FORMAT ────────────────────────────────────────────────────────────────────
+function fmtUSD(v) {
+  if (!isFinite(v)) return '—';
+  const n = Math.abs(v);
+  if (n >= 1) return (v < 0 ? '-$' : '$') + n.toLocaleString('en-US', { maximumFractionDigits: 0 });
+  if (n > 0)  return (v < 0 ? '-$' : '$') + n.toFixed(2);
+  return '$0';
+}
+function fmtRate(v) { return '$' + v.toFixed(2); }
+
+// ── READ INPUTS ───────────────────────────────────────────────────────────────
+function inputs() {
+  const inTok  = Math.max(0, parseInt(document.getElementById('inTokens').value, 10)  || 0);
+  const outTok = Math.max(0, parseInt(document.getElementById('outTokens').value, 10) || 0);
+  const reqs   = Math.max(0, parseInt(document.getElementById('reqs').value, 10)      || 0);
+  return { inTok, outTok, reqs };
+}
+
+// ── CORE COST MATH ────────────────────────────────────────────────────────────
+// Monthly cost = (inTokens · reqs / 1M) · inRate + (outTokens · reqs / 1M) · outRate
+function monthlyCost(m, i) {
+  return (i.inTok * i.reqs / 1e6) * m.in + (i.outTok * i.reqs / 1e6) * m.out;
+}
+// Effective blended $/1M at the user's input:output ratio
+function effRate(m, i) {
+  const tot = i.inTok + i.outTok;
+  if (tot <= 0) return 0;
+  return (i.inTok * m.in + i.outTok * m.out) / tot;
+}
+
+// ── MAIN RECALC ───────────────────────────────────────────────────────────────
+function recalc() {
+  const i = inputs();
+
+  // rank every model cheapest-first for this usage
+  const rows = MODELS.map(m => ({ m, cost: monthlyCost(m, i), eff: effRate(m, i) }))
+                     .sort((a, b) => a.cost - b.cost);
+
+  const cheapest = rows[0];
+  const priciest = rows[rows.length - 1];
+
+  // summary cards
+  document.getElementById('cheapMonthly').textContent = fmtUSD(cheapest.cost);
+  document.getElementById('cheapName').textContent    = cheapest.m.name;
+  document.getElementById('dearMonthly').textContent  = fmtUSD(priciest.cost);
+  document.getElementById('dearName').textContent     = priciest.m.name;
+
+  // verdict
+  const v = document.getElementById('verdict');
+  if (i.reqs <= 0 || (i.inTok + i.outTok) <= 0) {
+    v.innerHTML = 'Enter your monthly usage above to rank the APIs by cost.';
+  } else {
+    const save = priciest.cost - cheapest.cost;
+    const pct  = priciest.cost > 0 ? Math.round((save / priciest.cost) * 100) : 0;
+    v.innerHTML = `<span class="big">${cheapest.m.name} is cheapest for your workload</span> at <strong>${fmtUSD(cheapest.cost)}/mo</strong> ` +
+      `&mdash; <span class="save">${pct}% less</span> than ${priciest.m.name} at ${fmtUSD(priciest.cost)}/mo ` +
+      `(a <span class="save">${fmtUSD(save)}/mo</span> gap). Running the same volume locally on hardware you own is <strong>$0 per token</strong>.`;
+  }
+
+  // table — ranked APIs, then the local $0/token row pinned at the bottom
+  const body = document.getElementById('priceTable');
+  let html = rows.map((row, idx) => {
+    const best = idx === 0;
+    return `<tr class="${best ? 'best' : ''}">
+      <td><span class="model-name">${row.m.name}</span>${best ? '<span class="badge-best">CHEAPEST</span>' : ''}<span class="vendor-tag">${row.m.vendor}</span></td>
+      <td>${fmtRate(row.m.in)}</td>
+      <td>${fmtRate(row.m.out)}</td>
+      <td>${fmtRate(row.eff)}</td>
+      <td>${fmtUSD(row.cost)}</td>
+    </tr>`;
+  }).join('');
+  html += `<tr class="local">
+      <td><span class="model-name">Local (ABUZ8 OS)</span><span class="badge-local">SOVEREIGN</span><span class="vendor-tag">Open model on your GPU</span></td>
+      <td>$0.00</td>
+      <td>$0.00</td>
+      <td>$0.00</td>
+      <td>$0*</td>
+    </tr>`;
+  body.innerHTML = html;
+}
+
+// ── WAITLIST ──────────────────────────────────────────────────────────────────
+async function submitWaitlist() {
+  const email = document.getElementById('ctaEmail').value.trim();
+  if (!email || !email.includes('@')) { alert('Please enter a valid email address.'); return; }
+  const payload = { email, product: 'qadir-os-llm-price-comparison', ts: new Date().toISOString() };
+  try {
+    await fetch('/api/waitlist', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+  } catch (e) { /* graceful fallback — never block the confirmation */ }
+  document.getElementById('ctaEmail').style.display = 'none';
+  document.querySelector('.cta-form button').style.display = 'none';
+  document.getElementById('ctaSuccess').classList.add('visible');
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+recalc();
+</script>
+<script src="/tools/_tools-shared.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>

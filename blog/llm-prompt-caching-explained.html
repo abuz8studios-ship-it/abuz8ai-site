@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<!-- 2026-07-20 — Weekly content: llm-prompt-caching-explained -->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prompt Caching Explained: The 90% LLM Discount Most Teams Ignore | ABUZ8</title>
+<meta name="description" content="Prompt caching explained: how cached input tokens cut LLM API bills by up to 90%, when cache hits actually happen, the break-even math, and how to structure prompts for it.">
+<meta name="keywords" content="prompt caching, llm prompt caching, cached input tokens, prompt cache hit, reduce llm api costs, anthropic prompt caching, openai prompt caching">
+<link rel="canonical" href="https://abuz8ai.com/blog/llm-prompt-caching-explained">
+<meta property="og:title" content="Prompt Caching Explained: The 90% LLM Discount Most Teams Ignore">
+<meta property="og:type" content="article">
+<link rel="stylesheet" href="/blog/_blog-base.css">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@300;400;600;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
+<style>
+:root{
+  --lapis:#0a1628; --lapis-mid:#EEF3F8; --lapis-light:#E3EBF3;
+  --card:#0d1a30; --border:#D6E0EC;
+  --text:#e8e4d8; --cream:#1F2D3D; --dim:#5A6B7D;
+  --gold:#5fa8e8; --gold-light:#255F95; --gold-dim:#7DA3C8;
+  --turq:#5fa8e8; --turq-light:#5fa8e8; --turq-bright:#255F95;
+  --primary:#5fa8e8;
+}
+body{background:var(--lapis);}
+code{background:#EEF3F8;color:#255F95;}
+.callout.cta{background:linear-gradient(135deg,#EAF2FA,#0a1628);}
+</style>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","headline":"Prompt Caching Explained: The 90% LLM Discount Most Teams Ignore","datePublished":"2026-07-20","author":{"@type":"Organization","name":"ABUZ8 AI"}}
+</script>
+</head>
+<body>
+<div class="container">
+  <a href="/blog/" class="back">&larr; ABUZ8 BLOG</a>
+  <h1>Prompt Caching Explained: The 90% LLM Discount Most Teams Ignore</h1>
+  <div class="meta-row"><span>DEVELOPERS</span><span class="dot"></span><span>JULY 20, 2026</span><span class="dot"></span><span>7 MIN READ</span></div>
+
+  <p>Here's a line item hiding in almost every LLM bill: you're paying full price, over and over, to send the model the exact same text. Your system prompt. Your tool definitions. That 40-page policy document every request references. <strong>Prompt caching</strong> fixes this — providers store the repeated prefix of your prompt and charge you a fraction (in the best cases around a tenth) of the normal input rate every time it's reused. It is the single cheapest optimization in AI right now, and most teams still haven't turned it on.</p>
+
+  <p>This guide covers how prompt caching actually works, when cache hits happen (and the ways you silently break them), the break-even math, and how to restructure prompts so the discount applies to the biggest possible slice of your bill.</p>
+
+  <h2>What prompt caching actually is</h2>
+  <p>When a model processes your prompt, the expensive part is prefill — computing attention over every input token before generating the first output token. If the first N tokens of today's request are byte-identical to the first N tokens of a request from a minute ago, that computation is redundant. Prompt caching lets the provider keep the processed state of that prefix around and skip the recompute.</p>
+
+  <p>You see it as pricing: cached input tokens are billed at a steep discount to fresh input tokens — commonly 50–90% off depending on provider and model. Writing to the cache sometimes costs a premium over base input (a cache-write surcharge), which is why the math matters and why blindly caching everything can lose money on low-traffic prompts.</p>
+
+  <h2>The rule that decides everything: prefix matching</h2>
+  <p>Caches match from the start of the prompt, forward, and stop at the first difference. This single fact should dictate your prompt architecture:</p>
+
+  <h2>Structure prompts stable-first</h2>
+  <p>Put content in this order — most static at the top, most dynamic at the bottom:</p>
+  <p>1. System prompt and persona — never changes between requests.<br>
+  2. Tool and function definitions — changes only when you ship.<br>
+  3. Reference documents and few-shot examples — changes rarely.<br>
+  4. Conversation history — grows, but the old turns stay identical.<br>
+  5. The user's new message — changes every request, so it goes last.</p>
+
+  <p>Get this backwards — say, a timestamp or a request ID at the top of the system prompt — and every request misses cache from token one. A single dynamic word placed early can cost you the entire discount. This is the most common cache-buster we see, followed closely by non-deterministic serialization: if your tool definitions render in a different key order per request, the bytes differ, and the cache treats it as brand-new text.</p>
+
+  <h2>The break-even math</h2>
+  <p>Say your stable prefix is 20,000 tokens (system prompt + tools + a reference doc), and fresh input costs $3 per million tokens with cached input at $0.30 and a 25% cache-write premium.</p>
+
+  <p>Without caching, 1,000 requests process 20M prefix tokens at full rate: $60. With caching, you pay one write (20k tokens at $3.75/M ≈ $0.075) and 999 hits (about 20M tokens at $0.30/M ≈ $6). Total: roughly $6.08 — a 90% cut on the prefix portion of the bill. The catch is cache lifetime: entries typically expire after minutes of inactivity, so the discount depends on request frequency. A prompt hit once an hour re-writes every time and saves nothing. A prompt hit every few seconds rides the discount almost continuously. Before restructuring anything, run your own numbers in the free <a href="/tools/ai-prompt-caching-calculator.html" class="in">prompt caching calculator</a> — it models write premiums, hit rates, and expiry against your actual traffic.</p>
+
+  <h2>Where the wins are biggest</h2>
+  <p>Prompt caching pays off in direct proportion to how much repeated context you carry. Agent systems are the extreme case: an agent loop re-sends its system prompt, tool schemas, and running history on every single step — ten tool calls means ten near-identical prefixes. Chatbots with long conversations, RAG systems with a fixed instruction preamble, and anything doing classification against a constant rubric all sit in the same bucket. Count what your prefix actually costs with the <a href="/tools/ai-token-counter.html" class="in">token counter</a>, then check how much room it eats with the <a href="/tools/ai-context-window-planner.html" class="in">context window planner</a> — the three numbers together tell you exactly what caching is worth to you.</p>
+
+  <h2>What caching doesn't fix</h2>
+  <p>Two honest caveats. First, caching discounts input, not output — if your costs are dominated by long generations, this lever barely moves the needle. Second, cache reads are still tokens the model attends over: latency improves (prefill is skipped), but a bloated 50k-token prompt is still a bloated prompt. Caching makes repetition cheap; it does not make bloat smart. Trim first, cache second.</p>
+
+  <h2>The local angle: the cache you own</h2>
+  <p>Here's the part the API pricing pages won't tell you: prefix reuse isn't a billing feature, it's an inference feature. Run models on your own hardware and the same trick — prompt/prefill reuse in llama.cpp and friends — is simply free, forever, with no expiry window set by someone else's business model. That's the design principle behind <strong>QADIR OS</strong>: a sovereign agentic OS that runs local-first, where we measured prefill-reuse delivering roughly a 5&times; speedup on repeated prefixes on our own GPUs. No meter, no cache-write surcharge, no landlord.</p>
+
+  <div class="callout cta">
+    <p><strong>Stop paying full price for the same tokens.</strong> Model your savings with the free <a href="/tools/ai-prompt-caching-calculator.html" class="in">prompt caching calculator</a>, or skip the meter entirely — <a href="/" class="in">join QADIR OS early access</a> and run agents on your own machine. No card required.</p>
+  </div>
+  <div class="foot">Built by <a href="/">ABUZ8 LLC</a> — we're building QADIR OS, the sovereign agentic operating system.</div>
+</div>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+<script src="/blog/_blog-shared.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>

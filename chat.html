@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Talk to the Brain — ABUZ8 AI</title>
+<meta name="description" content="Talk to a real sovereign AI brain — a Bayesian router across 28 lanes, local-first, no surveillance. Free daily messages, early access.">
+<link rel="canonical" href="https://abuz8ai.com/chat.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Talk to the Brain — ABUZ8 AI">
+<meta property="og:description" content="Talk to a real sovereign AI brain — a Bayesian router across 28 lanes, local-first, no surveillance. Free daily messages, early access.">
+<meta property="og:url" content="https://abuz8ai.com/chat.html">
+<meta name="theme-color" content="#0a1628">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/abuz8-theme.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "name": "Talk to the Brain — ABUZ8 AI",
+  "url": "https://abuz8ai.com/chat.html",
+  "description": "Public chat window onto the ABUZ8 sovereign brain — a Bayesian router that picks the right model lane per question, local-first by default.",
+  "publisher": { "@type": "Organization", "name": "ABUZ8 LLC" }
+}
+</script>
+<style>
+  /* page-specific styles ONLY — theme vars, never new hex colors */
+  .chat-wrap { max-width: 880px; margin: 0 auto; padding: 40px 22px 80px; position: relative; z-index: 1; }
+  .chat-hero h1 {
+    font-family: var(--font-display); font-size: clamp(1.8rem, 4.5vw, 2.6rem);
+    margin: 14px 0 8px; font-weight: 700; color: var(--white);
+  }
+  .chat-hero p { color: var(--dim); margin: 0 0 18px; font-size: 15px; max-width: 640px; }
+  .chat-hero p strong { color: var(--gold-light); }
+  .meta { color: var(--dim); font-size: 12px; margin-top: 6px; font-family: var(--font-mono); }
+  .meta strong { color: var(--green-bright); }
+  .chat {
+    background: var(--glass); backdrop-filter: blur(10px);
+    border: 1px solid var(--border); border-radius: var(--r-lg);
+    box-shadow: inset 0 1px 0 rgba(245,240,232,.05), 0 16px 44px rgba(4,10,22,.35);
+    padding: 20px; margin-top: 26px;
+  }
+  .log {
+    display: flex; flex-direction: column; gap: 14px;
+    max-height: 56vh; overflow-y: auto; padding-right: 6px;
+  }
+  .turn { display: flex; gap: 12px; align-items: flex-start; }
+  .turn .who {
+    flex-shrink: 0; width: 30px; height: 30px; border-radius: 8px;
+    display: grid; place-items: center; font-size: 11px; font-weight: 700;
+    font-family: var(--font-mono);
+  }
+  .turn.user .who { background: var(--blue-deep); color: var(--white); }
+  .turn.bot  .who { background: rgba(201,168,76,.18); color: var(--gold-light); border: 1px solid var(--border-gold); }
+  .turn .msg {
+    flex: 1; background: var(--lapis-3); border: 1px solid var(--border);
+    border-radius: 10px; padding: 10px 14px; font-size: 15px; color: var(--text);
+    white-space: pre-wrap; word-wrap: break-word;
+  }
+  .turn.user .msg { background: var(--lapis-2); }
+  .turn .lane {
+    color: var(--dim); font-size: 11px; margin-top: 6px;
+    letter-spacing: .04em; text-transform: lowercase; font-family: var(--font-mono);
+  }
+  .composer { margin-top: 16px; display: flex; gap: 10px; }
+  textarea#input {
+    flex: 1; resize: none; min-height: 48px; max-height: 200px;
+    padding: 12px 14px; border: 1px solid var(--border); border-radius: 10px;
+    font: inherit; font-size: 15px; background: var(--lapis-2); color: var(--text);
+  }
+  textarea#input::placeholder { color: var(--dim); }
+  textarea#input:focus { outline: 2px solid var(--gold); outline-offset: 1px; }
+  button.send {
+    background: linear-gradient(135deg, var(--gold), var(--gold-light)); color: var(--lapis);
+    border: 0; border-radius: 10px;
+    padding: 0 22px; font: inherit; font-weight: 700; cursor: pointer;
+    transition: box-shadow .3s, transform .3s;
+  }
+  button.send:hover { box-shadow: 0 6px 24px var(--gold-glow); transform: translateY(-2px); }
+  button.send[disabled] { background: var(--lapis-3); color: var(--dim); border: 1px solid var(--border); cursor: not-allowed; transform: none; box-shadow: none; }
+  .status { margin-top: 10px; color: var(--dim); font-size: 12px; min-height: 16px; }
+  .status.err { color: var(--gold-light); }
+  @media (max-width: 640px) {
+    .chat-hero h1 { font-size: 1.5rem; }
+    .log { max-height: 50vh; }
+  }
+</style>
+</head>
+<body>
+<div class="geo-bg"></div>
+<nav class="abuz8-nav">
+<div class="nav-inner">
+  <a href="/" style="text-decoration:none;">
+    <div class="logo">ABUZ8</div>
+    <div class="logo-sub">Sovereign AI</div>
+  </a>
+  <div class="nav-links">
+    <a href="/tools.html">Tools</a>
+    <a href="/store.html">Store</a>
+    
+    <a href="/agents.html">Agents</a>
+    <a href="/models.html">Models</a>
+    <a href="/news.html">News</a>
+    <a href="/roadmap.html">Roadmap</a>
+    <a href="/store.html" class="nav-cta">Get Started</a>
+  </div>
+</div>
+</nav>
+
+<main class="chat-wrap">
+  <section class="chat-hero">
+    <span class="badge badge-early">Early Access · Sovereign Brain</span>
+    <h1>Talk to the brain.</h1>
+    <p>One window onto a real Bayesian router that picks the right model for your question — local first, cloud when needed. Free for the first <strong id="quota">5</strong> messages a day.</p>
+    <div class="meta" id="meta">Status: <strong id="brain-status">connecting…</strong> · routing lanes: <strong id="lanes">—</strong></div>
+  </section>
+
+  <section class="chat" aria-label="Chat with ABUZ8 brain">
+    <div class="log" id="log" aria-live="polite">
+      <div class="turn bot">
+        <div class="who">AB</div>
+        <div>
+          <div class="msg">Assalamu alaikum — I'm the ABUZ8 brain. Ask me anything: I'll route through 28 lanes (local Ollama, Claude, Gemini, Grok, DeepSeek, more) and pick the cheapest one that meets the difficulty of your question. Local-first by default. No surveillance, no chat-training-on-your-data, no dark patterns.</div>
+          <div class="lane">lane: editorial · welcome message</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="composer">
+      <textarea id="input" placeholder="Ask anything. Ctrl/Cmd + Enter to send." rows="2" autofocus></textarea>
+      <button class="send" id="send">Send</button>
+    </div>
+    <div class="status" id="status"></div>
+  </section>
+
+  <div class="note-gold note" style="margin-top:26px;">
+    If the brain shows <strong>tunnel offline</strong>, the local hardware behind this page is temporarily unreachable — nothing is simulated here, so the window simply waits until the real brain is back. Early access to the full ABUZ8 OS is via <a href="/request.html">request</a>.
+  </div>
+</main>
+
+<footer class="abuz8-footer">
+<div class="foot-grid">
+  <div class="foot-brand">
+    <div class="logo">ABUZ8</div>
+    <p>Sovereign AI for everyone. Real tools, local models, no fake claims. Built on real hardware by ABUZ8 LLC, Ohio.</p>
+  </div>
+  <div class="foot-col"><h4>Platform</h4>
+    <a href="/tools.html">Free Tools</a><a href="/store.html">Store</a><a href="/models.html">Models</a><a href="/agents.html">AI Agents</a><a href="/news.html">News</a><a href="/blog/">Blog</a>
+  </div>
+  <div class="foot-col"><h4>Mission</h4>
+    <a href="/sovereign.html">Sovereign AI</a><a href="/journey.html">Journey &amp; Goals</a><a href="/roadmap.html">Roadmap</a><a href="/audit.html">Audit &amp; Transparency</a><a href="/purpose.html">Purpose</a>
+  </div>
+  <div class="foot-col"><h4>Hubs</h4>
+    <a href="/github.html">GitHub Hub</a><a href="/huggingface.html">Hugging Face Hub</a><a href="/polymarket.html">Polymarket Tester</a><a href="/community.html">Community</a><a href="/education.html">Education</a><a href="/downloads.html">Downloads</a>
+  </div>
+  <div class="foot-col"><h4>Trust</h4>
+    <a href="/security.html">Security &amp; Compliance</a><a href="/disclaimer.html">Disclaimer</a><a href="/privacy.html">Privacy</a><a href="/terms.html">Terms</a><a href="/refund.html">Refunds</a><a href="/license.html">License</a><a href="/contact.html">Contact</a><a href="/status.html">Status</a>
+  </div>
+</div>
+<div class="foot-base">
+  <div>© <span data-year>2026</span> ABUZ8 LLC. All rights reserved.</div>
+  <div>Built local-first on real hardware · No fake claims · <a href="/sovereign.html">Sovereign AI for everyone</a></div>
+</div>
+</footer>
+
+<script>
+(function(){
+  const $ = (id) => document.getElementById(id);
+  const log = $('log'), input = $('input'), sendBtn = $('send'), status = $('status');
+
+  // local history (per-session, ephemeral)
+  const history = [];
+  let inFlight = false;
+
+  function addTurn(role, text, lane) {
+    const wrap = document.createElement('div');
+    wrap.className = 'turn ' + (role === 'user' ? 'user' : 'bot');
+    const who = document.createElement('div');
+    who.className = 'who';
+    who.textContent = role === 'user' ? 'YOU' : 'AB';
+    const right = document.createElement('div');
+    right.style.flex = '1';
+    const msg = document.createElement('div');
+    msg.className = 'msg';
+    msg.textContent = text;
+    right.appendChild(msg);
+    if (lane) {
+      const meta = document.createElement('div');
+      meta.className = 'lane';
+      meta.textContent = 'lane: ' + lane;
+      right.appendChild(meta);
+    }
+    wrap.appendChild(who);
+    wrap.appendChild(right);
+    log.appendChild(wrap);
+    log.scrollTop = log.scrollHeight;
+    return msg;
+  }
+
+  async function send() {
+    if (inFlight) return;
+    const text = input.value.trim();
+    if (!text) return;
+    inFlight = true;
+    sendBtn.disabled = true;
+    status.className = 'status';
+    status.textContent = 'Routing…';
+
+    addTurn('user', text);
+    history.push({ role: 'user', content: text });
+    input.value = '';
+
+    const botMsg = addTurn('assistant', '', '');
+    botMsg.textContent = '…';
+
+    try {
+      const res = await fetch('/api/agent', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ messages: history })
+      });
+      if (!res.ok) {
+        const err = await res.text();
+        botMsg.textContent = '(error) ' + (err || res.statusText);
+        botMsg.parentElement.querySelector('.lane') && botMsg.parentElement.querySelector('.lane').remove();
+        status.className = 'status err';
+        status.textContent = 'Brain returned ' + res.status + '. The tunnel to the local brain may be restarting — try again in a minute.';
+        return;
+      }
+      const data = await res.json();
+      // OpenAI-compatible response shape
+      const reply = data?.choices?.[0]?.message?.content || data?.reply || JSON.stringify(data);
+      const lane = data?.model || data?.lane || 'auto';
+      botMsg.textContent = reply;
+      // append/update lane label
+      const right = botMsg.parentElement;
+      let laneEl = right.querySelector('.lane');
+      if (!laneEl) { laneEl = document.createElement('div'); laneEl.className = 'lane'; right.appendChild(laneEl); }
+      laneEl.textContent = 'lane: ' + lane;
+      history.push({ role: 'assistant', content: reply });
+
+      // update remaining quota if header present
+      const rem = res.headers.get('x-quota-remaining');
+      if (rem !== null) $('quota').textContent = rem;
+      status.textContent = '';
+    } catch (e) {
+      botMsg.textContent = '(network error) ' + e.message;
+      status.className = 'status err';
+      status.textContent = 'Couldn’t reach the brain. Check connection.';
+    } finally {
+      inFlight = false;
+      sendBtn.disabled = false;
+      input.focus();
+    }
+  }
+
+  sendBtn.addEventListener('click', send);
+  input.addEventListener('keydown', (e) => {
+    if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') { e.preventDefault(); send(); }
+  });
+
+  // Probe brain status (non-blocking; informational only)
+  fetch('/api/agent?probe=1').then(r => r.json()).then(d => {
+    $('brain-status').textContent = d.ok ? 'live' : 'tunnel offline';
+    $('lanes').textContent = d.lanes || '—';
+    if (typeof d.remaining === 'number') $('quota').textContent = d.remaining;
+  }).catch(() => {
+    $('brain-status').textContent = 'tunnel offline';
+  });
+})();
+</script>
+<script src="/assets/js/abuz8-ui.js" defer></script>
+<script src="/assets/js/abuz8-onboard.js" defer></script>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Percentage Calculator — Percent Of, Percent Change &amp; % Increase/Decrease | ABUZ8</title>
+  <meta name="description" content="Free online percentage calculator. Work out what is X% of Y, what percent one number is of another, percent increase or decrease, and X is P% of what — instantly, with plain-English answers. 100% client-side, no signup." />
+  <meta name="keywords" content="percentage calculator, percent calculator, what is x percent of y, percentage change calculator, percent increase, percent decrease, percentage difference, how to calculate percentage, percent of a number, tip calculator" />
+  <meta property="og:title" content="Percentage Calculator — Percent Of, % Change, Increase/Decrease | ABUZ8" />
+  <meta property="og:description" content="Calculate percent of a number, what percent one number is of another, and percent increase or decrease — instantly, with plain-English answers. Runs 100% in your browser, no signup." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://abuz8ai.com/tools/percentage-calculator" />
+  <link rel="canonical" href="https://abuz8ai.com/tools/percentage-calculator" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebApplication",
+        "name": "Percentage Calculator",
+        "description": "Free online percentage calculator. Work out what is X percent of Y, what percent one number is of another, percent increase or decrease between two numbers, increase or decrease a number by a percent, and X is P percent of what number. Plain-English answers, one-click copy. Runs 100% in your browser with no upload.",
+        "url": "https://abuz8ai.com/tools/percentage-calculator",
+        "applicationCategory": "UtilitiesApplication",
+        "operatingSystem": "Any",
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+        "featureList": "What is X percent of Y, X is what percent of Y, percent increase and decrease, percentage change between two numbers, increase or decrease a number by a percent, X is P percent of what, plain-English answers, one-click copy",
+        "author": { "@type": "Organization", "name": "ABUZ8 LLC", "url": "https://abuz8ai.com" }
+      },
+      {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          { "@type": "ListItem", "position": 1, "name": "ABUZ8", "item": "https://abuz8ai.com/" },
+          { "@type": "ListItem", "position": 2, "name": "Free Tools", "item": "https://abuz8ai.com/tools/" },
+          { "@type": "ListItem", "position": 3, "name": "Percentage Calculator", "item": "https://abuz8ai.com/tools/percentage-calculator" }
+        ]
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "How do I calculate what is X percent of a number?",
+            "acceptedAnswer": { "@type": "Answer", "text": "Multiply the number by the percent and divide by 100. For example, 15% of 200 is 200 x 15 / 100 = 30. In the first calculator above, type 15 and 200 and the answer updates instantly with the full sentence." }
+          },
+          {
+            "@type": "Question",
+            "name": "How do I find what percent one number is of another?",
+            "acceptedAnswer": { "@type": "Answer", "text": "Divide the part by the whole and multiply by 100. For example, 45 out of 180 is 45 / 180 x 100 = 25%. Use the second calculator: enter 45 and 180 to get 25%." }
+          },
+          {
+            "@type": "Question",
+            "name": "How do I calculate percent increase or decrease?",
+            "acceptedAnswer": { "@type": "Answer", "text": "Subtract the old value from the new value, divide by the old value, then multiply by 100. From 80 to 100 is (100 - 80) / 80 x 100 = +25% (an increase). A negative result means a decrease. The third calculator does this and labels it increase or decrease for you." }
+          },
+          {
+            "@type": "Question",
+            "name": "Is my data private?",
+            "acceptedAnswer": { "@type": "Answer", "text": "Yes. Every calculation runs as plain JavaScript inside your browser — there is no server call, no upload and nothing logged or stored. Whatever numbers you enter never leave your device. Close the tab and it is gone." }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      /* Light, vision-safe palette (site mandate — matches number-base-converter.html 07-27) */
+      --lapis: #F8FAFC;      /* page background */
+      --card: #FFFFFF;       /* panels / nav */
+      --card-alt: #EEF3F8;   /* tinted surfaces */
+      --gold: #2E75B6;       /* primary accent */
+      --gold-dim: #1F5B94;   /* darker primary for borders/hover */
+      --teal: #0E7C63;
+      --teal-bright: #12866E;
+      --cream: #1F3A5F;      /* headings (dark navy on light) */
+      --text: #2C3E50;       /* body text */
+      --text-dim: #5A6B7C;   /* muted text */
+      --border: #D7E0EA;
+      --red: #C0392B;
+      --green: #197A4B;
+      --font-heading: 'Playfair Display', Georgia, serif;
+      --font-body: 'Inter', system-ui, sans-serif;
+      --font-mono: 'JetBrains Mono', 'Courier New', monospace;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { background: var(--lapis); color: var(--text); font-family: var(--font-body); font-size: 15px; line-height: 1.6; min-height: 100vh; }
+    a { color: var(--gold); text-decoration: none; transition: color 0.2s; }
+    a:hover { color: var(--teal-bright); }
+
+    /* NAV */
+    nav { background: var(--card); border-bottom: 1px solid var(--border); padding: 0 2rem; display: flex; align-items: center; justify-content: space-between; height: 60px; position: sticky; top: 0; z-index: 100; }
+    .nav-logo { font-family: var(--font-heading); font-size: 1.3rem; font-weight: 700; color: var(--gold); }
+    .nav-links { display: flex; align-items: center; gap: 1.4rem; }
+    .nav-links a { color: var(--text-dim); font-size: 0.85rem; font-weight: 500; }
+    .nav-links a:hover { color: var(--gold); }
+    .nav-cta { background: var(--gold); color: var(--lapis) !important; padding: 0.45rem 1.1rem; border-radius: 6px; font-weight: 600; }
+    .nav-cta:hover { background: var(--teal-bright); }
+
+    /* HERO */
+    .hero { text-align: center; padding: 2.6rem 1.5rem 1.4rem; }
+    .hero h1 { font-family: var(--font-heading); font-size: 2.3rem; color: var(--cream); line-height: 1.2; margin-bottom: 0.8rem; }
+    .hero h1 span { color: var(--gold); }
+    .hero p { color: var(--text-dim); font-size: 1.02rem; max-width: 640px; margin: 0 auto; }
+    .badges { display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: center; margin-top: 1.1rem; }
+    .badge { border: 1px solid var(--border); background: var(--card); color: var(--text-dim); font-size: 0.72rem; padding: 0.28rem 0.7rem; border-radius: 999px; letter-spacing: 0.03em; }
+    .badge b { color: var(--teal-bright); font-weight: 600; }
+
+    /* CALCULATORS */
+    .calcs { max-width: 820px; margin: 1.2rem auto 0; padding: 0 1.5rem; display: grid; gap: 1.1rem; }
+    .calc-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 1.3rem 1.4rem; }
+    .calc-card h2 { font-family: var(--font-heading); font-size: 1.15rem; color: var(--cream); margin-bottom: 0.85rem; }
+    .calc-row { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; font-size: 1.05rem; color: var(--text); line-height: 2.1; }
+    .calc-row .lbl { color: var(--text-dim); font-weight: 500; }
+    .pin { width: 92px; background: var(--lapis); border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-family: var(--font-mono); font-size: 1rem; padding: 0.5rem 0.55rem; outline: none; transition: border-color 0.2s; text-align: center; }
+    .pin:focus { border-color: var(--gold-dim); }
+    .pin.err { border-color: var(--red); }
+    .result-line { margin-top: 1rem; padding-top: 0.9rem; border-top: 1px dashed var(--border); display: flex; align-items: center; gap: 0.7rem; flex-wrap: wrap; }
+    .result { font-family: var(--font-mono); font-size: 1.5rem; font-weight: 500; color: var(--teal-bright); }
+    .result.up { color: var(--green); }
+    .result.down { color: var(--red); }
+    .sentence { color: var(--text-dim); font-size: 0.9rem; flex: 1 1 220px; min-width: 180px; }
+    .copy-btn { flex: 0 0 auto; border: 1px solid var(--border); background: var(--card-alt); color: var(--text-dim); border-radius: 8px; cursor: pointer; font-size: 0.75rem; font-weight: 600; padding: 0.4rem 0.7rem; transition: all 0.15s; }
+    .copy-btn:hover { border-color: var(--gold-dim); color: var(--gold); }
+    .copy-btn.ok { background: var(--green); color: #fff; border-color: var(--green); }
+    .tag { display: inline-block; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--gold); background: var(--card-alt); border: 1px solid var(--border); border-radius: 999px; padding: 0.15rem 0.6rem; margin-left: 0.5rem; vertical-align: middle; }
+
+    /* CTA */
+    .cta-box { max-width: 820px; margin: 2rem auto 0; padding: 1.6rem 1.5rem; background: var(--card-alt); border: 1px solid var(--border); border-radius: 12px; text-align: center; }
+    .cta-box h3 { font-family: var(--font-heading); font-size: 1.25rem; color: var(--cream); margin-bottom: 0.5rem; }
+    .cta-box p { color: var(--text-dim); max-width: 620px; margin: 0 auto 1rem; }
+    .cta-btn { display: inline-block; background: var(--gold); color: var(--lapis); padding: 0.6rem 1.5rem; border-radius: 8px; font-weight: 700; }
+    .cta-btn:hover { background: var(--teal-bright); color: var(--lapis); }
+
+    /* WAITLIST */
+    .waiting-list { max-width: 820px; margin: 1.4rem auto 0; padding: 1.6rem 1.5rem; background: rgba(46,117,182,0.05); border: 1px solid rgba(46,117,182,0.22); border-radius: 12px; text-align: center; }
+    .waiting-list h3 { color: var(--gold); margin-bottom: 0.4rem; font-family: var(--font-heading); }
+    .waiting-list p { color: var(--text-dim); max-width: 560px; margin: 0 auto 1rem; font-size: 0.95rem; }
+    .wl-form { display: flex; gap: 0.5rem; max-width: 460px; margin: 0 auto; }
+    .wl-form input { flex: 1; background: var(--card); border: 1px solid var(--border); border-radius: 8px; color: var(--text); padding: 0.6rem 0.8rem; outline: none; }
+    .wl-form input:focus { border-color: var(--gold-dim); }
+    .btn { border: none; border-radius: 8px; font-family: var(--font-body); font-weight: 600; font-size: 0.85rem; padding: 0.6rem 1rem; cursor: pointer; transition: all 0.2s; }
+    .btn-gold { background: var(--gold); color: var(--lapis); }
+    .btn-gold:hover { background: var(--teal-bright); }
+    #wl-status { margin-top: 0.7rem; font-size: 0.82rem; min-height: 1.1em; }
+
+    /* INFO / SEO */
+    .info { max-width: 820px; margin: 2.4rem auto 0; padding: 0 1.5rem; }
+    .info h2 { font-family: var(--font-heading); font-size: 1.55rem; color: var(--cream); margin: 1.6rem 0 0.6rem; }
+    .info h3 { font-family: var(--font-heading); font-size: 1.15rem; color: var(--cream); margin: 1.3rem 0 0.4rem; }
+    .info p { color: var(--text); margin-bottom: 0.7rem; }
+    .conv-table { width: 100%; border-collapse: collapse; margin: 0.6rem 0 1rem; font-size: 0.9rem; }
+    .conv-table th, .conv-table td { border: 1px solid var(--border); padding: 0.5rem 0.7rem; text-align: left; vertical-align: top; }
+    .conv-table th { background: var(--card-alt); color: var(--cream); font-weight: 600; }
+    .conv-table code { font-family: var(--font-mono); background: var(--card-alt); padding: 0.1rem 0.35rem; border-radius: 4px; font-size: 0.85em; }
+
+    /* RELATED */
+    .related { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 0.9rem; margin: 0.8rem 0 1rem; }
+    .rel-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 0.9rem 1rem; }
+    .rel-card a { font-weight: 600; }
+    .rel-card p { font-size: 0.82rem; color: var(--text-dim); margin: 0.25rem 0 0; }
+
+    /* FOOTER */
+    footer { max-width: 820px; margin: 2.6rem auto 0; padding: 1.4rem 1.5rem 3rem; border-top: 1px solid var(--border); text-align: center; color: var(--text-dim); font-size: 0.82rem; }
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+  </style>
+</head>
+<body>
+  <!-- NAV -->
+  <nav>
+    <a href="/" class="nav-logo">ABUZ8</a>
+    <div class="nav-links">
+      <a href="/tools/">Tools</a>
+      <a href="/blog/">Blog</a>
+      <a href="/pricing.html">Pricing</a>
+      <a href="/tools/ai-waiting-list-page.html" class="nav-cta">Join Early Access</a>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <header class="hero">
+    <h1>Percentage <span>Calculator</span></h1>
+    <p>Every everyday percentage question in one place — <strong>what is X% of Y</strong>, <strong>X is what percent of Y</strong>, <strong>percent increase or decrease</strong>, and more. Type your numbers and read the answer as a full sentence.</p>
+    <div class="badges">
+      <span class="badge"><b>5</b> calculators, live</span>
+      <span class="badge"><b>Plain-English</b> answers</span>
+      <span class="badge"><b>100%</b> client-side · free · no signup</span>
+    </div>
+  </header>
+
+  <div class="calcs">
+    <!-- 1: X% of Y -->
+    <div class="calc-card">
+      <h2>What is a percent of a number?</h2>
+      <div class="calc-row">
+        <span class="lbl">What is</span>
+        <input class="pin" id="a1" type="number" inputmode="decimal" value="15" aria-label="Percent" /> <span class="lbl">%</span>
+        <span class="lbl">of</span>
+        <input class="pin" id="b1" type="number" inputmode="decimal" value="200" aria-label="Number" /> <span class="lbl">?</span>
+      </div>
+      <div class="result-line">
+        <span class="result" id="r1">30</span>
+        <span class="sentence" id="s1">15% of 200 is 30.</span>
+        <button class="copy-btn" data-copy="r1" type="button" title="Copy answer">Copy</button>
+      </div>
+    </div>
+
+    <!-- 2: X is what % of Y -->
+    <div class="calc-card">
+      <h2>X is what percent of Y?</h2>
+      <div class="calc-row">
+        <input class="pin" id="a2" type="number" inputmode="decimal" value="45" aria-label="Part" />
+        <span class="lbl">is what percent of</span>
+        <input class="pin" id="b2" type="number" inputmode="decimal" value="180" aria-label="Whole" /> <span class="lbl">?</span>
+      </div>
+      <div class="result-line">
+        <span class="result" id="r2">25%</span>
+        <span class="sentence" id="s2">45 is 25% of 180.</span>
+        <button class="copy-btn" data-copy="r2" type="button" title="Copy answer">Copy</button>
+      </div>
+    </div>
+
+    <!-- 3: percent change A to B -->
+    <div class="calc-card">
+      <h2>Percent increase or decrease</h2>
+      <div class="calc-row">
+        <span class="lbl">From</span>
+        <input class="pin" id="a3" type="number" inputmode="decimal" value="80" aria-label="Old value" />
+        <span class="lbl">to</span>
+        <input class="pin" id="b3" type="number" inputmode="decimal" value="100" aria-label="New value" /> <span class="lbl">?</span>
+      </div>
+      <div class="result-line">
+        <span class="result" id="r3">+25%</span>
+        <span class="sentence" id="s3">From 80 to 100 is a 25% increase.</span>
+        <button class="copy-btn" data-copy="r3" type="button" title="Copy answer">Copy</button>
+      </div>
+    </div>
+
+    <!-- 4: increase/decrease a number by a percent -->
+    <div class="calc-card">
+      <h2>Increase or decrease a number by a percent</h2>
+      <div class="calc-row">
+        <input class="pin" id="b4" type="number" inputmode="decimal" value="200" aria-label="Starting number" />
+        <select class="pin" id="op4" style="width:auto;" aria-label="Increase or decrease">
+          <option value="inc">increased by</option>
+          <option value="dec">decreased by</option>
+        </select>
+        <input class="pin" id="a4" type="number" inputmode="decimal" value="15" aria-label="Percent" /> <span class="lbl">%</span>
+      </div>
+      <div class="result-line">
+        <span class="result" id="r4">230</span>
+        <span class="sentence" id="s4">200 increased by 15% is 230.</span>
+        <button class="copy-btn" data-copy="r4" type="button" title="Copy answer">Copy</button>
+      </div>
+    </div>
+
+    <!-- 5: X is P% of what -->
+    <div class="calc-card">
+      <h2>X is P% of what number?</h2>
+      <div class="calc-row">
+        <input class="pin" id="a5" type="number" inputmode="decimal" value="30" aria-label="Value" />
+        <span class="lbl">is</span>
+        <input class="pin" id="b5" type="number" inputmode="decimal" value="15" aria-label="Percent" /> <span class="lbl">% of what?</span>
+      </div>
+      <div class="result-line">
+        <span class="result" id="r5">200</span>
+        <span class="sentence" id="s5">30 is 15% of 200.</span>
+        <button class="copy-btn" data-copy="r5" type="button" title="Copy answer">Copy</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <div class="cta-box">
+    <h3>A percentage is one line of math — running your whole operation is the work.</h3>
+    <p>QADIR OS agents do the calculating, the writing, the testing and the follow-up end to end — automatically, on your own machine.</p>
+    <a href="/tools/ai-waiting-list-page.html" class="cta-btn">Join Early Access</a>
+  </div>
+
+  <!-- WAITLIST -->
+  <div class="waiting-list">
+    <h3>Build with a sovereign AI</h3>
+    <p>Join the waiting list for QADIR OS — the agentic operating system that turns a sentence into finished, tested work.</p>
+    <form class="wl-form" onsubmit="submitWaitingList(event)">
+      <input type="email" id="wl-email" placeholder="Enter your email" required aria-label="Email for early access" />
+      <button type="submit" class="btn btn-gold">Join Early Access</button>
+    </form>
+    <div id="wl-status"></div>
+  </div>
+
+  <!-- INFO / SEO COPY -->
+  <section class="info">
+    <h2>How to calculate a percentage</h2>
+    <p>A percentage is just a fraction out of 100 — the word literally means "per hundred". Every everyday percentage question is one of a few small formulas, and the five calculators above cover the ones people actually search for. Type your own numbers into any of them and the answer updates instantly, written out as a full sentence you can copy.</p>
+
+    <h3>The formulas, in plain terms</h3>
+    <table class="conv-table">
+      <thead><tr><th>Question</th><th>Formula</th><th>Example</th></tr></thead>
+      <tbody>
+        <tr><td>What is <strong>P%</strong> of <strong>N</strong>?</td><td><code>N &times; P / 100</code></td><td>15% of 200 = <code>30</code></td></tr>
+        <tr><td><strong>X</strong> is what percent of <strong>N</strong>?</td><td><code>X / N &times; 100</code></td><td>45 of 180 = <code>25%</code></td></tr>
+        <tr><td>Percent change <strong>A &rarr; B</strong></td><td><code>(B &minus; A) / A &times; 100</code></td><td>80 &rarr; 100 = <code>+25%</code></td></tr>
+        <tr><td><strong>N</strong> changed by <strong>P%</strong></td><td><code>N &times; (1 &plusmn; P/100)</code></td><td>200 +15% = <code>230</code></td></tr>
+        <tr><td><strong>X</strong> is <strong>P%</strong> of what?</td><td><code>X / (P / 100)</code></td><td>30 is 15% of <code>200</code></td></tr>
+      </tbody>
+    </table>
+
+    <h3>Percent of a number</h3>
+    <p>To find a percent of a number, turn the percent into a decimal (divide by 100) and multiply. A 15% tip on a $200 bill is 200 &times; 0.15 = $30. The same move handles discounts, tax, commission and interest for a single period.</p>
+
+    <h3>What percent one number is of another</h3>
+    <p>To find what percent a part is of a whole, divide the part by the whole and multiply by 100. If 45 of 180 seats are taken, that is 45 / 180 &times; 100 = 25% full. This is the calculation behind test scores, conversion rates and "how much is left".</p>
+
+    <h3>Percent increase and decrease</h3>
+    <p>Percent change compares a new value to an old one: subtract the old from the new, divide by the old, and multiply by 100. Going from 80 to 100 is a 25% increase; going from 100 to 80 is a 20% decrease — the two are not the same, because the starting point (the denominator) changed. A positive answer is an increase, a negative answer is a decrease.</p>
+
+    <h3>Is my data private?</h3>
+    <p>Yes. Every calculation runs as plain JavaScript inside your browser — no server call, no upload, nothing logged or stored. Whatever you enter never leaves your device. Refresh the page and it is gone.</p>
+
+    <h2>More free tools</h2>
+    <div class="related">
+      <div class="rel-card">
+        <a href="/tools/number-base-converter">Number Base Converter</a>
+        <p>Binary, octal, decimal, hex and any base 2–36.</p>
+      </div>
+      <div class="rel-card">
+        <a href="/tools/ai-agent-cost-calculator">AI Agent Cost Calculator</a>
+        <p>Estimate token and API costs for AI agents.</p>
+      </div>
+      <div class="rel-card">
+        <a href="/tools/word-counter">Word &amp; Character Counter</a>
+        <p>Live word, character and reading-time counts.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <p>&copy; 2026 <a href="/">ABUZ8 LLC</a> &middot; All tools run 100% client-side &middot; <a href="/tools/">More Free Tools</a> &middot; <a href="/blog/">ABUZ8 Blog</a></p>
+  </footer>
+
+  <script>
+// ══════════════════════════════════════════════════════════════
+// Self-contained percentage engine — zero dependency, pure JS.
+// DOM-free core, exported for node so the SHIPPED code is unit-tested
+// (not a copy). Float noise killed by rounding to 6 decimals.
+// ══════════════════════════════════════════════════════════════
+function fmtNum(n){
+  if(n === null || n === undefined || !isFinite(n)) return '—';
+  var r = Math.round((n + (n >= 0 ? Number.EPSILON : -Number.EPSILON)) * 1e6) / 1e6;
+  if(Object.is(r, -0)) r = 0;
+  return String(r);
+}
+function pctOf(p, n){ return (n * p) / 100; }                 // what is p% of n
+function whatPct(x, n){ return n === 0 ? null : (x / n) * 100; } // x is what % of n
+function pctChange(a, b){ return a === 0 ? null : ((b - a) / a) * 100; } // a -> b
+function changeBy(n, p, dir){ return dir === 'dec' ? n * (1 - p / 100) : n * (1 + p / 100); }
+function isPctOfWhat(x, p){ return p === 0 ? null : x / (p / 100); } // x is p% of what
+
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = { fmtNum: fmtNum, pctOf: pctOf, whatPct: whatPct, pctChange: pctChange, changeBy: changeBy, isPctOfWhat: isPctOfWhat };
+}
+
+// ---- DOM wiring (self-skips under node / no document) ----
+if (typeof document !== 'undefined') {
+  var $ = function(id){ return document.getElementById(id); };
+  var num = function(id){ var el = $(id); var v = parseFloat(el.value); return (el.value.trim() === '' || isNaN(v)) ? null : v; };
+  var mark = function(ids, bad){ ids.forEach(function(id){ $(id).classList.toggle('err', bad); }); };
+
+  function calc1(){
+    var p = num('a1'), n = num('b1');
+    if(p === null || n === null){ mark(['a1','b1'], true); $('r1').textContent = '—'; $('s1').textContent = 'Enter both numbers.'; return; }
+    mark(['a1','b1'], false);
+    var v = pctOf(p, n);
+    $('r1').textContent = fmtNum(v);
+    $('s1').textContent = fmtNum(p) + '% of ' + fmtNum(n) + ' is ' + fmtNum(v) + '.';
+  }
+
+  function calc2(){
+    var x = num('a2'), n = num('b2');
+    if(x === null || n === null){ mark(['a2','b2'], true); $('r2').textContent = '—'; $('s2').textContent = 'Enter both numbers.'; return; }
+    mark(['a2','b2'], false);
+    var v = whatPct(x, n);
+    if(v === null){ $('r2').textContent = '—'; $('s2').textContent = 'A number can’t be a percent of zero.'; return; }
+    $('r2').textContent = fmtNum(v) + '%';
+    $('s2').textContent = fmtNum(x) + ' is ' + fmtNum(v) + '% of ' + fmtNum(n) + '.';
+  }
+
+  function calc3(){
+    var a = num('a3'), b = num('b3'), r = $('r3');
+    r.classList.remove('up','down');
+    if(a === null || b === null){ mark(['a3','b3'], true); r.textContent = '—'; $('s3').textContent = 'Enter both values.'; return; }
+    mark(['a3','b3'], false);
+    var v = pctChange(a, b);
+    if(v === null){ r.textContent = '—'; $('s3').textContent = 'Percent change from zero is undefined.'; return; }
+    var word = v > 0 ? 'increase' : (v < 0 ? 'decrease' : 'no change');
+    r.textContent = (v > 0 ? '+' : '') + fmtNum(v) + '%';
+    if(v > 0) r.classList.add('up'); else if(v < 0) r.classList.add('down');
+    $('s3').textContent = 'From ' + fmtNum(a) + ' to ' + fmtNum(b) + ' is a ' + fmtNum(Math.abs(v)) + '% ' + word + '.';
+  }
+
+  function calc4(){
+    var n = num('b4'), p = num('a4'), dir = $('op4').value;
+    if(n === null || p === null){ mark(['b4','a4'], true); $('r4').textContent = '—'; $('s4').textContent = 'Enter both numbers.'; return; }
+    mark(['b4','a4'], false);
+    var v = changeBy(n, p, dir);
+    var word = dir === 'dec' ? 'decreased' : 'increased';
+    $('r4').textContent = fmtNum(v);
+    $('s4').textContent = fmtNum(n) + ' ' + word + ' by ' + fmtNum(p) + '% is ' + fmtNum(v) + '.';
+  }
+
+  function calc5(){
+    var x = num('a5'), p = num('b5');
+    if(x === null || p === null){ mark(['a5','b5'], true); $('r5').textContent = '—'; $('s5').textContent = 'Enter both numbers.'; return; }
+    mark(['a5','b5'], false);
+    var v = isPctOfWhat(x, p);
+    if(v === null){ $('r5').textContent = '—'; $('s5').textContent = 'A number can’t be 0% of anything.'; return; }
+    $('r5').textContent = fmtNum(v);
+    $('s5').textContent = fmtNum(x) + ' is ' + fmtNum(p) + '% of ' + fmtNum(v) + '.';
+  }
+
+  var wiring = [
+    ['a1','b1', calc1], ['a2','b2', calc2], ['a3','b3', calc3], ['b4','a4', calc4], ['a5','b5', calc5]
+  ];
+  wiring.forEach(function(w){ $(w[0]).addEventListener('input', w[2]); $(w[1]).addEventListener('input', w[2]); });
+  $('op4').addEventListener('change', calc4);
+
+  // copy buttons
+  function copyText(text, btn){
+    var done = function(){ if(btn){ var old = btn.textContent; btn.textContent = '✓'; btn.classList.add('ok'); setTimeout(function(){ btn.textContent = old; btn.classList.remove('ok'); }, 1100); } };
+    if(navigator.clipboard && navigator.clipboard.writeText){ navigator.clipboard.writeText(text).then(done, function(){ done(); }); }
+    else { var ta = document.createElement('textarea'); ta.value = text; document.body.appendChild(ta); ta.select(); try { document.execCommand('copy'); } catch(e){} document.body.removeChild(ta); done(); }
+  }
+  Array.prototype.forEach.call(document.querySelectorAll('.copy-btn'), function(btn){
+    btn.addEventListener('click', function(){ var el = $(btn.dataset.copy); if(el) copyText(el.textContent, btn); });
+  });
+
+  // waitlist submit (site standard)
+  window.submitWaitingList = async function(e){
+    e.preventDefault();
+    var email = $('wl-email').value, status = $('wl-status');
+    status.textContent = 'Sending...'; status.style.color = 'var(--text-dim)';
+    try {
+      var response = await fetch('/api/waitlist', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email, product_id: 'percentage-calculator', source: 'tools' })
+      });
+      var data = await response.json();
+      if(data.success){ status.textContent = 'Success! You are on the list.'; status.style.color = 'var(--green)'; $('wl-email').value = ''; }
+      else { status.textContent = 'Error: ' + (data.error || 'please try again'); status.style.color = 'var(--red)'; }
+    } catch(err){ status.textContent = 'Connection error — please try again.'; status.style.color = 'var(--red)'; }
+  };
+
+  // initial paint
+  calc1(); calc2(); calc3(); calc4(); calc5();
+}
+  </script>
+
+  <link rel="stylesheet" href="/assets/css/zait-chat.css" />
+  <script src="/assets/js/zait-chat.js"></script>
+  <script src="/assets/js/dfy-banner.js" async></script>
+  <script src="/assets/js/abuz8-intent.js" defer></script>
+  <script src="/tools/_tools-shared.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cloud GPU Cost Calculator — What Renting an H100, A100 or 4090 Really Costs | ABUZ8</title>
+  <meta name="description" content="Free cloud GPU rental cost calculator. Enter your job — training hours or inference tokens — and see the total cost on RunPod, Vast.ai, Lambda and AWS across RTX 4090, 5090, L40S, A100, H100, H200 and B200. Finds the cheapest provider. 100% client-side, no signup." />
+  <meta name="keywords" content="cloud GPU cost calculator, GPU rental price, H100 hourly cost, A100 rental cost, RunPod vs Lambda vs Vast, cheapest cloud GPU, GPU training cost, LLM inference cost GPU, RTX 4090 rental, B200 price" />
+  <meta property="og:title" content="Cloud GPU Cost Calculator | ABUZ8" />
+  <meta property="og:description" content="Enter your training hours or inference tokens. See what an H100, A100 or 4090 costs across RunPod, Vast, Lambda and AWS — and which is cheapest. Client-side, free, no signup." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://abuz8ai.com/tools/ai-cloud-gpu-cost-calculator" />
+  <link rel="canonical" href="https://abuz8ai.com/tools/ai-cloud-gpu-cost-calculator" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Cloud GPU Cost Calculator",
+    "description": "Free client-side calculator that estimates the total cost of renting a cloud GPU for a training or inference job and compares prices across RunPod, Vast.ai, Lambda and AWS.",
+    "url": "https://abuz8ai.com/tools/ai-cloud-gpu-cost-calculator.html",
+    "applicationCategory": "BusinessApplication",
+    "operatingSystem": "Any",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+    "author": { "@type": "Organization", "name": "ABUZ8 LLC", "url": "https://abuz8ai.com" }
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "How much does it cost to rent an H100 GPU per hour?",
+        "acceptedAnswer": { "@type": "Answer", "text": "As of mid-2026, an NVIDIA H100 rents from roughly $1.99/hr on RunPod Community Cloud and about $2.39/hr on Secure Cloud, up to $2.99-$3.29/hr on Lambda, while marketplace hosts like Vast.ai can dip near $1.49/hr without an uptime guarantee. This calculator multiplies the rate you pick by your job's GPU-hours to give a total, and shows the cheapest provider for that GPU." }
+      },
+      {
+        "@type": "Question",
+        "name": "Is it cheaper to rent a cloud GPU or use an LLM API?",
+        "acceptedAnswer": { "@type": "Answer", "text": "For steady, high-volume inference a per-token API is often simpler and can be cheaper because you pay nothing when idle. Renting a GPU wins for training and fine-tuning, for sustained batch inference where you keep the card busy, and when you need full control of the model and data. This tool prices the rental side; pair it with a per-token price comparison to see both." }
+      },
+      {
+        "@type": "Question",
+        "name": "Which cloud GPU provider is cheapest?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Marketplace providers such as Vast.ai and RunPod Community Cloud are usually the cheapest per hour, but they trade away uptime guarantees and support. Managed providers like Lambda and the big hyperscalers cost more but add reliability, networking and compliance. The comparison table ranks every provider for your chosen GPU so you can see the spread." }
+      },
+      {
+        "@type": "Question",
+        "name": "Does spot or interruptible pricing lower the cost?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Yes. Spot, community and interruptible instances can cut the hourly rate by 40-70% versus on-demand, at the risk of the instance being reclaimed. They are ideal for checkpointed training and fault-tolerant batch jobs, and a poor fit for a live production endpoint. Toggle the spot discount in this calculator to see the effect." }
+      },
+      {
+        "@type": "Question",
+        "name": "Is my data sent to a server?",
+        "acceptedAnswer": { "@type": "Answer", "text": "No. This calculator runs entirely in your browser. Nothing you enter is uploaded, logged, or stored anywhere." }
+      }
+    ]
+  }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0a1628;
+      --card: #0d1a30;
+      --card-alt: #111f38;
+      --primary: #5fa8e8;
+      --primary-dim: #2e75b6;
+      --teal: #0e9f6e;
+      --gold: #c9a84c;
+      --text: #e8e4d8;
+      --text-dim: #8a9aaa;
+      --border: #1a2e50;
+      --good: #2ab89a;
+      --good-bg: #0f2a2a;
+      --warn: #c9a84c;
+      --warn-bg: #2a2413;
+      --font-heading: 'Playfair Display', Georgia, serif;
+      --font-body: 'Inter', system-ui, sans-serif;
+      --font-mono: 'JetBrains Mono', 'Courier New', monospace;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      font-size: 15px;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+    a { color: var(--primary); text-decoration: none; transition: color 0.2s; }
+    a:hover { color: var(--primary-dim); }
+
+    nav {
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      padding: 0 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 60px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .nav-logo {
+      font-family: var(--font-heading);
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--primary);
+      letter-spacing: 0.02em;
+    }
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links a { color: var(--text-dim); font-size: 0.9rem; font-weight: 500; }
+    .nav-links a:hover { color: var(--primary); }
+
+    main { max-width: 980px; margin: 0 auto; padding: 3rem 1.5rem 5rem; }
+    .page-header { text-align: center; margin-bottom: 2.2rem; }
+    .page-header h1 {
+      font-family: var(--font-heading);
+      font-size: 2.4rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 0.5rem;
+      line-height: 1.18;
+    }
+    .page-header p { color: var(--text-dim); font-size: 1rem; max-width: 660px; margin: 0 auto; }
+    .privacy-note {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      margin-top: 0.9rem; padding: 0.35rem 0.9rem;
+      background: var(--good-bg); border: 1px solid #1c4a44;
+      border-radius: 20px; font-size: 0.78rem; color: var(--good);
+    }
+
+    label { display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-dim);
+            text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.5rem; }
+    select, input[type="number"] {
+      width: 100%;
+      background: var(--card-alt);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      padding: 0.7rem 0.9rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    select:focus, input:focus { border-color: var(--primary); }
+    .hint { font-size: 0.72rem; color: var(--text-dim); margin-top: 0.35rem; font-weight: 400; text-transform: none; letter-spacing: 0; }
+
+    .seg { display: inline-flex; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; margin-bottom: 1.1rem; }
+    .seg button {
+      background: var(--card-alt); color: var(--text-dim); border: none;
+      padding: 0.55rem 1.2rem; font-family: var(--font-body); font-size: 0.85rem; font-weight: 600;
+      cursor: pointer; transition: background 0.2s, color 0.2s;
+    }
+    .seg button.active { background: var(--primary); color: #0a1628; }
+
+    .panel {
+      background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+      padding: 1.4rem 1.5rem; margin-bottom: 1.4rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.18);
+    }
+    .panel h2 {
+      font-family: var(--font-heading); font-size: 1.25rem; color: var(--primary);
+      margin-bottom: 1.1rem;
+    }
+    .controls { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+    .controls .full { grid-column: 1 / -1; }
+    .check-row { display: flex; align-items: center; gap: 0.6rem; margin-top: 0.4rem; }
+    .check-row input { width: auto; }
+    .check-row label { margin: 0; text-transform: none; letter-spacing: 0; font-weight: 500; color: var(--text); font-size: 0.85rem; }
+
+    /* RESULT CARDS */
+    .results { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; margin: 0.4rem 0 0; }
+    .rcard { border: 1px solid var(--border); border-radius: 12px; padding: 1.3rem 1.4rem; background: var(--card-alt); }
+    .rcard.cheap { border-top: 3px solid var(--teal); }
+    .rcard.job   { border-top: 3px solid var(--primary); }
+    .rcard .rlabel { font-size: 0.74rem; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text-dim); font-weight: 600; }
+    .rcard .rbig { font-family: var(--font-heading); font-size: 2.1rem; font-weight: 700; line-height: 1.1; margin: 0.3rem 0 0.1rem; }
+    .rcard.cheap .rbig { color: var(--teal); }
+    .rcard.job .rbig { color: var(--primary); }
+    .rcard .rsub { font-size: 0.8rem; color: var(--text-dim); }
+    .rcard ul { list-style: none; margin-top: 0.9rem; font-size: 0.82rem; }
+    .rcard li { display: flex; justify-content: space-between; padding: 0.3rem 0; border-top: 1px dashed var(--border); }
+    .rcard li span:last-child { font-family: var(--font-mono); color: var(--text); }
+
+    /* VERDICT */
+    .verdict {
+      margin: 1.4rem 0 0; padding: 1.1rem 1.3rem; border-radius: 10px;
+      font-size: 0.95rem; line-height: 1.6;
+      background: var(--good-bg); border: 1px solid #1c4a44; color: var(--text);
+    }
+    .verdict strong { color: var(--good); }
+    .verdict .big { font-family: var(--font-heading); font-weight: 700; }
+
+    /* TABLE */
+    .table-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: 12px; margin-top: 1.3rem; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.86rem; min-width: 620px; background: var(--card); }
+    thead th {
+      background: var(--card-alt); color: var(--text-dim);
+      font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.06em;
+      text-align: right; padding: 0.8rem 1rem; border-bottom: 1px solid var(--border); font-weight: 600;
+    }
+    thead th:first-child { text-align: left; }
+    tbody td { padding: 0.7rem 1rem; border-bottom: 1px solid var(--border); text-align: right; font-family: var(--font-mono); }
+    tbody td:first-child { text-align: left; font-family: var(--font-body); }
+    tbody tr:last-child td { border-bottom: none; }
+    tbody tr.best { background: var(--good-bg); }
+    tbody tr.best td:first-child { box-shadow: inset 3px 0 0 var(--teal); }
+    .prov-name { font-weight: 600; color: var(--text); }
+    .prov-tier { font-size: 0.68rem; color: var(--text-dim); font-weight: 400; display: block; }
+    .badge-best { font-size: 0.62rem; color: var(--teal); font-weight: 700; letter-spacing: 0.05em; margin-left: 0.4rem; }
+    .price-note { font-size: 0.78rem; color: var(--text-dim); margin-top: 0.9rem; line-height: 1.7; }
+    .price-note a { color: var(--text-dim); text-decoration: underline; }
+    .price-note a:hover { color: var(--primary); }
+
+    /* CTA */
+    .cta-section {
+      background: linear-gradient(135deg, #0f2040 0%, #0f2a2a 100%);
+      border: 1px solid #1c4a44; border-radius: 12px;
+      padding: 2.2rem 2rem; text-align: center; margin-top: 3rem;
+    }
+    .cta-section h2 { font-family: var(--font-heading); font-size: 1.5rem; color: var(--primary); margin-bottom: 0.5rem; }
+    .cta-section p { color: var(--text-dim); font-size: 0.95rem; margin-bottom: 1.2rem; max-width: 600px; margin-left: auto; margin-right: auto; }
+    .cta-form { display: flex; gap: 0.6rem; justify-content: center; flex-wrap: wrap; }
+    .cta-form input[type="email"] {
+      flex: 1; max-width: 300px; min-width: 200px;
+      background: var(--card-alt); border: 1px solid var(--border); border-radius: 6px;
+      color: var(--text); font-family: var(--font-body); font-size: 0.9rem; padding: 0.6rem 1rem; outline: none;
+    }
+    .cta-form input[type="email"]:focus { border-color: var(--primary); }
+    button.btn-primary {
+      padding: 0.6rem 1.4rem; border-radius: 6px; border: none; cursor: pointer;
+      font-family: var(--font-body); font-size: 0.88rem; font-weight: 600; transition: background 0.2s;
+      background: var(--primary); color: #0a1628;
+    }
+    button.btn-primary:hover { background: var(--primary-dim); }
+    .cta-success { display: none; color: var(--good); font-size: 0.9rem; margin-top: 0.8rem; font-weight: 600; }
+    .cta-success.visible { display: block; }
+
+    .content { margin-top: 3rem; }
+    .content h2 { font-family: var(--font-heading); font-size: 1.5rem; color: var(--primary); margin: 0 0 1rem; padding-top: 1rem; }
+    .faq-item { border-top: 1px solid var(--border); padding: 1.1rem 0; }
+    .faq-item h3 { font-size: 1rem; color: var(--text); margin-bottom: 0.4rem; font-weight: 600; }
+    .faq-item p { color: var(--text-dim); font-size: 0.9rem; }
+
+    footer {
+      background: var(--card); border-top: 1px solid var(--border);
+      text-align: center; padding: 1.5rem; font-size: 0.82rem; color: var(--text-dim);
+    }
+    footer a { color: var(--text-dim); }
+    footer a:hover { color: var(--primary); }
+
+    @media (max-width: 720px) {
+      .controls { grid-template-columns: 1fr 1fr; }
+      .results { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 600px) {
+      .page-header h1 { font-size: 1.8rem; }
+      nav { padding: 0 1rem; }
+      .nav-links { gap: 1rem; }
+      main { padding: 2rem 1rem 4rem; }
+      .controls { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="nav-logo">ABUZ8</a>
+  <ul class="nav-links">
+    <li><a href="/tools.html">Tools</a></li>
+    <li><a href="/store.html">Store</a></li>
+  </ul>
+</nav>
+
+<main>
+  <div class="page-header">
+    <h1>Cloud GPU Cost Calculator</h1>
+    <p>Pick a GPU and describe your job — hours of training or millions of inference tokens — and see the total rental cost, plus a side-by-side of what every major cloud provider charges for that card. Find the cheapest place to run it.</p>
+    <span class="privacy-note">&#128274; 100% in-browser — nothing you enter is uploaded</span>
+  </div>
+
+  <div class="panel">
+    <h2>1. What are you running?</h2>
+    <div class="seg" id="modeSeg">
+      <button data-mode="train" class="active" onclick="setMode('train')">Training / fine-tune</button>
+      <button data-mode="infer" onclick="setMode('infer')">Batch inference</button>
+    </div>
+
+    <div class="controls" id="trainControls">
+      <div>
+        <label for="gpuCount">GPUs used</label>
+        <input type="number" id="gpuCount" min="1" value="1" oninput="recalc()" />
+        <div class="hint">Cards running in parallel.</div>
+      </div>
+      <div>
+        <label for="trainHours">Wall-clock hours</label>
+        <input type="number" id="trainHours" min="0" step="0.5" value="24" oninput="recalc()" />
+        <div class="hint">How long the job runs, per card.</div>
+      </div>
+      <div>
+        <label for="utilTrain">GPU utilisation %</label>
+        <input type="number" id="utilTrain" min="1" max="100" value="100" oninput="recalc()" />
+        <div class="hint">You still pay for idle time; this scales the effective work, not the bill.</div>
+      </div>
+    </div>
+
+    <div class="controls" id="inferControls" style="display:none;">
+      <div>
+        <label for="tokens">Tokens to process (millions)</label>
+        <input type="number" id="tokens" min="0" step="1" value="1000" oninput="recalc()" />
+        <div class="hint">Total input + output tokens for the run.</div>
+      </div>
+      <div>
+        <label for="throughput">Throughput (tokens/sec)</label>
+        <input type="number" id="throughput" min="1" value="2500" oninput="recalc()" />
+        <div class="hint">Tokens per second this GPU sustains for your model.</div>
+      </div>
+      <div>
+        <label for="gpuCountI">GPUs used</label>
+        <input type="number" id="gpuCountI" min="1" value="1" oninput="recalc()" />
+        <div class="hint">Cards serving in parallel.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2>2. Which GPU &amp; pricing tier?</h2>
+    <div class="controls">
+      <div class="full">
+        <label for="gpu">GPU model</label>
+        <select id="gpu" onchange="recalc()"></select>
+        <div class="hint">Rates are representative on-demand marketplace prices, verified July&nbsp;2026.</div>
+      </div>
+    </div>
+    <div class="check-row">
+      <input type="checkbox" id="spot" onchange="recalc()" />
+      <label for="spot">Use spot / community / interruptible pricing (~55% off, no uptime guarantee)</label>
+    </div>
+  </div>
+
+  <div class="verdict" id="verdict"></div>
+
+  <div class="results">
+    <div class="rcard job">
+      <div class="rlabel">Your job — at the mid rate</div>
+      <div class="rbig" id="jobCost">$0</div>
+      <div class="rsub" id="jobSub">total for this run</div>
+      <ul>
+        <li><span>GPU-hours billed</span><span id="gpuHours">0</span></li>
+        <li><span>Effective rate</span><span id="effRate">$0/hr</span></li>
+      </ul>
+    </div>
+    <div class="rcard cheap">
+      <div class="rlabel">Cheapest provider</div>
+      <div class="rbig" id="cheapCost">$0</div>
+      <div class="rsub" id="cheapName">—</div>
+      <ul>
+        <li><span>You save vs priciest</span><span id="saveVs">$0</span></li>
+        <li><span>Spread across providers</span><span id="spread">—</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Provider</th>
+          <th>$/GPU-hr</th>
+          <th>Job total</th>
+          <th>vs cheapest</th>
+        </tr>
+      </thead>
+      <tbody id="provTable"></tbody>
+    </table>
+  </div>
+
+  <p class="price-note">
+    Rates are representative on-demand prices per GPU-hour, verified July&nbsp;2026 &mdash; marketplace and spot rates move constantly, so confirm live at
+    <a href="https://www.runpod.io/pricing" target="_blank" rel="noopener">RunPod</a>,
+    <a href="https://vast.ai/pricing" target="_blank" rel="noopener">Vast.ai</a>,
+    <a href="https://lambda.ai/service/gpu-cloud" target="_blank" rel="noopener">Lambda</a>, and
+    <a href="https://aws.amazon.com/ec2/instance-types/p5/" target="_blank" rel="noopener">AWS</a>.
+    Marketplace tiers (Vast, RunPod Community) are cheapest but carry no uptime guarantee; managed and hyperscaler tiers cost more and add reliability, networking and support. This prices the <strong>rental</strong> only &mdash; storage, egress and setup time are extra.
+  </p>
+
+  <div class="cta-section">
+    <h2>Stop renting compute you already own the case for.</h2>
+    <p>Every hour on a cloud GPU is a meter running. QADIR&nbsp;OS routes each job to the cheapest capable brain — your own hardware first, a rented GPU or a cloud API only when the work demands it — so you pay for the ceiling, not the floor.</p>
+    <div class="cta-form">
+      <input type="email" id="ctaEmail" placeholder="you@company.com" />
+      <button class="btn-primary" onclick="submitWaitlist()">Join early access</button>
+    </div>
+    <div id="ctaSuccess" class="cta-success">&#10003; You're on the list. We'll be in touch.</div>
+  </div>
+
+  <div class="content">
+    <h2>Renting GPU compute without overpaying</h2>
+    <div class="faq-item">
+      <h3>How much does it cost to rent an H100?</h3>
+      <p>As of mid-2026 an NVIDIA H100 rents from roughly $1.99/hr on RunPod Community Cloud and about $2.39/hr on Secure Cloud, climbing to $2.99&ndash;$3.29/hr on Lambda, while marketplace hosts on Vast.ai can reach near $1.49/hr without an uptime guarantee. The calculator above multiplies whichever rate you pick by your job's GPU-hours and shows the cheapest provider for that card.</p>
+    </div>
+    <div class="faq-item">
+      <h3>Should I rent a GPU or just call an LLM API?</h3>
+      <p>For steady, bursty inference a per-token API is often simpler and cheaper because you pay nothing when idle. Renting a GPU wins for training and fine-tuning, for sustained batch inference where you keep the card busy, and whenever you need full control of the model weights and your data. Price the rental here, then compare it against a per-token API to see which side of the line your workload sits on.</p>
+    </div>
+    <div class="faq-item">
+      <h3>What does spot or community pricing actually save?</h3>
+      <p>Spot, community and interruptible instances typically cut the hourly rate by 40&ndash;70% versus on-demand, in exchange for the instance being reclaimable at short notice. They shine for checkpointed training and fault-tolerant batch jobs and are a poor fit for a live production endpoint. Toggle the spot discount above to see the effect on your total.</p>
+    </div>
+    <div class="faq-item">
+      <h3>Why is the same GPU so much cheaper on one provider?</h3>
+      <p>Marketplace platforms like Vast.ai and RunPod Community Cloud rent spare capacity from many hosts, so prices float low but reliability and support vary. Managed clouds and the big hyperscalers charge a premium for guaranteed uptime, fast interconnect, compliance and a support line. The table ranks every provider for your chosen GPU so the trade-off is explicit, not hidden.</p>
+    </div>
+    <div class="faq-item">
+      <h3>Is my data sent anywhere?</h3>
+      <p>No. This calculator runs entirely in your browser. Nothing you enter is uploaded, logged, or stored.</p>
+    </div>
+  </div>
+</main>
+
+<footer>
+  ABUZ8 LLC &middot; Free AI Tools &middot; <a href="mailto:ahmad@abuz8ai.com">ahmad@abuz8ai.com</a>
+</footer>
+
+<script>
+// ── GPU CATALOG — representative on-demand $/GPU-hr by provider tier, verified July 2026 ──
+// Sources: RunPod, Vast.ai, Lambda, AWS public pricing + 2026 aggregator surveys.
+// Each GPU lists provider rates; marketplace (Vast/RunPod Community) run cheapest, hyperscaler priciest.
+const GPUS = [
+  { name:'RTX 4090 (24GB)',  providers:{ 'Vast.ai':0.35, 'RunPod Community':0.44, 'RunPod Secure':0.69, 'Lambda':0.99 } },
+  { name:'RTX 5090 (32GB)',  providers:{ 'Vast.ai':0.69, 'RunPod Community':0.89, 'RunPod Secure':1.09 } },
+  { name:'L40S (48GB)',      providers:{ 'Vast.ai':0.79, 'RunPod Community':0.99, 'RunPod Secure':1.19, 'Lambda':1.49 } },
+  { name:'A100 80GB',        providers:{ 'Vast.ai':1.05, 'RunPod Community':1.39, 'RunPod Secure':1.64, 'Lambda':1.79, 'AWS':3.67 } },
+  { name:'H100 80GB',        providers:{ 'Vast.ai':1.79, 'RunPod Community':1.99, 'RunPod Secure':2.39, 'Lambda':2.99, 'AWS':4.30 } },
+  { name:'H200 141GB',       providers:{ 'RunPod Secure':3.29, 'Lambda':3.79, 'AWS':5.50 } },
+  { name:'B200 (Blackwell)', providers:{ 'RunPod Secure':4.49, 'Lambda':4.99, 'AWS':7.20 } }
+];
+
+const SPOT_DISCOUNT = 0.55;       // spot / community ~55% of on-demand
+const HORIZON = null;             // not used here; single-run cost
+
+// ── FORMAT ───────────────────────────────────────────────────────────────────
+function fmtUSD(v) {
+  if (!isFinite(v)) return '—';
+  const n = Math.abs(v);
+  if (n >= 100)  return (v < 0 ? '-$' : '$') + n.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+  if (n >= 1)    return (v < 0 ? '-$' : '$') + n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  if (n > 0)     return (v < 0 ? '-$' : '$') + n.toFixed(2);
+  return '$0';
+}
+function fmtRate(v) { return isFinite(v) ? '$' + v.toFixed(2) + '/hr' : '—'; }
+function fmtHours(h) {
+  if (!isFinite(h)) return '—';
+  if (h >= 100) return Math.round(h).toLocaleString('en-US');
+  return h.toFixed(1);
+}
+
+// ── CORE MATH (pure, unit-tested) ────────────────────────────────────────────
+// GPU-hours the provider bills you for. Utilisation does NOT reduce the bill —
+// a rented card is billed by wall-clock time whether busy or idle. For inference
+// mode we derive wall-clock from tokens / throughput (a busier card = fewer hours).
+function trainGpuHours(gpuCount, wallHours) {
+  return Math.max(0, gpuCount) * Math.max(0, wallHours);
+}
+function inferWallHours(tokensMillions, tokensPerSec, gpuCount) {
+  const totalTokens = Math.max(0, tokensMillions) * 1e6;
+  const tps = Math.max(1e-9, tokensPerSec) * Math.max(1, gpuCount);
+  return totalTokens / tps / 3600; // seconds → hours
+}
+function inferGpuHours(tokensMillions, tokensPerSec, gpuCount) {
+  const wall = inferWallHours(tokensMillions, tokensPerSec, gpuCount);
+  return wall * Math.max(1, gpuCount);
+}
+function effectiveRate(baseRate, spot) {
+  return spot ? baseRate * SPOT_DISCOUNT : baseRate;
+}
+function jobCost(gpuHours, rate) {
+  return Math.max(0, gpuHours) * Math.max(0, rate);
+}
+// Rank providers for a GPU at given gpuHours; returns sorted ascending by total.
+function rankProviders(gpu, gpuHours, spot) {
+  return Object.keys(gpu.providers).map(name => {
+    const rate = effectiveRate(gpu.providers[name], spot);
+    return { name, rate, total: jobCost(gpuHours, rate) };
+  }).sort((a, b) => a.total - b.total);
+}
+
+// ── READ INPUTS ──────────────────────────────────────────────────────────────
+let MODE = 'train';
+function readNum(id, def) { const el = document.getElementById(id); const v = parseFloat(el && el.value); return isFinite(v) ? v : def; }
+function currentGpuHours() {
+  if (MODE === 'train') {
+    return trainGpuHours(readNum('gpuCount', 1), readNum('trainHours', 0));
+  }
+  return inferGpuHours(readNum('tokens', 0), readNum('throughput', 1), readNum('gpuCountI', 1));
+}
+function currentWallHours() {
+  if (MODE === 'train') return readNum('trainHours', 0);
+  return inferWallHours(readNum('tokens', 0), readNum('throughput', 1), readNum('gpuCountI', 1));
+}
+
+// ── MAIN RECALC ──────────────────────────────────────────────────────────────
+function recalc() {
+  const gpu = GPUS[document.getElementById('gpu').value] || GPUS[0];
+  const spot = document.getElementById('spot').checked;
+  const gpuHours = currentGpuHours();
+  const wall = currentWallHours();
+  const ranked = rankProviders(gpu, gpuHours, spot);
+  const cheapest = ranked[0];
+  const priciest = ranked[ranked.length - 1];
+  // "mid" = median provider rate, a fair headline for the job card
+  const mid = ranked[Math.floor(ranked.length / 2)];
+
+  document.getElementById('jobCost').textContent = fmtUSD(mid.total);
+  document.getElementById('gpuHours').textContent = fmtHours(gpuHours);
+  document.getElementById('effRate').textContent = fmtRate(mid.rate);
+  document.getElementById('jobSub').textContent =
+    MODE === 'train'
+      ? `total for a ${fmtHours(wall)}-hour run`
+      : `total to process ${fmtHours(readNum('tokens',0))}M tokens (~${fmtHours(wall)} h)`;
+
+  document.getElementById('cheapCost').textContent = fmtUSD(cheapest.total);
+  document.getElementById('cheapName').textContent = `${cheapest.name} · ${fmtRate(cheapest.rate)}`;
+  const save = priciest.total - cheapest.total;
+  document.getElementById('saveVs').textContent = fmtUSD(save);
+  document.getElementById('spread').textContent =
+    `${fmtRate(cheapest.rate)}–${fmtRate(priciest.rate)}`;
+
+  const v = document.getElementById('verdict');
+  if (gpuHours <= 0) {
+    v.innerHTML = 'Enter your job above to price it across every provider.';
+  } else {
+    const pct = priciest.total > 0 ? Math.round((save / priciest.total) * 100) : 0;
+    v.innerHTML = `<span class="big">Cheapest: ${cheapest.name}.</span> Running your job on a <strong>${gpu.name}</strong> there costs <strong>${fmtUSD(cheapest.total)}</strong> — <strong>${fmtUSD(save)}</strong> (${pct}%) less than the priciest option${spot ? ', with spot pricing applied' : ''}. That's ${fmtHours(gpuHours)} GPU-hours billed.`;
+  }
+
+  const body = document.getElementById('provTable');
+  body.innerHTML = ranked.map((row, idx) => {
+    const best = idx === 0;
+    const delta = row.total - cheapest.total;
+    const deltaCell = idx === 0 ? '—' : '+' + fmtUSD(delta);
+    return `<tr class="${best ? 'best' : ''}">
+      <td><span class="prov-name">${row.name}</span>${best ? '<span class="badge-best">CHEAPEST</span>' : ''}</td>
+      <td>${fmtRate(row.rate)}</td>
+      <td>${fmtUSD(row.total)}</td>
+      <td>${deltaCell}</td>
+    </tr>`;
+  }).join('');
+}
+
+// ── MODE TOGGLE ──────────────────────────────────────────────────────────────
+function setMode(m) {
+  MODE = m;
+  document.querySelectorAll('#modeSeg button').forEach(b => b.classList.toggle('active', b.dataset.mode === m));
+  document.getElementById('trainControls').style.display = m === 'train' ? 'grid' : 'none';
+  document.getElementById('inferControls').style.display = m === 'infer' ? 'grid' : 'none';
+  recalc();
+}
+
+// ── WAITLIST ─────────────────────────────────────────────────────────────────
+async function submitWaitlist() {
+  const email = document.getElementById('ctaEmail').value.trim();
+  if (!email || !email.includes('@')) { alert('Please enter a valid email address.'); return; }
+  const payload = { email, product: 'qadir-os-cloud-gpu-cost-calculator', ts: new Date().toISOString() };
+  try {
+    await fetch('/api/waitlist', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+  } catch (e) { /* graceful fallback */ }
+  document.getElementById('ctaEmail').style.display = 'none';
+  document.querySelector('.cta-form button').style.display = 'none';
+  document.getElementById('ctaSuccess').classList.add('visible');
+}
+
+// ── INIT ─────────────────────────────────────────────────────────────────────
+(function init() {
+  if (typeof document === 'undefined') return; // node-safe: pure core only under test
+  const g = document.getElementById('gpu');
+  g.innerHTML = GPUS.map((gp, idx) => {
+    const rates = Object.values(gp.providers);
+    const lo = Math.min(...rates), hi = Math.max(...rates);
+    return `<option value="${idx}">${gp.name} — $${lo.toFixed(2)}–$${hi.toFixed(2)}/hr</option>`;
+  }).join('');
+  g.value = 4; // H100 default — the headline card people search
+  recalc();
+})();
+
+// ── EXPORT PURE CORE FOR UNIT TESTS (node-only; browser ignores) ─────────────
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = {
+    GPUS, SPOT_DISCOUNT,
+    trainGpuHours, inferWallHours, inferGpuHours,
+    effectiveRate, jobCost, rankProviders,
+    fmtUSD, fmtRate, fmtHours
+  };
+}
+</script>
+<script src="/tools/_tools-shared.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>

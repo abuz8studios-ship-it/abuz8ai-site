@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Eulogy Writer — ABUZ8</title>
+<meta name="description" content="Create a heartfelt, professionally written eulogy honoring your loved one. Free AI-powered tool — no login required.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--lapis:#0a1628;--lapis2:#0f1f3d;--lapis3:#162544;--gold:#c9a84c;--gold2:#e0bc5a;--turq:#0e9f6e;--turq2:#22b5a0;--cream:#f5f0e8;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--lapis);color:var(--cream);font-family:'Inter',sans-serif;min-height:100vh;}
+header{background:var(--lapis2);border-bottom:1px solid rgba(201,168,76,.15);padding:16px 32px;display:flex;align-items:center;gap:12px;}
+header h1{font-family:'Playfair Display',serif;font-size:1.4rem;color:var(--gold);letter-spacing:.02em;}
+header span{background:rgba(201,168,76,.15);color:var(--gold);font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;}
+.hero{text-align:center;padding:48px 20px 32px;}
+.hero h2{font-family:'Playfair Display',serif;font-size:2.1rem;color:var(--cream);margin-bottom:10px;line-height:1.3;}
+.hero p{color:rgba(245,240,232,.65);font-size:.95rem;max-width:540px;margin:0 auto;line-height:1.6;}
+.main{max-width:820px;margin:0 auto;padding:0 20px 80px;}
+.card{background:var(--lapis2);border:1px solid rgba(201,168,76,.12);border-radius:12px;padding:26px;}
+.card+.card{margin-top:16px;}
+.card h3{font-family:'Playfair Display',serif;font-size:1.15rem;color:var(--gold);margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid rgba(201,168,76,.12);}
+label{display:block;font-size:12px;font-weight:700;color:var(--gold);margin-bottom:6px;letter-spacing:.05em;text-transform:uppercase;}input,select{width:100%;background:var(--lapis3);border:1px solid rgba(201,168,76,.2);border-radius:8px;padding:11px 14px;color:var(--cream);font-family:'Inter',sans-serif;font-size:14px;outline:none;transition:border .2s;margin-bottom:16px;}
+input:focus,select:focus,textarea:focus{border-color:var(--gold);}
+textarea{width:100%;background:var(--lapis3);border:1px solid rgba(201,168,76,.2);border-radius:8px;padding:11px 14px;color:var(--cream);font-family:'Inter',sans-serif;font-size:14px;outline:none;transition:border .2s;margin-bottom:16px;resize:vertical;min-height:90px;line-height:1.6;}
+select option{background:var(--lapis2);color:var(--cream);}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+@media(max-width:600px){.grid-2{grid-template-columns:1fr;}}
+.tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;}
+.tag{padding:6px 14px;border-radius:20px;border:1px solid rgba(201,168,76,.2);cursor:pointer;font-size:12px;color:rgba(245,240,232,.7);transition:all .2s;user-select:none;}
+.tag:hover{border-color:var(--gold);color:var(--cream);}
+.tag.active{background:var(--gold);border-color:var(--gold);color:var(--lapis);font-weight:700;}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:12px 24px;border-radius:8px;border:none;cursor:pointer;font-family:'Inter',sans-serif;font-size:14px;font-weight:600;transition:all .2s;}
+.btn-gold{background:var(--gold);color:var(--lapis);width:100%;justify-content:center;}
+.btn-gold:hover{background:var(--gold2);}
+.btn-gold:disabled{opacity:.45;cursor:not-allowed;}
+.btn-outline{background:transparent;border:1px solid rgba(201,168,76,.3);color:var(--cream);}
+.btn-outline:hover{border-color:var(--gold);color:var(--gold);}
+.actions{margin-top:18px;display:flex;gap:12px;flex-wrap:wrap;}/* Output */
+#outputArea{display:none;}
+.eulogy-output{background:var(--lapis3);border:1px solid rgba(201,168,76,.1);border-radius:10px;padding:28px;font-size:14px;line-height:1.9;color:rgba(245,240,232,.9);white-space:pre-wrap;font-family:'Inter',sans-serif;min-height:180px;}
+.word-count{font-size:12px;color:rgba(245,240,232,.4);margin-top:10px;text-align:right;}
+/* Progress */
+.progress-wrap{background:rgba(255,255,255,.05);border-radius:6px;height:6px;overflow:hidden;margin-bottom:20px;display:none;}
+.progress-fill{height:100%;border-radius:6px;background:linear-gradient(90deg,var(--turq),var(--gold));transition:width .8s ease;}
+/* Waitlist */
+.waitlist{background:linear-gradient(135deg,var(--lapis2),var(--lapis3));border:1px solid rgba(201,168,76,.2);border-radius:12px;padding:28px;text-align:center;margin-top:16px;}
+.waitlist h3{font-family:'Playfair Display',serif;font-size:1.3rem;color:var(--gold);margin-bottom:8px;}
+.waitlist p{color:rgba(245,240,232,.7);margin-bottom:16px;font-size:14px;line-height:1.6;}
+.wl-form{display:flex;gap:10px;max-width:400px;margin:0 auto;flex-wrap:wrap;}
+.wl-form input{flex:1;min-width:180px;margin-bottom:0;}
+.wl-success{color:var(--turq2);font-weight:600;display:none;font-size:15px;}
+/* Sensitivity notice */
+.notice{background:rgba(26,138,122,.08);border:1px solid rgba(26,138,122,.2);border-radius:8px;padding:14px 18px;font-size:13px;color:rgba(245,240,232,.65);line-height:1.6;margin-bottom:20px;}
+.notice strong{color:var(--turq2);}
+</style>
+<script src="_abuz8-live-brain.js" defer></script>
+<script src="_abuz8-config.js" defer></script>
+<link rel="canonical" href="https://abuz8ai.com/tools/ai-eulogy-writer">
+</head>
+<body>
+<header>
+  <h1>ABUZ8</h1>
+  <span>Eulogy Writer</span>
+</header>
+
+<div class="hero">
+  <h2>Honor Their Memory with Words That Matter</h2>
+  <p>A thoughtful tool to help you craft a heartfelt eulogy — even when the words feel impossible to find.</p>
+</div>
+
+<div class="main">
+  <div class="notice">
+    <strong>We understand this is a difficult time.</strong> This tool is here to help you organize your thoughts and memories into a meaningful tribute. Take your time — there is no rush.
+  </div>
+
+  <div class="card">
+    <h3>About Your Loved One</h3>
+    <div class="grid-2">
+      <div>
+        <label>Their Name</label>
+        <input type="text" id="personName" placeholder="e.g. Margaret, Dad, Uncle Jim">
+      </div>
+      <div>
+        <label>Your Relationship</label>
+        <select id="relationship">
+          <option value="">Choose...</option>
+          <option value="parent">Parent (Mother / Father)</option>
+          <option value="grandparent">Grandparent</option>
+          <option value="spouse">Spouse / Partner</option>
+          <option value="sibling">Sibling</option>
+          <option value="child">Child</option>
+          <option value="friend">Friend</option>
+          <option value="mentor">Mentor / Teacher</option>
+          <option value="colleague">Colleague</option>
+        </select>
+      </div>
+    </div>
+    <label>Their Key Qualities</label>
+    <p style="font-size:12px;color:rgba(245,240,232,.45);margin-bottom:10px;">Select all that resonate — these shape the heart of the eulogy.</p>
+    <div class="tags" id="qualityTags">
+      <span class="tag" data-v="kind">Kind</span>
+      <span class="tag" data-v="funny">Funny</span>
+      <span class="tag" data-v="generous">Generous</span>
+      <span class="tag" data-v="brave">Brave</span>
+      <span class="tag" data-v="wise">Wise</span>
+      <span class="tag" data-v="loving">Loving</span>
+      <span class="tag" data-v="creative">Creative</span>
+      <span class="tag" data-v="hardworking">Hardworking</span>
+      <span class="tag" data-v="adventurous">Adventurous</span>
+      <span class="tag" data-v="faithful">Faithful</span>
+      <span class="tag" data-v="patient">Patient</span>
+      <span class="tag" data-v="resilient">Resilient</span>
+    </div>
+
+    <label>A Favorite Memory or Story</label>
+    <textarea id="memory" placeholder="Share a moment that captures who they were — a story, a habit, something they always said. The more detail, the more personal the eulogy will feel."></textarea>
+  </div>
+
+  <div class="card">
+    <h3>Eulogy Preferences</h3>
+    <div class="grid-2">
+      <div>
+        <label>Tone</label>
+        <select id="tone">
+          <option value="warm">Warm &amp; Celebratory</option>
+          <option value="reflective">Reflective &amp; Grateful</option>
+          <option value="formal">Formal &amp; Dignified</option>
+          <option value="light">Light &amp; Humorous</option>
+          <option value="spiritual">Spiritual &amp; Hopeful</option>
+        </select>
+      </div>
+      <div>
+        <label>Length</label>
+        <select id="length">
+          <option value="brief">Brief (2–3 minutes)</option>
+          <option value="standard" selected>Standard (5 minutes)</option>
+          <option value="extended">Extended (8–10 minutes)</option>
+        </select>
+      </div>
+    </div>
+    <button class="btn btn-gold" id="generateBtn" onclick="generate()">Write Eulogy</button>
+  </div>
+
+  <div class="progress-wrap" id="progressWrap">
+    <div class="progress-fill" id="progressFill"></div>
+  </div>
+
+  <div class="card" id="outputArea">
+    <h3>Your Eulogy</h3>
+    <div class="eulogy-output" id="eulogyOutput"></div>
+    <div class="word-count" id="wordCount"></div>
+    <div class="actions">
+      <button class="btn btn-outline" onclick="copyEulogy()">Copy to Clipboard</button>
+      <button class="btn btn-outline" onclick="downloadEulogy()">Download as Text</button>
+      <button class="btn btn-outline" onclick="generate()">Regenerate</button>
+    </div>
+  </div>
+
+  <div class="waitlist">
+    <h3>AI-Powered Grief Support &amp; Memorial Tools</h3>
+    <p>Join early access for personalized memorial pages, obituary writing, ceremony planning, and more.</p>
+    <div class="wl-form" id="wlForm">
+      <input type="email" id="wlEmail" placeholder="your@email.com">
+      <button class="btn btn-gold" style="width:auto;flex:none;" onclick="joinWaitlist()">Join Early Access</button>
+    </div>
+    <div class="wl-success" id="wlSuccess">You're on the list. We'll be in touch.</div>
+  </div>
+</div>
+<script src="_abuz8-live-brain.js" defer></script>
+<script>
+/* ── Tag multi-select ── */
+document.querySelectorAll('#qualityTags .tag').forEach(t=>{
+  t.addEventListener('click',()=>t.classList.toggle('active'));
+});
+
+function getQualities(){
+  return [...document.querySelectorAll('#qualityTags .tag.active')].map(t=>t.dataset.v);
+}
+
+/* ── Helpers ── */
+function pick(arr){return arr[Math.floor(Math.random()*arr.length)];}
+function pickN(arr,n){const s=[...arr];for(let i=s.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[s[i],s[j]]=[s[j],s[i]];}return s.slice(0,n);}
+
+/* ── Template Data ── */
+const REL_LABELS={parent:'my parent',grandparent:'my grandparent',spouse:'my partner in life',sibling:'my sibling',child:'my child',friend:'my dear friend',mentor:'my mentor',colleague:'my colleague'};
+const REL_BOND={
+  parent:['shaped everything I am','gave me roots and wings','whose love was the foundation of our family','taught me what it means to show up, every single day'],
+  grandparent:['whose stories became the fabric of our family','who showed us that wisdom is lived, not just spoken','whose home was the center of our universe','who carried decades of love in every gesture'],
+  spouse:['who was my home in every sense of the word','whose hand I was lucky enough to hold through this life','who showed me what partnership really means','who made even ordinary days feel extraordinary'],
+  sibling:['who knew me before I knew myself','who was my first friend and my longest ally','whose laughter I can still hear when I close my eyes','who shared the same beginnings and shaped each other along the way'],
+  child:['who taught me that love has no ceiling','whose light changed every room and every heart','who showed me strength I never knew existed','whose time here, however long, reshaped everything'],
+  friend:['who was the family I chose','whose friendship was one of the greatest gifts of my life','who showed up in the moments that mattered most','whose loyalty and warmth never wavered'],
+  mentor:['who saw something in me before I could see it myself','whose guidance changed the course of my life','who led by example in the truest sense','whose belief in others was their greatest legacy'],
+  colleague:['whose professionalism and warmth elevated everyone around them','who brought purpose and humanity to everything they did','whose impact in our shared work was immeasurable','who proved that how you do the work matters as much as the work itself']
+};
+const QUALITY_LINES={
+  kind:['had a gentleness that put people at ease','made kindness look effortless — it was simply who they were','never passed someone in need without offering a hand'],
+  funny:['could make an entire room laugh with a single look','had a wit that could lighten even the heaviest moments','reminded us that joy and laughter are acts of love'],
+  generous:['gave freely — their time, their energy, their heart','believed that generosity was not about what you have, but what you share','would give you the coat off their back and somehow still keep you warm'],
+  brave:['faced life with a courage that inspired everyone who knew them','never let fear make their decisions','showed us that bravery is not the absence of fear, but the choice to move forward anyway'],
+  wise:['had the rare ability to say exactly what you needed to hear','carried a quiet wisdom that came not from books but from lived experience','taught through patience and presence, never through lectures'],
+  loving:['loved with their whole heart, openly and unconditionally','made everyone feel like the most important person in the room','showed us that love is not a word — it is in every small act'],
+  creative:['saw the world differently — and that difference was a gift','brought imagination and beauty into everything they touched','reminded us that creativity is how the soul speaks'],
+  hardworking:['understood the dignity of effort and never cut corners','built their life brick by brick, with intention and integrity','showed us that dedication is its own form of love'],
+  adventurous:['lived with an openness to the world that was contagious','never let comfort stand in the way of a full life','showed us that the best stories come from saying yes'],
+  faithful:['held fast to their beliefs with quiet conviction','was a pillar of faith for everyone around them','found peace and purpose in something larger than themselves'],
+  patient:['had a patience that felt like a superpower','never rushed, never pushed — just held space until things were ready','showed us that stillness is a kind of strength'],
+  resilient:['faced hardship with a steadiness that held others together','was knocked down more than once and stood up every time','showed us that resilience is not about being unbreakable — it is about being willing to rebuild']
+};
+const OPENINGS={
+  warm:['Thank you all for being here today. If {name} could see this room right now, I think they would be deeply moved — and probably a little embarrassed by all the fuss.','We are gathered here not to mourn what we have lost, but to celebrate what we were so lucky to have. And what we had, in {name}, was truly extraordinary.','There are some people who walk into your life and change the temperature of the room. {name} was one of those people.'],
+  reflective:['I have spent the last few days trying to find the right words, knowing that no words could ever be enough. But {name} deserves my best attempt.','As I stand here today, I am reminded that grief is really just love with no place to go. And the depth of what we feel right now is a measure of how much {name} meant to each of us.','There is a kind of silence that follows loss — the kind where you realize how much of your world was shaped by one person. {name} was that person for so many of us.'],
+  formal:['We gather here today to honor the life and legacy of {name} — a life lived with purpose, dignity, and an unwavering commitment to the people they loved.','{name} leaves behind a legacy that cannot be measured in years alone. It is measured in the lives they touched, the standards they set, and the values they carried.','It is my solemn privilege to stand before you today and speak about someone whose life exemplified the very best of what it means to be human.'],
+  light:['If {name} were here right now, they would probably tell me to keep this short. So in their honor, I will try — but I make no promises.','The thing about trying to sum up {name} in a speech is that they were never really a "sum it up" kind of person. They were more of a "let me tell you one more thing" kind of person.','{name} once told me that the best speeches are the ones where people laugh more than they cry. So I am going to do my best to honor that.'],
+  spiritual:['{name} walked this earth with grace and purpose, and I believe they are at peace now — reunited with those who went before and held in a love far greater than our own.','The Book of Ecclesiastes tells us there is a time for everything. Today is a time to grieve, but it is also a time to give thanks for the extraordinary soul that was {name}.','Faith teaches us that this life is not the end — it is a chapter. And {name} wrote one of the most beautiful chapters I have ever witnessed.']
+};
+const TRANSITIONS=[
+  'What made {name} truly special was not any single grand gesture — it was the accumulation of a thousand small ones.',
+  'If you asked different people to describe {name}, you would hear different stories. But the thread running through all of them would be the same.',
+  'I want to share something with you that I think captures exactly who {name} was.',
+  'People sometimes ask me what I will miss most. The truth is, I will miss everything. But most of all, I will miss the way {name} made the world feel a little safer, a little warmer.',
+  'There is a difference between someone who is present and someone who truly shows up. {name} showed up — every single time.',
+  '{name} had a way of making you feel like whatever you were going through, you would not have to go through it alone.',
+];
+
+const CLOSINGS={
+  warm:['{name}, thank you — for the laughter, the love, and the countless moments that made our lives richer. We carry you with us, always.','So today, we do not say goodbye. We say thank you. Thank you, {name}, for being exactly who you were. This world was better for having you in it.','If love could have kept you here, you would have lived forever. But the love you gave us — that does live forever. And we will carry it forward, in everything we do.'],
+  reflective:['In the quiet moments ahead, when we feel the weight of this loss, I hope we can also feel the warmth of what {name} left behind — a life of meaning, connection, and grace.','We will miss you, {name}. But we will honor you by living the way you taught us — with intention, with gratitude, and with love that does not hold back.','The poet Mary Oliver once asked, "What is it you plan to do with your one wild and precious life?" {name} answered that question every day, through action, through love, through presence.'],
+  formal:['{name} has left an enduring mark on this world and on each of us. May we honor that legacy by carrying forward the principles they held dear — excellence, integrity, and compassion.','Let us remember {name} not only for what they accomplished, but for how they made us feel — valued, respected, and believed in. That is the truest measure of a life well lived.','May the memory of {name} be a blessing to all who were fortunate enough to know them. Their legacy endures.'],
+  light:['{name}, wherever you are, I hope you are laughing. And I hope you know that you left us all with enough stories to last a lifetime. We love you — and we will keep telling every single one.','I think {name} would be pretty pleased with this turnout. And I think they would want us to go easy on the tears and heavy on the stories. So let us raise a glass to someone who made every room brighter just by being in it.','You taught us to laugh, {name}. And we will keep laughing — for you, because of you, and in honor of the joy you brought to everyone around you.'],
+  spiritual:['{name}, we release you into a peace that surpasses all understanding. And we trust that your spirit remains with us — in the wind, in the quiet, in every moment of grace yet to come.','May {name} rest in the eternal embrace of a love far greater than we can comprehend. And may we, who remain, find comfort in knowing that this parting is not forever.','Go gently, {name}. You have earned your rest. And when we see beauty in this world — the sunrise, the laughter of children, the kindness of strangers — we will know that your light is still shining.']
+};
+const MEMORY_INTROS=[
+  'One memory that stays with me — and I think it says everything about who {name} was:',
+  'If I had to choose one moment that captures the essence of {name}, it would be this:',
+  'There is one story I keep coming back to. It is small, but it is {name} through and through:',
+  'I want to share a memory that I think many of you will recognize, because it is so perfectly {name}:',
+  'When I think of {name}, one moment rises above the rest:',
+];
+
+const BODY_BRIDGES=[
+  'But {name} was not just one thing to one person. They were a {rel} who {bond}.',
+  'To know {name} was to understand that {quality_line}. And that was not something they tried to be — it was simply who they were.',
+  '{name} {quality_line}. Everyone who crossed their path felt it.',
+  'As {rel_label}, {name} {bond}. That is not something you learn — it is something you are.',
+];
+
+/* ── Length config ── */
+const LENGTH_CONFIG={brief:{qualityCount:2,hasMemory:true,wordTarget:300},standard:{qualityCount:3,hasMemory:true,wordTarget:600},extended:{qualityCount:5,hasMemory:true,wordTarget:900}};
+
+/* ── Generator ── */
+function generate(){
+  const name=document.getElementById('personName').value.trim();
+  const rel=document.getElementById('relationship').value;
+  const quals=getQualities();
+  const memory=document.getElementById('memory').value.trim();
+  const tone=document.getElementById('tone').value;
+  const len=document.getElementById('length').value;
+
+  if(!name){alert('Please enter their name.');return;}
+  if(!rel){alert('Please select your relationship.');return;}
+  if(quals.length===0){alert('Please select at least one quality.');return;}
+
+  const btn=document.getElementById('generateBtn');
+  btn.disabled=true;btn.textContent='Writing...';
+  const pw=document.getElementById('progressWrap');
+  const pf=document.getElementById('progressFill');
+  pw.style.display='block';pf.style.width='0%';
+  setTimeout(()=>pf.style.width='40%',100);
+  setTimeout(()=>pf.style.width='70%',600);
+
+  setTimeout(()=>{
+    const eulogy=buildEulogy(name,rel,quals,memory,tone,len);
+    pf.style.width='100%';
+    setTimeout(()=>{
+      document.getElementById('eulogyOutput').textContent=eulogy;
+      document.getElementById('outputArea').style.display='block';
+      const wc=eulogy.split(/\s+/).length;
+      const mins=Math.round(wc/130);
+      document.getElementById('wordCount').textContent=wc+' words · approximately '+mins+' minute'+(mins!==1?'s':'')+' to read';
+      document.getElementById('outputArea').scrollIntoView({behavior:'smooth',block:'start'});
+      pw.style.display='none';btn.disabled=false;btn.textContent='Write Eulogy';
+    },400);
+  },1200);
+}
+function buildEulogy(name,rel,quals,memory,tone,len){
+  const cfg=LENGTH_CONFIG[len];
+  const relLabel=REL_LABELS[rel]||rel;
+  const bonds=REL_BOND[rel]||REL_BOND.friend;
+  const r=(s)=>s.replace(/\{name\}/g,name).replace(/\{rel\}/g,rel).replace(/\{rel_label\}/g,relLabel);
+  const sections=[];
+
+  /* Opening */
+  sections.push(r(pick(OPENINGS[tone])));
+
+  /* Relationship bond */
+  const bond=pick(bonds);
+  sections.push(r('{name} was '+relLabel+' — someone who '+bond+'.'));
+
+  /* Qualities */
+  const useQuals=pickN(quals,Math.min(quals.length,cfg.qualityCount));
+  const qualParagraphs=useQuals.map(q=>{
+    const line=pick(QUALITY_LINES[q]||QUALITY_LINES.kind);
+    return r('{name} '+line+'.');
+  });
+
+  if(qualParagraphs.length>1){
+    sections.push(qualParagraphs[0]);
+    sections.push(r(pick(TRANSITIONS)));
+    sections.push(qualParagraphs.slice(1).join(' '));
+  } else {
+    sections.push(qualParagraphs[0]);
+  }
+
+  /* Memory section */
+  if(memory && cfg.hasMemory){
+    sections.push(r(pick(MEMORY_INTROS)));
+    sections.push(memory);
+    const memoryReflections=[
+      'That was {name}. Not grand. Not performative. Just real, and honest, and full of heart.',
+      'When I think back on moments like that, I realize how much of who I am was shaped by {name}.',
+      'It is moments like these — small, seemingly ordinary — that reveal the extraordinary person {name} truly was.',
+      'That story makes me smile even now. And I think {name} would want us to hold onto that feeling.',
+    ];
+    sections.push(r(pick(memoryReflections)));
+  }
+
+  /* Extended-length additional content */
+  if(len==='extended'){
+    const extendedBridges=[
+      'There is so much more I could say — so many stories, so many people in this room with their own {name} moments. And that is the mark of a life well lived.',
+      'I have been thinking about what {name} would want us to take from today. Not sadness — though that is natural. But gratitude. Gratitude for the time we had.',
+      '{name} believed in showing up for people. Not with words, but with action. And every person here is proof of how well they lived that belief.',
+      'If there is one lesson {name} leaves behind, it is this: time is not measured in hours. It is measured in presence, in intention, in the way you make people feel when you are with them.',
+    ];
+    sections.push(r(pick(extendedBridges)));
+    const unusedQuals=quals.filter(q=>!useQuals.includes(q));
+    if(unusedQuals.length>0){
+      const extraQ=pickN(unusedQuals,Math.min(unusedQuals.length,2));
+      const extraLines=extraQ.map(q=>r('{name} '+pick(QUALITY_LINES[q]||QUALITY_LINES.kind)+'.')).join(' ');
+      sections.push(extraLines);
+    }
+  }
+
+  /* Closing */
+  sections.push(r(pick(CLOSINGS[tone])));
+
+  return sections.join('\n\n');
+}
+/* ── Copy & Download ── */
+function copyEulogy(){
+  const text=document.getElementById('eulogyOutput').textContent;
+  navigator.clipboard.writeText(text).then(()=>{
+    const btn=event.target;
+    btn.textContent='Copied';
+    setTimeout(()=>btn.textContent='Copy to Clipboard',2000);
+  });
+}
+
+function downloadEulogy(){
+  const text=document.getElementById('eulogyOutput').textContent;
+  const name=document.getElementById('personName').value.trim()||'eulogy';
+  const blob=new Blob([text],{type:'text/plain'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='eulogy-for-'+name.toLowerCase().replace(/\s+/g,'-')+'.txt';
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+/* ── Waitlist ── */
+function joinWaitlist(){
+  const email=document.getElementById('wlEmail').value.trim();
+  if(!email||!email.includes('@')){alert('Please enter a valid email.');return;}
+  fetch('/api/waitlist',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({email,product:'ai-eulogy-writer',ts:Date.now()})
+  }).catch(()=>{});
+  document.getElementById('wlEmail').value='';
+  document.getElementById('wlForm').style.display='none';
+  document.getElementById('wlSuccess').style.display='block';
+}
+</script>
+
+<script src="/assets/js/dfy-banner.js" async></script>
+<script src="/tools/_abuz8-md.js"></script>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+<script src="/tools/_tools-shared.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>

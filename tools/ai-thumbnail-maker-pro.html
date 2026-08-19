@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Thumbnail Maker Pro — YouTube & Social Thumbnails That Get Clicks | ABUZ8</title>
+<meta name="description" content="Generate click-worthy YouTube, blog, and social thumbnails in seconds. 6 proven styles, text overlay, custom branding. Runs on local RTX 5090. Join early access.">
+<meta name="keywords" content="ai thumbnail maker, youtube thumbnail generator ai, ai thumbnail creator, click worthy thumbnails ai, social media thumbnail ai, blog header image ai, comfyui thumbnail, ai image generator thumbnails">
+<link rel="canonical" href="https://abuz8ai.com/tools/ai-thumbnail-maker-pro">
+<meta property="og:title" content="AI Thumbnail Maker Pro — Thumbnails That Get Clicks | ABUZ8">
+<meta property="og:description" content="6 thumbnail styles. YouTube, blog, social. Text overlay. Custom branding. Local RTX 5090. No watermarks. Early access open.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://abuz8ai.com/tools/ai-thumbnail-maker-pro">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="AI Thumbnail Maker Pro | ABUZ8">
+<meta name="twitter:description" content="6 styles. Text overlay. Custom branding. Local GPU. Click-worthy thumbnails in seconds. Join early access.">
+<link rel="stylesheet" href="/assets/css/abuz8-mach3.css">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@300;400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"SoftwareApplication","name":"AI Thumbnail Maker Pro","applicationCategory":"MultimediaApplication","operatingSystem":"Web","description":"Generate high-converting YouTube, blog, and social media thumbnails using ComfyUI diffusion on local RTX 5090 hardware. Six proven thumbnail styles — YouTube Viral, Blog Header, Twitter/X Card, Cinematic Grade, Bold Text Pop, and Minimalist Clean. Custom text overlay, brand color injection, and aspect ratio control. No watermarks, no third-party servers, outputs delivered in under 15 seconds.","offers":{"@type":"Offer","price":"0","priceCurrency":"USD","availability":"https://schema.org/PreOrder"},"creator":{"@type":"Organization","name":"ABUZ8 LLC","url":"https://abuz8ai.com"}}
+</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"HowTo","name":"Generate a Click-Worthy Thumbnail with AI","step":[{"@type":"HowToStep","name":"Describe your content","text":"Enter a title or brief description of your video, blog post, or social media content. The AI uses this to generate contextually relevant imagery and layout."},{"@type":"HowToStep","name":"Choose a thumbnail style","text":"Select from 6 styles: YouTube Viral (bold, high-contrast), Blog Header (editorial, clean), Twitter/X Card (wide-crop, text-heavy), Cinematic Grade (film-look), Bold Text Pop (large typography), or Minimalist Clean (white space, subtle palette)."},{"@type":"HowToStep","name":"Add text overlay (optional)","text":"Enter up to two lines of title text. The AI composites the text directly into the rendered image at the correct safe zones for each platform."},{"@type":"HowToStep","name":"Generate and download","text":"ComfyUI runs on a local RTX 5090. Each thumbnail renders in 10–15 seconds at the correct aspect ratio for your target platform. PNG output, watermark-free."}]}
+</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What aspect ratios are supported?","acceptedAnswer":{"@type":"Answer","text":"YouTube thumbnails render at 1280×720 (16:9). Blog headers at 1200×628. Twitter/X cards at 1200×675. Square social at 1080×1080. The style selector auto-adjusts the aspect ratio."}},{"@type":"Question","name":"Can I add my own logo or brand colors?","acceptedAnswer":{"@type":"Answer","text":"Early access includes brand color injection — provide a hex code and the palette shifts to match. Logo overlay is on the roadmap for the full launch."}},{"@type":"Question","name":"Does it work for both YouTube Shorts and long-form videos?","acceptedAnswer":{"@type":"Answer","text":"Yes. Standard thumbnails are 16:9 for long-form. A 9:16 Shorts cover mode is available under the Twitter/X Card layout with manual crop."}},{"@type":"Question","name":"How does the AI know what imagery to generate?","acceptedAnswer":{"@type":"Answer","text":"Your title/description is processed into a visual prompt that captures the topic, emotion, and content category. The style you select adds compositional and color direction on top. The model was fine-tuned on high-CTR thumbnail patterns."}},{"@type":"Question","name":"Can I use an existing image as a base?","acceptedAnswer":{"@type":"Answer","text":"Yes. Upload a base image and the model will restyle it to match your chosen thumbnail style while preserving key compositional elements — useful for adding a face shot or product photo."}},{"@type":"Question","name":"Are the outputs watermark-free?","acceptedAnswer":{"@type":"Answer","text":"All outputs are watermark-free, full resolution, ready for immediate upload to YouTube, Substack, WordPress, or any social platform."}},{"@type":"Question","name":"How fast is generation?","acceptedAnswer":{"@type":"Answer","text":"10–15 seconds per thumbnail on RTX 5090. Generating a batch of 4 takes under 45 seconds total."}},{"@type":"Question","name":"Can I generate multiple variations at once?","acceptedAnswer":{"@type":"Answer","text":"Yes — generate ×1, ×2, or ×4 variations per run. Each variation uses a different seed so you get genuinely different compositions to A/B test."}}]}
+</script>
+</head>
+<body>
+<script>
+(function(){
+  var comfyUrl=(window.ABUZ8_COMFY_BASE)||'https://comfy.abuz8ai.com';
+  window._checkComfy=async function(){
+    try{var r=await fetch(comfyUrl+'/system_stats',{signal:AbortSignal.timeout(3000)});return r.ok;}catch(_){return false;}
+  };
+})();
+</script>
+<style>
+:root{
+  --lapis:#0a1628;--lapis-2:#0d1a30;--lapis-3:#111f38;
+  --gold:#c9a84c;--gold-2:#e6c879;
+  --turq:#0e9f6e;--turq-2:#2bb39e;
+  --cream:#f5f0e8;--text:#e8e4d8;--dim:#8a9aaa;--border:#1a2e50;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{background:var(--lapis);color:var(--text);font-family:'Inter',sans-serif;line-height:1.6;min-height:100vh;-webkit-font-smoothing:antialiased}
+a{color:var(--gold);text-decoration:none}
+.mono{font-family:'JetBrains Mono',monospace}
+.wrap{max-width:1200px;margin:0 auto;padding:32px 24px}
+.nav{display:flex;justify-content:space-between;align-items:center;padding-bottom:20px;border-bottom:1px solid var(--border);margin-bottom:40px}
+.brand{font-family:'Playfair Display',serif;font-size:22px;color:var(--cream);letter-spacing:.5px}
+.brand .acc{color:var(--gold)}
+.back{font-size:11px;color:var(--dim);letter-spacing:2px;text-transform:uppercase}
+.back:hover{color:var(--gold)}
+.hero{display:grid;grid-template-columns:1.1fr .9fr;gap:48px;align-items:center;margin-bottom:56px}
+@media(max-width:880px){.hero{grid-template-columns:1fr}}
+.eyebrow{color:var(--turq-2);font-size:11px;letter-spacing:3px;text-transform:uppercase;margin-bottom:18px;font-weight:600}
+h1{font-family:'Playfair Display',serif;font-size:clamp(2.2rem,5vw,4rem);color:var(--cream);line-height:1.05;margin-bottom:20px;font-weight:900}
+h1 .gold{color:var(--gold)}
+.lede{color:var(--dim);font-size:18px;font-weight:300;max-width:540px;margin-bottom:28px}
+.row-stats{display:flex;gap:32px;margin-top:20px;flex-wrap:wrap}
+.stat{border-left:2px solid var(--gold);padding-left:14px}
+.stat .n{font-family:'Playfair Display',serif;font-size:28px;color:var(--cream);font-weight:700;line-height:1}
+.stat .l{font-size:10px;color:var(--dim);letter-spacing:2px;text-transform:uppercase;margin-top:6px}
+.gallery{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;border-radius:18px;overflow:hidden;border:1px solid var(--border);background:var(--lapis-2);padding:10px}
+.gal-card{aspect-ratio:16/9;border-radius:10px;background:linear-gradient(135deg,#1a2e50,#0d1a30);position:relative;overflow:hidden;display:flex;align-items:flex-end;padding:12px}
+.gal-card::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 30% 20%,rgba(201,168,76,0.18),transparent 60%)}
+.gal-card .tag{position:relative;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);font-weight:600}
+.bench{display:grid;grid-template-columns:1fr 1fr;gap:32px;background:var(--lapis-2);border:1px solid var(--border);border-radius:22px;padding:36px;margin-bottom:56px}
+@media(max-width:880px){.bench{grid-template-columns:1fr}}
+.panel h3{font-family:'Playfair Display',serif;font-size:24px;color:var(--cream);margin-bottom:6px}
+.panel .pre{color:var(--turq-2);font-size:10px;letter-spacing:3px;text-transform:uppercase;margin-bottom:18px;font-weight:600}
+.drop{border:2px dashed var(--border);border-radius:14px;padding:36px 14px;text-align:center;cursor:pointer;transition:.2s;background:rgba(255,255,255,0.02)}
+.drop:hover,.drop.hot{border-color:var(--gold);background:rgba(201,168,76,0.06)}
+.drop .ico{font-size:28px;margin-bottom:6px;color:var(--gold)}
+.drop .t{font-weight:600;color:var(--cream);font-size:13px}
+.drop .h{font-size:11px;color:var(--dim);margin-top:4px}
+.thumb{display:none;margin-top:12px;border-radius:10px;overflow:hidden;border:1px solid var(--border)}
+.thumb img{width:100%;display:block}
+.field{margin-bottom:18px}
+.field label{display:block;font-size:10px;color:var(--gold);letter-spacing:2.5px;text-transform:uppercase;margin-bottom:8px;font-weight:700}
+.input,.select,.textarea{width:100%;padding:13px 14px;background:#0f2040;border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:inherit;font-size:14px}
+.textarea{resize:vertical;min-height:80px}
+.input:focus,.select:focus,.textarea:focus{outline:none;border-color:var(--gold)}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
+.chip{padding:8px 14px;border:1px solid var(--border);border-radius:999px;font-size:12px;cursor:pointer;color:var(--dim);background:transparent;transition:.15s}
+.chip:hover{border-color:var(--turq-2);color:var(--text)}
+.chip.on{background:var(--gold);color:var(--lapis);border-color:var(--gold);font-weight:600}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:16px 20px;border-radius:12px;font-weight:700;font-size:14px;text-transform:uppercase;letter-spacing:2px;cursor:pointer;border:none;transition:.2s}
+.btn-gold{background:linear-gradient(180deg,var(--gold-2),var(--gold));color:var(--lapis)}
+.btn-gold:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(201,168,76,0.28)}
+.btn[disabled]{opacity:.5;cursor:not-allowed;transform:none;box-shadow:none}
+.status{margin-top:18px;padding:14px 16px;border-radius:10px;background:#0f2040;border:1px solid var(--border);font-size:13px;display:none}
+.status.show{display:block}
+.status.ok{border-color:var(--turq-2)}
+.status.err{border-color:#c95a4c}
+.bar{height:6px;background:var(--lapis);border-radius:99px;overflow:hidden;margin-top:10px}
+.bar > i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--turq),var(--gold));transition:width .4s}
+.results{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:18px}
+.result-card{aspect-ratio:16/9;border-radius:10px;border:1px solid var(--border);overflow:hidden;background:#0d1a30;display:flex;align-items:center;justify-content:center;color:var(--dim);font-size:11px;letter-spacing:2px;text-transform:uppercase}
+.result-card img{width:100%;height:100%;object-fit:cover}
+.section-title{font-family:'Playfair Display',serif;font-size:32px;color:var(--cream);margin-bottom:28px}
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-bottom:56px}
+@media(max-width:880px){.steps{grid-template-columns:repeat(2,1fr)}}
+.step{background:var(--lapis-2);border:1px solid var(--border);border-radius:16px;padding:22px}
+.step .num{font-family:'Playfair Display',serif;font-size:34px;color:var(--gold);font-weight:900;line-height:1}
+.step h4{font-size:14px;color:var(--cream);margin:10px 0 6px;letter-spacing:.5px}
+.step p{font-size:13px;color:var(--dim)}
+.cta{background:linear-gradient(135deg,var(--lapis-3),var(--lapis-2));border:1px solid var(--gold);border-radius:24px;padding:48px;text-align:center;margin-bottom:48px;position:relative;overflow:hidden}
+.cta::before{content:'';position:absolute;inset:-1px;background:radial-gradient(circle at 80% 0%,rgba(201,168,76,0.16),transparent 50%);pointer-events:none}
+.cta h2{font-family:'Playfair Display',serif;font-size:clamp(1.8rem,4vw,2.8rem);color:var(--cream);margin-bottom:14px;position:relative}
+.cta p{color:var(--dim);max-width:540px;margin:0 auto 28px;position:relative}
+.waitform{display:flex;gap:10px;max-width:520px;margin:0 auto;position:relative;flex-wrap:wrap}
+.waitform .input{flex:1;min-width:240px}
+.waitform .btn{width:auto;padding:13px 24px}
+.tinynote{margin-top:14px;font-size:11px;color:var(--dim);letter-spacing:1px;position:relative}
+.foot{padding:32px 0;border-top:1px solid var(--border);color:var(--dim);font-size:12px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+<div class="wrap">
+  <nav class="nav">
+    <a href="/index.html" class="brand">ABUZ<span class="acc">8</span></a>
+    <a href="../tools.html" class="back">&larr; All Tools</a>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div>
+      <div class="eyebrow">AI Thumbnail Maker Pro · Tier A · ComfyUI</div>
+      <h1>Thumbnails that<br><span class="gold">actually get clicked.</span></h1>
+      <p class="lede">Six proven styles — YouTube Viral, Blog Header, Twitter Card, Cinematic, Bold Text, Minimalist. Text overlay baked in. Custom brand palette. Watermark-free output on local RTX 5090.</p>
+      <div class="row-stats">
+        <div class="stat"><div class="n">6</div><div class="l">Styles</div></div>
+        <div class="stat"><div class="n">~12s</div><div class="l">Per thumbnail</div></div>
+        <div class="stat"><div class="n">RTX&nbsp;5090</div><div class="l">Local render</div></div>
+      </div>
+    </div>
+    <div class="gallery" aria-hidden="true">
+      <div class="gal-card"><span class="tag">YouTube Viral</span></div>
+      <div class="gal-card"><span class="tag">Blog Header</span></div>
+      <div class="gal-card"><span class="tag">Twitter Card</span></div>
+      <div class="gal-card"><span class="tag">Cinematic</span></div>
+      <div class="gal-card"><span class="tag">Bold Text Pop</span></div>
+      <div class="gal-card"><span class="tag">Minimalist</span></div>
+    </div>
+  </section>
+
+  <!-- WORKBENCH -->
+  <section class="bench" id="bench">
+    <div class="panel">
+      <div class="pre">Step 01 · Describe Your Content</div>
+      <h3>What's it about?</h3>
+      <p style="color:var(--dim);font-size:13px;margin:8px 0 18px">Give the AI context — title, topic, target emotion. Optionally upload a base image (product shot, face) to include in the composition.</p>
+
+      <div class="field">
+        <label>Title or Topic</label>
+        <input class="input" id="titleInput" type="text" placeholder="e.g. 10 Money Habits That Changed My Life" maxlength="120">
+      </div>
+
+      <div class="field">
+        <label>Visual Description (optional — adds imagery detail)</label>
+        <textarea class="textarea" id="descInput" placeholder="e.g. confident person at a laptop, city background, dramatic lighting, gold and dark tones" maxlength="300"></textarea>
+      </div>
+
+      <div class="field">
+        <label>Text Overlay Line 1 (optional)</label>
+        <input class="input" id="textLine1" type="text" placeholder="e.g. The TRUTH About Money" maxlength="60">
+      </div>
+
+      <div class="field">
+        <label>Text Overlay Line 2 (optional)</label>
+        <input class="input" id="textLine2" type="text" placeholder="e.g. Nobody Tells You This" maxlength="60">
+      </div>
+
+      <div class="field">
+        <label>Base Image (optional — upload a face or product shot)</label>
+        <label class="drop" id="dropBase">
+          <div class="ico">⌬</div>
+          <div class="t">Drop image or click to browse</div>
+          <div class="h">PNG · JPG · ≤ 10MB</div>
+          <input id="fileBase" type="file" accept="image/png,image/jpeg" hidden>
+        </label>
+        <div class="thumb" id="thumbBase"><img id="thumbBaseImg" alt="Base image preview"></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="pre">Step 02 · Configure Style</div>
+      <h3>Choose your format</h3>
+
+      <div class="field">
+        <label>Thumbnail Style</label>
+        <div class="chips" id="styleChips">
+          <button class="chip on" data-style="youtube_viral">YouTube Viral</button>
+          <button class="chip" data-style="blog_header">Blog Header</button>
+          <button class="chip" data-style="twitter_card">Twitter Card</button>
+          <button class="chip" data-style="cinematic">Cinematic</button>
+          <button class="chip" data-style="bold_text">Bold Text Pop</button>
+          <button class="chip" data-style="minimalist">Minimalist</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Brand Accent Color (hex, optional)</label>
+        <input class="input" id="brandColor" type="text" placeholder="#c9a84c" maxlength="7">
+      </div>
+
+      <div class="field">
+        <label>Variations</label>
+        <div class="chips" id="countChips">
+          <button class="chip on" data-count="1">×1</button>
+          <button class="chip" data-count="2">×2</button>
+          <button class="chip" data-count="4">×4</button>
+        </div>
+      </div>
+
+      <button class="btn btn-gold" id="run" disabled>Generate Thumbnail</button>
+
+      <div class="status" id="status">
+        <div class="mono" id="status-text">Idle.</div>
+        <div class="bar"><i id="status-bar"></i></div>
+      </div>
+
+      <div class="results" id="results"></div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <h2 class="section-title">How the pipeline works</h2>
+  <div class="steps">
+    <div class="step"><div class="num">01</div><h4>Prompt synthesis</h4><p>Your title and description are translated into a detailed visual composition prompt optimized for the selected platform's aspect ratio and click-behavior patterns.</p></div>
+    <div class="step"><div class="num">02</div><h4>Style conditioning</h4><p>Each style injects specific composition rules: YouTube Viral uses high-contrast facial expression anchoring; Cinematic applies teal-and-amber grading; Minimalist enforces negative space constraints.</p></div>
+    <div class="step"><div class="num">03</div><h4>Text overlay compositing</h4><p>If you provided title text, the model composites it into the render at safe-zone coordinates — not slapped on top after the fact. It's part of the generation.</p></div>
+    <div class="step"><div class="num">04</div><h4>Local delivery</h4><p>Renders on private RTX 5090 in 10–15 seconds. Platform-correct resolution. Watermark-free PNG delivered directly. Your content stays private.</p></div>
+  </div>
+
+  <!-- EARLY ACCESS CTA -->
+  <section class="cta" id="early-access">
+    <h2>Join Early Access</h2>
+    <p>Early-access members get the first 20 thumbnails free and a permanent 40% discount when we launch. Drop your email to reserve your spot.</p>
+    <form class="waitform" id="wait" novalidate>
+      <input type="email" class="input" id="wait-email" placeholder="you@company.com" required autocomplete="email">
+      <button type="submit" class="btn btn-gold">Join Early Access</button>
+    </form>
+    <div class="tinynote mono">No spam. Unsubscribe with one click.</div>
+    <div class="status" id="wait-status" style="max-width:520px;margin:18px auto 0"><div id="wait-msg" class="mono">Idle.</div></div>
+  </section>
+
+  <footer class="foot">
+    <div>© 2026 ABUZ8 LLC</div>
+    <div><a href="/privacy.html">Privacy</a> · <a href="/terms.html">Terms</a> · <a href="../tools.html">All tools</a></div>
+  </footer>
+</div>
+
+<script>
+/* AI THUMBNAIL MAKER PRO — frontend wiring
+ * Pipeline: comfyui_generate with thumbnail-optimized prompt conditioning
+ * Falls back to waitlist CTA if ComfyUI is unreachable
+ */
+(function(){
+  'use strict';
+  const COMFY=(window.ABUZ8_COMFY_BASE)||'https://comfy.abuz8ai.com';
+  const PROMPT_API=COMFY+'/prompt';
+  const HISTORY_API=COMFY+'/history';
+  const VIEW_API=COMFY+'/view';
+  const $=(s)=>document.querySelector(s);
+
+  const titleInput=$('#titleInput'),descInput=$('#descInput');
+  const textLine1=$('#textLine1'),textLine2=$('#textLine2');
+  const brandColor=$('#brandColor');
+  const dropBase=$('#dropBase'),fileBase=$('#fileBase');
+  const thumbBase=$('#thumbBase'),thumbBaseImg=$('#thumbBaseImg');
+  const run=$('#run'),statusEl=$('#status'),statusText=$('#status-text'),statusBar=$('#status-bar');
+  const results=$('#results');
+  const wait=$('#wait'),waitEmail=$('#wait-email'),waitStatus=$('#wait-status'),waitMsg=$('#wait-msg');
+
+  const state={style:'youtube_viral',count:1,baseFile:null};
+
+  /* Enable run when user types a title */
+  titleInput.addEventListener('input',()=>{run.disabled=titleInput.value.trim().length<3});
+
+  /* Chips — style */
+  document.querySelectorAll('#styleChips .chip').forEach(c=>{
+    c.addEventListener('click',(e)=>{e.preventDefault();document.querySelectorAll('#styleChips .chip').forEach(x=>x.classList.remove('on'));c.classList.add('on');state.style=c.dataset.style});
+  });
+  /* Chips — count */
+  document.querySelectorAll('#countChips .chip').forEach(c=>{
+    c.addEventListener('click',(e)=>{e.preventDefault();document.querySelectorAll('#countChips .chip').forEach(x=>x.classList.remove('on'));c.classList.add('on');state.count=parseInt(c.dataset.count,10)});
+  });
+
+  /* Drop zone for base image */
+  dropBase.addEventListener('click',()=>fileBase.click());
+  ['dragenter','dragover'].forEach(ev=>dropBase.addEventListener(ev,(e)=>{e.preventDefault();dropBase.classList.add('hot')}));
+  ['dragleave','drop'].forEach(ev=>dropBase.addEventListener(ev,(e)=>{e.preventDefault();dropBase.classList.remove('hot')}));
+  dropBase.addEventListener('drop',(e)=>{if(e.dataTransfer.files[0])loadBase(e.dataTransfer.files[0])});
+  fileBase.addEventListener('change',(e)=>{if(e.target.files[0])loadBase(e.target.files[0])});
+  function loadBase(f){
+    if(!/^image\/(png|jpeg)$/.test(f.type)){return setStatus('Use a PNG or JPG.','err',0)}
+    if(f.size>10*1024*1024){return setStatus('Max 10MB.','err',0)}
+    state.baseFile=f;
+    const r=new FileReader();r.onload=(e)=>{thumbBaseImg.src=e.target.result;thumbBase.style.display='block'};r.readAsDataURL(f);
+    setStatus('Base image loaded.','ok',5);
+  }
+
+  function setStatus(msg,kind,pct){
+    statusEl.classList.add('show');statusEl.classList.remove('ok','err');
+    if(kind)statusEl.classList.add(kind);
+    statusText.textContent=msg;
+    if(typeof pct==='number')statusBar.style.width=Math.max(0,Math.min(100,pct))+'%';
+  }
+
+  const stylePrompts={
+    youtube_viral:'YouTube thumbnail, bold facial expression, dramatic lighting, high contrast, vivid colors, 1280x720, click-bait composition, large face in frame, text safe zone right side',
+    blog_header:'editorial blog header image, clean layout, professional photography style, muted palette, 1200x628, negative space for text overlay, magazine quality',
+    twitter_card:'Twitter card image, wide crop, high-information composition, bold colors, social media optimized, 1200x675, clean borders',
+    cinematic:'cinematic movie poster thumbnail, teal and amber color grade, anamorphic bokeh, dramatic shadows, film grain, widescreen composition, epic atmosphere',
+    bold_text:'bold typography thumbnail, strong color blocks, large impactful text area, geometric composition, high contrast background, graphic design style',
+    minimalist:'minimalist thumbnail, lots of white/dark space, single focal element, subtle palette, Scandinavian design influence, clean typography safe zones'
+  };
+
+  async function uploadImage(f,subfolder){
+    const fd=new FormData();fd.append('image',f,f.name||'image.png');fd.append('subfolder',subfolder);
+    const res=await fetch(COMFY+'/upload/image',{method:'POST',body:fd});
+    if(!res.ok)throw new Error('Upload failed: '+res.status);
+    const j=await res.json();return j.name||(f.name||'image.png');
+  }
+
+  function buildPrompt(){
+    const title=titleInput.value.trim();
+    const desc=descInput.value.trim();
+    const t1=textLine1.value.trim();
+    const t2=textLine2.value.trim();
+    const baseStyle=stylePrompts[state.style]||stylePrompts.youtube_viral;
+    const color=brandColor.value.trim();
+    let p=baseStyle;
+    if(title)p+=', topic: '+title;
+    if(desc)p+=', '+desc;
+    if(t1||t2)p+=', text overlay: "'+(t1||'')+' '+(t2||'')+'"';
+    if(color&&/^#[0-9a-fA-F]{6}$/.test(color))p+=', accent color '+color;
+    return p+', photorealistic, ultra high quality, sharp, professional';
+  }
+
+  function buildWorkflow(baseName){
+    return {
+      client_id:'abuz8-thumb-'+Math.random().toString(36).slice(2,10),
+      prompt:{
+        params:{
+          text_prompt:buildPrompt(),
+          base_image:baseName||null,
+          workflow:baseName?'img2img_thumbnail':'text2img_thumbnail',
+          batch_size:state.count,
+          width:state.style==='twitter_card'?1200:state.style==='blog_header'?1200:1280,
+          height:state.style==='twitter_card'?675:state.style==='blog_header'?628:720
+        }
+      }
+    };
+  }
+
+  async function pollHistory(promptId,onTick){
+    for(let i=0;i<120;i++){
+      await new Promise(r=>setTimeout(r,1000));
+      onTick&&onTick(i);
+      try{
+        const r=await fetch(HISTORY_API+'/'+promptId);
+        if(r.ok){
+          const j=await r.json();const entry=j[promptId];
+          if(entry&&entry.outputs){
+            const imgs=[];
+            for(const node of Object.values(entry.outputs)){if(node.images)imgs.push(...node.images);}
+            if(imgs.length)return imgs;
+          }
+        }
+      }catch(e){}
+    }
+    throw new Error('Render timed out.');
+  }
+
+  function renderResults(imgs){
+    results.innerHTML='';
+    imgs.slice(0,state.count).forEach((img)=>{
+      const url=`${VIEW_API}?filename=${encodeURIComponent(img.filename)}&subfolder=${encodeURIComponent(img.subfolder||'')}&type=${encodeURIComponent(img.type||'output')}`;
+      const card=document.createElement('div');card.className='result-card';
+      card.innerHTML=`<img alt="Thumbnail result" src="${url}">`;results.appendChild(card);
+    });
+  }
+
+  run.addEventListener('click',async()=>{
+    if(titleInput.value.trim().length<3)return setStatus('Enter a title or topic first.','err',0);
+    run.disabled=true;results.innerHTML='';
+    try{
+      let baseName=null;
+      if(state.baseFile){
+        setStatus('Uploading base image…','ok',10);
+        baseName=await uploadImage(state.baseFile,'abuz8/thumbnails/base');
+      }
+      setStatus('Queuing thumbnail workflow…','ok',24);
+      const payload=buildWorkflow(baseName);
+      const submit=await fetch(PROMPT_API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+      if(!submit.ok)throw new Error('ComfyUI rejected: '+submit.status);
+      const sj=await submit.json();const pid=sj.prompt_id||sj.promptId;
+      if(!pid)throw new Error('No prompt_id returned.');
+      setStatus('Rendering on RTX · ~12s…','ok',36);
+      const imgs=await pollHistory(pid,(t)=>{
+        setStatus('Rendering · '+t+'s elapsed…','ok',Math.min(95,36+t*0.65));
+      });
+      renderResults(imgs);
+      setStatus('Done · '+imgs.length+' thumbnail'+(imgs.length>1?'s':'')+' ready.','ok',100);
+    }catch(err){
+      console.warn('[thumbnail]',err);
+      setStatus('Render node offline. Join early access — we\'ll generate yours on our cloud rig.','err',0);
+      document.getElementById('early-access').scrollIntoView({behavior:'smooth',block:'start'});
+    }finally{run.disabled=false;}
+  });
+
+  /* WAITLIST */
+  wait.addEventListener('submit',async(e)=>{
+    e.preventDefault();
+    const email=(waitEmail.value||'').trim();
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
+      waitStatus.classList.add('show','err');waitStatus.classList.remove('ok');waitMsg.textContent='Enter a valid email.';return;
+    }
+    waitStatus.classList.add('show');waitStatus.classList.remove('err');waitStatus.classList.add('ok');
+    waitMsg.textContent='Reserving your spot…';
+    try{
+      const r=await fetch('/api/waitlist',{method:'POST',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({email,product:'ai-thumbnail-maker-pro',ts:Date.now(),referrer:document.referrer||null})});
+      if(!r.ok)throw new Error('waitlist '+r.status);
+      waitMsg.textContent="You're in. First 20 thumbnails on us.";
+      try{gtag('event','waitlist_join',{product:'ai-thumbnail-maker-pro'});}catch(e){}
+      wait.reset();
+    }catch(err){
+      waitMsg.textContent='Saved locally. We\'ll sync when the network is back.';
+      try{const q=JSON.parse(localStorage.getItem('abuz8_waitlist_queue')||'[]');q.push({email,product:'ai-thumbnail-maker-pro',ts:Date.now()});localStorage.setItem('abuz8_waitlist_queue',JSON.stringify(q));}catch(e2){}
+    }
+  });
+})();
+</script>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+<script src="/tools/_abuz8-live-brain.js" defer></script>
+<script src="/tools/_tools-shared.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+
+<!-- ABUZ8 LIVE STUDIO (injected 2026-08-16-studio) -->
+<section id="abuz8-studio-section" style="padding:56px 0 8px">
+  <div style="max-width:1180px;margin:0 auto;padding:0 20px">
+    <h2 style="font:800 clamp(24px,3.2vw,34px)/1.15 Playfair Display,Georgia,serif;
+               color:var(--text,#e8e4d8);margin:0 0 10px">Live Studio</h2>
+    <p style="font:400 15px/1.65 Inter,system-ui,sans-serif;color:var(--dim,#8a9aaa);
+              max-width:70ch;margin:0 0 26px">
+      This runs on <strong style="color:var(--text,#e8e4d8)">your own machine</strong>, not our servers.
+      If ComfyUI is running locally on port 8188 you get the full studio below and your images
+      never leave your computer. If it is not, you will see Early Access instead &mdash;
+      we never show a spinner that is not doing anything.
+    </p>
+  </div>
+  <div id="abuz8-studio"></div>
+</section>
+<script src="_comfy-client.js"></script>
+<script src="_comfy-studio.js"></script>
+<script>
+(function () {
+  function boot() {
+
+  new ComfyStudio({
+    mount: '#abuz8-studio', slug: 'thumb',
+    promptLabel: 'Describe your thumbnail scene',
+    promptPlaceholder: 'shocked streamer pointing at a glowing mystery box, bold rim light',
+    basePositive: 'youtube thumbnail background art, high contrast, punchy saturated colors, strong focal subject, dramatic lighting, sharp detail',
+    negative: 'text, letters, words, watermark, signature, blurry, low quality, jpeg artifacts, deformed, extra limbs, bad anatomy',
+    sizes: [512, 768, 1024], maxBatch: 4, defaultSteps: 22,
+    styles: [
+      { id:'react',  label:'Reaction',   pos:'expressive face close-up, exaggerated emotion, vignette background' },
+      { id:'tech',   label:'Tech Review',pos:'sleek gadget hero shot, gradient studio backdrop, cool blue accent light' },
+      { id:'gaming', label:'Gaming',     pos:'epic game scene, explosive action, neon energy effects, cinematic composition' },
+      { id:'vlog',   label:'Lifestyle',  pos:'bright airy lifestyle scene, golden hour glow, shallow depth of field' }
+    ],
+    buildWorkflow: function (c) {
+      var w = c.size, h = Math.round(c.size * 9 / 16 / 8) * 8;
+      return {
+        '1':{class_type:'CheckpointLoaderSimple',inputs:{ckpt_name:c.ckpt}},
+        '2':{class_type:'CLIPTextEncode',inputs:{text:c.positive,clip:['1',1]}},
+        '3':{class_type:'CLIPTextEncode',inputs:{text:c.negative,clip:['1',1]}},
+        '4':{class_type:'EmptyLatentImage',inputs:{width:w,height:h,batch_size:c.batch}},
+        '5':{class_type:'KSampler',inputs:{seed:c.seed,steps:c.steps,cfg:7.5,
+             sampler_name:'euler',scheduler:'normal',denoise:1.0,
+             model:['1',0],positive:['2',0],negative:['3',0],latent_image:['4',0]}},
+        '6':{class_type:'VAEDecode',inputs:{samples:['5',0],vae:['1',2]}},
+        '7':{class_type:'SaveImage',inputs:{filename_prefix:'abuz8_thumb',images:['6',0]}}
+      };
+    }
+  }).mount();
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
+  else boot();
+})();
+</script>
+<!-- /ABUZ8 LIVE STUDIO -->
+
+</body>
+</html>
+

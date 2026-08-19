@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sovereign AI — ABUZ8 AI</title>
+<meta name="description" content="Sovereign local AI for everyone: run open models on your own GPU, keep your data on your own disk. Free guides, 180 free tools, and an honest roadmap.">
+<link rel="canonical" href="https://abuz8ai.com/sovereign">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Sovereign AI — ABUZ8 AI">
+<meta property="og:description" content="Sovereign local AI for everyone: run open models on your own GPU, keep your data on your own disk. Free guides, 180 free tools, and an honest roadmap.">
+<meta property="og:url" content="https://abuz8ai.com/sovereign">
+<meta name="theme-color" content="#0a1628">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/abuz8-theme.css">
+<style>
+/* page-specific styles ONLY — theme vars, no new hex colors */
+.mission-lead{font-family:var(--font-display);font-size:clamp(1.15rem,2.6vw,1.5rem);color:var(--white);
+  line-height:1.5;max-width:760px;margin:0 0 26px}
+.mission-lead em{color:var(--gold-light);font-style:normal}
+.commit-block{border-left:3px solid var(--border);padding:18px 22px;background:var(--lapis-3);
+  border-radius:0 var(--r-md) var(--r-md) 0;margin-bottom:16px}
+.commit-block.is-live{border-left-color:var(--green)}
+.commit-block.is-early{border-left-color:var(--gold)}
+.commit-block.is-roadmap{border-left-color:var(--blue)}
+.commit-block h3{font-size:15px;margin:10px 0 8px;font-family:var(--font-body)}
+.commit-block p,.commit-block li{color:var(--dim);font-size:13px;line-height:1.65}
+.commit-block ul{margin:8px 0 0 18px}
+.tier-hint{font-size:12px;color:var(--muted);margin-top:10px}
+.stack-links{margin-top:26px}
+.section-pad{padding:40px 32px;max-width:var(--wrap);margin:0 auto;position:relative;z-index:1}
+.tab-intro{color:var(--dim);font-size:14px;line-height:1.7;max-width:720px;margin-bottom:24px}
+.rig-row td:first-child{color:var(--gold-light);font-weight:600;white-space:nowrap}
+</style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebPage",
+      "@id": "https://abuz8ai.com/sovereign.html",
+      "url": "https://abuz8ai.com/sovereign.html",
+      "name": "Sovereign AI — ABUZ8 AI",
+      "description": "Sovereign local AI for everyone: run open models on your own GPU, keep your data on your own disk. Free guides, 180 free tools, and an honest roadmap.",
+      "isPartOf": { "@type": "WebSite", "name": "ABUZ8 AI", "url": "https://abuz8ai.com" },
+      "publisher": { "@type": "Organization", "name": "ABUZ8 LLC" }
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "What does sovereign AI mean?",
+          "acceptedAnswer": { "@type": "Answer", "text": "AI you own and control: open-weight models running on your own hardware, with your data staying on your own disk. No cloud account required, no per-token billing, and no provider able to change or remove the model you depend on." }
+        },
+        {
+          "@type": "Question",
+          "name": "Do I need an expensive GPU to start?",
+          "acceptedAnswer": { "@type": "Answer", "text": "No. A GPU with 8 GB of VRAM comfortably runs 7-8B parameter models at 4-bit quantization, and small 1-4B models run on CPU alone (slower, but usable). More VRAM lets you run larger, more capable models." }
+        },
+        {
+          "@type": "Question",
+          "name": "Is a local model as capable as the big cloud models?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Honestly, no. Today's frontier cloud models are generally more capable than what runs on a single consumer GPU. But open models have become good enough for a huge range of real work, and they improve constantly. Sovereignty is a tradeoff you choose for privacy, cost control, and independence, not a claim that local beats cloud at everything." }
+        },
+        {
+          "@type": "Question",
+          "name": "Has ABUZ8 published its own models or datasets?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Not yet. Our Hugging Face account exists but has no public models, datasets, or spaces today. Publishing sovereign models and datasets is on our roadmap, and we will not claim it is done before it is." }
+        },
+        {
+          "@type": "Question",
+          "name": "Can I download ABUZ8 OS?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Not publicly yet. ABUZ8 OS is real and in active development (v2.55.x internally), but it is in early access with no public download. Request access at https://abuz8ai.com/request.html and we will route you through the waitlist." }
+        },
+        {
+          "@type": "Question",
+          "name": "What do the free tools cost?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Nothing. The 180 free tool pages are free to use. The browser dev tools run 100% client-side in your browser. Some AI generation tools need our local GPU backend; when it is offline they honestly fall back to a waitlist form instead of pretending to work." }
+        },
+        {
+          "@type": "Question",
+          "name": "Where is ABUZ8 built and tested?",
+          "acceptedAnswer": { "@type": "Answer", "text": "On a real RTX 5090 rig by ABUZ8 LLC in Ohio, USA. Everything recommended on this page is what we run ourselves." }
+        }
+      ]
+    }
+  ]
+}
+</script>
+</head>
+<body>
+<div class="geo-bg"></div>
+<div class="glow-orb glow-orb-1"></div>
+<div class="glow-orb glow-orb-2"></div>
+<div class="glow-orb glow-orb-3"></div>
+
+<nav class="abuz8-nav">
+<div class="nav-inner">
+  <a href="/" style="text-decoration:none;">
+    <div class="logo">ABUZ8</div>
+    <div class="logo-sub">Sovereign AI</div>
+  </a>
+  <div class="nav-links">
+    <a href="/tools.html">Tools</a>
+    <a href="/store.html">Store</a>
+    
+    <a href="/agents.html">Agents</a>
+    <a href="/models.html">Models</a>
+    <a href="/news.html">News</a>
+    <a href="/roadmap.html">Roadmap</a>
+    <a href="/store.html" class="nav-cta">Get Started</a>
+  </div>
+</div>
+</nav>
+
+<div class="wrap">
+  <nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a> › Sovereign AI</nav>
+</div>
+
+<section class="hero">
+  <div class="hero-eyebrow">The Mission</div>
+  <h1>Sovereign local AI <span class="gold">for everyone</span></h1>
+  <p>AI you own: open models running on your own GPU, your data on your own disk, no cloud lock-in. This is the conviction ABUZ8 is built on — and this page is the honest, practical path to it. No fluff. No fake promises. Real tools that work.</p>
+  <div class="hero-btns">
+    <a class="btn btn-gold" href="/models.html">📚 Read the Models Guide</a>
+    <a class="btn btn-green" href="/downloads.html">⬇️ Downloads</a>
+    <a class="btn btn-outline" href="/tools.html">🧰 169 Free Tools</a>
+  </div>
+  <div class="stats-row">
+    <div class="stat"><div class="stat-num" data-count="180">180</div><div class="stat-label">Free tool pages</div></div>
+    <div class="stat"><div class="stat-num" data-count="527">527</div><div class="stat-label">Blog posts</div></div>
+    <div class="stat"><div class="stat-num" data-count="28">28</div><div class="stat-label">Store products</div></div>
+    <div class="stat"><div class="stat-num">RTX 5090</div><div class="stat-label">Real test rig</div></div>
+  </div>
+</section>
+
+<section class="section-pad">
+<div class="tabs" data-tabs>
+  <div class="tab-list" role="tablist" aria-label="Sovereign AI">
+    <button class="tab-btn" role="tab" id="tab-mission" aria-controls="panel-mission" aria-selected="true">🧭 The Mission</button>
+    <button class="tab-btn" role="tab" id="tab-stack" aria-controls="panel-stack" aria-selected="false">🧱 The Stack</button>
+    <button class="tab-btn" role="tab" id="tab-start" aria-controls="panel-start" aria-selected="false">🚀 Start Today</button>
+    <button class="tab-btn" role="tab" id="tab-commit" aria-controls="panel-commit" aria-selected="false">🤝 Our Commitments</button>
+    <button class="tab-btn" role="tab" id="tab-faq" aria-controls="panel-faq" aria-selected="false">❓ FAQ</button>
+  </div>
+
+  <!-- ============ TAB 1: THE MISSION ============ -->
+  <div class="tab-panel" role="tabpanel" id="panel-mission" aria-labelledby="tab-mission">
+    <p class="mission-lead">The most personal computer you own should also be the smartest one — and it should <em>answer to you</em>, not to a subscription server on someone else's continent.</p>
+    <p class="tab-intro">ABUZ8 exists to make AI ownership normal. Since Day 0 of this build-in-public journey (2026-03-25), everything here has been built and tested on a real RTX 5090 rig by ABUZ8 LLC in Ohio — and everything we teach, anyone can run at home. Here is why we think owning your AI matters:</p>
+    <div class="grid-2">
+      <div class="card">
+        <div class="icon-chip">🔒</div>
+        <h3>Privacy by architecture</h3>
+        <p>A local model physically cannot leak your prompts to a server, because there is no server. Your drafts, your documents, your questions — they never leave your disk. Not "we promise not to look": there is nothing to look at.</p>
+      </div>
+      <div class="card">
+        <div class="icon-chip">💰</div>
+        <h3>Cost you control</h3>
+        <p>Metered cloud AI bills you per token, forever. Local AI trades that for hardware you own plus electricity. The hardware is a real upfront cost — we won't pretend otherwise — but the math tilts toward local a little more every year as open models improve.</p>
+      </div>
+      <div class="card">
+        <div class="icon-chip">🔌</div>
+        <h3>Resilience</h3>
+        <p>A model on your disk works offline, keeps working during outages, and can never be deprecated, throttled, or shut down out from under you. Nobody can retire the version you rely on.</p>
+      </div>
+      <div class="card">
+        <div class="icon-chip">🗝️</div>
+        <h3>No lock-in</h3>
+        <p>Open-weight models in the GGUF format are portable files. Switch runtimes, switch machines, switch models — your workflow belongs to you, not to any vendor's roadmap. Including ours.</p>
+      </div>
+    </div>
+    <div class="note-gold note">
+      <strong>Honest framing.</strong> This is our conviction, stated plainly — not a claim that cloud AI is useless. Frontier cloud models are more capable today than anything a single consumer GPU can run, and there are jobs where they are the right tool. Our position is narrower and firmer: everyone should have the <em>option</em> of AI they fully own, it should be easy, and we build for that.
+    </div>
+    <p class="tab-intro" style="margin-top:20px;margin-bottom:0;">Want the longer story? Read our <a href="/journey.html">journey &amp; goals</a>, our <a href="/purpose.html">purpose</a>, and the <a href="/roadmap.html">public roadmap</a>.</p>
+  </div>
+
+  <!-- ============ TAB 2: THE STACK ============ -->
+  <div class="tab-panel" role="tabpanel" id="panel-stack" aria-labelledby="tab-stack" hidden>
+    <p class="tab-intro">"Sovereign" is not a vibe — it is a specific, buildable stack. Five layers, each one on hardware you control. The open-source runtimes below (llama.cpp, Ollama) are independent projects by their own authors; we teach them and credit them.</p>
+    <div class="grid-3">
+      <div class="card">
+        <div class="icon-chip">🧠</div>
+        <h3>Open-weight models</h3>
+        <p>Model files (GGUF format) you download once and keep forever. Quantization shrinks them to fit consumer GPUs with a modest quality trade. Portable across runtimes and machines.</p>
+        <a class="card-link" href="/models.html">Models guide →</a>
+      </div>
+      <div class="card">
+        <div class="icon-chip">⚙️</div>
+        <h3>Local runtime</h3>
+        <p>llama.cpp and Ollama — free, open-source engines that run GGUF models on your machine. One installer, one command, no account. Credited to their authors; not ours.</p>
+        <a class="card-link" href="/downloads.html">Downloads →</a>
+      </div>
+      <div class="card">
+        <div class="icon-chip">🖥️</div>
+        <h3>Your GPU</h3>
+        <p>Consumer hardware from 8 GB VRAM up runs real models today. We build and test on an RTX 5090, but the on-ramp starts far cheaper — see the hardware tiers in Start Today.</p>
+        <a class="card-link" href="#tab=panel-start">Hardware tiers →</a>
+      </div>
+      <div class="card">
+        <div class="icon-chip">💾</div>
+        <h3>Your data, your disk</h3>
+        <p>Prompts, chats, documents, and outputs stay on storage you own. There is no server-side history to breach, subpoena, or mine — because there is no server side.</p>
+        <a class="card-link" href="/privacy.html">Our privacy stance →</a>
+      </div>
+      <div class="card">
+        <div class="icon-chip">🧩</div>
+        <h3>The agentic layer <span class="badge badge-early">Early Access</span></h3>
+        <p>ABUZ8 OS — our local-first agentic OS in active development (v2.55.x internally). No public download yet; we don't fake links. Request early access and join the waitlist.</p>
+        <a class="card-link" href="/request.html">Request access →</a>
+      </div>
+      <div class="card">
+        <div class="icon-chip">📦</div>
+        <h3>Verified guide</h3>
+        <p>No paid guides are for sale today. Verified ComfyUI Workflows was pulled 2026-08-08; it was previously tested end to end on real hardware before it shipped. Everything else in the guided-builds line was pulled 2026-07-30 after an honest-delivery audit — see the audit page.</p>
+        <a class="card-link" href="/store.html">Shop the store →</a>
+      </div>
+    </div>
+    <div class="pill-row stack-links">
+      <span class="pill"><a href="/models.html">models.html</a></span>
+      <span class="pill"><a href="/downloads.html">downloads.html</a></span>
+      <span class="pill"><a href="/store.html">Store</a></span>
+      <span class="pill"><a href="/tools.html">Free tools</a></span>
+      <span class="pill"><a href="/open-source.html">Open source</a></span>
+    </div>
+  </div>
+
+  <!-- ============ TAB 3: START TODAY ============ -->
+  <div class="tab-panel" role="tabpanel" id="panel-start" aria-labelledby="tab-start" hidden>
+    <p class="tab-intro">Your first local model in about ten minutes. First find your hardware tier, then follow the steps. These are honest rules of thumb for 4-bit (Q4) GGUF quantization at modest context length — exact fit varies with context and quant, so when in doubt start one tier smaller.</p>
+
+    <h3 style="margin-bottom:12px;">Hardware tiers</h3>
+    <div class="table-scroll">
+      <table class="data-table">
+        <thead>
+          <tr><th>Tier</th><th>Example hardware</th><th>VRAM</th><th>What runs well (Q4 rule of thumb)</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>CPU-only</td><td>Any modern PC, no dedicated GPU</td><td>system RAM</td><td>1–4B small models — slower, fine for light tasks and learning</td></tr>
+          <tr><td>Entry</td><td>RTX 3050 / 4060 class</td><td>8 GB</td><td>7–8B models — the sweet spot to start</td></tr>
+          <tr><td>Mid</td><td>RTX 3060 12GB / 4070 class</td><td>12 GB</td><td>13–14B models, or 7–8B at higher-quality quants</td></tr>
+          <tr><td>Enthusiast</td><td>RTX 4080 / 5070 Ti class</td><td>16 GB</td><td>Up to ~20B-class models with room for longer context</td></tr>
+          <tr><td>High end</td><td>RTX 3090 / 4090</td><td>24 GB</td><td>30B-class models; 70B-class with partial CPU offload</td></tr>
+          <tr class="rig-row"><td>Flagship</td><td>RTX 5090 — our real test rig</td><td>32 GB</td><td>30B-class at high quality; 70B-class at aggressive quants</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="tier-hint">Check your VRAM on Windows: Task Manager → Performance → GPU → "Dedicated GPU memory".</p>
+
+    <hr class="divider">
+
+    <h3 style="margin-bottom:6px;">First local model in ~10 minutes</h3>
+    <ol class="steps">
+      <li>
+        <strong>Install a runtime</strong>
+        <p>Easiest path: Ollama (ollama.com) — one installer for Windows, macOS, or Linux, no account needed. Power users can build llama.cpp directly. Both are free, open-source projects credited to their authors.</p>
+      </li>
+      <li>
+        <strong>Pull a starter model</strong>
+        <p>A small ~3B model downloads in minutes and fits nearly any machine in the table above — even CPU-only:</p>
+        <pre class="code"><button class="code-copy">Copy</button>ollama run llama3.2</pre>
+      </li>
+      <li>
+        <strong>Prove it's yours — go offline</strong>
+        <p>Disconnect Wi-Fi and keep chatting. It still works, because the model is on your disk and the compute is your GPU. Your prompts never left the machine. That feeling is the whole mission.</p>
+      </li>
+      <li>
+        <strong>Step up to your tier</strong>
+        <p>Browse open GGUF models on Hugging Face and match the parameter count to your VRAM tier. Our free <a href="/models.html">models guide</a> walks through picking, quantization, and trade-offs in plain language.</p>
+      </li>
+      <li>
+        <strong>Go deeper, free</strong>
+        <p>Use the <a href="/tools.html">180 free tools</a>, the <a href="/education.html">education hub</a>, and the <a href="/blog/">blog</a> (441 posts). When you want a fully-assembled, execution-verified pack, check the <a href="/store.html">store</a>.</p>
+      </li>
+    </ol>
+    <div class="note">
+      <strong>Everything above is doable today, for free,</strong> with open-source software and a mid-range PC. The paid guides save you time; they are never required to get sovereign.
+    </div>
+  </div>
+
+  <!-- ============ TAB 4: OUR COMMITMENTS ============ -->
+  <div class="tab-panel" role="tabpanel" id="panel-commit" aria-labelledby="tab-commit" hidden>
+    <p class="tab-intro">Every claim on this site carries a Truth-Status badge: <span class="badge badge-live"><span class="badge-dot"></span>LIVE</span> means working and verifiable today, <span class="badge badge-early">EARLY ACCESS</span> means it exists but is gated, <span class="badge badge-roadmap">ROADMAP</span> means planned and not built — and roadmap items are never for sale. Here is where the mission stands, honestly:</p>
+
+    <div class="commit-block is-live">
+      <span class="badge badge-live"><span class="badge-dot"></span>LIVE</span>
+      <h3>Free tools and guides, today</h3>
+      <ul>
+        <li>180 free tool pages — browser dev tools run 100% client-side; AI generation tools honestly fall back to a waitlist when the local GPU backend is offline.</li>
+        <li>527 blog posts, the <a href="/models.html">models guide</a>, and the <a href="/education.html">education hub</a> — free.</li>
+        <li>A <a href="/store.html">store</a> with one execution-verified product, instant download over Stripe-hosted checkout — 27 other listings were removed 2026-07-30 after an honest-delivery audit (see <a href="/audit.html">the audit page</a>).</li>
+      </ul>
+    </div>
+
+    <div class="commit-block is-early">
+      <span class="badge badge-early">EARLY ACCESS</span>
+      <h3>ABUZ8 OS — the sovereign agentic OS</h3>
+      <p>Real and in active development (v2.55.x internally, 800+ internal API routes, self-hosted update channel). There is no public download yet, and we will not fabricate one. Interest goes through <a href="/request.html">the request page</a>, and the waitlist is the only data we collect.</p>
+    </div>
+
+    <div class="commit-block is-roadmap">
+      <span class="badge badge-roadmap">ROADMAP</span>
+      <h3>Open models, open datasets, open code</h3>
+      <ul>
+        <li>Publishing sovereign models and datasets on Hugging Face. Our account exists today with zero public models — we say so plainly rather than imply otherwise.</li>
+        <li>Open-sourcing components on GitHub. There is no public ABUZ8 GitHub org today; when there is, it will be linked from <a href="/open-source.html">the open-source page</a>.</li>
+      </ul>
+      <p style="margin-top:8px;">No buy buttons on roadmap items. Ever. Follow progress on the <a href="/roadmap.html">roadmap</a> and <a href="/audit.html">audit &amp; transparency</a> pages.</p>
+    </div>
+
+    <div class="warn">
+      <strong>Why this strictness?</strong> Fake claims and vaporware kill trust, and trust is the only asset a small company has. If you ever find a claim on this site that doesn't hold, tell us: <a href="/contact.html">contact</a> · ahmad@abuz8ai.com.
+    </div>
+  </div>
+
+  <!-- ============ TAB 5: FAQ ============ -->
+  <div class="tab-panel" role="tabpanel" id="panel-faq" aria-labelledby="tab-faq" hidden>
+    <p class="tab-intro">Straight answers, no hedging where hedging isn't honest.</p>
+
+    <details class="acc">
+      <summary>What does "sovereign AI" mean?</summary>
+      <div class="acc-body">AI you own and control: open-weight models running on your own hardware, with your data staying on your own disk. No cloud account required, no per-token billing, and no provider able to change or remove the model you depend on.</div>
+    </details>
+    <details class="acc">
+      <summary>Do I need an expensive GPU to start?</summary>
+      <div class="acc-body">No. A GPU with 8 GB of VRAM comfortably runs 7–8B parameter models at 4-bit quantization, and small 1–4B models run on CPU alone (slower, but usable). More VRAM lets you run larger, more capable models — see the hardware tiers in the Start Today tab.</div>
+    </details>
+    <details class="acc">
+      <summary>Is a local model as capable as the big cloud models?</summary>
+      <div class="acc-body">Honestly, no. Today's frontier cloud models are generally more capable than what runs on a single consumer GPU. But open models have become good enough for a huge range of real work — drafting, coding help, summarizing, private Q&amp;A — and they improve constantly. Sovereignty is a trade-off you choose for privacy, cost control, and independence, not a claim that local beats cloud at everything.</div>
+    </details>
+    <details class="acc">
+      <summary>Has ABUZ8 published its own models or datasets?</summary>
+      <div class="acc-body">Not yet. Our Hugging Face account exists but has no public models, datasets, or spaces today. Publishing sovereign models and datasets is on our roadmap, and we won't claim it's done before it is.</div>
+    </details>
+    <details class="acc">
+      <summary>Can I download ABUZ8 OS?</summary>
+      <div class="acc-body">Not publicly yet. ABUZ8 OS is real and in active development (v2.55.x internally), but it's in early access with no public download. Request access at <a href="/request.html">the request page</a> and we'll route you through the waitlist.</div>
+    </details>
+    <details class="acc">
+      <summary>What do the free tools cost?</summary>
+      <div class="acc-body">Nothing. The <a href="/tools.html">180 free tool pages</a> are free to use. The browser dev tools run 100% client-side in your browser. Some AI generation tools need our local GPU backend; when it's offline they honestly fall back to a waitlist form instead of pretending to work.</div>
+    </details>
+    <details class="acc">
+      <summary>Where is ABUZ8 built and tested?</summary>
+      <div class="acc-body">On a real RTX 5090 rig by ABUZ8 LLC in Ohio, USA. Everything recommended on this page is what we run ourselves.</div>
+    </details>
+  </div>
+</div>
+</section>
+
+<footer class="abuz8-footer">
+<div class="foot-grid">
+  <div class="foot-brand">
+    <div class="logo">ABUZ8</div>
+    <p>Sovereign AI for everyone. Real tools, local models, no fake claims. Built on real hardware by ABUZ8 LLC, Ohio.</p>
+  </div>
+  <div class="foot-col"><h4>Platform</h4>
+    <a href="/tools.html">Free Tools</a><a href="/store.html">Store</a><a href="/models.html">Models</a><a href="/agents.html">AI Agents</a><a href="/news.html">News</a><a href="/blog/">Blog</a>
+  </div>
+  <div class="foot-col"><h4>Mission</h4>
+    <a href="/sovereign.html">Sovereign AI</a><a href="/journey.html">Journey &amp; Goals</a><a href="/roadmap.html">Roadmap</a><a href="/audit.html">Audit &amp; Transparency</a><a href="/purpose.html">Purpose</a>
+  </div>
+  <div class="foot-col"><h4>Hubs</h4>
+    <a href="/github.html">GitHub Hub</a><a href="/huggingface.html">Hugging Face Hub</a><a href="/polymarket.html">Polymarket Tester</a><a href="/community.html">Community</a><a href="/education.html">Education</a><a href="/downloads.html">Downloads</a>
+  </div>
+  <div class="foot-col"><h4>Trust</h4>
+    <a href="/security.html">Security &amp; Compliance</a><a href="/disclaimer.html">Disclaimer</a><a href="/privacy.html">Privacy</a><a href="/terms.html">Terms</a><a href="/refund.html">Refunds</a><a href="/license.html">License</a><a href="/contact.html">Contact</a><a href="/status.html">Status</a>
+  </div>
+</div>
+<div class="foot-base">
+  <div>© <span data-year>2026</span> ABUZ8 LLC. All rights reserved.</div>
+  <div>Built local-first on real hardware · No fake claims · <a href="/sovereign.html">Sovereign AI for everyone</a></div>
+</div>
+</footer>
+<script src="/assets/js/abuz8-ui.js" defer></script>
+<script src="/assets/js/abuz8-onboard.js" defer></script>
+<script>
+/* In-page #tab= links: abuz8-ui.js honors the hash only on load, so bridge hashchange to a tab click. */
+addEventListener('hashchange', function () {
+  var m = (location.hash || '').match(/tab=([\w-]+)/);
+  if (!m) return;
+  var t = document.querySelector('[role="tab"][aria-controls="' + m[1] + '"]');
+  if (t) { t.click(); t.focus(); }
+});
+</script>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>

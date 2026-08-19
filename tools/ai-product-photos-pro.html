@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Product Photos Pro — Studio-Grade Product Shots from One Snapshot | ABUZ8</title>
+<meta name="description" content="Turn a plain phone photo of any product into studio-grade commercial photography. 8 scene presets — white studio, marble, luxury black, lifestyle, water splash. ~12s per shot. Runs on local RTX 5090. Join early access.">
+<meta name="keywords" content="ai product photography, ai product photos, product photo generator, ecommerce product images, ai studio photography, comfyui product photos, ai background replacement, amazon product photos, shopify product images">
+<link rel="canonical" href="https://abuz8ai.com/tools/ai-product-photos-pro">
+<meta property="og:title" content="AI Product Photos Pro — Studio-Grade Product Shots from One Snapshot | ABUZ8">
+<meta property="og:description" content="8 scene presets. ~12s per shot. White studio, marble, luxury black, lifestyle, water splash. RTX 5090 local render. Early access open.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://abuz8ai.com/tools/ai-product-photos-pro">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="AI Product Photos Pro | ABUZ8">
+<meta name="twitter:description" content="8 scenes. Phone snapshot to studio-grade product photo. Local GPU. Join early access.">
+<link rel="stylesheet" href="/assets/css/abuz8-mach3.css">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@300;400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"SoftwareApplication","name":"AI Product Photos Pro","applicationCategory":"MultimediaApplication","operatingSystem":"Web","description":"Transform a plain product snapshot into studio-grade commercial photography using ComfyUI img2img and studio relighting on local RTX 5090. Eight scene presets: White Studio, Marble Surface, Wood Table, Gradient Studio, Lifestyle Outdoor, Luxury Black, Water Splash, and Floral Beauty. Adjustable scene strength from 0.40 to 0.95. Optional background reference upload supported. Outputs are watermark-free and cleared for commercial e-commerce use. No third-party processing.","offers":{"@type":"Offer","price":"0","priceCurrency":"USD","availability":"https://schema.org/PreOrder"},"creator":{"@type":"Organization","name":"ABUZ8 LLC","url":"https://abuz8ai.com"}}
+</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"HowTo","name":"Create Studio-Grade Product Photos with AI","step":[{"@type":"HowToStep","name":"Upload your product snapshot","text":"Drop in a plain photo of your product — a phone shot on a table or against a wall works fine. PNG or JPG up to 10MB. The cleaner the subject edges, the better the result."},{"@type":"HowToStep","name":"Choose a scene","text":"Select one of the 8 built-in commercial scenes (White Studio, Marble Surface, Wood Table, Gradient Studio, Lifestyle Outdoor, Luxury Black, Water Splash, Floral Beauty) or upload your own background reference image. Optionally add a text prompt to fine-tune lighting and mood."},{"@type":"HowToStep","name":"Set scene strength","text":"Choose how aggressively the scene and lighting are rebuilt — 0.95 for a full studio re-render, or 0.40 for a subtle background and lighting clean-up that keeps the original product almost untouched."},{"@type":"HowToStep","name":"Generate and download","text":"ComfyUI img2img with studio relighting runs on private RTX 5090 hardware in approximately 12 seconds. Output is 1024x1024 PNG, watermark-free, ready for Amazon, Shopify, or ads. Download individually or as a batch."}]}
+</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Do I need a professional camera or lightbox?","acceptedAnswer":{"@type":"Answer","text":"No. A plain phone snapshot is enough. The pipeline rebuilds the background, surface, and studio lighting around your product. The only requirement is that the product itself is in focus and clearly visible in the source photo."}},{"@type":"Question","name":"Will it change the actual product?","acceptedAnswer":{"@type":"Answer","text":"At lower scene strengths (0.40 to 0.55) the product is preserved almost exactly while only the background and lighting are upgraded. At higher strengths the model has more freedom to relight and reflect the product into the scene. For catalog accuracy, use 0.45 to 0.60; for hero and ad shots, use 0.75 to 0.95."}},{"@type":"Question","name":"Can I use my own background?","acceptedAnswer":{"@type":"Answer","text":"Yes. Upload any image as a background reference and the model will composite and relight your product into that environment. This is ideal for matching an existing brand look or a specific lifestyle setting."}},{"@type":"Question","name":"What resolution is the output?","acceptedAnswer":{"@type":"Answer","text":"Default output is 1024x1024 pixels, watermark-free. Marketplace-specific aspect ratios (square for Amazon, 4:5 for Instagram, 16:9 for banners) will be selectable in early access."}},{"@type":"Question","name":"Can I use the photos commercially?","acceptedAnswer":{"@type":"Answer","text":"Yes. Early access outputs are cleared for personal and commercial use — e-commerce listings, paid ads, packaging, and social. Full license terms will be published at launch."}},{"@type":"Question","name":"How long does it take?","acceptedAnswer":{"@type":"Answer","text":"Approximately 12 seconds per image on RTX 5090 at standard scene strength. A x4 batch of variations completes in under a minute, so you can pick the best angle and lighting in one pass."}},{"@type":"Question","name":"Is my image stored or used for training?","acceptedAnswer":{"@type":"Answer","text":"No. Images are processed locally and discarded after generation. We do not store or train on user content."}}]}
+</script>
+</head>
+<body>
+<script>
+(function(){
+  var comfyUrl=(window.ABUZ8_COMFY_BASE)||'https://comfy.abuz8ai.com';
+  var checked=false,comfyLive=false;
+  window._checkComfy=async function(){
+    if(checked)return comfyLive;
+    try{var r=await fetch(comfyUrl+'/system_stats',{signal:AbortSignal.timeout(3000)});comfyLive=r.ok;checked=true;}catch(_){comfyLive=false;checked=true;}
+    return comfyLive;
+  };
+  window._cloudGenerate=async function(prompt){
+    try{var r=await fetch('/api/ai-image',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt:prompt})});
+    if(!r.ok)return null;var blob=await r.blob();return URL.createObjectURL(blob);}catch(_){return null;}
+  };
+})();
+</script>
+<style>
+:root{
+  --lapis:#0a1628;--lapis-2:#0d1a30;--lapis-3:#111f38;
+  --gold:#c9a84c;--gold-2:#e6c879;
+  --turq:#0e9f6e;--turq-2:#2bb39e;
+  --cream:#f5f0e8;--text:#e8e4d8;--dim:#8a9aaa;--border:#1a2e50;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{background:var(--lapis);color:var(--text);font-family:'Inter',sans-serif;line-height:1.6;min-height:100vh;-webkit-font-smoothing:antialiased}
+a{color:var(--gold);text-decoration:none}
+.mono{font-family:'JetBrains Mono',monospace}
+.wrap{max-width:1200px;margin:0 auto;padding:32px 24px}
+.nav{display:flex;justify-content:space-between;align-items:center;padding-bottom:20px;border-bottom:1px solid var(--border);margin-bottom:40px}
+.brand{font-family:'Playfair Display',serif;font-size:22px;color:var(--cream);letter-spacing:.5px}
+.brand .acc{color:var(--gold)}
+.back{font-size:11px;color:var(--dim);letter-spacing:2px;text-transform:uppercase}
+.back:hover{color:var(--gold)}
+.hero{display:grid;grid-template-columns:1.1fr .9fr;gap:48px;align-items:center;margin-bottom:56px}
+@media(max-width:880px){.hero{grid-template-columns:1fr}}
+.eyebrow{color:var(--turq-2);font-size:11px;letter-spacing:3px;text-transform:uppercase;margin-bottom:18px;font-weight:600}
+h1{font-family:'Playfair Display',serif;font-size:clamp(2.2rem,5vw,4rem);color:var(--cream);line-height:1.05;margin-bottom:20px;font-weight:900}
+h1 .gold{color:var(--gold)}
+.lede{color:var(--dim);font-size:18px;font-weight:300;max-width:540px;margin-bottom:28px}
+.row-stats{display:flex;gap:32px;margin-top:20px;flex-wrap:wrap}
+.stat{border-left:2px solid var(--gold);padding-left:14px}
+.stat .n{font-family:'Playfair Display',serif;font-size:28px;color:var(--cream);font-weight:700;line-height:1}
+.stat .l{font-size:10px;color:var(--dim);letter-spacing:2px;text-transform:uppercase;margin-top:6px}
+.gallery{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;border-radius:18px;overflow:hidden;border:1px solid var(--border);background:var(--lapis-2);padding:10px}
+.gal-card{aspect-ratio:3/4;border-radius:12px;background:linear-gradient(135deg,#1a2e50,#0d1a30);position:relative;overflow:hidden;display:flex;align-items:flex-end;padding:14px}
+.gal-card::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 30% 20%,rgba(201,168,76,0.18),transparent 60%)}
+.gal-card .tag{position:relative;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);font-weight:600}
+</style>
+<style>
+.bench{display:grid;grid-template-columns:1fr 1fr;gap:32px;background:var(--lapis-2);border:1px solid var(--border);border-radius:22px;padding:36px;margin-bottom:56px}
+@media(max-width:880px){.bench{grid-template-columns:1fr}}
+.panel h3{font-family:'Playfair Display',serif;font-size:24px;color:var(--cream);margin-bottom:6px}
+.panel .pre{color:var(--turq-2);font-size:10px;letter-spacing:3px;text-transform:uppercase;margin-bottom:18px;font-weight:600}
+.upload-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:18px}
+@media(max-width:600px){.upload-row{grid-template-columns:1fr}}
+.drop{border:2px dashed var(--border);border-radius:14px;padding:36px 14px;text-align:center;cursor:pointer;transition:.2s;background:rgba(255,255,255,0.02)}
+.drop:hover,.drop.hot{border-color:var(--gold);background:rgba(201,168,76,0.06)}
+.drop .ico{font-size:28px;margin-bottom:6px;color:var(--gold)}
+.drop .t{font-weight:600;color:var(--cream);font-size:13px}
+.drop .h{font-size:11px;color:var(--dim);margin-top:4px}
+.thumb{display:none;margin-top:12px;border-radius:10px;overflow:hidden;border:1px solid var(--border)}
+.thumb img{width:100%;display:block}
+.field{margin-bottom:18px}
+.field label{display:block;font-size:10px;color:var(--gold);letter-spacing:2.5px;text-transform:uppercase;margin-bottom:8px;font-weight:700}
+.input,.select{width:100%;padding:13px 14px;background:#0f2040;border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:inherit;font-size:14px}
+.input:focus,.select:focus{outline:none;border-color:var(--gold)}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
+.chip{padding:8px 14px;border:1px solid var(--border);border-radius:999px;font-size:12px;cursor:pointer;color:var(--dim);background:transparent;transition:.15s}
+.chip:hover{border-color:var(--turq-2);color:var(--text)}
+.chip.on{background:var(--gold);color:var(--lapis);border-color:var(--gold);font-weight:600}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:16px 20px;border-radius:12px;font-weight:700;font-size:14px;text-transform:uppercase;letter-spacing:2px;cursor:pointer;border:none;transition:.2s}
+.btn-gold{background:linear-gradient(180deg,var(--gold-2),var(--gold));color:var(--lapis)}
+.btn-gold:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(201,168,76,0.28)}
+.btn[disabled]{opacity:.5;cursor:not-allowed;transform:none;box-shadow:none}
+.status{margin-top:18px;padding:14px 16px;border-radius:10px;background:#0f2040;border:1px solid var(--border);font-size:13px;display:none}
+.status.show{display:block}
+.status.ok{border-color:var(--turq-2)}
+.status.err{border-color:#c95a4c}
+.bar{height:6px;background:var(--lapis);border-radius:99px;overflow:hidden;margin-top:10px}
+.bar > i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--turq),var(--gold));transition:width .4s}
+.results{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:18px}
+.result-card{aspect-ratio:1/1;border-radius:10px;border:1px solid var(--border);overflow:hidden;background:#0d1a30;display:flex;align-items:center;justify-content:center;color:var(--dim);font-size:11px;letter-spacing:2px;text-transform:uppercase;position:relative}
+.result-card img{width:100%;height:100%;object-fit:cover}
+.result-card .dl-overlay{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(10,22,40,0.9));padding:10px;display:flex;justify-content:flex-end;opacity:0;transition:.2s}
+.result-card:hover .dl-overlay{opacity:1}
+.result-card .dl-overlay a{font-size:10px;color:var(--gold);letter-spacing:1.5px;text-transform:uppercase;font-weight:700;text-decoration:none}
+.section-title{font-family:'Playfair Display',serif;font-size:32px;color:var(--cream);margin-bottom:28px}
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-bottom:56px}
+@media(max-width:880px){.steps{grid-template-columns:repeat(2,1fr)}}
+.step{background:var(--lapis-2);border:1px solid var(--border);border-radius:16px;padding:22px}
+.step .num{font-family:'Playfair Display',serif;font-size:34px;color:var(--gold);font-weight:900;line-height:1}
+.step h4{font-size:14px;color:var(--cream);margin:10px 0 6px;letter-spacing:.5px}
+.step p{font-size:13px;color:var(--dim)}
+.cta{background:linear-gradient(135deg,var(--lapis-3),var(--lapis-2));border:1px solid var(--gold);border-radius:24px;padding:48px;text-align:center;margin-bottom:48px;position:relative;overflow:hidden}
+.cta::before{content:'';position:absolute;inset:-1px;background:radial-gradient(circle at 80% 0%,rgba(201,168,76,0.16),transparent 50%);pointer-events:none}
+.cta h2{font-family:'Playfair Display',serif;font-size:clamp(1.8rem,4vw,2.8rem);color:var(--cream);margin-bottom:14px;position:relative}
+.cta p{color:var(--dim);max-width:540px;margin:0 auto 28px;position:relative}
+.waitform{display:flex;gap:10px;max-width:520px;margin:0 auto;position:relative;flex-wrap:wrap}
+.waitform .input{flex:1;min-width:240px}
+.waitform .btn{width:auto;padding:13px 24px}
+.tinynote{margin-top:14px;font-size:11px;color:var(--dim);letter-spacing:1px;position:relative}
+.foot{padding:32px 0;border-top:1px solid var(--border);color:var(--dim);font-size:12px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+<div class="wrap">
+  <nav class="nav">
+    <a href="/index.html" class="brand">ABUZ<span class="acc">8</span></a>
+    <a href="../tools.html" class="back">&larr; All Tools</a>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div>
+      <div class="eyebrow">AI Product Photos Pro &middot; Tier A &middot; ComfyUI</div>
+      <h1>One snapshot.<br><span class="gold">Studio-grade</span><br>product photos.</h1>
+      <p class="lede">Skip the lightbox, the photographer, and the $400 invoice. Drop in a plain phone photo and walk away with commercial-grade product shots — white studio, marble, luxury black, lifestyle, water splash. img2img relighting on a local RTX 5090.</p>
+      <div class="row-stats">
+        <div class="stat"><div class="n">8</div><div class="l">Scene presets</div></div>
+        <div class="stat"><div class="n">~12s</div><div class="l">Per shot</div></div>
+        <div class="stat"><div class="n">RTX&nbsp;5090</div><div class="l">Local render</div></div>
+      </div>
+    </div>
+    <div class="gallery" aria-hidden="true">
+      <div class="gal-card"><span class="tag">White Studio</span></div>
+      <div class="gal-card"><span class="tag">Marble Surface</span></div>
+      <div class="gal-card"><span class="tag">Wood Table</span></div>
+      <div class="gal-card"><span class="tag">Gradient Studio</span></div>
+      <div class="gal-card"><span class="tag">Luxury Black</span></div>
+      <div class="gal-card"><span class="tag">Water Splash</span></div>
+    </div>
+  </section>
+
+  <!-- WORKBENCH -->
+  <section class="bench" id="bench">
+    <div class="panel">
+      <div class="pre">Step 01 &middot; Upload Images</div>
+      <h3>Product &amp; Background</h3>
+      <p style="color:var(--dim);font-size:13px;margin:8px 0 18px">Product = the item to photograph. Background reference = optional custom scene or environment to drop the product into instead of a preset.</p>
+      <div class="upload-row">
+        <div>
+          <div style="font-size:10px;color:var(--gold);letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;font-weight:700">Product Photo</div>
+          <label class="drop" id="dropContent">
+            <div class="ico">&#9683;</div>
+            <div class="t">Product</div>
+            <div class="h">PNG &middot; JPG &middot; &le; 10MB</div>
+            <input id="fileContent" type="file" accept="image/png,image/jpeg" hidden>
+          </label>
+          <div class="thumb" id="thumbContent"><img id="thumbContentImg" alt="Product photo preview"></div>
+        </div>
+        <div>
+          <div style="font-size:10px;color:var(--gold);letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;font-weight:700">Background Ref <span style="color:var(--dim);font-weight:400">(optional)</span></div>
+          <label class="drop" id="dropStyle">
+            <div class="ico">&#9678;</div>
+            <div class="t">Scene Image</div>
+            <div class="h">PNG &middot; JPG &middot; &le; 10MB</div>
+            <input id="fileStyle" type="file" accept="image/png,image/jpeg" hidden>
+          </label>
+          <div class="thumb" id="thumbStyle"><img id="thumbStyleImg" alt="Background reference preview"></div>
+        </div>
+      </div>
+      <div class="field">
+        <label>Scene Text Prompt (optional &mdash; describe the shot)</label>
+        <input class="input" id="promptInput" type="text" placeholder="e.g. soft morning light, shallow depth of field, premium minimalist, warm reflections" maxlength="200">
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="pre">Step 02 &middot; Configure</div>
+      <h3>Scene options</h3>
+
+      <div class="field">
+        <label>Scene Preset</label>
+        <div class="chips" id="styleChips">
+          <button class="chip on" data-style="studio_white">White Studio</button>
+          <button class="chip" data-style="marble">Marble Surface</button>
+          <button class="chip" data-style="wood_table">Wood Table</button>
+          <button class="chip" data-style="gradient_studio">Gradient Studio</button>
+          <button class="chip" data-style="lifestyle_outdoor">Lifestyle Outdoor</button>
+          <button class="chip" data-style="luxury_black">Luxury Black</button>
+          <button class="chip" data-style="water_splash">Water Splash</button>
+          <button class="chip" data-style="floral_beauty">Floral Beauty</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Scene Strength</label>
+        <select class="select" id="strength">
+          <option value="0.95">0.95 &mdash; Full studio re-render</option>
+          <option value="0.80" selected>0.80 &mdash; Strong scene (recommended)</option>
+          <option value="0.65">0.65 &mdash; Balanced relight</option>
+          <option value="0.50">0.50 &mdash; Catalog-accurate</option>
+          <option value="0.40">0.40 &mdash; Light clean-up</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label>Output Count</label>
+        <div class="chips" id="countChips">
+          <button class="chip on" data-count="1">&times;1</button>
+          <button class="chip" data-count="28">&times;2</button>
+          <button class="chip" data-count="28">&times;4</button>
+        </div>
+      </div>
+
+      <button class="btn btn-gold" id="run" disabled>Generate Product Photos</button>
+
+      <div class="status" id="status">
+        <div class="mono" id="status-text">Idle.</div>
+        <div class="bar"><i id="status-bar"></i></div>
+      </div>
+
+      <div class="results" id="results"></div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <h2 class="section-title">How it actually works</h2>
+  <div class="steps">
+    <div class="step"><div class="num">01</div><h4>Subject isolation</h4><p>The product is segmented from its original background and its structural latent &mdash; shape, edges, label, and proportions &mdash; is locked so the item itself stays recognizable through the relight pass.</p></div>
+    <div class="step"><div class="num">02</div><h4>Scene conditioning</h4><p>Your chosen scene preset (or uploaded background reference) is encoded into a text and visual conditioning vector that defines the surface, backdrop, and studio lighting direction.</p></div>
+    <div class="step"><div class="num">03</div><h4>img2img relighting</h4><p>ComfyUI runs an img2img studio pass at the chosen strength, rebuilding the environment, contact shadows, and reflections so the product sits convincingly in a real commercial set.</p></div>
+    <div class="step"><div class="num">04</div><h4>Local delivery</h4><p>Renders on private RTX 5090 hardware in ~12 seconds. Full-res, watermark-free PNG delivered directly in the browser. Nothing stored after download.</p></div>
+  </div>
+
+  <!-- WAITLIST CTA -->
+  <section class="cta" id="early-access">
+    <h2>Join Early Access</h2>
+    <p>First 10 product shots on us. Early-access pricing locked in forever &mdash; no grandfathered exceptions, no price creep for those who joined early.</p>
+    <form class="waitform" id="wait" novalidate>
+      <input type="email" class="input" id="wait-email" placeholder="you@company.com" required autocomplete="email">
+      <button type="submit" class="btn btn-gold">Join Early Access</button>
+    </form>
+    <div class="tinynote mono">No spam. No fluff. Unsubscribe with one click.</div>
+    <div class="status" id="wait-status" style="max-width:520px;margin:18px auto 0"><div id="wait-msg" class="mono">Idle.</div></div>
+  </section>
+
+  <footer class="foot">
+    <div>&copy; 2026 ABUZ8 LLC</div>
+    <div><a href="/privacy.html">Privacy</a> &middot; <a href="/terms.html">Terms</a> &middot; <a href="../tools.html">All tools</a></div>
+  </footer>
+</div>
+
+<script>
+/* AI PRODUCT PHOTOS PRO — frontend wiring
+ * Pipeline: ComfyUI img2img studio relighting
+ * Falls back to waitlist CTA if ComfyUI is unreachable
+ */
+(function(){
+  'use strict';
+  const COMFY=(window.ABUZ8_COMFY_BASE)||'https://comfy.abuz8ai.com';
+  const PROMPT_API=COMFY+'/prompt';
+  const HISTORY_API=COMFY+'/history';
+  const VIEW_API=COMFY+'/view';
+  const $=(s)=>document.querySelector(s);
+
+  const dropContent=$('#dropContent'),fileContent=$('#fileContent');
+  const dropStyle=$('#dropStyle'),fileStyle=$('#fileStyle');
+  const thumbContent=$('#thumbContent'),thumbContentImg=$('#thumbContentImg');
+  const thumbStyle=$('#thumbStyle'),thumbStyleImg=$('#thumbStyleImg');
+  const run=$('#run'),statusEl=$('#status'),statusText=$('#status-text'),statusBar=$('#status-bar');
+  const results=$('#results'),promptInput=$('#promptInput');
+  const wait=$('#wait'),waitEmail=$('#wait-email'),waitStatus=$('#wait-status'),waitMsg=$('#wait-msg');
+
+  const state={contentFile:null,styleFile:null,style:'studio_white',strength:'0.80',count:1};
+
+  /* Scene chips */
+  document.querySelectorAll('#styleChips .chip').forEach(c=>{
+    c.addEventListener('click',(e)=>{e.preventDefault();document.querySelectorAll('#styleChips .chip').forEach(x=>x.classList.remove('on'));c.classList.add('on');state.style=c.dataset.style;});
+  });
+  /* Count chips */
+  document.querySelectorAll('#countChips .chip').forEach(c=>{
+    c.addEventListener('click',(e)=>{e.preventDefault();document.querySelectorAll('#countChips .chip').forEach(x=>x.classList.remove('on'));c.classList.add('on');state.count=parseInt(c.dataset.count,10);});
+  });
+  $('#strength').addEventListener('change',(e)=>{state.strength=e.target.value;});
+
+  /* Drop / file helpers */
+  function wireDropZone(drop,file,thumb,thumbImg,stateKey){
+    drop.addEventListener('click',()=>file.click());
+    ['dragenter','dragover'].forEach(ev=>drop.addEventListener(ev,(e)=>{e.preventDefault();drop.classList.add('hot');}));
+    ['dragleave','drop'].forEach(ev=>drop.addEventListener(ev,(e)=>{e.preventDefault();drop.classList.remove('hot');}));
+    drop.addEventListener('drop',(e)=>{if(e.dataTransfer.files[0])loadFile(e.dataTransfer.files[0],thumb,thumbImg,stateKey);});
+    file.addEventListener('change',(e)=>{if(e.target.files[0])loadFile(e.target.files[0],thumb,thumbImg,stateKey);});
+  }
+  function loadFile(f,thumb,thumbImg,stateKey){
+    if(!/^image\/(png|jpeg)$/.test(f.type)){return setStatus('Use a PNG or JPG.','err',0);}
+    if(f.size>10*1024*1024){return setStatus('Max 10MB.','err',0);}
+    state[stateKey]=f;
+    const r=new FileReader();r.onload=(e)=>{thumbImg.src=e.target.result;thumb.style.display='block';};r.readAsDataURL(f);
+    if(state.contentFile)run.disabled=false;
+    setStatus(stateKey==='contentFile'?'Product photo loaded &middot; ready.':'Background reference loaded &middot; visual conditioning active.','ok',stateKey==='contentFile'?5:10);
+  }
+  wireDropZone(dropContent,fileContent,thumbContent,thumbContentImg,'contentFile');
+  wireDropZone(dropStyle,fileStyle,thumbStyle,thumbStyleImg,'styleFile');
+
+  function setStatus(msg,kind,pct){
+    statusEl.classList.add('show');statusEl.classList.remove('ok','err');
+    if(kind)statusEl.classList.add(kind);
+    statusText.textContent=msg;
+    if(typeof pct==='number')statusBar.style.width=Math.max(0,Math.min(100,pct))+'%';
+  }
+
+  async function uploadImage(f,subfolder){
+    const fd=new FormData();fd.append('image',f,f.name||'image.png');fd.append('subfolder',subfolder);
+    const res=await fetch(COMFY+'/upload/image',{method:'POST',body:fd});
+    if(!res.ok)throw new Error('Upload failed: '+res.status);
+    const j=await res.json();return j.name||(f.name||'image.png');
+  }
+
+  const scenePrompts={
+    studio_white:'clean seamless white studio background, professional soft box lighting, crisp contact shadow, e-commerce product photography, high key, color accurate',
+    marble:'polished white marble surface, elegant minimal product shot, soft natural light, subtle reflection, luxury editorial photography',
+    wood_table:'warm wooden table surface, rustic lifestyle product photography, natural window light, cozy ambient mood, shallow depth of field',
+    gradient_studio:'smooth gradient studio backdrop, vibrant color sweep, modern advertising product shot, glossy reflective floor, dramatic rim light',
+    lifestyle_outdoor:'outdoor lifestyle setting, natural daylight, blurred background bokeh, real-world context, premium brand feel, golden hour',
+    luxury_black:'dramatic black background, spotlight rim lighting, high-end luxury product photography, deep shadows, premium reflective surface',
+    water_splash:'dynamic water splash, fresh droplets, bright commercial photography, crisp frozen motion, vibrant and clean',
+    floral_beauty:'soft floral arrangement, pastel tones, natural diffused light, beauty and cosmetics styling, delicate elegant composition'
+  };
+
+  function buildWorkflow(contentName,styleName,opts){
+    return {
+      client_id:'abuz8-productphotos-'+Math.random().toString(36).slice(2,10),
+      prompt:{
+        params:{
+          product_image:contentName,
+          background_reference:styleName||null,
+          text_prompt:(promptInput.value.trim()||null)||scenePrompts[opts.style]||scenePrompts.studio_white,
+          scene_preset:opts.style,
+          scene_prompt:scenePrompts[opts.style]||scenePrompts.studio_white,
+          strength:parseFloat(opts.strength),
+          batch_size:opts.count,
+          workflow:'img2img_product_studio'
+        }
+      }
+    };
+  }
+
+  async function pollHistory(promptId,onTick){
+    for(let i=0;i<180;i++){
+      await new Promise(r=>setTimeout(r,1000));
+      onTick&&onTick(i);
+      try{
+        const r=await fetch(HISTORY_API+'/'+promptId);
+        if(r.ok){
+          const j=await r.json();const entry=j[promptId];
+          if(entry&&entry.outputs){
+            const imgs=[];
+            for(const node of Object.values(entry.outputs)){if(node.images)imgs.push(...node.images);}
+            if(imgs.length)return imgs;
+          }
+        }
+      }catch(e){}
+    }
+    throw new Error('Render timed out.');
+  }
+
+  function renderResults(imgs){
+    results.innerHTML='';
+    imgs.slice(0,state.count).forEach((img)=>{
+      const url=`${VIEW_API}?filename=${encodeURIComponent(img.filename)}&subfolder=${encodeURIComponent(img.subfolder||'')}&type=${encodeURIComponent(img.type||'output')}`;
+      const card=document.createElement('div');card.className='result-card';
+      card.innerHTML=`<img alt="Product photo result" src="${url}"><div class="dl-overlay"><a href="${url}" download="abuz8-product-${state.style}.png">Download</a></div>`;
+      results.appendChild(card);
+    });
+    for(let i=imgs.length;i<state.count;i++){
+      const card=document.createElement('div');card.className='result-card';card.textContent='Queued &middot; '+(i+1);results.appendChild(card);
+    }
+  }
+
+  run.addEventListener('click',async()=>{
+    if(!state.contentFile)return setStatus('Upload a product photo first.','err',0);
+    run.disabled=true;results.innerHTML='';
+    try{
+      setStatus('Uploading product photo to render node...','ok',10);
+      const contentName=await uploadImage(state.contentFile,'abuz8/productphotos/product');
+      let styleName=null;
+      if(state.styleFile){
+        setStatus('Uploading background reference...','ok',22);
+        styleName=await uploadImage(state.styleFile,'abuz8/productphotos/scene');
+      }
+      setStatus('Queuing img2img studio workflow...','ok',32);
+      const payload=buildWorkflow(contentName,styleName,state);
+      const submit=await fetch(PROMPT_API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+      if(!submit.ok)throw new Error('ComfyUI rejected: '+submit.status);
+      const sj=await submit.json();const pid=sj.prompt_id||sj.promptId;
+      if(!pid)throw new Error('No prompt_id returned.');
+      setStatus('Rendering on RTX &middot; ~12s per shot...','ok',42);
+      const imgs=await pollHistory(pid,(t)=>{
+        setStatus('Rendering &middot; '+t+'s elapsed...','ok',Math.min(95,42+t*0.5));
+      });
+      renderResults(imgs);
+      setStatus('Done &middot; '+imgs.length+' shot'+(imgs.length>1?'s':'')+' ready.','ok',100);
+    }catch(err){
+      console.warn('[productphotos]',err);
+      setStatus('Render node unreachable. Join early access &mdash; we\'ll shoot your product on our cloud rig.','err',0);
+      document.getElementById('early-access').scrollIntoView({behavior:'smooth',block:'start'});
+    }finally{run.disabled=false;}
+  });
+
+  /* WAITLIST */
+  wait.addEventListener('submit',async(e)=>{
+    e.preventDefault();
+    const email=(waitEmail.value||'').trim();
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
+      waitStatus.classList.add('show','err');waitStatus.classList.remove('ok');waitMsg.textContent='Enter a valid email.';return;
+    }
+    waitStatus.classList.add('show');waitStatus.classList.remove('err');waitStatus.classList.add('ok');
+    waitMsg.textContent='Reserving your spot...';
+    try{
+      const r=await fetch('/api/waitlist',{method:'POST',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({email,product:'ai-product-photos-pro',ts:Date.now(),referrer:document.referrer||null})});
+      if(!r.ok)throw new Error('waitlist '+r.status);
+      waitMsg.textContent="You're in. We'll email you when your slot opens.";
+      try{gtag('event','waitlist_join',{product:'ai-product-photos-pro'});}catch(e){}
+      wait.reset();
+    }catch(err){
+      try{
+        await fetch('/functions/waitlist',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,product:'ai-product-photos-pro'})});
+        waitMsg.textContent="You're in. We'll email you when your slot opens.";
+      }catch(e2){
+        waitMsg.textContent='Saved locally. We\'ll sync when the network is back.';
+        try{const q=JSON.parse(localStorage.getItem('abuz8_waitlist_queue')||'[]');q.push({email,product:'ai-product-photos-pro',ts:Date.now()});localStorage.setItem('abuz8_waitlist_queue',JSON.stringify(q));}catch(e3){}
+      }
+    }
+  });
+})();
+</script>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+<script src="/tools/_abuz8-live-brain.js" defer></script>
+<script src="/tools/_tools-shared.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+
+<!-- ABUZ8 LIVE STUDIO (injected 2026-08-11-studio) -->
+<section id="abuz8-studio-section" style="padding:56px 0 8px">
+  <div style="max-width:1180px;margin:0 auto;padding:0 20px">
+    <h2 style="font:800 clamp(24px,3.2vw,34px)/1.15 Playfair Display,Georgia,serif;
+               color:var(--text,#e8e4d8);margin:0 0 10px">Live Studio</h2>
+    <p style="font:400 15px/1.65 Inter,system-ui,sans-serif;color:var(--dim,#8a9aaa);
+              max-width:70ch;margin:0 0 26px">
+      This runs on <strong style="color:var(--text,#e8e4d8)">your own machine</strong>, not our servers.
+      If ComfyUI is running locally on port 8188 you get the full studio below and your images
+      never leave your computer. If it is not, you will see Early Access instead &mdash;
+      we never show a spinner that is not doing anything.
+    </p>
+  </div>
+  <div id="abuz8-studio"></div>
+</section>
+<script src="_comfy-client.js"></script>
+<script src="_comfy-studio.js"></script>
+<script>
+(function () {
+  function boot() {
+
+  new ComfyStudio({
+    mount: '#abuz8-studio', slug: 'product',
+    promptLabel: 'Describe the product and the scene',
+    promptPlaceholder: 'a matte black ceramic coffee mug on polished concrete, morning light',
+    basePositive: 'professional product photography, studio lighting, shallow depth of field, ' +
+                  'crisp focus, commercial catalog quality, 85mm lens',
+    negative: 'text, watermark, signature, blurry, low quality, jpeg artifacts, deformed, extra limbs, bad anatomy, cluttered background, hands, people',
+    sizes: [512, 768, 1024], maxBatch: 4, defaultSteps: 26,
+    styles: [
+      { id:'studio',  label:'Studio White',  pos:'seamless white studio backdrop, soft box lighting, subtle reflection' },
+      { id:'lifestyle',label:'Lifestyle',    pos:'lifestyle product shot, natural window light, warm styled surface, soft shadows' },
+      { id:'luxury',  label:'Luxury Dark',   pos:'luxury product shot on dark surface, dramatic rim lighting, gold accents, moody' },
+      { id:'flatlay', label:'Flat Lay',      pos:'overhead flat lay composition, even diffused light, minimal styled props' }
+    ],
+    buildWorkflow: function (c) {
+      return {
+        '1':{class_type:'CheckpointLoaderSimple',inputs:{ckpt_name:c.ckpt}},
+        '2':{class_type:'CLIPTextEncode',inputs:{text:c.positive,clip:['1',1]}},
+        '3':{class_type:'CLIPTextEncode',inputs:{text:c.negative,clip:['1',1]}},
+        '4':{class_type:'EmptyLatentImage',inputs:{width:c.size,height:c.size,batch_size:c.batch}},
+        '5':{class_type:'KSampler',inputs:{seed:c.seed,steps:c.steps,cfg:7.0,
+             sampler_name:'dpmpp_2m',scheduler:'karras',denoise:1.0,
+             model:['1',0],positive:['2',0],negative:['3',0],latent_image:['4',0]}},
+        '6':{class_type:'VAEDecode',inputs:{samples:['5',0],vae:['1',2]}},
+        '7':{class_type:'SaveImage',inputs:{filename_prefix:'abuz8_product',images:['6',0]}}
+      };
+    }
+  }).mount();
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
+  else boot();
+})();
+</script>
+<!-- /ABUZ8 LIVE STUDIO -->
+
+</body>
+</html>
+

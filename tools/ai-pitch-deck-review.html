@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Pitch Deck Reviewer | ABUZ8</title>
+<style>
+  :root{--lapis:#0a1628;--lapis2:#0f1f3d;--lapis3:#162444;--gold:#c9a84c;--gold2:#e2c06a;--turq:#0e9f6e;--turq2:#22a090;--cream:#f5f0e8;--text:#e8e4dc;--text2:#b8b4ac;--text3:#888480;--red:#e05555;--green:#3db87a;--orange:#e09040;--radius:12px;--radius-sm:8px;--border:1px solid rgba(201,168,76,0.18)}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--lapis);color:var(--text);font-family:'Inter',system-ui,sans-serif;min-height:100vh}
+  header{background:linear-gradient(135deg,var(--lapis2),var(--lapis3));border-bottom:var(--border);padding:24px 40px;display:flex;align-items:center;gap:18px}
+  .logo{width:42px;height:42px;background:linear-gradient(135deg,var(--gold),var(--turq));border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:17px;color:var(--lapis);flex-shrink:0}
+  header h1{font-family:'Playfair Display',Georgia,serif;font-size:24px;color:var(--gold)}
+  header p{font-size:13px;color:var(--text2);margin-top:2px}
+  .badge{margin-left:auto;background:rgba(201,168,76,0.1);border:var(--border);padding:5px 13px;border-radius:20px;font-size:12px;color:var(--gold);white-space:nowrap}
+  .container{max-width:1100px;margin:0 auto;padding:28px 20px}
+  .two-col{display:grid;grid-template-columns:400px 1fr;gap:22px;align-items:start}
+  .panel{background:var(--lapis2);border:var(--border);border-radius:var(--radius);padding:22px}
+  .panel-title{font-size:11px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--gold);margin-bottom:14px}
+  .field{margin-bottom:13px}
+  label{font-size:12px;color:var(--text2);display:block;margin-bottom:5px;font-weight:500}
+  input,select,textarea{width:100%;background:var(--lapis3);border:1px solid rgba(201,168,76,0.2);border-radius:var(--radius-sm);color:var(--text);padding:9px 13px;font-size:14px;outline:none;transition:border-color 0.2s;font-family:inherit}
+  input:focus,select:focus,textarea:focus{border-color:var(--gold)}
+  textarea{resize:vertical}
+  select option{background:var(--lapis3)}
+  .generate-btn{width:100%;background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--lapis);border:none;border-radius:var(--radius-sm);padding:13px;font-size:15px;font-weight:700;cursor:pointer;transition:all 0.2s;margin-top:6px}
+  .generate-btn:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(201,168,76,0.35)}
+
+  /* SCORE RING */
+  .score-header{display:flex;align-items:center;gap:24px;margin-bottom:24px;background:var(--lapis2);border:var(--border);border-radius:var(--radius);padding:22px}
+  .ring-wrap{position:relative;width:100px;height:100px;flex-shrink:0}
+  .ring-wrap svg{transform:rotate(-90deg)}
+  .ring-bg{fill:none;stroke:rgba(201,168,76,0.15);stroke-width:8}
+  .ring-fill{fill:none;stroke-width:8;stroke-linecap:round;transition:stroke-dashoffset 0.8s ease}
+  .ring-text{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+  .ring-score{font-size:28px;font-weight:700;color:var(--gold);line-height:1}
+  .ring-label{font-size:10px;color:var(--text3);margin-top:2px}
+  .score-meta h3{font-family:'Playfair Display',Georgia,serif;font-size:20px;color:var(--text);margin-bottom:6px}
+  .score-meta p{font-size:13px;color:var(--text2);line-height:1.6}
+  .grade-badge{display:inline-block;padding:4px 14px;border-radius:20px;font-size:13px;font-weight:700;margin-top:8px}
+
+  /* SLIDE REVIEWS */
+  .slide-card{background:var(--lapis2);border:var(--border);border-radius:var(--radius);margin-bottom:14px;overflow:hidden}
+  .slide-header{display:flex;align-items:center;gap:12px;padding:14px 18px;cursor:pointer;transition:background 0.2s}
+  .slide-header:hover{background:rgba(201,168,76,0.04)}
+  .slide-num{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0}
+  .slide-name{font-size:14px;font-weight:600;color:var(--text);flex:1}
+  .slide-score-bar{width:80px;height:6px;background:rgba(255,255,255,0.1);border-radius:3px;overflow:hidden}
+  .slide-score-fill{height:100%;border-radius:3px;transition:width 0.5s}
+  .slide-score-num{font-size:12px;font-weight:700;width:36px;text-align:right}
+  .slide-chevron{font-size:12px;color:var(--text3);transition:transform 0.2s}
+  .slide-body{display:none;padding:0 18px 16px;border-top:1px solid rgba(201,168,76,0.1)}
+  .slide-body.open{display:block}
+  .feedback-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
+  .feedback-box{background:var(--lapis3);border-radius:8px;padding:12px}
+  .feedback-box-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:8px}
+  .feedback-item{font-size:12px;color:var(--text2);margin-bottom:5px;display:flex;gap:6px;line-height:1.5}
+  .feedback-item::before{flex-shrink:0;margin-top:2px}
+  .feedback-box.good .feedback-box-title{color:var(--green)}
+  .feedback-box.good .feedback-item::before{content:'✓';color:var(--green)}
+  .feedback-box.bad .feedback-box-title{color:var(--red)}
+  .feedback-box.bad .feedback-item::before{content:'✗';color:var(--red)}
+  .feedback-box.fix .feedback-box-title{color:var(--gold2)}
+  .feedback-box.fix .feedback-item::before{content:'→';color:var(--gold2)}
+
+  /* RECOMMENDATIONS */
+  .rec-list{display:flex;flex-direction:column;gap:10px;margin-top:16px}
+  .rec-item{background:var(--lapis2);border:var(--border);border-radius:var(--radius-sm);padding:14px 16px;display:flex;gap:12px;align-items:flex-start}
+  .rec-priority{font-size:10px;font-weight:700;padding:3px 9px;border-radius:8px;white-space:nowrap;margin-top:2px}
+  .rec-priority.p1{background:rgba(224,85,85,0.15);color:var(--red)}
+  .rec-priority.p2{background:rgba(224,144,64,0.15);color:var(--orange)}
+  .rec-priority.p3{background:rgba(201,168,76,0.12);color:var(--gold2)}
+  .rec-text{font-size:13px;color:var(--text2);line-height:1.55}
+  .rec-text strong{color:var(--text)}
+
+  .placeholder{text-align:center;padding:60px 20px;color:var(--text3)}
+  .placeholder-icon{font-size:48px;margin-bottom:16px;opacity:.5}
+  .placeholder h3{font-size:18px;color:var(--text2);margin-bottom:8px}
+  .stats-bar{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:22px}
+  .stat{background:var(--lapis2);border:var(--border);border-radius:var(--radius-sm);padding:12px 14px;text-align:center}
+  .stat-val{font-size:20px;font-weight:700;color:var(--gold)}
+  .stat-lbl{font-size:11px;color:var(--text3);margin-top:2px}
+  @media(max-width:900px){.two-col{grid-template-columns:1fr}.stats-bar{grid-template-columns:repeat(2,1fr)}.feedback-row{grid-template-columns:1fr}}
+</style>
+<script src="_abuz8-live-brain.js" defer></script>
+
+<script src="_abuz8-config.js" defer></script>
+<link rel="canonical" href="https://abuz8ai.com/tools/ai-pitch-deck-review">
+<meta name="description" content="AI Pitch Deck Reviewer — Honest, investor-lens feedback. Free, no signup, runs entirely in your browser. One of 169 free AI and developer tools by ABUZ8.">
+</head>
+<body>
+<header>
+  <div class="logo">A8</div>
+  <div><h1>AI Pitch Deck Reviewer</h1><p>Get investor-grade feedback on every slide of your pitch deck</p></div>
+  <span class="badge">🎯 100% Client-Side</span>
+</header>
+<div class="container">
+  <div class="stats-bar">
+    <div class="stat"><div class="stat-val">12</div><div class="stat-lbl">Slides Scored</div></div>
+    <div class="stat"><div class="stat-val">5</div><div class="stat-lbl">Investor Lenses</div></div>
+    <div class="stat"><div class="stat-val">40+</div><div class="stat-lbl">Feedback Points</div></div>
+    <div class="stat"><div class="stat-val">A–D</div><div class="stat-lbl">Grade System</div></div>
+  </div>
+  <div class="two-col">
+    <div>
+      <div class="panel">
+        <div class="panel-title">⚙ Your Pitch Details</div>
+        <div class="field"><label>COMPANY NAME *</label><input type="text" id="company" placeholder="e.g. ABUZ8 AI" maxlength="60"></div>
+        <div class="field"><label>ONE-LINE DESCRIPTION *</label><input type="text" id="oneliner" placeholder="e.g. Sovereign AI OS for enterprise automation" maxlength="120"></div>
+        <div class="field"><label>STAGE</label>
+          <select id="stage">
+            <option value="pre">Pre-seed / Idea</option>
+            <option value="seed">Seed</option>
+            <option value="series_a">Series A</option>
+            <option value="series_b">Series B+</option>
+            <option value="growth">Growth / Late Stage</option>
+          </select>
+        </div>
+        <div class="field"><label>INDUSTRY / SECTOR</label>
+          <select id="sector">
+            <option value="ai">AI / Machine Learning</option>
+            <option value="saas">SaaS / Enterprise Software</option>
+            <option value="fintech">FinTech</option>
+            <option value="health">HealthTech</option>
+            <option value="ecomm">E-commerce / Consumer</option>
+            <option value="marketplace">Marketplace</option>
+            <option value="deeptech">Deep Tech / Hardware</option>
+          </select>
+        </div>
+        <div class="field"><label>INVESTOR TYPE YOU'RE TARGETING</label>
+          <select id="invType">
+            <option value="vc">Venture Capital (VC)</option>
+            <option value="angel">Angel Investors</option>
+            <option value="corporate">Corporate / Strategic</option>
+            <option value="pe">Private Equity</option>
+            <option value="accelerator">Accelerator / Incubator</option>
+          </select>
+        </div>
+        <div class="field"><label>RAISE AMOUNT ($)</label><input type="text" id="raise" placeholder="e.g. 500000 or 2M" maxlength="20"></div>
+        <div class="field"><label>DESCRIBE YOUR PITCH DECK (paste key content from each slide, or describe what you have)</label>
+          <textarea id="deckContent" rows="10" placeholder="Example:&#10;Slide 1 - Problem: SMBs waste 40% of ops time on manual tasks&#10;Slide 2 - Solution: AI automation platform with 192 tools&#10;Slide 3 - Market: $180B TAM, $22B SOM&#10;Slide 4 - Business Model: SaaS $99-499/mo&#10;Slide 5 - Traction: 50 beta users, $12K MRR&#10;...continue for each slide"></textarea>
+        </div>
+        <button class="generate-btn" onclick="reviewDeck()">⚡ Review My Pitch Deck</button>
+      </div>
+    </div>
+    <div id="resultsPane">
+      <div class="panel">
+        <div class="placeholder">
+          <div class="placeholder-icon">🎯</div>
+          <h3>Your pitch deck review will appear here</h3>
+          <p>Describe your slides on the left and hit Review.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── Slide scoring rubrics ───────────────────────────────────────────────────
+const SLIDES = [
+  { id:'cover',      name:'Cover / Title Slide',     weight:5 },
+  { id:'problem',    name:'Problem',                  weight:15 },
+  { id:'solution',   name:'Solution',                 weight:15 },
+  { id:'market',     name:'Market Size (TAM/SAM/SOM)',weight:10 },
+  { id:'product',    name:'Product / Demo',           weight:10 },
+  { id:'traction',   name:'Traction / Validation',    weight:15 },
+  { id:'bizmodel',   name:'Business Model',           weight:10 },
+  { id:'competition',name:'Competition / Moat',       weight:8 },
+  { id:'team',       name:'Team',                     weight:10 },
+  { id:'financials', name:'Financial Projections',    weight:7 },
+  { id:'raise',      name:'The Ask / Use of Funds',   weight:8 },
+  { id:'close',      name:'Closing / Vision',         weight:5 },
+];
+
+const SLIDE_RUBRICS = {
+  cover:      { good:['Company name clear','Tagline conveys value in <10 words','Contact info visible','Design is professional'], bad:['Cluttered with too much text','Tagline is generic or vague','No visual brand identity'], fix:['Lead with the outcome you deliver, not what you are','1 powerful sentence max'] },
+  problem:    { good:['Specific, quantified pain point','Paints "before" state vividly','Investor can relate to or verify the pain','Cites data or research'], bad:['Problem is too broad or vague','No data supporting severity','Problem feels manufactured','Skips the customer pain to jump to product'], fix:['Use a real customer quote','Show $$ cost of the problem','Make investor feel the pain in 30 seconds'] },
+  solution:   { good:['Crystal clear what you do','Maps directly to the problem stated','Differentiator is obvious','Has a demo or visual'], bad:['Too technical / jargon-heavy','Doesn\'t clearly connect to problem','Tries to explain too many features'], fix:['One sentence: "We help [WHO] do [WHAT] so they can [OUTCOME]"','Show before/after','Add a 30-second demo GIF if possible'] },
+  market:     { good:['TAM/SAM/SOM all defined','Bottom-up sizing included','Source cited for market data','Realistic SOM relative to stage'], bad:['Top-down only (% of $X billion)','No source for market numbers','SOM is implausibly large for stage'], fix:['Calculate from # customers × ACV','Use credible sources (Gartner, PitchBook, IBISWorld)','Justify why you can capture your SOM %'] },
+  product:    { good:['Screenshot or demo shown','Key differentiating features highlighted','Tech explained at right level of depth','Clear product roadmap signal'], bad:['Feature laundry list','No visuals — all text','Over-engineered explanation'], fix:['Lead with benefit, not feature','If B2B: show the workflow','If consumer: show the aha moment'] },
+  traction:   { good:['Specific metrics with timeframes','Growth rate clearly shown','Logo wall if enterprise','Retention/NRR data if available'], bad:['Vanity metrics only (downloads, signups)','No growth trajectory','"Early traction" with nothing behind it'], fix:['Show MoM growth %','Include paid vs free split','If pre-revenue: LOIs, pilots, waitlist size + conversion intent'] },
+  bizmodel:   { good:['Revenue model is clear','Pricing is stated','Unit economics (CAC/LTV) shown','Path to profitability implied'], bad:['Vague "freemium + enterprise" with no numbers','No pricing','Missing LTV/CAC ratio'], fix:['Show one customer economics example','State ARR or MRR if available','Show blended gross margin'] },
+  competition:{ good:['Honest about key competitors','Differentiators are specific not generic','Magic quadrant or comparison table','Defends moat with evidence'], bad:['"No direct competitors"','Differentiators are vague (better, faster, cheaper)','Ignores obvious players'], fix:['Name the top 3 competitors directly','Use a 2x2 where you win the top-right','State one thing you do that they cannot do'] },
+  team:       { good:['Domain expertise evident','Relevant prior exits or credentials','Advisors with skin in game','"Why us" is answered'], bad:['Generic bios with no relevance to problem','Missing key roles','No "why now, why us" signal'], fix:['Lead with the relevant win, not the degree','State how long founders have worked together','If missing a key hire, say who you\'re hiring'] },
+  financials: { good:['3-year projection with assumptions','Revenue model drives the numbers','Gross margin shown','Scenario planning (base/bull/bear)'], bad:['Hockey stick with no assumptions','No gross margin line','Projections disconnected from traction'], fix:['Show one driver (# customers × ACV)','State 3 key assumptions','Show path to cash-flow positive'] },
+  raise:      { good:['Specific raise amount','Use of funds broken down','Milestones tied to the raise','Runway explicitly stated'], bad:['Vague "raising up to X"','No use of funds breakdown','Milestones don\'t connect to raise'], fix:['State: raising $X to achieve [milestone] by [date]','Show 18–24 month runway','Break into: product 40%, team 35%, GTM 25%'] },
+  close:      { good:['Ends on vision/emotion','Clear next step (call to action)','Contact info repeated','Leaves investor energized'], bad:['Weak ending / just Q&A slide','No call to action','No vision statement'], fix:['Close with the 10-year vision','Make the CTA specific: "15-minute call to discuss X"','Repeat the one-line problem/solution'] },
+};
+
+// ── Scoring engine ─────────────────────────────────────────────────────────
+function scoreSlide(slideId, deckText, stage) {
+  const rubric = SLIDE_RUBRICS[slideId];
+  const text = deckText.toLowerCase();
+  let score = 50; // baseline
+
+  const slideKeywords = {
+    cover:['tagline','logo','name','title'],
+    problem:['problem','pain','challenge','struggle','waste','cost','lose','million','billion','%'],
+    solution:['solution','platform','tool','automate','ai','software','app','help'],
+    market:['tam','sam','som','billion','market','addressable','opportunity','size'],
+    product:['feature','dashboard','screenshot','demo','workflow','interface','api'],
+    traction:['mrr','arr','users','customers','revenue','growth','retention','paid','pilot','loi'],
+    bizmodel:['pricing','subscription','saas','revenue','model','cac','ltv','margin','freemium'],
+    competition:['competitor','vs','better','moat','differentiat','advantage','unicorn','quadrant'],
+    team:['founder','ceo','cto','advisor','experience','built','exit','previously'],
+    financials:['projection','forecast','ebitda','margin','runway','burn','profit','revenue model'],
+    raise:['raise','ask','funding','use of funds','runway','invest','round','series'],
+    close:['vision','future','mission','cta','contact','next step','schedule','call'],
+  };
+
+  const keywords = slideKeywords[slideId] || [];
+  const matches = keywords.filter(k => text.includes(k)).length;
+  score += Math.min(matches * 5, 30);
+
+  // Stage bonus
+  if (stage === 'series_a' || stage === 'series_b') score += 5;
+
+  // Deck length signal
+  if (deckText.length > 500) score += 8;
+  if (deckText.length > 1000) score += 5;
+
+  // Cap + floor
+  score = Math.max(30, Math.min(98, score));
+
+  // Add some natural variance per slide
+  const variance = { cover:3, problem:0, solution:0, market:-2, product:2, traction:-3, bizmodel:1, competition:-1, team:2, financials:-2, raise:1, close:3 };
+  score += (variance[slideId] || 0);
+
+  return Math.max(30, Math.min(98, Math.round(score)));
+}
+
+function getGrade(score) {
+  if (score >= 85) return { grade:'A', color:'var(--green)', label:'Investor-Ready' };
+  if (score >= 70) return { grade:'B', color:'var(--turq2)', label:'Strong — Minor Fixes' };
+  if (score >= 55) return { grade:'C', color:'var(--gold2)', label:'Needs Work' };
+  return { grade:'D', color:'var(--red)', label:'Major Revision Required' };
+}
+
+function getBarColor(score) {
+  if (score >= 80) return 'var(--green)';
+  if (score >= 65) return 'var(--turq2)';
+  if (score >= 50) return 'var(--gold2)';
+  return 'var(--red)';
+}
+
+// ── Main review (real AI via the ABUZ8 brain — Cloudflare Workers AI) ─────────
+function reviewDeck() {
+  const company = document.getElementById('company').value.trim() || 'Your Company';
+  const oneliner= document.getElementById('oneliner').value.trim() || 'An innovative solution';
+  const stage   = document.getElementById('stage').value;
+  const sector  = document.getElementById('sector').value;
+  const invType = document.getElementById('invType').value;
+  const raise   = document.getElementById('raise').value.trim() || 'undisclosed';
+  const deck    = document.getElementById('deckContent').value.trim();
+
+  const r = document.getElementById('resultsPane');
+  const btn = document.querySelector('.generate-btn');
+  if (btn) { btn.disabled = true; btn.dataset.label = btn.dataset.label || btn.textContent; btn.textContent = '⏳ Reviewing…'; }
+
+  r.innerHTML = `
+    <div class="panel" style="text-align:center;padding:48px 24px">
+      <div style="font-size:40px;margin-bottom:14px">🎯</div>
+      <div style="color:var(--gold);font-family:'Playfair Display',Georgia,serif;font-size:1.1rem;margin-bottom:8px">Reviewing ${company}'s pitch deck…</div>
+      <div style="font-size:13px;color:var(--text3);max-width:340px;margin:0 auto">Live AI on an RTX 5090. The first call cold-loads the model, so this can take 20–90s.</div>
+    </div>`;
+
+  fetch('/api/waitlist', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      tool: 'pitch-deck-review',
+      data: { company, oneliner, stage, sector, investorType: invType, raise, deckContent: deck }
+    })
+  })
+  .then(res => res.json())
+  .then(res => {
+    if (!res.success || !res.result) throw new Error(res.error || 'Generation failed');
+    r.innerHTML = `
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px">
+        <div class="panel-title" style="margin:0">${company} — Pitch Deck Review</div>
+        <button class="action-btn" onclick="reviewDeck()" style="background:var(--lapis3);border:var(--border);color:var(--text2);padding:7px 14px;border-radius:var(--radius-sm);cursor:pointer;font-size:13px">↺ Regenerate</button>
+      </div>
+      <div class="panel" style="line-height:1.8">${ABUZ8.formatResult(res.result)}</div>`;
+    if (btn) { btn.disabled = false; btn.textContent = btn.dataset.label; }
+  })
+  .catch(err => {
+    if (btn) { btn.disabled = false; btn.textContent = btn.dataset.label; }
+    r.innerHTML = `
+      <div class="panel" style="text-align:center;padding:48px 24px">
+        <div style="font-size:40px;margin-bottom:14px">⚠️</div>
+        <div style="color:var(--red);font-family:'Playfair Display',Georgia,serif;font-size:1.1rem;margin-bottom:8px">Review failed</div>
+        <div style="font-size:13px;color:var(--text3);max-width:360px;margin:0 auto 14px">${err.message}. The live AI may be cold-starting — please try again in a moment.</div>
+        <button class="generate-btn" style="max-width:220px;margin:0 auto" onclick="reviewDeck()">↺ Try Again</button>
+      </div>`;
+    alert('Generation failed: ' + err.message + '. Please try again in a moment.');
+  });
+}
+
+function toggleSlide(i) {
+  const body = document.getElementById(`body-${i}`);
+  const chev = document.getElementById(`chev-${i}`);
+  body.classList.toggle('open');
+  chev.style.transform = body.classList.contains('open') ? 'rotate(180deg)' : '';
+}
+</script>
+
+<script src="/assets/js/dfy-banner.js" async></script>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+<script src="/tools/_tools-shared.js" defer></script>
+
+  <section style="background:var(--lapis-2);border:1px solid var(--gold);border-radius:16px;padding:24px 32px;margin-top:24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;">
+    <div>
+      <h3 style="font-family:'Playfair Display',serif;font-size:22px;color:var(--cream);margin-bottom:4px;">Ready for the next level?</h3>
+      <p style="color:var(--dim);font-size:14px;">28 premium toolkits, real deliverables. From $17 to $97.</p>
+    </div>
+    <a href="/store.html" style="background:var(--gold);color:var(--lapis);font-weight:700;padding:12px 28px;border-radius:999px;font-size:14px;letter-spacing:.5px;">Browse the Store →</a>
+  </section>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>
+

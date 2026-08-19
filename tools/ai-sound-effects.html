@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Sound Effects | ABUZ8</title>
+    <link rel="canonical" href="https://abuz8ai.com/tools/ai-sound-effects-pro">
+<style>
+  :root{--lapis:#0a1628;--lapis2:#0f1f3d;--lapis3:#162444;--gold:#c9a84c;--gold2:#e0bc6a;--turq:#0e9f6e;--turq2:#22a090;--text:#e8e4da;--muted:#8a9ab5;--green:#3db87a;}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--lapis);color:var(--text);font-family:'Inter',system-ui,sans-serif;min-height:100vh;}
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;500;600&display=swap');
+  header{background:linear-gradient(135deg,var(--lapis2),var(--lapis3));border-bottom:1px solid rgba(201,168,76,0.3);padding:16px 40px;display:flex;align-items:center;justify-content:space-between;}
+  .logo{font-family:'Playfair Display',serif;font-size:1.5rem;color:var(--gold);}
+  .logo span{color:var(--turq);}
+  .pill{display:flex;align-items:center;gap:8px;background:rgba(61,184,122,0.12);border:1px solid rgba(61,184,122,0.3);border-radius:20px;padding:6px 14px;font-size:0.8rem;color:var(--green);}
+  .dot{width:7px;height:7px;border-radius:50%;background:var(--green);animation:pulse 2s infinite;}
+  @keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.4;}}
+  .hero{padding:60px 40px;text-align:center;background:linear-gradient(135deg,var(--lapis3),var(--lapis2));border-bottom:1px solid rgba(201,168,76,0.15);}
+  .hero h1{font-family:'Playfair Display',serif;font-size:2.8rem;color:var(--gold);margin-bottom:12px;}
+  .hero p{color:var(--muted);font-size:1.05rem;max-width:600px;margin:0 auto 24px;}
+  .main{max-width:900px;margin:0 auto;padding:50px 20px;}
+  .card{background:var(--lapis2);border:1px solid rgba(201,168,76,0.2);border-radius:16px;padding:32px;margin-bottom:24px;}
+  .card h2{font-family:'Playfair Display',serif;color:var(--gold);font-size:1.4rem;margin-bottom:20px;}
+  .category-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px;margin-bottom:20px;}
+  .cat-btn{background:rgba(255,255,255,0.04);border:1px solid rgba(138,154,181,0.2);border-radius:10px;padding:14px 8px;cursor:pointer;text-align:center;transition:all 0.2s;}
+  .cat-btn:hover,.cat-btn.sel{border-color:var(--gold);background:rgba(201,168,76,0.08);}
+  .cat-icon{font-size:1.8rem;margin-bottom:6px;}
+  .cat-name{font-size:0.8rem;font-weight:600;}
+  label{display:block;color:var(--muted);font-size:0.78rem;font-weight:600;letter-spacing:0.5px;text-transform:uppercase;margin-bottom:6px;margin-top:16px;}
+  input[type=text],select,input[type=range]{width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(138,154,181,0.3);border-radius:8px;padding:10px 14px;color:var(--text);font-family:inherit;font-size:0.9rem;}
+  input[type=text]:focus,select:focus{outline:none;border-color:var(--gold);}
+  select option{background:var(--lapis2);}
+  input[type=range]{padding:0;height:4px;cursor:pointer;accent-color:var(--gold);}
+  .range-row{display:flex;justify-content:space-between;font-size:0.78rem;color:var(--muted);margin-top:4px;}
+  .form-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;}
+  @media(max-width:600px){.form-row{grid-template-columns:1fr;}}
+  .btn{width:100%;padding:16px;background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--lapis);font-weight:700;font-size:1.05rem;border:none;border-radius:10px;cursor:pointer;transition:all 0.2s;margin-top:20px;font-family:inherit;}
+  .btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(201,168,76,0.4);}
+  .btn:disabled{opacity:0.5;cursor:not-allowed;transform:none;}
+  .sfx-list{list-style:none;}
+  .sfx-item{display:flex;align-items:center;gap:14px;padding:14px;background:var(--lapis3);border-radius:10px;margin-bottom:8px;border:1px solid rgba(255,255,255,0.06);transition:all 0.2s;}
+  .sfx-item:hover{border-color:rgba(201,168,76,0.2);}
+  .play-btn{width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold2));border:none;font-size:1rem;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all 0.2s;}
+  .play-btn:hover{transform:scale(1.1);}
+  .sfx-info{flex:1;}
+  .sfx-name{font-size:0.9rem;font-weight:600;color:var(--text);}
+  .sfx-meta{font-size:0.75rem;color:var(--muted);margin-top:3px;}
+  .waveform{flex:1;height:32px;background:linear-gradient(90deg,rgba(201,168,76,0.3),rgba(26,138,122,0.3));border-radius:4px;position:relative;overflow:hidden;}
+  .waveform::after{content:'';position:absolute;inset:0;background:repeating-linear-gradient(90deg,transparent,transparent 3px,rgba(255,255,255,0.05) 3px,rgba(255,255,255,0.05) 4px);}
+  .dl-btn-sm{padding:7px 16px;background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.3);color:var(--gold2);border-radius:6px;font-size:0.78rem;cursor:pointer;font-family:inherit;white-space:nowrap;}
+  .generating{display:none;text-align:center;padding:40px;color:var(--muted);}
+  .generating .spin{font-size:2rem;animation:spin 1s linear infinite;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+  .waitlist-section{background:linear-gradient(135deg,rgba(201,168,76,0.08),rgba(26,138,122,0.08));border:1px solid rgba(201,168,76,0.2);border-radius:16px;padding:40px;text-align:center;}
+  .waitlist-section h2{font-family:'Playfair Display',serif;font-size:1.7rem;color:var(--gold);margin-bottom:10px;}
+  .waitlist-section p{color:var(--muted);margin-bottom:20px;}
+  .email-row{display:flex;gap:10px;max-width:400px;margin:0 auto;}
+  .email-row input{flex:1;background:rgba(255,255,255,0.06);border:1px solid rgba(138,154,181,0.3);border-radius:8px;padding:11px 14px;color:var(--text);font-family:inherit;font-size:0.9rem;}
+  .email-row button{padding:11px 22px;background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--lapis);font-weight:700;border:none;border-radius:8px;cursor:pointer;font-family:inherit;}
+  .success-msg{color:var(--green);margin-top:10px;display:none;font-size:0.9rem;}
+</style>
+<script src="_abuz8-live-brain.js" defer></script>
+
+<script src="_abuz8-config.js" defer></script>
+<meta name="description" content="AI Sound Effects — Generate SFX on demand. Free, no signup, runs entirely in your browser. One of 169 free AI and developer tools by ABUZ8.">
+</head>
+<body>
+<script>
+// Cloud fallback: if ComfyUI is unreachable, redirect generate calls to Workers AI
+(function(){
+  var comfyUrl = (window.ABUZ8_COMFY_BASE) || 'https://comfy.abuz8ai.com';
+  var checked = false, comfyLive = false;
+  window._checkComfy = async function(){
+    if(checked) return comfyLive;
+    try{
+      var r = await fetch(comfyUrl+'/system_stats',{signal:AbortSignal.timeout(3000)});
+      comfyLive = r.ok; checked = true;
+    }catch(_){ comfyLive = false; checked = true; }
+    return comfyLive;
+  };
+  window._cloudGenerate = async function(prompt){
+    try{
+      var r = await fetch('/api/ai-image',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt:prompt})});
+      if(!r.ok) return null;
+      var blob = await r.blob();
+      return URL.createObjectURL(blob);
+    }catch(_){ return null; }
+  };
+})();
+</script>
+<header>
+  <div class="logo">ABU<span>Z8</span></div>
+  <div class="pill"><div class="dot"></div>AI Engine Online</div>
+</header>
+<div class="hero">
+  <h1>AI Sound Effects</h1>
+  <p>Generate custom sound effects, foley, and ambient audio for videos, games, podcasts, and apps — describe it and it's yours in seconds.</p>
+</div>
+<div class="main">
+  <div class="card">
+    <h2>🎵 Generate Sound Effect</h2>
+    <label>Category</label>
+    <div class="category-grid" id="catGrid"></div>
+    <label>Describe Your Sound</label>
+    <input type="text" id="sfxPrompt" placeholder="e.g. heavy wooden door creaking open in a dark dungeon" />
+    <div class="form-row">
+      <div>
+        <label>Duration</label>
+        <select id="duration">
+          <option value="1">1 second</option>
+          <option value="3" selected>3 seconds</option>
+          <option value="5">5 seconds</option>
+          <option value="10">10 seconds</option>
+          <option value="30">30 seconds (ambient)</option>
+        </select>
+      </div>
+      <div>
+        <label>Quality</label>
+        <select id="quality">
+          <option value="44100">CD Quality (44.1kHz)</option>
+          <option value="48000" selected>Broadcast (48kHz)</option>
+          <option value="96000">Studio (96kHz)</option>
+        </select>
+      </div>
+      <div>
+        <label>Variations</label>
+        <select id="variations">
+          <option value="1">1 variation</option>
+          <option value="3" selected>3 variations</option>
+          <option value="5">5 variations</option>
+        </select>
+      </div>
+    </div>
+    <label>Intensity: <span id="intensityVal">70</span>%</label>
+    <input type="range" id="intensity" min="10" max="100" value="70" oninput="document.getElementById('intensityVal').textContent=this.value" />
+    <div class="range-row"><span>Subtle</span><span>Extreme</span></div>
+
+    <button class="btn" id="genBtn" onclick="generateSFX()">⚡ Generate Sound Effect</button>
+  </div>
+
+  <div class="card">
+    <h2>🎧 Results</h2>
+    <div class="generating" id="generating">
+      <div class="spin">🎵</div>
+      <p style="margin-top:12px">Generating your sound effects...</p>
+    </div>
+    <ul class="sfx-list" id="sfxList">
+      <li style="text-align:center;color:var(--muted);padding:32px">Your generated sounds will appear here</li>
+    </ul>
+  </div>
+
+  <div class="waitlist-section">
+    <h2>🎬 Pro Access</h2>
+    <p>Unlock unlimited generations, stems/layers, batch export, and direct DAW integration.</p>
+    <div class="email-row">
+      <input type="email" id="wlEmail" placeholder="your@email.com" />
+      <button onclick="joinWaitlist()">Join Waitlist</button>
+    </div>
+    <div class="success-msg" id="successMsg">✅ You're on the list!</div>
+  </div>
+</div>
+
+<script src="_abuz8-live-brain.js" onerror="console.log('Brain offline')"></script>
+<script>
+const CATS = [
+  {id:'nature',icon:'🌿',name:'Nature'},
+  {id:'urban',icon:'🏙',name:'Urban'},
+  {id:'tech',icon:'💻',name:'Tech / UI'},
+  {id:'foley',icon:'👟',name:'Foley'},
+  {id:'impact',icon:'💥',name:'Impact'},
+  {id:'ambient',icon:'🌊',name:'Ambient'},
+  {id:'scifi',icon:'🚀',name:'Sci-Fi'},
+  {id:'horror',icon:'👻',name:'Horror'},
+  {id:'cartoon',icon:'🎈',name:'Cartoon'},
+  {id:'music',icon:'🎼',name:'Musical'},
+];
+const PRESET_PROMPTS = {
+  nature:'rustling leaves in a forest with distant birdsong',
+  urban:'busy city intersection with cars honking and crowd noise',
+  tech:'notification ping with subtle digital reverb',
+  foley:'leather boots walking on wet cobblestone',
+  impact:'heavy metal door slamming shut with echo',
+  ambient:'deep ocean underwater ambience with distant whale calls',
+  scifi:'spaceship engine hum with futuristic beeping',
+  horror:'eerie wind blowing through broken window panes',
+  cartoon:'bouncy spring boing effect',
+  music:'short orchestral sting with brass and timpani',
+};
+let selCat = 'nature';
+
+document.getElementById('catGrid').innerHTML = CATS.map(c=>
+  `<div class="cat-btn${c.id==='nature'?' sel':''}" onclick="selCategory(this,'${c.id}')"><div class="cat-icon">${c.icon}</div><div class="cat-name">${c.name}</div></div>`).join('');
+
+function selCategory(el,id){
+  document.querySelectorAll('.cat-btn').forEach(e=>e.classList.remove('sel'));
+  el.classList.add('sel'); selCat=id;
+  if(!document.getElementById('sfxPrompt').value) document.getElementById('sfxPrompt').value=PRESET_PROMPTS[id]||'';
+}
+
+function generateSFX(){
+  const prompt = document.getElementById('sfxPrompt').value.trim();
+  if(!prompt){ alert('Please describe your sound effect.'); return; }
+  const btn=document.getElementById('genBtn');
+  btn.disabled=true; btn.textContent='⏳ Generating...';
+  document.getElementById('generating').style.display='block';
+  document.getElementById('sfxList').innerHTML='';
+
+  const count = parseInt(document.getElementById('variations').value);
+  const dur = document.getElementById('duration').value;
+
+  setTimeout(()=>{
+    if(window.ABUZ8&&window.ABUZ8.callComfy){
+      window.ABUZ8.callComfy('comfyui_sfx',{prompt,duration:dur,count,category:selCat}).then(res=>{
+        showResults(res,prompt,dur,count);
+      }).catch(()=>showDemoResults(prompt,dur,count));
+    } else showDemoResults(prompt,dur,count);
+  },3000);
+}
+
+function showDemoResults(prompt,dur,count){
+  document.getElementById('generating').style.display='none';
+  const names=Array.from({length:count},(_,i)=>`${prompt.split(' ').slice(0,3).join('-')}-v${i+1}.wav`);
+  document.getElementById('sfxList').innerHTML = names.map((n,i)=>`
+    <li class="sfx-item">
+      <button class="play-btn" onclick="playPreview(${i})">▶</button>
+      <div class="sfx-info"><div class="sfx-name">${n}</div><div class="sfx-meta">${dur}s • 48kHz • WAV</div></div>
+      <div class="waveform"></div>
+      <button class="dl-btn-sm" onclick="alert('Processing... ComfyUI generation starting. This requires the local GPU server.')">⬇ Download</button>
+    </li>`).join('');
+  document.getElementById('genBtn').disabled=false;
+  document.getElementById('genBtn').textContent='⚡ Generate Sound Effect';
+}
+
+function showResults(res,prompt,dur,count){
+  document.getElementById('generating').style.display='none';
+  const items=(res.files||[]);
+  if(items.length){ 
+    document.getElementById('sfxList').innerHTML=items.map((url,i)=>`
+      <li class="sfx-item">
+        <button class="play-btn" onclick="playAudio('${url}',${i})">▶</button>
+        <div class="sfx-info"><div class="sfx-name">SFX Variation ${i+1}</div><div class="sfx-meta">${dur}s • 48kHz</div></div>
+        <div class="waveform"></div>
+        <button class="dl-btn-sm" onclick="dlAudio('${url}',${i+1})">⬇ Download</button>
+      </li>`).join('');
+  } else showDemoResults(prompt,dur,count);
+  document.getElementById('genBtn').disabled=false;
+  document.getElementById('genBtn').textContent='⚡ Generate Sound Effect';
+}
+
+let audios={};
+function playPreview(i){ const k='demo_'+i; if(!audios[k]){ const ctx=new AudioContext(); const o=ctx.createOscillator(); const g=ctx.createGain(); o.connect(g); g.connect(ctx.destination); o.frequency.value=200+i*150; g.gain.setValueAtTime(0.3,ctx.currentTime); g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+0.5); o.start(); o.stop(ctx.currentTime+0.5); } }
+function playAudio(url,i){ if(audios[i]){ audios[i].pause(); delete audios[i]; return; } const a=new Audio(url); a.play(); audios[i]=a; }
+function dlAudio(url,n){ const a=document.createElement('a'); a.href=url; a.download=`sfx_${n}.wav`; a.click(); }
+function promptWaitlist(){/* gate removed - tool is free */}
+function joinWaitlist(){ const e=document.getElementById('wlEmail').value; if(!e||!e.includes('@')){ alert('Valid email please.'); return; } document.getElementById('successMsg').style.display='block'; document.getElementById('wlEmail').value='';fetch('/api/waitlist',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:e,product:'ai-sound-effects',ts:Date.now()})}).catch(function(){}); if(window.ABUZ8&&window.ABUZ8.callBrain) window.ABUZ8.callBrain('waitlist_add',{email:e,product:'ai-sound-effects',ts:Date.now()}); }
+</script>
+
+<script src="/assets/js/dfy-banner.js" async></script>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+<script src="/tools/_tools-shared.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>
+

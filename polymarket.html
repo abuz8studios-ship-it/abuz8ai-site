@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Polymarket Paper Tester — ABUZ8 AI</title>
+<meta name="description" content="Live Polymarket odds with a free paper-trading simulator — virtual bankroll, no real money, no wallets. Educational prediction-market tester by ABUZ8.">
+<link rel="canonical" href="https://abuz8ai.com/polymarket">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Polymarket Paper Tester — ABUZ8 AI">
+<meta property="og:description" content="Live Polymarket odds with a free paper-trading simulator — virtual bankroll, no real money, no wallets. Educational prediction-market tester by ABUZ8.">
+<meta property="og:url" content="https://abuz8ai.com/polymarket">
+<meta name="theme-color" content="#0a1628">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/abuz8-theme.css">
+<style>
+/* page-specific styles ONLY — theme vars, no new hex colors */
+.pm-status{font-family:var(--font-mono);font-size:12px;color:var(--dim);margin:0 0 18px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.pm-status .pm-dot{width:8px;height:8px;border-radius:50%;background:var(--muted);display:inline-block}
+.pm-status.is-live .pm-dot{background:var(--green-bright)}
+.pm-status.is-snapshot .pm-dot{background:var(--gold)}
+.pm-card{min-height:220px}
+.pm-card h3{font-size:14px;line-height:1.45}
+.pm-out{display:flex;justify-content:space-between;align-items:baseline;gap:10px;font-size:12.5px;color:var(--dim);margin-top:8px}
+.pm-out b{color:var(--text);font-weight:600}
+.pm-out .pm-pct{font-family:var(--font-mono);color:var(--gold-light)}
+.pm-bar{height:6px;border-radius:3px;background:var(--lapis-3);overflow:hidden;margin-top:4px}
+.pm-bar span{display:block;height:100%;background:var(--green-deep)}
+.pm-bar.pm-alt span{background:var(--blue-deep)}
+.pm-meta{display:flex;justify-content:space-between;gap:10px;font-size:11px;color:var(--muted);margin-top:auto;padding-top:14px}
+.pm-form{display:grid;grid-template-columns:2fr 1.2fr .9fr auto;gap:14px;align-items:end;margin:18px 0 6px}
+@media(max-width:860px){.pm-form{grid-template-columns:1fr}}
+.pm-field label{display:block;font-size:11px;color:var(--dim);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
+.pm-field select,.pm-field input{width:100%;background:var(--lapis-3);border:1px solid var(--border);border-radius:8px;color:var(--text);padding:10px 12px;font-size:13px;font-family:var(--font-body)}
+.pm-field select:focus,.pm-field input:focus{outline:none;border-color:var(--gold)}
+.pm-tiles{display:flex;gap:28px;flex-wrap:wrap;margin:6px 0 18px}
+.pm-tile .pm-num{font-family:var(--font-mono);font-size:22px;font-weight:700;color:var(--gold)}
+.pm-tile .pm-lbl{font-size:10.5px;color:var(--dim);text-transform:uppercase;letter-spacing:1px;margin-top:2px}
+.pl-up{color:var(--green-bright);font-weight:600;font-family:var(--font-mono)}
+.pl-down{color:var(--gold);font-weight:600;font-family:var(--font-mono)}
+.pl-flat{color:var(--dim);font-family:var(--font-mono)}
+.pm-empty{color:var(--dim);font-size:13px;padding:14px 0}
+.pm-close{background:transparent;border:1px solid var(--border);color:var(--dim);font-size:11px;letter-spacing:1px;text-transform:uppercase;padding:5px 12px;border-radius:6px;cursor:pointer;transition:color .3s,border-color .3s}
+.pm-close:hover{color:var(--gold);border-color:var(--gold)}
+.pm-paper-flag{display:inline-flex;align-items:center;gap:6px;font-size:10px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;padding:4px 11px;border-radius:20px;background:var(--blue-deep);color:var(--white)}
+</style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebPage",
+      "name": "Polymarket Paper Tester",
+      "url": "https://abuz8ai.com/polymarket.html",
+      "description": "Live Polymarket prediction-market odds plus a free paper-trading simulator with a virtual bankroll. No real money, no wallets, no orders — educational use only.",
+      "isPartOf": { "@type": "WebSite", "name": "ABUZ8 AI", "url": "https://abuz8ai.com" }
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Is any real money involved in the Polymarket Paper Tester?",
+          "acceptedAnswer": { "@type": "Answer", "text": "No. The tester uses a virtual bankroll that starts at $1,000 and exists only in your browser's localStorage. No wallets are connected, no deposits are taken, and no orders are ever placed. Nothing you do here moves real money." }
+        },
+        {
+          "@type": "Question",
+          "name": "Does this page place orders on Polymarket?",
+          "acceptedAnswer": { "@type": "Answer", "text": "No. We read public market data from Polymarket's Gamma API through a GET-only proxy and display it. The page cannot place, modify, or cancel any order on any exchange." }
+        },
+        {
+          "@type": "Question",
+          "name": "Is this financial advice?",
+          "acceptedAnswer": { "@type": "Answer", "text": "No. This is an educational simulation for learning how prediction-market prices work. Nothing on this page is investment, trading, or gambling advice. See our disclaimer at https://abuz8ai.com/disclaimer.html." }
+        },
+        {
+          "@type": "Question",
+          "name": "Is ABUZ8 affiliated with Polymarket?",
+          "acceptedAnswer": { "@type": "Answer", "text": "No. ABUZ8 LLC is not affiliated with, endorsed by, or connected to Polymarket. Market data is credited to Polymarket's public API and shown read-only for education." }
+        },
+        {
+          "@type": "Question",
+          "name": "Where is my paper-trading data stored?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Only in your own browser, in localStorage under the key abuz8_polymarket_paper. It is never sent to our servers or anyone else's. The Reset button erases it completely." }
+        },
+        {
+          "@type": "Question",
+          "name": "Who can use this page?",
+          "acceptedAnswer": { "@type": "Answer", "text": "The educational simulator is for adults 18 and over. Real prediction-market trading involves risk and may be restricted or unavailable in your jurisdiction, including parts of the United States. Check your local laws before ever using a real-money platform." }
+        }
+      ]
+    }
+  ]
+}
+</script>
+</head>
+<body>
+<div class="geo-bg"></div>
+<div class="glow-orb glow-orb-1"></div>
+<div class="glow-orb glow-orb-2"></div>
+<div class="glow-orb glow-orb-3"></div>
+
+<nav class="abuz8-nav">
+<div class="nav-inner">
+  <a href="/" style="text-decoration:none;">
+    <div class="logo">ABUZ8</div>
+    <div class="logo-sub">Sovereign AI</div>
+  </a>
+  <div class="nav-links">
+    <a href="/tools.html">Tools</a>
+    <a href="/store.html">Store</a>
+    
+    <a href="/agents.html">Agents</a>
+    <a href="/models.html">Models</a>
+    <a href="/news.html">News</a>
+    <a href="/roadmap.html">Roadmap</a>
+    <a href="/store.html" class="nav-cta">Get Started</a>
+  </div>
+</div>
+</nav>
+
+<div class="wrap">
+  <div class="crumbs"><a href="/">Home</a> › Polymarket Paper Tester</div>
+</div>
+
+<section class="hero">
+  <div class="hero-eyebrow">Prediction Markets · Educational · Paper Only</div>
+  <h1>Polymarket <span class="gold">Paper Tester</span></h1>
+  <p>Watch real prediction-market odds, then practice with a <strong>100% virtual bankroll</strong>. Prices come read-only from Polymarket's public API — no wallets, no orders, and no real money, ever. Built to teach how market prices approximate probabilities.</p>
+  <div class="hero-btns">
+    <a class="btn btn-gold" href="#pm-tabs">📊 See Live Markets</a>
+    <a class="btn btn-outline" href="/disclaimer.html">⚖️ Read the Disclaimer</a>
+  </div>
+  <div class="stats-row">
+    <div class="stat"><div class="stat-num">$1,000</div><div class="stat-label">Virtual starting bankroll</div></div>
+    <div class="stat"><div class="stat-num">$0</div><div class="stat-label">Real money at risk</div></div>
+    <div class="stat"><div class="stat-num">5 min</div><div class="stat-label">Feed cache</div></div>
+    <div class="stat"><div class="stat-num">100%</div><div class="stat-label">Paper data stays in your browser</div></div>
+  </div>
+</section>
+
+<section id="pm-tabs" style="max-width:var(--wrap);margin:0 auto;padding:0 32px 40px">
+  <div class="warn"><strong>PAPER TRADING ONLY.</strong> This is an educational simulation. It never moves real money, never connects a wallet, and never places an order anywhere. It is not financial advice. 18+. Real prediction markets may be restricted in your jurisdiction, including parts of the US. Not affiliated with Polymarket.</div>
+
+  <div class="tabs" data-tabs>
+    <div class="tab-list" role="tablist" aria-label="Polymarket tester sections">
+      <button class="tab-btn" role="tab" id="tab-markets" aria-controls="panel-markets" aria-selected="true">📊 Live Markets</button>
+      <button class="tab-btn" role="tab" id="tab-paper" aria-controls="panel-paper" aria-selected="false">🧪 Paper Tester</button>
+      <button class="tab-btn" role="tab" id="tab-how" aria-controls="panel-how" aria-selected="false">📖 How It Works</button>
+      <button class="tab-btn" role="tab" id="tab-legal" aria-controls="panel-legal" aria-selected="false">⚖️ Risk &amp; Legal</button>
+    </div>
+
+    <!-- ============ TAB 1: LIVE MARKETS ============ -->
+    <div class="tab-panel" role="tabpanel" id="panel-markets" aria-labelledby="tab-markets">
+      <h2 style="font-size:1.4rem;margin-bottom:8px">Highest-volume open markets</h2>
+      <p style="color:var(--dim);font-size:13.5px;margin-bottom:16px">The most-traded open markets right now, ranked by 24-hour volume. A "Yes" price of $0.41 means the market currently implies roughly a 41% chance. Every card links out to the market on polymarket.com.</p>
+      <div class="pm-status" id="pm-status"><span class="pm-dot"></span><span id="pm-status-text">Loading market feed…</span></div>
+      <div class="grid-3" id="pm-grid"></div>
+      <div class="note-blue note" style="margin-top:22px">📡 Market data comes from <strong>Polymarket's public Gamma API</strong> via our read-only, GET-only proxy (<code class="inline">/api/polymarket</code>), cached 5 minutes at the edge. All data is credited to Polymarket; we aggregate and link out, and we are not affiliated with Polymarket. If the live feed is unreachable, the board shows a clearly labeled snapshot captured 2026-07-17 — never fabricated numbers.</div>
+    </div>
+
+    <!-- ============ TAB 2: PAPER TESTER ============ -->
+    <div class="tab-panel" role="tabpanel" id="panel-paper" aria-labelledby="tab-paper" hidden>
+      <h2 style="font-size:1.4rem;margin-bottom:8px">Paper Tester <span class="pm-paper-flag">Paper · Simulated</span></h2>
+      <p style="color:var(--dim);font-size:13.5px;margin-bottom:14px">Practice reading prediction-market prices with a virtual bankroll. Pick a market and outcome, stake virtual dollars at the current price, and watch your simulated P/L as prices move. Everything lives in <code class="inline">localStorage</code> in your browser — nothing is sent to us or to Polymarket.</p>
+
+      <div class="warn" style="margin:0 0 18px"><strong>100% simulated.</strong> Virtual dollars only. No wallets, no deposits, no orders, no payouts. Educational use — not financial advice.</div>
+
+      <div class="pm-tiles">
+        <div class="pm-tile"><div class="pm-num" id="pt-cash">—</div><div class="pm-lbl">Virtual cash</div></div>
+        <div class="pm-tile"><div class="pm-num" id="pt-open">—</div><div class="pm-lbl">Open positions value</div></div>
+        <div class="pm-tile"><div class="pm-num" id="pt-total">—</div><div class="pm-lbl">Account total</div></div>
+        <div class="pm-tile"><div class="pm-num" id="pt-net">—</div><div class="pm-lbl">Net P/L vs $1,000 start</div></div>
+      </div>
+
+      <div class="panel" style="padding:22px">
+        <h3 style="font-size:14px;margin-bottom:4px">Open a paper position</h3>
+        <div class="pm-form">
+          <div class="pm-field">
+            <label for="pm-market">Market</label>
+            <select id="pm-market"><option value="">Loading markets…</option></select>
+          </div>
+          <div class="pm-field">
+            <label for="pm-outcome">Outcome</label>
+            <select id="pm-outcome"><option value="">—</option></select>
+          </div>
+          <div class="pm-field">
+            <label for="pm-stake">Virtual stake ($100–$10,000)</label>
+            <input type="number" id="pm-stake" min="100" max="10000" step="50" value="100">
+          </div>
+          <div><button class="btn btn-gold btn-sm" id="pm-open" type="button" style="padding:11px 20px">Open paper position</button></div>
+        </div>
+        <div id="pm-form-note" style="font-size:12px;color:var(--dim);min-height:18px"></div>
+      </div>
+
+      <h3 style="font-size:14px;margin:26px 0 10px">Open paper positions</h3>
+      <div id="pm-pos-wrap">
+        <div class="pm-empty" id="pm-pos-empty">No paper positions yet. Open one above once the feed loads.</div>
+        <div class="table-scroll" id="pm-pos-table" style="display:none">
+          <table class="data-table">
+            <thead><tr><th>Market</th><th>Outcome</th><th>Stake</th><th>Entry</th><th>Now</th><th>Value</th><th>P/L</th><th></th></tr></thead>
+            <tbody id="pm-pos-body"></tbody>
+          </table>
+        </div>
+      </div>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-top:18px">
+        <button class="btn btn-outline btn-sm" id="pm-reset" type="button">Reset paper account to $1,000</button>
+        <span style="font-size:11.5px;color:var(--muted)">Erases the <code class="inline">abuz8_polymarket_paper</code> key from your browser's localStorage. Nothing else is stored anywhere.</span>
+      </div>
+      <div class="note note-gold" style="margin-top:20px">🧮 <strong>How valuation works:</strong> a paper position buys <em>stake ÷ entry price</em> virtual shares. Its value is <em>shares × current price</em>; a winning share would resolve to $1 on the real market. If a market drops out of the feed, its position is shown valued at entry price and labeled accordingly — an honest "price unavailable", never a made-up number.</div>
+    </div>
+
+    <!-- ============ TAB 3: HOW IT WORKS ============ -->
+    <div class="tab-panel" role="tabpanel" id="panel-how" aria-labelledby="tab-how" hidden>
+      <h2 style="font-size:1.4rem;margin-bottom:8px">How prediction markets work</h2>
+      <div class="grid-2" style="margin:18px 0">
+        <div class="card"><span class="icon-chip">🎯</span><h3>What a prediction market is</h3><p>A prediction market lets people trade shares in the outcome of a future event — "Will X happen?" Shares in the winning outcome resolve to $1; shares in losing outcomes resolve to $0. The trading price in between reflects what the crowd collectively believes.</p></div>
+        <div class="card"><span class="icon-chip">📐</span><h3>Price ≈ probability</h3><p>Because a winning share pays exactly $1, a share trading at $0.41 implies the market assigns roughly a 41% chance to that outcome. That's why prediction markets are studied as live, money-weighted probability estimates — often sharper than polls.</p></div>
+        <div class="card"><span class="icon-chip">🌊</span><h3>Why prices move</h3><p>News, evidence, and opinion shifts flow into buy and sell pressure. If traders think an outcome is underpriced they buy it, pushing the price — and the implied probability — up. Watching prices react to news is the fastest way to build probability intuition.</p></div>
+        <div class="card"><span class="icon-chip">🧪</span><h3>Why we built a paper tester</h3><p>Reading about probability is one thing; feeling a position move against you is another. The paper tester gives you that feedback loop with zero risk: virtual dollars, real prices, honest P/L. Learn calibration before ever considering real markets — or instead of them entirely.</p></div>
+      </div>
+
+      <h3 style="font-size:15px;margin:26px 0 6px">A worked example (real market, captured 2026-07-17)</h3>
+      <p style="color:var(--dim);font-size:13px;margin-bottom:10px">"Will Argentina win the 2026 FIFA World Cup?" — "Yes" was trading at $0.4115, implying about a 41% chance. A $100 paper stake at $0.4115 buys ≈ 243 virtual shares. If the price later rises to $0.50, the position is worth ≈ $121.50 (+$21.50 paper P/L). If Argentina were eliminated, "Yes" would head toward $0 and the paper stake toward $0 too.</p>
+
+      <h3 style="font-size:15px;margin:26px 0 10px">Using the tester</h3>
+      <ol class="steps">
+        <li><strong>Browse the live board</strong><p>Open the Live Markets tab. Markets are ranked by 24-hour volume — the crowd's current focus. Each price is the market-implied probability.</p></li>
+        <li><strong>Form your own estimate</strong><p>Before staking, decide what probability <em>you</em> would assign. The gap between your estimate and the market price is your (paper) edge — or your mistake.</p></li>
+        <li><strong>Open a paper position</strong><p>In the Paper Tester tab, pick the market, the outcome, and a virtual stake between $100 and $10,000 from your $1,000 starting bankroll.</p></li>
+        <li><strong>Track your P/L</strong><p>Positions are revalued at the current fetched price every time the page loads the feed. Green means the market moved toward your view.</p></li>
+        <li><strong>Close and review</strong><p>Close a position to bank the virtual result, then ask: was I right for the right reason? Reset any time to start the experiment over at $1,000.</p></li>
+      </ol>
+
+      <div class="note">🎓 Want the deeper theory? Prediction-market prices, scoring rules, and calibration are covered across our <a href="/education.html">education hub</a> and <a href="/blog/">blog</a>.</div>
+    </div>
+
+    <!-- ============ TAB 4: RISK & LEGAL ============ -->
+    <div class="tab-panel" role="tabpanel" id="panel-legal" aria-labelledby="tab-legal" hidden>
+      <h2 style="font-size:1.4rem;margin-bottom:12px">Risk &amp; Legal</h2>
+      <div class="warn"><strong>Read this before anything else.</strong><br><br>
+        <strong>1. This is an educational simulation.</strong> The Paper Tester uses virtual dollars that exist only in your browser. No real money is ever staked, moved, won, or lost on this page.<br><br>
+        <strong>2. No real trading is possible here.</strong> There are no wallets, no deposits, no order placement, and no connection to any exchange account. The page only <em>reads</em> public prices.<br><br>
+        <strong>3. Not financial advice.</strong> Nothing on this page is investment, trading, or gambling advice, and ABUZ8 LLC is not a licensed financial advisor. Market prices shown are informational only.<br><br>
+        <strong>4. 18+.</strong> This educational content is intended for adults.<br><br>
+        <strong>5. Real prediction markets carry real risk and legal restrictions.</strong> Trading on real-money prediction markets can lose your entire stake and may be restricted or unavailable in your jurisdiction — including parts of the United States. It is your responsibility to know and follow your local laws.<br><br>
+        <strong>6. Not affiliated with Polymarket.</strong> ABUZ8 LLC is not affiliated with, endorsed by, or connected to Polymarket. Market data is drawn read-only from Polymarket's public API and credited to them.
+      </div>
+      <div class="note-gold note">📄 The full site disclaimer applies to this page: <a href="/disclaimer.html">abuz8ai.com/disclaimer.html</a>. Questions or takedown requests: <a href="/contact.html">contact</a> (ahmad@abuz8ai.com).</div>
+
+      <h3 style="font-size:15px;margin:28px 0 12px">Frequently asked questions</h3>
+      <details class="acc"><summary>Is any real money involved?</summary><div class="acc-body">No. The tester uses a virtual bankroll that starts at $1,000 and exists only in your browser's localStorage. No wallets are connected, no deposits are taken, and no orders are ever placed. Nothing you do here moves real money.</div></details>
+      <details class="acc"><summary>Does this page place orders on Polymarket?</summary><div class="acc-body">No. We read public market data from Polymarket's Gamma API through a GET-only proxy and display it. The page cannot place, modify, or cancel any order on any exchange.</div></details>
+      <details class="acc"><summary>Is this financial advice?</summary><div class="acc-body">No. This is an educational simulation for learning how prediction-market prices work. Nothing here is investment, trading, or gambling advice. See the <a href="/disclaimer.html">full disclaimer</a>.</div></details>
+      <details class="acc"><summary>Is ABUZ8 affiliated with Polymarket?</summary><div class="acc-body">No. ABUZ8 LLC is not affiliated with, endorsed by, or connected to Polymarket. Market data is credited to Polymarket's public API and shown read-only for education.</div></details>
+      <details class="acc"><summary>Where is my paper-trading data stored?</summary><div class="acc-body">Only in your own browser, in localStorage under the key <code class="inline">abuz8_polymarket_paper</code>. It is never sent to our servers or anyone else's. The Reset button erases it completely.</div></details>
+      <details class="acc"><summary>Who can use this page?</summary><div class="acc-body">The educational simulator is for adults 18 and over. Real prediction-market trading involves risk and may be restricted or unavailable in your jurisdiction, including parts of the United States. Check your local laws before ever using a real-money platform.</div></details>
+    </div>
+  </div>
+</section>
+
+<footer class="abuz8-footer">
+<div class="foot-grid">
+  <div class="foot-brand">
+    <div class="logo">ABUZ8</div>
+    <p>Sovereign AI for everyone. Real tools, local models, no fake claims. Built on real hardware by ABUZ8 LLC, Ohio.</p>
+  </div>
+  <div class="foot-col"><h4>Platform</h4>
+    <a href="/tools.html">Free Tools</a><a href="/store.html">Store</a><a href="/models.html">Models</a><a href="/agents.html">AI Agents</a><a href="/news.html">News</a><a href="/blog/">Blog</a>
+  </div>
+  <div class="foot-col"><h4>Mission</h4>
+    <a href="/sovereign.html">Sovereign AI</a><a href="/journey.html">Journey &amp; Goals</a><a href="/roadmap.html">Roadmap</a><a href="/audit.html">Audit &amp; Transparency</a><a href="/purpose.html">Purpose</a>
+  </div>
+  <div class="foot-col"><h4>Hubs</h4>
+    <a href="/github.html">GitHub Hub</a><a href="/huggingface.html">Hugging Face Hub</a><a href="/polymarket.html">Polymarket Tester</a><a href="/community.html">Community</a><a href="/education.html">Education</a><a href="/downloads.html">Downloads</a>
+  </div>
+  <div class="foot-col"><h4>Trust</h4>
+    <a href="/security.html">Security &amp; Compliance</a><a href="/disclaimer.html">Disclaimer</a><a href="/privacy.html">Privacy</a><a href="/terms.html">Terms</a><a href="/refund.html">Refunds</a><a href="/license.html">License</a><a href="/contact.html">Contact</a><a href="/status.html">Status</a>
+  </div>
+</div>
+<div class="foot-base">
+  <div>© <span data-year>2026</span> ABUZ8 LLC. All rights reserved.</div>
+  <div>Built local-first on real hardware · No fake claims · <a href="/sovereign.html">Sovereign AI for everyone</a></div>
+</div>
+</footer>
+<script src="/assets/js/abuz8-ui.js" defer></script>
+<script src="/assets/js/abuz8-onboard.js" defer></script>
+<script>
+/* Polymarket paper tester — 100% client-side. Reads /api/polymarket (read-only proxy).
+   Paper state lives ONLY in localStorage key 'abuz8_polymarket_paper'. No wallets, no orders. */
+(function () {
+  'use strict';
+
+  var KEY = 'abuz8_polymarket_paper';
+  var START = 1000, MIN_STAKE = 100, MAX_STAKE = 10000;
+  var SNAPSHOT_DATE_FALLBACK = '2026-07-17';
+
+  var markets = [];               // sanitized markets from the proxy
+  var feed = { source: null, snapshotDate: null, loaded: false };
+
+  /* ---------- state ---------- */
+  function freshState() { return { bankroll: START, realized: 0, positions: [] }; }
+  function loadState() {
+    try {
+      var s = JSON.parse(localStorage.getItem(KEY));
+      if (s && typeof s.bankroll === 'number' && isFinite(s.bankroll) && Array.isArray(s.positions)) {
+        if (typeof s.realized !== 'number' || !isFinite(s.realized)) s.realized = 0;
+        return s;
+      }
+    } catch (e) { /* corrupted → fresh */ }
+    return freshState();
+  }
+  function saveState() {
+    try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) { /* storage blocked — session-only */ }
+  }
+  var state = loadState();
+
+  /* ---------- formatting ---------- */
+  function money(n) {
+    if (typeof n !== 'number' || !isFinite(n)) return '—';
+    return '$' + n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+  function pct(p) {
+    if (typeof p !== 'number' || !isFinite(p)) return '—';
+    return (p * 100).toFixed(1) + '%';
+  }
+  function vol(n) {
+    if (typeof n !== 'number' || !isFinite(n)) return '—';
+    if (n >= 1e6) return '$' + (n / 1e6).toFixed(1) + 'M';
+    if (n >= 1e3) return '$' + (n / 1e3).toFixed(0) + 'K';
+    return '$' + n.toFixed(0);
+  }
+  function dateStr(iso) {
+    return (typeof iso === 'string' && iso.length >= 10) ? iso.slice(0, 10) : '—';
+  }
+  function el(tag, cls, text) {
+    var d = document.createElement(tag);
+    if (cls) d.className = cls;
+    if (text != null) d.textContent = text;
+    return d;
+  }
+
+  /* ---------- market lookup ---------- */
+  function marketById(id) {
+    for (var i = 0; i < markets.length; i++) if (markets[i].id === id) return markets[i];
+    return null;
+  }
+  function priceNow(marketId, oi) {
+    var m = marketById(marketId);
+    if (!m || !Array.isArray(m.outcomePrices)) return null;
+    var p = m.outcomePrices[oi];
+    return (typeof p === 'number' && isFinite(p)) ? p : null;
+  }
+  function marketUrl(slug) {
+    return (typeof slug === 'string' && /^[a-zA-Z0-9_-]{1,200}$/.test(slug))
+      ? 'https://polymarket.com/market/' + slug
+      : 'https://polymarket.com';
+  }
+
+  /* ---------- status line ---------- */
+  function setStatus(mode, text) {
+    var box = document.getElementById('pm-status');
+    var t = document.getElementById('pm-status-text');
+    if (!box || !t) return;
+    box.className = 'pm-status' + (mode === 'live' ? ' is-live' : mode === 'snapshot' ? ' is-snapshot' : '');
+    t.textContent = text;
+  }
+
+  /* ---------- live markets board ---------- */
+  function renderBoard() {
+    var grid = document.getElementById('pm-grid');
+    if (!grid) return;
+    grid.textContent = '';
+    if (!feed.loaded) {
+      var off = el('div', 'panel');
+      off.style.gridColumn = '1 / -1';
+      off.appendChild(el('h3', null, 'Feed offline'));
+      var p = el('p', null, 'The market board could not load right now (the /api/polymarket proxy was unreachable). No cached data is shown in its place — try again in a minute, or browse polymarket.com directly.');
+      p.style.color = 'var(--dim)'; p.style.fontSize = '13px'; p.style.marginTop = '8px';
+      off.appendChild(p);
+      grid.appendChild(off);
+      return;
+    }
+    markets.forEach(function (m) {
+      var card = el('div', 'card pm-card');
+      card.appendChild(el('h3', null, m.question || 'Untitled market'));
+      var outs = Array.isArray(m.outcomes) ? m.outcomes : [];
+      var shown = Math.min(outs.length, 4);
+      for (var i = 0; i < shown; i++) {
+        var p = (Array.isArray(m.outcomePrices) && typeof m.outcomePrices[i] === 'number') ? m.outcomePrices[i] : null;
+        var row = el('div', 'pm-out');
+        var name = el('b', null, outs[i]);
+        var val = el('span', 'pm-pct', pct(p));
+        row.appendChild(name); row.appendChild(val);
+        card.appendChild(row);
+        var bar = el('div', 'pm-bar' + (i % 2 === 1 ? ' pm-alt' : ''));
+        var fill = el('span');
+        var w = (p == null) ? 0 : Math.max(0, Math.min(100, p * 100));
+        fill.style.width = w + '%';
+        bar.appendChild(fill);
+        card.appendChild(bar);
+      }
+      var meta = el('div', 'pm-meta');
+      meta.appendChild(el('span', null, '24h vol ' + vol(m.volume24hr)));
+      meta.appendChild(el('span', null, 'Ends ' + dateStr(m.endDate)));
+      card.appendChild(meta);
+      var link = el('a', 'card-link', 'View on Polymarket ↗');
+      link.href = marketUrl(m.slug);
+      link.target = '_blank';
+      link.rel = 'noopener noreferrer nofollow';
+      card.appendChild(link);
+      grid.appendChild(card);
+    });
+  }
+
+  /* ---------- paper tester: form ---------- */
+  function fillMarketSelect() {
+    var sel = document.getElementById('pm-market');
+    if (!sel) return;
+    sel.textContent = '';
+    if (!feed.loaded || !markets.length) {
+      var o = el('option', null, 'Feed offline — cannot open new positions');
+      o.value = '';
+      sel.appendChild(o);
+      fillOutcomeSelect('');
+      return;
+    }
+    var first = el('option', null, 'Choose a market…');
+    first.value = '';
+    sel.appendChild(first);
+    markets.forEach(function (m) {
+      if (!m.id) return;
+      var o = el('option', null, m.question.length > 90 ? m.question.slice(0, 87) + '…' : m.question);
+      o.value = m.id;
+      sel.appendChild(o);
+    });
+  }
+  function fillOutcomeSelect(marketId) {
+    var sel = document.getElementById('pm-outcome');
+    if (!sel) return;
+    sel.textContent = '';
+    var m = marketById(marketId);
+    if (!m || !Array.isArray(m.outcomes) || !m.outcomes.length) {
+      var o = el('option', null, '—');
+      o.value = '';
+      sel.appendChild(o);
+      return;
+    }
+    m.outcomes.forEach(function (name, i) {
+      var p = (Array.isArray(m.outcomePrices) && typeof m.outcomePrices[i] === 'number') ? m.outcomePrices[i] : null;
+      var o = el('option', null, name + ' — ' + pct(p));
+      o.value = String(i);
+      sel.appendChild(o);
+    });
+  }
+  function formNote(msg) {
+    var n = document.getElementById('pm-form-note');
+    if (n) n.textContent = msg || '';
+  }
+
+  function openPosition() {
+    if (!feed.loaded) { formNote('Feed offline — new paper positions need a live price.'); return; }
+    var mSel = document.getElementById('pm-market');
+    var oSel = document.getElementById('pm-outcome');
+    var stakeIn = document.getElementById('pm-stake');
+    var m = marketById(mSel ? mSel.value : '');
+    if (!m) { formNote('Pick a market first.'); return; }
+    var oi = oSel ? parseInt(oSel.value, 10) : NaN;
+    if (!isFinite(oi) || oi < 0 || oi >= m.outcomes.length) { formNote('Pick an outcome.'); return; }
+    var p = priceNow(m.id, oi);
+    if (p == null || p <= 0 || p >= 1) { formNote('That outcome has no usable price right now (must be between $0 and $1).'); return; }
+    var stake = stakeIn ? Math.round(parseFloat(stakeIn.value)) : NaN;
+    if (!isFinite(stake) || stake < MIN_STAKE || stake > MAX_STAKE) {
+      formNote('Stake must be between $' + MIN_STAKE + ' and $' + MAX_STAKE.toLocaleString('en-US') + ' (virtual).'); return;
+    }
+    if (stake > state.bankroll) {
+      formNote('Not enough virtual cash: bankroll is ' + money(state.bankroll) + '. Close positions or reset.'); return;
+    }
+    state.bankroll = Math.round((state.bankroll - stake) * 100) / 100;
+    state.positions.push({
+      pid: Date.now() + '-' + Math.floor(Math.random() * 1e6),
+      marketId: m.id,
+      question: m.question,
+      slug: m.slug || null,
+      outcome: m.outcomes[oi],
+      oi: oi,
+      stake: stake,
+      entry: p,
+      opened: new Date().toISOString()
+    });
+    saveState();
+    formNote('Paper position opened: ' + money(stake) + ' on "' + m.outcomes[oi] + '" at ' + pct(p) + '. (Virtual — no real order placed.)');
+    renderPositions();
+  }
+
+  /* ---------- paper tester: positions + totals ---------- */
+  function positionValue(pos) {
+    var now = priceNow(pos.marketId, pos.oi);
+    var shares = pos.stake / pos.entry;
+    if (now == null) return { now: null, value: pos.stake, estimated: true };
+    return { now: now, value: Math.round(shares * now * 100) / 100, estimated: false };
+  }
+
+  function closePosition(pid) {
+    for (var i = 0; i < state.positions.length; i++) {
+      if (state.positions[i].pid === pid) {
+        var pos = state.positions[i];
+        var v = positionValue(pos);
+        state.bankroll = Math.round((state.bankroll + v.value) * 100) / 100;
+        state.realized = Math.round((state.realized + (v.value - pos.stake)) * 100) / 100;
+        state.positions.splice(i, 1);
+        saveState();
+        renderPositions();
+        formNote('Closed at ' + (v.estimated ? 'entry price (live price unavailable)' : pct(v.now)) + ' for ' + money(v.value) + ' virtual. ' + (v.value >= pos.stake ? 'Paper gain' : 'Paper loss') + ': ' + money(Math.abs(v.value - pos.stake)) + '.');
+        return;
+      }
+    }
+  }
+
+  function plSpan(delta) {
+    var s = el('span', delta > 0 ? 'pl-up' : delta < 0 ? 'pl-down' : 'pl-flat');
+    s.textContent = (delta > 0 ? '+' : delta < 0 ? '−' : '±') + money(Math.abs(delta));
+    return s;
+  }
+
+  function renderPositions() {
+    var body = document.getElementById('pm-pos-body');
+    var table = document.getElementById('pm-pos-table');
+    var empty = document.getElementById('pm-pos-empty');
+    if (!body || !table || !empty) return;
+    body.textContent = '';
+    var openValue = 0;
+    if (!state.positions.length) {
+      table.style.display = 'none';
+      empty.style.display = '';
+    } else {
+      table.style.display = '';
+      empty.style.display = 'none';
+      state.positions.forEach(function (pos) {
+        var v = positionValue(pos);
+        openValue += v.value;
+        var tr = document.createElement('tr');
+        var tdQ = el('td', null, pos.question.length > 60 ? pos.question.slice(0, 57) + '…' : pos.question);
+        tr.appendChild(tdQ);
+        tr.appendChild(el('td', null, pos.outcome));
+        tr.appendChild(el('td', null, money(pos.stake)));
+        tr.appendChild(el('td', null, pct(pos.entry)));
+        tr.appendChild(el('td', null, v.estimated ? '— (unavailable)' : pct(v.now)));
+        var tdV = el('td', null, money(v.value) + (v.estimated ? ' *' : ''));
+        tr.appendChild(tdV);
+        var tdPl = document.createElement('td');
+        tdPl.appendChild(plSpan(Math.round((v.value - pos.stake) * 100) / 100));
+        tr.appendChild(tdPl);
+        var tdA = document.createElement('td');
+        var btn = el('button', 'pm-close', 'Close');
+        btn.type = 'button';
+        btn.addEventListener('click', function () { closePosition(pos.pid); });
+        tdA.appendChild(btn);
+        tr.appendChild(tdA);
+        body.appendChild(tr);
+      });
+    }
+    openValue = Math.round(openValue * 100) / 100;
+    var total = Math.round((state.bankroll + openValue) * 100) / 100;
+    var net = Math.round((total - START) * 100) / 100;
+    var set = function (id, v) { var n = document.getElementById(id); if (n) n.textContent = v; };
+    set('pt-cash', money(state.bankroll));
+    set('pt-open', money(openValue));
+    set('pt-total', money(total));
+    var netEl = document.getElementById('pt-net');
+    if (netEl) {
+      netEl.textContent = (net > 0 ? '+' : net < 0 ? '−' : '±') + money(Math.abs(net));
+      netEl.style.color = net > 0 ? 'var(--green-bright)' : net < 0 ? 'var(--gold)' : 'var(--dim)';
+    }
+  }
+
+  function resetPaper() {
+    var ok = window.confirm('Reset the paper account? This erases all virtual positions and history from your browser and restores the $1,000 virtual bankroll.');
+    if (!ok) return;
+    state = freshState();
+    try { localStorage.removeItem(KEY); } catch (e) { /* ignore */ }
+    saveState();
+    renderPositions();
+    formNote('Paper account reset to ' + money(START) + ' virtual.');
+  }
+
+  /* ---------- feed load ---------- */
+  function applyFeed(json) {
+    var list = (json && Array.isArray(json.markets)) ? json.markets : [];
+    markets = list.filter(function (m) {
+      return m && typeof m.question === 'string' && Array.isArray(m.outcomes) && Array.isArray(m.outcomePrices);
+    });
+    feed.loaded = markets.length > 0;
+    feed.source = json && json.source ? json.source : null;
+    feed.snapshotDate = (json && json.snapshot_date) ? json.snapshot_date : SNAPSHOT_DATE_FALLBACK;
+    if (!feed.loaded) {
+      setStatus('offline', 'Feed offline — no market data available right now.');
+    } else if (feed.source === 'snapshot') {
+      setStatus('snapshot', 'Cached snapshot (' + feed.snapshotDate + ') — the live Polymarket feed is temporarily unreachable. Prices below are NOT current.');
+    } else {
+      setStatus('live', 'Live feed — Polymarket public API via our read-only proxy, edge-cached 5 minutes.');
+    }
+    renderBoard();
+    fillMarketSelect();
+    fillOutcomeSelect('');
+    renderPositions();
+    var openBtn = document.getElementById('pm-open');
+    if (openBtn) openBtn.disabled = !feed.loaded;
+    if (feed.loaded && feed.source === 'snapshot') {
+      formNote('Note: prices come from a cached snapshot (' + feed.snapshotDate + '), not live trading. Paper positions will use these cached prices.');
+    }
+  }
+
+  function loadFeed() {
+    fetch('/api/polymarket?type=markets&limit=24')
+      .then(function (r) { if (!r.ok) throw new Error('bad status ' + r.status); return r.json(); })
+      .then(applyFeed)
+      .catch(function () {
+        feed.loaded = false;
+        setStatus('offline', 'Feed offline — could not reach /api/polymarket. Existing paper positions are shown valued at entry price.');
+        renderBoard();
+        fillMarketSelect();
+        renderPositions();
+        var openBtn = document.getElementById('pm-open');
+        if (openBtn) openBtn.disabled = true;
+      });
+  }
+
+  /* ---------- boot ---------- */
+  function boot() {
+    var mSel = document.getElementById('pm-market');
+    if (mSel) mSel.addEventListener('change', function () { fillOutcomeSelect(mSel.value); });
+    var openBtn = document.getElementById('pm-open');
+    if (openBtn) openBtn.addEventListener('click', openPosition);
+    var resetBtn = document.getElementById('pm-reset');
+    if (resetBtn) resetBtn.addEventListener('click', resetPaper);
+    renderPositions();
+    loadFeed();
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', boot);
+  } else {
+    boot();
+  }
+})();
+</script>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>

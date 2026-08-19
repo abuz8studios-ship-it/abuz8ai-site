@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<!-- Published 2026-08-15. ABUZ8 LLC. -->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Thompson Sampling for LLM Routing — How a Router Learns Which Model to Trust | ABUZ8</title>
+<meta name="description" content="Thompson sampling for LLM routing explained: Beta posteriors per lane, cost-weighted selection, trust thresholds, and why it beats a static price-sorted routing table.">
+<meta name="keywords" content="thompson sampling llm routing, bandit model routing, adaptive llm router, beta posterior model selection, cost weighted llm routing">
+<link rel="canonical" href="https://abuz8ai.com/blog/thompson-sampling-llm-routing">
+<meta property="og:title" content="Thompson Sampling for LLM Routing — How a Router Learns Which Model to Trust">
+<meta property="og:type" content="article">
+<link rel="stylesheet" href="/blog/_blog-base.css">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@300;400;600;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
+<script type="application/ld+json">
+{"@context": "https://schema.org", "@type": "BlogPosting", "headline": "Thompson Sampling for LLM Routing — How a Router Learns Which Model to Trust", "datePublished": "2026-08-15", "author": {"@type": "Organization", "name": "ABUZ8 AI"}}
+</script>
+</head>
+<body>
+<div class="container">
+  <a href="/blog/" class="back">&larr; ABUZ8 BLOG</a>
+  <h1>Thompson Sampling for LLM Routing — How a Router Learns Which Model to Trust</h1>
+  <div class="meta-row"><span>ENGINEERING</span><span class="dot"></span><span>AUGUST 15, 2026</span><span class="dot"></span><span>5 MIN READ</span></div>
+
+  <p><strong>Thompson sampling for LLM routing</strong> replaces the thing most systems do — a hand-maintained table that says "use the cheap model for simple tasks and the expensive one for hard tasks" — with a router that works out which model is actually good at your work by watching what happens. The distinction matters because the hand-maintained table encodes someone's opinion from the month it was written, and model quality, pricing and availability all move faster than anyone updates a config file.</p>
+
+  <h2>The problem, stated properly</h2>
+  <p>You have a set of lanes: local models on your own GPU, cheap commercial endpoints, premium flagship models. Each has a cost and an unknown, workload-specific quality. Every request forces a choice, and the choice has two competing goals — exploit the lane you currently believe is best, or explore a lane you have not tried enough to judge. Always exploiting means you never discover that a cheap provider quietly became excellent. Always exploring means you pay for experiments forever. This is the classic multi-armed bandit, and Thompson sampling is one of the oldest and best-behaved answers to it.</p>
+
+  <h2>How it actually works</h2>
+  <p>Give every (lane, task-domain) pair a Beta distribution — two numbers, <code>alpha</code> and <code>beta</code>, counting successes and failures. That distribution represents not a quality score but a <em>belief</em> about quality, including how uncertain the belief is. A lane with 2 successes and 1 failure has a wide, flat distribution: it might be great, it might be terrible. A lane with 400 successes and 12 failures has a narrow spike: you know what you have.</p>
+  <p>To route a request, draw one random sample from each lane's distribution and pick the winner. That single mechanic produces exploration and exploitation for free. Uncertain lanes have wide distributions, so they occasionally sample high and get a turn. Well-understood mediocre lanes have narrow distributions centred low, so they rarely win. As evidence accumulates, distributions tighten and traffic concentrates on what works — without any scheduled epsilon, decay curve, or tuning knob for a human to get wrong.</p>
+
+  <h2>Adding cost: the part that makes it economics</h2>
+  <p>Raw Thompson sampling optimises quality alone, which will happily send everything to the most capable model. Divide each sampled quality value by the lane's cost before taking the argmax and the objective becomes quality per dollar. Now an expensive lane has to be <em>better enough</em> to justify being more expensive — not merely better. In practice this is the whole ballgame, because for a large fraction of real traffic a cheap lane is not meaningfully worse, and the premium model was only winning on habit.</p>
+
+  <div class="callout">
+    <p><strong>Trust threshold:</strong> lanes below a minimum observation count — ours is <code>n=8</code> — are held under a cap and cannot displace a proven lane on one lucky draw. Without this, a brand-new lane that happens to succeed twice can capture traffic on noise. It is a small guard that prevents an embarrassing class of failure.</p>
+  </div>
+
+  <h2>What it looks like on real traffic</h2>
+  <p>Ours runs across 31 configured lanes — 10 local, 9 cheap-tier commercial, 12 premium — spanning local GPU inference and 12 commercial providers. Over the 89.9-day window from 11 May to 9 August 2026 the routing log holds <strong>1,469 calls</strong>. The distribution is the interesting part: 1,322 went to cheap-tier lanes, 95 to local, and <strong>21 to premium — 1.4% of all traffic</strong>. Total spend across the window was $0.14. The same call volume sent entirely to a flagship model at list price would have run $65.28.</p>
+  <p>Nobody configured that split. No human wrote a rule saying "send 1.4% to premium." The posteriors worked it out from outcomes, and they included the discovery that one cheap provider lane was performing at roughly 0.97 quality on our workload — which promoted it above lanes that cost far more. That is the behaviour you cannot get from a static table: the router changed its mind about a provider because the provider earned it.</p>
+
+  <h2>The failure mode nobody warns you about</h2>
+  <p>Beta posteriors are only as good as the events you feed them, and the most common corruption is feeding in errors that say nothing about quality. A 401 or 403 is a configuration fact, not a model-quality fact. Write those into the posterior and the router concludes a perfectly capable lane is bad and routes away from it permanently, for reasons invisible on any dashboard.</p>
+  <p>We have this defect on record: across the same window, 345 HTTP 403 responses from one provider and 756 failures with no error class attached contribute to an overall call success rate of 19.9%. The fix is a transport-layer classifier that separates availability failures from quality failures before the learner sees them, plus an auth circuit breaker that trips a lane out of rotation instead of retrying into a wall. If you build one of these systems, build that classifier first — the error taxonomy is laid out in <a href="/blog/llm-api-error-codes-explained.html" class="in">LLM API error codes explained</a>.</p>
+
+  <h2>When a bandit is the wrong tool</h2>
+  <p>Three cases. If you have one model and no alternatives, there is nothing to route. If quality is not observable — no grader, no user signal, no downstream success indicator — the posteriors have nothing to update on and you are drawing from priors forever; solve measurement before you solve routing. And if a task class has a hard compliance or capability floor, that is a constraint, not a preference: encode it as a filter that removes ineligible lanes before sampling, rather than hoping the bandit learns it. A router that has to discover through failures that a lane cannot do the job has learned something expensive.</p>
+  <p>For the general shape of provider strategy, <a href="/blog/ai-model-routing-explained.html" class="in">model routing explained</a> covers the ground level; the cost consequences are in <a href="/blog/cheapest-way-to-run-ai-agents.html" class="in">the cheapest way to run AI agents</a>.</p>
+
+  <h2>Frequently asked questions</h2>
+  <p><strong>Why Thompson sampling rather than epsilon-greedy?</strong> Epsilon-greedy explores blindly at a fixed rate — it spends the same effort on a lane it already knows is bad as on one it is unsure about. Thompson sampling explores in proportion to genuine uncertainty, which means it wastes less traffic and needs no schedule to tune as conditions change.</p>
+  <p><strong>How much traffic before the router is useful?</strong> Per (lane, domain) pair rather than in total — a few dozen observations produce meaningfully tightened posteriors, which is why a trust threshold matters early on. Expect the first weeks to look noisy and the split to stabilise as counts build.</p>
+  <p><strong>Does this replace evaluation?</strong> No. The router optimises within the lanes you allow it; evaluation decides which lanes deserve to be in the pool and defines what success means. A bandit fed a bad success signal will confidently optimise toward the wrong thing.</p>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Why Thompson sampling rather than epsilon-greedy for LLM routing?","acceptedAnswer":{"@type":"Answer","text":"Epsilon-greedy explores blindly at a fixed rate. Thompson sampling explores in proportion to genuine uncertainty, wasting less traffic and needing no schedule to tune."}},{"@type":"Question","name":"How much traffic does a bandit router need to be useful?","acceptedAnswer":{"@type":"Answer","text":"Counts accrue per lane-and-domain pair; a few dozen observations tighten posteriors meaningfully. A trust threshold prevents new lanes capturing traffic on noise early on."}},{"@type":"Question","name":"Does adaptive routing replace model evaluation?","acceptedAnswer":{"@type":"Answer","text":"No. Routing optimises within the allowed lanes; evaluation decides which lanes belong in the pool and defines success. A bandit fed a bad success signal optimises toward the wrong thing."}}]}
+  </script>
+
+  <div class="callout cta">
+    <p><strong>See the mechanism running:</strong> QADIR OS routes across 31 lanes with cost-weighted Beta posteriors and writes every call to a database you own — so you can audit the split yourself instead of taking our word for it. <a href="/" class="in">Join the early-access list</a>.</p>
+  </div>
+
+  <div class="foot">Built by <a href="/">ABUZ8 LLC</a> — we're building QADIR OS, the sovereign agentic operating system. This article is general information, not legal advice.</div>
+</div>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+<script src="/blog/_blog-shared.js" defer></script>
+<script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>

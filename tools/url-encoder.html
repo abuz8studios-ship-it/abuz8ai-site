@@ -1,0 +1,412 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>URL Encoder / Decoder — Free Online Tool | ABUZ8</title>
+<meta name="description" content="Encode and decode URLs and query strings online. Percent-encoding, URL component mode, query string parser, double-encode mode. Free, no signup, runs in your browser.">
+<link rel="canonical" href="https://abuz8ai.com/tools/url-encoder">
+<meta property="og:title" content="URL Encoder / Decoder — ABUZ8">
+<meta property="og:description" content="Percent-encode URLs, decode encoded strings, parse query parameters. Free, client-side.">
+<meta property="og:url" content="https://abuz8ai.com/tools/url-encoder">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="URL Encoder / Decoder — ABUZ8">
+<meta name="twitter:description" content="Encode/decode URLs and query strings. Parse query params. Free.">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"URL Encoder / Decoder","applicationCategory":"DeveloperApplication","operatingSystem":"Web","url":"https://abuz8ai.com/tools/url-encoder.html","description":"Online URL encoder and decoder. Supports percent-encoding, URL component mode, query string parsing, and double-encode mode. Free, 100% client-side.","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"provider":{"@type":"Organization","name":"ABUZ8 LLC","url":"https://abuz8ai.com"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is URL encoding?","acceptedAnswer":{"@type":"Answer","text":"URL encoding (percent-encoding) converts characters that are not safe in URLs into a % followed by two hexadecimal digits representing the character's UTF-8 byte value. For example, a space becomes %20, and an ampersand becomes %26."}},{"@type":"Question","name":"What is the difference between encodeURI and encodeURIComponent?","acceptedAnswer":{"@type":"Answer","text":"encodeURI encodes a full URL, preserving characters that are valid in URLs such as :, /, ?, #, &, =. encodeURIComponent encodes a URL component (like a query parameter value), encoding those same characters so they don't interfere with URL structure. Use encodeURIComponent for query parameter keys and values."}},{"@type":"Question","name":"What characters are safe in URLs?","acceptedAnswer":{"@type":"Answer","text":"Per RFC 3986, unreserved characters are safe: A-Z, a-z, 0-9, hyphen (-), underscore (_), period (.), tilde (~). Reserved characters like :, /, ?, #, @, !, $, &, ', (, ), *, +, ,, ;, = have special meaning in URLs and must be percent-encoded when used as data."}}]}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap">
+<style>
+:root{--lapis:#0a1628;--lapis-mid:#0f2040;--lapis-light:#163060;--gold:#c9a84c;--gold-l:#e8d48b;--gold-d:#8a7030;--turq:#0e9f6e;--turq-l:#2fbf8f;--turq-b:#2fbf8f;--cream:#f5f0e8;--text:#e8e4d8;--dim:#8a9aaa;--card:#0d1a30;--border:#1a2e50;--red:#c94c4c}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{background:var(--lapis);color:var(--text);font-family:'Inter',sans-serif;line-height:1.6;-webkit-font-smoothing:antialiased;min-height:100vh}
+a{color:var(--gold);text-decoration:none}
+.wrap{max-width:900px;margin:0 auto;padding:24px 20px 80px}
+.nav{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border);padding-bottom:16px;margin-bottom:32px}
+.brand{font-family:'Playfair Display',serif;font-size:18px;color:var(--cream);letter-spacing:.5px}
+.brand .acc{color:var(--gold)}
+.back{color:var(--dim);font-size:12px;letter-spacing:1.5px;text-transform:uppercase}
+.back:hover{color:var(--gold)}
+.hero{margin-bottom:32px}
+.hero .eyebrow{color:var(--turq-l);font-size:11px;letter-spacing:3px;text-transform:uppercase;font-weight:600;margin-bottom:10px}
+.hero h1{font-family:'Playfair Display',serif;font-size:clamp(1.8rem,4vw,2.8rem);color:var(--cream);font-weight:900;line-height:1.1;margin-bottom:10px}
+.hero h1 .g{color:var(--gold)}
+.hero p{color:var(--dim);font-size:15px;max-width:580px}
+/* MODE SELECTOR */
+.mode-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
+.mode-btn{padding:8px 18px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--dim);font-family:'Inter',sans-serif;font-size:12px;font-weight:500;cursor:pointer;letter-spacing:.5px;transition:all .15s}
+.mode-btn.active{background:var(--gold);color:var(--lapis);border-color:var(--gold);font-weight:700}
+.mode-btn:hover:not(.active){border-color:var(--gold);color:var(--gold)}
+/* CODEC PANEL */
+.codec{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}
+@media(max-width:640px){.codec{grid-template-columns:1fr}}
+.pane{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px}
+.pane-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.pane-label{font-size:12px;letter-spacing:1px;text-transform:uppercase;color:var(--dim);font-weight:500}
+.copy-btn{background:transparent;border:1px solid var(--border);border-radius:5px;color:var(--dim);font-family:'Inter',sans-serif;font-size:11px;padding:3px 9px;cursor:pointer;transition:all .15s}
+.copy-btn:hover,.copy-btn.ok{border-color:var(--turq-l);color:var(--turq-b)}
+textarea{width:100%;min-height:160px;resize:vertical;background:var(--lapis-mid,#0f2040);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:12.5px;padding:12px;line-height:1.5}
+textarea:focus{outline:none;border-color:var(--gold)}
+.dir-center{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:10px 0}
+.dir-btn{background:transparent;border:1px solid var(--border);border-radius:8px;color:var(--dim);font-size:13px;padding:8px 14px;cursor:pointer;white-space:nowrap;font-family:'Inter',sans-serif;transition:all .15s}
+.dir-btn:hover{border-color:var(--gold);color:var(--gold)}
+.dir-arrow{color:var(--gold);font-size:20px;font-weight:700}
+/* STATS */
+.char-stats{font-size:11px;color:var(--dim);margin-top:6px;font-family:'JetBrains Mono',monospace}
+.char-stats span{color:var(--turq-l)}
+/* ERROR */
+.err-msg{font-size:12px;color:var(--red);margin-top:6px;display:none}
+/* QUERY PARSER */
+.qp-table{width:100%;border-collapse:collapse;margin-top:14px;font-size:12.5px}
+.qp-table th{text-align:left;color:var(--dim);font-size:11px;letter-spacing:1px;text-transform:uppercase;font-weight:600;padding:6px 10px;border-bottom:1px solid var(--border)}
+.qp-table td{padding:8px 10px;border-bottom:1px solid var(--border);font-family:'JetBrains Mono',monospace;color:var(--cream);word-break:break-all}
+.qp-table td:first-child{color:var(--gold);min-width:80px}
+.qp-table tr:last-child td{border-bottom:none}
+.qp-empty{color:var(--dim);font-size:13px;padding:14px 0;text-align:center}
+/* OPTIONS */
+.opts{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+.opt{display:flex;align-items:center;gap:5px;cursor:pointer;font-size:13px;color:var(--dim);user-select:none}
+.opt input{accent-color:var(--gold);width:14px;height:14px}
+.opt:hover{color:var(--text)}
+/* CHAR REFERENCE */
+.ref-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px;margin-top:14px}
+.ref-cell{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:8px 12px;font-size:12px}
+.ref-char{font-family:'JetBrains Mono',monospace;color:var(--gold);font-weight:600}
+.ref-enc{font-family:'JetBrains Mono',monospace;color:var(--turq-l);font-size:11px}
+.ref-note{color:var(--dim);font-size:10px;margin-top:2px}
+/* WAITLIST */
+.waitlist{background:linear-gradient(135deg,var(--lapis-mid,#0f2040),var(--lapis-light,#163060));border:1px solid var(--gold-d);border-radius:14px;padding:28px;margin-top:40px;text-align:center}
+.waitlist h3{font-family:'Playfair Display',serif;font-size:1.3rem;color:var(--cream);margin-bottom:8px}
+.waitlist p{color:var(--dim);font-size:13px;margin-bottom:18px}
+.waitlist-form{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.wl-input{background:var(--card);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'Inter',sans-serif;font-size:14px;padding:10px 16px;width:260px}
+.wl-input:focus{outline:none;border-color:var(--gold)}
+.wl-btn{background:var(--gold);color:var(--lapis);border:none;border-radius:8px;font-family:'Inter',sans-serif;font-size:13px;font-weight:700;padding:10px 22px;cursor:pointer}
+.wl-btn:hover{background:var(--gold-l)}
+.wl-msg{margin-top:10px;font-size:12px;color:var(--turq-b);display:none}
+/* FAQ */
+.faq{margin-top:48px}
+.faq h2{font-family:'Playfair Display',serif;font-size:1.4rem;color:var(--cream);margin-bottom:18px}
+.faq-item{border-bottom:1px solid var(--border);padding:14px 0}
+.faq-q{font-size:14px;font-weight:600;color:var(--cream);cursor:pointer;display:flex;justify-content:space-between}
+.faq-q::after{content:'＋';color:var(--gold);font-size:16px}
+.faq-item.open .faq-q::after{content:'－'}
+.faq-a{font-size:13px;color:var(--dim);display:none;padding-top:8px;line-height:1.7}
+.faq-item.open .faq-a{display:block}
+.foot{margin-top:60px;padding-top:20px;border-top:1px solid var(--border);font-size:11px;color:var(--dim);display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.foot a{color:var(--gold)}
+.section-title{font-family:'Playfair Display',serif;font-size:1.1rem;color:var(--cream);margin:32px 0 12px}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <nav class="nav">
+    <a href="/index.html" class="brand">ABUZ8<span class="acc">.</span></a>
+    <a href="/tools.html" class="back">← All Tools</a>
+  </nav>
+
+  <header class="hero">
+    <div class="eyebrow">Free Developer Utility</div>
+    <h1>URL <span class="g">Encoder / Decoder</span></h1>
+    <p>Percent-encode and decode URLs, query strings, and components. Includes a query-string parser and common character reference. Live update — nothing leaves your browser.</p>
+  </header>
+
+  <!-- MODE -->
+  <div class="mode-row">
+    <button class="mode-btn active" data-mode="component">encodeURIComponent</button>
+    <button class="mode-btn" data-mode="full">encodeURI (full URL)</button>
+    <button class="mode-btn" data-mode="double">Double-encode</button>
+    <button class="mode-btn" data-mode="query">Query Parser</button>
+  </div>
+
+  <!-- OPTIONS -->
+  <div class="opts" id="optRow">
+    <label class="opt"><input type="checkbox" id="optPlus"> + as space (form-style)</label>
+    <label class="opt"><input type="checkbox" id="optUpper"> Uppercase hex (%2F vs %2f)</label>
+  </div>
+
+  <!-- CODEC -->
+  <div class="codec" id="codecWrap">
+    <div class="pane">
+      <div class="pane-head">
+        <span class="pane-label">Plain / Decoded</span>
+        <button class="copy-btn" id="copyDec">Copy</button>
+      </div>
+      <textarea id="decInput" placeholder="Type plain text or a URL…" spellcheck="false" autocomplete="off"></textarea>
+      <div class="char-stats" id="decStats">0 chars</div>
+    </div>
+
+    <div class="dir-center" id="dirCenter" style="display:none">
+      <div class="dir-arrow">⇆</div>
+    </div>
+
+    <div class="pane">
+      <div class="pane-head">
+        <span class="pane-label">Encoded</span>
+        <button class="copy-btn" id="copyEnc">Copy</button>
+      </div>
+      <textarea id="encInput" placeholder="Paste encoded URL to decode…" spellcheck="false" autocomplete="off"></textarea>
+      <div class="char-stats" id="encStats">0 chars</div>
+      <div class="err-msg" id="errMsg">⚠ Could not decode — invalid percent-encoding</div>
+    </div>
+  </div>
+
+  <!-- QUERY PARSER PANEL -->
+  <div id="queryPanel" style="display:none">
+    <div class="pane">
+      <div class="pane-head">
+        <span class="pane-label">Query String / Full URL</span>
+        <button class="copy-btn" id="copyQP">Copy table</button>
+      </div>
+      <textarea id="queryInput" placeholder="Paste a URL or query string: ?foo=bar&baz=qux%20test" spellcheck="false" autocomplete="off"></textarea>
+      <div id="qpTable"></div>
+    </div>
+  </div>
+
+  <!-- CHAR REFERENCE -->
+  <h2 class="section-title">Common Percent-Encoded Characters</h2>
+  <div class="ref-grid" id="refGrid"></div>
+
+  <!-- WAITLIST -->
+  <div class="waitlist">
+    <h3>Need batch encoding, API access, or custom presets?</h3>
+    <p>Join Early Access for the premium URL Suite — batch encode/decode, REST API, IDN/punycode, OAuth parameter builder, and webhook signer.</p>
+    <div class="waitlist-form">
+      <input class="wl-input" type="email" id="wlEmail" placeholder="your@email.com">
+      <button class="wl-btn" id="wlBtn">Join Early Access</button>
+    </div>
+    <div class="wl-msg" id="wlMsg">✓ You're on the list. We'll be in touch.</div>
+  </div>
+
+  <!-- FAQ -->
+  <div class="faq">
+    <h2>About URL Encoding</h2>
+    <div class="faq-item">
+      <div class="faq-q">What is URL encoding (percent-encoding)?</div>
+      <div class="faq-a">URL encoding converts characters that aren't safe in URLs into a <code style="color:var(--turq-l)">%</code> followed by two hex digits representing the character's UTF-8 byte value. A space becomes <code style="color:var(--turq-l)">%20</code>, an ampersand becomes <code style="color:var(--turq-l)">%26</code>. It's defined by RFC 3986.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">encodeURIComponent vs encodeURI — which should I use?</div>
+      <div class="faq-a"><code style="color:var(--turq-l)">encodeURIComponent</code> is for <strong style="color:var(--cream)">values inside a URL</strong> — query parameter keys/values, path segments you're building dynamically. It encodes everything except unreserved chars (A-Z, a-z, 0-9, <code>-_.!~*'()</code>). <br><br><code style="color:var(--turq-l)">encodeURI</code> is for a <strong style="color:var(--cream)">complete URL</strong> where structure characters like <code>/</code>, <code>?</code>, <code>#</code>, <code>&</code> must be preserved. Use it only when you have a full URL and want to make it safe for a hyperlink.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">Why does + sometimes appear instead of %20?</div>
+      <div class="faq-a">HTML form encoding (<code style="color:var(--turq-l)">application/x-www-form-urlencoded</code>) uses <code>+</code> as shorthand for a space, while pure percent-encoding (RFC 3986) uses <code>%20</code>. Many server-side frameworks (PHP, Flask, Express) decode both. Enable the "± as space" option in this tool to handle the form-encoding convention.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">What is double-encoding and when is it used?</div>
+      <div class="faq-a">Double-encoding runs <code style="color:var(--turq-l)">encodeURIComponent</code> twice. The <code>%</code> sign itself becomes <code>%25</code>, so <code>%20</code> becomes <code>%2520</code>. This is needed when you're embedding an already-encoded URL inside another URL parameter — for example, a redirect URL inside an OAuth callback. In most cases, single-encode is correct.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">Is this tool safe? Is any data sent anywhere?</div>
+      <div class="faq-a">100% safe. This tool runs entirely in your browser using standard JavaScript. No data is transmitted to any server. You can verify by going offline — it continues to work perfectly.</div>
+    </div>
+  </div>
+
+  <footer class="foot">
+    <div>© 2026 ABUZ8 LLC · Client-side only · No data transmitted</div>
+    <div><a href="/tools.html">All Tools</a> · <a href="/index.html">Home</a> · <a href="/privacy.html">Privacy</a></div>
+  </footer>
+
+</div>
+
+<script>
+(function(){
+'use strict';
+
+var mode='component';
+var ignoreEnc=false,ignoreDec=false;
+
+/* ── MODE BUTTONS ── */
+document.querySelectorAll('.mode-btn').forEach(function(btn){
+  btn.addEventListener('click',function(){
+    document.querySelectorAll('.mode-btn').forEach(function(b){b.classList.remove('active')});
+    btn.classList.add('active');
+    mode=btn.dataset.mode;
+    var isQuery=mode==='query';
+    document.getElementById('codecWrap').style.display=isQuery?'none':'grid';
+    document.getElementById('queryPanel').style.display=isQuery?'block':'none';
+    document.getElementById('optRow').style.display=isQuery?'none':'flex';
+    if(!isQuery) fromDec();
+  });
+});
+
+/* ── ENCODE/DECODE FUNCTIONS ── */
+function encode(s){
+  var plus=document.getElementById('optPlus').checked;
+  var upper=document.getElementById('optUpper').checked;
+  var fn=mode==='full'?encodeURI:(mode==='double'?function(x){return encodeURIComponent(encodeURIComponent(x));}:encodeURIComponent);
+  var r=fn(s);
+  if(plus) r=r.replace(/%20/g,'+');
+  if(upper) r=r.replace(/%[0-9a-f]{2}/gi,function(m){return m.toUpperCase()});
+  return r;
+}
+
+function decode(s){
+  var plus=document.getElementById('optPlus').checked;
+  if(plus) s=s.replace(/\+/g,' ');
+  if(mode==='double'){
+    s=decodeURIComponent(s);
+    s=decodeURIComponent(s);
+    return s;
+  }
+  return decodeURIComponent(s);
+}
+
+/* ── LIVE UPDATE ── */
+function fromDec(){
+  if(ignoreDec) return;
+  var s=document.getElementById('decInput').value;
+  document.getElementById('decStats').innerHTML=s.length+' chars';
+  try{
+    var enc=encode(s);
+    ignoreEnc=true;
+    document.getElementById('encInput').value=enc;
+    ignoreEnc=false;
+    document.getElementById('encStats').innerHTML=enc.length+' chars · <span>'+(enc.length-s.length>0?'+'+(enc.length-s.length):enc.length-s.length)+' overhead</span>';
+    document.getElementById('errMsg').style.display='none';
+  }catch(e){document.getElementById('encInput').value='';document.getElementById('errMsg').style.display='block';}
+}
+
+function fromEnc(){
+  if(ignoreEnc) return;
+  var s=document.getElementById('encInput').value;
+  document.getElementById('encStats').innerHTML=s.length+' chars';
+  document.getElementById('errMsg').style.display='none';
+  try{
+    var dec=decode(s);
+    ignoreDec=true;
+    document.getElementById('decInput').value=dec;
+    ignoreDec=false;
+    document.getElementById('decStats').innerHTML=dec.length+' chars';
+  }catch(e){
+    document.getElementById('errMsg').style.display='block';
+    ignoreDec=true;
+    document.getElementById('decInput').value='';
+    ignoreDec=false;
+  }
+}
+
+document.getElementById('decInput').addEventListener('input',fromDec);
+document.getElementById('encInput').addEventListener('input',fromEnc);
+document.getElementById('optPlus').addEventListener('change',fromDec);
+document.getElementById('optUpper').addEventListener('change',fromDec);
+
+/* ── COPY ── */
+function mkCopy(btnId,srcId){
+  document.getElementById(btnId).addEventListener('click',function(){
+    var v=document.getElementById(srcId).value;
+    if(!v) return;
+    if(navigator.clipboard){navigator.clipboard.writeText(v);}
+    else{var t=document.createElement('textarea');t.value=v;document.body.appendChild(t);t.select();document.execCommand('copy');document.body.removeChild(t);}
+    var btn=document.getElementById(btnId);
+    var orig=btn.textContent;btn.textContent='✓';btn.classList.add('ok');
+    setTimeout(function(){btn.textContent=orig;btn.classList.remove('ok');},1400);
+  });
+}
+mkCopy('copyDec','decInput');
+mkCopy('copyEnc','encInput');
+
+/* ── QUERY PARSER ── */
+function parseQueryString(input){
+  var str=input.trim();
+  var qi=str.indexOf('?');
+  if(qi>=0) str=str.slice(qi+1);
+  var hi=str.indexOf('#');
+  if(hi>=0) str=str.slice(0,hi);
+  if(!str) return [];
+  return str.split('&').map(function(pair){
+    var eqIdx=pair.indexOf('=');
+    var key,val;
+    if(eqIdx>=0){key=pair.slice(0,eqIdx);val=pair.slice(eqIdx+1);}
+    else{key=pair;val='';}
+    try{key=decodeURIComponent(key.replace(/\+/g,' '));}catch(e){}
+    try{val=decodeURIComponent(val.replace(/\+/g,' '));}catch(e){}
+    return{key:key,val:val,raw:pair};
+  });
+}
+
+function renderQP(){
+  var params=parseQueryString(document.getElementById('queryInput').value);
+  var el=document.getElementById('qpTable');
+  if(!params.length){el.innerHTML='<div class="qp-empty">Paste a URL or ?key=value&amp;… above</div>';return;}
+  var html='<table class="qp-table"><thead><tr><th>#</th><th>Key</th><th>Value</th></tr></thead><tbody>';
+  params.forEach(function(p,i){
+    html+='<tr><td style="color:var(--dim)">'+(i+1)+'</td><td>'+esc(p.key)+'</td><td>'+esc(p.val)+'</td></tr>';
+  });
+  html+='</tbody></table>';
+  el.innerHTML=html;
+}
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+
+document.getElementById('queryInput').addEventListener('input',renderQP);
+
+document.getElementById('copyQP').addEventListener('click',function(){
+  var params=parseQueryString(document.getElementById('queryInput').value);
+  if(!params.length)return;
+  var tsv=params.map(function(p,i){return (i+1)+'\t'+p.key+'\t'+p.val}).join('\n');
+  if(navigator.clipboard) navigator.clipboard.writeText(tsv);
+  var btn=document.getElementById('copyQP');btn.textContent='✓';btn.classList.add('ok');
+  setTimeout(function(){btn.textContent='Copy table';btn.classList.remove('ok');},1400);
+});
+
+/* ── CHAR REFERENCE ── */
+var CHARS=[
+  {c:' ',note:'Space (use %20 in paths)'},
+  {c:'!',note:'Usually safe but encoded by encodeURIComponent'},
+  {c:'"',note:'Delimiter — always encode'},
+  {c:'#',note:'Fragment identifier'},
+  {c:'$',note:'Sub-delimiter'},
+  {c:'%',note:'Percent sign — always encode'},
+  {c:'&',note:'Query param separator'},
+  {c:"'",note:'Single quote'},
+  {c:'(',note:'Open paren'},
+  {c:')',note:'Close paren'},
+  {c:'*',note:'Asterisk'},
+  {c:'+',note:'Plus / space in form-encoding'},
+  {c:',',note:'Sub-delimiter'},
+  {c:'/',note:'Path separator'},
+  {c:':',note:'Scheme separator'},
+  {c:';',note:'Sub-delimiter'},
+  {c:'=',note:'Key/value separator'},
+  {c:'?',note:'Query start'},
+  {c:'@',note:'User-info separator'},
+  {c:'[',note:'IP literal start'},
+  {c:']',note:'IP literal end'},
+  {c:'{',note:'Not defined in RFC 3986'},
+  {c:'}',note:'Not defined in RFC 3986'},
+  {c:'|',note:'Not safe in URLs'},
+];
+var grid=document.getElementById('refGrid');
+CHARS.forEach(function(item){
+  var cell=document.createElement('div');
+  cell.className='ref-cell';
+  var enc=encodeURIComponent(item.c);
+  cell.innerHTML='<span class="ref-char">'+esc(item.c)+'</span> → <span class="ref-enc">'+enc+'</span><div class="ref-note">'+item.note+'</div>';
+  grid.appendChild(cell);
+});
+
+/* ── FAQ ── */
+document.querySelectorAll('.faq-q').forEach(function(q){q.addEventListener('click',function(){q.parentElement.classList.toggle('open')})});
+
+/* ── WAITLIST ── */
+document.getElementById('wlBtn').addEventListener('click',function(){
+  var email=document.getElementById('wlEmail').value.trim();
+  if(!email||!email.includes('@'))return;
+  fetch('/api/waitlist',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:email,tool:'url-encoder',ts:Date.now()})}).catch(function(){});
+  document.getElementById('wlMsg').style.display='block';
+  document.getElementById('wlBtn').disabled=true;
+  document.getElementById('wlBtn').textContent='Joined ✓';
+  try{localStorage.setItem('wl_url_enc','1');}catch(e){}
+});
+try{if(localStorage.getItem('wl_url_enc')){document.getElementById('wlBtn').disabled=true;document.getElementById('wlBtn').textContent='Joined ✓';document.getElementById('wlMsg').style.display='block';}}catch(e){}
+
+})();
+</script>
+<script src="/tools/_abuz8-live-brain.js" defer></script>
+<script src="/tools/_tools-shared.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>

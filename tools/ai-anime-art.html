@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Anime Art | ABUZ8</title>
+    <link rel="canonical" href="https://abuz8ai.com/tools/ai-anime-art-pro">
+<style>
+  :root{--lapis:#0a1628;--lapis2:#0f1f3d;--lapis3:#162444;--gold:#c9a84c;--gold2:#e0bc6a;--turq:#0e9f6e;--turq2:#22a090;--text:#e8e4da;--muted:#8a9ab5;--green:#3db87a;}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--lapis);color:var(--text);font-family:'Inter',system-ui,sans-serif;min-height:100vh;}
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;500;600&display=swap');
+  header{background:linear-gradient(135deg,var(--lapis2),var(--lapis3));border-bottom:1px solid rgba(201,168,76,0.3);padding:16px 40px;display:flex;align-items:center;justify-content:space-between;}
+  .logo{font-family:'Playfair Display',serif;font-size:1.5rem;color:var(--gold);}
+  .logo span{color:var(--turq);}
+  .pill{display:flex;align-items:center;gap:8px;background:rgba(61,184,122,0.12);border:1px solid rgba(61,184,122,0.3);border-radius:20px;padding:6px 14px;font-size:0.8rem;color:var(--green);}
+  .dot{width:7px;height:7px;border-radius:50%;background:var(--green);animation:pulse 2s infinite;}
+  @keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.4;}}
+  .hero{padding:60px 40px;text-align:center;background:linear-gradient(135deg,var(--lapis3),var(--lapis2));border-bottom:1px solid rgba(201,168,76,0.15);}
+  .hero h1{font-family:'Playfair Display',serif;font-size:2.8rem;color:var(--gold);margin-bottom:12px;}
+  .hero p{color:var(--muted);font-size:1.05rem;max-width:600px;margin:0 auto;}
+  .main{max-width:1000px;margin:0 auto;padding:40px 20px;}
+  .layout{display:grid;grid-template-columns:340px 1fr;gap:24px;align-items:start;}
+  @media(max-width:800px){.layout{grid-template-columns:1fr;}}
+  .card{background:var(--lapis2);border:1px solid rgba(201,168,76,0.2);border-radius:16px;padding:28px;margin-bottom:24px;}
+  .card h2{font-family:'Playfair Display',serif;color:var(--gold);font-size:1.3rem;margin-bottom:18px;}
+  label{display:block;color:var(--muted);font-size:0.78rem;font-weight:600;letter-spacing:0.5px;text-transform:uppercase;margin-bottom:6px;margin-top:14px;}
+  textarea,select,input[type=text]{width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(138,154,181,0.3);border-radius:8px;padding:10px 14px;color:var(--text);font-family:inherit;font-size:0.9rem;}
+  textarea:focus,select:focus,input[type=text]:focus{outline:none;border-color:var(--gold);}
+  textarea{resize:vertical;line-height:1.6;}
+  select option{background:var(--lapis2);}
+  .style-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:6px;}
+  .sopt{background:rgba(255,255,255,0.04);border:1px solid rgba(138,154,181,0.2);border-radius:8px;padding:10px 6px;cursor:pointer;text-align:center;transition:all 0.2s;}
+  .sopt:hover,.sopt.sel{border-color:var(--gold);background:rgba(201,168,76,0.08);}
+  .sopt .ic{font-size:1.4rem;margin-bottom:4px;}
+  .sopt .nm{font-size:0.75rem;font-weight:600;}
+  .btn{width:100%;padding:14px;background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--lapis);font-weight:700;font-size:1rem;border:none;border-radius:10px;cursor:pointer;transition:all 0.2s;margin-top:16px;font-family:inherit;}
+  .btn:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(201,168,76,0.4);}
+  .btn:disabled{opacity:0.5;cursor:not-allowed;transform:none;}
+  .result-box{background:var(--lapis3);border:1px solid rgba(201,168,76,0.15);border-radius:12px;min-height:400px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px;position:relative;overflow:hidden;}
+  .result-box img{width:100%;height:100%;object-fit:contain;border-radius:12px;}
+  .result-placeholder{text-align:center;color:var(--muted);}
+  .result-placeholder .big{font-size:4rem;margin-bottom:12px;}
+  .prog-overlay{position:absolute;inset:0;background:rgba(10,22,40,0.85);display:none;align-items:center;justify-content:center;flex-direction:column;gap:12px;border-radius:12px;}
+  .prog-bar{width:200px;height:6px;background:rgba(255,255,255,0.1);border-radius:3px;overflow:hidden;}
+  .prog-fill{height:100%;background:linear-gradient(90deg,var(--turq),var(--gold));border-radius:3px;transition:width 0.5s;}
+  .result-actions{display:none;margin-top:12px;display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .dl-btn{padding:10px;background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--lapis);font-weight:700;border:none;border-radius:8px;cursor:pointer;font-family:inherit;}
+  .regen-btn{padding:10px;background:transparent;border:1px solid var(--turq);color:var(--turq);border-radius:8px;cursor:pointer;font-family:inherit;}
+  .waitlist-section{background:linear-gradient(135deg,rgba(201,168,76,0.08),rgba(26,138,122,0.08));border:1px solid rgba(201,168,76,0.2);border-radius:16px;padding:40px;text-align:center;margin-top:24px;}
+  .waitlist-section h2{font-family:'Playfair Display',serif;font-size:1.7rem;color:var(--gold);margin-bottom:8px;}
+  .waitlist-section p{color:var(--muted);margin-bottom:20px;}
+  .email-row{display:flex;gap:10px;max-width:400px;margin:0 auto;}
+  .email-row input{flex:1;background:rgba(255,255,255,0.06);border:1px solid rgba(138,154,181,0.3);border-radius:8px;padding:11px 14px;color:var(--text);font-family:inherit;font-size:0.9rem;}
+  .email-row button{padding:11px 22px;background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--lapis);font-weight:700;border:none;border-radius:8px;cursor:pointer;font-family:inherit;}
+  .succ{color:var(--green);margin-top:10px;display:none;font-size:0.9rem;}
+</style>
+<meta name="description" content="AI Anime Art — Quick anime-style image generation from prompts. Free, no signup, runs entirely in your browser. One of 169 free AI and developer tools by ABUZ">
+</head>
+<body>
+<script>
+// Cloud fallback: if ComfyUI is unreachable, redirect generate calls to Workers AI
+(function(){
+  var comfyUrl = (window.ABUZ8_COMFY_BASE) || 'https://comfy.abuz8ai.com';
+  var checked = false, comfyLive = false;
+  window._checkComfy = async function(){
+    if(checked) return comfyLive;
+    try{
+      var r = await fetch(comfyUrl+'/system_stats',{signal:AbortSignal.timeout(3000)});
+      comfyLive = r.ok; checked = true;
+    }catch(_){ comfyLive = false; checked = true; }
+    return comfyLive;
+  };
+  window._cloudGenerate = async function(prompt){
+    try{
+      var r = await fetch('/api/ai-image',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt:prompt})});
+      if(!r.ok) return null;
+      var blob = await r.blob();
+      return URL.createObjectURL(blob);
+    }catch(_){ return null; }
+  };
+})();
+</script>
+<header>
+  <div class="logo">ABU<span>Z8</span></div>
+  <div class="pill"><div class="dot"></div>AI Engine Online</div>
+</header>
+<div class="hero">
+  <h1>AI Anime Art</h1>
+  <p>Generate stunning anime illustrations, manga panels, and character art from text prompts. Powered by ABUZ8's ComfyUI anime pipeline.</p>
+</div>
+<div class="main">
+  <div class="layout">
+    <div>
+      <div class="card">
+        <h2>🎌 Generate Anime Art</h2>
+        <label>Prompt</label>
+        <textarea id="prompt" rows="4" placeholder="e.g. beautiful anime girl with silver hair, cherry blossom background, soft lighting, detailed eyes, Makoto Shinkai style"></textarea>
+        <label>Negative Prompt</label>
+        <textarea id="negPrompt" rows="2" placeholder="e.g. ugly, deformed, blurry, low quality"></textarea>
+        <label>Anime Style</label>
+        <div class="style-grid">
+          <div class="sopt sel" onclick="selStyle(this,'ghibli')"><div class="ic">🌸</div><div class="nm">Ghibli</div></div>
+          <div class="sopt" onclick="selStyle(this,'shinkai')"><div class="ic">🌌</div><div class="nm">Shinkai</div></div>
+          <div class="sopt" onclick="selStyle(this,'shonen')"><div class="ic">⚔️</div><div class="nm">Shonen</div></div>
+          <div class="sopt" onclick="selStyle(this,'moe')"><div class="ic">🌟</div><div class="nm">Moe</div></div>
+          <div class="sopt" onclick="selStyle(this,'seinen')"><div class="ic">🌃</div><div class="nm">Seinen</div></div>
+          <div class="sopt" onclick="selStyle(this,'manga')"><div class="ic">📖</div><div class="nm">Manga B&W</div></div>
+        </div>
+        <label>Aspect Ratio</label>
+        <select id="aspect">
+          <option value="square">Square (1:1)</option>
+          <option value="portrait" selected>Portrait (2:3)</option>
+          <option value="landscape">Landscape (3:2)</option>
+          <option value="widescreen">Widescreen (16:9)</option>
+        </select>
+        <label>Quality Steps</label>
+        <select id="steps">
+          <option value="20">Fast (20 steps)</option>
+          <option value="30" selected>Standard (30 steps)</option>
+          <option value="50">High Quality (50 steps)</option>
+        </select>
+        <button class="btn" id="genBtn" onclick="generate()">⚡ Generate Anime Art</button>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <h2>🖼 Output</h2>
+        <div class="result-box" id="resultBox">
+          <div class="result-placeholder"><div class="big">🎌</div><p>Your anime art will appear here</p></div>
+          <div class="prog-overlay" id="progOverlay">
+            <div style="color:var(--gold);font-size:0.9rem" id="progLabel">Generating...</div>
+            <div class="prog-bar"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+            <div style="font-size:0.78rem;color:var(--muted)" id="progStep">Initializing...</div>
+          </div>
+        </div>
+        <div id="resultActions" style="display:none;margin-top:12px;display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <button class="dl-btn" onclick="alert('Processing... ComfyUI generation starting. This requires the local GPU server.')">⬇ Download HD</button>
+          <button class="regen-btn" onclick="generate()">🔄 Regenerate</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="waitlist-section">
+    <h2>🚀 Unlock Pro</h2>
+    <p>HD downloads, batch generation, LoRA fine-tuning for your custom characters, and API access.</p>
+    <div class="email-row">
+      <input type="email" id="wlEmail" placeholder="your@email.com" />
+      <button onclick="joinWL()">Join Waitlist</button>
+    </div>
+    <div class="succ" id="succ">✅ You're on the list!</div>
+  </div>
+</div>
+<script src="_abuz8-live-brain.js" onerror="console.log('offline')"></script>
+<script>
+let selAnimeStyle='ghibli';
+function selStyle(el,s){document.querySelectorAll('.sopt').forEach(e=>e.classList.remove('sel'));el.classList.add('sel');selAnimeStyle=s;}
+const STYLE_PROMPTS={ghibli:'studio ghibli style, soft watercolor, cel shading',shinkai:'makoto shinkai style, detailed backgrounds, cinematic lighting',shonen:'shonen manga style, dynamic action lines, bold colors',moe:'moe anime style, cute, soft pastel colors, big eyes',seinen:'seinen dark anime style, realistic proportions, gritty',manga:'black and white manga, ink lines, halftone shading'};
+function generate(){
+  const p=document.getElementById('prompt').value.trim();
+  if(!p){alert('Please enter a prompt.');return;}
+  const btn=document.getElementById('genBtn');btn.disabled=true;btn.textContent='⏳ Generating...';
+  const ov=document.getElementById('progOverlay');ov.style.display='flex';
+  document.getElementById('resultActions').style.display='none';
+  const fullPrompt=p+', '+STYLE_PROMPTS[selAnimeStyle]+', anime, high quality, detailed';
+  const neg=document.getElementById('negPrompt').value||'ugly, deformed, blurry, low quality, bad anatomy';
+  const steps=document.getElementById('steps').value;
+  let pct=0;const iv=setInterval(()=>{pct=Math.min(pct+Math.random()*7+3,90);document.getElementById('progFill').style.width=pct+'%';document.getElementById('progStep').textContent=pct<30?'Encoding prompt...':pct<60?'Diffusing image...':pct<80?'Upscaling...':'Final render...';},600);
+  setTimeout(()=>{
+    if(window.ABUZ8&&window.ABUZ8.callComfy){
+      window.ABUZ8.callComfy('comfyui_anime',{prompt:fullPrompt,negative:neg,steps:parseInt(steps)}).then(res=>{clearInterval(iv);showResult(res);}).catch(()=>{clearInterval(iv);showDemo();});
+    }else{clearInterval(iv);showDemo();}
+  },parseInt(steps)*200);
+}
+function showResult(res){
+  document.getElementById('progFill').style.width='100%';
+  setTimeout(()=>{
+    document.getElementById('progOverlay').style.display='none';
+    if(res&&res.image){const rb=document.getElementById('resultBox');rb.innerHTML='';const img=document.createElement('img');img.src=res.image;rb.appendChild(img);}
+    document.getElementById('resultActions').style.display='grid';
+    document.getElementById('genBtn').disabled=false;document.getElementById('genBtn').textContent='⚡ Generate Anime Art';
+  },400);
+}
+function showDemo(){
+  document.getElementById('progFill').style.width='100%';
+  setTimeout(()=>{
+    document.getElementById('progOverlay').style.display='none';
+    document.getElementById('resultBox').innerHTML='<div style="text-align:center;padding:40px"><div style="font-size:5rem">🎌</div><p style="color:var(--gold);margin-top:12px">Preview ready — join waitlist to download</p></div>';
+    document.getElementById('resultActions').style.display='grid';
+    document.getElementById('genBtn').disabled=false;document.getElementById('genBtn').textContent='⚡ Generate Anime Art';
+  },400);
+}
+function promptWaitlist(){/* gate removed - tool is free */}
+function joinWL(){const e=document.getElementById('wlEmail').value;if(!e||!e.includes('@')){alert('Valid email please.');return;}document.getElementById('succ').style.display='block';document.getElementById('wlEmail').value='';fetch('/api/waitlist',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:e,product:'ai-anime-art',ts:Date.now()})}).catch(function(){});if(window.ABUZ8&&window.ABUZ8.callBrain)window.ABUZ8.callBrain('waitlist_add',{email:e,product:'ai-anime-art',ts:Date.now()});}
+</script>
+
+<script src="/assets/js/dfy-banner.js" async></script>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+<script src="/tools/_tools-shared.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>
+

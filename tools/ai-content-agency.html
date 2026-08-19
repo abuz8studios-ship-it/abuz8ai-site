@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Content Agency — ABUZ8</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --lapis:#0a1628;--lapis2:#0f1f3d;--lapis3:#162447;
+  --gold:#c9a84c;--gold2:#e8c96a;--gold3:#a07830;
+  --turq:#0e9f6e;--turq2:#22b5a0;
+  --cream:#f5f0e8;--cream2:#ede7d9;
+  --text:#1a1a2e;--muted:#6b7280;
+  --radius:12px;--shadow:0 4px 24px rgba(10,22,40,.13);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',sans-serif;background:var(--lapis);color:var(--cream);line-height:1.6;overflow-x:hidden}
+
+/* NAV */
+nav{display:flex;align-items:center;justify-content:space-between;padding:18px 48px;border-bottom:1px solid rgba(201,168,76,.15);position:sticky;top:0;background:rgba(10,22,40,.95);backdrop-filter:blur(12px);z-index:100}
+.nav-logo{font-family:'Playfair Display',serif;font-size:1.4rem;color:var(--gold);letter-spacing:.03em}
+.nav-logo span{color:var(--cream)}
+.nav-cta{background:var(--gold);color:var(--lapis);padding:9px 22px;border-radius:8px;font-weight:600;font-size:.9rem;cursor:pointer;border:none;transition:.2s}
+.nav-cta:hover{background:var(--gold2)}
+
+/* HERO */
+.hero{padding:90px 48px 60px;text-align:center;max-width:900px;margin:0 auto}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(201,168,76,.12);border:1px solid rgba(201,168,76,.3);border-radius:20px;padding:6px 16px;font-size:.82rem;color:var(--gold);margin-bottom:28px}
+.hero h1{font-family:'Playfair Display',serif;font-size:clamp(2.4rem,5vw,4rem);line-height:1.15;margin-bottom:20px}
+.hero h1 em{color:var(--gold);font-style:normal}
+.hero p{font-size:1.12rem;color:var(--cream2);max-width:620px;margin:0 auto 36px}
+.hero-stats{display:flex;justify-content:center;gap:48px;flex-wrap:wrap;margin-bottom:48px}
+.stat-item{text-align:center}
+.stat-num{font-family:'Playfair Display',serif;font-size:2rem;color:var(--gold);font-weight:700}
+.stat-lbl{font-size:.8rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+
+/* CONTENT TYPE SELECTOR */
+.section{padding:60px 48px;max-width:1100px;margin:0 auto}
+.section-title{font-family:'Playfair Display',serif;font-size:1.9rem;margin-bottom:8px}
+.section-sub{color:var(--muted);margin-bottom:32px;font-size:.97rem}
+
+.type-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin-bottom:40px}
+.type-card{background:var(--lapis2);border:2px solid rgba(201,168,76,.15);border-radius:var(--radius);padding:24px 20px;cursor:pointer;transition:.25s;text-align:center}
+.type-card:hover{border-color:rgba(201,168,76,.4);transform:translateY(-3px)}
+.type-card.active{border-color:var(--gold);background:rgba(201,168,76,.08)}
+.type-card .tc-icon{font-size:2rem;margin-bottom:10px}
+.type-card .tc-name{font-weight:600;font-size:1rem;margin-bottom:4px}
+.type-card .tc-volume{font-size:.82rem;color:var(--muted)}
+.type-card .tc-price{font-size:.85rem;color:var(--turq2);margin-top:6px;font-weight:600}
+
+/* CONFIG PANEL */
+.config-panel{background:var(--lapis2);border:1px solid rgba(201,168,76,.18);border-radius:var(--radius);padding:32px;margin-bottom:40px}
+.config-panel h3{font-family:'Playfair Display',serif;font-size:1.2rem;margin-bottom:20px;color:var(--gold)}
+.config-row{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px}
+.config-group{display:flex;flex-direction:column;gap:8px}
+.config-group label{font-size:.85rem;font-weight:600;color:var(--cream2);text-transform:uppercase;letter-spacing:.06em}
+.config-group input,.config-group select,.config-group textarea{background:var(--lapis3);border:1px solid rgba(201,168,76,.2);border-radius:8px;padding:10px 14px;color:var(--cream);font-family:'Inter',sans-serif;font-size:.9rem;outline:none;transition:.2s;width:100%}
+.config-group input:focus,.config-group select:focus,.config-group textarea:focus{border-color:var(--gold)}
+.config-group textarea{resize:vertical;min-height:80px}
+.tone-pills{display:flex;flex-wrap:wrap;gap:8px}
+.tone-pill{padding:6px 16px;border-radius:20px;border:1px solid rgba(201,168,76,.25);background:transparent;color:var(--cream2);font-size:.83rem;cursor:pointer;transition:.2s}
+.tone-pill:hover{border-color:var(--gold);color:var(--gold)}
+.tone-pill.active{background:rgba(201,168,76,.15);border-color:var(--gold);color:var(--gold)}
+
+/* VOLUME SLIDER */
+.volume-wrap{background:var(--lapis2);border:1px solid rgba(201,168,76,.18);border-radius:var(--radius);padding:28px 32px;margin-bottom:40px}
+.volume-wrap h3{font-family:'Playfair Display',serif;font-size:1.2rem;margin-bottom:20px;color:var(--gold)}
+.slider-row{display:flex;align-items:center;gap:20px;margin-bottom:20px}
+.slider-row label{font-size:.85rem;color:var(--cream2);min-width:140px;font-weight:600}
+input[type=range]{-webkit-appearance:none;width:100%;height:4px;background:rgba(201,168,76,.2);border-radius:2px;outline:none}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;background:var(--gold);border-radius:50%;cursor:pointer}
+.slider-val{min-width:60px;text-align:right;font-weight:700;color:var(--gold);font-size:1rem}
+.volume-summary{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.vs-card{background:var(--lapis3);border-radius:10px;padding:16px;text-align:center}
+.vs-num{font-family:'Playfair Display',serif;font-size:1.5rem;color:var(--gold);font-weight:700}
+.vs-lbl{font-size:.78rem;color:var(--muted);margin-top:4px}
+
+/* CALENDAR PREVIEW */
+.calendar-wrap{background:var(--lapis2);border:1px solid rgba(201,168,76,.18);border-radius:var(--radius);padding:32px;margin-bottom:40px}
+.calendar-wrap h3{font-family:'Playfair Display',serif;font-size:1.2rem;margin-bottom:20px;color:var(--gold)}
+.cal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+.cal-header span{font-weight:600;font-size:.95rem}
+.cal-nav{display:flex;gap:8px}
+.cal-btn{background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.2);border-radius:6px;padding:4px 10px;color:var(--cream);cursor:pointer;font-size:.85rem;transition:.2s}
+.cal-btn:hover{background:rgba(201,168,76,.2)}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.cal-day-label{text-align:center;font-size:.75rem;color:var(--muted);font-weight:600;text-transform:uppercase;padding:4px 0}
+.cal-day{background:var(--lapis3);border-radius:8px;padding:8px 6px;min-height:64px;position:relative;font-size:.75rem}
+.cal-day.today{border:1px solid rgba(201,168,76,.4)}
+.cal-day .day-num{color:var(--muted);margin-bottom:4px;font-size:.72rem}
+.cal-piece{border-radius:4px;padding:2px 6px;font-size:.68rem;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:500}
+.cal-piece.blog{background:rgba(26,138,122,.3);color:var(--turq2)}
+.cal-piece.social{background:rgba(201,168,76,.2);color:var(--gold2)}
+.cal-piece.email{background:rgba(99,102,241,.25);color:#a5b4fc}
+.cal-piece.video{background:rgba(236,72,153,.2);color:#f9a8d4}
+.cal-piece.thread{background:rgba(34,197,94,.2);color:#86efac}
+.cal-legend{display:flex;gap:16px;flex-wrap:wrap;margin-top:12px}
+.cal-leg-item{display:flex;align-items:center;gap:6px;font-size:.78rem;color:var(--muted)}
+.cal-leg-dot{width:10px;height:10px;border-radius:50%}
+
+/* PIPELINE */
+.pipeline-wrap{background:var(--lapis2);border:1px solid rgba(201,168,76,.18);border-radius:var(--radius);padding:32px;margin-bottom:40px}
+.pipeline-wrap h3{font-family:'Playfair Display',serif;font-size:1.2rem;margin-bottom:24px;color:var(--gold)}
+.pipeline-steps{display:grid;grid-template-columns:repeat(5,1fr);gap:0;position:relative}
+.pipeline-steps::before{content:'';position:absolute;top:22px;left:10%;right:10%;height:2px;background:linear-gradient(90deg,var(--gold) 0%,rgba(201,168,76,.2) 100%)}
+.ps-item{text-align:center;position:relative;z-index:1}
+.ps-dot{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.1rem;margin:0 auto 10px;border:2px solid var(--gold)}
+.ps-item.done .ps-dot{background:var(--gold);color:var(--lapis)}
+.ps-item.active .ps-dot{background:rgba(201,168,76,.2);color:var(--gold);animation:pulse 2s infinite}
+.ps-item.pending .ps-dot{background:var(--lapis3);color:var(--muted);border-color:rgba(201,168,76,.2)}
+.ps-name{font-size:.8rem;font-weight:600;color:var(--cream2)}
+.ps-sub{font-size:.72rem;color:var(--muted);margin-top:2px}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(201,168,76,.4)}50%{box-shadow:0 0 0 8px rgba(201,168,76,0)}}
+
+/* SAMPLE PREVIEW */
+.preview-wrap{background:var(--lapis2);border:1px solid rgba(201,168,76,.18);border-radius:var(--radius);padding:32px;margin-bottom:40px}
+.preview-wrap h3{font-family:'Playfair Display',serif;font-size:1.2rem;margin-bottom:20px;color:var(--gold)}
+.preview-tabs{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap}
+.ptab{padding:7px 18px;border-radius:20px;border:1px solid rgba(201,168,76,.2);background:transparent;color:var(--cream2);font-size:.84rem;cursor:pointer;transition:.2s}
+.ptab:hover{border-color:rgba(201,168,76,.4)}
+.ptab.active{background:rgba(201,168,76,.15);border-color:var(--gold);color:var(--gold)}
+.preview-content{display:none}
+.preview-content.active{display:block}
+.pc-doc{background:var(--lapis3);border-radius:10px;padding:28px;font-size:.9rem;line-height:1.7;color:var(--cream2);max-height:340px;overflow-y:auto}
+.pc-doc h2{font-family:'Playfair Display',serif;font-size:1.3rem;color:var(--cream);margin-bottom:10px}
+.pc-doc h3{font-size:1rem;color:var(--gold);margin:16px 0 8px}
+.pc-doc p{margin-bottom:12px}
+.pc-doc .hook{color:var(--turq2);font-weight:600;font-style:italic}
+.gen-btn{margin-top:16px;background:var(--turq);color:white;border:none;padding:11px 28px;border-radius:8px;font-weight:600;cursor:pointer;font-size:.9rem;transition:.2s;display:flex;align-items:center;gap:8px}
+.gen-btn:hover{background:var(--turq2)}
+.gen-btn.loading{opacity:.7;cursor:not-allowed}
+
+/* PRICING */
+.pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-bottom:40px}
+.price-card{background:var(--lapis2);border:2px solid rgba(201,168,76,.18);border-radius:var(--radius);padding:32px 24px;text-align:center;transition:.3s;position:relative;overflow:hidden}
+.price-card.popular{border-color:var(--gold);background:rgba(201,168,76,.06)}
+.price-card.popular::before{content:'Most Popular';position:absolute;top:16px;right:-28px;background:var(--gold);color:var(--lapis);font-size:.72rem;font-weight:700;padding:4px 36px;transform:rotate(45deg);letter-spacing:.06em}
+.price-card:hover{transform:translateY(-4px);box-shadow:var(--shadow)}
+.price-name{font-size:.85rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--gold);margin-bottom:8px}
+.price-num{font-family:'Playfair Display',serif;font-size:2.4rem;color:var(--cream);margin-bottom:4px}
+.price-num span{font-size:1rem;color:var(--muted)}
+.price-desc{font-size:.83rem;color:var(--muted);margin-bottom:24px}
+.price-features{list-style:none;text-align:left;margin-bottom:28px;display:flex;flex-direction:column;gap:8px}
+.price-features li{font-size:.85rem;color:var(--cream2);display:flex;align-items:flex-start;gap:8px}
+.price-features li::before{content:'✦';color:var(--gold);flex-shrink:0;font-size:.75rem;margin-top:3px}
+.price-cta{width:100%;padding:12px;border-radius:8px;font-weight:700;font-size:.9rem;cursor:pointer;transition:.2s;border:none}
+.price-cta.primary{background:var(--gold);color:var(--lapis)}
+.price-cta.primary:hover{background:var(--gold2)}
+.price-cta.secondary{background:transparent;border:2px solid var(--gold);color:var(--gold)}
+.price-cta.secondary:hover{background:rgba(201,168,76,.1)}
+
+/* ROI CALCULATOR */
+.roi-wrap{background:linear-gradient(135deg,var(--lapis2),var(--lapis3));border:1px solid rgba(201,168,76,.25);border-radius:var(--radius);padding:36px;margin-bottom:40px}
+.roi-wrap h3{font-family:'Playfair Display',serif;font-size:1.4rem;margin-bottom:24px;color:var(--gold)}
+.roi-inputs{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:28px}
+.roi-row{display:flex;flex-direction:column;gap:6px}
+.roi-row label{font-size:.82rem;color:var(--cream2);font-weight:600;text-transform:uppercase;letter-spacing:.06em}
+.roi-row input{background:var(--lapis3);border:1px solid rgba(201,168,76,.2);border-radius:8px;padding:10px 14px;color:var(--cream);font-size:.95rem;font-family:'Inter',sans-serif;outline:none;transition:.2s}
+.roi-row input:focus{border-color:var(--gold)}
+.roi-result{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.roi-card{background:rgba(0,0,0,.2);border-radius:10px;padding:20px;text-align:center}
+.roi-num{font-family:'Playfair Display',serif;font-size:1.8rem;color:var(--gold);font-weight:700}
+.roi-lbl{font-size:.78rem;color:var(--muted);margin-top:6px;line-height:1.3}
+
+/* WAITLIST */
+.waitlist-section{background:linear-gradient(135deg,var(--lapis2) 0%,var(--lapis3) 100%);border-top:1px solid rgba(201,168,76,.2);padding:80px 48px;text-align:center}
+.waitlist-section h2{font-family:'Playfair Display',serif;font-size:2.2rem;margin-bottom:12px}
+.waitlist-section h2 em{color:var(--gold);font-style:normal}
+.waitlist-section p{color:var(--cream2);margin-bottom:36px;font-size:1rem;max-width:500px;margin-left:auto;margin-right:auto}
+.wl-form{display:flex;gap:12px;max-width:480px;margin:0 auto 20px;flex-wrap:wrap}
+.wl-form input{flex:1;min-width:220px;background:var(--lapis3);border:1px solid rgba(201,168,76,.3);border-radius:8px;padding:13px 18px;color:var(--cream);font-family:'Inter',sans-serif;font-size:.95rem;outline:none;transition:.2s}
+.wl-form input:focus{border-color:var(--gold)}
+.wl-form button{background:var(--gold);color:var(--lapis);border:none;padding:13px 28px;border-radius:8px;font-weight:700;font-size:.95rem;cursor:pointer;transition:.2s;white-space:nowrap}
+.wl-form button:hover{background:var(--gold2)}
+.wl-note{font-size:.8rem;color:var(--muted)}
+.wl-success{display:none;background:rgba(26,138,122,.15);border:1px solid var(--turq);border-radius:10px;padding:20px 28px;max-width:480px;margin:0 auto;color:var(--turq2);font-weight:600}
+
+/* SOCIAL PROOF */
+.proof-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-bottom:40px}
+.proof-card{background:var(--lapis2);border:1px solid rgba(201,168,76,.15);border-radius:var(--radius);padding:24px}
+.proof-stars{color:var(--gold);font-size:1rem;margin-bottom:10px}
+.proof-text{font-size:.88rem;color:var(--cream2);line-height:1.6;margin-bottom:16px;font-style:italic}
+.proof-author{display:flex;align-items:center;gap:10px}
+.proof-avatar{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.9rem;font-weight:700;flex-shrink:0}
+.proof-name{font-size:.85rem;font-weight:600;color:var(--cream)}
+.proof-role{font-size:.78rem;color:var(--muted)}
+
+/* RESPONSIVE */
+@media(max-width:768px){
+  nav{padding:16px 20px}
+  .hero{padding:60px 20px 40px}
+  .section{padding:40px 20px}
+  .config-row,.roi-inputs{grid-template-columns:1fr}
+  .pricing-grid{grid-template-columns:1fr}
+  .proof-grid{grid-template-columns:1fr}
+  .pipeline-steps{grid-template-columns:repeat(3,1fr)}
+  .volume-summary{grid-template-columns:repeat(2,1fr)}
+  .cal-grid{font-size:.7rem}
+  .pipeline-steps::before{display:none}
+  .hero-stats{gap:24px}
+}
+</style>
+<link rel="canonical" href="https://abuz8ai.com/tools/ai-content-agency">
+<meta name="description" content="AI Content Agency — Run a content agency powered by AI — blog, social, email at scale. Free, no signup, runs entirely in your browser. One of 169 free AI and ">
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">ABU<span>Z8</span> · AI Content Agency</div>
+  <button class="nav-cta" onclick="document.querySelector('.waitlist-section').scrollIntoView({behavior:'smooth'})">Join the Waitlist</button>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-badge">⚡ Powered by QADIR OS · Free Content Planning Demo</div>
+  <h1>See What an <em>AI-Powered<br>Content Engine</em><br>Could Look Like For Your Brand</h1>
+  <p>Configure your brand voice and volume below to preview blog posts, social threads, email sequences, and video scripts — a free, no-signup demo of what AI-assisted content planning can produce. Nothing here is a paid service.</p>
+  <div class="hero-stats">
+    <div class="stat-item"><div class="stat-num">6</div><div class="stat-lbl">Content Types Modeled</div></div>
+    <div class="stat-item"><div class="stat-num">Free</div><div class="stat-lbl">No Signup Required</div></div>
+    <div class="stat-item"><div class="stat-num">28-Day</div><div class="stat-lbl">Calendar Preview</div></div>
+    <div class="stat-item"><div class="stat-num">100%</div><div class="stat-lbl">Runs In Your Browser</div></div>
+  </div>
+</section>
+
+<!-- CONTENT TYPE SELECTOR -->
+<section class="section">
+  <h2 class="section-title">What Content Do You Need?</h2>
+  <p class="section-sub">Select all content types — we handle the full stack.</p>
+  <div class="type-grid" id="typeGrid">
+    <div class="type-card active" data-type="blog" onclick="toggleType(this)">
+      <div class="tc-icon">📝</div>
+      <div class="tc-name">Blog Posts</div>
+      <div class="tc-volume">2,500–4,000 words · SEO-optimized</div>
+    </div>
+    <div class="type-card" data-type="social" onclick="toggleType(this)">
+      <div class="tc-icon">📱</div>
+      <div class="tc-name">Social Media</div>
+      <div class="tc-volume">Posts · Threads · Carousels</div>
+    </div>
+    <div class="type-card" data-type="email" onclick="toggleType(this)">
+      <div class="tc-icon">📧</div>
+      <div class="tc-name">Email Sequences</div>
+      <div class="tc-volume">Nurture · Onboarding · Campaigns</div>
+    </div>
+    <div class="type-card" data-type="video" onclick="toggleType(this)">
+      <div class="tc-icon">🎬</div>
+      <div class="tc-name">Video Scripts</div>
+      <div class="tc-volume">YouTube · TikTok · Webinar</div>
+    </div>
+    <div class="type-card" data-type="thread" onclick="toggleType(this)">
+      <div class="tc-icon">🧵</div>
+      <div class="tc-name">X / LinkedIn Threads</div>
+      <div class="tc-volume">Thought leadership · Viral hooks</div>
+    </div>
+    <div class="type-card" data-type="ad" onclick="toggleType(this)">
+      <div class="tc-icon">💡</div>
+      <div class="tc-name">Ad Copy</div>
+      <div class="tc-volume">Meta · Google · LinkedIn Ads</div>
+    </div>
+  </div>
+
+  <!-- CONFIG PANEL -->
+  <div class="config-panel">
+    <h3>✦ Brand Voice Configuration</h3>
+    <div class="config-row">
+      <div class="config-group">
+        <label>Brand / Company Name</label>
+        <input type="text" id="brandName" placeholder="e.g. Acme SaaS" oninput="updatePreview()">
+      </div>
+      <div class="config-group">
+        <label>Industry / Niche</label>
+        <select id="industry" onchange="updatePreview()">
+          <option value="">Select industry…</option>
+          <option>SaaS / Tech</option>
+          <option>E-commerce / DTC</option>
+          <option>Finance / FinTech</option>
+          <option>Health & Wellness</option>
+          <option>Real Estate</option>
+          <option>Marketing Agency</option>
+          <option>B2B Services</option>
+          <option>Education / Courses</option>
+          <option>Other</option>
+        </select>
+      </div>
+    </div>
+    <div class="config-row">
+      <div class="config-group">
+        <label>Target Audience</label>
+        <input type="text" id="audience" placeholder="e.g. Startup founders, SMB owners…" oninput="updatePreview()">
+      </div>
+      <div class="config-group">
+        <label>Core Topic / Keywords</label>
+        <input type="text" id="topic" placeholder="e.g. AI automation, productivity…" oninput="updatePreview()">
+      </div>
+    </div>
+    <div class="config-group" style="margin-bottom:16px">
+      <label>Brand Tone</label>
+      <div class="tone-pills" id="tonePills">
+        <div class="tone-pill active" onclick="toggleTone(this)">Professional</div>
+        <div class="tone-pill" onclick="toggleTone(this)">Casual</div>
+        <div class="tone-pill" onclick="toggleTone(this)">Bold / Direct</div>
+        <div class="tone-pill" onclick="toggleTone(this)">Educational</div>
+        <div class="tone-pill" onclick="toggleTone(this)">Inspirational</div>
+        <div class="tone-pill" onclick="toggleTone(this)">Conversational</div>
+        <div class="tone-pill" onclick="toggleTone(this)">Data-driven</div>
+        <div class="tone-pill" onclick="toggleTone(this)">Witty / Fun</div>
+      </div>
+    </div>
+    <div class="config-group">
+      <label>Brand Style Notes (optional)</label>
+      <textarea id="styleNotes" placeholder="e.g. Use 'we' not 'I', avoid jargon, always include CTA, Oxford comma…" oninput="updatePreview()"></textarea>
+    </div>
+  </div>
+
+  <!-- VOLUME SLIDER -->
+  <div class="volume-wrap">
+    <h3>✦ Content Volume</h3>
+    <div class="slider-row">
+      <label>Blog Posts / Month</label>
+      <input type="range" min="2" max="30" value="8" id="blogVol" oninput="updateVolume()">
+      <div class="slider-val" id="blogVal">8</div>
+    </div>
+    <div class="slider-row">
+      <label>Social Posts / Month</label>
+      <input type="range" min="10" max="120" value="30" id="socialVol" oninput="updateVolume()">
+      <div class="slider-val" id="socialVal">30</div>
+    </div>
+    <div class="slider-row">
+      <label>Emails / Month</label>
+      <input type="range" min="2" max="24" value="8" id="emailVol" oninput="updateVolume()">
+      <div class="slider-val" id="emailVal">8</div>
+    </div>
+    <div class="slider-row">
+      <label>Video Scripts / Month</label>
+      <input type="range" min="0" max="16" value="4" id="videoVol" oninput="updateVolume()">
+      <div class="slider-val" id="videoVal">4</div>
+    </div>
+    <div class="volume-summary" id="volSummary">
+      <div class="vs-card"><div class="vs-num" id="vs-total">50</div><div class="vs-lbl">Content Pieces / Mo</div></div>
+      <div class="vs-card"><div class="vs-num" id="vs-words">148K</div><div class="vs-lbl">Words Generated</div></div>
+      <div class="vs-card"><div class="vs-num" id="vs-hours">210</div><div class="vs-lbl">Hours Saved / Mo</div></div>
+      <div class="vs-card"><div class="vs-num" id="vs-cost">$9,450</div><div class="vs-lbl">Agency Cost Replaced</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTENT CALENDAR PREVIEW -->
+<section class="section" style="padding-top:0">
+  <h2 class="section-title">Your Content Calendar</h2>
+  <p class="section-sub">AI populates your calendar based on volume settings and brand voice config.</p>
+  <div class="calendar-wrap">
+    <div class="cal-header">
+      <span id="calMonthLabel">May 2026</span>
+      <div class="cal-nav">
+        <button class="cal-btn" onclick="shiftWeek(-1)">← Prev</button>
+        <button class="cal-btn" onclick="shiftWeek(1)">Next →</button>
+      </div>
+    </div>
+    <div class="cal-grid" id="calGrid">
+      <!-- populated by JS -->
+    </div>
+    <div class="cal-legend">
+      <div class="cal-leg-item"><div class="cal-leg-dot" style="background:rgba(26,138,122,.6)"></div>Blog</div>
+      <div class="cal-leg-item"><div class="cal-leg-dot" style="background:rgba(201,168,76,.5)"></div>Social</div>
+      <div class="cal-leg-item"><div class="cal-leg-dot" style="background:rgba(99,102,241,.5)"></div>Email</div>
+      <div class="cal-leg-item"><div class="cal-leg-dot" style="background:rgba(236,72,153,.4)"></div>Video</div>
+      <div class="cal-leg-item"><div class="cal-leg-dot" style="background:rgba(34,197,94,.4)"></div>Thread</div>
+    </div>
+  </div>
+</section>
+
+<!-- DELIVERY PIPELINE -->
+<section class="section" style="padding-top:0">
+  <h2 class="section-title">How It Works</h2>
+  <p class="section-sub">Your content moves through a 5-stage quality pipeline before it reaches you.</p>
+  <div class="pipeline-wrap">
+    <h3>✦ Content Delivery Pipeline</h3>
+    <div class="pipeline-steps">
+      <div class="ps-item done">
+        <div class="ps-dot">🎯</div>
+        <div class="ps-name">Research</div>
+        <div class="ps-sub">Topic + SEO</div>
+      </div>
+      <div class="ps-item done">
+        <div class="ps-dot">✍️</div>
+        <div class="ps-name">AI Draft</div>
+        <div class="ps-sub">Brand-voiced</div>
+      </div>
+      <div class="ps-item active">
+        <div class="ps-dot">🔍</div>
+        <div class="ps-name">QA Review</div>
+        <div class="ps-sub">Fact-check + edit</div>
+      </div>
+      <div class="ps-item pending">
+        <div class="ps-dot">✅</div>
+        <div class="ps-name">Your Review</div>
+        <div class="ps-sub">Optional edits</div>
+      </div>
+      <div class="ps-item pending">
+        <div class="ps-dot">🚀</div>
+        <div class="ps-name">Publish</div>
+        <div class="ps-sub">Scheduled + live</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SAMPLE PREVIEW -->
+<section class="section" style="padding-top:0">
+  <h2 class="section-title">Sample Output</h2>
+  <p class="section-sub">Here's what AI-generated content looks like — tuned to your brand.</p>
+  <div class="preview-wrap">
+    <h3 id="previewTitle">✦ Blog Post Preview</h3>
+    <div class="preview-tabs" id="previewTabs">
+      <div class="ptab active" data-tab="blog" onclick="switchPreview(this)">Blog Post</div>
+      <div class="ptab" data-tab="social" onclick="switchPreview(this)">Social Thread</div>
+      <div class="ptab" data-tab="email" onclick="switchPreview(this)">Email Subject Lines</div>
+      <div class="ptab" data-tab="hook" onclick="switchPreview(this)">Video Hook</div>
+    </div>
+
+    <div class="preview-content active" id="prev-blog">
+      <div class="pc-doc" id="blogDoc">
+        <h2 id="blogTitle">How AI Automation Is Replacing $50K/Year Agency Contracts in 2026</h2>
+        <p class="hook">The agency model is dying. Here's what's replacing it — and how a lean team could reclaim serious budget by producing it in-house with AI.</p>
+        <h3>The Problem With Traditional Agencies</h3>
+        <p>Many businesses pay thousands per month for content agencies that operate on multi-week turnarounds, cycle through junior writers, and deliver first drafts that need heavy rework before they're publishable.</p>
+        <h3>What AI-Powered Content Can Deliver</h3>
+        <p>With QADIR-powered content pipelines, the same output volume — blog posts, social content, email sequences — can get produced dramatically faster, at a fraction of the cost. Not "pretty good for AI." Actually good. Brand-voiced, researched, SEO-structured.</p>
+        <h3>The 3 Content Pillars That Drive Revenue</h3>
+        <p>Top-performing brands focus on: (1) Authority content — long-form SEO posts that rank for high-intent terms. (2) Nurture content — email sequences that convert subscribers to buyers. (3) Social proof loops — thread content that keeps decision-makers engaged.</p>
+      </div>
+    </div>
+
+    <div class="preview-content" id="prev-social">
+      <div class="pc-doc" id="socialDoc">
+        <p style="color:var(--gold);font-weight:700;margin-bottom:12px">🧵 LinkedIn Thread — 8 posts</p>
+        <p class="hook">I analyzed 200 content strategies. Here's what the top 10% do differently:</p>
+        <p><strong>1/</strong> They publish on a schedule no one can maintain manually. AI changed that. Here's the exact system →</p>
+        <p><strong>2/</strong> They don't write for search engines. They write for <em>conversion</em>. Every piece answers: "What does the reader do next?"</p>
+        <p><strong>3/</strong> They batch production. Instead of 1 blog post taking 8 hours, they run 30 in parallel over a weekend. AI handles drafts. Humans approve.</p>
+        <p><strong>4/</strong> They repurpose mercilessly. One blog post → 6 social posts → 3 email paragraphs → 1 video script. The content factory never stops.</p>
+        <p style="color:var(--muted);font-size:.82rem;margin-top:12px">…+ 4 more posts in sequence</p>
+      </div>
+    </div>
+
+    <div class="preview-content" id="prev-email">
+      <div class="pc-doc" id="emailDoc">
+        <p style="color:var(--gold);font-weight:700;margin-bottom:16px">📧 Email Subject Line Variants (A/B Test Pack)</p>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <div style="background:var(--lapis2);border-radius:8px;padding:12px 16px">
+            <div style="font-size:.72rem;color:var(--muted);margin-bottom:4px">VARIANT A — Curiosity</div>
+            <div style="font-weight:600">The $12K/month agency bill we eliminated in 48 hours</div>
+          </div>
+          <div style="background:var(--lapis2);border-radius:8px;padding:12px 16px">
+            <div style="font-size:.72rem;color:var(--muted);margin-bottom:4px">VARIANT B — Direct Result</div>
+            <div style="font-weight:600">We published 50 pieces of content last month. Our team has 2 people.</div>
+          </div>
+          <div style="background:var(--lapis2);border-radius:8px;padding:12px 16px">
+            <div style="font-size:.72rem;color:var(--muted);margin-bottom:4px">VARIANT C — Question</div>
+            <div style="font-weight:600">Why are you still paying $8K/mo for content?</div>
+          </div>
+          <div style="background:var(--lapis2);border-radius:8px;padding:12px 16px;border:1px solid rgba(201,168,76,.3)">
+            <div style="font-size:.72rem;color:var(--gold);margin-bottom:4px">WINNER — AI Predicted 📈</div>
+            <div style="font-weight:600">I replaced my $12K content agency with AI. Here's exactly what happened.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="preview-content" id="prev-hook">
+      <div class="pc-doc" id="hookDoc">
+        <p style="color:var(--gold);font-weight:700;margin-bottom:12px">🎬 YouTube Hook Scripts (First 30 seconds)</p>
+        <div style="margin-bottom:16px">
+          <div style="font-size:.78rem;color:var(--muted);margin-bottom:6px">HOOK OPTION 1 — Problem-First</div>
+          <p class="hook">"If you're spending more than $3,000 a month on content and still not ranking — this video is going to hurt a little. Because I'm about to show you exactly why, and what I did instead."</p>
+        </div>
+        <div>
+          <div style="font-size:.78rem;color:var(--muted);margin-bottom:6px">HOOK OPTION 2 — Result-First</div>
+          <p class="hook">"Last month we published 62 pieces of content. Got 3 clients from cold SEO traffic. Spent zero hours writing. This is the exact system — I'm walking through every piece of it right now."</p>
+        </div>
+      </div>
+    </div>
+
+    <button class="gen-btn" id="genBtn" onclick="generateSample()">
+      <span id="genBtnText">✦ Generate Sample for My Brand</span>
+    </button>
+  </div>
+</section>
+
+<!-- ROI CALCULATOR -->
+<section class="section" style="padding-top:0">
+  <h2 class="section-title">Illustrative Cost Calculator</h2>
+  <p class="section-sub">Plug in your numbers to see how the volume you configured above compares to a typical agency spend. This is a rough, illustrative estimate — not a quote or a guarantee.</p>
+  <div class="roi-wrap">
+    <h3>✦ Content Cost Comparison (Illustrative)</h3>
+    <div class="roi-inputs">
+      <div class="roi-row">
+        <label>Current Agency / Freelancer Monthly Cost ($)</label>
+        <input type="number" id="agencyCost" value="8000" oninput="calcROI()">
+      </div>
+      <div class="roi-row">
+        <label>Content Pieces Delivered Per Month</label>
+        <input type="number" id="agencyPieces" value="12" oninput="calcROI()">
+      </div>
+      <div class="roi-row">
+        <label>Lead Value (avg deal size, $)</label>
+        <input type="number" id="dealSize" value="5000" oninput="calcROI()">
+      </div>
+      <div class="roi-row">
+        <label>Leads from Content Per Month (current)</label>
+        <input type="number" id="currentLeads" value="3" oninput="calcROI()">
+      </div>
+    </div>
+    <div class="roi-result">
+      <div class="roi-card">
+        <div class="roi-num" id="roi-savings">$0</div>
+        <div class="roi-lbl">Illustrative Monthly Cost Difference</div>
+      </div>
+      <div class="roi-card">
+        <div class="roi-num" id="roi-volume">0×</div>
+        <div class="roi-lbl">Potential Content Volume Increase</div>
+      </div>
+      <div class="roi-card">
+        <div class="roi-num" id="roi-revenue">$0</div>
+        <div class="roi-lbl">Illustrative Added Revenue Potential / Mo</div>
+      </div>
+    </div>
+    <p style="font-size:.78rem;color:var(--muted);margin-top:16px;text-align:center">Estimate only, based on illustrative per-piece production costs and the volume you configured above — not a quote, offer, or guaranteed outcome.</p>
+  </div>
+</section>
+
+<!-- MANAGED VERSION ROADMAP -->
+<section class="section" style="padding-top:0" id="roadmap-pricing">
+  <h2 class="section-title">A Managed Version — Roadmap</h2>
+  <p class="section-sub">Not built. Not for sale. Here's what we're considering, and how to get notified if it ships.</p>
+  <div style="background:var(--lapis2);border:1px solid rgba(201,168,76,.18);border-radius:var(--radius);padding:36px;text-align:center">
+    <div class="hero-badge" style="margin-bottom:20px">🛠️ ROADMAP — not yet available for purchase</div>
+    <p style="color:var(--cream2);max-width:600px;margin:0 auto 28px;font-size:.92rem;line-height:1.7">
+      We're exploring a managed, done-for-you content pipeline — brand-voiced blog posts, social, email, and video scripts delivered on a schedule — as a possible future product.
+      <strong>Nothing on this page is buyable today:</strong> there are no subscription tiers, no Stripe products, and no customers on this program yet. Pricing, terms, and even whether we build it at all are undecided.
+      If you'd want in when (or if) it opens, join the waitlist below and we'll email you.
+    </p>
+    <button class="price-cta primary" style="width:auto;padding:13px 34px" onclick="document.querySelector('.waitlist-section').scrollIntoView({behavior:'smooth'})">Join the Waitlist →</button>
+  </div>
+</section>
+
+<!-- SOCIAL PROOF -->
+<section class="section" style="padding-top:0">
+  <h2 class="section-title">Be our first customer</h2>
+  <p class="section-sub">We're newly launched — no customer case studies yet. Want to be the first? <a href="request.html" style="color:var(--gold)">Get started</a>.</p>
+</section>
+
+<!-- WAITLIST -->
+<div class="waitlist-section">
+  <h2>Want This <em>Built For You</em>?</h2>
+  <p>This page is a free interactive demo — there's no live content-agency service to buy yet. Join the waitlist and we'll email you if a managed version ships.</p>
+  <div class="wl-form" id="wlForm">
+    <input type="email" id="wlEmail" placeholder="Work email address">
+    <button onclick="joinWaitlist()">Join the Waitlist →</button>
+  </div>
+  <div class="wl-success" id="wlSuccess">
+    🎉 You're on the list! We'll email you if and when a managed version launches.
+  </div>
+  <div class="wl-note">Roadmap program · Not yet available · No purchase or commitment today</div>
+</div>
+
+<script>
+// ——————————————————————————
+// STATE
+// ——————————————————————————
+let activeTypes = new Set(['blog']);
+let activeTones = new Set(['Professional']);
+let calWeekOffset = 0;
+
+// ——————————————————————————
+// TYPE CARDS
+// ——————————————————————————
+function toggleType(el) {
+  const t = el.dataset.type;
+  if (activeTypes.has(t)) {
+    if (activeTypes.size > 1) { activeTypes.delete(t); el.classList.remove('active'); }
+  } else {
+    activeTypes.add(t);
+    el.classList.add('active');
+  }
+  buildCalendar();
+  updateVolume();
+}
+
+// ——————————————————————————
+// TONE PILLS
+// ——————————————————————————
+function toggleTone(el) {
+  const t = el.textContent;
+  if (activeTones.has(t)) {
+    if (activeTones.size > 1) { activeTones.delete(t); el.classList.remove('active'); }
+  } else {
+    activeTones.add(t);
+    el.classList.add('active');
+  }
+  updatePreview();
+}
+
+// ——————————————————————————
+// VOLUME SLIDERS
+// ——————————————————————————
+function updateVolume() {
+  const bv = parseInt(document.getElementById('blogVol').value);
+  const sv = parseInt(document.getElementById('socialVol').value);
+  const ev = parseInt(document.getElementById('emailVol').value);
+  const vv = parseInt(document.getElementById('videoVol').value);
+
+  document.getElementById('blogVal').textContent = bv;
+  document.getElementById('socialVal').textContent = sv;
+  document.getElementById('emailVal').textContent = ev;
+  document.getElementById('videoVal').textContent = vv;
+
+  const total = bv + sv + ev + vv;
+  const words = bv*3200 + sv*80 + ev*320 + vv*850;
+  const hours = Math.round(bv*4.5 + sv*0.4 + ev*1.2 + vv*2.5);
+  const cost = bv*250 + sv*45 + ev*120 + vv*300;
+
+  document.getElementById('vs-total').textContent = total;
+  document.getElementById('vs-words').textContent = (words/1000).toFixed(0)+'K';
+  document.getElementById('vs-hours').textContent = hours;
+  document.getElementById('vs-cost').textContent = '$'+cost.toLocaleString();
+
+  buildCalendar();
+  if (typeof calcROI === 'function') calcROI();
+}
+
+// ——————————————————————————
+// CALENDAR
+// ——————————————————————————
+const DAY_LABELS = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+const CONTENT_TYPES = [
+  { key:'blog',   cls:'blog',   label:'Blog',       emoji:'📝' },
+  { key:'social', cls:'social', label:'Social',     emoji:'📱' },
+  { key:'email',  cls:'email',  label:'Email',      emoji:'📧' },
+  { key:'video',  cls:'video',  label:'Script',     emoji:'🎬' },
+  { key:'thread', cls:'thread', label:'Thread',     emoji:'🧵' },
+];
+
+function buildCalendar() {
+  const grid = document.getElementById('calGrid');
+  const bv = parseInt(document.getElementById('blogVol').value);
+  const sv = parseInt(document.getElementById('socialVol').value);
+  const ev = parseInt(document.getElementById('emailVol').value);
+  const vv = parseInt(document.getElementById('videoVol').value);
+  const tv = Math.round((sv + bv) * 0.3); // threads
+
+  // weekly cadences
+  const weekly = {
+    blog:   bv/4.33,
+    social: sv/4.33,
+    email:  ev/4.33,
+    video:  vv/4.33,
+    thread: tv/4.33,
+  };
+
+  // build 5 weeks × 7 days
+  const today = new Date();
+  const startOfWeek = new Date(today);
+  const dow = (today.getDay()+6)%7;
+  startOfWeek.setDate(today.getDate() - dow + calWeekOffset*7);
+
+  // update month label
+  document.getElementById('calMonthLabel').textContent =
+    startOfWeek.toLocaleDateString('en-US',{month:'long',year:'numeric'});
+
+  // day label row
+  let html = DAY_LABELS.map(d=>`<div class="cal-day-label">${d}</div>`).join('');
+
+  // assign pieces to days in a deterministic pattern
+  const pieces = []; // {day:0-27, type}
+  let counts = {...weekly};
+  for (let d = 0; d < 28; d++) {
+    CONTENT_TYPES.forEach(ct => {
+      if (!activeTypes.has(ct.key) && ct.key !== 'thread') return;
+      const expected = counts[ct.key];
+      const rand = Math.abs(Math.sin(d * 31 + ct.key.length * 7)) * 1.5;
+      if (rand < expected) pieces.push({day: d, type: ct});
+    });
+  }
+
+  for (let d = 0; d < 28; d++) {
+    const date = new Date(startOfWeek);
+    date.setDate(startOfWeek.getDate() + d);
+    const isToday = date.toDateString() === today.toDateString();
+    const dayPieces = pieces.filter(p => p.day === d);
+    const dayNum = date.getDate();
+
+    const piecesHtml = dayPieces.slice(0,3).map(p =>
+      `<div class="cal-piece ${p.type.cls}">${p.type.emoji} ${p.type.label}</div>`
+    ).join('');
+
+    html += `<div class="cal-day${isToday?' today':''}">
+      <div class="day-num">${dayNum}</div>
+      ${piecesHtml}
+      ${dayPieces.length > 3 ? `<div style="font-size:.65rem;color:var(--muted)">+${dayPieces.length-3} more</div>` : ''}
+    </div>`;
+  }
+
+  grid.innerHTML = html;
+}
+
+function shiftWeek(dir) {
+  calWeekOffset += dir;
+  buildCalendar();
+}
+
+// ——————————————————————————
+// PREVIEW TABS
+// ——————————————————————————
+function switchPreview(el) {
+  document.querySelectorAll('.ptab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.preview-content').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('prev-'+el.dataset.tab).classList.add('active');
+}
+
+// ——————————————————————————
+// GENERATE SAMPLE
+// ——————————————————————————
+const TOPICS = {
+  'SaaS / Tech': ['AI workflows','product-led growth','developer experience','SaaS pricing strategy'],
+  'E-commerce / DTC': ['customer retention','product launch strategy','DTC growth hacking','UGC marketing'],
+  'Finance / FinTech': ['financial automation','cash flow optimization','FinTech compliance','payment processing'],
+  'Health & Wellness': ['longevity science','mental performance','health optimization','biohacking basics'],
+  'Marketing Agency': ['client acquisition','agency scaling','content ROI','marketing automation'],
+  'B2B Services': ['consultative selling','B2B lead generation','service productization','account expansion'],
+  '': ['business growth','productivity','AI automation','digital transformation'],
+};
+
+function updatePreview() { /* live update on config changes — lightweight */ }
+
+async function generateSample() {
+  const btn = document.getElementById('genBtn');
+  const btnText = document.getElementById('genBtnText');
+  if (btn.classList.contains('loading')) return;
+
+  const brand = document.getElementById('brandName').value || 'Your Brand';
+  const industry = document.getElementById('industry').value || '';
+  const audience = document.getElementById('audience').value || 'business owners';
+  const topic = document.getElementById('topic').value;
+  const tones = [...activeTones].join(' + ');
+
+  btn.classList.add('loading');
+  btnText.textContent = '⏳ Generating sample…';
+
+  const topicPool = TOPICS[industry] || TOPICS[''];
+  const chosenTopic = topic || topicPool[Math.floor(Math.random()*topicPool.length)];
+
+  const payload = {
+    brand, industry, audience, topic: chosenTopic, tones,
+    types: [...activeTypes],
+    ts: Date.now()
+  };
+
+  let result = null;
+  try {
+    if (window.ABUZ8 && window.ABUZ8.callBrain) {
+      result = await window.ABUZ8.callBrain('content_sample_generate', payload);
+    }
+  } catch(e) {}
+
+  // Demo generation
+  await new Promise(r => setTimeout(r, 1800));
+
+  const titlePool = [
+    `How ${brand} Is Winning With ${chosenTopic} in 2026`,
+    `The ${tones.split(' + ')[0]} Guide to ${chosenTopic} for ${audience}`,
+    `Why ${chosenTopic} Is the Biggest Opportunity in ${industry || 'Business'} Right Now`,
+    `${brand}'s Playbook for Scaling ${chosenTopic}`,
+  ];
+  const titleEl = document.getElementById('blogTitle');
+  if (titleEl) titleEl.textContent = titlePool[Math.floor(Math.random()*titlePool.length)];
+
+  btn.classList.remove('loading');
+  btnText.textContent = '✓ Sample Generated — Scroll Up to View';
+  setTimeout(()=>{
+    btnText.textContent = '✦ Generate New Sample';
+  }, 3000);
+}
+
+// ——————————————————————————
+// ROI CALCULATOR (illustrative only — compares your agency spend to
+// the DIY volume configured in the Content Volume section above,
+// priced at the same illustrative per-piece rates used there)
+// ——————————————————————————
+function calcROI() {
+  const agencyCost = parseInt(document.getElementById('agencyCost').value)||0;
+  const agencyPieces = parseInt(document.getElementById('agencyPieces').value)||1;
+  const dealSize = parseInt(document.getElementById('dealSize').value)||0;
+  const currentLeads = parseInt(document.getElementById('currentLeads').value)||0;
+
+  // DIY volume + illustrative cost, from the Content Volume sliders above
+  const bv = parseInt(document.getElementById('blogVol').value)||0;
+  const sv = parseInt(document.getElementById('socialVol').value)||0;
+  const ev = parseInt(document.getElementById('emailVol').value)||0;
+  const vv = parseInt(document.getElementById('videoVol').value)||0;
+  const diyPieces = bv + sv + ev + vv;
+  const diyCost = bv*250 + sv*45 + ev*120 + vv*300;
+
+  const savings = agencyCost - diyCost;
+  const volumeMult = (diyPieces / Math.max(agencyPieces,1)).toFixed(1);
+  const additionalLeads = Math.round(currentLeads * (diyPieces / Math.max(agencyPieces,1) - 1) * 0.6);
+  const addedRevenue = additionalLeads * dealSize;
+
+  document.getElementById('roi-savings').textContent = savings >= 0
+    ? '$'+savings.toLocaleString() : '-$'+Math.abs(savings).toLocaleString();
+  document.getElementById('roi-volume').textContent = volumeMult+'×';
+  document.getElementById('roi-revenue').textContent = '$'+addedRevenue.toLocaleString();
+}
+
+// ——————————————————————————
+// WAITLIST
+// ——————————————————————————
+async function joinWaitlist() {
+  const email = document.getElementById('wlEmail').value.trim();
+  if (!email || !email.includes('@')) {
+    document.getElementById('wlEmail').style.borderColor='#ef4444';
+    setTimeout(()=>document.getElementById('wlEmail').style.borderColor='',1500);
+    return;
+  }
+  const brand = document.getElementById('brandName').value || '';
+  const industry = document.getElementById('industry').value || '';
+  const types = [...activeTypes];
+  const tones = [...activeTones];
+
+  try {
+    await fetch('/api/waitlist',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,product:'ai-content-agency',ts:Date.now()})}).catch(()=>{});
+    if (window.ABUZ8 && window.ABUZ8.callBrain) {
+      await window.ABUZ8.callBrain('content_agency_waitlist', {
+        email, brand, industry, types, tones,
+        ts: Date.now()
+      });
+    }
+  } catch(e){}
+
+  document.getElementById('wlForm').style.display='none';
+  document.getElementById('wlSuccess').style.display='block';
+}
+
+// ——————————————————————————
+// INIT
+// ——————————————————————————
+updateVolume();
+calcROI();
+</script>
+<script src="/tools/_abuz8-live-brain.js" onerror="console.log('brain offline — demo mode')"></script>
+
+<script src="/assets/js/dfy-banner.js" async></script>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+<script src="/tools/_tools-shared.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>
+

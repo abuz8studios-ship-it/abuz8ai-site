@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Hashtag Generator — ABUZ8</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{--lapis:#0a1628;--lapis2:#0f2040;--gold:#c9a84c;--gold2:#e6c876;--turq:#0e9f6e;--cream:#f5f0e8;--cream2:#ede7d9;--text:#1a1a2e;--muted:#5a6070;--r:12px;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'Inter',sans-serif;background:var(--cream);color:var(--text);min-height:100vh;}
+  header{background:var(--lapis);padding:18px 32px;display:flex;align-items:center;justify-content:space-between;}
+  .brand{font-family:'Playfair Display',serif;font-size:22px;color:#fff;}
+  .brand span{color:var(--gold);}
+  .subtitle{color:rgba(255,255,255,0.5);font-size:12px;margin-top:2px;}
+  .main{max-width:1020px;margin:0 auto;padding:32px 20px;}
+  h1{font-family:'Playfair Display',serif;font-size:32px;color:var(--lapis);margin-bottom:6px;}
+  .hero-sub{color:var(--muted);font-size:15px;margin-bottom:32px;}
+  .layout{display:grid;grid-template-columns:320px 1fr;gap:28px;}
+  @media(max-width:680px){.layout{grid-template-columns:1fr;}}
+  .panel{background:#fff;border-radius:var(--r);padding:24px;box-shadow:0 2px 16px rgba(10,22,40,0.07);}
+  label{display:block;font-size:12px;font-weight:600;color:var(--lapis);text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px;}
+  input,textarea{width:100%;border:1.5px solid var(--cream2);border-radius:8px;padding:10px 13px;font-size:14px;font-family:'Inter',sans-serif;color:var(--text);background:#fff;outline:none;margin-bottom:18px;transition:border-color .2s;}
+  input:focus,textarea:focus{border-color:var(--gold);}
+  .chips{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:18px;}
+  .chip{border:1.5px solid var(--cream2);background:#fff;border-radius:20px;padding:6px 13px;font-size:12px;font-weight:500;color:var(--muted);cursor:pointer;transition:all .2s;}
+  .chip.active{background:var(--lapis);border-color:var(--lapis);color:#fff;}
+  .gen-btn{width:100%;background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--lapis);font-size:15px;font-weight:700;border:none;border-radius:8px;padding:14px;cursor:pointer;transition:opacity .2s;font-family:'Inter',sans-serif;}
+  .gen-btn:hover{opacity:.9;}
+  .gen-btn:disabled{opacity:.5;cursor:not-allowed;}
+  .section-label{font-family:'Playfair Display',serif;font-size:16px;font-weight:600;color:var(--lapis);margin-bottom:14px;padding-bottom:8px;border-bottom:2px solid var(--gold);}
+  .prog-bar{width:100%;height:3px;background:var(--cream2);border-radius:2px;overflow:hidden;margin-bottom:18px;display:none;}
+  .prog-fill{height:100%;width:0;background:linear-gradient(90deg,var(--turq),var(--gold));transition:width 1.2s ease;}
+  .sets-wrap{display:flex;flex-direction:column;gap:16px;}
+  .set-card{background:var(--cream);border-radius:10px;padding:16px 18px;}
+  .set-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--gold);margin-bottom:10px;}
+  .hashtags-wrap{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;}
+  .htag{background:#fff;border:1.5px solid var(--cream2);border-radius:20px;padding:5px 12px;font-size:13px;font-weight:500;color:var(--lapis);cursor:pointer;transition:all .2s;user-select:none;}
+  .htag:hover{border-color:var(--gold);color:var(--gold);}
+  .htag.selected{background:var(--lapis);border-color:var(--lapis);color:#fff;}
+  .set-footer{display:flex;align-items:center;justify-content:space-between;}
+  .set-count{font-size:11px;color:var(--muted);}
+  .copy-set-btn{border:1.5px solid var(--cream2);background:#fff;border-radius:6px;padding:5px 12px;font-size:12px;cursor:pointer;color:var(--lapis);transition:all .2s;}
+  .copy-set-btn:hover{border-color:var(--gold);}
+  .selected-bar{background:linear-gradient(135deg,var(--lapis),var(--lapis2));border-radius:10px;padding:16px 18px;margin-top:16px;}
+  .selected-bar h4{color:var(--gold);font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;}
+  .selected-display{color:#fff;font-size:14px;line-height:2;min-height:40px;}
+  .actions{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;}
+  .action-btn{border:1.5px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.1);border-radius:8px;padding:7px 14px;font-size:12px;font-weight:500;color:#fff;cursor:pointer;transition:all .2s;}
+  .action-btn:hover{border-color:var(--gold);color:var(--gold);}
+  .empty-state{text-align:center;padding:50px 20px;color:var(--muted);font-size:14px;}
+  .empty-state .icon{font-size:36px;margin-bottom:10px;}
+  .platform-note{font-size:11px;color:var(--muted);margin-top:8px;padding:8px;background:var(--cream);border-radius:6px;}
+</style>
+<script src="_abuz8-live-brain.js" defer></script>
+
+<script src="_abuz8-config.js" defer></script>
+<link rel="canonical" href="https://abuz8ai.com/tools/ai-hashtag-generator">
+<meta name="description" content="AI Hashtag Generator — Relevant, reach-boosting hashtags. Free, no signup, runs entirely in your browser. One of 169 free AI and developer tools by ABUZ8.">
+</head>
+<body>
+
+<header>
+  <div>
+    <div class="brand">ABU<span>Z8</span></div>
+    <div class="subtitle">AI Hashtag Generator</div>
+  </div>
+  <div style="color:rgba(255,255,255,0.4);font-size:12px;">Free · No login required</div>
+</header>
+
+<div class="main">
+  <h1>AI Hashtag Generator</h1>
+  <p class="hero-sub">Generate optimized hashtag sets for Instagram, LinkedIn, TikTok, Twitter, and more — categorized by reach.</p>
+
+  <div class="layout">
+
+    <!-- LEFT -->
+    <div class="panel">
+      <div class="section-label">Your Content</div>
+
+      <label>Topic / Post About</label>
+      <textarea id="topic" rows="3" placeholder="e.g. Just launched our AI tool that writes cold emails in 10 seconds. Targeted at B2B sales teams."></textarea>
+
+      <label>Industry / Niche</label>
+      <input type="text" id="niche" placeholder="e.g. SaaS, Fitness, Real Estate">
+
+      <label>Platform</label>
+      <div class="chips">
+        <button class="chip active" onclick="setPlatform('Instagram',this)">📸 Instagram</button>
+        <button class="chip" onclick="setPlatform('LinkedIn',this)">💼 LinkedIn</button>
+        <button class="chip" onclick="setPlatform('TikTok',this)">🎵 TikTok</button>
+        <button class="chip" onclick="setPlatform('Twitter',this)">𝕏 Twitter</button>
+        <button class="chip" onclick="setPlatform('YouTube',this)">▶ YouTube</button>
+      </div>
+
+      <label>Content Type</label>
+      <div class="chips">
+        <button class="chip active" onclick="setContent('General',this)">General</button>
+        <button class="chip" onclick="setContent('Product Launch',this)">Launch</button>
+        <button class="chip" onclick="setContent('Tutorial',this)">Tutorial</button>
+        <button class="chip" onclick="setContent('Motivation',this)">Motivation</button>
+        <button class="chip" onclick="setContent('Behind Scenes',this)">BTS</button>
+      </div>
+
+      <div class="prog-bar" id="prog"><div class="prog-fill" id="progFill"></div></div>
+      <button class="gen-btn" id="genBtn" onclick="generate()">✦ Generate Hashtags</button>
+    </div>
+
+    <!-- RIGHT -->
+    <div class="panel">
+      <div id="resultsArea">
+        <div class="empty-state">
+          <div class="icon">#️⃣</div>
+          <p>Enter your post topic and click Generate.</p>
+          <p style="margin-top:6px;font-size:12px;">We'll create 3 sets: Mega, Mid, and Niche reach.</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+let platform = 'Instagram';
+let contentType = 'General';
+let selectedHashtags = new Set();
+
+function setPlatform(p, el) {
+  platform = p;
+  el.closest('.chips').querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+}
+
+function setContent(c, el) {
+  contentType = c;
+  el.closest('.chips').querySelectorAll('.chip').forEach(ch => ch.classList.remove('active'));
+  el.classList.add('active');
+}
+
+const HASHTAG_BANK = {
+  tech: {
+    mega: ['technology','tech','innovation','startup','ai','artificialintelligence','machinelearning','software','coding','programming'],
+    mid: ['saas','b2bsoftware','techfounder','producthunt','saasgrowth','devtools','techstartup','aitools','automation','nocode'],
+    niche: ['saasgrowth','foundersofinstagram','techpreneur','b2bmarketing','salestech','devops','openai','llm','promptengineering','aiagent'],
+  },
+  fitness: {
+    mega: ['fitness','gym','workout','health','motivation','fit','bodybuilding','exercise','healthylifestyle','wellness'],
+    mid: ['fitnessmotivation','gymlife','personaltrainer','weightloss','strengthtraining','fitfam','healthyeating','fitnessgoals','crossfit','homeworkout'],
+    niche: ['fatlossjourney','mealprepsunday','macros','hiitworkout','calisthenics','functionalfitness','bodytransformation','fitnesstips','gymrat','liftinglife'],
+  },
+  business: {
+    mega: ['business','entrepreneur','success','marketing','money','entrepreneurship','smallbusiness','mindset','leadership','hustle'],
+    mid: ['businessowner','growthhacking','digitalmarketing','contentmarketing','emailmarketing','businesstips','startuplife','ecommerce','branding','sales'],
+    niche: ['b2bmarketing','founders','growthhacking','conversionoptimization','productmarket','cmo','revops','salesfunnel','accountbasedsales','mrr'],
+  },
+  creative: {
+    mega: ['design','art','creative','photography','illustration','graphicdesign','branding','logo','typography','creativity'],
+    mid: ['branddesign','uidesign','uxdesign','motiondesign','brandidentity','visualdesign','logodesign','artdirection','designinspiration','creativeprocess'],
+    niche: ['dribbble','behance','figmadesign','brandstrategy','minimalistdesign','designsystem','uiux','productdesign','webdesign','designthinking'],
+  },
+  food: {
+    mega: ['food','foodie','recipe','cooking','instafood','delicious','foodphotography','homecooking','yummy','tasty'],
+    mid: ['foodblogger','healthyfood','mealprep','plantbased','veganfood','cleaneating','foodlover','homemade','dinnerrecipes','quickrecipes'],
+    niche: ['wholefoodsplantbased','mealprepping','glutenfree','dairyfree','keto','paleo','intuitiveeating','sustainablefood','farmtotable','fermentation'],
+  },
+  default: {
+    mega: ['trending','viral','explore','instagood','share','follow','like','repost','community','content'],
+    mid: ['contentcreator','socialmedia','socialmediamarketing','growthmindset','dailyinspiration','onlinebusiness','personalbrand','thoughtleadership','monday','entrepreneur'],
+    niche: ['niche','microinfluencer','personalbranding','audiencebuilding','contentmarketing','creatorsofinstagram','makersofinstagram','buildingpublicly','bip','indiehacker'],
+  }
+};
+
+const PLATFORM_NOTES = {
+  Instagram: 'Instagram: Use 5-15 hashtags. Mix mega, mid, and niche. Place in caption or first comment.',
+  LinkedIn: 'LinkedIn: Use 3-5 hashtags. Focus on professional/industry terms. Avoid # spamming.',
+  TikTok: 'TikTok: Use 3-5 hashtags + #FYP. Keep them broad and trending.',
+  Twitter: 'Twitter/X: Use 1-2 hashtags max. They work as conversation threads, not discovery.',
+  YouTube: 'YouTube: Use 3-5 tags in the title area. Keep them relevant to your video topic.',
+};
+
+const CONTENT_EXTRAS = {
+  'Product Launch': ['productlaunch','newproduct','launch','comingsoon','producthunt','buildinpublic','mvp','milestone','shipped'],
+  'Tutorial': ['howto','tutorial','learnwith','tips','guide','diy','education','skills','workshop','masterclass'],
+  'Motivation': ['motivation','mindset','growthmindset','dailymotivation','successmindset','believe','hardwork','consistency','levelup','winning'],
+  'Behind Scenes': ['behindthescenes','bts','dayinmylife','reallife','transparent','authentic','process','workflow','buildinpublic','creatorlife'],
+  'General': [],
+};
+
+function detectNiche(text) {
+  const t = text.toLowerCase();
+  if (/(tech|ai|software|saas|code|app|startup|api|tool)/.test(t)) return 'tech';
+  if (/(fit|gym|workout|health|nutrition|exercise|body)/.test(t)) return 'fitness';
+  if (/(business|entrepreneur|sales|marketing|revenue|growth)/.test(t)) return 'business';
+  if (/(design|art|creative|brand|logo|color|ui|ux)/.test(t)) return 'creative';
+  if (/(food|recipe|cook|eat|meal|diet|vegan)/.test(t)) return 'food';
+  return 'default';
+}
+
+function extractKeywords(text) {
+  return text.toLowerCase().replace(/[^a-z0-9\s]/g, '').split(/\s+/).filter(w => w.length > 3 && !['that','this','with','from','your','their','have','been','will','just','into','about','when','what','also','some','then','them'].includes(w)).slice(0, 5);
+}
+
+function generate() {
+  const topic = document.getElementById('topic').value.trim();
+  const niche = document.getElementById('niche').value.trim();
+
+  if (!topic && !niche) { alert('Enter your post topic or niche.'); return; }
+
+  const btn = document.getElementById('genBtn');
+  btn.disabled = true;
+  btn.textContent = '✦ Generating...';
+  const prog = document.getElementById('prog');
+  const fill = document.getElementById('progFill');
+  prog.style.display = 'block';
+  fill.style.width = '0';
+  setTimeout(() => fill.style.width = '90%', 50);
+
+  const finish = () => {
+    prog.style.display = 'none';
+    fill.style.width = '0';
+    btn.disabled = false;
+    btn.textContent = '✦ Generate Hashtags';
+  };
+
+  // Real AI generation via the ABUZ8 brain (Cloudflare Workers AI). No template bank.
+  fetch('/api/waitlist', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      tool: 'hashtag-generator',
+      data: { topic, niche, platform, contentType }
+    })
+  })
+  .then(r => r.json())
+  .then(res => {
+    if (!res.success || !res.result) throw new Error(res.error || 'Generation failed');
+    fill.style.width = '100%';
+    setTimeout(() => {
+      finish();
+      // Extract hashtag tokens from the AI output (with or without leading #), dedupe.
+      const seen = new Set();
+      const tags = [];
+      (res.result.match(/#?[A-Za-z0-9_]{2,}/g) || []).forEach(raw => {
+        const t = raw.replace(/^#/, '').trim();
+        if (t && !seen.has(t.toLowerCase())) { seen.add(t.toLowerCase()); tags.push(t); }
+      });
+      renderResults(tags);
+    }, 250);
+  })
+  .catch(err => {
+    finish();
+    alert('Generation failed: ' + err.message + '. Please try again in a moment.');
+  });
+}
+
+function renderResults(tags) {
+  selectedHashtags = new Set();
+  const area = document.getElementById('resultsArea');
+  const platformNote = PLATFORM_NOTES[platform] || '';
+
+  area.innerHTML = `
+    <div class="section-label">Generated Hashtags</div>
+    <div class="platform-note">💡 ${platformNote}</div>
+    <div class="sets-wrap" style="margin-top:14px">
+      ${renderSet('#️⃣ AI-Generated for ' + platform, tags, 'ai')}
+    </div>
+    <div class="selected-bar">
+      <h4>Selected Hashtags <span id="selCount">(0)</span></h4>
+      <div class="selected-display" id="selDisplay">Click hashtags above to select them.</div>
+      <div class="actions">
+        <button class="action-btn" onclick="copySelected()">📋 Copy Selected</button>
+        <button class="action-btn" onclick="selectAll()">Select All</button>
+        <button class="action-btn" onclick="clearSelected()">Clear</button>
+        <button class="action-btn" onclick="copyAll()">Copy All</button>
+      </div>
+    </div>
+  `;
+
+  // Attach click handlers
+  document.querySelectorAll('.htag').forEach(el => {
+    el.addEventListener('click', () => toggleTag(el));
+  });
+}
+
+function renderSet(title, tags, group) {
+  const tagHtml = tags.map(t => `<span class="htag" data-tag="${t}">#${t}</span>`).join('');
+  const allStr = tags.map(t => '#'+t).join(' ');
+  return `<div class="set-card">
+    <div class="set-title">${title}</div>
+    <div class="hashtags-wrap">${tagHtml}</div>
+    <div class="set-footer">
+      <span class="set-count">${tags.length} tags</span>
+      <button class="copy-set-btn" onclick="copyStr('${allStr.replace(/'/g,"\\'")}')" >Copy Set</button>
+    </div>
+  </div>`;
+}
+
+function toggleTag(el) {
+  const tag = el.dataset.tag;
+  if (selectedHashtags.has(tag)) {
+    selectedHashtags.delete(tag);
+    el.classList.remove('selected');
+  } else {
+    selectedHashtags.add(tag);
+    el.classList.add('selected');
+  }
+  updateSelectedDisplay();
+}
+
+function updateSelectedDisplay() {
+  const display = document.getElementById('selDisplay');
+  const count = document.getElementById('selCount');
+  if (!display) return;
+  if (selectedHashtags.size === 0) {
+    display.textContent = 'Click hashtags above to select them.';
+  } else {
+    display.textContent = [...selectedHashtags].map(t => '#'+t).join(' ');
+  }
+  count.textContent = `(${selectedHashtags.size})`;
+}
+
+function copySelected() {
+  if (!selectedHashtags.size) { alert('Select some hashtags first.'); return; }
+  navigator.clipboard.writeText([...selectedHashtags].map(t=>'#'+t).join(' ')).then(()=>alert('Copied!'));
+}
+
+function copyAll() {
+  const all = [...document.querySelectorAll('.htag')].map(e=>'#'+e.dataset.tag).join(' ');
+  navigator.clipboard.writeText(all).then(()=>alert('All hashtags copied!'));
+}
+
+function selectAll() {
+  document.querySelectorAll('.htag').forEach(el => {
+    selectedHashtags.add(el.dataset.tag);
+    el.classList.add('selected');
+  });
+  updateSelectedDisplay();
+}
+
+function clearSelected() {
+  selectedHashtags.clear();
+  document.querySelectorAll('.htag').forEach(el => el.classList.remove('selected'));
+  updateSelectedDisplay();
+}
+
+function copyStr(str) {
+  navigator.clipboard.writeText(str);
+  alert('Set copied!');
+}
+</script>
+
+<script src="/assets/js/dfy-banner.js" async></script>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+<script src="/tools/_tools-shared.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>
+

@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AI Pricing Strategy — ABUZ8</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--lapis:#0a1628;--lapis2:#0f1f3d;--lapis3:#162544;--gold:#c9a84c;--turq:#0e9f6e;--turq2:#22b5a0;--cream:#f5f0e8;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--lapis);color:var(--cream);font-family:'Inter',sans-serif;min-height:100vh;}
+header{background:var(--lapis2);border-bottom:1px solid var(--gold);padding:18px 32px;display:flex;align-items:center;gap:16px;}
+.logo{font-family:'Playfair Display',serif;color:var(--gold);font-size:1.4rem;}
+.badge{background:var(--gold);color:var(--lapis);font-size:.65rem;font-weight:700;padding:2px 8px;border-radius:10px;}
+h1{font-family:'Playfair Display',serif;font-size:1.8rem;color:var(--gold);margin-bottom:6px;}
+.sub{color:#8899aa;font-size:.9rem;}
+main{max-width:1100px;margin:0 auto;padding:32px 24px;}
+.layout{display:grid;grid-template-columns:300px 1fr;gap:24px;margin-top:24px;}
+.panel{background:var(--lapis2);border:1px solid #1e3a5f;border-radius:12px;padding:24px;}
+.panel h2{font-family:'Playfair Display',serif;color:var(--gold);font-size:1.1rem;margin-bottom:16px;}
+label{display:block;font-size:.8rem;color:#8899aa;margin-bottom:4px;margin-top:14px;}
+label:first-of-type{margin-top:0;}
+input,select,textarea{width:100%;background:var(--lapis3);border:1px solid #1e3a5f;border-radius:6px;color:var(--cream);padding:8px 12px;font-size:.85rem;font-family:'Inter',sans-serif;}
+textarea{resize:vertical;min-height:60px;}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--gold);}
+.btn{background:var(--gold);color:var(--lapis);border:none;border-radius:8px;padding:12px 24px;font-weight:700;cursor:pointer;width:100%;margin-top:16px;}
+.btn:hover{opacity:.85;}
+#output{display:none;}
+.pricing-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px;}
+.ptab{background:var(--lapis3);border:1px solid #1e3a5f;border-radius:6px;padding:7px 14px;font-size:.8rem;cursor:pointer;}
+.ptab.active{border-color:var(--gold);color:var(--gold);}
+.plan-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:20px;}
+.plan{background:var(--lapis3);border:1px solid #1e3a5f;border-radius:12px;padding:20px;position:relative;}
+.plan.recommended{border-color:var(--gold);}
+.plan-badge{position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:var(--gold);color:var(--lapis);font-size:.65rem;font-weight:700;padding:2px 10px;border-radius:10px;white-space:nowrap;}
+.plan-name{font-family:'Playfair Display',serif;color:var(--gold);font-size:1.1rem;margin-bottom:4px;}
+.plan-price{font-size:2rem;font-weight:700;color:var(--cream);margin:10px 0 4px;}
+.plan-price span{font-size:.85rem;color:#8899aa;font-weight:400;}
+.plan-desc{font-size:.78rem;color:#8899aa;margin-bottom:14px;}
+.plan-features{list-style:none;}
+.plan-features li{font-size:.8rem;padding:5px 0;border-bottom:1px solid #1e3a5f;display:flex;gap:8px;}
+.plan-features li:last-child{border:none;}
+.plan-features li::before{content:'✓';color:var(--turq2);flex-shrink:0;}
+.insight{background:var(--lapis3);border-left:3px solid var(--gold);border-radius:0 8px 8px 0;padding:14px 16px;margin-bottom:12px;}
+.insight-title{font-weight:600;font-size:.88rem;color:var(--gold);margin-bottom:6px;}
+.insight-body{font-size:.82rem;color:#aabbcc;line-height:1.6;}
+.metric-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px;}
+.mbox{background:var(--lapis3);border:1px solid #1e3a5f;border-radius:8px;padding:14px;text-align:center;}
+.mval{font-family:'Playfair Display',serif;color:var(--gold);font-size:1.3rem;}
+.mlbl{font-size:.7rem;color:#8899aa;margin-top:4px;}
+.cmp-table{width:100%;border-collapse:collapse;font-size:.82rem;margin-top:12px;}
+.cmp-table th{text-align:left;padding:8px;color:#8899aa;border-bottom:1px solid #1e3a5f;font-weight:500;}
+.cmp-table td{padding:8px;border-bottom:1px solid #1e3a5f;}
+.cmp-table tr:last-child td{border:none;}
+.waitlist{background:linear-gradient(135deg,var(--lapis2),var(--lapis3));border:1px solid var(--gold);border-radius:12px;padding:24px;text-align:center;margin-top:20px;}
+.waitlist h3{font-family:'Playfair Display',serif;color:var(--gold);margin-bottom:8px;}
+.wl-form{display:flex;gap:8px;max-width:360px;margin:10px auto 0;}
+.wl-form input{border-radius:6px;padding:9px 12px;}
+.wl-form button{background:var(--gold);color:var(--lapis);border:none;border-radius:6px;padding:9px 18px;font-weight:700;cursor:pointer;white-space:nowrap;}
+</style>
+<link rel="canonical" href="https://abuz8ai.com/tools/ai-pricing-strategy">
+<meta name="description" content="AI Pricing Strategy — Tiers, unit economics, psychology. Free, no signup, runs entirely in your browser. One of 169 free AI and developer tools by ABUZ8.">
+</head>
+<body>
+<header>
+  <div class="logo">ABUZ8</div>
+  <div style="flex:1">
+    <div style="font-size:.85rem;font-weight:600;">AI Pricing Strategy</div>
+    <div style="font-size:.72rem;color:#8899aa;">Optimize pricing for growth and margins</div>
+  </div>
+  <span class="badge">TIER H</span>
+</header>
+<main>
+  <h1>AI Pricing Strategy</h1>
+  <p class="sub">Generate tiered pricing plans, competitive benchmarks, and pricing psychology recommendations.</p>
+
+  <div class="layout">
+    <div class="panel">
+      <h2>💰 Your Product</h2>
+      <label>Product Name</label>
+      <input id="product" value="Nexus AI" placeholder="Product name">
+      <label>Product Type</label>
+      <select id="type">
+        <option>B2B SaaS</option><option>B2C SaaS</option><option>Marketplace</option>
+        <option>API / Developer Tool</option><option>Professional Services</option>
+      </select>
+      <label>Target Market</label>
+      <select id="market">
+        <option>Consumers</option><option>SMB</option><option selected>Mid-Market</option><option>Enterprise</option>
+      </select>
+      <label>Cost to Serve (COGS $/user/mo)</label>
+      <input id="cogs" value="8" placeholder="8">
+      <label>Current Price (if any, $/mo)</label>
+      <input id="currentPrice" value="0" placeholder="0 if launching">
+      <label>Top Competitor Price ($/mo)</label>
+      <input id="compPrice" value="150" placeholder="150">
+      <label>Top Competitor Name</label>
+      <input id="compName" value="Salesforce" placeholder="Competitor">
+      <label>Willingness to Pay (estimate $)</label>
+      <input id="wtp" value="200" placeholder="200">
+      <label>Billing Model Preference</label>
+      <select id="billing">
+        <option>Per Seat</option><option>Usage-Based</option><option>Flat Rate</option>
+        <option selected>Hybrid (Seat + Usage)</option>
+      </select>
+      <label>Primary Value Metric</label>
+      <input id="valueMetric" value="Revenue generated per rep" placeholder="What customers get from you">
+      <label>Free Tier / Trial?</label>
+      <select id="freeTier">
+        <option>No free tier</option><option selected>Freemium</option><option>14-day trial</option><option>30-day trial</option>
+      </select>
+      <button class="btn" onclick="buildPricing()">⚡ Build Pricing Strategy</button>
+    </div>
+
+    <div>
+      <div id="inputPrompt" class="panel" style="text-align:center;padding:48px 24px;">
+        <div style="font-size:3rem;margin-bottom:16px;">💲</div>
+        <div style="font-family:'Playfair Display',serif;color:var(--gold);font-size:1.2rem;margin-bottom:8px;">Pricing Strategy Engine</div>
+        <div style="font-size:.85rem;color:#8899aa;max-width:320px;margin:0 auto;">Enter your product details to generate tiered pricing, competitive positioning, unit economics, and pricing psychology tactics.</div>
+      </div>
+      <div id="output">
+        <div class="pricing-tabs">
+          <div class="ptab active" onclick="switchTab(this,'plans')">Pricing Plans</div>
+          <div class="ptab" onclick="switchTab(this,'economics')">Unit Economics</div>
+          <div class="ptab" onclick="switchTab(this,'competitive')">Competitive</div>
+          <div class="ptab" onclick="switchTab(this,'psychology')">Psychology</div>
+        </div>
+        <div id="pricingContent"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="waitlist">
+    <h3>🚀 Pro: A/B Test Your Pricing Page</h3>
+    <p>Deploy live pricing experiments, track conversion rates by tier, and get AI-powered recommendations to maximize revenue.</p>
+    <div class="wl-form">
+      <input type="email" id="wlEmail" placeholder="ceo@startup.com">
+      <button onclick="joinWL()">Get Pro Access</button>
+    </div>
+  </div>
+</main>
+<script src="_abuz8-live-brain.js" defer></script>
+<script>
+let pricingTabs={};
+
+function buildPricing(){
+  const product=document.getElementById('product').value||'Product';
+  const type=document.getElementById('type').value;
+  const market=document.getElementById('market').value;
+  const cogs=document.getElementById('cogs').value;
+  const currentPrice=document.getElementById('currentPrice').value;
+  const compPrice=document.getElementById('compPrice').value;
+  const compName=document.getElementById('compName').value||'Competitor';
+  const wtp=document.getElementById('wtp').value;
+  const billing=document.getElementById('billing').value;
+  const valueMetric=document.getElementById('valueMetric').value;
+  const freeTier=document.getElementById('freeTier').value;
+
+  const btn=document.querySelector('.btn');
+  if(btn){btn.disabled=true;btn.dataset.label=btn.dataset.label||btn.textContent;btn.textContent='⏳ Building…';}
+
+  document.getElementById('inputPrompt').style.display='none';
+  document.getElementById('output').style.display='block';
+  document.getElementById('pricingContent').innerHTML=`
+    <div class="insight" style="text-align:center;padding:40px 24px;border-left:none">
+      <div style="font-size:2.4rem;margin-bottom:12px">💲</div>
+      <div style="color:var(--gold);font-family:'Playfair Display',serif;font-size:1.1rem;margin-bottom:8px">Building ${product}'s pricing strategy…</div>
+      <div style="font-size:.85rem;color:#8899aa;max-width:340px;margin:0 auto">Live AI on an RTX 5090. The first call cold-loads the model, so this can take 20–90s.</div>
+    </div>`;
+
+  // Real AI pricing strategy via the ABUZ8 brain (Cloudflare Workers AI). No templates.
+  fetch('/api/waitlist',{
+    method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({tool:'pricing-strategy',data:{product,productType:type,targetMarket:market,cogsPerUser:cogs,currentPrice,competitorPrice:compPrice,competitorName:compName,willingnessToPay:wtp,billingModel:billing,valueMetric,freeTier}})
+  })
+  .then(r=>r.json())
+  .then(res=>{
+    if(btn){btn.disabled=false;btn.textContent=btn.dataset.label;}
+    if(!res.success||!res.result) throw new Error(res.error||'Generation failed');
+    const out=`<div class="insight" style="border-left:none;line-height:1.7">${ABUZ8.formatResult(res.result)}</div>`;
+    pricingTabs={plans:out,economics:out,competitive:out,psychology:out};
+    document.getElementById('pricingContent').innerHTML=out;
+  })
+  .catch(err=>{
+    if(btn){btn.disabled=false;btn.textContent=btn.dataset.label;}
+    pricingTabs={};
+    document.getElementById('pricingContent').innerHTML=`
+      <div class="insight" style="text-align:center;padding:40px 24px;border-left:none">
+        <div style="font-size:2.4rem;margin-bottom:12px">⚠️</div>
+        <div style="color:#f87171;font-family:'Playfair Display',serif;font-size:1.1rem;margin-bottom:8px">Generation failed</div>
+        <div style="font-size:.85rem;color:#8899aa;max-width:360px;margin:0 auto 14px">${err.message}. The live AI may be cold-starting — please try again in a moment.</div>
+        <button class="btn" style="max-width:220px;margin:0 auto" onclick="buildPricing()">↺ Try Again</button>
+      </div>`;
+    alert('Generation failed: '+err.message+'. Please try again in a moment.');
+  });
+}
+
+function switchTab(el,tab){
+  document.querySelectorAll('.ptab').forEach(t=>t.classList.remove('active'));
+  if(el) el.classList.add('active');
+  if(pricingTabs[tab]) document.getElementById('pricingContent').innerHTML=pricingTabs[tab];
+}
+
+function joinWL(){
+  const e=document.getElementById('wlEmail').value.trim();
+  if(!e||!e.includes('@')){alert('Valid email required');return;}
+  fetch('/api/waitlist',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:e,tool:'ai-pricing-strategy',ts:Date.now()})}).catch(()=>{});
+  localStorage.setItem('wl_pricing',e);
+  document.querySelector('.waitlist').innerHTML='<h3 style="color:var(--gold);font-family:Playfair Display,serif">✅ On the list!</h3><p style="color:#8899aa;margin-top:8px;">Pro access within 24h.</p>';
+}
+</script>
+
+<script src="/assets/js/dfy-banner.js" async></script>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+<script src="/tools/_tools-shared.js" defer></script>
+
+  <section style="background:var(--lapis-2);border:1px solid var(--gold);border-radius:16px;padding:24px 32px;margin-top:24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;">
+    <div>
+      <h3 style="font-family:'Playfair Display',serif;font-size:22px;color:var(--cream);margin-bottom:4px;">Ready for the next level?</h3>
+      <p style="color:var(--dim);font-size:14px;">28 premium toolkits, real deliverables. From $17 to $97.</p>
+    </div>
+    <a href="/store.html" style="background:var(--gold);color:var(--lapis);font-weight:700;padding:12px 28px;border-radius:999px;font-size:14px;letter-spacing:.5px;">Browse the Store →</a>
+  </section>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>
+

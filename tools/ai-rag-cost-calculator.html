@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RAG Cost Calculator — What Embeddings + a Vector Database Really Cost | ABUZ8</title>
+  <meta name="description" content="Free RAG cost calculator. Enter your corpus size, embedding model and query volume and see the real cost of a retrieval system — one-time index build, monthly vector storage, and query-embedding cost — with a $0/token local (self-hosted) comparison. 100% client-side, all rates editable." />
+  <meta name="keywords" content="RAG cost calculator, embedding cost calculator, vector database cost, cost to build RAG, embedding pricing, vector storage cost, retrieval augmented generation cost, OpenAI embedding price, self-hosted RAG, local embeddings" />
+  <meta property="og:title" content="RAG Cost Calculator — Embeddings + Vector Database Cost | ABUZ8" />
+  <meta property="og:description" content="Enter your corpus size and query volume. See the true cost of a RAG system — one-time embedding, monthly vector storage, query embedding — vs $0/token local. Client-side, free, no signup." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://abuz8ai.com/tools/ai-rag-cost-calculator" />
+  <link rel="canonical" href="https://abuz8ai.com/tools/ai-rag-cost-calculator" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "RAG Cost Calculator",
+    "description": "Free client-side tool that estimates the cost of a Retrieval-Augmented Generation system: one-time embedding of a corpus, monthly vector storage, and query-embedding cost, with a self-hosted $0/token comparison. All pricing inputs are editable.",
+    "url": "https://abuz8ai.com/tools/ai-rag-cost-calculator.html",
+    "applicationCategory": "DeveloperApplication",
+    "operatingSystem": "Any",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+    "author": { "@type": "Organization", "name": "ABUZ8 LLC", "url": "https://abuz8ai.com" }
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "How much does it cost to build a RAG system?",
+        "acceptedAnswer": { "@type": "Answer", "text": "A RAG system has three cost buckets: a one-time cost to embed your whole corpus, a recurring cost to store the resulting vectors in a database, and a per-query cost to embed each incoming question (plus the separate cost of the generation model that writes the answer). Embedding is usually cheap — a few dollars per million tokens — so for most corpora the one-time index build is small and the ongoing cost is dominated by vector-database hosting and the generation LLM. This calculator breaks out each bucket so you can see where your money actually goes." }
+      },
+      {
+        "@type": "Question",
+        "name": "What does a vector database cost?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Raw storage for embeddings is small: each vector is roughly dimensions x 4 bytes (float32), so a million 1,536-dimension vectors is about 6 GB. Managed vector databases, however, rarely bill purely per gigabyte — they charge by pod, by serverless read/write units, or with monthly minimums, so real bills are often much higher than raw storage suggests. Self-hosting the vector store (FAISS, pgvector, Qdrant, Chroma) on hardware you already own drops the marginal storage cost to zero. This tool models storage as an editable dollars-per-GB-month figure so you can plug in whatever your provider actually charges." }
+      },
+      {
+        "@type": "Question",
+        "name": "Are embeddings a one-time or a recurring cost?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Both. You pay once to embed the existing corpus when you build the index, and then you keep paying to embed new or changed documents as they arrive and to embed every incoming query at search time. The one-time build scales with corpus size; the recurring embedding scales with how often your content changes and how many queries you serve. Storage is billed for as long as the index exists." }
+      },
+      {
+        "@type": "Question",
+        "name": "Is self-hosted RAG cheaper than a managed pipeline?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Past a modest scale, yes. An open embedding model running on a GPU you own has no per-token charge, and a self-hosted vector store has no per-GB charge — the marginal cost of both is electricity. You trade a fixed hardware cost up front for a near-zero variable cost, and the savings compound as the corpus and query volume grow. The cost-smart pattern is to embed and store locally and only spend on a paid API when a hosted model genuinely beats your local one, which is exactly what ABUZ8 OS automates." }
+      },
+      {
+        "@type": "Question",
+        "name": "Is my data sent to a server?",
+        "acceptedAnswer": { "@type": "Answer", "text": "No. This calculator runs entirely in your browser. Nothing you type is uploaded, logged, or stored anywhere." }
+      }
+    ]
+  }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0a1628;
+      --card: #0d1a30;
+      --card-alt: #111f38;
+      --primary: #5fa8e8;
+      --primary-dim: #2e75b6;
+      --teal: #0e9f6e;
+      --text: #e8e4d8;
+      --text-dim: #5b6b7c;
+      --border: #d8e0e8;
+      --good: #0e9f6e;
+      --good-bg: #e7f3f0;
+      --warn: #c9a84c;
+      --warn-bg: #fbf1e3;
+      --font-heading: 'Playfair Display', Georgia, serif;
+      --font-body: 'Inter', system-ui, sans-serif;
+      --font-mono: 'JetBrains Mono', 'Courier New', monospace;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      font-size: 15px;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+    a { color: var(--primary); text-decoration: none; transition: color 0.2s; }
+    a:hover { color: var(--primary-dim); }
+
+    nav {
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      padding: 0 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 60px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .nav-logo {
+      font-family: var(--font-heading);
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--primary);
+      letter-spacing: 0.02em;
+    }
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links a { color: var(--text-dim); font-size: 0.9rem; font-weight: 500; }
+    .nav-links a:hover { color: var(--primary); }
+
+    main { max-width: 980px; margin: 0 auto; padding: 3rem 1.5rem 5rem; }
+    .page-header { text-align: center; margin-bottom: 2.2rem; }
+    .page-header h1 {
+      font-family: var(--font-heading);
+      font-size: 2.4rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 0.5rem;
+      line-height: 1.18;
+    }
+    .page-header p { color: var(--text-dim); font-size: 1rem; max-width: 680px; margin: 0 auto; }
+    .privacy-note {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      margin-top: 0.9rem; padding: 0.35rem 0.9rem;
+      background: var(--good-bg); border: 1px solid #bfe0d8;
+      border-radius: 20px; font-size: 0.78rem; color: var(--good);
+    }
+
+    label { display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-dim);
+            text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.5rem; }
+    input[type="number"], select {
+      width: 100%;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      padding: 0.7rem 0.9rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    select { font-family: var(--font-body); }
+    input:focus, select:focus { border-color: var(--primary); }
+    .hint { font-size: 0.72rem; color: var(--text-dim); margin-top: 0.35rem; font-weight: 400; text-transform: none; letter-spacing: 0; }
+
+    .panel {
+      background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+      padding: 1.4rem 1.5rem; margin-bottom: 1.4rem;
+      box-shadow: 0 1px 3px rgba(44,62,80,0.04);
+    }
+    .panel h2 {
+      font-family: var(--font-heading); font-size: 1.25rem; color: var(--primary);
+      margin-bottom: 1.1rem;
+    }
+    .controls { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem 1.2rem; }
+    .controls .full { grid-column: 1 / -1; }
+
+    /* TWO RESULT CARDS */
+    .results { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; margin: 0.4rem 0 0; }
+    .rcard { border: 1px solid var(--border); border-radius: 12px; padding: 1.3rem 1.4rem; background: var(--card-alt); }
+    .rcard.build { border-top: 3px solid var(--primary); }
+    .rcard.month { border-top: 3px solid var(--teal); }
+    .rcard .rlabel { font-size: 0.74rem; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text-dim); font-weight: 600; }
+    .rcard .rbig { font-family: var(--font-heading); font-size: 2.1rem; font-weight: 700; line-height: 1.1; margin: 0.3rem 0 0.1rem; }
+    .rcard.build .rbig { color: var(--primary); }
+    .rcard.month .rbig { color: var(--teal); }
+    .rcard .rsub { font-size: 0.8rem; color: var(--text-dim); }
+
+    /* VERDICT */
+    .verdict {
+      margin: 1.4rem 0 0; padding: 1.1rem 1.3rem; border-radius: 10px;
+      font-size: 0.95rem; line-height: 1.6;
+      background: var(--good-bg); border: 1px solid #bfe0d8; color: var(--text);
+    }
+    .verdict strong { color: var(--primary); }
+    .verdict .big { font-family: var(--font-heading); font-weight: 700; }
+    .verdict .save { color: var(--teal); font-weight: 700; }
+
+    /* TABLE */
+    .table-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: 12px; margin-top: 1.3rem; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.86rem; min-width: 620px; background: var(--card); }
+    thead th {
+      background: var(--card-alt); color: var(--text-dim);
+      font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.06em;
+      text-align: right; padding: 0.8rem 1rem; border-bottom: 1px solid var(--border); font-weight: 600;
+    }
+    thead th:first-child { text-align: left; }
+    tbody td { padding: 0.7rem 1rem; border-bottom: 1px solid var(--border); text-align: right; font-family: var(--font-mono); }
+    tbody td:first-child { text-align: left; font-family: var(--font-body); }
+    tbody tr.subtotal td { font-weight: 700; background: var(--card-alt); }
+    tbody tr.subtotal td:first-child { box-shadow: inset 3px 0 0 var(--primary); }
+    tbody tr.local { background: #1a332d; }
+    tbody tr.local td:first-child { box-shadow: inset 3px 0 0 var(--teal); }
+    .line-name { font-weight: 600; color: var(--text); }
+    .line-tag { font-size: 0.68rem; color: var(--text-dim); display: block; font-weight: 400; margin-top: 0.1rem; }
+    .badge-local { font-size: 0.62rem; color: var(--teal); font-weight: 700; letter-spacing: 0.05em; margin-left: 0.4rem; }
+    .price-note { font-size: 0.78rem; color: var(--text-dim); margin-top: 0.9rem; line-height: 1.7; }
+    .price-note strong { color: var(--text); }
+    .price-note a { color: var(--text-dim); text-decoration: underline; }
+    .price-note a:hover { color: var(--primary); }
+
+    /* CTA */
+    .cta-section {
+      background: linear-gradient(135deg, #eef5fb 0%, #e7f3f0 100%);
+      border: 1px solid #cfe0ef; border-radius: 12px;
+      padding: 2.2rem 2rem; text-align: center; margin-top: 3rem;
+    }
+    .cta-section h2 { font-family: var(--font-heading); font-size: 1.5rem; color: var(--primary); margin-bottom: 0.5rem; }
+    .cta-section p { color: var(--text-dim); font-size: 0.95rem; margin-bottom: 1.2rem; max-width: 600px; margin-left: auto; margin-right: auto; }
+    .cta-form { display: flex; gap: 0.6rem; justify-content: center; flex-wrap: wrap; }
+    .cta-form input[type="email"] {
+      flex: 1; max-width: 300px; min-width: 200px;
+      background: var(--card); border: 1px solid var(--border); border-radius: 6px;
+      color: var(--text); font-family: var(--font-body); font-size: 0.9rem; padding: 0.6rem 1rem; outline: none;
+    }
+    .cta-form input[type="email"]:focus { border-color: var(--primary); }
+    button {
+      padding: 0.6rem 1.4rem; border-radius: 6px; border: none; cursor: pointer;
+      font-family: var(--font-body); font-size: 0.88rem; font-weight: 600; transition: background 0.2s;
+    }
+    .btn-primary { background: var(--primary); color: #0d1a30; }
+    .btn-primary:hover { background: var(--primary-dim); }
+    .cta-success { display: none; color: var(--teal); font-size: 0.9rem; margin-top: 0.8rem; font-weight: 600; }
+    .cta-success.visible { display: block; }
+
+    .content { margin-top: 3rem; }
+    .content h2 { font-family: var(--font-heading); font-size: 1.5rem; color: var(--primary); margin: 0 0 1rem; padding-top: 1rem; }
+    .content > p { color: var(--text-dim); font-size: 0.92rem; margin-bottom: 1rem; }
+    .content > p a { text-decoration: underline; }
+    .faq-item { border-top: 1px solid var(--border); padding: 1.1rem 0; }
+    .faq-item h3 { font-size: 1rem; color: var(--text); margin-bottom: 0.4rem; font-weight: 600; }
+    .faq-item p { color: var(--text-dim); font-size: 0.9rem; }
+
+    footer {
+      background: var(--card); border-top: 1px solid var(--border);
+      text-align: center; padding: 1.5rem; font-size: 0.82rem; color: var(--text-dim);
+    }
+    footer a { color: var(--text-dim); }
+    footer a:hover { color: var(--primary); }
+
+    @media (max-width: 720px) {
+      .controls { grid-template-columns: 1fr; }
+      .results { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 600px) {
+      .page-header h1 { font-size: 1.8rem; }
+      nav { padding: 0 1rem; }
+      .nav-links { gap: 1rem; }
+      main { padding: 2rem 1rem 4rem; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="nav-logo">ABUZ8</a>
+  <ul class="nav-links">
+    <li><a href="/tools.html">Tools</a></li>
+    <li><a href="/store.html">Store</a></li>
+  </ul>
+</nav>
+
+<main>
+  <div class="page-header">
+    <h1>RAG Cost Calculator</h1>
+    <p>Estimate what a Retrieval-Augmented Generation pipeline actually costs: the one-time job of embedding your corpus, the monthly bill to store those vectors, and the per-query embedding cost — with a self-hosted <strong>$0/token</strong> comparison. Every price is an editable input, so it works for any provider.</p>
+    <span class="privacy-note">&#128274; 100% in-browser — nothing you enter is uploaded</span>
+  </div>
+
+  <div class="panel">
+    <h2>Your corpus &amp; usage</h2>
+    <div class="controls">
+      <div>
+        <label for="chunks">Chunks in corpus</label>
+        <input type="number" id="chunks" min="0" value="100000" oninput="recalc()" />
+        <div class="hint">Total text chunks (or documents) to index.</div>
+      </div>
+      <div>
+        <label for="tokPerChunk">Tokens / chunk</label>
+        <input type="number" id="tokPerChunk" min="0" value="512" oninput="recalc()" />
+        <div class="hint">Avg size of each chunk.</div>
+      </div>
+      <div>
+        <label for="queries">Queries / month</label>
+        <input type="number" id="queries" min="0" value="50000" oninput="recalc()" />
+        <div class="hint">Searches served per month.</div>
+      </div>
+      <div>
+        <label for="tokPerQuery">Tokens / query</label>
+        <input type="number" id="tokPerQuery" min="0" value="60" oninput="recalc()" />
+        <div class="hint">Avg length of each question embedded.</div>
+      </div>
+      <div>
+        <label for="embedPreset">Embedding model</label>
+        <select id="embedPreset" onchange="applyEmbedPreset()"></select>
+        <div class="hint">Presets fill the rate &amp; dims — both editable.</div>
+      </div>
+      <div>
+        <label for="storePreset">Vector store</label>
+        <select id="storePreset" onchange="applyStorePreset()"></select>
+        <div class="hint">Managed billing varies; self-host is $0/GB.</div>
+      </div>
+      <div>
+        <label for="embedPrice">Embedding rate ($/1M tokens)</label>
+        <input type="number" id="embedPrice" min="0" step="0.01" value="0.02" oninput="markCustomEmbed(); recalc()" />
+        <div class="hint">What your provider charges per 1M tokens.</div>
+      </div>
+      <div>
+        <label for="dims">Vector dimensions</label>
+        <input type="number" id="dims" min="1" value="1536" oninput="markCustomEmbed(); recalc()" />
+        <div class="hint">Output dimensions of the embedding model.</div>
+      </div>
+      <div>
+        <label for="storePerGB">Storage ($/GB&middot;month)</label>
+        <input type="number" id="storePerGB" min="0" step="0.01" value="0.25" oninput="markCustomStore(); recalc()" />
+        <div class="hint">Vector-DB storage rate; 0 for self-host.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="verdict" id="verdict"></div>
+
+  <div class="results">
+    <div class="rcard build">
+      <div class="rlabel">One-time index build</div>
+      <div class="rbig" id="buildCost">$0</div>
+      <div class="rsub" id="buildSub">&mdash;</div>
+    </div>
+    <div class="rcard month">
+      <div class="rlabel">Ongoing / month</div>
+      <div class="rbig" id="monthCost">$0</div>
+      <div class="rsub" id="monthSub">&mdash;</div>
+    </div>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Cost component</th>
+          <th>Basis</th>
+          <th>Rate</th>
+          <th>Cost</th>
+        </tr>
+      </thead>
+      <tbody id="costTable"></tbody>
+    </table>
+  </div>
+
+  <p class="price-note">
+    Embedding rates and dimensions default to <strong>typical list values for reference only</strong> &mdash; they change often, so edit the fields to match your provider's current pricing. Confirm live rates at
+    <a href="https://openai.com/api/pricing/" target="_blank" rel="noopener">OpenAI</a>,
+    <a href="https://cohere.com/pricing" target="_blank" rel="noopener">Cohere</a>, and
+    <a href="https://www.voyageai.com/pricing" target="_blank" rel="noopener">Voyage</a>.
+    Vector storage is modeled as a simple <strong>$/GB&middot;month</strong>; real managed services (Pinecone, Weaviate, others) often bill by pod, serverless read/write units, or monthly minimums, so plug in your own effective rate.
+    Raw vector size is <span style="font-family:var(--font-mono)">chunks &times; dimensions &times; 4&nbsp;bytes</span> (float32).
+    The <strong>Local (ABUZ8&nbsp;OS)</strong> row is $0 per token and $0 per GB &mdash; marginal cost is electricity only; fixed hardware is covered in the
+    <a href="/tools/ai-self-host-calculator.html">self-host vs cloud calculator</a>.
+    This tool sizes the retrieval layer; the generation model that writes each answer is priced separately in the
+    <a href="/tools/ai-llm-price-comparison.html">LLM price comparison</a>.
+  </p>
+
+  <div class="cta-section">
+    <h2>Own your index, not just rent your answers.</h2>
+    <p>Every row above is a bill that scales with your corpus and traffic. ABUZ8&nbsp;OS embeds your documents with open models and stores the vectors on hardware you own — $0 per token, $0 per GB, and your data never leaves the machine. Sovereign RAG by default, cloud only when it genuinely wins.</p>
+    <div class="cta-form">
+      <input type="email" id="ctaEmail" placeholder="you@company.com" />
+      <button class="btn-primary" onclick="submitWaitlist()">Join early access</button>
+    </div>
+    <div id="ctaSuccess" class="cta-success">&#10003; You're on the list. We'll be in touch.</div>
+  </div>
+
+  <div class="content">
+    <h2>Understanding what a RAG pipeline costs</h2>
+    <p>Related: <a href="/tools/ai-llm-price-comparison.html">LLM API price comparison</a> &middot; <a href="/tools/ai-self-host-calculator.html">Self-host vs cloud calculator</a> &middot; <a href="/tools/ai-vram-calculator.html">Local LLM VRAM calculator</a> &middot; <a href="/tools/ai-token-counter.html">Token counter</a></p>
+    <div class="faq-item">
+      <h3>The three buckets: build, store, query</h3>
+      <p>Retrieval cost splits cleanly. <strong>Build</strong> is the one-time job of embedding your entire corpus — it scales with total tokens and happens once (or again whenever you re-index). <strong>Store</strong> is the recurring vector-database bill for keeping those embeddings searchable. <strong>Query</strong> is the per-search cost of embedding each incoming question. This calculator shows all three, plus the raw size of the vectors so you can sanity-check any managed quote against what you're actually storing.</p>
+    </div>
+    <div class="faq-item">
+      <h3>Why embedding is usually the cheap part</h3>
+      <p>Embedding rates are a fraction of chat-completion rates, so for most corpora the one-time build lands in the single or double digits of dollars. The recurring spend is dominated by two things this tool deliberately keeps separate: the vector database (which rarely bills as pure per-GB storage) and the generation model that writes each answer. If your RAG bill feels high, it's almost always the hosting tier or the generation LLM — not the embeddings.</p>
+    </div>
+    <div class="faq-item">
+      <h3>When self-hosting the retrieval layer wins</h3>
+      <p>An open embedding model on a GPU you own has no per-token charge, and a self-hosted vector store (FAISS, pgvector, Qdrant, Chroma) has no per-GB charge — the marginal cost of both is electricity. Above a modest scale, owning the retrieval layer beats renting it, and the savings compound as your corpus and traffic grow. ABUZ8&nbsp;OS runs this locally by default and only reaches for a paid API when a hosted model clearly beats your local one.</p>
+    </div>
+    <div class="faq-item">
+      <h3>Is my data sent anywhere?</h3>
+      <p>No. This calculator runs entirely in your browser. Nothing you enter is uploaded, logged, or stored.</p>
+    </div>
+  </div>
+</main>
+
+<footer>
+  ABUZ8 LLC &middot; Free AI Tools &middot; <a href="mailto:ahmad@abuz8ai.com">ahmad@abuz8ai.com</a>
+</footer>
+
+<script>
+// ── EMBEDDING PRESETS (USD per 1M tokens, output dimensions) ───────────────────
+// Defaults are ILLUSTRATIVE reference values, not a live price feed — every field
+// is editable so the tool stays correct even as vendor pricing changes. The math,
+// not the price table, is the product here.
+const EMBED_PRESETS = [
+  { name: 'OpenAI text-embedding-3-small', price: 0.02, dims: 1536 },
+  { name: 'OpenAI text-embedding-3-large', price: 0.13, dims: 3072 },
+  { name: 'Cohere Embed v3',               price: 0.10, dims: 1024 },
+  { name: 'Voyage voyage-3',               price: 0.06, dims: 1024 },
+  { name: 'Local (ABUZ8 OS) — self-hosted', price: 0.00, dims: 1024 },
+  { name: 'Custom (edit fields)',          price: null, dims: null }
+];
+
+// ── VECTOR-STORE PRESETS ($/GB·month) ──────────────────────────────────────────
+const STORE_PRESETS = [
+  { name: 'Managed vector DB (typical)',     perGB: 0.25 },
+  { name: 'Self-host / Local (ABUZ8 OS)',    perGB: 0.00 },
+  { name: 'Custom (edit field)',             perGB: null }
+];
+
+// ── POPULATE SELECTS ────────────────────────────────────────────────────────────
+(function initSelects() {
+  const es = document.getElementById('embedPreset');
+  EMBED_PRESETS.forEach((p, i) => { const o = document.createElement('option'); o.value = i; o.textContent = p.name; es.appendChild(o); });
+  es.value = '0';
+  const ss = document.getElementById('storePreset');
+  STORE_PRESETS.forEach((p, i) => { const o = document.createElement('option'); o.value = i; o.textContent = p.name; ss.appendChild(o); });
+  ss.value = '0';
+})();
+
+// ── PRESET → FIELD WIRING ────────────────────────────────────────────────────────
+function applyEmbedPreset() {
+  const p = EMBED_PRESETS[+document.getElementById('embedPreset').value];
+  if (p && p.price !== null) {
+    document.getElementById('embedPrice').value = p.price;
+    document.getElementById('dims').value = p.dims;
+  }
+  recalc();
+}
+function applyStorePreset() {
+  const p = STORE_PRESETS[+document.getElementById('storePreset').value];
+  if (p && p.perGB !== null) document.getElementById('storePerGB').value = p.perGB;
+  recalc();
+}
+// If the user hand-edits a rate, flip the matching select to "Custom" so the UI never lies.
+function markCustomEmbed() { document.getElementById('embedPreset').value = String(EMBED_PRESETS.length - 1); }
+function markCustomStore() { document.getElementById('storePreset').value = String(STORE_PRESETS.length - 1); }
+
+// ── FORMAT ────────────────────────────────────────────────────────────────────
+function fmtUSD(v) {
+  if (!isFinite(v)) return '—';
+  const n = Math.abs(v);
+  if (n >= 1)  return (v < 0 ? '-$' : '$') + n.toLocaleString('en-US', { maximumFractionDigits: 2 });
+  if (n > 0)   return (v < 0 ? '-$' : '$') + n.toFixed(3);
+  return '$0';
+}
+function fmtNum(v) { return Math.round(v).toLocaleString('en-US'); }
+function fmtGB(gb) {
+  if (gb >= 1)    return gb.toFixed(2) + ' GB';
+  if (gb > 0)     return (gb * 1024).toFixed(1) + ' MB';
+  return '0 MB';
+}
+
+// ── READ INPUTS ───────────────────────────────────────────────────────────────
+function inputs() {
+  const num = (id) => Math.max(0, parseFloat(document.getElementById(id).value) || 0);
+  return {
+    chunks:      Math.floor(num('chunks')),
+    tokPerChunk: Math.floor(num('tokPerChunk')),
+    queries:     Math.floor(num('queries')),
+    tokPerQuery: Math.floor(num('tokPerQuery')),
+    embedPrice:  num('embedPrice'),      // $/1M tokens
+    dims:        Math.floor(num('dims')),
+    storePerGB:  num('storePerGB')       // $/GB·month
+  };
+}
+
+// ── CORE COST MATH (all transparent, no hidden factors) ─────────────────────────
+function compute(i) {
+  const buildTokens  = i.chunks * i.tokPerChunk;                 // tokens to embed the whole corpus
+  const buildCost    = (buildTokens / 1e6) * i.embedPrice;       // one-time
+  const storageGB    = (i.chunks * i.dims * 4) / 1e9;            // float32 vectors, 4 bytes each
+  const monthStorage = storageGB * i.storePerGB;                 // recurring
+  const queryTokens  = i.queries * i.tokPerQuery;                // query embeddings per month
+  const monthQuery   = (queryTokens / 1e6) * i.embedPrice;       // recurring
+  const monthTotal   = monthStorage + monthQuery;
+  const firstMonth   = buildCost + monthTotal;
+  return { buildTokens, buildCost, storageGB, monthStorage, queryTokens, monthQuery, monthTotal, firstMonth };
+}
+
+// ── MAIN RECALC ───────────────────────────────────────────────────────────────
+function recalc() {
+  const i = inputs();
+  const r = compute(i);
+
+  // summary cards
+  document.getElementById('buildCost').textContent = fmtUSD(r.buildCost);
+  document.getElementById('buildSub').textContent  = fmtNum(r.buildTokens) + ' tokens embedded once';
+  document.getElementById('monthCost').textContent = fmtUSD(r.monthTotal);
+  document.getElementById('monthSub').textContent  = fmtGB(r.storageGB) + ' stored + ' + fmtNum(r.queryTokens) + ' query tokens/mo';
+
+  // verdict
+  const v = document.getElementById('verdict');
+  if (i.chunks <= 0 || i.tokPerChunk <= 0) {
+    v.innerHTML = 'Enter your corpus size above to estimate the cost of your retrieval layer.';
+  } else {
+    v.innerHTML =
+      `<span class="big">Indexing ${fmtNum(i.chunks)} chunks costs about ${fmtUSD(r.buildCost)} once</span>, ` +
+      `then <strong>${fmtUSD(r.monthTotal)}/mo</strong> to keep it live ` +
+      `(${fmtGB(r.storageGB)} of vectors). Run the same retrieval layer locally on hardware you own and the embedding and storage are <span class="save">$0</span> &mdash; only the electricity moves.`;
+  }
+
+  // breakdown table + pinned local $0 row
+  const body = document.getElementById('costTable');
+  body.innerHTML =
+    `<tr>
+       <td><span class="line-name">Embed corpus</span><span class="line-tag">one-time index build</span></td>
+       <td>${fmtNum(r.buildTokens)} tok</td>
+       <td>${fmtUSD(i.embedPrice)}/1M</td>
+       <td>${fmtUSD(r.buildCost)}</td>
+     </tr>
+     <tr>
+       <td><span class="line-name">Vector storage</span><span class="line-tag">${i.dims}-dim float32 vectors</span></td>
+       <td>${fmtGB(r.storageGB)}</td>
+       <td>${fmtUSD(i.storePerGB)}/GB&middot;mo</td>
+       <td>${fmtUSD(r.monthStorage)}/mo</td>
+     </tr>
+     <tr>
+       <td><span class="line-name">Query embedding</span><span class="line-tag">${fmtNum(i.queries)} queries/mo</span></td>
+       <td>${fmtNum(r.queryTokens)} tok</td>
+       <td>${fmtUSD(i.embedPrice)}/1M</td>
+       <td>${fmtUSD(r.monthQuery)}/mo</td>
+     </tr>
+     <tr class="subtotal">
+       <td><span class="line-name">First month</span><span class="line-tag">build + one month live</span></td>
+       <td>&mdash;</td>
+       <td>&mdash;</td>
+       <td>${fmtUSD(r.firstMonth)}</td>
+     </tr>
+     <tr class="local">
+       <td><span class="line-name">Local (ABUZ8 OS)</span><span class="badge-local">SOVEREIGN</span><span class="line-tag">open embeddings + self-hosted store</span></td>
+       <td>${fmtGB(r.storageGB)}</td>
+       <td>$0 / $0</td>
+       <td>$0*</td>
+     </tr>`;
+}
+
+// ── WAITLIST ──────────────────────────────────────────────────────────────────
+async function submitWaitlist() {
+  const email = document.getElementById('ctaEmail').value.trim();
+  if (!email || !email.includes('@')) { alert('Please enter a valid email address.'); return; }
+  const payload = { email, product: 'qadir-os-rag-cost-calculator', ts: new Date().toISOString() };
+  try {
+    await fetch('/api/waitlist', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+  } catch (e) { /* graceful fallback — never block the confirmation */ }
+  document.getElementById('ctaEmail').style.display = 'none';
+  document.querySelector('.cta-form button').style.display = 'none';
+  document.getElementById('ctaSuccess').classList.add('visible');
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+recalc();
+</script>
+<script src="/tools/_tools-shared.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>

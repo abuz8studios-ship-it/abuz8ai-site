@@ -1,0 +1,1046 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Live Bayesian Routing Demo — ABUZ8 / QADIR OS</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Type any query. Watch a Bayesian cost router pick the cheapest model that can actually handle it. Real prices. Real classifier. Live in your browser, no backend.">
+<meta name="keywords" content="bayesian routing, llm cost optimization, thompson sampling, query difficulty classifier, opus haiku price, multi-model gateway, ai routing demo">
+<meta name="author" content="ABUZ8 LLC">
+<link rel="canonical" href="https://abuz8ai.com/routing-demo.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Live Bayesian Routing Demo — Opus quality, Haiku price, in your browser">
+<meta property="og:description" content="Watch the same Bayesian cost router that powers QADIR OS pick the cheapest model that can actually handle your query. Real prices. Real math. Live, in your browser.">
+<meta property="og:url" content="https://abuz8ai.com/routing-demo.html">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Live Bayesian Routing Demo — ABUZ8">
+<meta name="twitter:description" content="Type a query. See it routed through a real Bayesian cost router with Thompson sampling. No backend.">
+<meta name="theme-color" content="#0a1628">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/abuz8-theme.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "ABUZ8 Bayesian Routing Demo",
+  "applicationCategory": "DeveloperApplication",
+  "operatingSystem": "Browser",
+  "description": "Interactive in-browser visualization of the Bayesian cost router that powers QADIR OS. Real model prices. Real classifier heuristics. No backend.",
+  "url": "https://abuz8ai.com/routing-demo.html",
+  "publisher": {
+    "@type": "Organization",
+    "name": "ABUZ8 LLC",
+    "url": "https://abuz8ai.com"
+  },
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  }
+}
+</script>
+<style>
+/* page-specific styles ONLY — theme vars, no new hex colors */
+:root{
+  --turq:var(--green); --turq-light:var(--green-bright); --turq-bright:var(--green-bright);
+  --tier0:var(--green-bright);  /* green-bright = local/free */
+  --tier1:var(--gold);          /* gold = cheap cloud */
+  --tier2:var(--gold-light);    /* gold-light = premium */
+}
+main.wrap{position:relative;z-index:1}
+.hero{padding:64px 0 32px;text-align:center;max-width:none}
+.hero .eyebrow{
+  display:inline-block;
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px;letter-spacing:2px;text-transform:uppercase;
+  color:var(--turq-bright);
+  background:rgba(14,159,110,.08);
+  border:1px solid rgba(14,159,110,.25);
+  padding:6px 14px;border-radius:99px;
+  margin-bottom:24px;
+}
+h1{
+  font-family:'Playfair Display',serif;
+  font-weight:900;font-size:clamp(36px,5vw,64px);
+  line-height:1.05;letter-spacing:-.02em;
+  color:var(--cream);margin-bottom:18px;
+}
+h1 .accent{color:var(--gold);font-style:italic}
+.lede{
+  font-size:clamp(16px,1.5vw,19px);color:var(--dim);
+  max-width:720px;margin:0 auto 28px;line-height:1.55;
+}
+.lede strong{color:var(--text);font-weight:600}
+.proof-strip{
+  display:flex;flex-wrap:wrap;justify-content:center;gap:24px 36px;
+  font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--dim);
+  margin-bottom:48px;letter-spacing:.5px;
+}
+.proof-strip span{display:inline-flex;align-items:center;gap:8px}
+.proof-strip .dot{
+  width:6px;height:6px;border-radius:50%;background:var(--turq-bright);
+  box-shadow:0 0 8px var(--green-glow);
+}
+
+/* ─── Stage ─────────────────────────────────────────────────────────── */
+.stage{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:28px;
+  margin-bottom:32px;
+  box-shadow:0 8px 32px rgba(0,0,0,.35);
+}
+.stage h2{
+  font-family:'Playfair Display',serif;font-weight:700;
+  font-size:22px;color:var(--cream);margin-bottom:6px;
+}
+.stage h2 .num{color:var(--gold);font-family:'JetBrains Mono',monospace;font-size:14px;margin-right:10px;vertical-align:3px}
+.stage .sub{color:var(--dim);font-size:14px;margin-bottom:20px}
+
+/* ─── Query input ───────────────────────────────────────────────────── */
+.input-row{display:flex;gap:12px;flex-wrap:wrap}
+textarea#q{
+  flex:1;min-height:96px;
+  background:var(--lapis-mid);
+  border:1px solid var(--border);
+  color:var(--text);
+  font:15px/1.5 'JetBrains Mono',monospace;
+  padding:14px 16px;border-radius:10px;
+  resize:vertical;
+  transition:border-color .3s ease, box-shadow .3s ease;
+}
+textarea#q:focus{
+  outline:none;border-color:var(--turq);
+  box-shadow:0 0 0 3px rgba(14,159,110,.15);
+}
+.actions{display:flex;flex-direction:column;gap:8px;min-width:180px}
+button.primary{
+  background:linear-gradient(135deg,var(--gold) 0%,var(--gold-dim) 100%);
+  color:var(--lapis);
+  font-weight:700;font-size:15px;
+  border:none;padding:14px 22px;border-radius:10px;
+  cursor:pointer;
+  transition:transform .2s ease, box-shadow .2s ease, filter .2s ease;
+  letter-spacing:.3px;
+}
+button.primary:hover{transform:translateY(-1px);filter:brightness(1.08);box-shadow:0 6px 18px rgba(201,168,76,.25)}
+button.primary:active{transform:translateY(0)}
+button.ghost{
+  background:transparent;color:var(--dim);
+  border:1px solid var(--border);
+  font:13px 'Inter',sans-serif;padding:10px 14px;border-radius:8px;
+  cursor:pointer;transition:all .25s ease;
+}
+button.ghost:hover{border-color:var(--turq);color:var(--turq-bright)}
+.examples{margin-top:14px;display:flex;flex-wrap:wrap;gap:8px}
+.examples .ex{
+  font:12px 'JetBrains Mono',monospace;
+  background:rgba(14,159,110,.08);
+  color:var(--turq-bright);
+  border:1px solid rgba(14,159,110,.25);
+  padding:6px 10px;border-radius:6px;cursor:pointer;
+  transition:all .3s ease;
+}
+.examples .ex:hover{background:rgba(14,159,110,.15);border-color:var(--turq-bright)}
+
+/* ─── Difficulty meter ─────────────────────────────────────────────── */
+.meter-wrap{margin-top:8px}
+.meter-head{
+  display:flex;justify-content:space-between;align-items:baseline;
+  margin-bottom:10px;font-family:'JetBrains Mono',monospace;
+}
+.meter-head .label{color:var(--dim);font-size:12px;letter-spacing:1px;text-transform:uppercase}
+.meter-head .val{color:var(--cream);font-size:18px;font-weight:700}
+.meter{
+  height:14px;background:var(--lapis-mid);border-radius:99px;overflow:hidden;
+  position:relative;border:1px solid var(--border);
+}
+.meter::before{
+  /* tier threshold ticks */
+  content:"";position:absolute;inset:0;
+  background:
+    linear-gradient(90deg,transparent 29.9%,rgba(255,255,255,.18) 29.9%,rgba(255,255,255,.18) 30.1%,transparent 30.1%),
+    linear-gradient(90deg,transparent 54.9%,rgba(255,255,255,.18) 54.9%,rgba(255,255,255,.18) 55.1%,transparent 55.1%);
+  pointer-events:none;z-index:2;
+}
+.meter .fill{
+  height:100%;width:0%;
+  background:linear-gradient(90deg,var(--turq-bright) 0%,var(--gold) 55%,var(--gold-light) 100%);
+  border-radius:99px;
+  transition:width .9s cubic-bezier(.2,.7,.2,1);
+}
+.meter-foot{
+  display:flex;justify-content:space-between;
+  font:11px 'JetBrains Mono',monospace;color:var(--dim);
+  margin-top:8px;letter-spacing:.5px;
+}
+.meter-foot span:nth-child(1){color:var(--tier0)}
+.meter-foot span:nth-child(2){color:var(--tier1)}
+.meter-foot span:nth-child(3){color:var(--tier2)}
+.signals{
+  margin-top:14px;display:flex;flex-wrap:wrap;gap:8px;
+  font:12px 'JetBrains Mono',monospace;
+}
+.sig{
+  background:rgba(255,255,255,.04);
+  color:var(--dim);
+  padding:5px 10px;border-radius:6px;
+  border:1px solid var(--border);
+}
+.sig.fired{color:var(--text);border-color:var(--turq)}
+.sig.override{background:rgba(201,168,76,.10);color:var(--gold-light);border-color:var(--gold-dim)}
+
+
+/* ─── Lane grid ────────────────────────────────────────────────────── */
+.lanes{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+  gap:12px;margin-top:12px;
+}
+.lane{
+  background:var(--lapis-mid);
+  border:1px solid var(--border);
+  border-radius:10px;
+  padding:14px 16px;
+  position:relative;overflow:hidden;
+  transition:opacity .6s ease, border-color .6s ease, transform .6s ease;
+}
+.lane.dimmed{opacity:.32;filter:saturate(.4)}
+.lane.eligible{border-color:var(--turq)}
+.lane.chosen{
+  border-color:var(--gold);
+  box-shadow:0 0 0 1px var(--gold), 0 8px 24px rgba(201,168,76,.18);
+  transform:translateY(-2px);
+}
+.lane .head{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:8px}
+.lane .name{
+  font-family:'Playfair Display',serif;font-weight:700;font-size:16px;
+  color:var(--cream);
+}
+.lane .id{font:11px 'JetBrains Mono',monospace;color:var(--dim);margin-top:2px}
+.lane .tier-badge{
+  font:10px 'JetBrains Mono',monospace;letter-spacing:1px;text-transform:uppercase;
+  padding:3px 8px;border-radius:4px;flex-shrink:0;
+}
+.lane .tier-badge.t0{background:rgba(14,159,110,.12);color:var(--tier0);border:1px solid rgba(14,159,110,.3)}
+.lane .tier-badge.t1{background:rgba(201,168,76,.12);color:var(--tier1);border:1px solid rgba(201,168,76,.3)}
+.lane .tier-badge.t2{background:rgba(232,212,139,.12);color:var(--tier2);border:1px solid rgba(232,212,139,.3)}
+.lane .price{
+  font:12px 'JetBrains Mono',monospace;color:var(--dim);
+  margin-bottom:10px;
+}
+.lane .price .num{color:var(--text);font-weight:600}
+/* Thompson posterior bar */
+.posterior{
+  height:8px;background:var(--lapis);border-radius:99px;overflow:hidden;
+  margin-top:6px;position:relative;
+}
+.posterior .bar{
+  height:100%;background:linear-gradient(90deg,var(--turq) 0%,var(--turq-bright) 100%);
+  border-radius:99px;width:0%;transition:width .8s cubic-bezier(.2,.7,.2,1);
+}
+.posterior .sample{
+  position:absolute;top:-3px;width:2px;height:14px;
+  background:var(--gold-light);
+  border-radius:1px;
+  transition:left .8s cubic-bezier(.2,.7,.2,1);
+}
+.lane .meta{
+  display:flex;justify-content:space-between;
+  font:11px 'JetBrains Mono',monospace;color:var(--dim);
+  margin-top:6px;
+}
+.lane .meta .util{color:var(--gold-light)}
+.lane.chosen::after{
+  content:"CHOSEN";position:absolute;top:8px;right:-22px;
+  background:var(--gold);color:var(--lapis);
+  font:9px 'JetBrains Mono',monospace;font-weight:700;
+  letter-spacing:1.5px;padding:3px 26px;
+  transform:rotate(35deg);
+  pointer-events:none;
+}
+
+/* ─── Decision panel ───────────────────────────────────────────────── */
+.decision{
+  display:grid;grid-template-columns:1fr 1fr;gap:24px;
+  margin-top:16px;
+}
+@media (max-width:720px){.decision{grid-template-columns:1fr}}
+.dec-card{
+  background:var(--lapis-mid);border:1px solid var(--border);
+  border-radius:10px;padding:18px 20px;
+}
+.dec-card .h{
+  font:11px 'JetBrains Mono',monospace;letter-spacing:1.5px;
+  text-transform:uppercase;color:var(--dim);margin-bottom:12px;
+}
+.dec-card .big{
+  font-family:'Playfair Display',serif;font-weight:700;
+  font-size:28px;color:var(--cream);line-height:1.1;margin-bottom:6px;
+}
+.dec-card .sub{font-size:13px;color:var(--dim);line-height:1.5}
+.dec-card .savings-num{color:var(--turq-bright)}
+.dec-card .savings-pct{color:var(--gold-light);font-size:14px;margin-left:6px}
+.cumulative{
+  margin-top:14px;padding-top:14px;border-top:1px dashed var(--border);
+  font:12px 'JetBrains Mono',monospace;color:var(--dim);
+  display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;
+}
+.cumulative .v{color:var(--cream);font-weight:700}
+
+/* ─── Reasoning trace ──────────────────────────────────────────────── */
+.trace{
+  margin-top:16px;background:var(--lapis-mid);border:1px solid var(--border);
+  border-radius:10px;padding:16px 20px;
+  font:12px/1.7 'JetBrains Mono',monospace;color:var(--dim);
+  white-space:pre-wrap;word-break:break-word;
+  max-height:240px;overflow-y:auto;
+}
+.trace .k{color:var(--turq-bright)}
+.trace .v{color:var(--text)}
+.trace .pos{color:var(--turq-bright)}
+.trace .neg{color:var(--gold-light)}
+
+/* ─── How it works ─────────────────────────────────────────────────── */
+.three-up{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:24px;
+}
+@media (max-width:840px){.three-up{grid-template-columns:1fr}}
+.step{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:12px;padding:22px;
+}
+.step .num{
+  font-family:'JetBrains Mono',monospace;color:var(--gold);font-weight:700;
+  font-size:13px;letter-spacing:2px;
+}
+.step h3{
+  font-family:'Playfair Display',serif;font-weight:700;
+  font-size:18px;color:var(--cream);margin:6px 0 10px;
+}
+.step p{color:var(--dim);font-size:14px;line-height:1.6}
+
+/* ─── CTA / footer ─────────────────────────────────────────────────── */
+.cta{
+  background:linear-gradient(135deg,var(--lapis-light) 0%,var(--card) 100%);
+  border:1px solid var(--gold-dim);
+  border-radius:14px;padding:36px;text-align:center;margin:48px 0 32px;
+}
+.cta h2{
+  font-family:'Playfair Display',serif;font-weight:800;
+  font-size:clamp(24px,3vw,34px);color:var(--cream);margin-bottom:12px;
+}
+.cta h2 em{color:var(--gold);font-style:italic}
+.cta p{color:var(--dim);max-width:600px;margin:0 auto 22px;font-size:15px}
+.cta-row{display:flex;flex-wrap:wrap;gap:12px;justify-content:center}
+.cta-row a.btn{
+  display:inline-block;padding:13px 24px;border-radius:10px;
+  font-weight:700;font-size:14px;letter-spacing:.4px;
+  transition:transform .2s ease, filter .2s ease, box-shadow .2s ease;
+  text-decoration:none;
+}
+.cta-row a.btn.gold{
+  background:var(--gold);color:var(--lapis);
+}
+.cta-row a.btn.gold:hover{filter:brightness(1.1);transform:translateY(-1px);box-shadow:0 6px 20px rgba(201,168,76,.3);text-decoration:none}
+.cta-row a.btn.outline{
+  background:transparent;color:var(--turq-bright);border:1px solid var(--turq);
+}
+.cta-row a.btn.outline:hover{background:rgba(14,159,110,.12);text-decoration:none;transform:translateY(-1px)}
+.provenance{margin:0 0 40px;text-align:center;font:11px 'JetBrains Mono',monospace;letter-spacing:.5px;color:var(--dim)}
+@media (prefers-reduced-motion: reduce){
+  *{transition:none !important;animation:none !important}
+}
+</style>
+</head>
+<body>
+<div class="geo-bg"></div>
+<nav class="abuz8-nav">
+<div class="nav-inner">
+  <a href="/" style="text-decoration:none;">
+    <div class="logo">ABUZ8</div>
+    <div class="logo-sub">Sovereign AI</div>
+  </a>
+  <div class="nav-links">
+    <a href="/tools.html">Tools</a>
+    <a href="/store.html">Store</a>
+    
+    <a href="/agents.html">Agents</a>
+    <a href="/models.html">Models</a>
+    <a href="/news.html">News</a>
+    <a href="/roadmap.html">Roadmap</a>
+    <a href="/store.html" class="nav-cta">Get Started</a>
+  </div>
+</div>
+</nav>
+
+<main class="wrap">
+
+<section class="hero">
+  <div class="eyebrow">LIVE · NO BACKEND · REAL PRICES</div>
+  <h1>Opus quality.<br>Haiku <span class="accent">price.</span></h1>
+  <p class="lede">Type any query. Watch a Bayesian cost router classify it, filter the lane pool, sample posteriors, and pick the <strong>cheapest model that can actually handle it</strong>. The same router that runs inside QADIR OS — verbatim heuristics, real published prices, ported to JavaScript so you can run it in your browser without trusting our backend.</p>
+  <div class="proof-strip">
+    <span><span class="dot"></span>13-lane pool · 9 providers</span>
+    <span><span class="dot"></span>Thompson sampling on Beta posteriors</span>
+    <span><span class="dot"></span>Sub-millisecond classification</span>
+    <span><span class="dot"></span>Zero network calls</span>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<!--  STAGE 1 — Query input                                              -->
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<section class="stage">
+  <h2><span class="num">01</span>Type a query</h2>
+  <p class="sub">Anything. Real questions, code requests, medical edge-cases, multi-step analyses. The classifier runs locally on each keystroke (debounced).</p>
+
+  <div class="input-row">
+    <textarea id="q" placeholder="e.g.  what is 2+2 — or — write a Python class that implements a Bayesian cost router with Thompson sampling, unit tests, and a benchmark harness"></textarea>
+    <div class="actions">
+      <button class="primary" id="run">Route this query →</button>
+      <button class="ghost" id="reset">Reset cumulative</button>
+    </div>
+  </div>
+
+  <div class="examples" id="examples">
+    <span class="ex" data-q="what is 2+2">trivial-lookup</span>
+    <span class="ex" data-q="write a 5-word slogan for an AI coffee shop">creative-short</span>
+    <span class="ex" data-q="why is the sky blue and how does Rayleigh scattering explain it">reasoning</span>
+    <span class="ex" data-q="first analyze our Q3 revenue, then forecast Q4 based on trend, then explain the trade-offs of raising prices 10% vs 20% with rationale">multi-step</span>
+    <span class="ex" data-q="write a Python class that implements a Bayesian Thompson-sampling brain router with cost-adjusted utility scoring across 3 model tiers. Include unit tests and a benchmark harness.">code-synthesis</span>
+    <span class="ex" data-q="what dosage of ibuprofen for my 5-year-old">premium-medical</span>
+    <span class="ex" data-q="draft an LLC operating agreement contract">premium-legal</span>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<!--  STAGE 2 — Difficulty meter                                         -->
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<section class="stage">
+  <h2><span class="num">02</span>Difficulty classification</h2>
+  <p class="sub">Same heuristic battery as <code style="color:var(--gold-light);font:13px 'JetBrains Mono',monospace">core/routing/query_difficulty.py</code> — length, sentence count, vocab diversity, multi-step markers, reasoning markers, lookup downweight, code-synthesis detection, and premium-domain safety overrides.</p>
+
+  <div class="meter-wrap">
+    <div class="meter-head">
+      <span class="label">Difficulty score · 0=trivial, 1=expert</span>
+      <span class="val"><span id="score">0.000</span> · conf <span id="conf">—</span></span>
+    </div>
+    <div class="meter"><div class="fill" id="fill"></div></div>
+    <div class="meter-foot">
+      <span>← TIER 0 · local / free</span>
+      <span>TIER 1 · cheap cloud</span>
+      <span>TIER 2 · premium →</span>
+    </div>
+    <div class="signals" id="signals"></div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<!--  STAGE 3 — Lane pool                                                -->
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<section class="stage">
+  <h2><span class="num">03</span>Lane pool · Bayesian sampling</h2>
+  <p class="sub">Lanes below the difficulty floor get filtered out (dimmed). The remaining lanes compete on <em style="color:var(--gold-light)">cost-adjusted utility</em> = Thompson-sampled quality / effective $/1k tokens. Gold tick = this turn's posterior sample.</p>
+  <div class="lanes" id="lanes"></div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<!--  STAGE 4 — Decision + cost saved                                    -->
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<section class="stage">
+  <h2><span class="num">04</span>Decision · cost vs. always-Opus baseline</h2>
+  <p class="sub">If you defaulted every query to Claude Opus (the safe expensive choice), you'd spend the baseline. The router picks the cheapest qualifying lane. Difference is the savings — per query, then cumulatively across this session.</p>
+
+  <div class="decision">
+    <div class="dec-card">
+      <div class="h">Routed to</div>
+      <div class="big" id="chosenName">—</div>
+      <div class="sub" id="chosenWhy">Type a query above and hit <em>Route this query</em>.</div>
+    </div>
+    <div class="dec-card">
+      <div class="h">Saved this query</div>
+      <div class="big"><span class="savings-num" id="saveOne">$0.00000</span><span class="savings-pct" id="savePct"></span></div>
+      <div class="sub" id="costLine">vs. always-Opus baseline of <span id="oppCost">—</span></div>
+      <div class="cumulative">
+        <span>Queries routed: <span class="v" id="cumN">0</span></span>
+        <span>Cumulative saved: <span class="v" id="cumSave">$0.00</span></span>
+        <span>Avg savings/query: <span class="v" id="cumAvg">$0.00000</span></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="trace" id="trace">// classifier + router trace will appear here after first routing</div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<!--  STAGE 5 — How it works                                             -->
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<section style="margin:48px 0 16px">
+  <h2 style="font-family:'Playfair Display',serif;font-weight:800;font-size:30px;color:var(--cream);text-align:center;letter-spacing:-.01em">How the real router works</h2>
+  <p style="text-align:center;color:var(--dim);max-width:680px;margin:10px auto 0;font-size:15px">Three filters stacked. Each one is independently buildable. Together: <em style="color:var(--gold-light)">"cheapest model that can handle this specific query"</em> — with cost-aware exploration and provable safety overrides.</p>
+
+  <div class="three-up">
+    <div class="step">
+      <div class="num">FILTER 01</div>
+      <h3>Query-difficulty tier floor</h3>
+      <p>The classifier reads the query — length, sentence count, vocab diversity, multi-step / reasoning / lookup / code-synthesis markers — and emits a tier floor. Easy queries can route to free local models; hard queries are <strong>structurally prevented</strong> from reaching free-tier lanes. Premium-domain markers (medical, legal, security) force tier-2 regardless of other signals.</p>
+    </div>
+    <div class="step">
+      <div class="num">FILTER 02</div>
+      <h3>Thompson sampling on per-lane posteriors</h3>
+      <p>Each lane has a Beta posterior over its success rate, updated from production calls. On every routing decision, the router draws a sample from each posterior. Lanes with strong track records get exploited; new or uncertain lanes get explored — the literal Bayesian bandit move. Posterior bars on the cards above visualize this live.</p>
+    </div>
+    <div class="step">
+      <div class="num">FILTER 03</div>
+      <h3>Cost-adjusted utility ranking</h3>
+      <p>Final ranking: <code style="color:var(--gold-light);font:12px 'JetBrains Mono',monospace">utility = sample / effective_cost</code> for balanced mode. Cheap mode squares the cost penalty. Quality mode ignores cost. Speed mode boosts low-latency providers (Cerebras, Groq, Haiku). The cascade always carries 2–3 fallback lanes for retry without loss of quality.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<!--  CTA                                                                -->
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<section class="cta">
+  <h2>This is the brain that ships <em>inside</em> QADIR OS.</h2>
+  <p>Same heuristics. Same posteriors. Same cost math. Wrapped in a local-first desktop OS built for engineers who got tired of paying Opus prices for Haiku-class queries. QADIR OS is in <strong>early access</strong> — request it, it is not a public download yet.</p>
+  <div class="cta-row">
+    <a class="btn gold" href="/request.html">Request Early Access</a>
+    <a class="btn outline" href="/qadir.html">QADIR OS overview</a>
+    <a class="btn outline" href="/investors.html">Investors</a>
+    <a class="btn outline" href="/github.html">GitHub Hub</a>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<!--  Direct monetization — Free deploy this into your stack             -->
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<section class="cta" style="background:linear-gradient(135deg,var(--lapis-2) 0%,var(--lapis-mid) 100%);border-color:var(--gold)">
+  <h2 style="color:var(--cream)">Want this <em>in your stack</em>, not just your browser?</h2>
+  <p>A stranger-installable version of this router that drops into your codebase is in active development. When it ships, you'll be able to wire it to your providers, seed posteriors from your traffic, and get an observability endpoint. Submit a request below and we'll let you know the day it's ready.</p>
+  <div class="cta-row" style="margin-top:6px">
+    <a class="btn gold" href="/request.html?p=bayesian-router-install" style="font-size:15px;padding:14px 28px">Submit a request &rarr;</a>
+  </div>
+  <div style="margin-top:14px;font:11px 'JetBrains Mono',monospace;color:var(--dim);letter-spacing:.5px">submitting a request is free — no payment taken · everything we sell is tested before it ships, and if it breaks we make it right (<a href="/refund.html">refund policy</a>)</div>
+</section>
+
+<div class="provenance">ABUZ8 LLC · Bayesian cost router demo · Heuristics ported verbatim from <code>core/routing/query_difficulty.py</code> · Lane prices verbatim from <code>config/brain_connections.yaml</code> (2026-05-14 snapshot) · No telemetry · Runs entirely in your browser</div>
+
+</main>
+
+<footer class="abuz8-footer">
+<div class="foot-grid">
+  <div class="foot-brand">
+    <div class="logo">ABUZ8</div>
+    <p>Sovereign AI for everyone. Real tools, local models, no fake claims. Built on real hardware by ABUZ8 LLC, Ohio.</p>
+  </div>
+  <div class="foot-col"><h4>Platform</h4>
+    <a href="/tools.html">Free Tools</a><a href="/store.html">Store</a><a href="/models.html">Models</a><a href="/agents.html">AI Agents</a><a href="/news.html">News</a><a href="/blog/">Blog</a>
+  </div>
+  <div class="foot-col"><h4>Mission</h4>
+    <a href="/sovereign.html">Sovereign AI</a><a href="/journey.html">Journey &amp; Goals</a><a href="/roadmap.html">Roadmap</a><a href="/audit.html">Audit &amp; Transparency</a><a href="/purpose.html">Purpose</a>
+  </div>
+  <div class="foot-col"><h4>Hubs</h4>
+    <a href="/github.html">GitHub Hub</a><a href="/huggingface.html">Hugging Face Hub</a><a href="/polymarket.html">Polymarket Tester</a><a href="/community.html">Community</a><a href="/education.html">Education</a><a href="/downloads.html">Downloads</a>
+  </div>
+  <div class="foot-col"><h4>Trust</h4>
+    <a href="/security.html">Security &amp; Compliance</a><a href="/disclaimer.html">Disclaimer</a><a href="/privacy.html">Privacy</a><a href="/terms.html">Terms</a><a href="/refund.html">Refunds</a><a href="/license.html">License</a><a href="/contact.html">Contact</a><a href="/status.html">Status</a>
+  </div>
+</div>
+<div class="foot-base">
+  <div>© <span data-year>2026</span> ABUZ8 LLC. All rights reserved.</div>
+  <div>Built local-first on real hardware · No fake claims · <a href="/sovereign.html">Sovereign AI for everyone</a></div>
+</div>
+</footer>
+
+
+<script>
+/* ═════════════════════════════════════════════════════════════════════════
+   ABUZ8 routing demo — JS port of core/routing/{query_difficulty, cost_router}
+   Verbatim heuristics. Verbatim lane prices from brain_connections.yaml.
+   No backend calls. No telemetry. localStorage only for cumulative savings.
+   ═════════════════════════════════════════════════════════════════════════ */
+
+// ─── LANES (verbatim from config/brain_connections.yaml, 2026-05-14) ──
+// Effective $/1k = cost_in + 3.0 * cost_out  (typical chat I:O ratio)
+const RATIO = 3.0;
+const CHEAP_FLOOR = 0.0005;
+const TIER1_CEILING = 0.0030;
+
+function effectiveCost(ci, co){ return ci + RATIO * co; }
+function tierFor(provider, eff){
+  if (provider === 'local' || provider === 'ollama_local' ||
+      provider === 'nemotron_omni_local' || provider === 'qwen3_coder_local') return 0;
+  if (eff <= CHEAP_FLOOR) return 1;
+  if (eff <= TIER1_CEILING) return 1;
+  return 2;
+}
+
+const RAW_LANES = [
+  // Local (tier 0)
+  { id:'qwen3_coder_local/qwen3_coder', provider:'qwen3_coder_local', name:'Qwen3-Coder 30B (local)',  ci:0,       co:0,       a:42, b:8  },
+  { id:'ollama_local/qwen36_128k',      provider:'ollama_local',      name:'Qwen 3.6 128k (local)',    ci:0,       co:0,       a:30, b:7  },
+  { id:'cloudflare/llama3_8b',          provider:'cloudflare',        name:'Llama 3.1 8B (CF Workers)',ci:0,       co:0,       a:18, b:6  },
+  // Cheap cloud (tier 1)
+  { id:'cerebras/llama8b',              provider:'cerebras',          name:'Llama 3.1 8B (Cerebras)',  ci:0.0001,  co:0.0001,  a:25, b:4  },
+  { id:'groq/llama3_8b',                provider:'groq',              name:'Llama 3.1 8B (Groq)',      ci:0.00005, co:0.00008, a:22, b:5  },
+  { id:'anthropic/haiku',               provider:'anthropic',         name:'Claude Haiku 4.5',         ci:0.00025, co:0.00125, a:55, b:7  },
+  { id:'xai/grok3_mini',                provider:'xai',               name:'Grok 3 Mini',              ci:0.0003,  co:0.0005,  a:14, b:4  },
+  { id:'cerebras/llama70b',             provider:'cerebras',          name:'Llama 3.1 70B (Cerebras)', ci:0.0006,  co:0.0006,  a:33, b:5  },
+  { id:'groq/llama3_70b',               provider:'groq',              name:'Llama 3.3 70B (Groq)',     ci:0.00059, co:0.00079, a:28, b:5  },
+  { id:'inception_labs/mercury',        provider:'inception_labs',    name:'Mercury Coder',            ci:0.00025, co:0.001,   a:11, b:3  },
+  // Premium (tier 2)
+  { id:'anthropic/sonnet',              provider:'anthropic',         name:'Claude Sonnet 4.6',        ci:0.003,   co:0.015,   a:88, b:6  },
+  { id:'openai/gpt4o',                  provider:'openai',            name:'GPT-4o',                   ci:0.005,   co:0.015,   a:70, b:8  },
+  { id:'anthropic/opus',                provider:'anthropic',         name:'Claude Opus 4.6',          ci:0.015,   co:0.075,   a:95, b:4  },
+];
+
+const LANES = RAW_LANES.map(l => {
+  const eff = effectiveCost(l.ci, l.co);
+  return { ...l, eff, tier: tierFor(l.provider, eff) };
+});
+
+// Find Opus for the always-Opus baseline cost
+const OPUS = LANES.find(l => l.id === 'anthropic/opus');
+const OPUS_COST_PER_QUERY = OPUS.eff;  // $/1k tokens, treat as one "unit query"
+
+// ─── CLASSIFIER (verbatim port from query_difficulty.py) ──────────────
+const THRESHOLD_TIER_1 = 0.30;
+const THRESHOLD_TIER_2 = 0.55;
+const SHORT_LEN = 80, MEDIUM_LEN = 400, LONG_LEN = 1500, VERY_LONG_LEN = 4000;
+
+const MULTI_STEP_MARKERS = ["then","after that","next","first","second","third","finally",
+  "step 1","step 2","step 3","step one","step two","and also","additionally","furthermore",
+  "moreover","in addition","compare","contrast","trade-off","trade off","tradeoff",
+  "pros and cons","advantages and disadvantages","synthesize","integrate","consolidate",
+  "summarize across"];
+const REASONING_MARKERS = ["why","explain","analyze","analyse","reason","rationale","derive",
+  "prove","demonstrate","argue","justify","evaluate","assess","critique","deconstruct",
+  "implication","implications","philosophical","theoretical","fundamental","essence"];
+const LOOKUP_MARKERS = ["what is","what's","define","definition","spell","translate","convert",
+  "format","reformat","list","show me","current time","date","weather","synonym","antonym"];
+const CREATIVE_MARKERS = ["write a","generate","create a","make a","draft","compose","tweet",
+  "headline","title","tagline","slogan","caption"];
+const PREMIUM_DOMAIN_MARKERS = ["medical","diagnosis","diagnose","prescription","dosage",
+  "legal","lawsuit","contract","compliance","financial advice","investment","tax",
+  "psychiatric","psychological","therapy","security audit","vulnerability","exploit","zero-day"];
+
+const CODE_MATH_RX = [
+  /```|`[^`]{6,}`/,
+  /\b(def |class |function |const |let |var |import |from )/,
+  /\$[^$]+\$/,
+  /[\\∀-⋿]/,
+  /\b(integral|derivative|equation|theorem|lemma|matrix|vector|tensor)\b/i,
+];
+const CODE_SYNTHESIS_RX = [
+  /\b(implement|implements|implementation)\b/i,
+  /\b(write|build|create)\s+(a\s+)?(python|javascript|typescript|rust|go|java|c\+\+|c#|sql)\b/i,
+  /\bunit\s*tests?\b/i,
+  /\b(benchmark|harness|fixture|mock|stub)\b/i,
+  /\b(algorithm|router|scheduler|optimizer|estimator|parser|compiler|interpreter|serializer)\b/i,
+  /\bclass\s+\w/i,
+];
+
+function lengthSig(q){
+  const n = q.length;
+  if (n < SHORT_LEN)     return [0.05, `short (n=${n})`];
+  if (n < MEDIUM_LEN)    return [0.20, `medium (n=${n})`];
+  if (n < LONG_LEN)      return [0.45, `long (n=${n})`];
+  if (n < VERY_LONG_LEN) return [0.70, `very long (n=${n})`];
+  return [0.85, `extremely long (n=${n})`];
+}
+function sentenceSig(q){
+  const parts = q.split(/(?<=[.!?])\s+/).filter(s => s.trim().length > 3);
+  const n = parts.length;
+  if (n <= 1) return [0.05, `single-sentence (n=${n})`];
+  if (n <= 3) return [0.15, `few sentences (n=${n})`];
+  if (n <= 8) return [0.35, `multi-paragraph (n=${n})`];
+  return [0.55, `long-form (n=${n})`];
+}
+function vocabSig(q){
+  const words = (q.toLowerCase().match(/\b[a-z]{3,}\b/g) || []);
+  if (words.length < 5) return [0.05, "trivial vocab"];
+  const unique = new Set(words).size;
+  const ratio = unique / words.length;
+  if (ratio > 0.85 && words.length > 30) return [0.40, `high vocab diversity (${ratio.toFixed(2)})`];
+  if (ratio > 0.70) return [0.20, `varied vocab (${ratio.toFixed(2)})`];
+  return [0.10, `repetitive vocab (${ratio.toFixed(2)})`];
+}
+function markerSig(q, markers, label, weight){
+  const ql = q.toLowerCase();
+  let hits = 0;
+  for (const m of markers) if (ql.includes(m)) hits++;
+  if (hits === 0) return [0.0, ""];
+  if (hits === 1) return [weight * 0.5, `${label} marker x1`];
+  if (hits === 2) return [weight * 0.8, `${label} marker x2`];
+  return [weight, `${label} markers x${hits}`];
+}
+function codeMathSig(q){
+  const cm = CODE_MATH_RX.filter(r => r.test(q)).length;
+  const syn = CODE_SYNTHESIS_RX.filter(r => r.test(q)).length;
+  if (syn >= 3) return [0.65, `heavy code synthesis (cm=${cm}, syn=${syn})`];
+  if (syn >= 2) return [0.45, `code synthesis (cm=${cm}, syn=${syn})`];
+  if (syn === 1) return [0.30, `some code synthesis (cm=${cm}, syn=1)`];
+  if (cm === 0) return [0.0, ""];
+  if (cm === 1) return [0.15, "code/math content"];
+  return [0.25, `heavy code/math content (x${cm})`];
+}
+function premiumDomainSig(q, hint){
+  const ql = q.toLowerCase();
+  const hl = (hint || "").toLowerCase();
+  for (const m of PREMIUM_DOMAIN_MARKERS) {
+    if (ql.includes(m) || hl.includes(m)) return [1.0, `premium-domain override (${m})`, m];
+  }
+  return [0.0, "", null];
+}
+function aggregate(signals){
+  const contributions = {}, descriptions = {};
+  for (const k of Object.keys(signals)) {
+    const [v, d] = signals[k];
+    if (v > 0) contributions[k] = v;
+    if (d) descriptions[k] = d;
+  }
+  const vals = Object.values(contributions);
+  if (vals.length === 0) return [0.10, 0.85, descriptions];
+  const base = Math.max(...vals);
+  const coFire = vals.filter(v => v > 0.15).length;
+  const additive = Math.min(0.20, 0.06 * (coFire - 1));
+  const score = Math.min(1.0, base + additive);
+  let confidence;
+  if (vals.length === 1) confidence = (base > 0.25 && base < 0.65) ? 0.55 : 0.75;
+  else {
+    const mean = vals.reduce((s,v)=>s+v,0) / vals.length;
+    const variance = vals.reduce((s,v)=>s+(v-mean)*(v-mean),0) / vals.length;
+    confidence = Math.max(0.30, Math.min(0.95, 0.95 - 1.5 * variance));
+  }
+  return [score, confidence, descriptions];
+}
+function scoreToTier(s){ if (s < THRESHOLD_TIER_1) return 0; if (s < THRESHOLD_TIER_2) return 1; return 2; }
+
+function classify(query, hint){
+  const q = (query || "").trim();
+  if (!q) return { score:0, confidence:1, tier_floor:0, signals:{empty:"empty query"}, domain_override:null };
+  const [pScore, pDesc, pTerm] = premiumDomainSig(q, hint);
+  if (pScore >= 1.0) {
+    return { score:1.0, confidence:0.95, tier_floor:2,
+             signals:{premium_domain:pDesc}, domain_override:pTerm };
+  }
+  const sigs = {
+    length:    lengthSig(q),
+    sentences: sentenceSig(q),
+    vocab:     vocabSig(q),
+    lookup:    markerSig(q, LOOKUP_MARKERS,    "lookup",    -0.45),
+    creative:  markerSig(q, CREATIVE_MARKERS,  "creative",   0.20),
+    reasoning: markerSig(q, REASONING_MARKERS, "reasoning",  0.35),
+    multi_step:markerSig(q, MULTI_STEP_MARKERS,"multi-step", 0.40),
+    code_math: codeMathSig(q),
+  };
+  const [lookupNeg, lookupDesc] = sigs.lookup;
+  let lookupOffset = 0;
+  if (lookupNeg < 0) {
+    sigs.lookup = [0, `lookup downweight (${lookupDesc})`];
+    lookupOffset = Math.abs(lookupNeg);
+  }
+  let [score, confidence, sigSummary] = aggregate(sigs);
+  score = Math.max(0, score - lookupOffset);
+  if (lookupOffset > 0) sigSummary.lookup_offset = `-${lookupOffset.toFixed(2)}`;
+  return { score, confidence, tier_floor:scoreToTier(score), signals:sigSummary, domain_override:null };
+}
+
+// ─── THOMPSON SAMPLING (Beta distribution) ────────────────────────────
+// Marsaglia-Tsang method via Gamma. Cheap and accurate enough for demo viz.
+function gammaSample(k){
+  if (k < 1) {
+    const u = Math.random();
+    return gammaSample(k + 1) * Math.pow(u, 1/k);
+  }
+  const d = k - 1/3, c = 1 / Math.sqrt(9 * d);
+  while (true) {
+    let x, v;
+    do { x = randn(); v = 1 + c * x; } while (v <= 0);
+    v = v * v * v;
+    const u = Math.random();
+    if (u < 1 - 0.0331 * x*x*x*x) return d * v;
+    if (Math.log(u) < 0.5 * x*x + d * (1 - v + Math.log(v))) return d * v;
+  }
+}
+function randn(){
+  const u = 1 - Math.random(), v = 1 - Math.random();
+  return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
+}
+function betaSample(a, b){
+  const x = gammaSample(a), y = gammaSample(b);
+  return x / (x + y);
+}
+
+// ─── CHOOSE LANE (port of cost_router.choose_lane) ────────────────────
+function chooseLane(query, lanes, priority='balanced'){
+  const a = classify(query);
+  const eligible = lanes.filter(l => l.tier >= a.tier_floor);
+  const pool = eligible.length ? eligible : lanes;  // safety: never empty
+
+  const scored = pool.map(l => {
+    const sample = betaSample(l.a, l.b);
+    const mean = l.a / (l.a + l.b);
+    const costEff = Math.max(l.eff, CHEAP_FLOOR);
+    let utility;
+    if (priority === 'quality') utility = sample;
+    else if (priority === 'cheap') utility = sample / (costEff * costEff);
+    else utility = sample / costEff;  // balanced
+    return { ...l, sample, mean, utility };
+  });
+  scored.sort((x, y) => y.utility - x.utility);
+  return { assessment: a, scored, pool, eligible, chosen: scored[0] };
+}
+</script>
+
+
+<script>
+/* ═════════════════════════════════════════════════════════════════════════
+   UI wiring
+   ═════════════════════════════════════════════════════════════════════════ */
+const $ = id => document.getElementById(id);
+const fmtUsd = (n, p=5) => '$' + n.toFixed(p);
+const fmtUsdNice = n => {
+  if (n >= 1)    return '$' + n.toFixed(2);
+  if (n >= 0.01) return '$' + n.toFixed(4);
+  return '$' + n.toFixed(5);
+};
+
+// ─── Render lane cards (called once on load) ──────────────────────────
+function tierName(t){ return t===0 ? 'TIER 0' : t===1 ? 'TIER 1' : 'TIER 2'; }
+function renderLanes(){
+  const el = $('lanes');
+  el.innerHTML = LANES.map(l => `
+    <div class="lane dimmed" data-id="${l.id}">
+      <div class="head">
+        <div>
+          <div class="name">${l.name}</div>
+          <div class="id">${l.id}</div>
+        </div>
+        <div class="tier-badge t${l.tier}">${tierName(l.tier)}</div>
+      </div>
+      <div class="price">
+        <span class="num">${fmtUsd(l.eff)}</span> / 1k tok eff
+        · prior <span class="num">α=${l.a} β=${l.b}</span>
+      </div>
+      <div class="posterior">
+        <div class="bar" style="width:${(l.a/(l.a+l.b)*100).toFixed(0)}%"></div>
+        <div class="sample" style="left:0%"></div>
+      </div>
+      <div class="meta">
+        <span>μ=<span class="mu">${(l.a/(l.a+l.b)).toFixed(2)}</span></span>
+        <span class="util">u=<span class="u">—</span></span>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ─── Render classifier signals ────────────────────────────────────────
+function renderSignals(assessment){
+  const el = $('signals');
+  const items = [];
+  for (const [k, v] of Object.entries(assessment.signals || {})) {
+    if (!v) continue;
+    const cls = (k === 'premium_domain') ? 'sig fired override' : 'sig fired';
+    items.push(`<span class="${cls}">${k}: ${v}</span>`);
+  }
+  // also surface inert signals so the UI shows what was considered
+  const considered = ['length','sentences','vocab','lookup','reasoning','multi_step','code_math','creative'];
+  for (const k of considered) {
+    if (assessment.signals && assessment.signals[k]) continue;
+    items.push(`<span class="sig">${k}: —</span>`);
+  }
+  el.innerHTML = items.join('');
+}
+
+// ─── Render decision panel ────────────────────────────────────────────
+function renderDecision(result){
+  const a = result.assessment;
+  const c = result.chosen;
+
+  // difficulty meter
+  $('score').textContent = a.score.toFixed(3);
+  $('conf').textContent = a.confidence.toFixed(2);
+  $('fill').style.width = (a.score * 100).toFixed(1) + '%';
+
+  // chosen lane
+  $('chosenName').textContent = c.name;
+  const whyParts = [
+    `${a.domain_override ? 'forced ' : ''}floor=tier ${a.tier_floor}`,
+    `chose tier ${c.tier}`,
+    `μ=${c.mean.toFixed(2)}`,
+    `sample=${c.sample.toFixed(2)}`,
+    `u=${c.utility.toFixed(3)}`,
+    `${fmtUsd(c.eff)}/1k`,
+  ];
+  $('chosenWhy').innerHTML = whyParts.join(' · ');
+
+  // savings
+  const saved = Math.max(0, OPUS_COST_PER_QUERY - c.eff);
+  const pct = OPUS_COST_PER_QUERY > 0 ? (saved / OPUS_COST_PER_QUERY * 100) : 0;
+  $('saveOne').textContent = fmtUsdNice(saved);
+  $('savePct').textContent = saved > 0 ? ` (${pct.toFixed(0)}% off)` : '';
+  $('oppCost').textContent = fmtUsd(OPUS_COST_PER_QUERY);
+
+  // cumulative (persisted)
+  const state = loadState();
+  state.n += 1;
+  state.saved += saved;
+  saveState(state);
+  $('cumN').textContent = state.n;
+  $('cumSave').textContent = fmtUsdNice(state.saved);
+  $('cumAvg').textContent = state.n > 0 ? fmtUsdNice(state.saved / state.n) : '$0.00000';
+}
+
+// ─── Render lane visuals after routing ────────────────────────────────
+function renderLaneStates(result){
+  const a = result.assessment;
+  const chosenId = result.chosen.id;
+  const eligibleIds = new Set(result.eligible.map(l => l.id));
+  const byId = Object.fromEntries(result.scored.map(s => [s.id, s]));
+
+  for (const l of LANES) {
+    const card = document.querySelector(`.lane[data-id="${l.id}"]`);
+    if (!card) continue;
+    const s = byId[l.id];
+    card.classList.remove('dimmed','eligible','chosen');
+    if (!eligibleIds.has(l.id) && result.eligible.length > 0) card.classList.add('dimmed');
+    if (eligibleIds.has(l.id)) card.classList.add('eligible');
+    if (l.id === chosenId) card.classList.add('chosen');
+
+    if (s) {
+      const muEl = card.querySelector('.mu'); if (muEl) muEl.textContent = s.mean.toFixed(2);
+      const uEl  = card.querySelector('.u');  if (uEl)  uEl.textContent  = s.utility.toFixed(2);
+      const sampleEl = card.querySelector('.sample');
+      if (sampleEl) sampleEl.style.left = (s.sample * 100).toFixed(1) + '%';
+      const bar = card.querySelector('.bar');
+      if (bar) bar.style.width = (s.mean * 100).toFixed(0) + '%';
+    }
+  }
+}
+
+// ─── Render trace ─────────────────────────────────────────────────────
+function renderTrace(query, result){
+  const a = result.assessment;
+  const c = result.chosen;
+  const lines = [];
+  lines.push(`<span class="k">// query:</span> <span class="v">${escapeHtml(query.slice(0, 220))}${query.length>220?'…':''}</span>`);
+  lines.push('');
+  lines.push(`<span class="k">classify():</span>`);
+  lines.push(`  score=<span class="v">${a.score.toFixed(3)}</span>  confidence=<span class="v">${a.confidence.toFixed(3)}</span>  tier_floor=<span class="v">${a.tier_floor}</span>${a.domain_override ? `  domain_override=<span class="pos">${a.domain_override}</span>` : ''}`);
+  for (const [k, v] of Object.entries(a.signals || {})) {
+    lines.push(`  ${k}: <span class="v">${v}</span>`);
+  }
+  lines.push('');
+  lines.push(`<span class="k">choose_lane():</span>`);
+  lines.push(`  eligible after tier-floor filter: <span class="v">${result.eligible.length}</span> / ${LANES.length}`);
+  if (result.eligible.length < LANES.length) {
+    const filtered = LANES.filter(l => l.tier < a.tier_floor).map(l => l.id);
+    lines.push(`  <span class="neg">filtered out:</span> ${filtered.join(', ')}`);
+  }
+  lines.push(`  top 3 by utility:`);
+  for (const s of result.scored.slice(0, 3)) {
+    lines.push(`    <span class="v">${s.id.padEnd(36)}</span> sample=${s.sample.toFixed(2)} μ=${s.mean.toFixed(2)} cost=${fmtUsd(s.eff)} u=${s.utility.toFixed(3)}`);
+  }
+  lines.push('');
+  lines.push(`<span class="pos">→ chose ${c.id}</span>`);
+  $('trace').innerHTML = lines.join('\n');
+}
+
+function escapeHtml(s){
+  return s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+// ─── Cumulative state (localStorage) ──────────────────────────────────
+function loadState(){
+  try { return JSON.parse(localStorage.getItem('abuz8_routing_demo') || '{"n":0,"saved":0}'); }
+  catch(e) { return {n:0, saved:0}; }
+}
+function saveState(s){
+  try { localStorage.setItem('abuz8_routing_demo', JSON.stringify(s)); } catch(e){}
+}
+
+// ─── Live preview (classifier only, on each keystroke, debounced) ─────
+let kbTimer;
+function livePreview(){
+  clearTimeout(kbTimer);
+  kbTimer = setTimeout(() => {
+    const q = $('q').value;
+    if (!q.trim()) {
+      $('score').textContent = '0.000';
+      $('conf').textContent = '—';
+      $('fill').style.width = '0%';
+      renderSignals({signals:{}});
+      return;
+    }
+    const a = classify(q);
+    $('score').textContent = a.score.toFixed(3);
+    $('conf').textContent = a.confidence.toFixed(2);
+    $('fill').style.width = (a.score * 100).toFixed(1) + '%';
+    renderSignals(a);
+  }, 120);
+}
+
+// ─── Wire everything ──────────────────────────────────────────────────
+function runRouting(){
+  const q = $('q').value.trim();
+  if (!q) { $('q').focus(); return; }
+  const result = chooseLane(q, LANES, 'balanced');
+  // Sequence the animation so users see the brain "think":
+  //   1) difficulty meter fills (signals already up from livePreview)
+  //   2) lanes dim/glow into place
+  //   3) decision panel + trace
+  renderSignals(result.assessment);
+  $('score').textContent = result.assessment.score.toFixed(3);
+  $('conf').textContent = result.assessment.confidence.toFixed(2);
+  $('fill').style.width = (result.assessment.score * 100).toFixed(1) + '%';
+  setTimeout(() => renderLaneStates(result), 200);
+  setTimeout(() => { renderDecision(result); renderTrace(q, result); }, 700);
+}
+
+function init(){
+  renderLanes();
+  const state = loadState();
+  $('cumN').textContent = state.n;
+  $('cumSave').textContent = fmtUsdNice(state.saved);
+  $('cumAvg').textContent = state.n > 0 ? fmtUsdNice(state.saved / state.n) : '$0.00000';
+  $('oppCost').textContent = fmtUsd(OPUS_COST_PER_QUERY);
+
+  $('run').addEventListener('click', runRouting);
+  $('reset').addEventListener('click', () => {
+    saveState({n:0, saved:0});
+    $('cumN').textContent = 0;
+    $('cumSave').textContent = '$0.00';
+    $('cumAvg').textContent = '$0.00000';
+  });
+  $('q').addEventListener('input', livePreview);
+  $('q').addEventListener('keydown', e => {
+    if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') { e.preventDefault(); runRouting(); }
+  });
+  document.querySelectorAll('#examples .ex').forEach(ex => {
+    ex.addEventListener('click', () => {
+      $('q').value = ex.getAttribute('data-q');
+      livePreview();
+      runRouting();
+    });
+  });
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', init);
+} else {
+  init();
+}
+</script>
+<script src="/assets/js/abuz8-ui.js" defer></script>
+<script src="/assets/js/abuz8-onboard.js" defer></script>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>
+

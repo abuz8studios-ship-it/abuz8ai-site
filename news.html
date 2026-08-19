@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI News Hub — ABUZ8 AI</title>
+<meta name="description" content="Live AI feeds: GitHub trending repos (week + month), Hugging Face trending models, and star boards for 20 open-source agent projects — credited, cached, honest.">
+<link rel="canonical" href="https://abuz8ai.com/news">
+<meta property="og:type" content="website">
+<meta property="og:title" content="AI News Hub — ABUZ8 AI">
+<meta property="og:description" content="Live AI feeds: GitHub trending repos (week + month), Hugging Face trending models, and star boards for 20 open-source agent projects — credited, cached, honest.">
+<meta property="og:url" content="https://abuz8ai.com/news">
+<meta name="theme-color" content="#0a1628">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/abuz8-theme.css">
+<style>
+/* page-specific styles ONLY — theme vars, no new hex colors */
+.feed-head{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:18px}
+.feed-status{font-size:12px;color:var(--dim);display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.seg{display:inline-flex;border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.seg-btn{background:transparent;border:none;color:var(--dim);font-family:var(--font-body);font-size:12px;font-weight:600;letter-spacing:.5px;padding:8px 16px;cursor:pointer;transition:color .3s,background .3s}
+.seg-btn:hover{color:var(--gold-light)}
+.seg-btn[aria-pressed="true"]{background:var(--lapis-3);color:var(--gold)}
+.repo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
+@media(max-width:640px){.repo-grid{grid-template-columns:1fr}}
+.repo-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:8px}
+.repo-name{font-family:var(--font-mono);font-size:13.5px;font-weight:600;word-break:break-word;line-height:1.4}
+.gain{color:var(--green-bright);font-weight:700;font-size:11.5px;font-family:var(--font-mono);white-space:nowrap;text-align:right}
+.repo-meta{display:flex;align-items:center;gap:12px;flex-wrap:wrap;font-size:11.5px;color:var(--muted);margin-top:12px;padding-top:12px;border-top:1px solid var(--border)}
+.repo-meta span{display:inline-flex;align-items:center;gap:5px}
+.lang-dot{width:10px;height:10px;border-radius:50%;display:inline-block;background:var(--blue);flex-shrink:0}
+.feed-credit{font-size:11.5px;color:var(--muted);margin-top:18px;line-height:1.6}
+.loading-line{font-size:13px;color:var(--dim);padding:28px 0;text-align:center}
+.rank{font-family:var(--font-mono);color:var(--gold);font-weight:600}
+.retry-btn{background:transparent;border:1px solid var(--border);color:var(--text);font-family:var(--font-body);font-size:12px;font-weight:600;padding:7px 16px;border-radius:8px;cursor:pointer;transition:border-color .3s,color .3s;margin-top:10px}
+.retry-btn:hover{border-color:var(--gold);color:var(--gold)}
+.curated-grid .card h3{display:flex;align-items:center;gap:8px}
+.curated-links a{display:inline-block;margin-right:14px;font-size:12px;color:var(--green-bright);font-weight:600}
+.curated-links a:hover{color:var(--gold)}
+</style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebPage",
+      "@id": "https://abuz8ai.com/news.html",
+      "url": "https://abuz8ai.com/news.html",
+      "name": "AI News Hub — ABUZ8 AI",
+      "description": "Live AI feeds: GitHub trending repos (week + month), Hugging Face trending models, and star boards for 20 open-source agent projects — credited, cached, honest.",
+      "isPartOf": { "@type": "WebSite", "url": "https://abuz8ai.com/", "name": "ABUZ8 AI" }
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://abuz8ai.com/" },
+        { "@type": "ListItem", "position": 2, "name": "News", "item": "https://abuz8ai.com/news.html" }
+      ]
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Is the data on this page live?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Yes, when the feeds are reachable. The GitHub boards come from our Cloudflare Pages Functions, edge-cached for about 1 hour (trending) and 30 minutes (agent stars). Hugging Face trending is fetched by your browser directly from the public Hugging Face API. When a feed cannot be reached, the board says so honestly — a labeled cached snapshot or a feed-offline note, never a fabricated number." }
+        },
+        {
+          "@type": "Question",
+          "name": "Why do I sometimes see a cached snapshot label?",
+          "acceptedAnswer": { "@type": "Answer", "text": "GitHub has no official JSON API for its trending page, so we parse the public trending pages server-side. If the upstream page is unreachable or its markup changes, we serve a real frozen snapshot captured 2026-05-24 and label it clearly, so you never see a broken or empty board." }
+        },
+        {
+          "@type": "Question",
+          "name": "Does this page auto-refresh or poll?",
+          "acceptedAnswer": { "@type": "Answer", "text": "No. Each tab fetches its feed once, the first time you open it. There is no background polling and no auto-refresh. Reload the page to pull fresh data." }
+        },
+        {
+          "@type": "Question",
+          "name": "Are the models and repos on these boards ABUZ8 projects?",
+          "acceptedAnswer": { "@type": "Answer", "text": "No. Everything on the boards belongs to its authors — we aggregate, credit, and link out to every source. ABUZ8's own Hugging Face account currently has no public models; publishing sovereign models and datasets is on our roadmap." }
+        },
+        {
+          "@type": "Question",
+          "name": "Do you track visitors on this page?",
+          "acceptedAnswer": { "@type": "Answer", "text": "This page sets no tracking cookies and sends nothing about you to our servers. Feed requests go to our public API endpoints and to the public Hugging Face API. The only data this site ever collects is what a visitor submits to the waitlist form." }
+        }
+      ]
+    }
+  ]
+}
+</script>
+</head>
+<body>
+<div class="geo-bg"></div>
+<div class="glow-orb glow-orb-1"></div>
+<div class="glow-orb glow-orb-2"></div>
+<div class="glow-orb glow-orb-3"></div>
+
+<nav class="abuz8-nav">
+<div class="nav-inner">
+  <a href="/" style="text-decoration:none;">
+    <div class="logo">ABUZ8</div>
+    <div class="logo-sub">Sovereign AI</div>
+  </a>
+  <div class="nav-links">
+    <a href="/tools.html">Tools</a>
+    <a href="/store.html">Store</a>
+    
+    <a href="/agents.html">Agents</a>
+    <a href="/models.html">Models</a>
+    <a href="/news.html">News</a>
+    <a href="/roadmap.html">Roadmap</a>
+    <a href="/store.html" class="nav-cta">Get Started</a>
+  </div>
+</div>
+</nav>
+
+<div class="wrap">
+  <div class="crumbs"><a href="/">Home</a> › News</div>
+</div>
+
+<section class="hero">
+  <div class="hero-eyebrow">Live AI Ecosystem Feeds</div>
+  <h1>AI News <span class="gold">Hub</span></h1>
+  <p>What's moving in open AI right now — GitHub's fastest-growing repos, Hugging Face's trending models, and the star race across 20 open-source agent frameworks. Public data, credited to its authors, cached kindly, with honest fallbacks.</p>
+  <div class="stats-row">
+    <div class="stat"><div class="stat-num" data-count="3">3</div><div class="stat-label">Live data feeds</div></div>
+    <div class="stat"><div class="stat-num" data-count="20">20</div><div class="stat-label">Agent projects tracked</div></div>
+    <div class="stat"><div class="stat-num" data-count="2">2</div><div class="stat-label">Trending windows</div></div>
+    <div class="stat"><div class="stat-num" data-count="0">0</div><div class="stat-label">Auto-refresh polling</div></div>
+  </div>
+</section>
+
+<section class="wrap" style="padding-bottom:40px;">
+  <div class="tabs" data-tabs id="news-tabs">
+    <div class="tab-list" role="tablist" aria-label="AI news feeds">
+      <button class="tab-btn" role="tab" id="tab-github" aria-controls="panel-github" aria-selected="true">🔥 GitHub Trending</button>
+      <button class="tab-btn" role="tab" id="tab-hf" aria-controls="panel-hf" aria-selected="false">🤗 Hugging Face</button>
+      <button class="tab-btn" role="tab" id="tab-agents" aria-controls="panel-agents" aria-selected="false">🤖 Agent Systems</button>
+      <button class="tab-btn" role="tab" id="tab-research" aria-controls="panel-research" aria-selected="false">📚 Research &amp; Learning</button>
+      <button class="tab-btn" role="tab" id="tab-source" aria-controls="panel-source" aria-selected="false">🔍 How We Source</button>
+    </div>
+
+    <!-- ============ TAB 1 · GITHUB TRENDING ============ -->
+    <div class="tab-panel" role="tabpanel" id="panel-github" aria-labelledby="tab-github">
+      <div class="feed-head">
+        <div class="feed-status" id="gh-status">Loading live feed…</div>
+        <div class="seg" role="group" aria-label="Trending window">
+          <button type="button" class="seg-btn" id="gh-week-btn" aria-pressed="true">This Week</button>
+          <button type="button" class="seg-btn" id="gh-month-btn" aria-pressed="false">This Month</button>
+        </div>
+      </div>
+      <div id="gh-board"><div class="loading-line">Loading GitHub trending…</div></div>
+      <p class="feed-credit">Source: <a href="https://github.com/trending" target="_blank" rel="noopener">github.com/trending</a> (weekly + monthly windows), parsed server-side by our Cloudflare Pages Function and edge-cached about 1 hour. GitHub publishes no official trending JSON API, so we read the public page and always link every repo straight to its home. Each card is labeled with the window its star gain measures. All repos belong to their authors — we aggregate and credit, never copy.</p>
+    </div>
+
+    <!-- ============ TAB 2 · HUGGING FACE ============ -->
+    <div class="tab-panel" role="tabpanel" id="panel-hf" aria-labelledby="tab-hf" hidden>
+      <div class="feed-head">
+        <div class="feed-status" id="hf-status">Loading live feed…</div>
+      </div>
+      <div id="hf-board"><div class="loading-line">Loading Hugging Face trending…</div></div>
+      <p class="feed-credit">Source: the public <a href="https://huggingface.co/models?sort=trending" target="_blank" rel="noopener">Hugging Face</a> models API (<code class="inline">sort=trendingScore</code>), fetched directly by your browser — this request never touches our servers. Every model links to its Hugging Face page and belongs to its authors. ABUZ8 is not affiliated with Hugging Face; our own account currently has no public models — publishing sovereign models is <span class="badge badge-roadmap">Roadmap</span>.</p>
+    </div>
+
+    <!-- ============ TAB 3 · AGENT SYSTEMS ============ -->
+    <div class="tab-panel" role="tabpanel" id="panel-agents" aria-labelledby="tab-agents" hidden>
+      <div class="feed-head">
+        <div class="feed-status" id="ag-status">Loading live feed…</div>
+      </div>
+      <div id="ag-board"><div class="loading-line">Loading agent star board…</div></div>
+      <p class="feed-credit">Source: the public GitHub REST API, aggregated by our Cloudflare Pages Function and edge-cached about 30 minutes, for a curated set of 20 open-source agentic projects. We track them because they matter to anyone building agents locally; the code and the stars belong to their authors and communities. Want to run agents yourself? Start at our <a href="/agents.html">Agents hub</a> and <a href="/models.html">Models guide</a>.</p>
+    </div>
+
+    <!-- ============ TAB 4 · RESEARCH & LEARNING ============ -->
+    <div class="tab-panel" role="tabpanel" id="panel-research" aria-labelledby="tab-research" hidden>
+      <div class="note-gold">🗂️ <strong>Curated links — not a live feed.</strong> These are hand-picked public resources we actually use, each credited and linked directly to its source. Nothing here is generated or scraped.</div>
+      <div class="grid-3 curated-grid" style="margin-top:22px;">
+        <div class="card">
+          <span class="icon-chip">📄</span>
+          <h3>arXiv — new AI preprints</h3>
+          <p>The open preprint server run by Cornell. New machine-learning, language, and AI papers land here daily, free to read.</p>
+          <div class="curated-links" style="margin-top:12px;">
+            <a href="https://arxiv.org/list/cs.AI/recent" target="_blank" rel="noopener">cs.AI →</a>
+            <a href="https://arxiv.org/list/cs.CL/recent" target="_blank" rel="noopener">cs.CL →</a>
+            <a href="https://arxiv.org/list/cs.LG/recent" target="_blank" rel="noopener">cs.LG →</a>
+          </div>
+        </div>
+        <div class="card">
+          <span class="icon-chip">🤗</span>
+          <h3>Hugging Face Papers</h3>
+          <p>Daily community-voted trending AI papers, usually with linked models, datasets, and demos alongside each paper.</p>
+          <a class="card-link" href="https://huggingface.co/papers" target="_blank" rel="noopener">hf.co/papers →</a>
+        </div>
+        <div class="card">
+          <span class="icon-chip">🎓</span>
+          <h3>ABUZ8 Education Hub</h3>
+          <p>Our free learning hub — plain-language guides to local models, agents, and the sovereign AI stack.</p>
+          <a class="card-link" href="/education.html">education.html →</a>
+        </div>
+        <div class="card">
+          <span class="icon-chip">✍️</span>
+          <h3>ABUZ8 Blog</h3>
+          <p>440 posts on running AI locally: model guides, tool walkthroughs, agent build notes, and honest write-ups.</p>
+          <a class="card-link" href="/blog/">Browse the blog →</a>
+        </div>
+        <div class="card">
+          <span class="icon-chip">🧠</span>
+          <h3>Models Guide</h3>
+          <p>How to choose and run local models on your own hardware — quantization, VRAM budgets, and runtimes.</p>
+          <a class="card-link" href="/models.html">models.html →</a>
+        </div>
+        <div class="card">
+          <span class="icon-chip">🐙</span>
+          <h3>GitHub &amp; HF Hubs</h3>
+          <p>Our deeper board pages — more GitHub trending views and the Hugging Face ecosystem hub, both credited feeds.</p>
+          <div class="curated-links" style="margin-top:12px;">
+            <a href="/github.html">GitHub Hub →</a>
+            <a href="/huggingface.html">HF Hub →</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ TAB 5 · HOW WE SOURCE ============ -->
+    <div class="tab-panel" role="tabpanel" id="panel-source" aria-labelledby="tab-source" hidden>
+      <span class="kicker">// the pipeline, honestly</span>
+      <h3 style="margin:8px 0 6px;">How this page gets its data</h3>
+      <p style="color:var(--dim);font-size:14px;max-width:720px;">No fabricated numbers, no fake urgency, no invisible tracking. Here is exactly where every number on this page comes from and what happens when a feed goes down.</p>
+      <ol class="steps" style="margin-top:26px;">
+        <li><strong>Public sources only</strong><p>GitHub's public trending pages, the public GitHub REST API, and the public Hugging Face API. We never scrape private data and never claim anyone's work as ours — every card links to its author.</p></li>
+        <li><strong>Server-side aggregation</strong><p>Two Cloudflare Pages Functions do the work: <code class="inline">/api/github-trending</code> parses GitHub's weekly and monthly trending pages (GitHub has no official trending JSON API), and <code class="inline">/api/github-agents</code> pulls live star counts for 20 curated open-source agent projects.</p></li>
+        <li><strong>Edge caching — kind to upstream</strong><p>Trending is cached about 1 hour, agent stars about 30 minutes, at Cloudflare's edge. That keeps the boards fresh without hammering anyone's servers.</p></li>
+        <li><strong>Honest fallbacks, always labeled</strong><p>If the trending parse fails, you get a real frozen snapshot captured 2026-05-24, labeled "cached snapshot." If GitHub rate-limits the star board, affected rows fall back to last-known cached counts and the board says so. If Hugging Face is unreachable, you get a labeled feed-offline note — never an invented number, never an empty broken board.</p></li>
+        <li><strong>One fetch per tab, zero polling</strong><p>Each tab loads its feed once, the first time you open it. Nothing auto-refreshes in the background. Reload the page when you want fresh data.</p></li>
+      </ol>
+      <div class="note">🟢 <strong>Privacy:</strong> this page sets no tracking cookies and sends nothing about you to our servers. The Hugging Face request goes straight from your browser to huggingface.co. The only data this site ever collects is what a visitor chooses to submit to the waitlist form.</div>
+      <div class="note-blue">🧭 <strong>Full disclosure:</strong> ABUZ8 has no public GitHub org and no public Hugging Face models today. Open-sourcing components and publishing sovereign models are both <span class="badge badge-roadmap">Roadmap</span> items — the boards above showcase other people's excellent work, credited.</div>
+
+      <h3 style="margin:36px 0 14px;">FAQ</h3>
+      <details class="acc">
+        <summary>Is the data on this page live?</summary>
+        <div class="acc-body">Yes, when the feeds are reachable. The GitHub boards come from our Cloudflare Pages Functions, edge-cached for about 1 hour (trending) and 30 minutes (agent stars). Hugging Face trending is fetched by your browser directly from the public Hugging Face API. When a feed cannot be reached, the board says so honestly — a labeled cached snapshot or a feed-offline note, never a fabricated number.</div>
+      </details>
+      <details class="acc">
+        <summary>Why do I sometimes see a "cached snapshot" label?</summary>
+        <div class="acc-body">GitHub has no official JSON API for its trending page, so we parse the public trending pages server-side. If the upstream page is unreachable or its markup changes, we serve a real frozen snapshot captured 2026-05-24 and label it clearly, so you never see a broken or empty board.</div>
+      </details>
+      <details class="acc">
+        <summary>Does this page auto-refresh or poll?</summary>
+        <div class="acc-body">No. Each tab fetches its feed once, the first time you open it. There is no background polling and no auto-refresh. Reload the page to pull fresh data.</div>
+      </details>
+      <details class="acc">
+        <summary>Are the models and repos on these boards ABUZ8 projects?</summary>
+        <div class="acc-body">No. Everything on the boards belongs to its authors — we aggregate, credit, and link out to every source. ABUZ8's own Hugging Face account currently has no public models; publishing sovereign models and datasets is on our roadmap.</div>
+      </details>
+      <details class="acc">
+        <summary>Do you track visitors on this page?</summary>
+        <div class="acc-body">This page sets no tracking cookies and sends nothing about you to our servers. Feed requests go to our public API endpoints and to the public Hugging Face API. The only data this site ever collects is what a visitor submits to the waitlist form.</div>
+      </details>
+    </div>
+  </div>
+</section>
+
+<script>
+(function () {
+  'use strict';
+
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+  function fmt(n) {
+    return (typeof n === 'number' && isFinite(n)) ? n.toLocaleString('en-US') : '—';
+  }
+  function safeColor(c) {
+    return (typeof c === 'string' && /^#[0-9a-fA-F]{3,8}$/.test(c)) ? c : '';
+  }
+  function offline(el, sourceName, href, label, retryFn) {
+    el.innerHTML =
+      '<div class="note-blue">📡 <strong>Feed offline.</strong> We could not reach ' + esc(sourceName) +
+      ' from your browser just now — no cached numbers are being shown here because we will not invent data. ' +
+      'You can visit the source directly: <a href="' + esc(href) + '" target="_blank" rel="noopener">' + esc(label) + '</a>.' +
+      '<br><button type="button" class="retry-btn">Try again</button></div>';
+    var btn = el.querySelector('.retry-btn');
+    if (btn && retryFn) btn.addEventListener('click', retryFn);
+  }
+
+  /* ---------- Tab 1: GitHub Trending (/api/github-trending) ---------- */
+  var ghData = null; // { week: [...], month: [...], source: "live"|"snapshot" }
+  var ghView = 'week';
+
+  function ghCard(r) {
+    var color = safeColor(r.langColor);
+    var url = r.url ? r.url : ('https://github.com/' + r.full_name);
+    var per = r.period === 'month' ? 'month' : 'week';
+    var h = '<article class="card">';
+    h += '<div class="repo-top">';
+    h += '<a class="repo-name" href="' + esc(url) + '" target="_blank" rel="noopener">' + esc(r.full_name) + '</a>';
+    if (typeof r.gained === 'number' && isFinite(r.gained)) {
+      h += '<span class="gain">+' + fmt(r.gained) + '<br>this ' + per + '</span>';
+    }
+    h += '</div>';
+    h += '<p>' + (r.description ? esc(r.description) : '<em>No description provided.</em>') + '</p>';
+    h += '<div class="repo-meta">';
+    if (r.language) {
+      h += '<span><span class="lang-dot"' + (color ? ' style="background:' + color + '"' : '') + '></span>' + esc(r.language) + '</span>';
+    }
+    h += '<span>⭐ ' + fmt(r.stars) + '</span>';
+    h += '<span>🍴 ' + fmt(r.forks) + '</span>';
+    h += '</div></article>';
+    return h;
+  }
+
+  function ghRender() {
+    var board = document.getElementById('gh-board');
+    if (!ghData) return;
+    var list = ghView === 'month' ? ghData.month : ghData.week;
+    if (!list || !list.length) {
+      board.innerHTML = '<div class="note-blue">📡 The ' + esc(ghView) + ' window returned no repos this time. Try the other window, or visit <a href="https://github.com/trending" target="_blank" rel="noopener">github.com/trending</a> directly.</div>';
+      return;
+    }
+    board.innerHTML = '<div class="repo-grid">' + list.map(ghCard).join('') + '</div>';
+  }
+
+  function ghStatus() {
+    var st = document.getElementById('gh-status');
+    if (!ghData) return;
+    if (ghData.source === 'snapshot') {
+      st.innerHTML = '<span class="pill">📼 Cached snapshot · captured 2026-05-24</span> <span>Live parse temporarily unavailable — this is real (older) data, labeled honestly.</span>';
+    } else {
+      st.innerHTML = '<span class="badge badge-live"><span class="badge-dot"></span>Live</span> <span>Parsed from github.com/trending · edge-cached ~1 hour</span>';
+    }
+  }
+
+  function loadGithub() {
+    var board = document.getElementById('gh-board');
+    var st = document.getElementById('gh-status');
+    board.innerHTML = '<div class="loading-line">Loading GitHub trending…</div>';
+    st.textContent = 'Loading live feed…';
+    fetch('/api/github-trending')
+      .then(function (res) { if (!res.ok) throw new Error('HTTP ' + res.status); return res.json(); })
+      .then(function (j) {
+        if (!j || !j.ok || !Array.isArray(j.repos)) throw new Error('bad payload');
+        ghData = {
+          week: j.repos,
+          month: Array.isArray(j.monthly) && j.monthly.length ? j.monthly : j.repos,
+          source: j.source === 'snapshot' ? 'snapshot' : 'live'
+        };
+        ghStatus();
+        ghRender();
+      })
+      .catch(function () {
+        st.textContent = 'Feed offline';
+        offline(board, 'our /api/github-trending feed', 'https://github.com/trending', 'github.com/trending', loadGithub);
+      });
+  }
+
+  (function wireToggle() {
+    var wk = document.getElementById('gh-week-btn');
+    var mo = document.getElementById('gh-month-btn');
+    function set(view) {
+      ghView = view;
+      wk.setAttribute('aria-pressed', view === 'week' ? 'true' : 'false');
+      mo.setAttribute('aria-pressed', view === 'month' ? 'true' : 'false');
+      ghRender();
+    }
+    wk.addEventListener('click', function () { set('week'); });
+    mo.addEventListener('click', function () { set('month'); });
+  })();
+
+  /* ---------- Tab 2: Hugging Face trending (public HF API, browser-direct) ---------- */
+  function loadHF() {
+    var board = document.getElementById('hf-board');
+    var st = document.getElementById('hf-status');
+    board.innerHTML = '<div class="loading-line">Loading Hugging Face trending…</div>';
+    st.textContent = 'Loading live feed…';
+    fetch('https://huggingface.co/api/models?sort=trendingScore&limit=20')
+      .then(function (res) { if (!res.ok) throw new Error('HTTP ' + res.status); return res.json(); })
+      .then(function (data) {
+        if (!Array.isArray(data) || !data.length) throw new Error('bad payload');
+        st.innerHTML = '<span class="badge badge-live"><span class="badge-dot"></span>Live</span> <span>Fetched from the public Hugging Face API by your browser · sorted by trending score</span>';
+        board.innerHTML = '<div class="repo-grid">' + data.map(function (m) {
+          var id = m.id || m.modelId || '';
+          if (!id) return '';
+          var h = '<article class="card">';
+          h += '<div class="repo-top"><a class="repo-name" href="https://huggingface.co/' + esc(encodeURI(id)) + '" target="_blank" rel="noopener">' + esc(id) + '</a></div>';
+          h += '<div class="repo-meta" style="border-top:none;padding-top:0;margin-top:6px;">';
+          if (m.pipeline_tag) h += '<span class="pill">' + esc(m.pipeline_tag) + '</span>';
+          if (typeof m.downloads === 'number') h += '<span>⬇️ ' + fmt(m.downloads) + '</span>';
+          if (typeof m.likes === 'number') h += '<span>❤️ ' + fmt(m.likes) + '</span>';
+          h += '</div></article>';
+          return h;
+        }).join('') + '</div>';
+      })
+      .catch(function () {
+        st.textContent = 'Feed offline';
+        offline(board, 'the public Hugging Face API', 'https://huggingface.co/models?sort=trending', 'huggingface.co/models', loadHF);
+      });
+  }
+
+  /* ---------- Tab 3: Agent Systems star board (/api/github-agents) ---------- */
+  function loadAgents() {
+    var board = document.getElementById('ag-board');
+    var st = document.getElementById('ag-status');
+    board.innerHTML = '<div class="loading-line">Loading agent star board…</div>';
+    st.textContent = 'Loading live feed…';
+    fetch('/api/github-agents')
+      .then(function (res) { if (!res.ok) throw new Error('HTTP ' + res.status); return res.json(); })
+      .then(function (j) {
+        if (!j || !j.ok || !j.repos) throw new Error('bad payload');
+        var rows = Object.keys(j.repos).map(function (name) {
+          var r = j.repos[name] || {};
+          return { name: name, stars: (typeof r.stars === 'number' ? r.stars : null), lang: r.lang || '', archived: !!r.archived, fallback: !!r.fallback };
+        }).sort(function (a, b) { return (b.stars || 0) - (a.stars || 0); });
+
+        var liveCount = (typeof j.live === 'number') ? j.live : null;
+        var total = (typeof j.total === 'number') ? j.total : rows.length;
+        if (liveCount !== null && liveCount < total) {
+          st.innerHTML = '<span class="pill">⚠️ Partially cached</span> <span>' + liveCount + ' of ' + total + ' counts are live from the GitHub API; the rest are last-known cached values, marked below.</span>';
+        } else {
+          st.innerHTML = '<span class="badge badge-live"><span class="badge-dot"></span>Live</span> <span>Star counts from the public GitHub API · edge-cached ~30 minutes</span>';
+        }
+
+        var h = '<div class="table-scroll"><table class="data-table"><thead><tr><th>#</th><th>Project</th><th>⭐ Stars</th><th>Language</th><th></th></tr></thead><tbody>';
+        rows.forEach(function (r, i) {
+          h += '<tr>';
+          h += '<td class="rank">' + (i + 1) + '</td>';
+          h += '<td><a href="https://github.com/' + esc(r.name) + '" target="_blank" rel="noopener">' + esc(r.name) + '</a>'
+             + (r.archived ? ' <span class="pill">archived</span>' : '')
+             + (r.fallback ? ' <span class="pill">cached count</span>' : '') + '</td>';
+          h += '<td style="font-family:var(--font-mono);">' + fmt(r.stars) + '</td>';
+          h += '<td>' + (r.lang ? esc(r.lang) : '—') + '</td>';
+          h += '<td><a href="https://github.com/' + esc(r.name) + '" target="_blank" rel="noopener">View →</a></td>';
+          h += '</tr>';
+        });
+        h += '</tbody></table></div>';
+        board.innerHTML = h;
+      })
+      .catch(function () {
+        st.textContent = 'Feed offline';
+        offline(board, 'our /api/github-agents feed', 'https://github.com/trending', 'github.com/trending', loadAgents);
+      });
+  }
+
+  /* ---------- Lazy load: one fetch per tab, on first open. No polling. ---------- */
+  var loaders = { 'panel-github': loadGithub, 'panel-hf': loadHF, 'panel-agents': loadAgents };
+  var loadedPanels = {};
+
+  function maybeLoad() {
+    for (var id in loaders) {
+      if (!Object.prototype.hasOwnProperty.call(loaders, id)) continue;
+      var p = document.getElementById(id);
+      if (p && !p.hidden && !loadedPanels[id]) {
+        loadedPanels[id] = true;
+        loaders[id]();
+      }
+    }
+  }
+
+  var tabsRoot = document.getElementById('news-tabs');
+  if (tabsRoot && 'MutationObserver' in window) {
+    new MutationObserver(maybeLoad).observe(tabsRoot, { attributes: true, subtree: true, attributeFilter: ['hidden'] });
+  } else if (tabsRoot) {
+    tabsRoot.addEventListener('click', function () { setTimeout(maybeLoad, 0); });
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', maybeLoad);
+  } else {
+    maybeLoad();
+  }
+})();
+</script>
+
+<footer class="abuz8-footer">
+<div class="foot-grid">
+  <div class="foot-brand">
+    <div class="logo">ABUZ8</div>
+    <p>Sovereign AI for everyone. Real tools, local models, no fake claims. Built on real hardware by ABUZ8 LLC, Ohio.</p>
+  </div>
+  <div class="foot-col"><h4>Platform</h4>
+    <a href="/tools.html">Free Tools</a><a href="/store.html">Store</a><a href="/models.html">Models</a><a href="/agents.html">AI Agents</a><a href="/news.html">News</a><a href="/blog/">Blog</a>
+  </div>
+  <div class="foot-col"><h4>Mission</h4>
+    <a href="/sovereign.html">Sovereign AI</a><a href="/journey.html">Journey &amp; Goals</a><a href="/roadmap.html">Roadmap</a><a href="/audit.html">Audit &amp; Transparency</a><a href="/purpose.html">Purpose</a>
+  </div>
+  <div class="foot-col"><h4>Hubs</h4>
+    <a href="/github.html">GitHub Hub</a><a href="/huggingface.html">Hugging Face Hub</a><a href="/polymarket.html">Polymarket Tester</a><a href="/community.html">Community</a><a href="/education.html">Education</a><a href="/downloads.html">Downloads</a>
+  </div>
+  <div class="foot-col"><h4>Trust</h4>
+    <a href="/security.html">Security &amp; Compliance</a><a href="/disclaimer.html">Disclaimer</a><a href="/privacy.html">Privacy</a><a href="/terms.html">Terms</a><a href="/refund.html">Refunds</a><a href="/license.html">License</a><a href="/contact.html">Contact</a><a href="/status.html">Status</a>
+  </div>
+</div>
+<div class="foot-base">
+  <div>© <span data-year>2026</span> ABUZ8 LLC. All rights reserved.</div>
+  <div>Built local-first on real hardware · No fake claims · <a href="/sovereign.html">Sovereign AI for everyone</a></div>
+</div>
+</footer>
+<script src="/assets/js/abuz8-ui.js" defer></script>
+<script src="/assets/js/abuz8-onboard.js" defer></script>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>

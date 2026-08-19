@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Wedding Planner — ABUZ8</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;400i&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--lapis:#0a1628;--lapis2:#0f1f3d;--lapis3:#162544;--gold:#c9a84c;--turq:#0e9f6e;--turq2:#22b5a0;--cream:#f5f0e8;--rose:#e8a0b0;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--lapis);color:var(--cream);font-family:'Inter',sans-serif;min-height:100vh;}
+header{background:var(--lapis2);border-bottom:1px solid rgba(201,168,76,.15);padding:16px 32px;display:flex;align-items:center;gap:12px;}
+header h1{font-family:'Playfair Display',serif;font-size:1.4rem;color:var(--gold);}
+header span{background:var(--rose);color:var(--lapis);font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px;}
+.hero{text-align:center;padding:44px 20px 28px;}
+.hero h2{font-family:'Playfair Display',serif;font-size:2rem;color:var(--cream);margin-bottom:10px;}
+.hero p{color:rgba(245,240,232,.7);font-size:.95rem;max-width:520px;margin:0 auto;}
+.main{max-width:1000px;margin:0 auto;padding:0 20px 80px;}
+.card{background:var(--lapis2);border:1px solid rgba(201,168,76,.12);border-radius:12px;padding:26px;}
+.card+.card{margin-top:16px;}
+label{display:block;font-size:12px;font-weight:700;color:var(--gold);margin-bottom:6px;letter-spacing:.05em;text-transform:uppercase;}
+input,select{width:100%;background:var(--lapis3);border:1px solid rgba(201,168,76,.2);border-radius:8px;padding:11px 14px;color:var(--cream);font-family:'Inter',sans-serif;font-size:14px;outline:none;transition:border .2s;}
+input:focus,select:focus{border-color:var(--gold);}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px;}
+.tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;}
+.tag{padding:6px 14px;border-radius:20px;border:1px solid rgba(201,168,76,.2);cursor:pointer;font-size:12px;color:rgba(245,240,232,.7);transition:all .2s;user-select:none;}
+.tag.active{background:var(--gold);border-color:var(--gold);color:var(--lapis);font-weight:700;}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:12px 24px;border-radius:8px;border:none;cursor:pointer;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;transition:all .2s;}
+.btn-gold{background:var(--gold);color:var(--lapis);}
+.btn-gold:hover{background:#e0bc5a;}
+.btn-outline{background:transparent;border:1px solid rgba(201,168,76,.3);color:var(--cream);}
+.btn-outline:hover{border-color:var(--gold);color:var(--gold);}
+.actions{margin-top:18px;display:flex;gap:12px;flex-wrap:wrap;}
+/* Plan area */
+#planArea{display:none;}
+.plan-hero{font-family:'Playfair Display',serif;font-size:1.6rem;color:var(--gold);margin-bottom:6px;text-align:center;}
+.plan-sub{text-align:center;font-size:13px;color:rgba(245,240,232,.55);margin-bottom:24px;}
+/* Summary stats */
+.wedding-stats{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:24px;}
+.ws{flex:1;min-width:100px;background:var(--lapis3);border:1px solid rgba(201,168,76,.1);border-radius:10px;padding:12px;text-align:center;}
+.ws-val{font-size:1.3rem;font-weight:700;color:var(--gold);}
+.ws-lbl{font-size:11px;color:rgba(245,240,232,.4);text-transform:uppercase;letter-spacing:.05em;margin-top:2px;}
+/* Tabs */
+.tabs{display:flex;gap:0;border-bottom:1px solid rgba(201,168,76,.12);margin-bottom:20px;overflow-x:auto;}
+.tab{padding:10px 18px;cursor:pointer;font-size:13px;font-weight:600;color:rgba(245,240,232,.45);border-bottom:2px solid transparent;transition:all .2s;white-space:nowrap;}
+.tab.active{color:var(--gold);border-bottom-color:var(--gold);}
+.pane{display:none;}
+.pane.active{display:block;}
+/* Checklist */
+.checklist-section{margin-bottom:20px;}
+.checklist-section h4{font-size:11px;font-weight:700;color:var(--turq2);letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px;}
+.check-item{display:flex;align-items:center;gap:12px;padding:10px;background:var(--lapis3);border-radius:8px;margin-bottom:6px;cursor:pointer;transition:all .2s;border:1px solid rgba(201,168,76,.07);}
+.check-item:hover{border-color:rgba(201,168,76,.2);}
+.check-item.done{opacity:.5;}
+.check-box{width:20px;height:20px;border-radius:4px;border:2px solid rgba(201,168,76,.3);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s;}
+.check-item.done .check-box{background:var(--turq2);border-color:var(--turq2);}
+.check-text{flex:1;font-size:13px;line-height:1.4;}
+.check-item.done .check-text{text-decoration:line-through;}
+.check-timing{font-size:11px;color:var(--gold);font-weight:600;white-space:nowrap;}
+/* Budget table */
+.budget-row{display:flex;align-items:center;gap:12px;padding:10px;background:var(--lapis3);border-radius:8px;margin-bottom:6px;}
+.budget-cat{flex:1;font-size:13px;}
+.budget-est{font-size:13px;font-weight:600;color:var(--gold);white-space:nowrap;}
+.budget-pct{font-size:11px;color:rgba(245,240,232,.4);width:36px;text-align:right;}
+.bbar{height:4px;border-radius:2px;background:rgba(255,255,255,.06);margin-top:3px;overflow:hidden;}
+.bbar-fill{height:100%;border-radius:2px;background:linear-gradient(90deg,var(--turq),var(--gold));}
+/* Timeline */
+.timeline{position:relative;padding-left:24px;}
+.timeline::before{content:'';position:absolute;left:7px;top:0;bottom:0;width:2px;background:rgba(201,168,76,.15);}
+.tl-item{position:relative;margin-bottom:16px;}
+.tl-dot{position:absolute;left:-21px;width:12px;height:12px;border-radius:50%;background:var(--gold);top:4px;border:2px solid var(--lapis2);}
+.tl-time{font-size:11px;font-weight:700;color:var(--gold);letter-spacing:.06em;text-transform:uppercase;}
+.tl-title{font-size:13px;font-weight:600;color:var(--cream);margin-top:2px;}
+.tl-desc{font-size:12px;color:rgba(245,240,232,.5);margin-top:2px;line-height:1.5;}
+/* Vendors */
+.vendor-card{background:var(--lapis3);border:1px solid rgba(201,168,76,.1);border-radius:10px;padding:14px;margin-bottom:8px;}
+.vendor-name{font-size:13px;font-weight:700;color:var(--cream);}
+.vendor-type{font-size:11px;color:var(--turq2);font-weight:700;letter-spacing:.05em;text-transform:uppercase;margin-bottom:4px;}
+.vendor-notes{font-size:12px;color:rgba(245,240,232,.55);line-height:1.5;}
+.vendor-status{font-size:11px;padding:3px 10px;border-radius:20px;float:right;font-weight:700;}
+.status-booked{background:rgba(34,181,160,.15);color:var(--turq2);}
+.status-search{background:rgba(201,168,76,.1);color:var(--gold);}
+/* Day timeline */
+.day-item{display:flex;gap:12px;margin-bottom:10px;}
+.day-time{min-width:64px;font-size:12px;color:rgba(245,240,232,.4);font-weight:600;padding-top:2px;}
+.day-content{flex:1;background:var(--lapis3);border-radius:8px;padding:10px 12px;font-size:13px;}
+.day-content strong{display:block;color:var(--cream);margin-bottom:2px;}
+.day-content span{color:rgba(245,240,232,.5);font-size:12px;}
+/* Progress */
+.progress-wrap{background:rgba(255,255,255,.05);border-radius:6px;height:8px;overflow:hidden;margin:12px 0;}
+.progress-fill{height:100%;border-radius:6px;background:linear-gradient(90deg,var(--rose),var(--gold));transition:width .5s;}
+/* Waitlist */
+.waitlist{background:linear-gradient(135deg,var(--lapis2),var(--lapis3));border:1px solid rgba(201,168,76,.2);border-radius:12px;padding:28px;text-align:center;margin-top:16px;}
+.waitlist h3{font-family:'Playfair Display',serif;font-size:1.3rem;color:var(--gold);margin-bottom:8px;}
+.waitlist p{color:rgba(245,240,232,.7);margin-bottom:16px;font-size:14px;}
+.wl-form{display:flex;gap:10px;max-width:380px;margin:0 auto;flex-wrap:wrap;}
+.wl-form input{flex:1;min-width:180px;}
+.wl-success{color:var(--turq2);font-weight:600;display:none;}
+</style>
+<link rel="canonical" href="https://abuz8ai.com/tools/ai-wedding-planner">
+<meta name="description" content="AI Wedding Planner — Plan the big day. Free, no signup, runs entirely in your browser. One of 169 free AI and developer tools by ABUZ8.">
+</head>
+<body>
+<header>
+  <h1>⚡ ABUZ8</h1>
+  <span>💍 AI WEDDING PLANNER</span>
+</header>
+<div class="hero">
+  <h2>Plan Your Perfect Wedding</h2>
+  <p>Enter your vision and budget — get a complete checklist, budget breakdown, vendor guide, day-of timeline, and more.</p>
+</div>
+<div class="main">
+  <div class="card" id="inputArea">
+    <div class="grid-3">
+      <div>
+        <label>Wedding Date</label>
+        <input type="date" id="weddingDate">
+      </div>
+      <div>
+        <label>Guest Count</label>
+        <input type="number" id="guestCount" placeholder="e.g. 80" min="2" max="1000">
+      </div>
+      <div>
+        <label>Total Budget</label>
+        <input type="number" id="totalBudget" placeholder="e.g. 25000" min="1000" step="500">
+      </div>
+    </div>
+    <div class="grid-2">
+      <div>
+        <label>Wedding Style</label>
+        <div class="tags" id="styleTags">
+          <span class="tag active" data-v="classic">🌹 Classic / Romantic</span>
+          <span class="tag" data-v="rustic">🌿 Rustic / Boho</span>
+          <span class="tag" data-v="modern">✨ Modern / Minimalist</span>
+          <span class="tag" data-v="garden">🌸 Garden / Floral</span>
+          <span class="tag" data-v="beach">🌊 Beach / Destination</span>
+          <span class="tag" data-v="luxury">💎 Black Tie / Luxury</span>
+          <span class="tag" data-v="intimate">🕯 Intimate / Micro</span>
+        </div>
+      </div>
+      <div>
+        <label>Venue Type</label>
+        <div class="tags" id="venueTags">
+          <span class="tag active" data-v="ballroom">🏰 Ballroom / Hotel</span>
+          <span class="tag" data-v="garden">🌿 Garden / Outdoor</span>
+          <span class="tag" data-v="barn">🏚 Barn / Farm</span>
+          <span class="tag" data-v="winery">🍷 Winery / Estate</span>
+          <span class="tag" data-v="beach">🏖 Beach</span>
+          <span class="tag" data-v="restaurant">🍽 Restaurant / Private</span>
+          <span class="tag" data-v="rooftop">🌆 Rooftop</span>
+        </div>
+      </div>
+    </div>
+    <div class="actions">
+      <button class="btn btn-gold" onclick="generatePlan()">💍 Generate Wedding Plan</button>
+      <button class="btn btn-outline" onclick="loadExample()">Load Example</button>
+    </div>
+  </div>
+
+  <div class="card" id="planArea">
+    <div class="plan-hero" id="planHero">Your Dream Wedding</div>
+    <div class="plan-sub" id="planSub"></div>
+
+    <div class="wedding-stats" id="weddingStats"></div>
+
+    <div style="margin-bottom:16px;">
+      <div style="display:flex;justify-content:space-between;font-size:12px;color:rgba(245,240,232,.5);margin-bottom:4px;">
+        <span>Planning Progress</span>
+        <span id="progressLabel">0% complete</span>
+      </div>
+      <div class="progress-wrap"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+    </div>
+
+    <div class="tabs">
+      <div class="tab active" onclick="setTab('checklist',this)">✅ Checklist</div>
+      <div class="tab" onclick="setTab('budget',this)">💰 Budget</div>
+      <div class="tab" onclick="setTab('timeline',this)">📅 Timeline</div>
+      <div class="tab" onclick="setTab('vendors',this)">🤝 Vendors</div>
+      <div class="tab" onclick="setTab('dayof',this)">🌹 Day-Of</div>
+    </div>
+
+    <div class="pane active" id="pane-checklist"></div>
+    <div class="pane" id="pane-budget"></div>
+    <div class="pane" id="pane-timeline"></div>
+    <div class="pane" id="pane-vendors"></div>
+    <div class="pane" id="pane-dayof"></div>
+  </div>
+
+  <div class="waitlist">
+    <h3>💍 Full-Service AI Wedding Coordinator</h3>
+    <p>Join for vendor matching, contract review, guest management, RSVPs, and a personal wedding AI assistant.</p>
+    <div class="wl-form">
+      <input type="email" id="wlEmail" placeholder="your@email.com">
+      <button class="btn btn-gold" onclick="joinWaitlist()">Join Waitlist</button>
+    </div>
+    <div class="wl-success" id="wlSuccess">✓ You're on the list!</div>
+  </div>
+</div>
+
+<script src="_abuz8-live-brain.js" defer></script>
+<script>
+document.querySelectorAll('#styleTags .tag').forEach(t=>{t.addEventListener('click',()=>{document.querySelectorAll('#styleTags .tag').forEach(x=>x.classList.remove('active'));t.classList.add('active');});});
+document.querySelectorAll('#venueTags .tag').forEach(t=>{t.addEventListener('click',()=>{document.querySelectorAll('#venueTags .tag').forEach(x=>x.classList.remove('active'));t.classList.add('active');});});
+
+const CHECKLIST = [
+  {timing:'12+ Months',items:['Set your total budget and contribution breakdown','Discuss wedding vision and priorities with partner','Create guest list — start with must-invites','Research and visit potential venues','Hire a wedding planner or coordinator (optional but recommended)','Get engagement photos taken','Announce engagement on social media / to family']},
+  {timing:'9–12 Months',items:['Book your venue — it books out fastest','Set wedding date (confirm with key guests)','Research photographers — book early (best ones go first)','Book live band or DJ','Start dress/suit shopping (dresses need 6+ months for alterations)','Begin honeymoon research']},
+  {timing:'6–9 Months',items:['Book caterer or confirm venue catering','Hire florist — review portfolios','Book officiant / celebrant','Book hair & makeup artists','Create wedding website','Send Save-the-Dates']},
+  {timing:'3–6 Months',items:['Send formal invitations (6–8 weeks before wedding)','Plan rehearsal dinner','Finalize menu and dietary requirements','Book transportation (limo, vintage cars, shuttle buses)','Register for gifts','Book honeymoon flights & accommodation','Finalize wedding party attire']},
+  {timing:'1–3 Months',items:['Final dress/suit fittings','Confirm all vendor bookings — get everything in writing','Create seating chart','Finalize ceremony readings, vows, music','Arrange rehearsal and rehearsal dinner','Send final guest count to caterer']},
+  {timing:'1–2 Weeks',items:['Final vendor confirmations and timing walkthrough','Break in your wedding shoes','Prepare vendor payment envelopes','Pack honeymoon bags','Assign day-of responsibilities to bridal party','Get a massage — you deserve it!']},
+  {timing:'Wedding Week',items:['Pick up wedding dress','Confirm all vendors have the schedule','Prepare emergency kit (safety pins, stain remover, painkillers, energy bars)','Get a manicure','Prepare personal vows (if writing your own)','Relax and enjoy — you\'ve planned this!']},
+];
+
+const VENDORS = [
+  {type:'📸 Photography',name:'Research & Compare',notes:'Interview 3+ photographers. Review full galleries (not just highlights). Confirm they have backup equipment and an assistant.',status:'search'},
+  {type:'🌸 Florist',name:'Floral Designer',notes:'Bring wedding style images. Ask for seasonal flower alternatives to manage cost. Request itemized quote including setup/breakdown.',status:'search'},
+  {type:'🍽 Catering',name:'Catering Company',notes:'Confirm dietary restriction options (vegan, gluten-free, halal/kosher). Ask about tasting sessions. Clarify corkage fee if bringing own wine.',status:'search'},
+  {type:'🎵 Music',name:'DJ / Live Band',notes:'Request setlist input and a "do not play" list. Confirm PA system, lighting equipment. Book backup DJ if budget allows.',status:'search'},
+  {type:'🎂 Wedding Cake',name:'Bakery / Pastry Chef',notes:'Schedule tastings with top 3 options. Confirm delivery time and setup. Ask about cutting fee if venue charges separately.',status:'search'},
+  {type:'💄 Hair & Makeup',name:'Beauty Team',notes:'Book a trial 6–8 weeks before. Confirm timing for full bridal party. Ask about travel fees if coming on location.',status:'search'},
+  {type:'🚗 Transport',name:'Chauffeur / Vintage Cars',notes:'Confirm pickup/dropoff addresses and timing. Ask about contingency plan if vehicle breaks down. Get contract in writing.',status:'search'},
+  {type:'✍️ Officiant',name:'Wedding Celebrant',notes:'Meet at least twice before the wedding. Provide ceremony script for review 4 weeks before. Confirm legal requirements for your location.',status:'search'},
+];
+
+const BUDGET_SPLIT = {
+  classic:{venue:30,catering:28,photo:12,music:7,flowers:8,dress:6,cake:3,transport:2,misc:4},
+  rustic:{venue:25,catering:30,photo:14,music:6,flowers:10,dress:5,cake:4,transport:2,misc:4},
+  luxury:{venue:35,catering:25,photo:15,music:8,flowers:10,dress:5,cake:2,transport:3,misc:-3},
+  intimate:{venue:15,catering:35,photo:20,music:5,flowers:10,dress:6,cake:4,transport:1,misc:4},
+};
+
+const DAY_SCHEDULE = [
+  {time:'7:00 AM',title:'Bridal party gets ready',desc:'Hair & makeup begin. Breakfast delivered to getting-ready suite.'},
+  {time:'10:00 AM',title:'Photographer arrives',desc:'Getting-ready photos, details shots, wedding rings, invitations.'},
+  {time:'12:00 PM',title:'Bride/groom see flowers & décor',desc:'Venue walkthrough before guests arrive. Final adjustments.'},
+  {time:'2:00 PM',title:'Guests begin arriving',desc:'Ceremony seating begins. Ushers in position. Music playing.'},
+  {time:'3:00 PM',title:'Ceremony begins',desc:'Processional, vows, ring exchange, first kiss, recessional.'},
+  {time:'3:45 PM',title:'Cocktail hour',desc:'Guests mingle, canapés served. Couple does portraits with photographer.'},
+  {time:'5:00 PM',title:'Reception doors open',desc:'Guests find seats. First dance announcement.'},
+  {time:'5:15 PM',title:'First dance & speeches',desc:'First dance, father/parent dances, best man & maid of honour speeches.'},
+  {time:'6:30 PM',title:'Dinner service',desc:'Three-course meal (starter, main, dessert). Background music.'},
+  {time:'8:30 PM',title:'Cake cutting',desc:'Official cake cut, followed by dancing opening.'},
+  {time:'9:00 PM',title:'Party time!',desc:'DJ or band in full swing. Late night snacks served at 10:30 PM.'},
+  {time:'12:00 AM',title:'Last dance & send-off',desc:'Final song, sparkler or confetti exit, transport to hotel.'},
+];
+
+let checkDone = new Set();
+
+function generatePlan() {
+  const dateVal = document.getElementById('weddingDate').value;
+  const guests = parseInt(document.getElementById('guestCount').value)||80;
+  const budget = parseInt(document.getElementById('totalBudget').value)||25000;
+  const style = document.querySelector('#styleTags .tag.active')?.dataset.v || 'classic';
+  const venue = document.querySelector('#venueTags .tag.active')?.dataset.v || 'ballroom';
+
+  const btn = document.querySelector('.btn-gold');
+  btn.textContent = '💍 Planning...'; btn.disabled=true;
+
+  // Header stats from real form inputs.
+  const days = daysUntil(dateVal);
+  const styleLabels = {classic:'Classic Romance',rustic:'Rustic Boho',modern:'Modern Elegance',garden:'Garden Floral',beach:'Beach Dream',luxury:'Black Tie Luxury',intimate:'Intimate Micro-Wedding'};
+  document.getElementById('planHero').textContent = styleLabels[style] || 'Your Dream Wedding';
+  document.getElementById('planSub').textContent = dateVal ? `${new Date(dateVal).toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'})} · ${guests} guests · $${budget.toLocaleString()} budget` : `${guests} guests · $${budget.toLocaleString()} budget`;
+  document.getElementById('weddingStats').innerHTML = [
+    {v:days!==null?days+' days':'Set Date',l:'Until Wedding'},
+    {v:guests,l:'Guests'},
+    {v:'$'+budget.toLocaleString(),l:'Total Budget'},
+    {v:'$'+(budget/guests).toFixed(0),l:'Per Guest'},
+  ].map(s=>`<div class="ws"><div class="ws-val">${s.v}</div><div class="ws-lbl">${s.l}</div></div>`).join('');
+  // The progress bar tracked the legacy checklist; hide its containing block. AI returns one combined plan.
+  const progBlock = document.querySelector('.progress-wrap'); if(progBlock && progBlock.parentElement) progBlock.parentElement.style.display='none';
+  const tabs = document.querySelector('.tabs'); if(tabs) tabs.style.display='none';
+  ['pane-budget','pane-timeline','pane-vendors','pane-dayof'].forEach(id=>{ const p=document.getElementById(id); if(p) p.style.display='none'; });
+  const pane = document.getElementById('pane-checklist');
+  pane.classList.add('active');
+  pane.innerHTML = '<div style="color:rgba(245,240,232,.5);font-size:13px;padding:32px;text-align:center;">💍 Planning your wedding with AI…</div>';
+  document.getElementById('planArea').style.display = 'block';
+  document.getElementById('planArea').scrollIntoView({behavior:'smooth',block:'start'});
+
+  // Real AI generation via the ABUZ8 brain (Cloudflare Workers AI). No templates.
+  fetch('/api/waitlist', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      tool: 'wedding-planner',
+      data: {
+        weddingDate: dateVal || 'not set',
+        guestCount: guests,
+        totalBudget: budget,
+        weddingStyle: style,
+        venueType: venue,
+        format: 'Return a complete wedding plan as clean HTML with sections: <h3>Planning Checklist</h3> (by timeframe), <h3>Budget Breakdown</h3> (by category with amounts), <h3>Timeline</h3>, <h3>Vendor Guide</h3>, and <h3>Day-Of Schedule</h3>, using <ul>/<li> lists.'
+      }
+    })
+  })
+  .then(r => r.json())
+  .then(res => {
+    if (!res.success || !res.result) throw new Error(res.error || 'Generation failed');
+    btn.textContent = '💍 Generate Wedding Plan'; btn.disabled=false;
+    pane.innerHTML = ABUZ8md(res.result);
+  })
+  .catch(err => {
+    btn.textContent = '💍 Generate Wedding Plan'; btn.disabled=false;
+    pane.innerHTML = '<div style="color:#e05555;font-size:13px;padding:32px;text-align:center;">Generation failed. Please try again in a moment.</div>';
+    alert('Generation failed: ' + err.message + '. Please try again in a moment.');
+  });
+}
+
+function loadExample() {
+  const d = new Date(); d.setFullYear(d.getFullYear()+1);
+  document.getElementById('weddingDate').value = d.toISOString().slice(0,10);
+  document.getElementById('guestCount').value = '85';
+  document.getElementById('totalBudget').value = '28000';
+  generatePlan();
+}
+
+function daysUntil(dateStr) {
+  if(!dateStr) return null;
+  const diff = new Date(dateStr) - new Date();
+  return Math.ceil(diff/(1000*60*60*24));
+}
+
+function renderPlan(dateVal, guests, budget, style, venue) {
+  const days = daysUntil(dateVal);
+  const styleLabels = {classic:'Classic Romance',rustic:'Rustic Boho',modern:'Modern Elegance',garden:'Garden Floral',beach:'Beach Dream',luxury:'Black Tie Luxury',intimate:'Intimate Micro-Wedding'};
+
+  document.getElementById('planHero').textContent = styleLabels[style] || 'Your Dream Wedding';
+  document.getElementById('planSub').textContent = dateVal ? `${new Date(dateVal).toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'})} · ${guests} guests · $${budget.toLocaleString()} budget` : `${guests} guests · $${budget.toLocaleString()} budget`;
+
+  document.getElementById('weddingStats').innerHTML = [
+    {v:days!==null?days+' days':'Set Date',l:'Until Wedding'},
+    {v:guests,l:'Guests'},
+    {v:'$'+budget.toLocaleString(),l:'Total Budget'},
+    {v:'$'+(budget/guests).toFixed(0),l:'Per Guest'},
+    {v:VENDORS.length,l:'Vendors to Book'},
+  ].map(s=>`<div class="ws"><div class="ws-val">${s.v}</div><div class="ws-lbl">${s.l}</div></div>`).join('');
+
+  renderChecklist();
+  renderBudget(budget, style);
+  renderTimeline(dateVal);
+  renderVendors();
+  renderDayOf();
+
+  document.getElementById('planArea').style.display = 'block';
+  document.getElementById('planArea').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function renderChecklist() {
+  const totalItems = CHECKLIST.reduce((s,c)=>s+c.items.length,0);
+  document.getElementById('pane-checklist').innerHTML = CHECKLIST.map(section=>`
+    <div class="checklist-section">
+      <h4>${section.timing}</h4>
+      ${section.items.map((item,i)=>{
+        const id=section.timing.replace(/\s/g,'_')+'_'+i;
+        return `<div class="check-item${checkDone.has(id)?' done':''}" onclick="toggleCheck('${id}',this)">
+          <div class="check-box">${checkDone.has(id)?'✓':''}</div>
+          <div class="check-text">${item}</div>
+          <div class="check-timing">${section.timing}</div>
+        </div>`;
+      }).join('')}
+    </div>`).join('');
+  updateProgress(totalItems);
+}
+
+function toggleCheck(id, el) {
+  if(checkDone.has(id)) checkDone.delete(id);
+  else checkDone.add(id);
+  el.classList.toggle('done', checkDone.has(id));
+  el.querySelector('.check-box').textContent = checkDone.has(id)?'✓':'';
+  const total = CHECKLIST.reduce((s,c)=>s+c.items.length,0);
+  updateProgress(total);
+}
+
+function updateProgress(total) {
+  const pct = total>0 ? Math.round(checkDone.size/total*100) : 0;
+  document.getElementById('progressFill').style.width = pct+'%';
+  document.getElementById('progressLabel').textContent = `${checkDone.size}/${total} complete (${pct}%)`;
+}
+
+function renderBudget(total, style) {
+  const split = BUDGET_SPLIT[style] || BUDGET_SPLIT.classic;
+  const cats = [
+    ['🏰 Venue',split.venue],['🍽 Catering',split.catering],['📸 Photography/Video',split.photo],['🌸 Flowers & Décor',split.flowers],['👗 Dress & Attire',split.dress],['🎵 Music/Entertainment',split.music],['🎂 Cake & Desserts',split.cake],['🚗 Transportation',split.transport],['📋 Misc (invites, favours, tips)',Math.abs(split.misc||4)]
+  ];
+  document.getElementById('pane-budget').innerHTML = `
+    <div style="font-size:13px;color:rgba(245,240,232,.6);margin-bottom:16px;">Based on a <strong style="color:var(--gold);">$${total.toLocaleString()}</strong> budget for ${document.getElementById('guestCount').value||80} guests:</div>
+    ${cats.map(([cat,pct])=>{
+      const amt=Math.round(total*pct/100);
+      return `<div class="budget-row">
+        <div class="budget-cat">${cat}<div class="bbar"><div class="bbar-fill" style="width:${pct}%"></div></div></div>
+        <div class="budget-pct">${pct}%</div>
+        <div class="budget-est">$${amt.toLocaleString()}</div>
+      </div>`;
+    }).join('')}
+    <div style="font-size:12px;color:rgba(245,240,232,.4);margin-top:12px;">💡 Tip: Keep a 10% contingency buffer. Weddings often run over budget on catering and flowers.</div>`;
+}
+
+function renderTimeline(dateVal) {
+  const months = [
+    {label:'12+ Months Before',title:'Foundation',desc:'Set budget, vision, guest list, venue research — the most impactful decisions happen now.'},
+    {label:'9–12 Months',title:'Big Bookings',desc:'Secure venue, photographer, caterer, and entertainment — vendors fill up fastest.'},
+    {label:'6 Months',title:'Details & Dress',desc:'Florist, hair/makeup, officiant, dress shopping. Send save-the-dates.'},
+    {label:'3 Months',title:'Invitations & Fittings',desc:'Send invitations, confirm dietary needs, finalize seating chart.'},
+    {label:'1 Month',title:'Final Confirmations',desc:'Confirm all vendors, schedule rehearsal, finalize vows and ceremony order.'},
+    {label:'1 Week',title:'Last Touches',desc:'Venue walkthrough, vendor payments ready, pack honeymoon bags.'},
+    {label:'Wedding Day',title:'Enjoy Every Moment',desc:'Your only job today is to be present. Trust your vendors — they\'ve got this.'},
+  ];
+  document.getElementById('pane-timeline').innerHTML = `<div class="timeline">${months.map(m=>`
+    <div class="tl-item"><div class="tl-dot"></div>
+      <div class="tl-time">${m.label}</div>
+      <div class="tl-title">${m.title}</div>
+      <div class="tl-desc">${m.desc}</div>
+    </div>`).join('')}</div>`;
+}
+
+function renderVendors() {
+  document.getElementById('pane-vendors').innerHTML = VENDORS.map(v=>`
+    <div class="vendor-card">
+      <span class="vendor-status ${v.status==='booked'?'status-booked':'status-search'}">${v.status==='booked'?'✓ Booked':'📍 Find Now'}</span>
+      <div class="vendor-type">${v.type}</div>
+      <div class="vendor-name">${v.name}</div>
+      <div class="vendor-notes">${v.notes}</div>
+    </div>`).join('');
+}
+
+function renderDayOf() {
+  document.getElementById('pane-dayof').innerHTML = `
+    <div style="font-size:12px;color:rgba(245,240,232,.5);margin-bottom:16px;">Sample day-of schedule (adjust to your ceremony time):</div>
+    ${DAY_SCHEDULE.map(s=>`
+    <div class="day-item">
+      <div class="day-time">${s.time}</div>
+      <div class="day-content"><strong>${s.title}</strong><span>${s.desc}</span></div>
+    </div>`).join('')}`;
+}
+
+function setTab(id, el) {
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.pane').forEach(p=>p.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('pane-'+id).classList.add('active');
+}
+
+function joinWaitlist() {
+  const email = document.getElementById('wlEmail').value.trim();
+  if(!email||!email.includes('@')) { alert('Please enter a valid email.'); return; }
+  fetch('/api/waitlist',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,product:'ai-wedding-planner',ts:Date.now()})}).catch(()=>{});
+  document.getElementById('wlEmail').value='';
+  document.querySelector('.wl-form').style.display='none';
+  document.getElementById('wlSuccess').style.display='block';
+}
+</script>
+
+<script src="/assets/js/dfy-banner.js" async></script>
+<script src="/tools/_abuz8-md.js"></script>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+<script src="/tools/_tools-shared.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>
+

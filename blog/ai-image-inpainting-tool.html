@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Image Inpainting: Erase, Replace, and Repair Photos in the Browser | ABUZ8</title>
+<meta name="description" content="AI image inpainting fills the gap where you erased something. Here's how the models actually work, where they break, and the masking tricks that separate clean edits from obvious ones.">
+<meta name="keywords" content="ai image inpainting, image inpainting tool, ai photo repair, fill in image ai, inpainting online">
+<link rel="canonical" href="https://abuz8ai.com/blog/ai-image-inpainting-tool">
+<meta property="og:title" content="AI Image Inpainting: Erase, Replace, and Repair Photos in the Browser">
+<meta property="og:type" content="article">
+<link rel="stylesheet" href="/blog/_blog-base.css">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@300;400;600;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","headline":"AI Image Inpainting: Erase, Replace, and Repair Photos in the Browser","datePublished":"2026-06-01","author":{"@type":"Organization","name":"ABUZ8 AI"}}
+</script>
+</head>
+<body>
+<div class="container">
+  <a href="/blog/" class="back">&larr; ABUZ8 BLOG</a>
+  <h1>AI Image Inpainting: Erase, Replace, and Repair Photos in the Browser</h1>
+  <div class="meta-row"><span>TOOLS</span><span class="dot"></span><span>JUNE 1, 2026</span><span class="dot"></span><span>5 MIN READ</span></div>
+
+  <p><strong>AI image inpainting</strong> is the quiet workhorse behind most "magic eraser" features you've used in the last two years. You paint over a part of an image, and the model invents new pixels to fill the hole so convincingly that nobody can tell something was there. Remove a photobomber, erase a watermark you have the rights to remove, repair a scratched scan, swap a sky. This post is how inpainting actually works under the hood, the three failure modes that ruin amateur edits, and the masking workflow we use to get clean results every time.</p>
+
+  <p>Our <a href="/tools/ai-image-inpainting.html" class="in">free image inpainting tool</a> runs the model stack described below, in your browser, with no account.</p>
+
+  <h2>What inpainting actually does</h2>
+  <p>Most people think inpainting "removes" an object. It doesn't. It does the opposite — it <em>generates</em> a brand new object: whatever the model predicts should be behind the thing you erased. You hand it a masked region (the hole) and the surrounding pixels (the context), and a diffusion model paints the hole back in, conditioned on what it sees around the edges.</p>
+
+  <p>That distinction matters because it explains every failure you'll ever hit. The model is guessing. If the context is rich and unambiguous — a person standing in front of a plain wall — the guess is perfect. If the context is ambiguous — a person standing in front of a detailed bookshelf — the model has to invent book spines that never existed, and the seams show.</p>
+
+  <h2>The three ways inpainting goes wrong</h2>
+  <ol>
+    <li><strong>The ghost.</strong> A faint outline of the removed object stays behind. Cause: your mask was too tight. The model preserved a few edge pixels of the original because you didn't paint over them. Fix: always over-mask by 8-15 pixels past the object's silhouette.</li>
+    <li><strong>The blur smear.</strong> The filled region looks soft and low-detail next to a sharp background. Cause: weak model, or denoise strength set too low, so it averaged instead of generating. Fix: a stronger base model and a higher denoise on the masked region only.</li>
+    <li><strong>The hallucinated nonsense.</strong> You erase a hand and the model paints a sixth finger, or fills a removed sign with garbled fake text. Cause: ambiguous context plus too large a hole. Fix: shrink the job — inpaint in two or three smaller passes instead of one giant mask.</li>
+  </ol>
+
+  <h2>The model we use</h2>
+  <p>Our pipeline runs a Flux-based inpainting model with a dedicated fill checkpoint. Compared to the older Stable Diffusion 1.5 inpainting models that powered the first wave of magic-eraser apps, the newer fill models hold structure far better — straight lines stay straight, brick stays aligned, and text-adjacent regions stop producing the melted-letters look that gave AI edits away in 2023.</p>
+
+  <p>For surgical "remove this one object, keep everything else" jobs, we pair the fill model with a segment-anything mask so you can click the object instead of hand-painting it. The model traces the exact silhouette, we auto-expand the mask, and the fill runs only inside it.</p>
+
+  <h2>The masking workflow that actually works</h2>
+  <div class="callout">
+    <p><strong>Step 1:</strong> Mask the object plus its shadow and any reflection. People forget shadows. A removed person with their shadow still on the floor looks haunted.</p>
+    <p><strong>Step 2:</strong> Over-mask the edges by ~10 pixels so no original pixels survive.</p>
+    <p><strong>Step 3:</strong> If the hole is large, split it. Inpaint the left half, then the right half. Smaller holes mean better context and fewer hallucinations.</p>
+    <p><strong>Step 4:</strong> Run it twice with different seeds and keep the better result. Inpainting is probabilistic — the second roll is often cleaner.</p>
+  </div>
+
+  <h2>Inpainting vs background removal vs object removal</h2>
+  <p>These three get confused constantly:</p>
+  <ul>
+    <li><strong>Background removal</strong> deletes everything <em>except</em> the subject and gives you a transparent PNG. Use our <a href="/blog/ai-background-remover-free.html" class="in">background remover</a> for that.</li>
+    <li><strong>Object removal</strong> is inpainting aimed at one thing you want gone — the model fills in the background behind it. Covered in our <a href="/blog/ai-object-remover-from-photo.html" class="in">object remover guide</a>.</li>
+    <li><strong>Inpainting</strong> is the general tool: erase <em>and optionally replace</em> any region with a prompt. "Replace this jacket with a leather one." "Turn this empty wall into a window."</li>
+  </ul>
+
+  <h2>Real use cases that pay for themselves</h2>
+  <ul>
+    <li><strong>E-commerce cleanup.</strong> Remove the price tag, the mannequin pin, the stray cable in the product shot.</li>
+    <li><strong>Real estate.</strong> Erase the trash cans, the parked car, the for-sale sign from a neighbor's lawn.</li>
+    <li><strong>Photo restoration.</strong> Fill scratches, tears, and missing corners on scanned family photos.</li>
+    <li><strong>Content edits.</strong> Remove a logo you have rights over, swap a dated background, clean up a busy frame before it goes on a thumbnail.</li>
+  </ul>
+
+  <h2>The honest limitation</h2>
+  <p>Inpainting cannot recover information that was never captured. If a face is half hidden behind a removed object, the model invents the hidden half — it does not reconstruct the real one. For creative work that's fine. For anything where accuracy is a legal or factual matter (evidence, journalism, ID photos), inpainting is the wrong tool, and you should treat any filled region as a fabrication, because that's exactly what it is.</p>
+
+  <h2>Try the free tool</h2>
+  <p>The <a href="/tools/ai-image-inpainting.html" class="in">ABUZ8 inpainting tool</a> runs a Flux fill model with click-to-mask segmentation. Paint or click, optionally add a prompt for what should replace the region, and download the result. No upload to a third party, no watermark, no credits.</p>
+
+  <div class="cta-block">
+    <h3>Join Early Access</h3>
+    <p>ABUZ8 is rolling out 100 AI tools behind one login. Get in early and lock your spot.</p>
+    <a href="/" class="cta-btn">Join Early Access</a>
+  </div>
+</div>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+<script src="/blog/_blog-shared.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>
+

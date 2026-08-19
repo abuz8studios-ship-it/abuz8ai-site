@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Image Compressor — Free Online JPG, PNG &amp; WebP Compressor | ABUZ8</title>
+  <meta name="description" content="Free online image compressor. Shrink JPG, PNG and WebP files, convert formats, and resize — all in your browser. Nothing is uploaded. No signup, no limits, private by design." />
+  <meta name="robots" content="index, follow" />
+  <meta property="og:title" content="Free Image Compressor — JPG, PNG, WebP | ABUZ8" />
+  <meta property="og:description" content="Compress and convert images in your browser. 100% client-side — your files never leave your device." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://abuz8ai.com/tools/image-compressor" />
+  <link rel="canonical" href="https://abuz8ai.com/tools/image-compressor" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "ABUZ8 Image Compressor",
+    "applicationCategory": "MultimediaApplication",
+    "operatingSystem": "Web",
+    "url": "https://abuz8ai.com/tools/image-compressor.html",
+    "description": "Free online image compressor and converter for JPG, PNG and WebP. Runs entirely in the browser — images are never uploaded.",
+    "featureList": "Compress JPG, Compress PNG, Compress WebP, Convert between formats, Resize images, Batch processing, 100% client-side privacy",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+    "author": { "@type": "Organization", "name": "ABUZ8 LLC", "url": "https://abuz8ai.com" }
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Are my images uploaded to a server?",
+        "acceptedAnswer": { "@type": "Answer", "text": "No. The ABUZ8 Image Compressor runs entirely in your browser using the HTML5 Canvas API. Your images are processed on your own device and are never sent to any server, so the tool works even offline once the page has loaded." }
+      },
+      {
+        "@type": "Question",
+        "name": "Which image formats are supported?",
+        "acceptedAnswer": { "@type": "Answer", "text": "You can compress and convert JPG/JPEG, PNG and WebP images. Most browsers can also read GIF and BMP inputs. Output can be saved as JPEG, WebP or PNG, or you can keep the original format." }
+      },
+      {
+        "@type": "Question",
+        "name": "How much smaller will my images get?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Typical photos shrink by 60 to 90 percent when saved as WebP or JPEG at quality 80, with little visible difference. Savings depend on the original format, dimensions and quality setting. Already-optimized files may not shrink further, and the tool shows you the exact before-and-after size for each image." }
+      },
+      {
+        "@type": "Question",
+        "name": "Is it really free?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Yes. There is no signup, watermark or file limit. ABUZ8 builds free browser tools and offers an optional early-access waitlist for the QADIR OS automation suite." }
+      }
+    ]
+  }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --lapis: #0a1628;
+      --card: #0d1a30;
+      --card2: #111f38;
+      --gold: #c9a84c;
+      --teal: #0e9f6e;
+      --teal-light: #2fbf8f;
+      --text: #e8eaf0;
+      --text-dim: #8a9ab5;
+      --border: #1e2f4a;
+      --red: #e05252;
+      --green: #2fbf8f;
+      --font-head: 'Playfair Display', Georgia, serif;
+      --font-body: 'Inter', system-ui, sans-serif;
+      --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+    }
+    html, body { min-height: 100%; }
+    body { background: var(--lapis); color: var(--text); font-family: var(--font-body); font-size: 15px; line-height: 1.6; display: flex; flex-direction: column; }
+
+    nav { background: var(--card); border-bottom: 1px solid var(--border); padding: 0 24px; height: 56px; display: flex; align-items: center; justify-content: space-between; }
+    .nav-logo { font-family: var(--font-head); font-size: 1.3rem; color: var(--gold); text-decoration: none; font-weight: 700; letter-spacing: 0.02em; }
+    .nav-links { display: flex; gap: 24px; list-style: none; }
+    .nav-links a { color: var(--text-dim); text-decoration: none; font-size: 0.875rem; font-weight: 500; transition: color 0.2s; }
+    .nav-links a:hover { color: var(--teal-light); }
+
+    .hero { padding: 36px 24px 16px; text-align: center; }
+    .hero h1 { font-family: var(--font-head); font-size: clamp(1.6rem, 4vw, 2.4rem); color: var(--gold); margin-bottom: 8px; }
+    .hero p { color: var(--text-dim); font-size: 0.95rem; max-width: 600px; margin: 0 auto; }
+
+    .tool-wrap { max-width: 920px; margin: 0 auto; padding: 0 24px 40px; width: 100%; }
+
+    /* PRIVACY BADGE */
+    .privacy-badge { display: flex; align-items: center; justify-content: center; gap: 8px; background: rgba(26,138,122,0.1); border: 1px solid var(--teal); color: var(--teal-light); font-size: 0.82rem; padding: 8px 14px; border-radius: 8px; margin: 8px auto 20px; max-width: 540px; text-align: center; }
+
+    /* CONTROLS PANEL */
+    .controls { background: var(--card2); border: 1px solid var(--border); border-radius: 10px; padding: 16px 18px; margin-bottom: 16px; display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 16px 22px; }
+    .ctrl label { display: block; font-size: 0.72rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-dim); margin-bottom: 8px; }
+    .ctrl select, .ctrl input[type=number] { width: 100%; background: var(--card); border: 1px solid var(--border); color: var(--text); font-family: var(--font-body); font-size: 0.88rem; padding: 9px 12px; border-radius: 7px; outline: none; }
+    .ctrl select:focus, .ctrl input:focus { border-color: var(--teal); }
+    .quality-row { display: flex; align-items: center; gap: 12px; }
+    .quality-row input[type=range] { flex: 1; accent-color: var(--gold); cursor: pointer; }
+    .quality-val { font-family: var(--font-mono); font-size: 0.9rem; color: var(--gold); min-width: 44px; text-align: right; }
+    .ctrl.disabled { opacity: 0.4; pointer-events: none; }
+
+    /* DRAG DROP ZONE */
+    .drop-zone { border: 2px dashed var(--border); border-radius: 12px; padding: 38px 22px; text-align: center; color: var(--text-dim); font-size: 0.9rem; cursor: pointer; transition: all 0.2s; margin-bottom: 18px; background: var(--card2); }
+    .drop-zone:hover, .drop-zone.dragover { border-color: var(--teal); color: var(--teal-light); background: rgba(26,138,122,0.08); }
+    .drop-zone input[type=file] { display: none; }
+    .drop-icon { font-size: 2.2rem; margin-bottom: 8px; }
+
+    /* TOTALS BAR */
+    .totals { display: none; align-items: center; flex-wrap: wrap; gap: 14px; background: linear-gradient(135deg, var(--card2) 0%, #0d1f35 100%); border: 1px solid var(--border); border-left: 3px solid var(--gold); border-radius: 9px; padding: 14px 18px; margin-bottom: 16px; font-size: 0.88rem; }
+    .totals.show { display: flex; }
+    .totals .big { font-family: var(--font-mono); font-size: 1.15rem; color: var(--gold); font-weight: 500; }
+    .totals .saved { color: var(--teal-light); font-weight: 600; }
+    .totals .spacer { margin-left: auto; }
+
+    /* ACTION ROW */
+    .action-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 18px; }
+    .act-btn { background: var(--gold); color: var(--lapis); border: none; font-family: var(--font-body); font-weight: 700; font-size: 0.875rem; padding: 10px 22px; border-radius: 7px; cursor: pointer; transition: opacity 0.2s; }
+    .act-btn:hover { opacity: 0.85; }
+    .act-btn.secondary { background: var(--card2); color: var(--text-dim); border: 1px solid var(--border); }
+    .act-btn.secondary:hover { color: var(--teal-light); border-color: var(--teal); }
+    .act-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    /* RESULTS GRID */
+    .results { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 14px; }
+    .img-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; display: flex; flex-direction: column; }
+    .img-thumb { height: 150px; background: #060f1d url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"><rect width="10" height="10" fill="%230a1424"/><rect x="10" y="10" width="10" height="10" fill="%230a1424"/></svg>') repeat; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+    .img-thumb img { max-width: 100%; max-height: 100%; object-fit: contain; }
+    .img-meta { padding: 12px 14px; font-size: 0.8rem; }
+    .img-name { color: var(--text); font-weight: 600; font-size: 0.84rem; margin-bottom: 8px; word-break: break-all; line-height: 1.35; }
+    .img-stats { display: grid; grid-template-columns: auto 1fr; gap: 3px 10px; font-family: var(--font-mono); font-size: 0.78rem; color: var(--text-dim); margin-bottom: 10px; }
+    .img-stats .v { color: var(--text); text-align: right; }
+    .badge-saved { display: inline-block; font-family: var(--font-body); font-weight: 700; font-size: 0.8rem; padding: 2px 10px; border-radius: 20px; }
+    .badge-saved.good { background: rgba(52,212,176,0.14); color: var(--teal-light); }
+    .badge-saved.bad { background: rgba(224,82,82,0.14); color: var(--red); }
+    .badge-saved.work { background: rgba(201,168,76,0.14); color: var(--gold); }
+    .card-actions { display: flex; gap: 8px; padding: 0 14px 14px; }
+    .card-actions button { flex: 1; font-size: 0.8rem; padding: 8px; border-radius: 6px; cursor: pointer; font-family: var(--font-body); font-weight: 600; border: 1px solid var(--border); }
+    .dl-btn { background: var(--teal); color: #fff; border-color: var(--teal) !important; }
+    .dl-btn:hover { background: var(--teal-light); }
+    .dl-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    .rm-btn { background: var(--card2); color: var(--text-dim); }
+    .rm-btn:hover { color: var(--red); border-color: var(--red) !important; }
+    .err-text { color: var(--red); font-size: 0.78rem; padding: 0 14px 12px; }
+
+    /* INFO / FAQ */
+    .info-section { max-width: 760px; margin: 8px auto 0; padding: 0 24px; }
+    .info-section h2 { font-family: var(--font-head); color: var(--gold); font-size: 1.35rem; margin: 28px 0 10px; }
+    .info-section h3 { color: var(--text); font-size: 1rem; margin: 18px 0 4px; }
+    .info-section p { color: var(--text-dim); font-size: 0.9rem; margin-bottom: 8px; }
+    .info-section ul { color: var(--text-dim); font-size: 0.9rem; margin: 0 0 10px 20px; }
+
+    /* CTA */
+    .cta-section { background: linear-gradient(135deg, var(--card2) 0%, #0d1f35 100%); border-top: 1px solid var(--border); padding: 48px 24px; text-align: center; margin-top: 40px; }
+    .cta-section h2 { font-family: var(--font-head); font-size: 1.6rem; color: var(--gold); margin-bottom: 10px; }
+    .cta-section p { color: var(--text-dim); margin-bottom: 24px; max-width: 520px; margin-left: auto; margin-right: auto; }
+    .cta-form { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; max-width: 460px; margin: 0 auto; }
+    .cta-form input { flex: 1; min-width: 220px; background: var(--card); border: 1px solid var(--border); color: var(--text); font-family: var(--font-body); font-size: 0.9rem; padding: 11px 16px; border-radius: 7px; outline: none; }
+    .cta-form input:focus { border-color: var(--teal); }
+    .cta-form button { background: var(--gold); color: var(--lapis); border: none; font-family: var(--font-body); font-weight: 700; font-size: 0.9rem; padding: 11px 22px; border-radius: 7px; cursor: pointer; transition: opacity 0.2s; white-space: nowrap; }
+    .cta-form button:hover { opacity: 0.85; }
+    .cta-msg { margin-top: 12px; font-size: 0.85rem; min-height: 20px; }
+    .cta-msg.ok { color: var(--teal-light); }
+    .cta-msg.err { color: var(--red); }
+
+    footer { background: var(--card); border-top: 1px solid var(--border); padding: 16px 24px; text-align: center; color: var(--text-dim); font-size: 0.8rem; }
+    footer a { color: var(--teal-light); text-decoration: none; }
+
+    @media (max-width: 600px) {
+      .nav-links { gap: 14px; }
+      .tool-wrap { padding: 0 12px 32px; }
+      .controls { padding: 14px; gap: 14px; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="/">ABUZ8</a>
+  <ul class="nav-links">
+    <li><a href="/tools.html">Tools</a></li>
+    <li><a href="/store.html">Store</a></li>
+    <li><a href="/comfyui-blueprint.html">ComfyUI</a></li>
+  </ul>
+</nav>
+
+<div class="hero">
+  <h1>Image Compressor</h1>
+  <p>Shrink and convert JPG, PNG and WebP images right in your browser. Drag in a batch, pick your quality, and download — your files never get uploaded.</p>
+</div>
+
+<div class="tool-wrap">
+
+  <div class="privacy-badge">🔒 100% private — every image is processed on your device. Nothing is uploaded.</div>
+
+  <!-- CONTROLS -->
+  <div class="controls">
+    <div class="ctrl">
+      <label for="fmt">Output format</label>
+      <select id="fmt" onchange="setFormat(this.value)">
+        <option value="image/webp">WebP — best compression + transparency</option>
+        <option value="image/jpeg">JPEG — smallest, no transparency</option>
+        <option value="image/png">PNG — lossless, transparency</option>
+        <option value="keep">Keep original format</option>
+      </select>
+    </div>
+    <div class="ctrl" id="quality-ctrl">
+      <label for="quality">Quality <span style="text-transform:none;letter-spacing:0">(JPEG / WebP)</span></label>
+      <div class="quality-row">
+        <input type="range" id="quality" min="10" max="100" step="1" value="82" oninput="setQuality(this.value)" />
+        <span class="quality-val" id="quality-val">82%</span>
+      </div>
+    </div>
+    <div class="ctrl">
+      <label for="maxdim">Resize (longest side)</label>
+      <select id="maxdim" onchange="setMaxDim(this.value)">
+        <option value="0">No resize — keep dimensions</option>
+        <option value="4096">Max 4096 px</option>
+        <option value="2560">Max 2560 px</option>
+        <option value="1920">Max 1920 px (Full HD)</option>
+        <option value="1280">Max 1280 px</option>
+        <option value="1024">Max 1024 px</option>
+        <option value="800">Max 800 px</option>
+        <option value="640">Max 640 px</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- DROP ZONE -->
+  <div class="drop-zone" id="drop-zone" onclick="document.getElementById('file-input').click()"
+       ondragover="dragOver(event)" ondrop="drop(event)" ondragleave="dragLeave(event)">
+    <input type="file" id="file-input" accept="image/*" multiple onchange="onPick(this.files)" />
+    <div class="drop-icon">🖼️</div>
+    <div>Drag &amp; drop images here, or <strong style="color:var(--gold)">click to browse</strong></div>
+    <div style="font-size:0.78rem;margin-top:6px;color:var(--text-dim)">JPG · PNG · WebP · GIF · BMP &nbsp;•&nbsp; batch supported &nbsp;•&nbsp; up to ~30&nbsp;MB each</div>
+  </div>
+
+  <!-- TOTALS -->
+  <div class="totals" id="totals">
+    <span><span id="t-count">0</span> images</span>
+    <span>Original: <span class="big" id="t-orig">0 B</span></span>
+    <span>→ Compressed: <span class="big" id="t-comp">0 B</span></span>
+    <span class="saved" id="t-saved">Saved 0%</span>
+    <span class="spacer"></span>
+  </div>
+
+  <!-- ACTIONS -->
+  <div class="action-row">
+    <button class="act-btn" id="dl-all" onclick="downloadAll()" disabled>⬇ Download all</button>
+    <button class="act-btn secondary" id="clear-all" onclick="clearAll()" disabled>✕ Clear</button>
+  </div>
+
+  <!-- RESULTS -->
+  <div class="results" id="results"></div>
+
+</div>
+
+<!-- SEO / FAQ CONTENT -->
+<div class="info-section">
+  <h2>Free image compressor that respects your privacy</h2>
+  <p>This tool compresses and converts images using your browser's built-in Canvas engine. Because everything happens locally, your photos are never transmitted to a server — making it safe for sensitive screenshots, client work, ID documents and anything you would not want sitting in someone else's cloud.</p>
+
+  <h3>How to compress an image</h3>
+  <ul>
+    <li>Drag your images onto the drop zone (or click to browse). You can add a whole batch at once.</li>
+    <li>Choose an output format. <strong>WebP</strong> gives the smallest files while keeping transparency; <strong>JPEG</strong> is best for photos; <strong>PNG</strong> stays lossless.</li>
+    <li>Drag the quality slider — 75–85% is the sweet spot for most photos.</li>
+    <li>Optionally resize the longest side to cut large camera images down to web dimensions.</li>
+    <li>Download each result, or grab them all at once. The before/after size is shown for every file.</li>
+  </ul>
+
+  <h3>WebP vs JPEG vs PNG</h3>
+  <p>WebP typically produces files 25–35% smaller than JPEG at the same visual quality and is supported by every modern browser. JPEG remains the safest universal choice for photographs. PNG is lossless and ideal for logos, screenshots and graphics with sharp edges or transparency — use the resize option to shrink large PNGs.</p>
+</div>
+
+<section class="cta-section">
+  <h2>Automate this with QADIR OS</h2>
+  <p>Batch-optimize thousands of images, auto-convert on upload, and wire compression into your content pipeline — coming soon for ABUZ8 early-access members.</p>
+  <div class="cta-form">
+    <input type="email" id="wl-email" placeholder="your@email.com" autocomplete="email" />
+    <button onclick="joinWaitlist()">Join Early Access</button>
+  </div>
+  <div class="cta-msg" id="wl-msg"></div>
+</section>
+
+<footer>
+  ABUZ8 LLC &middot; Free AI Tools &middot; <a href="mailto:ahmad@abuz8ai.com">ahmad@abuz8ai.com</a>
+</footer>
+
+<script>
+// ── STATE ───────────────────────────────────────────────────────────────────
+let images = [];
+let uid = 0;
+let settings = { format: 'image/webp', quality: 0.82, maxDim: 0 };
+let recompTimer;
+const EXT = { 'image/jpeg': 'jpg', 'image/webp': 'webp', 'image/png': 'png' };
+const MAX_BYTES = 30 * 1024 * 1024;
+
+const $ = id => document.getElementById(id);
+
+function fmtBytes(b) {
+  if (b === 0) return '0 B';
+  const k = 1024, sizes = ['B', 'KB', 'MB', 'GB'];
+  const i = Math.floor(Math.log(b) / Math.log(k));
+  return (b / Math.pow(k, i)).toFixed(i ? 1 : 0) + ' ' + sizes[i];
+}
+
+// ── SETTINGS ──────────────────────────────────────────────────────────────────
+function setFormat(v) {
+  settings.format = v;
+  const noQuality = (v === 'image/png');
+  $('quality-ctrl').className = 'ctrl' + (noQuality ? ' disabled' : '');
+  recompressDebounced();
+}
+function setQuality(v) {
+  settings.quality = v / 100;
+  $('quality-val').textContent = v + '%';
+  recompressDebounced();
+}
+function setMaxDim(v) {
+  settings.maxDim = parseInt(v, 10) || 0;
+  recompressDebounced();
+}
+function recompressDebounced() {
+  clearTimeout(recompTimer);
+  recompTimer = setTimeout(() => { images.forEach(compressOne); }, 220);
+}
+
+// ── INPUT ───────────────────────────────────────────────────────────────────
+function onPick(fileList) { addFiles(fileList); $('file-input').value = ''; }
+function dragOver(e) { e.preventDefault(); $('drop-zone').classList.add('dragover'); }
+function dragLeave() { $('drop-zone').classList.remove('dragover'); }
+function drop(e) {
+  e.preventDefault();
+  $('drop-zone').classList.remove('dragover');
+  if (e.dataTransfer.files) addFiles(e.dataTransfer.files);
+}
+function addFiles(fileList) {
+  const files = [...fileList].filter(f => f.type.startsWith('image/'));
+  files.forEach(file => {
+    const obj = {
+      id: ++uid, file, name: file.name, origSize: file.size, origType: file.type,
+      url: URL.createObjectURL(file), comp: null, compSize: 0, compType: null, compUrl: null,
+      ow: 0, oh: 0, w: 0, h: 0, status: 'pending', error: null
+    };
+    if (file.size > MAX_BYTES) { obj.status = 'error'; obj.error = 'File over 30 MB — too large for in-browser processing.'; }
+    images.push(obj);
+    if (obj.status !== 'error') compressOne(obj);
+  });
+  render();
+}
+
+// ── CORE COMPRESSION (Canvas API, fully client-side) ──────────────────────────
+async function compressOne(obj) {
+  if (obj.status === 'error' && obj.error && obj.error.indexOf('30 MB') > -1) return; // skip oversize
+  obj.status = 'working'; obj.error = null; render();
+  try {
+    const img = new Image();
+    img.src = obj.url;
+    await img.decode();
+    obj.ow = img.naturalWidth; obj.oh = img.naturalHeight;
+
+    let w = obj.ow, h = obj.oh;
+    const md = settings.maxDim;
+    if (md > 0 && Math.max(w, h) > md) {
+      const s = md / Math.max(w, h);
+      w = Math.max(1, Math.round(w * s));
+      h = Math.max(1, Math.round(h * s));
+    }
+    obj.w = w; obj.h = h;
+
+    const canvas = document.createElement('canvas');
+    canvas.width = w; canvas.height = h;
+    const ctx = canvas.getContext('2d');
+
+    let fmt = settings.format;
+    if (fmt === 'keep') {
+      fmt = (obj.origType === 'image/png' || obj.origType === 'image/webp' || obj.origType === 'image/jpeg')
+        ? obj.origType : 'image/png';
+    }
+    if (fmt === 'image/jpeg') { ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, w, h); } // JPEG has no alpha
+    ctx.drawImage(img, 0, 0, w, h);
+
+    const q = (fmt === 'image/png') ? undefined : settings.quality;
+    const blob = await new Promise(res => canvas.toBlob(res, fmt, q));
+    if (!blob) throw new Error('Your browser cannot export this format. Try JPEG or PNG.');
+
+    if (obj.compUrl) URL.revokeObjectURL(obj.compUrl);
+    obj.comp = blob; obj.compSize = blob.size; obj.compType = fmt; obj.compUrl = URL.createObjectURL(blob);
+    obj.status = 'done';
+  } catch (e) {
+    obj.status = 'error';
+    obj.error = (e && e.message) ? e.message : 'Could not read this image.';
+  }
+  render();
+  updateTotals();
+}
+
+// ── DOWNLOAD ──────────────────────────────────────────────────────────────────
+function dlName(obj) {
+  const base = obj.name.replace(/\.[^.]+$/, '') || 'image';
+  return base + '-min.' + (EXT[obj.compType] || 'img');
+}
+function downloadOne(id) {
+  const obj = images.find(o => o.id === id);
+  if (!obj || !obj.compUrl) return;
+  const a = document.createElement('a');
+  a.href = obj.compUrl; a.download = dlName(obj); a.click();
+}
+function downloadAll() {
+  const done = images.filter(o => o.status === 'done' && o.compUrl);
+  done.forEach((obj, i) => setTimeout(() => downloadOne(obj.id), i * 250));
+}
+function removeImg(id) {
+  const obj = images.find(o => o.id === id);
+  if (obj) { if (obj.url) URL.revokeObjectURL(obj.url); if (obj.compUrl) URL.revokeObjectURL(obj.compUrl); }
+  images = images.filter(o => o.id !== id);
+  render(); updateTotals();
+}
+function clearAll() {
+  images.forEach(o => { if (o.url) URL.revokeObjectURL(o.url); if (o.compUrl) URL.revokeObjectURL(o.compUrl); });
+  images = []; render(); updateTotals();
+}
+
+// ── RENDER ──────────────────────────────────────────────────────────────────
+function render() {
+  const wrap = $('results');
+  wrap.innerHTML = images.map(o => {
+    let saveHtml = '';
+    if (o.status === 'working' || o.status === 'pending') {
+      saveHtml = '<span class="badge-saved work">Compressing…</span>';
+    } else if (o.status === 'error') {
+      saveHtml = '<span class="badge-saved bad">Error</span>';
+    } else {
+      const pct = o.origSize ? (1 - o.compSize / o.origSize) * 100 : 0;
+      if (pct >= 0.5) saveHtml = '<span class="badge-saved good">▼ ' + pct.toFixed(0) + '% smaller</span>';
+      else if (pct <= -0.5) saveHtml = '<span class="badge-saved bad">▲ ' + Math.abs(pct).toFixed(0) + '% larger — keep original</span>';
+      else saveHtml = '<span class="badge-saved work">~ same size</span>';
+    }
+    const stats = (o.status === 'done') ? (
+      '<div class="img-stats">' +
+      '<span>Original</span><span class="v">' + fmtBytes(o.origSize) + '</span>' +
+      '<span>Compressed</span><span class="v">' + fmtBytes(o.compSize) + '</span>' +
+      '<span>Dimensions</span><span class="v">' + o.w + '×' + o.h + (o.maxApplied ? '' : '') + '</span>' +
+      '</div>'
+    ) : (o.status === 'error' ? '' :
+      '<div class="img-stats"><span>Original</span><span class="v">' + fmtBytes(o.origSize) + '</span></div>');
+
+    return '<div class="img-card">' +
+      '<div class="img-thumb">' + (o.url ? '<img src="' + o.url + '" alt="' + escapeHtml(o.name) + ' preview" loading="lazy" />' : '') + '</div>' +
+      '<div class="img-meta">' +
+        '<div class="img-name">' + escapeHtml(o.name) + '</div>' +
+        stats + saveHtml +
+        (o.error ? '' : '') +
+      '</div>' +
+      (o.error ? '<div class="err-text">' + escapeHtml(o.error) + '</div>' : '') +
+      '<div class="card-actions">' +
+        '<button class="dl-btn" onclick="downloadOne(' + o.id + ')"' + (o.status === 'done' ? '' : ' disabled') + '>⬇ Download</button>' +
+        '<button class="rm-btn" onclick="removeImg(' + o.id + ')">Remove</button>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+
+  const has = images.length > 0;
+  $('clear-all').disabled = !has;
+  $('dl-all').disabled = !images.some(o => o.status === 'done');
+}
+
+function updateTotals() {
+  const done = images.filter(o => o.status === 'done');
+  const t = $('totals');
+  if (!done.length) { t.classList.remove('show'); return; }
+  t.classList.add('show');
+  const orig = done.reduce((s, o) => s + o.origSize, 0);
+  const comp = done.reduce((s, o) => s + o.compSize, 0);
+  const pct = orig ? (1 - comp / orig) * 100 : 0;
+  $('t-count').textContent = done.length;
+  $('t-orig').textContent = fmtBytes(orig);
+  $('t-comp').textContent = fmtBytes(comp);
+  const saved = $('t-saved');
+  if (pct >= 0) { saved.style.color = 'var(--teal-light)'; saved.textContent = 'Saved ' + pct.toFixed(0) + '% (' + fmtBytes(orig - comp) + ')'; }
+  else { saved.style.color = 'var(--red)'; saved.textContent = Math.abs(pct).toFixed(0) + '% larger — try keeping original'; }
+}
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+
+// ── WAITLIST (canonical /api/waitlist → D1, with local fallback) ───────────────
+async function joinWaitlist() {
+  const email = $('wl-email').value.trim();
+  const msg = $('wl-msg');
+  if (!email || !/^[^@]+@[^@]+\.[^@]+$/.test(email)) {
+    msg.className = 'cta-msg err'; msg.textContent = 'Please enter a valid email.'; return;
+  }
+  msg.className = 'cta-msg'; msg.textContent = 'Sending...';
+  try {
+    const res = await fetch('/api/waitlist', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, tool: 'image-compressor' })
+    });
+    if (res.ok) {
+      msg.className = 'cta-msg ok'; msg.textContent = "You're on the list! We'll be in touch.";
+      $('wl-email').value = '';
+    } else { throw new Error(); }
+  } catch {
+    msg.className = 'cta-msg ok'; msg.textContent = "You're on the list! (Saved locally — API coming soon)";
+    const list = JSON.parse(localStorage.getItem('abuz8_waitlist') || '[]');
+    list.push({ email, tool: 'image-compressor', ts: Date.now() });
+    localStorage.setItem('abuz8_waitlist', JSON.stringify(list));
+    $('wl-email').value = '';
+  }
+}
+$('wl-email').addEventListener('keydown', e => { if (e.key === 'Enter') joinWaitlist(); });
+</script>
+<script src="/tools/_tools-shared.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>

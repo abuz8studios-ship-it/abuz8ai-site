@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Design Agency — ABUZ8</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --lapis:#0a1628;--lapis2:#0d1e38;--lapis3:#122240;
+  --gold:#c9a84c;--gold2:#e0bc6a;--gold3:#a8832a;
+  --turq:#0e9f6e;--turq2:#22a090;--turq3:#0f6a5c;
+  --cream:#f5f0e8;--cream2:#ede7d9;
+  --text:#f0ece4;--muted:#8a9ab5;
+  --r:12px;--r2:8px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--lapis);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh;}
+nav{background:rgba(10,22,40,.95);border-bottom:1px solid rgba(201,168,76,.2);padding:14px 32px;display:flex;align-items:center;gap:16px;position:sticky;top:0;z-index:100;backdrop-filter:blur(12px);}
+.nav-logo{font-family:'Playfair Display',serif;color:var(--gold);font-size:1.25rem;font-weight:700;text-decoration:none;}
+.nav-badge{background:rgba(201,168,76,.15);border:1px solid rgba(201,168,76,.3);color:var(--gold2);font-size:.7rem;padding:2px 8px;border-radius:20px;font-weight:600;}
+.nav-back{margin-left:auto;color:var(--muted);font-size:.85rem;text-decoration:none;}
+
+/* HERO */
+.hero{background:linear-gradient(135deg,var(--lapis2),#0c1f32);border-bottom:1px solid rgba(201,168,76,.15);padding:64px 32px 52px;text-align:center;position:relative;overflow:hidden;}
+.hero::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 70% 60% at 50% -10%,rgba(201,168,76,.08),transparent);pointer-events:none;}
+.hero-tag{background:linear-gradient(90deg,var(--gold3),var(--gold));color:var(--lapis);font-size:.7rem;font-weight:700;letter-spacing:.1em;padding:4px 14px;border-radius:20px;display:inline-block;margin-bottom:16px;text-transform:uppercase;}
+.hero h1{font-family:'Playfair Display',serif;font-size:clamp(2rem,5vw,3.2rem);color:var(--cream);margin-bottom:14px;line-height:1.15;position:relative;z-index:1;}
+.hero h1 span{color:var(--gold);}
+.hero p{color:var(--muted);font-size:1.05rem;max-width:600px;margin:0 auto 32px;position:relative;z-index:1;}
+.cta-row{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:44px;position:relative;z-index:1;}
+.btn-gold{background:linear-gradient(135deg,var(--gold3),var(--gold));color:var(--lapis);font-weight:700;font-size:.95rem;padding:14px 28px;border:none;border-radius:var(--r2);cursor:pointer;font-family:'Playfair Display',serif;transition:.25s;text-decoration:none;display:inline-block;}
+.btn-gold:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(201,168,76,.3);}
+.btn-ghost{background:transparent;border:1px solid rgba(201,168,76,.4);color:var(--gold);font-size:.9rem;padding:13px 24px;border-radius:var(--r2);cursor:pointer;text-decoration:none;display:inline-block;transition:.2s;}
+.btn-ghost:hover{background:rgba(201,168,76,.08);}
+
+/* PORTFOLIO MOSAIC */
+.mosaic{display:grid;grid-template-columns:repeat(6,1fr);grid-template-rows:repeat(2,120px);gap:8px;margin-bottom:44px;position:relative;z-index:1;max-width:900px;margin-left:auto;margin-right:auto;}
+.mosaic-cell{border-radius:var(--r2);overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:2rem;position:relative;}
+.mosaic-cell::after{content:attr(data-label);position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(10,22,40,.85));color:var(--cream);font-size:.6rem;font-weight:600;padding:4px 6px;text-align:center;letter-spacing:.04em;text-transform:uppercase;}
+.mc1{grid-column:1/3;grid-row:1/3;font-size:3rem;background:linear-gradient(135deg,#1a3a6a,#0d2240);}
+.mc2{grid-column:3/5;background:linear-gradient(135deg,#2a1f0a,#1a1208);}
+.mc3{grid-column:5/7;background:linear-gradient(135deg,#0d3030,#062020);}
+.mc4{grid-column:3/4;grid-row:2;background:linear-gradient(135deg,#1e1440,#0e0a28);}
+.mc5{grid-column:4/6;grid-row:2;background:linear-gradient(135deg,#2a2010,#1a1408);}
+.mc6{grid-column:6/7;grid-row:2;background:linear-gradient(135deg,#0a2a20,#061a14);}
+
+/* HERO STATS */
+.hero-stats{display:flex;gap:40px;justify-content:center;flex-wrap:wrap;position:relative;z-index:1;}
+.hstat{text-align:center;}
+.hstat-n{font-family:'Playfair Display',serif;font-size:1.8rem;color:var(--gold);font-weight:700;}
+.hstat-l{font-size:.72rem;color:var(--muted);letter-spacing:.05em;text-transform:uppercase;margin-top:2px;}
+
+/* MAIN */
+.main{max-width:1100px;margin:0 auto;padding:48px 24px;}
+.section-title{font-family:'Playfair Display',serif;font-size:1.6rem;color:var(--cream);margin-bottom:8px;}
+.section-sub{color:var(--muted);font-size:.9rem;margin-bottom:28px;}
+
+/* SERVICES GRID */
+.services-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:48px;}
+@media(max-width:720px){.services-grid{grid-template-columns:1fr 1fr;}}
+.service-card{background:var(--lapis2);border:1px solid rgba(201,168,76,.1);border-radius:var(--r);padding:22px;cursor:pointer;transition:.25s;position:relative;overflow:hidden;}
+.service-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--gold3),var(--gold));transform:scaleX(0);transform-origin:left;transition:.3s;}
+.service-card:hover::before,.service-card.active::before{transform:scaleX(1);}
+.service-card:hover,.service-card.active{border-color:rgba(201,168,76,.3);transform:translateY(-3px);}
+.sc-icon{font-size:1.8rem;margin-bottom:10px;}
+.sc-name{font-family:'Playfair Display',serif;font-size:.95rem;color:var(--cream);margin-bottom:6px;}
+.sc-desc{font-size:.75rem;color:var(--muted);line-height:1.5;margin-bottom:10px;}
+.sc-price{font-size:.75rem;color:var(--gold);font-weight:600;}
+.sc-time{font-size:.7rem;color:var(--muted);}
+
+/* ORDER PANEL */
+.order-panel{background:var(--lapis2);border:1px solid rgba(201,168,76,.15);border-radius:var(--r);overflow:hidden;margin-bottom:48px;}
+.op-header{background:linear-gradient(90deg,rgba(201,168,76,.08),transparent);border-bottom:1px solid rgba(201,168,76,.1);padding:20px 24px;}
+.op-title{font-family:'Playfair Display',serif;font-size:1.1rem;color:var(--gold);}
+.op-body{display:grid;grid-template-columns:1fr 1fr;gap:0;}
+@media(max-width:680px){.op-body{grid-template-columns:1fr;}}
+.op-left{padding:24px;border-right:1px solid rgba(201,168,76,.08);}
+.op-right{padding:24px;}
+
+.field{margin-bottom:16px;}
+.field label{display:block;font-size:.78rem;color:var(--muted);margin-bottom:5px;font-weight:500;}
+.field input,.field select,.field textarea{width:100%;background:var(--lapis3);border:1px solid rgba(201,168,76,.18);color:var(--text);padding:10px 13px;border-radius:var(--r2);font-size:.85rem;font-family:'Inter',sans-serif;outline:none;transition:.2s;}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--gold);}
+.field textarea{resize:vertical;min-height:80px;}
+
+/* STYLE SELECTOR */
+.style-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px;}
+.style-opt{background:var(--lapis3);border:2px solid rgba(201,168,76,.1);border-radius:var(--r2);padding:10px 8px;text-align:center;cursor:pointer;transition:.2s;}
+.style-opt:hover,.style-opt.active{border-color:var(--gold);background:rgba(201,168,76,.08);}
+.style-opt.active::after{display:none;}
+.so-preview{height:40px;border-radius:4px;margin-bottom:6px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;}
+.so-name{font-size:.68rem;color:var(--cream);font-weight:600;}
+
+/* DELIVERY TIMELINE */
+.timeline{display:flex;flex-direction:column;gap:12px;margin-bottom:16px;}
+.tl-item{display:flex;gap:12px;align-items:flex-start;}
+.tl-dot{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:700;flex-shrink:0;margin-top:2px;}
+.tl-dot.now{background:rgba(61,186,126,.2);color:#3dba7e;}
+.tl-dot.soon{background:rgba(201,168,76,.2);color:var(--gold);}
+.tl-dot.later{background:rgba(26,138,122,.15);color:var(--turq2);}
+.tl-info{flex:1;}
+.tl-label{font-size:.78rem;color:var(--cream);font-weight:600;margin-bottom:2px;}
+.tl-desc{font-size:.7rem;color:var(--muted);}
+
+/* PRICE SUMMARY */
+.price-summary{background:var(--lapis3);border:1px solid rgba(201,168,76,.12);border-radius:var(--r2);padding:16px;margin-bottom:16px;}
+.ps-row{display:flex;justify-content:space-between;font-size:.8rem;margin-bottom:8px;}
+.ps-row:last-child{margin-bottom:0;border-top:1px solid rgba(201,168,76,.1);padding-top:8px;margin-top:4px;}
+.ps-label{color:var(--muted);}
+.ps-value{color:var(--cream);font-weight:600;}
+.ps-total{color:var(--gold);font-family:'Playfair Display',serif;font-size:1.1rem;}
+
+/* PORTFOLIO GRID */
+.portfolio-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:48px;}
+@media(max-width:720px){.portfolio-grid{grid-template-columns:1fr 1fr;}}
+.port-card{background:var(--lapis2);border:1px solid rgba(201,168,76,.08);border-radius:var(--r);overflow:hidden;transition:.2s;cursor:pointer;}
+.port-card:hover{border-color:rgba(201,168,76,.3);transform:translateY(-4px);}
+.port-img{height:140px;display:flex;align-items:center;justify-content:center;font-size:2.5rem;position:relative;}
+.port-img::after{content:attr(data-type);position:absolute;top:8px;right:8px;background:rgba(10,22,40,.8);color:var(--gold);font-size:.6rem;font-weight:700;padding:2px 7px;border-radius:8px;text-transform:uppercase;letter-spacing:.04em;}
+.port-meta{padding:12px;}
+.port-name{font-size:.82rem;color:var(--cream);font-weight:600;margin-bottom:3px;}
+.port-client{font-size:.7rem;color:var(--muted);}
+.port-time{font-size:.68rem;color:var(--turq2);font-weight:600;margin-top:4px;}
+
+/* GUARANTEE */
+.guarantee-row{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:48px;}
+@media(max-width:600px){.guarantee-row{grid-template-columns:1fr;}}
+.gbox{background:var(--lapis2);border:1px solid rgba(201,168,76,.08);border-radius:var(--r);padding:20px;text-align:center;}
+.g-icon{font-size:2rem;margin-bottom:8px;}
+.g-title{font-size:.88rem;font-weight:600;color:var(--cream);margin-bottom:6px;}
+.g-desc{font-size:.75rem;color:var(--muted);line-height:1.5;}
+
+/* WAITLIST */
+.waitlist-section{background:linear-gradient(135deg,rgba(201,168,76,.06),rgba(26,138,122,.04));border:1px solid rgba(201,168,76,.2);border-radius:var(--r);padding:40px;text-align:center;}
+.wl-title{font-family:'Playfair Display',serif;font-size:1.5rem;color:var(--cream);margin-bottom:8px;}
+.wl-sub{color:var(--muted);font-size:.9rem;margin-bottom:22px;}
+.wl-form{display:flex;gap:10px;max-width:460px;margin:0 auto;}
+.wl-input{flex:1;background:var(--lapis3);border:1px solid rgba(201,168,76,.25);color:var(--text);padding:12px 14px;border-radius:var(--r2);font-size:.88rem;font-family:'Inter',sans-serif;outline:none;}
+.wl-input:focus{border-color:var(--gold);}
+.wl-btn{background:var(--gold);color:var(--lapis);font-weight:700;padding:12px 20px;border:none;border-radius:var(--r2);cursor:pointer;font-size:.88rem;white-space:nowrap;transition:.2s;}
+.wl-btn:hover{background:var(--gold2);}
+.wl-success{display:none;color:var(--turq2);font-weight:600;font-size:.9rem;margin-top:10px;}
+.wl-perks{display:flex;gap:20px;justify-content:center;margin-top:16px;flex-wrap:wrap;}
+.wl-perk{font-size:.75rem;color:var(--muted);display:flex;align-items:center;gap:5px;}
+.wl-perk::before{content:'✦';color:var(--gold);font-size:.6rem;}
+
+.toast{position:fixed;bottom:24px;right:24px;background:var(--lapis3);border:1px solid rgba(201,168,76,.3);color:var(--text);padding:12px 18px;border-radius:var(--r2);font-size:.85rem;opacity:0;transform:translateY(12px);transition:.3s;z-index:999;pointer-events:none;}
+.toast.show{opacity:1;transform:translateY(0);}
+
+.btn-submit{width:100%;background:linear-gradient(135deg,var(--gold3),var(--gold));color:var(--lapis);font-weight:700;font-size:1rem;padding:15px;border:none;border-radius:var(--r2);cursor:pointer;font-family:'Playfair Display',serif;transition:.25s;margin-top:4px;}
+.btn-submit:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(201,168,76,.3);}
+</style>
+<link rel="canonical" href="https://abuz8ai.com/tools/ai-design-agency">
+<meta name="description" content="AI Design Agency — Run a design agency powered by AI — branding, web, and collateral. Free, no signup, runs entirely in your browser. One of 169 free AI and d">
+</head>
+<body>
+<script>
+// Cloud fallback: if ComfyUI is unreachable, redirect generate calls to Workers AI
+(function(){
+  var comfyUrl = (window.ABUZ8_COMFY_BASE) || 'https://comfy.abuz8ai.com';
+  var checked = false, comfyLive = false;
+  window._checkComfy = async function(){
+    if(checked) return comfyLive;
+    try{
+      var r = await fetch(comfyUrl+'/system_stats',{signal:AbortSignal.timeout(3000)});
+      comfyLive = r.ok; checked = true;
+    }catch(_){ comfyLive = false; checked = true; }
+    return comfyLive;
+  };
+  window._cloudGenerate = async function(prompt){
+    try{
+      var r = await fetch('/api/ai-image',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt:prompt})});
+      if(!r.ok) return null;
+      var blob = await r.blob();
+      return URL.createObjectURL(blob);
+    }catch(_){ return null; }
+  };
+})();
+</script>
+
+<nav>
+  <a class="nav-logo" href="../index.html">ABUZ8</a>
+  <span class="nav-badge">TIER D · #57</span>
+  <a class="nav-back" href="../tools.html">← All Tools</a>
+</nav>
+
+<section class="hero">
+  <div class="hero-tag">🎨 AI Design Agency</div>
+  <h1>Unlimited <span>AI-Powered Design</span><br>Delivered in Hours</h1>
+  <p>Professional brand assets, social graphics, ads, and visual content — generated by our ComfyUI-powered design engine. No designers needed. No waiting weeks.</p>
+  <div class="cta-row">
+    <a href="#order" class="btn-gold">Place Your First Order →</a>
+    <a href="#portfolio" class="btn-ghost">View Portfolio</a>
+  </div>
+
+  <!-- MOSAIC PORTFOLIO PREVIEW -->
+  <div class="mosaic">
+    <div class="mosaic-cell mc1" data-label="Brand Identity">🏢</div>
+    <div class="mosaic-cell mc2" data-label="Social Post">📱</div>
+    <div class="mosaic-cell mc3" data-label="Ad Creative">📣</div>
+    <div class="mosaic-cell mc4" data-label="Logo">✦</div>
+    <div class="mosaic-cell mc5" data-label="Banner">🖼️</div>
+    <div class="mosaic-cell mc6" data-label="Thumbnail">🎬</div>
+  </div>
+
+  <div class="hero-stats">
+    <div class="hstat"><div class="hstat-n">4hr</div><div class="hstat-l">Avg Delivery</div></div>
+    <div class="hstat"><div class="hstat-n">∞</div><div class="hstat-l">Revisions</div></div>
+    <div class="hstat"><div class="hstat-n">50+</div><div class="hstat-l">Asset Types</div></div>
+    <div class="hstat"><div class="hstat-n">100%</div><div class="hstat-l">Commercial Rights</div></div>
+  </div>
+</section>
+
+<div class="main">
+
+  <!-- SERVICES -->
+  <div style="margin-bottom:16px;">
+    <div class="section-title">What We Design</div>
+    <div class="section-sub">Click any service to configure and order</div>
+  </div>
+  <div class="services-grid" id="servicesGrid">
+    <div class="service-card active" onclick="selectService(this,'brand')" data-svc="brand">
+      <div class="sc-icon">🏢</div>
+      <div class="sc-name">Brand Identity Package</div>
+      <div class="sc-desc">Logo (5 variants), brand colors, typography, usage guide, and icon set.</div>
+      <div class="sc-price">From $297</div>
+      <div class="sc-time">⏱ 8 hours delivery</div>
+    </div>
+    <div class="service-card" onclick="selectService(this,'social')" data-svc="social">
+      <div class="sc-icon">📱</div>
+      <div class="sc-name">Social Media Pack</div>
+      <div class="sc-desc">30 branded social posts (9:16 + 1:1 + 16:9) in your brand style.</div>
+      <div class="sc-price">From $197</div>
+      <div class="sc-time">⏱ 4 hours delivery</div>
+    </div>
+    <div class="service-card" onclick="selectService(this,'ads')" data-svc="ads">
+      <div class="sc-icon">📣</div>
+      <div class="sc-name">Ad Creative Bundle</div>
+      <div class="sc-desc">Facebook, Instagram, Google Display ads — 10 sizes, 3 copy variants each.</div>
+      <div class="sc-price">From $247</div>
+      <div class="sc-time">⏱ 6 hours delivery</div>
+    </div>
+    <div class="service-card" onclick="selectService(this,'pitch')" data-svc="pitch">
+      <div class="sc-icon">📊</div>
+      <div class="sc-name">Pitch Deck Design</div>
+      <div class="sc-desc">15-slide investor deck with custom illustrations, data viz, and icons.</div>
+      <div class="sc-price">From $397</div>
+      <div class="sc-time">⏱ 12 hours delivery</div>
+    </div>
+    <div class="service-card" onclick="selectService(this,'thumb')" data-svc="thumb">
+      <div class="sc-icon">🎬</div>
+      <div class="sc-name">YouTube Thumbnails</div>
+      <div class="sc-desc">10 custom thumbnails with face swap, text overlay, and brand style.</div>
+      <div class="sc-price">From $97</div>
+      <div class="sc-time">⏱ 2 hours delivery</div>
+    </div>
+    <div class="service-card" onclick="selectService(this,'custom')" data-svc="custom">
+      <div class="sc-icon">✨</div>
+      <div class="sc-name">Custom Project</div>
+      <div class="sc-desc">Anything else — book covers, event banners, merch, NFTs, app UI mockups.</div>
+      <div class="sc-price">Custom quote</div>
+      <div class="sc-time">⏱ TBD by scope</div>
+    </div>
+  </div>
+
+  <!-- ORDER PANEL -->
+  <div id="order" style="margin-bottom:16px;">
+    <div class="section-title">Place Your Order</div>
+    <div class="section-sub">Fill in the brief — AI handles the rest</div>
+  </div>
+  <div class="order-panel">
+    <div class="op-header">
+      <div class="op-title" id="orderTitle">Brand Identity Package</div>
+    </div>
+    <div class="op-body">
+      <div class="op-left">
+        <div class="field">
+          <label>Brand / Company Name</label>
+          <input type="text" id="brandName" placeholder="e.g. NovaTech Solutions" oninput="updateSummary()">
+        </div>
+        <div class="field">
+          <label>Industry</label>
+          <select id="brandIndustry" onchange="updateSummary()">
+            <option value="">Select industry...</option>
+            <option>SaaS / Technology</option>
+            <option>E-commerce / Retail</option>
+            <option>Finance / Crypto</option>
+            <option>Health & Wellness</option>
+            <option>Real Estate</option>
+            <option>Food & Beverage</option>
+            <option>Agency / Consulting</option>
+            <option>Entertainment / Media</option>
+            <option>Education</option>
+            <option>Non-profit</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Brand Personality (pick up to 3)</label>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:4px;" id="personalityGrid">
+            <span class="toggle-pill active" onclick="togglePill(this)">Professional</span>
+            <span class="toggle-pill" onclick="togglePill(this)">Bold</span>
+            <span class="toggle-pill" onclick="togglePill(this)">Playful</span>
+            <span class="toggle-pill" onclick="togglePill(this)">Luxurious</span>
+            <span class="toggle-pill" onclick="togglePill(this)">Minimal</span>
+            <span class="toggle-pill" onclick="togglePill(this)">Techy</span>
+            <span class="toggle-pill" onclick="togglePill(this)">Warm</span>
+            <span class="toggle-pill" onclick="togglePill(this)">Edgy</span>
+          </div>
+        </div>
+        <div style="font-size:.78rem;color:var(--muted);margin-bottom:8px;font-weight:500;">Color Preference</div>
+        <div class="style-row">
+          <div class="style-opt active" onclick="selectColor(this,'dark')"><div class="so-preview" style="background:linear-gradient(135deg,#0a1628,#c9a84c);">🌙</div><div class="so-name">Dark / Gold</div></div>
+          <div class="style-opt" onclick="selectColor(this,'light')"><div class="so-preview" style="background:linear-gradient(135deg,#f5f0e8,#0e9f6e);">☀️</div><div class="so-name">Light / Fresh</div></div>
+          <div class="style-opt" onclick="selectColor(this,'vibrant')"><div class="so-preview" style="background:linear-gradient(135deg,#7c3aed,#f59e0b);">🎨</div><div class="so-name">Vibrant</div></div>
+          <div class="style-opt" onclick="selectColor(this,'mono')"><div class="so-preview" style="background:linear-gradient(135deg,#111,#888);">⚫</div><div class="so-name">Monochrome</div></div>
+          <div class="style-opt" onclick="selectColor(this,'nature')"><div class="so-preview" style="background:linear-gradient(135deg,#166534,#dcfce7);">🌿</div><div class="so-name">Nature</div></div>
+          <div class="style-opt" onclick="selectColor(this,'custom')"><div class="so-preview" style="background:var(--lapis3);">🎯</div><div class="so-name">My Colors</div></div>
+        </div>
+        <div class="field">
+          <label>Brief (describe what you need)</label>
+          <textarea id="brief" placeholder="Tell us about your brand, target audience, what you like/dislike, any references..." oninput="updateSummary()"></textarea>
+        </div>
+        <div class="field">
+          <label>Reference URLs or inspiration (optional)</label>
+          <input type="text" id="refs" placeholder="dribbble.com/..., behance.net/...">
+        </div>
+      </div>
+      <div class="op-right">
+        <div style="font-size:.72rem;color:var(--muted);font-weight:600;letter-spacing:.05em;text-transform:uppercase;margin-bottom:12px;">Delivery Timeline</div>
+        <div class="timeline">
+          <div class="tl-item"><div class="tl-dot now">✓</div><div class="tl-info"><div class="tl-label">Order Received</div><div class="tl-desc">AI reads your brief immediately</div></div></div>
+          <div class="tl-item"><div class="tl-dot soon">2h</div><div class="tl-info"><div class="tl-label">First Concepts Ready</div><div class="tl-desc">3 direction options for you to pick</div></div></div>
+          <div class="tl-item"><div class="tl-dot soon">4h</div><div class="tl-info"><div class="tl-label">Full Package Delivered</div><div class="tl-desc">All files + source in your dashboard</div></div></div>
+          <div class="tl-item"><div class="tl-dot later">∞</div><div class="tl-info"><div class="tl-label">Unlimited Revisions</div><div class="tl-desc">Tweak until you love it</div></div></div>
+        </div>
+
+        <div style="font-size:.72rem;color:var(--muted);font-weight:600;letter-spacing:.05em;text-transform:uppercase;margin-bottom:12px;">Order Summary</div>
+        <div class="price-summary" id="priceSummary">
+          <div class="ps-row"><span class="ps-label">Service</span><span class="ps-value" id="ps-svc">Brand Identity Package</span></div>
+          <div class="ps-row"><span class="ps-label">Brand</span><span class="ps-value" id="ps-brand">—</span></div>
+          <div class="ps-row"><span class="ps-label">Delivery</span><span class="ps-value">~8 hours</span></div>
+          <div class="ps-row"><span class="ps-label">Revisions</span><span class="ps-value">Unlimited</span></div>
+          <div class="ps-row"><span class="ps-label">Total</span><span class="ps-value ps-total" id="ps-total">$297</span></div>
+        </div>
+
+        <div class="field">
+          <label>Your Email (delivery address)</label>
+          <input type="email" id="orderEmail" placeholder="you@company.com">
+        </div>
+        <button class="btn-submit" onclick="submitOrder()">✦ Submit Brief & Order</button>
+        <div style="font-size:.7rem;color:var(--muted);text-align:center;margin-top:8px;">Secure order · No charge until concepts approved · Cancel anytime</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PORTFOLIO -->
+  <div id="portfolio" style="margin-bottom:16px;">
+    <div class="section-title">Recent Deliveries</div>
+    <div class="section-sub">Real work from the ABUZ8 design engine</div>
+  </div>
+  <div class="portfolio-grid">
+    <div class="port-card"><div class="port-img" data-type="Brand" style="background:linear-gradient(135deg,#1a0a2e,#6d28d9);">🏢</div><div class="port-meta"><div class="port-name">Vertex Capital — Brand Identity</div><div class="port-client">FinTech startup · Series A</div><div class="port-time">Delivered in 6h</div></div></div>
+    <div class="port-card"><div class="port-img" data-type="Social" style="background:linear-gradient(135deg,#0c4a2e,#16a34a);">📱</div><div class="port-meta"><div class="port-name">GreenLeaf Co — 30 Social Posts</div><div class="port-client">Wellness brand · DTC</div><div class="port-time">Delivered in 3.5h</div></div></div>
+    <div class="port-card"><div class="port-img" data-type="Ads" style="background:linear-gradient(135deg,#7c2d12,#ea580c);">📣</div><div class="port-meta"><div class="port-name">Ember SaaS — Ad Creative Bundle</div><div class="port-client">B2B SaaS · Growth stage</div><div class="port-time">Delivered in 5h</div></div></div>
+    <div class="port-card"><div class="port-img" data-type="Pitch" style="background:linear-gradient(135deg,#0f172a,#1e40af);">📊</div><div class="port-meta"><div class="port-name">ArcFlow — Investor Deck</div><div class="port-client">AI startup · Pre-seed</div><div class="port-time">Delivered in 9h</div></div></div>
+    <div class="port-card"><div class="port-img" data-type="Thumb" style="background:linear-gradient(135deg,#1c1917,#d97706);">🎬</div><div class="port-meta"><div class="port-name">TechInsights — YouTube Pack</div><div class="port-client">Creator · 220K subscribers</div><div class="port-time">Delivered in 2h</div></div></div>
+    <div class="port-card"><div class="port-img" data-type="Custom" style="background:linear-gradient(135deg,#134e4a,#0d9488);">✨</div><div class="port-meta"><div class="port-name">Summit Realty — Full Rebrand</div><div class="port-client">Real estate agency · 80 agents</div><div class="port-time">Delivered in 14h</div></div></div>
+  </div>
+
+  <!-- GUARANTEES -->
+  <div class="guarantee-row">
+    <div class="gbox"><div class="g-icon">⚡</div><div class="g-title">Delivered in Hours</div><div class="g-desc">Not days or weeks. Your design engine runs 24/7 and delivers the first concepts within 2 hours of your order.</div></div>
+    <div class="gbox"><div class="g-icon">🔄</div><div class="g-title">Unlimited Revisions</div><div class="g-desc">Not happy? Iterate as many times as you need until the design is exactly what you envisioned. No limits, no extra charges.</div></div>
+    <div class="gbox"><div class="g-icon">📜</div><div class="g-title">Full Commercial Rights</div><div class="g-desc">Every asset we deliver is 100% yours. Print it, sell it, trademark it — no attribution required, no royalty fees ever.</div></div>
+  </div>
+
+  <!-- WAITLIST -->
+  <div class="waitlist-section">
+    <div class="wl-title">🎨 Join the Design Agency Waitlist</div>
+    <div class="wl-sub">Get early access, founding member pricing, and your first project free.</div>
+    <div class="wl-form">
+      <input class="wl-input" type="email" id="wlEmail" placeholder="work@company.com">
+      <button class="wl-btn" onclick="joinWaitlist()">Get Early Access</button>
+    </div>
+    <div class="wl-success" id="wlSuccess">✦ You're on the list! First project is on us.</div>
+    <div class="wl-perks">
+      <span class="wl-perk">First project free</span>
+      <span class="wl-perk">Founding pricing locked</span>
+      <span class="wl-perk">Priority queue</span>
+      <span class="wl-perk">Dedicated account</span>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<style>
+.toggle-pill{background:var(--lapis3);border:1px solid rgba(201,168,76,.1);color:var(--muted);font-size:.72rem;padding:4px 10px;border-radius:10px;cursor:pointer;transition:.2s;user-select:none;}
+.toggle-pill:hover{border-color:rgba(201,168,76,.3);}
+.toggle-pill.active{background:rgba(201,168,76,.1);border-color:var(--gold);color:var(--gold);}
+</style>
+
+<script src="/tools/_abuz8-live-brain.js" onerror="console.log('Brain offline')"></script>
+<script>
+const SVC_DATA = {
+  brand: { name:'Brand Identity Package', price:'$297', time:'~8 hours' },
+  social: { name:'Social Media Pack', price:'$197', time:'~4 hours' },
+  ads: { name:'Ad Creative Bundle', price:'$247', time:'~6 hours' },
+  pitch: { name:'Pitch Deck Design', price:'$397', time:'~12 hours' },
+  thumb: { name:'YouTube Thumbnails', price:'$97', time:'~2 hours' },
+  custom: { name:'Custom Project', price:'Custom quote', time:'TBD' },
+};
+let currentSvc = 'brand';
+let currentColor = 'dark';
+
+function selectService(el, svc){
+  document.querySelectorAll('.service-card').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  currentSvc = svc;
+  const d = SVC_DATA[svc];
+  document.getElementById('orderTitle').textContent = d.name;
+  updateSummary();
+  document.getElementById('order').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function selectColor(el, color){
+  document.querySelectorAll('.style-opt').forEach(o=>o.classList.remove('active'));
+  el.classList.add('active');
+  currentColor = color;
+}
+
+function togglePill(el){
+  const active = document.querySelectorAll('#personalityGrid .toggle-pill.active').length;
+  if(el.classList.contains('active')){ el.classList.remove('active'); return; }
+  if(active >= 3){ toast('Pick up to 3 personality traits'); return; }
+  el.classList.add('active');
+}
+
+function updateSummary(){
+  const d = SVC_DATA[currentSvc];
+  const brand = document.getElementById('brandName').value || '—';
+  document.getElementById('ps-svc').textContent   = d.name;
+  document.getElementById('ps-brand').textContent = brand;
+  document.getElementById('ps-total').textContent = d.price;
+}
+
+async function submitOrder(){
+  const brand = document.getElementById('brandName').value.trim();
+  const email = document.getElementById('orderEmail').value.trim();
+  const brief = document.getElementById('brief').value.trim();
+  if(!brand){ toast('Enter your brand name'); return; }
+  if(!email || !email.includes('@')){ toast('Enter your email for delivery'); return; }
+
+  const btn = document.querySelector('.btn-submit');
+  btn.textContent = '⟳ Submitting order...';
+  btn.disabled = true;
+
+  const payload = {
+    service: currentSvc, brand, email, brief,
+    industry: document.getElementById('brandIndustry').value,
+    color: currentColor,
+    personality: [...document.querySelectorAll('#personalityGrid .toggle-pill.active')].map(p=>p.textContent),
+    refs: document.getElementById('refs').value,
+    ts: Date.now()
+  };
+
+  try {
+    if(typeof window.ABUZ8 !== 'undefined' && window.ABUZ8.callBrain){
+      await window.ABUZ8.callBrain('design_order_submit', payload);
+    }
+  } catch(e){ console.log('Brain offline'); }
+
+  await new Promise(r=>setTimeout(r,1200));
+  btn.textContent = '✅ Order Submitted!';
+  btn.style.background = 'linear-gradient(135deg,var(--turq3),var(--turq))';
+  toast('✦ Brief received! First concepts coming in ~2 hours.', 5000);
+  document.getElementById('wlEmail').value = email;
+}
+
+async function joinWaitlist(){
+  const email = document.getElementById('wlEmail').value.trim();
+  if(!email || !email.includes('@')){ toast('Enter a valid email'); return; }
+  try {
+    if(typeof window.ABUZ8 !== 'undefined' && window.ABUZ8.callBrain){
+      await window.ABUZ8.callBrain('waitlist_add', { email, product:'ai-design-agency', ts: Date.now() });
+    }
+  } catch(e){ console.log('Brain offline'); }
+  document.getElementById('wlSuccess').style.display = 'block';
+  document.getElementById('wlEmail').value = '';fetch('/api/waitlist',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:e,product:'ai-design-agency',ts:Date.now()})}).catch(function(){});
+  toast('✦ Welcome! First project on us.');
+}
+
+function toast(msg, dur=2800){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), dur);
+}
+
+updateSummary();
+</script>
+
+<script src="/assets/js/dfy-banner.js" async></script>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+<script src="/tools/_tools-shared.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>
+

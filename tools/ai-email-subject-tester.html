@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Email Subject Line Tester — ABUZ8</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{--lapis:#0a1628;--lapis2:#0f2040;--gold:#c9a84c;--gold2:#e6c876;--turq:#0e9f6e;--cream:#f5f0e8;--cream2:#ede7d9;--text:#1a1a2e;--muted:#5a6070;--r:12px;--red:#c0392b;--orange:#e67e22;--green:#27ae60;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'Inter',sans-serif;background:var(--cream);color:var(--text);min-height:100vh;}
+  header{background:var(--lapis);padding:18px 32px;display:flex;align-items:center;justify-content:space-between;}
+  .brand{font-family:'Playfair Display',serif;font-size:22px;color:#fff;}
+  .brand span{color:var(--gold);}
+  .subtitle{color:rgba(255,255,255,0.5);font-size:12px;margin-top:2px;}
+  .main{max-width:860px;margin:0 auto;padding:32px 20px;}
+  h1{font-family:'Playfair Display',serif;font-size:32px;color:var(--lapis);margin-bottom:6px;}
+  .hero-sub{color:var(--muted);font-size:15px;margin-bottom:32px;}
+  .panel{background:#fff;border-radius:var(--r);padding:28px;box-shadow:0 2px 16px rgba(10,22,40,0.07);margin-bottom:24px;}
+  label{display:block;font-size:12px;font-weight:600;color:var(--lapis);text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px;}
+  .subject-input-wrap{position:relative;}
+  .subject-input{width:100%;border:2px solid var(--cream2);border-radius:10px;padding:14px 120px 14px 16px;font-size:16px;font-family:'Inter',sans-serif;color:var(--text);background:#fff;outline:none;transition:border-color .2s;}
+  .subject-input:focus{border-color:var(--gold);}
+  .char-badge{position:absolute;right:80px;top:50%;transform:translateY(-50%);font-size:12px;font-weight:600;color:var(--muted);}
+  .char-badge.warn{color:var(--orange);}
+  .char-badge.over{color:var(--red);}
+  .test-btn{position:absolute;right:8px;top:50%;transform:translateY(-50%);background:var(--lapis);color:#fff;border:none;border-radius:7px;padding:8px 16px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;transition:opacity .2s;}
+  .test-btn:hover{opacity:.85;}
+  .section-label{font-family:'Playfair Display',serif;font-size:16px;font-weight:600;color:var(--lapis);margin-bottom:16px;padding-bottom:8px;border-bottom:2px solid var(--gold);}
+  .score-ring-wrap{display:flex;align-items:center;gap:28px;margin-bottom:24px;}
+  .score-ring{width:90px;height:90px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:26px;font-weight:700;flex-shrink:0;position:relative;}
+  .score-ring::before{content:'';position:absolute;inset:0;border-radius:50%;border:6px solid var(--cream2);}
+  .score-ring .label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1px;}
+  .grade-A{background:rgba(39,174,96,0.12);color:var(--green);}
+  .grade-B{background:rgba(39,174,96,0.07);color:#2ecc71;}
+  .grade-C{background:rgba(230,126,34,0.1);color:var(--orange);}
+  .grade-D{background:rgba(192,57,43,0.1);color:var(--red);}
+  .score-verdict h3{font-family:'Playfair Display',serif;font-size:18px;font-weight:600;color:var(--lapis);margin-bottom:4px;}
+  .score-verdict p{font-size:13px;color:var(--muted);line-height:1.6;}
+  .metrics-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px;}
+  @media(max-width:600px){.metrics-grid{grid-template-columns:1fr 1fr;}}
+  .metric-card{background:var(--cream);border-radius:10px;padding:14px;text-align:center;}
+  .metric-card .m-val{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;}
+  .metric-card .m-label{font-size:10px;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin-top:3px;}
+  .grade-bar{height:6px;border-radius:3px;margin-top:8px;background:var(--cream2);overflow:hidden;}
+  .grade-fill{height:100%;border-radius:3px;transition:width .6s ease;}
+  .checks-list{display:flex;flex-direction:column;gap:8px;margin-bottom:24px;}
+  .check-item{display:flex;align-items:flex-start;gap:10px;font-size:13px;line-height:1.5;}
+  .check-icon{width:20px;height:20px;min-width:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;margin-top:1px;}
+  .check-pass{background:rgba(39,174,96,0.15);color:var(--green);}
+  .check-fail{background:rgba(192,57,43,0.12);color:var(--red);}
+  .check-warn{background:rgba(230,126,34,0.12);color:var(--orange);}
+  .check-text strong{color:var(--lapis);}
+  .alts-list{display:flex;flex-direction:column;gap:10px;}
+  .alt-card{background:var(--cream);border-radius:9px;padding:14px 16px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:border-color .2s;border:1.5px solid transparent;}
+  .alt-card:hover{border-color:var(--gold);}
+  .alt-score{font-size:13px;font-weight:700;min-width:36px;text-align:center;border-radius:6px;padding:3px 8px;}
+  .s-a{background:rgba(39,174,96,0.15);color:var(--green);}
+  .s-b{background:rgba(39,174,96,0.08);color:#2ecc71;}
+  .s-c{background:rgba(230,126,34,0.12);color:var(--orange);}
+  .alt-text{flex:1;font-size:14px;color:var(--text);}
+  .alt-copy{border:1.5px solid var(--cream2);background:#fff;border-radius:6px;padding:5px 10px;font-size:11px;cursor:pointer;color:var(--muted);transition:all .2s;}
+  .alt-copy:hover{border-color:var(--gold);color:var(--gold);}
+  .empty-state{text-align:center;padding:40px 20px;color:var(--muted);font-size:14px;}
+  .empty-state .icon{font-size:36px;margin-bottom:10px;}
+  .preview-bar{background:var(--lapis2);border-radius:10px;padding:16px 20px;margin-bottom:24px;}
+  .preview-bar h4{color:var(--gold);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;}
+  .preview-mock{display:flex;flex-direction:column;gap:10px;}
+  .mock-row{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:8px;background:rgba(255,255,255,0.06);}
+  .mock-sender{font-size:13px;font-weight:600;color:#fff;min-width:100px;}
+  .mock-subject{font-size:13px;color:rgba(255,255,255,0.85);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .mock-subject.truncated{color:rgba(255,165,0,0.8);}
+  .mock-date{font-size:11px;color:rgba(255,255,255,0.35);min-width:50px;text-align:right;}
+  .chips{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:18px;}
+  .chip{border:1.5px solid var(--cream2);background:#fff;border-radius:20px;padding:5px 12px;font-size:12px;font-weight:500;color:var(--muted);cursor:pointer;transition:all .2s;}
+  .chip.active{background:var(--lapis);border-color:var(--lapis);color:#fff;}
+  .context-row{display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap;}
+  .context-field{flex:1;min-width:140px;}
+  .context-field input{width:100%;border:1.5px solid var(--cream2);border-radius:8px;padding:9px 12px;font-size:13px;font-family:'Inter',sans-serif;color:var(--text);background:#fff;outline:none;transition:border-color .2s;}
+  .context-field input:focus{border-color:var(--gold);}
+</style>
+<script src="_abuz8-live-brain.js" defer></script>
+
+<script src="_abuz8-config.js" defer></script>
+<link rel="canonical" href="https://abuz8ai.com/tools/ai-email-subject-tester">
+<meta name="description" content="AI Email Subject Tester — Score and improve subject lines. Free, no signup, runs entirely in your browser. One of 169 free AI and developer tools by ABUZ8.">
+</head>
+<body>
+
+<header>
+  <div>
+    <div class="brand">ABU<span>Z8</span></div>
+    <div class="subtitle">AI Email Subject Line Tester</div>
+  </div>
+  <div style="color:rgba(255,255,255,0.4);font-size:12px;">Free · No login required</div>
+</header>
+
+<div class="main">
+  <h1>Email Subject Line Tester</h1>
+  <p class="hero-sub">Score your subject line, predict open rates, and get AI-generated alternatives — instantly.</p>
+
+  <!-- Input -->
+  <div class="panel">
+    <label>Your Subject Line</label>
+    <div class="subject-input-wrap">
+      <input type="text" class="subject-input" id="subjectInput" placeholder="e.g. Quick question about your Q3 pipeline..." oninput="onSubjectChange(this)">
+      <span class="char-badge" id="charBadge">0/60</span>
+      <button class="test-btn" onclick="analyzeSubject()">Analyze →</button>
+    </div>
+
+    <div style="margin-top:16px;">
+      <label>Email Type</label>
+      <div class="chips">
+        <button class="chip active" onclick="setChip('type',this,'Cold Outreach')">Cold Outreach</button>
+        <button class="chip" onclick="setChip('type',this,'Newsletter')">Newsletter</button>
+        <button class="chip" onclick="setChip('type',this,'Promotional')">Promotional</button>
+        <button class="chip" onclick="setChip('type',this,'Transactional')">Transactional</button>
+        <button class="chip" onclick="setChip('type',this,'Re-engagement')">Re-engagement</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Results -->
+  <div id="resultsPanel" style="display:none;">
+
+    <!-- Score -->
+    <div class="panel">
+      <div class="section-label">Subject Line Score</div>
+      <div class="score-ring-wrap">
+        <div class="score-ring" id="scoreRing">
+          <div>
+            <div style="text-align:center" id="scoreNum">--</div>
+            <div class="label" id="scoreGrade">--</div>
+          </div>
+        </div>
+        <div class="score-verdict">
+          <h3 id="verdictTitle">Analyzing...</h3>
+          <p id="verdictText"></p>
+        </div>
+      </div>
+
+      <!-- Metrics -->
+      <div class="metrics-grid">
+        <div class="metric-card">
+          <div class="m-val" id="mOpenRate">--</div>
+          <div class="m-label">Est. Open Rate</div>
+          <div class="grade-bar"><div class="grade-fill" id="mOpenFill" style="background:var(--turq);width:0"></div></div>
+        </div>
+        <div class="metric-card">
+          <div class="m-val" id="mLength">--</div>
+          <div class="m-label">Characters</div>
+          <div class="grade-bar"><div class="grade-fill" id="mLenFill" style="background:var(--gold);width:0"></div></div>
+        </div>
+        <div class="metric-card">
+          <div class="m-val" id="mWords">--</div>
+          <div class="m-label">Words</div>
+          <div class="grade-bar"><div class="grade-fill" id="mWordFill" style="background:var(--turq);width:0"></div></div>
+        </div>
+        <div class="metric-card">
+          <div class="m-val" id="mSpam">--</div>
+          <div class="m-label">Spam Risk</div>
+          <div class="grade-bar"><div class="grade-fill" id="mSpamFill" style="width:0"></div></div>
+        </div>
+      </div>
+
+      <!-- Email preview -->
+      <div class="preview-bar">
+        <h4>📬 Inbox Preview</h4>
+        <div class="preview-mock">
+          <div class="mock-row">
+            <span class="mock-sender">Your Name</span>
+            <span class="mock-subject" id="previewDesktop">...</span>
+            <span class="mock-date">9:41 AM</span>
+          </div>
+          <div class="mock-row" style="background:rgba(255,255,255,0.03)">
+            <span class="mock-sender" style="font-size:11px;color:rgba(255,255,255,0.4)">Mobile (35ch)</span>
+            <span class="mock-subject" id="previewMobile">...</span>
+            <span class="mock-date">9:41 AM</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Checks -->
+      <div class="section-label" style="margin-top:4px;">Detailed Checks</div>
+      <div class="checks-list" id="checksList"></div>
+    </div>
+
+    <!-- Alternatives -->
+    <div class="panel">
+      <div class="section-label">AI-Generated Alternatives</div>
+      <div class="alts-list" id="altsList"></div>
+    </div>
+
+  </div>
+
+  <div id="emptyState" class="panel">
+    <div class="empty-state">
+      <div class="icon">📧</div>
+      <p>Enter a subject line above and click Analyze.</p>
+      <p style="margin-top:6px;font-size:12px;">We'll score it on 12 factors and generate 5 better alternatives.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+let emailType = 'Cold Outreach';
+
+function setChip(group, el, val) {
+  if (group === 'type') emailType = val;
+  el.closest('.chips').querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+}
+
+function onSubjectChange(inp) {
+  const len = inp.value.length;
+  const badge = document.getElementById('charBadge');
+  badge.textContent = `${len}/60`;
+  badge.className = 'char-badge' + (len > 60 ? ' over' : len > 50 ? ' warn' : '');
+}
+
+const SPAM_WORDS = ['free','win','winner','click here','urgent','limited time','buy now','cash','prize','guarantee','no risk','100%','!!!','$$$','act now','order now','subscribe','unsubscribe','make money','earn money','work from home','billion','million dollars','credit','loan','debt','refinance'];
+const POWER_WORDS = ['exclusive','secret','proven','new','limited','insider','discover','you','your','results','save','instant','quick','easy','best','top','free','guaranteed'];
+
+function scoreSubject(subject) {
+  const len = subject.length;
+  const wordCount = subject.trim().split(/\s+/).length;
+  const lower = subject.toLowerCase();
+
+  let score = 50; // baseline
+  const checks = [];
+
+  // 1. Length
+  if (len >= 28 && len <= 50) {
+    score += 15;
+    checks.push({status:'pass', title:'Optimal length', detail:`${len} chars — sweet spot is 28–50.`});
+  } else if (len < 28) {
+    score += 5;
+    checks.push({status:'warn', title:'Short subject line', detail:`${len} chars — may lack context. Aim for 28+.`});
+  } else if (len <= 60) {
+    score += 8;
+    checks.push({status:'warn', title:'Slightly long', detail:`${len} chars — will truncate on mobile (35ch).`});
+  } else {
+    score -= 10;
+    checks.push({status:'fail', title:'Too long', detail:`${len} chars — truncated on desktop and mobile.`});
+  }
+
+  // 2. ALL CAPS
+  const capsWords = subject.split(/\s+/).filter(w => w.length > 2 && w === w.toUpperCase() && /[A-Z]/.test(w));
+  if (capsWords.length > 1) {
+    score -= 15;
+    checks.push({status:'fail', title:'Excessive caps', detail:`"${capsWords.join(', ')}" — triggers spam filters and looks aggressive.`});
+  } else {
+    checks.push({status:'pass', title:'No excessive caps', detail:'Capitalization looks natural.'});
+  }
+
+  // 3. Spam words
+  const spamFound = SPAM_WORDS.filter(w => lower.includes(w.toLowerCase()));
+  if (spamFound.length > 0) {
+    score -= spamFound.length * 8;
+    checks.push({status:'fail', title:'Spam trigger words', detail:`Found: "${spamFound.slice(0,3).join('", "')}" — high spam filter risk.`});
+  } else {
+    score += 10;
+    checks.push({status:'pass', title:'No spam trigger words', detail:'Clean — no common spam filter triggers.'});
+  }
+
+  // 4. Excessive punctuation
+  const excl = (subject.match(/!/g) || []).length;
+  const ques = (subject.match(/\?/g) || []).length;
+  if (excl > 1 || (excl + ques) > 2) {
+    score -= 10;
+    checks.push({status:'fail', title:'Excessive punctuation', detail:`${excl} exclamation(s), ${ques} question mark(s) — looks spammy.`});
+  } else if (ques === 1) {
+    score += 8;
+    checks.push({status:'pass', title:'Question format', detail:'Single question increases curiosity and open rate.'});
+  } else {
+    checks.push({status:'pass', title:'Clean punctuation', detail:'Punctuation is natural and minimal.'});
+  }
+
+  // 5. Personalization hint
+  if (lower.includes('you') || lower.includes('your')) {
+    score += 8;
+    checks.push({status:'pass', title:'Personalization signal', detail:`Uses "you/your" — feels direct and personal.`});
+  } else if (emailType === 'Cold Outreach') {
+    score -= 5;
+    checks.push({status:'warn', title:'No personalization', detail:'Cold outreach benefits from "you/your" or first name.'});
+  } else {
+    checks.push({status:'pass', title:'No personalization needed', detail:'Not required for this email type.'});
+  }
+
+  // 6. Power words
+  const pwFound = POWER_WORDS.filter(w => lower.includes(w.toLowerCase()));
+  if (pwFound.length >= 1) {
+    score += 5;
+    checks.push({status:'pass', title:'Power word detected', detail:`"${pwFound[0]}" — triggers emotional response.`});
+  } else {
+    checks.push({status:'warn', title:'No power words', detail:'Consider adding a word like: exclusive, proven, quick, new.'});
+  }
+
+  // 7. Numbers
+  if (/\d/.test(subject)) {
+    score += 6;
+    checks.push({status:'pass', title:'Contains number', detail:'Numbers in subjects increase CTR by up to 57%.'});
+  } else {
+    checks.push({status:'warn', title:'No number', detail:'Try adding a specific number: "3 ways to..." or "47% of...".'});
+  }
+
+  // Clamp score
+  score = Math.max(0, Math.min(100, score));
+
+  // Estimate open rate (baseline avg by type + score modifier)
+  const baseRates = {'Cold Outreach':18,'Newsletter':22,'Promotional':15,'Transactional':45,'Re-engagement':12};
+  const base = baseRates[emailType] || 20;
+  const openRate = Math.round(base + (score - 50) * 0.2);
+
+  // Spam risk
+  const spamRisk = spamFound.length > 0 ? 'High' : capsWords.length > 1 ? 'Medium' : excl > 1 ? 'Medium' : 'Low';
+
+  return {score, checks, wordCount, openRate, spamRisk, spamFound};
+}
+
+function getGrade(score) {
+  if (score >= 80) return {grade:'A', label:'Excellent', color:'var(--green)', cls:'grade-A'};
+  if (score >= 65) return {grade:'B', label:'Good', color:'#2ecc71', cls:'grade-B'};
+  if (score >= 45) return {grade:'C', label:'Average', color:'var(--orange)', cls:'grade-C'};
+  return {grade:'D', label:'Needs Work', color:'var(--red)', cls:'grade-D'};
+}
+
+function buildAlternatives(subject, type) {
+  const words = subject.split(' ');
+  const topicWord = words.find(w => w.length > 4) || words[0] || 'this';
+
+  const templates = {
+    'Cold Outreach': [
+      `Quick question about your ${topicWord.toLowerCase()}`,
+      `[First Name], how are you handling ${topicWord.toLowerCase()}?`,
+      `Saw your post — had a thought on ${topicWord.toLowerCase()}`,
+      `3 things most companies miss with ${topicWord.toLowerCase()}`,
+      `Your competitors are already doing this`,
+    ],
+    'Newsletter': [
+      `This week: ${topicWord} + what I learned`,
+      `The ${topicWord} mistake 80% of readers make`,
+      `5 minutes on ${topicWord} (worth it)`,
+      `[New] Your ${topicWord} guide is here`,
+      `I almost didn't send this one`,
+    ],
+    'Promotional': [
+      `Last chance: ${topicWord} deal ends tonight`,
+      `For you only: our best ${topicWord} offer`,
+      `[Expires soon] ${subject}`,
+      `${topicWord.charAt(0).toUpperCase()+topicWord.slice(1)} — 48 hours left`,
+      `You asked, we delivered: ${topicWord}`,
+    ],
+    'Re-engagement': [
+      `We miss you — here's what you've missed`,
+      `It's been a while. Still interested in ${topicWord}?`,
+      `[Update] Big changes to your ${topicWord}`,
+      `Come back: we have something for you`,
+      `A gift from us — no strings attached`,
+    ],
+    'Transactional': [
+      `Your ${topicWord} is confirmed`,
+      `Action required: your ${topicWord} details`,
+      `[Update] Your ${topicWord} status`,
+      `Receipt: ${topicWord} — ref #${Math.floor(Math.random()*9000+1000)}`,
+      `${topicWord} — everything you need to know`,
+    ],
+  };
+
+  const alts = (templates[type] || templates['Cold Outreach']).map(t => {
+    const s = scoreSubject(t);
+    return {text: t, score: s.score, grade: getGrade(s.score)};
+  });
+
+  return alts.sort((a,b) => b.score - a.score);
+}
+
+function analyzeSubject() {
+  const subject = document.getElementById('subjectInput').value.trim();
+  if (!subject) { alert('Enter a subject line first.'); return; }
+
+  const data = scoreSubject(subject);
+  const g = getGrade(data.score);
+
+  document.getElementById('emptyState').style.display = 'none';
+  document.getElementById('resultsPanel').style.display = 'block';
+
+  // Score ring
+  const ring = document.getElementById('scoreRing');
+  ring.className = `score-ring ${g.cls}`;
+  document.getElementById('scoreNum').textContent = data.score;
+  document.getElementById('scoreGrade').textContent = g.grade;
+
+  // Verdict
+  const verdicts = {
+    A: ['Strong subject line.', `Estimated open rate: ~${data.openRate}%. This is performing in the top tier.`],
+    B: ['Solid subject line.', `Estimated open rate: ~${data.openRate}%. A few tweaks could push it to A.`],
+    C: ['Average subject line.', `Estimated open rate: ~${data.openRate}%. Check the issues below for quick wins.`],
+    D: ['Needs work.', `Estimated open rate: ~${data.openRate}%. Multiple issues detected — see alternatives below.`],
+  };
+  document.getElementById('verdictTitle').textContent = verdicts[g.grade][0];
+  document.getElementById('verdictText').textContent = verdicts[g.grade][1];
+
+  // Metrics
+  document.getElementById('mOpenRate').textContent = `${data.openRate}%`;
+  document.getElementById('mOpenFill').style.width = `${Math.min(100, data.openRate * 1.5)}%`;
+  document.getElementById('mLength').textContent = subject.length;
+  document.getElementById('mLenFill').style.width = `${Math.min(100, (subject.length / 60) * 100)}%`;
+  document.getElementById('mWords').textContent = data.wordCount;
+  document.getElementById('mWordFill').style.width = `${Math.min(100, (data.wordCount / 10) * 100)}%`;
+  document.getElementById('mSpam').textContent = data.spamRisk;
+  const spamColors = {Low:'var(--green)',Medium:'var(--orange)',High:'var(--red)'};
+  document.getElementById('mSpamFill').style.background = spamColors[data.spamRisk];
+  document.getElementById('mSpamFill').style.width = data.spamRisk === 'Low' ? '20%' : data.spamRisk === 'Medium' ? '55%' : '90%';
+
+  // Preview
+  document.getElementById('previewDesktop').textContent = subject.length > 60 ? subject.slice(0,57)+'...' : subject;
+  document.getElementById('previewDesktop').className = 'mock-subject' + (subject.length > 60 ? ' truncated' : '');
+  document.getElementById('previewMobile').textContent = subject.length > 35 ? subject.slice(0,32)+'...' : subject;
+  document.getElementById('previewMobile').className = 'mock-subject' + (subject.length > 35 ? ' truncated' : '');
+
+  // Checks
+  const checksList = document.getElementById('checksList');
+  checksList.innerHTML = data.checks.map(c => `
+    <div class="check-item">
+      <div class="check-icon check-${c.status}">${c.status==='pass'?'✓':c.status==='fail'?'✗':'!'}</div>
+      <div class="check-text"><strong>${c.title}:</strong> ${c.detail}</div>
+    </div>`).join('');
+
+  // Alternatives — real AI generation via the ABUZ8 brain (Cloudflare Workers AI). No templates.
+  const altsList = document.getElementById('altsList');
+  altsList.innerHTML = `<div class="alt-card"><div class="alt-text" style="color:var(--muted)">Generating better alternatives with AI…</div></div>`;
+  fetch('/api/waitlist', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      tool: 'email-subject-tester',
+      data: { subject, emailType, currentScore: data.score, count: 5 }
+    })
+  })
+  .then(r => r.json())
+  .then(res => {
+    if (!res.success || !res.result) throw new Error(res.error || 'Generation failed');
+    // Parse AI output into individual subject lines, then score each with the real client-side scorer.
+    const lines = res.result
+      .split('\n')
+      .map(l => l.replace(/<[^>]+>/g, '').trim())
+      .map(l => l.replace(/^\s*(?:\d+[\.\)]|[-*•])\s*/, '').replace(/^["'“”]|["'“”]$/g, '').trim())
+      .filter(l => l.length > 0 && l.length < 160);
+    if (!lines.length) throw new Error('No alternatives returned');
+    const alts = lines.map(t => { const s = scoreSubject(t); return { text: t, score: s.score, grade: getGrade(s.score) }; })
+                      .sort((a, b) => b.score - a.score);
+    altsList.innerHTML = alts.map(a => `
+      <div class="alt-card">
+        <div class="alt-score s-${a.grade.grade.toLowerCase()}">${a.grade.grade}</div>
+        <div class="alt-text">${a.text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>
+        <button class="alt-copy" onclick="copyAlt(event,'${a.text.replace(/\\/g,'\\\\').replace(/'/g,"\\'")}')">Copy</button>
+      </div>`).join('');
+  })
+  .catch(err => {
+    altsList.innerHTML = `<div class="alt-card"><div class="alt-text" style="color:var(--red)">Couldn't generate alternatives: ${err.message}. Please try again in a moment.</div></div>`;
+  });
+}
+
+function copyAlt(e, text) {
+  e.stopPropagation();
+  navigator.clipboard.writeText(text);
+  const btn = e.target;
+  btn.textContent = '✓';
+  setTimeout(()=>btn.textContent='Copy',1200);
+}
+</script>
+
+<script src="/assets/js/dfy-banner.js" async></script>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+<script src="/tools/_tools-shared.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>
+

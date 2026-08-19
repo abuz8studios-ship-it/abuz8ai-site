@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Terms of Service Generator | ABUZ8</title>
+<style>
+  :root{--lapis:#0a1628;--lapis2:#0f1f3d;--lapis3:#162444;--gold:#c9a84c;--gold2:#e2c06a;--turq:#0e9f6e;--turq2:#22a090;--cream:#f5f0e8;--text:#e8e4dc;--text2:#b8b4ac;--text3:#888480;--red:#e05555;--green:#3db87a;--radius:12px;--radius-sm:8px;--border:1px solid rgba(201,168,76,0.18)}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--lapis);color:var(--text);font-family:'Inter',system-ui,sans-serif;min-height:100vh}
+  header{background:linear-gradient(135deg,var(--lapis2),var(--lapis3));border-bottom:var(--border);padding:24px 40px;display:flex;align-items:center;gap:18px}
+  .logo{width:42px;height:42px;background:linear-gradient(135deg,var(--gold),var(--turq));border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:17px;color:var(--lapis);flex-shrink:0}
+  header h1{font-family:'Playfair Display',Georgia,serif;font-size:24px;color:var(--gold)}
+  header p{font-size:13px;color:var(--text2);margin-top:2px}
+  .badge{margin-left:auto;background:rgba(201,168,76,0.1);border:var(--border);padding:5px 13px;border-radius:20px;font-size:12px;color:var(--gold);white-space:nowrap}
+  .container{max-width:1100px;margin:0 auto;padding:28px 20px}
+  .two-col{display:grid;grid-template-columns:360px 1fr;gap:22px;align-items:start}
+  .panel{background:var(--lapis2);border:var(--border);border-radius:var(--radius);padding:22px}
+  .panel-title{font-size:11px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--gold);margin-bottom:14px}
+  .field{margin-bottom:13px}
+  label{font-size:12px;color:var(--text2);display:block;margin-bottom:5px;font-weight:500}
+  input,select,textarea{width:100%;background:var(--lapis3);border:1px solid rgba(201,168,76,0.2);border-radius:var(--radius-sm);color:var(--text);padding:9px 13px;font-size:14px;outline:none;transition:border-color 0.2s;font-family:inherit}
+  input:focus,select:focus,textarea:focus{border-color:var(--gold)}
+  select option{background:var(--lapis3)}
+  .checkbox-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:4px}
+  .chk-item{display:flex;align-items:flex-start;gap:8px;cursor:pointer;padding:8px 10px;background:var(--lapis3);border:1px solid rgba(201,168,76,0.15);border-radius:var(--radius-sm);transition:all 0.2s}
+  .chk-item:hover{border-color:rgba(201,168,76,0.35)}
+  .chk-item input[type=checkbox]{width:16px;height:16px;min-width:16px;accent-color:var(--gold);margin-top:2px;cursor:pointer}
+  .chk-label{font-size:12px;color:var(--text2);line-height:1.4}
+  .chk-label b{display:block;color:var(--text);font-size:13px}
+  .generate-btn{width:100%;background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--lapis);border:none;border-radius:var(--radius-sm);padding:13px;font-size:15px;font-weight:700;cursor:pointer;transition:all 0.2s;letter-spacing:0.5px;margin-top:6px}
+  .generate-btn:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(201,168,76,0.35)}
+  .output-panel{background:var(--lapis2);border:var(--border);border-radius:var(--radius);padding:24px}
+  .output-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:10px}
+  .output-title{font-size:11px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--gold)}
+  .btn-row{display:flex;gap:8px;flex-wrap:wrap}
+  .action-btn{background:var(--lapis3);border:var(--border);color:var(--text2);padding:7px 14px;border-radius:var(--radius-sm);cursor:pointer;font-size:13px;transition:all 0.2s}
+  .action-btn:hover{border-color:var(--gold);color:var(--gold)}
+  .action-btn.primary{background:rgba(201,168,76,0.12);border-color:rgba(201,168,76,0.35);color:var(--gold)}
+  .action-btn.copied{background:rgba(61,184,122,0.12);border-color:var(--green);color:var(--green)}
+  .tos-output{background:var(--lapis3);border:1px solid rgba(201,168,76,0.12);border-radius:var(--radius);padding:28px;font-size:14px;line-height:1.8;color:var(--text);white-space:pre-wrap;word-break:break-word;max-height:680px;overflow-y:auto}
+  .tos-output h2{font-family:'Playfair Display',Georgia,serif;color:var(--gold);font-size:19px;margin:22px 0 8px}
+  .tos-output h2:first-child{margin-top:0}
+  .tos-output h3{color:var(--gold2);font-size:14px;margin:14px 0 5px;font-weight:600}
+  .tos-output p{margin-bottom:11px}
+  .tos-output ul{margin:6px 0 11px 20px}
+  .tos-output li{margin-bottom:5px;color:var(--text2)}
+  .disclaimer{background:rgba(201,168,76,0.07);border:1px solid rgba(201,168,76,0.2);border-radius:var(--radius-sm);padding:11px 15px;margin-bottom:14px;font-size:12px;color:var(--text3);line-height:1.5}
+  .disclaimer strong{color:var(--gold2)}
+  .placeholder{text-align:center;padding:60px 20px;color:var(--text3)}
+  .placeholder-icon{font-size:48px;margin-bottom:16px;opacity:.5}
+  .placeholder h3{font-size:18px;color:var(--text2);margin-bottom:8px}
+  .stats-bar{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:22px}
+  .stat{background:var(--lapis2);border:var(--border);border-radius:var(--radius-sm);padding:12px 14px;text-align:center}
+  .stat-val{font-size:20px;font-weight:700;color:var(--gold)}
+  .stat-lbl{font-size:11px;color:var(--text3);margin-top:2px}
+  @media(max-width:900px){.two-col{grid-template-columns:1fr}.stats-bar{grid-template-columns:repeat(2,1fr)}}
+</style>
+<script src="_abuz8-live-brain.js" defer></script>
+
+<script src="_abuz8-config.js" defer></script>
+<link rel="canonical" href="https://abuz8ai.com/tools/ai-terms-of-service-generator">
+<meta name="description" content="Terms of Service Generator — Draft terms of service. Free, no signup, runs entirely in your browser. One of 169 free AI and developer tools by ABUZ8.">
+</head>
+<body>
+
+<header>
+  <div class="logo">A8</div>
+  <div>
+    <h1>Terms of Service Generator</h1>
+    <p>Generate professional Terms of Service / Terms and Conditions for your business</p>
+  </div>
+  <span class="badge">⚖ Free &amp; Client-Side</span>
+</header>
+
+<div class="container">
+  <div class="stats-bar">
+    <div class="stat"><div class="stat-val">12+</div><div class="stat-lbl">Sections covered</div></div>
+    <div class="stat"><div class="stat-val">6</div><div class="stat-lbl">Business types</div></div>
+    <div class="stat"><div class="stat-val">Instant</div><div class="stat-lbl">Generation</div></div>
+    <div class="stat"><div class="stat-val">0 $</div><div class="stat-lbl">Cost</div></div>
+  </div>
+
+  <div class="two-col">
+    <!-- CONFIG -->
+    <div>
+      <div class="panel">
+        <div class="panel-title">⚙ Company Details</div>
+        <div class="field"><label>COMPANY / APP NAME *</label><input type="text" id="cname" placeholder="e.g. ABUZ8 AI" maxlength="80"></div>
+        <div class="field"><label>WEBSITE / APP URL *</label><input type="text" id="csite" placeholder="e.g. https://abuz8.ai" maxlength="100"></div>
+        <div class="field"><label>CONTACT EMAIL *</label><input type="email" id="cemail" placeholder="e.g. legal@yourcompany.com" maxlength="80"></div>
+        <div class="field"><label>GOVERNING LAW (State/Country)</label><input type="text" id="govLaw" placeholder="e.g. Delaware, USA or England &amp; Wales" maxlength="60"></div>
+        <div class="field">
+          <label>BUSINESS TYPE</label>
+          <select id="bizType">
+            <option value="saas">SaaS / Web Application</option>
+            <option value="ecomm">E-commerce / Online Store</option>
+            <option value="marketplace">Marketplace / Platform</option>
+            <option value="blog">Blog / Content Platform</option>
+            <option value="app">Mobile Application</option>
+            <option value="services">Professional Services</option>
+          </select>
+        </div>
+
+        <div class="panel-title" style="margin-top:16px">📋 Include Sections</div>
+        <div class="checkbox-grid">
+          <label class="chk-item"><input type="checkbox" id="sec_accounts" checked><div class="chk-label"><b>User Accounts</b>Registration, credentials</div></label>
+          <label class="chk-item"><input type="checkbox" id="sec_payment" checked><div class="chk-label"><b>Payments & Billing</b>Pricing, refunds</div></label>
+          <label class="chk-item"><input type="checkbox" id="sec_ip" checked><div class="chk-label"><b>Intellectual Property</b>Content ownership</div></label>
+          <label class="chk-item"><input type="checkbox" id="sec_ugc" checked><div class="chk-label"><b>User Content</b>Uploads, licensing</div></label>
+          <label class="chk-item"><input type="checkbox" id="sec_prohibited" checked><div class="chk-label"><b>Prohibited Uses</b>Abuse, scraping</div></label>
+          <label class="chk-item"><input type="checkbox" id="sec_warranty" checked><div class="chk-label"><b>Disclaimer</b>Warranty, liability</div></label>
+          <label class="chk-item"><input type="checkbox" id="sec_termination" checked><div class="chk-label"><b>Termination</b>Account suspension</div></label>
+          <label class="chk-item"><input type="checkbox" id="sec_dispute" checked><div class="chk-label"><b>Dispute Resolution</b>Arbitration clause</div></label>
+          <label class="chk-item"><input type="checkbox" id="sec_indemnity"><div class="chk-label"><b>Indemnification</b>User liability</div></label>
+          <label class="chk-item"><input type="checkbox" id="sec_api"><div class="chk-label"><b>API Terms</b>Developer / API access</div></label>
+          <label class="chk-item"><input type="checkbox" id="sec_sub"><div class="chk-label"><b>Subscriptions</b>Auto-renewal, cancellation</div></label>
+          <label class="chk-item"><input type="checkbox" id="sec_minor" checked><div class="chk-label"><b>Age Restriction</b>Minimum age requirement</div></label>
+        </div>
+
+        <button class="generate-btn" onclick="generateToS()">⚡ Generate Terms of Service</button>
+      </div>
+    </div>
+
+    <!-- OUTPUT -->
+    <div id="outputPane">
+      <div class="output-panel">
+        <div class="placeholder">
+          <div class="placeholder-icon">📋</div>
+          <h3>Your Terms of Service will appear here</h3>
+          <p>Enter your company details and click Generate.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function v(id){return document.getElementById(id)}
+function chk(id){return document.getElementById(id).checked}
+
+function generateToS(){
+  const name   = v('cname').value.trim()   || 'Our Company';
+  const site   = v('csite').value.trim()   || 'our website';
+  const email  = v('cemail').value.trim()  || 'legal@ourcompany.com';
+  const govLaw = v('govLaw').value.trim()  || 'Delaware, United States';
+  const biz    = v('bizType').value;
+
+  // Which sections the user wants included (from checkboxes) — passed to the AI brain.
+  const sectionMap = {
+    sec_accounts:'User Accounts', sec_payment:'Payments & Billing & Refunds', sec_ip:'Intellectual Property',
+    sec_ugc:'User Content', sec_prohibited:'Prohibited Uses', sec_warranty:'Disclaimers & Limitation of Liability',
+    sec_termination:'Termination', sec_dispute:'Dispute Resolution & Arbitration', sec_indemnity:'Indemnification',
+    sec_api:'API Terms', sec_sub:'Subscriptions & Auto-Renewal', sec_minor:'Age Restriction'
+  };
+  const sections = Object.entries(sectionMap).filter(([id]) => chk(id)).map(([,label]) => label);
+
+  // Render the output-panel shell immediately with a loading state.
+  const pane = v('outputPane');
+  pane.innerHTML = `
+    <div class="output-panel">
+      <div class="output-header">
+        <div class="output-title">📋 Your Terms of Service</div>
+        <div class="btn-row"><span style="font-size:11px;color:var(--text3);align-self:center">Generating…</span></div>
+      </div>
+      <div class="tos-output" id="tosContent" style="text-align:center;color:var(--text3);padding:60px 20px;">⚙ Generating your Terms of Service with AI…</div>
+    </div>
+  `;
+
+  // Real AI generation via the ABUZ8 brain (Cloudflare Workers AI). No templates.
+  fetch('/api/waitlist', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      tool: 'terms-of-service-generator',
+      data: {
+        companyName: name,
+        website: site,
+        contactEmail: email,
+        governingLaw: govLaw,
+        businessType: biz,
+        includeSections: sections.join(', ') || 'All standard sections',
+        format: 'Return complete, professional Terms of Service as clean HTML using <h2> for numbered section headings, <h3> for sub-headings, <p> for paragraphs, and <ul>/<li> for lists.'
+      }
+    })
+  })
+  .then(r => r.json())
+  .then(res => {
+    if (!res.success || !res.result) throw new Error(res.error || 'Generation failed');
+    const html = res.result;
+    const wordCount = html.replace(/<[^>]+>/g,' ').split(/\s+/).filter(w=>w).length;
+    pane.innerHTML = `
+      <div class="output-panel">
+        <div class="output-header">
+          <div class="output-title">📋 Your Terms of Service</div>
+          <div class="btn-row">
+            <span style="font-size:11px;color:var(--text3);align-self:center">~${wordCount} words</span>
+            <button class="action-btn primary" id="copyBtn" onclick="copyToS()">Copy Full ToS</button>
+            <button class="action-btn" onclick="downloadToS()">⬇ Download .txt</button>
+          </div>
+        </div>
+        <div class="disclaimer">
+          <strong>⚠ Legal Notice:</strong> This document is generated for reference purposes and does not constitute legal advice. For regulated industries, multi-jurisdiction operations, or high-stakes deployments, consult a qualified attorney.
+        </div>
+        <div class="tos-output" id="tosContent">${html}</div>
+      </div>
+    `;
+  })
+  .catch(err => {
+    pane.innerHTML = `
+      <div class="output-panel">
+        <div class="output-header"><div class="output-title">📋 Your Terms of Service</div></div>
+        <div class="placeholder">
+          <div class="placeholder-icon">⚠</div>
+          <h3>Generation failed</h3>
+          <p>${err.message}. Please try again in a moment.</p>
+        </div>
+      </div>
+    `;
+    alert('Generation failed: ' + err.message + '. Please try again in a moment.');
+  });
+}
+
+function copyToS(){
+  const text = document.getElementById('tosContent').innerText;
+  navigator.clipboard.writeText(text).then(()=>{
+    const btn = document.getElementById('copyBtn');
+    btn.textContent='✓ Copied!';btn.classList.add('copied');
+    setTimeout(()=>{btn.textContent='Copy Full ToS';btn.classList.remove('copied')},2500);
+  });
+}
+function downloadToS(){
+  const name = document.getElementById('cname').value.trim()||'company';
+  const text = document.getElementById('tosContent').innerText;
+  const blob = new Blob([text],{type:'text/plain'});
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href=url; a.download=`${name.replace(/\s+/g,'-').toLowerCase()}-terms-of-service.txt`; a.click();
+  URL.revokeObjectURL(url);
+}
+</script>
+
+<script src="/assets/js/dfy-banner.js" async></script>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+<script src="/tools/_tools-shared.js" defer></script>
+  <script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>
+
