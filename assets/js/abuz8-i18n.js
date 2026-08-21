@@ -46,6 +46,8 @@
       'cta-start':       'Start the rescue → $1,500',
       'cta-how':         'How it works',
       'nav-rescue':      'PM Rescue',
+      'nav-crew':        'Crew',
+      'nav-hq':          'HQ',
       'nav-tools':       'Free Tools',
       'nav-about':       'About',
       'nav-cta':         'Start the rescue →'
