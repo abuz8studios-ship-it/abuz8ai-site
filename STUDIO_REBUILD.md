@@ -1,29 +1,23 @@
-# Website rebuild — honest plan (2026-08-21)
+# Website rebuild — conversion spine (2026-08-22)
 
-## Done
-- `crew.html` + `amanecer.html` + `/crew` `/amanecer` redirects
-- Homepage nav **Crew** link
-- Crew restyled on **abuz8-theme.css** (lapis / muted gold / green) — same as rest of site
+## What shipped
+One company site. One promise. One live offer.
 
-## Live truth
-- Pushed to `abuz8studios-ship-it/abuz8ai-site` `main`
-- `https://abuz8ai.com/crew` still served homepage when checked (Pages lag **or** this project not the live hook)
-- `wrangler` **not logged in** on this machine — I cannot publish from here until you run `wrangler login`
+- `index.html` — company homepage (crew + system + honest rescue). Store is **not** sold as LIVE.
+- `crew.html` — product page for the agent team. Waitlist for the kit.
+- `hq.html` — public roster. Honest $0 / checkout off.
+- `playbook.html` — the sellable system, free until Stripe + PDF exist. `/system` → playbook.
+- `contact.html` — company nav (no Store CTA).
+- `rescue.html` — company links, glow blobs removed.
 
-## React + Three.js $100k rebuild
-Do **not** flip `pages_build_output_dir` to a Vite app tonight — that 404s 1,400 existing URLs (tools, blog, rescue).
+Palette lock: `--lapis #0a1628` `--gold #c9a84c` `--green-bright #2fbf8f`. No neon. No 3D orb.
 
-**Right sequence:**
-1. You: Cloudflare login / confirm Pages project = this repo
-2. Ship static crew + CTAs (this commit)
-3. New Vite+R3F app in `studio/` that **builds into** `/studio/` only
-4. When studio equals homepage quality, swap `index.html` — keep old routes
+## What we did not do
+- Did not flip to Vite + Three.js (would 404 ~1,400 URLs).
+- Did not turn store checkout on (empty deliverables).
+- Did not invent a Stripe payment link. Ahmad still creates `buy.stripe.com/...`.
 
-Palette lock (sensitive eyes): `--lapis #0a1628` `--gold #c9a84c` `--green-bright #2fbf8f` — no neon, no new hex.
-
-## Permission needed
-```
-cd C:\Users\wirec\codingProjects\abuz8ai-site
-npx wrangler login
-```
-Then tell me **deploy**. I will `wrangler pages deploy . --project-name=abuz8ai`
+## Money path
+Today: email → rescue $1,500.
+Next dollar: Ahmad pastes a Stripe payment link; we put it on `/rescue`.
+Later: playbook PDF + crew install kit.
