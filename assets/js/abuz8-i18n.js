@@ -333,18 +333,7 @@
       // Sync the visible dropdown
       const selector = document.getElementById('lang-selector');
       if (selector) selector.value = useLang;
-
-      // Layer 2 — machine-translate the rest of the page.
-      //
-      // The Google Translate widget of 2026 no longer reacts to programmatic
-      // `.goog-te-combo.value = ...; dispatchEvent('change')`. Setting the
-      // googtrans cookie and reloading is the only path that translates
-      // reliably every time, in every browser, without touching a Google-
-      // internal API that could change without notice.
-      //
-      // Cost: ~250ms of white flash on switch. Benefit: works, always.
-      setGoogTransCookie(useLang);
-      location.reload();
+      // No Google Translate widget. Footer select only flips tagged copy + RTL.
     },
 
     // Inject a floating language selector if the page didn't ship one.
@@ -373,10 +362,6 @@
     init: function () {
       const self = this;
       this.injectSelector();
-
-      // Preload the Google Translate widget once, so switching feels instant.
-      loadGoogleTranslate();
-
       const lang = this.getCurrentLang();
       // Apply Layer 1 immediately (dictionary). If the cookie already reflects
       // this lang, the page reload path already translated Layer 2 for us.

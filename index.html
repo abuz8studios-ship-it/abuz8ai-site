@@ -98,71 +98,99 @@
     <div class="logo-sub">Sovereign AI</div>
   </a>
   <div class="nav-links">
-    <a href="/news.html">News</a>
-    <a href="/models.html">Models</a>
-    <a href="/agent-board.html">Agents</a>
-    <a href="/github.html">GitHub</a>
-    <a href="/huggingface.html">Hugging Face</a>
+    <a href="/#tab=panel-repos">Repos</a>
+    <a href="/#tab=panel-models">Models</a>
+    <a href="/#tab=panel-apis">Free APIs</a>
+    <a href="/#tab=panel-patterns">Patterns</a>
+    <a href="/#tab=panel-harness">Harness</a>
     <a href="/tools.html">Tools</a>
-    <a href="/news.html" class="nav-cta">Open the feed</a>
+    <a href="/crew.html" class="nav-cta">Crew</a>
   </div>
 </div>
 </nav>
 
 <!-- ============ HERO ============ -->
 <section class="hero">
-  <div class="hero-eyebrow">Live AI intelligence · aggregated, credited, never copied</div>
-  <h1>The <span class="gold">feed</span>.<br>News. Models. Agents.</h1>
-  <p>One place instead of hunting GitHub, Hugging Face, OpenRouter, and twenty agent repos. Live boards when the feeds are up. Honest offline when they are not. No fabricated numbers.</p>
+  <div class="hero-eyebrow">Live boards · credited · never copied</div>
+  <h1>The <span class="gold">feed</span>.</h1>
+  <p>Top repos, top models, free APIs, brain patterns, and the harness that fits the job. Olive grove stays. Crew stays. Language lives in the footer.</p>
   <div class="hero-btns">
-    <a class="btn btn-gold" href="/news.html">AI News Hub</a>
-    <a class="btn btn-outline" href="/models.html">Frontier models</a>
-    <a class="btn btn-outline" href="/agent-board.html">Agent board</a>
+    <a class="btn btn-gold" href="#tab=panel-repos">Top repos</a>
+    <a class="btn btn-outline" href="#tab=panel-models">Top models</a>
+    <a class="btn btn-outline" href="#tab=panel-harness">Harness</a>
   </div>
 </section>
 
-<!-- ============ PILLARS ============ -->
-<section class="home-section">
+<!-- ============ FIVE BOARDS ============ -->
+<section class="home-section" id="boards">
   <div class="wrap">
-    <div class="section-head">
-      <div class="eyebrow">The boards</div>
-      <h2>News, models, agents</h2>
-      <p>The same three rooms this site was built for: what moved today, who leads the model race, and which agent stacks are actually used.</p>
-    </div>
-    <div class="grid-4">
-      <a class="card pillar-card" href="/news.html">
-        <span class="icon-chip">📰</span>
-        <h3>AI News</h3>
-        <p>GitHub trending (week + month), Hugging Face trending models, and 20 open-source agent star boards. Public data, credited to authors.</p>
-        <span class="badge badge-live"><span class="badge-dot"></span>LIVE</span>
-        <span class="card-link">Open the news hub →</span>
-      </a>
-      <a class="card pillar-card" href="/models.html">
-        <span class="icon-chip">🧠</span>
-        <h3>Frontier models</h3>
-        <p>Live leaderboard from OpenRouter — GPT, Claude, Gemini, Grok, DeepSeek, Qwen, GLM, Kimi, MiniMax, Llama. Snapshot if the feed is down.</p>
-        <span class="badge badge-live"><span class="badge-dot"></span>LIVE</span>
-        <span class="card-link">Open the models board →</span>
-      </a>
-      <a class="card pillar-card" href="/agent-board.html">
-        <span class="icon-chip">🤖</span>
-        <h3>Agents</h3>
-        <p>Live star boards for 20 curated open-source agent frameworks — credited to their authors — plus deploy-your-own guides.</p>
-        <span class="badge badge-live"><span class="badge-dot"></span>LIVE</span>
-        <span class="card-link">Enter the agent board →</span>
-      </a>
-      <a class="card pillar-card" href="/huggingface.html">
-        <span class="icon-chip">🤗</span>
-        <h3>Hugging Face</h3>
-        <p>Trending models, datasets, and spaces from the public Hugging Face API — honest offline fallback. We aggregate and credit.</p>
-        <span class="badge badge-live"><span class="badge-dot"></span>LIVE</span>
-        <span class="card-link">Open the HF hub →</span>
-      </a>
+    <div class="tabs" data-tabs>
+      <div class="tab-list" role="tablist" aria-label="Intelligence boards">
+        <button class="tab-btn" role="tab" id="tab-repos" aria-controls="panel-repos" aria-selected="true">Top repos</button>
+        <button class="tab-btn" role="tab" id="tab-models" aria-controls="panel-models" aria-selected="false">Top models</button>
+        <button class="tab-btn" role="tab" id="tab-apis" aria-controls="panel-apis" aria-selected="false">Top free APIs</button>
+        <button class="tab-btn" role="tab" id="tab-patterns" aria-controls="panel-patterns" aria-selected="false">Brain patterns</button>
+        <button class="tab-btn" role="tab" id="tab-harness" aria-controls="panel-harness" aria-selected="false">Harness per job</button>
+      </div>
+
+      <div class="tab-panel" role="tabpanel" id="panel-repos" aria-labelledby="tab-repos">
+        <p class="feed-status" id="feed-repos-status">Loading GitHub trending…</p>
+        <div id="feed-repos" class="grid-auto"></div>
+        <p class="credit-line" style="margin-top:16px;font-size:12px;color:var(--muted)">Source: github.com/trending via /api/github-trending. Authors own the repos.</p>
+      </div>
+
+      <div class="tab-panel" role="tabpanel" id="panel-models" aria-labelledby="tab-models" hidden>
+        <p class="feed-status" id="feed-models-status">Loading Hugging Face…</p>
+        <div id="feed-models" class="grid-auto"></div>
+        <p class="credit-line" style="margin-top:16px;font-size:12px;color:var(--muted)">Trending weights from Hugging Face. Frontier prices live on <a href="/models.html">/models</a>. Arabic scores on <a href="/benchmarks.html">/benchmarks</a>.</p>
+      </div>
+
+      <div class="tab-panel" role="tabpanel" id="panel-apis" aria-labelledby="tab-apis" hidden>
+        <p class="feed-status" id="feed-apis-status">Loading free-tier doors…</p>
+        <div id="feed-apis" class="grid-auto"></div>
+        <h3 style="margin:22px 0 12px;font-size:16px">Live OpenRouter :free right now</h3>
+        <div id="feed-apis-live" class="grid-auto"></div>
+        <p class="credit-line" style="margin-top:16px;font-size:12px;color:var(--muted)">Free tiers change. We credit the vendor. We do not promise unlimited.</p>
+      </div>
+
+      <div class="tab-panel" role="tabpanel" id="panel-patterns" aria-labelledby="tab-patterns" hidden>
+        <p style="color:var(--dim);font-size:14px;max-width:720px;margin-bottom:18px">Brain patterns we actually use. Curated, linked to the author. Not a fake leaderboard.</p>
+        <div class="grid-auto">
+          <a class="card" href="https://github.com/ayghri/i-have-adhd" target="_blank" rel="noopener noreferrer"><h3>i-have-adhd</h3><p>Lead with the next action. Number the steps. No buried answer.</p><span class="card-link">ayghri →</span></a>
+          <a class="card" href="https://github.com/obra/superpowers" target="_blank" rel="noopener noreferrer"><h3>superpowers</h3><p>Skills + a software method the agent can follow. Not vibes.</p><span class="card-link">obra →</span></a>
+          <a class="card" href="https://github.com/mksglu/context-mode" target="_blank" rel="noopener noreferrer"><h3>context-mode</h3><p>Sandbox tool output. Persist memory. Route across platforms.</p><span class="card-link">mksglu →</span></a>
+          <a class="card" href="https://github.com/blader/humanizer" target="_blank" rel="noopener noreferrer"><h3>humanizer</h3><p>Strip AI tells from writing. Use when the page must not sound generated.</p><span class="card-link">blader →</span></a>
+          <a class="card" href="https://github.com/addyosmani/agent-skills" target="_blank" rel="noopener noreferrer"><h3>agent-skills</h3><p>Production engineering skills for coding agents.</p><span class="card-link">addyosmani →</span></a>
+          <a class="card" href="https://github.com/affaan-m/ECC" target="_blank" rel="noopener noreferrer"><h3>ECC</h3><p>Harness performance: skills, instincts, memory, security, research-first.</p><span class="card-link">affaan-m →</span></a>
+          <a class="card" href="/benchmarks.html"><h3>ISNAD + Arabic root</h3><p>Our pattern: verify the chain, compress via roots. Not a published score.</p><span class="card-link">ABUZ8 board →</span></a>
+          <a class="card" href="https://github.com/karpathy" target="_blank" rel="noopener noreferrer"><h3>Think small, verify</h3><p>Karpathy-class: tiny loop, prove it, then grow. We use it as a coding law.</p><span class="card-link">karpathy →</span></a>
+        </div>
+      </div>
+
+      <div class="tab-panel" role="tabpanel" id="panel-harness" aria-labelledby="tab-harness" hidden>
+        <p style="color:var(--dim);font-size:14px;max-width:720px;margin-bottom:18px">Best agentic harness per job. Editorial, not a benchmark. Pick the tool that matches the work.</p>
+        <div class="table-scroll">
+          <table class="data-table">
+            <thead><tr><th>Job</th><th>Harness</th><th>Why</th></tr></thead>
+            <tbody>
+              <tr><td>Local sovereign desk</td><td>Hermes Agent</td><td>Hands, skills, Telegram, seats already logged in. No API-key begging.</td></tr>
+              <tr><td>Repo coding</td><td>Claude Code or Codex CLI</td><td>File-scope edits, tests, PRs. One agent, one branch.</td></tr>
+              <tr><td>Parallel coding</td><td>OpenCode / Cursor</td><td>Several agents on one tree. Use when the work splits cleanly.</td></tr>
+              <tr><td>Visual workflows</td><td>n8n</td><td>Self-host Zapier. Best when a human must see the graph.</td></tr>
+              <tr><td>Browser tasks</td><td>Browser Use</td><td>Real clicks on real pages. Not a fetch wrapper.</td></tr>
+              <tr><td>Image / video</td><td>ComfyUI</td><td>Local GPU graphs. Sell the output, not the node soup.</td></tr>
+              <tr><td>Multi-role crew</td><td>CrewAI</td><td>Named roles (research → draft → QA) as a productized loop.</td></tr>
+              <tr><td>Team chat UI</td><td>LibreChat</td><td>Self-hosted multi-model ChatGPT clone with auth.</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p style="margin-top:16px"><a href="/agent-board.html">Live star board of those stacks →</a></p>
+      </div>
     </div>
   </div>
 </section>
 
-<!-- ============ HUBS ============ -->
+<!-- ============ HUBS (his crew + our doors) ============ -->
 <section class="home-section">
   <div class="wrap">
     <div class="section-head">
@@ -238,37 +266,6 @@
   </div>
 </section>
 
-<!-- ============ MODELS TEASER ============ -->
-<section class="home-section">
-  <div class="wrap">
-    <div class="section-head">
-      <div class="eyebrow">Live Feed</div>
-      <h2>Frontier models</h2>
-      <p>Who is actually leading, with live price and context from OpenRouter.</p>
-    </div>
-    <div class="grid-3" id="mod-grid">
-      <div class="note note-blue" style="grid-column:1/-1;text-align:center;">Loading the live board… If it doesn't appear, the full board lives on the <a href="/models.html">models page</a>.</div>
-    </div>
-    <a class="section-link" href="/models.html">Open the full models board →</a>
-  </div>
-</section>
-
-<!-- ============ GITHUB TRENDING TEASER ============ -->
-<section class="home-section">
-  <div class="wrap">
-    <div class="section-head">
-      <div class="eyebrow">Live Feed</div>
-      <h2>Trending on GitHub</h2>
-      <p>The week's fastest-rising open-source repos, parsed server-side. All projects credited to their authors.</p>
-    </div>
-    <div class="grid-3" id="gh-grid">
-      <div class="note note-blue" style="grid-column:1/-1;text-align:center;">Loading the live board… If it doesn't appear, the feed is offline — the full boards live on the <a href="/github.html">GitHub Hub</a>.</div>
-    </div>
-    <div class="gh-status" id="gh-status" hidden></div>
-    <a class="section-link" href="/github.html">Open the full GitHub Hub →</a>
-  </div>
-</section>
-
 <!-- ============ MISSION STRIP ============ -->
 <section class="home-section tight">
   <div class="wrap">
@@ -283,102 +280,15 @@
 
 <!-- ============ FINAL CTA ============ -->
 <section class="final-cta">
-  <h2>Stop searching everywhere.</h2>
-  <p>News, models, and agent stacks in one feed. Live when the APIs are up. Labeled snapshot or offline when they are not.</p>
+  <h2>Five boards. One desk.</h2>
+  <p>Repos, models, free APIs, patterns, harness. Crew and playbook still here.</p>
   <div class="hero-btns">
-    <a class="btn btn-gold" href="/news.html">AI News Hub</a>
-    <a class="btn btn-outline" href="/models.html">Models</a>
-    <a class="btn btn-outline" href="/agent-board.html">Agents</a>
+    <a class="btn btn-gold" href="#tab=panel-repos">Open the boards</a>
+    <a class="btn btn-outline" href="/crew.html">Crew</a>
+    <a class="btn btn-outline" href="/playbook.html">Playbook</a>
   </div>
 </section>
 
-<script>
-/* GitHub trending teaser — honest live / snapshot / offline states */
-(function () {
-  'use strict';
-  var grid = document.getElementById('gh-grid');
-  var status = document.getElementById('gh-status');
-  if (!grid || !window.fetch) return;
-
-  function esc(s) {
-    return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
-      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
-    });
-  }
-  function fmt(n) {
-    if (typeof n === 'number' && isFinite(n)) return n.toLocaleString('en-US');
-    return String(n == null ? '' : n);
-  }
-  function offline() {
-    grid.innerHTML = '<div class="note note-blue" style="grid-column:1/-1;text-align:center;">Live feed offline right now — we show nothing rather than stale numbers. The cached boards live on the <a href="/github.html">GitHub Hub</a>.</div>';
-    if (status) status.hidden = true;
-  }
-
-  fetch('/api/github-trending')
-    .then(function (r) { if (!r.ok) throw new Error('http ' + r.status); return r.json(); })
-    .then(function (d) {
-      var repos = (d && d.repos) || [];
-      if (!d || !d.ok || !repos.length) { offline(); return; }
-      grid.innerHTML = '';
-      repos.slice(0, 6).forEach(function (repo) {
-        var a = document.createElement('a');
-        a.className = 'card';
-        a.href = repo.url || ('https://github.com/' + repo.full_name);
-        a.target = '_blank';
-        a.rel = 'noopener';
-        a.innerHTML =
-          '<h3>' + esc(repo.full_name) + '</h3>' +
-          '<p>' + esc(repo.description || 'No description provided.') + '</p>' +
-          '<div class="gh-meta">' +
-            (repo.language ? '<span class="pill">' + esc(repo.language) + '</span>' : '') +
-            '<span class="pill">★ ' + esc(fmt(repo.stars)) + '</span>' +
-            (repo.gained ? '<span class="pill">+' + esc(fmt(repo.gained)) + ' this ' + (repo.period === 'monthly' ? 'month' : 'week') + '</span>' : '') +
-          '</div>';
-        grid.appendChild(a);
-      });
-      if (status) {
-        status.hidden = false;
-        status.textContent = d.source === 'snapshot'
-          ? 'Cached snapshot (captured 2026-05-24) — the live feed resumes automatically when available.'
-          : 'Live from GitHub, parsed server-side.';
-      }
-    })
-    .catch(offline);
-})();
-(function () {
-  'use strict';
-  var grid = document.getElementById('mod-grid');
-  if (!grid || !window.fetch) return;
-  function esc(s) {
-    return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
-      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
-    });
-  }
-  function offline() {
-    grid.innerHTML = '<div class="note note-blue" style="grid-column:1/-1;text-align:center;">Live models feed offline — we show nothing rather than stale numbers. The full board is on the <a href="/models.html">models page</a>.</div>';
-  }
-  fetch('/api/ai-models?limit=6')
-    .then(function (r) { if (!r.ok) throw new Error('http ' + r.status); return r.json(); })
-    .then(function (d) {
-      var rows = (d && (d.ranked || d.frontier || d.models || d.ranking || d.items)) || [];
-      if (!rows.length && d && Array.isArray(d)) rows = d;
-      if (!rows.length) { offline(); return; }
-      grid.innerHTML = '';
-      rows.slice(0, 6).forEach(function (m, i) {
-        var a = document.createElement('a');
-        a.className = 'card';
-        a.href = '/models.html';
-        var name = m.name || m.id || 'model';
-        var org = m.org || m.organization || '';
-        var leads = m.leads || m.bench || m.description || '';
-        a.innerHTML = '<h3>' + esc((m.rank || (i + 1)) + '. ' + name) + '</h3>' +
-          '<p>' + esc(org) + (leads ? ' — ' + esc(String(leads).slice(0, 140)) : '') + '</p>';
-        grid.appendChild(a);
-      });
-    })
-    .catch(offline);
-})();
-</script>
 
 <footer class="abuz8-footer">
 <div class="foot-grid">
@@ -423,6 +333,7 @@
 <script src="/assets/js/abuz8-intent.js" defer></script>
 <script src="/assets/js/abuz8-source.js" defer></script>
 <script src="/assets/js/abuz8-measure.js" defer></script>
+<script src="/assets/js/abuz8-feed.js" defer></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" defer></script>
 <script src="/assets/js/abuz8-olive-grove.js" defer></script>
 </body>
