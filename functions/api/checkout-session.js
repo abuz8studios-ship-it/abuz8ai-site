@@ -22,13 +22,13 @@
  *   CAL_HANDLE               - optional Cal.com handle, e.g. "ahmad/strategy-call".
  *                              If unset, service buyers get an email CTA (nothing breaks).
  *
- * Read-only. No writes, no side effects. ABUZ8 LLC - 2026 - ahmad@abuz8ai.com
+ * Read-only. No writes, no side effects. ABUZ8 LLC - 2026 - support@abuz8ai.com
  */
 
 import { PRODUCT_FILES, makeDownloadUrl } from './download.js';
 
 const STRIPE_API = 'https://api.stripe.com/v1';
-const SUPPORT_EMAIL = 'ahmad@abuz8ai.com';
+const SUPPORT_EMAIL = 'support@abuz8ai.com';
 
 const json = (obj, status = 200) =>
   new Response(JSON.stringify(obj), {

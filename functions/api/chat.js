@@ -7,7 +7,7 @@
  */
 
 const QADIR_ENDPOINT = 'https://api.abuz8ai.com/api/agent';
-const FALLBACK_REPLY = "I'm Zait — ABUZ8's AI. I'm waking up. Check back in a moment or email ahmad@abuz8ai.com.";
+const FALLBACK_REPLY = "I'm Zait — ABUZ8's AI. I'm waking up. Check back in a moment or email support@abuz8ai.com.";
 
 export async function onRequestPost(context) {
   const corsHeaders = {

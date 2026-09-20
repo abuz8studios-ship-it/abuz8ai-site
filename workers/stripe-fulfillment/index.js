@@ -364,7 +364,7 @@ const PRODUCT_CATALOG = {
   "price_1TTrKk1r1N62QJj7lQocFwHx": {
     name: "Data Pipeline Report",
     type: "service",
-    onboarding: "Send your CSV to hello@abuz8ai.com and we'll return the executive report within 1 business day.",
+    onboarding: "Send your CSV to support@abuz8ai.com and we'll return the executive report within 1 business day.",
   },
 };
 
@@ -413,7 +413,7 @@ async function handleDownload(url, env) {
   // Verify expiry
   const now = Math.floor(Date.now() / 1000);
   if (now > parseInt(exp, 10)) {
-    return json({ error: "link_expired", hint: "This download link has expired. Contact support at ahmad@abuz8ai.com for a fresh link." }, 403);
+    return json({ error: "link_expired", hint: "This download link has expired. Contact support at support@abuz8ai.com for a fresh link." }, 403);
   }
 
   // Verify signature
@@ -644,7 +644,7 @@ async function sendCustomerEmail(env, { to, subject, html }) {
 }
 
 async function sendAdminEmail(env, { subject, body }) {
-  const admin = env.ADMIN_BCC || "hello@abuz8ai.com";
+  const admin = env.ADMIN_BCC || "support@abuz8ai.com";
   return await sendCustomerEmail(env, {
     to: admin,
     subject,

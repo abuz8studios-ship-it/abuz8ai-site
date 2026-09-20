@@ -213,7 +213,7 @@
         return data.reply || "Got it — I'll look into that.";
       }
     } catch (_e) { /* handled below */ }
-    return "I'm having trouble connecting right now. Email ahmad@abuz8ai.com or check abuz8ai.com/store.";
+    return "I'm having trouble connecting right now. Email support@abuz8ai.com or check abuz8ai.com/store.";
   }
 
   /* ── Send flow ────────────────────────────────────── */

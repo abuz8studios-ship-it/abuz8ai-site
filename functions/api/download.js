@@ -18,7 +18,7 @@
  *                              Optional: if absent, falls back to redirecting to DOWNLOAD_BASE_URL.
  *   DOWNLOAD_BASE_URL        — optional fallback static base, e.g. https://abuz8ai.com/downloads
  *
- * ABUZ8 LLC — 2026 · ahmad@abuz8ai.com
+ * ABUZ8 LLC — 2026 · support@abuz8ai.com
  */
 
 // Canonical product slug → filename in the R2 bucket / /downloads folder.
@@ -110,7 +110,7 @@ function fail(status, message) {
     `display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0;text-align:center;padding:24px;">` +
     `<div><h1 style="color:#c9a84c;font-size:22px;margin:0 0 8px;font-weight:700;">${message}</h1>` +
     `<p style="color:#8a9aaa;font-size:15px;margin:0 0 16px;line-height:1.6;">` +
-    `If you purchased and your link expired, email <a href="mailto:ahmad@abuz8ai.com" style="color:#2fbf8f;">ahmad@abuz8ai.com</a> and we will re-issue it.</p>` +
+    `If you purchased and your link expired, email <a href="mailto:support@abuz8ai.com" style="color:#2fbf8f;">support@abuz8ai.com</a> and we will re-issue it.</p>` +
     `<a href="https://abuz8ai.com" style="color:#c9a84c;">← abuz8ai.com</a></div></body>`,
     { status, headers: { 'content-type': 'text/html; charset=utf-8' } }
   );

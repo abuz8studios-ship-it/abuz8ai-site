@@ -138,7 +138,7 @@ export async function onRequestPost({ request, env }) {
   if (!q.ok) {
     return j(
       { error: "free-tier quota exhausted", quota: q.quota, remaining: 0,
-        upgrade: "Email ahmad@abuz8ai.com for higher limits or a Pro subscription." },
+        upgrade: "Email support@abuz8ai.com for higher limits or a Pro subscription." },
       429,
       { "x-quota-remaining": "0" }
     );

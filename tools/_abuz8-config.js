@@ -19,7 +19,7 @@ window.ABUZ8.LINKS = {
   huggingface: "https://huggingface.co/abuz8studios",
   news:        "https://ai-news-feed-284.pages.dev",
   scanner:     "https://abuz8ai.com/scanner.html",
-  email:       "hello@abuz8ai.com",
+  email:       "support@abuz8ai.com",
   support:     "https://abuz8ai.com/support.html"
 };
 

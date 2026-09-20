@@ -133,7 +133,7 @@ async function sendDeliveryEmail(env, { to, productName, downloadUrl }) {
       </a>
       <p style="color:#8a9aaa;font-size:12px;margin-top:24px;">
         Questions? Reply to this email or visit <a href="https://abuz8ai.com" style="color:#0e9f6e;">abuz8ai.com</a><br>
-        ABUZ8 LLC · ahmad@abuz8ai.com
+        ABUZ8 LLC · support@abuz8ai.com
       </p>
     </div>`;
 
@@ -142,7 +142,7 @@ async function sendDeliveryEmail(env, { to, productName, downloadUrl }) {
       method: 'POST',
       headers: { 'Authorization': `Bearer ${env.RESEND_API_KEY}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        from: 'ABUZ8 <ahmad@abuz8ai.com>',
+        from: 'ABUZ8 <support@abuz8ai.com>',
         to: [to],
         subject: `Your ${productName} download — ABUZ8`,
         html,

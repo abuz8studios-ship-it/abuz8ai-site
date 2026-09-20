@@ -67,13 +67,13 @@
     {
       id: 'contact',
       q: ['contact', 'email', 'support', 'help', 'human'],
-      a: 'Email <a href="mailto:ahmad@abuz8ai.com">ahmad@abuz8ai.com</a> — the official contact for support, partnerships, refunds, privacy requests, and security reports.',
+      a: 'Email <a href="mailto:support@abuz8ai.com">support@abuz8ai.com</a> — the official contact for support, partnerships, refunds, privacy requests, and security reports.',
       links: [{ t: 'Contact page', href: '/contact.html' }]
     },
     {
       id: 'refunds',
       q: ['refund', 'money back', 'guarantee', 'return', '14 day'],
-      a: 'Honest policy: <strong>no blanket money-back guarantee</strong> — every product is tested before it\'s sold, and the only promise we make is honesty. Results depend on you. If a product is broken or not as described, email <a href="mailto:ahmad@abuz8ai.com">ahmad@abuz8ai.com</a> and we\'ll make it right.',
+      a: 'Honest policy: <strong>no blanket money-back guarantee</strong> — every product is tested before it\'s sold, and the only promise we make is honesty. Results depend on you. If a product is broken or not as described, email <a href="mailto:support@abuz8ai.com">support@abuz8ai.com</a> and we\'ll make it right.',
       links: [{ t: 'Refund policy', href: '/refund.html' }]
     }
   ];
@@ -357,7 +357,7 @@
       kb = FALLBACK_KB;
       kbSource = 'fallback';
       noteMsg('Note: the full guide data could not load, so I’m running on a smaller built-in ' +
-        'answer set. Everything I say is still accurate — for anything I miss, email ahmad@abuz8ai.com.');
+        'answer set. Everything I say is still accurate — for anything I miss, email support@abuz8ai.com.');
       return kb;
     };
     var controller = (typeof AbortController !== 'undefined') ? new AbortController() : null;
@@ -443,7 +443,7 @@
   function unknownAnswer() {
     botMsg(
       'Sorry — I don’t have a confident answer for that one; I only know this site. ' +
-      'Here’s the map, or email <a href="mailto:ahmad@abuz8ai.com">ahmad@abuz8ai.com</a> ' +
+      'Here’s the map, or email <a href="mailto:support@abuz8ai.com">support@abuz8ai.com</a> ' +
       'and a human will answer.',
       SITE_MAP
     );
