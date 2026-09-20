@@ -43,7 +43,7 @@
       'hero-h1-autopsied': 'autopsied',
       'hero-h1-in48':    'in 48 hours.',
       'hero-p':          "Every mid-size company has one project bleeding $10K–$100K in delay costs. In two days you'll know why it stalled, who owns each fix, and exactly what to do first. Fixed scope. One-time price. Delivered by the operator.",
-      'cta-start':       'Start the rescue → $1,500',
+      'cta-start':       'Read the playbook',
       'cta-how':         'How it works',
       'nav-rescue':      'PM Rescue',
       'nav-crew':        'Crew',
@@ -60,7 +60,7 @@
       'hero-h1-autopsied': 'تشريح',
       'hero-h1-in48':    'خلال 48 ساعة.',
       'hero-p':          'كل شركة متوسطة الحجم لديها مشروع واحد يستنزف من 10 آلاف إلى 100 ألف دولار بسبب التأخير. خلال يومين ستعرف لماذا توقّف، ومن يمتلك كل إصلاح، وما الذي يجب فعله أولاً. نطاق محدّد. سعر ثابت. يُسلَّم مباشرة من المشغّل.',
-      'cta-start':       'ابدأ عملية الإنقاذ ← 1,500 دولار',
+      'cta-start':       'اقرأ الدليل',
       'cta-how':         'كيف يعمل',
       'nav-rescue':      'إنقاذ المشاريع',
       'nav-tools':       'أدوات مجانية',
@@ -75,7 +75,7 @@
       'hero-h1-autopsied': 'diagnosticado',
       'hero-h1-in48':    'en 48 horas.',
       'hero-p':          'Toda empresa mediana tiene un proyecto que pierde entre $10K y $100K por retrasos. En dos días sabrás por qué se estancó, quién debe arreglar cada punto y qué hacer primero. Alcance fijo. Precio único. Entregado por el operador.',
-      'cta-start':       'Iniciar el rescate → $1,500',
+      'cta-start':       'Leer el playbook',
       'cta-how':         'Cómo funciona',
       'nav-rescue':      'Rescate PM',
       'nav-tools':       'Herramientas Gratis',
@@ -120,7 +120,7 @@
       'hero-h1-autopsied': '深度诊断',
       'hero-h1-in48':    '仅需 48 小时。',
       'hero-p':          '每家中型公司都有一个项目因延迟每月流失 1 万到 10 万美元。两天之内你将得到答案：为何停滞、谁负责修复、以及第一步该做什么。范围固定。一次性付费。由运营者亲自交付。',
-      'cta-start':       '启动救援 → $1,500',
+      'cta-start':       '阅读手册',
       'cta-how':         '工作原理',
       'nav-rescue':      '项目救援',
       'nav-tools':       '免费工具',
@@ -135,7 +135,7 @@
       'hero-h1-autopsied': '徹底診断',
       'hero-h1-in48':    'を48時間で。',
       'hero-p':          'どの中堅企業にも、遅延で1万〜10万ドル失っているプロジェクトが一つあります。2日で分かるのは、なぜ止まったのか、誰が何を直すのか、そして最初にすべきこと。固定スコープ。一回限りの料金。運営者自身が納品します。',
-      'cta-start':       '救出を開始 → $1,500',
+      'cta-start':       'プレイブックを読む',
       'cta-how':         '仕組み',
       'nav-rescue':      'PMレスキュー',
       'nav-tools':       '無料ツール',
@@ -352,13 +352,12 @@
       if (document.getElementById('lang-selector')) return;
       const wrap = document.createElement('div');
       wrap.className = 'lang-selector-wrapper';
-      wrap.style.cssText =
-        'position:fixed;top:20px;right:20px;z-index:9999;';
       const sel = document.createElement('select');
       sel.id = 'lang-selector';
+      sel.setAttribute('aria-label', 'Language');
       sel.style.cssText =
-        'padding:8px 12px;border:1px solid #c8a55c;background:rgba(10,22,40,.9);' +
-        'color:#c8a55c;border-radius:4px;font-size:13px;cursor:pointer;' +
+        'padding:6px 10px;border:1px solid rgba(201,168,76,.35);background:rgba(10,22,40,.7);' +
+        'color:#c9a84c;border-radius:4px;font-size:12px;cursor:pointer;' +
         'font-family:Inter,system-ui,sans-serif;';
       Object.keys(LANGS).forEach(function (code) {
         const opt = document.createElement('option');
@@ -367,7 +366,8 @@
         sel.appendChild(opt);
       });
       wrap.appendChild(sel);
-      document.body.appendChild(wrap);
+      const host = document.querySelector('.abuz8-footer .foot-base') || document.querySelector('.abuz8-footer') || document.body;
+      host.appendChild(wrap);
     },
 
     init: function () {
