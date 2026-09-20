@@ -112,11 +112,11 @@ h3.sub{font-family:var(--font-body);font-size:16px;color:var(--white);margin:26p
     <div class="nav-links">
     <a href="/news.html">News</a>
     <a href="/models.html">Models</a>
-    <a href="/agent-board.html">Agents</a>
+    <a href="/benchmarks.html">Benchmarks</a>
     <a href="/github.html">GitHub</a>
     <a href="/huggingface.html">Hugging Face</a>
+    <a href="/huggingface.html#tab=panel-local">Local GGUF</a>
     <a href="/tools.html">Tools</a>
-    <a href="/news.html" class="nav-cta">Open the feed</a>
   </div>
 </div>
 </nav>
@@ -271,7 +271,15 @@ llama-server -m ./your-model-Q4_K_M.gguf -c 4096 --n-gpu-layers 99</pre>
             </tbody>
           </table>
         </div>
-        <div class="note" style="margin-top:16px">These are starting points, not laws — actual fit depends on context length, architecture and your OS's own VRAM use. Start one size smaller than you think, then move up.</div>
+        <div class="note" style="margin-top:16px">These are starting points, not laws. Actual fit depends on context length, architecture and your OS VRAM use. Start one size smaller than you think, then move up.</div>
+      </div>
+
+      <div class="panel">
+        <h3 class="sub" style="margin-top:0">Live GGUF files on Hugging Face</h3>
+        <p class="tab-intro">Trending GGUF repos right now. These are the files you actually download for Ollama, llama.cpp, or LM Studio. Counts come from Hugging Face. We do not host the weights.</p>
+        <div id="hf-gguf-status" class="feed-loading">Contacting /api/hf-live?kind=gguf…</div>
+        <div id="hf-gguf-grid" class="grid-auto"></div>
+        <p class="credit-line">Data: Hugging Face public API, filter=gguf, sorted by trending score. Each card opens the author's repo.</p>
       </div>
 
       <div class="note-gold">
@@ -386,14 +394,16 @@ llama-server -m ./your-model-Q4_K_M.gguf -c 4096 --n-gpu-layers 99</pre>
 </footer>
 <script src="/assets/js/abuz8-ui.js" defer></script>
 <script src="/assets/js/abuz8-onboard.js" defer></script>
+<script src="/assets/js/abuz8-source.js" defer></script>
 <script>
-/* Live Hugging Face boards — public API, fetched client-side, honest offline fallback. */
+/* Live Hugging Face boards — our edge proxy first, public API fallback, honest offline. */
 (function () {
   'use strict';
   var FEEDS = [
-    { url: 'https://huggingface.co/api/models?sort=trendingScore&limit=24',   mount: 'hf-models-grid',   status: 'hf-models-status',   kind: 'model',   browse: 'https://huggingface.co/models',   label: 'models' },
-    { url: 'https://huggingface.co/api/datasets?sort=trendingScore&limit=24', mount: 'hf-datasets-grid', status: 'hf-datasets-status', kind: 'dataset', browse: 'https://huggingface.co/datasets', label: 'datasets' },
-    { url: 'https://huggingface.co/api/spaces?sort=trendingScore&limit=24',   mount: 'hf-spaces-grid',   status: 'hf-spaces-status',   kind: 'space',   browse: 'https://huggingface.co/spaces',   label: 'Spaces' }
+    { api: '/api/hf-live?kind=models',   direct: 'https://huggingface.co/api/models?sort=trendingScore&limit=24',   mount: 'hf-models-grid',   status: 'hf-models-status',   kind: 'model',   browse: 'https://huggingface.co/models',   label: 'models' },
+    { api: '/api/hf-live?kind=datasets', direct: 'https://huggingface.co/api/datasets?sort=trendingScore&limit=24', mount: 'hf-datasets-grid', status: 'hf-datasets-status', kind: 'dataset', browse: 'https://huggingface.co/datasets', label: 'datasets' },
+    { api: '/api/hf-live?kind=spaces',   direct: 'https://huggingface.co/api/spaces?sort=trendingScore&limit=24',   mount: 'hf-spaces-grid',   status: 'hf-spaces-status',   kind: 'space',   browse: 'https://huggingface.co/spaces',   label: 'Spaces' },
+    { api: '/api/hf-live?kind=gguf',     direct: 'https://huggingface.co/api/models?filter=gguf&sort=trendingScore&limit=24', mount: 'hf-gguf-grid', status: 'hf-gguf-status', kind: 'model', browse: 'https://huggingface.co/models?library=gguf', label: 'GGUF files' }
   ];
 
   function fmt(n) {
@@ -449,20 +459,35 @@ llama-server -m ./your-model-Q4_K_M.gguf -c 4096 --n-gpu-layers 99</pre>
     var g = document.getElementById(feed.mount);
     var s = document.getElementById(feed.status);
     if (!g) return;
-    fetch(feed.url)
+    function paint(items, via) {
+      if (!Array.isArray(items) || !items.length) throw new Error('empty feed');
+      g.innerHTML = '';
+      items.forEach(function (it) {
+        var c = card(feed.kind, it);
+        if (c) g.appendChild(c);
+      });
+      if (!g.children.length) throw new Error('no renderable items');
+      if (s) {
+        s.className = 'feed-status';
+        s.textContent = 'Live from huggingface.co' + (via === 'proxy' ? ' via /api/hf-live' : ' in your browser') + ' · ' + new Date().toLocaleTimeString() + ' · top ' + g.children.length + '.';
+      }
+    }
+    function asList(j) {
+      if (Array.isArray(j)) return j;
+      if (j && j.ok && Array.isArray(j.items) && j.items.length) return j.items;
+      return null;
+    }
+    fetch(feed.api, { cache: 'no-store' })
       .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
-      .then(function (items) {
-        if (!Array.isArray(items) || !items.length) throw new Error('empty feed');
-        g.innerHTML = '';
-        items.forEach(function (it) {
-          var c = card(feed.kind, it);
-          if (c) g.appendChild(c);
-        });
-        if (!g.children.length) throw new Error('no renderable items');
-        if (s) {
-          s.className = 'feed-status';
-          s.textContent = 'Live from huggingface.co · fetched in your browser at ' + new Date().toLocaleTimeString() + ' · sorted by trending score · top ' + g.children.length + '.';
-        }
+      .then(function (j) {
+        var items = asList(j);
+        if (!items) throw new Error('empty proxy');
+        paint(items, 'proxy');
+      })
+      .catch(function () {
+        return fetch(feed.direct)
+          .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+          .then(function (items) { paint(items, 'direct'); });
       })
       .catch(function () {
         g.innerHTML = '';

@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Arabic + Open Benchmarks, Live — ABUZ8 AI</title>
+<meta name="description" content="Live Arabic open models from Hugging Face, credited to OALL (Open Arabic LLM Leaderboard). We aggregate and link. We do not invent scores.">
+<link rel="canonical" href="https://abuz8ai.com/benchmarks">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Arabic + Open Benchmarks, Live — ABUZ8 AI">
+<meta property="og:description" content="Live Arabic models from Hugging Face. Official ranking lives on OALL. We credit the source.">
+<meta property="og:url" content="https://abuz8ai.com/benchmarks">
+<meta name="theme-color" content="#0a1628">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/abuz8-theme.css">
+<style>
+.hf-section{max-width:var(--wrap);margin:0 auto;padding:0 32px 40px}
+.hf-card{color:var(--text)}
+.hf-top{display:flex;justify-content:flex-start;align-items:center;gap:8px}
+.hf-pill{color:var(--green-bright);font-family:var(--font-mono);text-transform:lowercase}
+.hf-id{font-family:var(--font-mono);font-size:13px;font-weight:600;color:var(--gold-light);word-break:break-word;margin:10px 0 8px;line-height:1.45}
+.hf-meta{display:flex;gap:14px;flex-wrap:wrap;font-size:11.5px;color:var(--dim);font-family:var(--font-mono)}
+.feed-loading{font-family:var(--font-mono);font-size:12px;color:var(--dim);border:1px dashed var(--border);border-radius:var(--r-md);padding:14px 18px;margin-bottom:16px}
+.feed-status{font-family:var(--font-mono);font-size:11px;color:var(--muted);margin-bottom:16px}
+.credit-line{font-size:12px;color:var(--muted);margin-top:20px;line-height:1.7}
+.tab-intro{color:var(--dim);font-size:14px;line-height:1.7;max-width:760px;margin-bottom:20px}
+.source-doors{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin:8px 0 28px}
+@media(max-width:640px){.hf-section{padding:0 16px 32px}}
+</style>
+</head>
+<body>
+<div class="geo-bg"></div>
+<nav class="abuz8-nav">
+<div class="nav-inner">
+  <a href="/" style="text-decoration:none;">
+    <div class="logo">ABUZ8</div>
+    <div class="logo-sub">Sovereign AI</div>
+  </a>
+    <div class="nav-links">
+    <a href="/news.html">News</a>
+    <a href="/models.html">Models</a>
+    <a href="/benchmarks.html">Benchmarks</a>
+    <a href="/huggingface.html">Hugging Face</a>
+    <a href="/github.html">GitHub</a>
+    <a href="/tools.html">Tools</a>
+    <a href="/huggingface.html#tab=panel-local" class="nav-cta">Run locally</a>
+  </div>
+</div>
+</nav>
+
+<div class="wrap">
+  <div class="crumbs"><a href="/">Home</a> › Benchmarks</div>
+</div>
+
+<section class="hero">
+  <div class="hero-eyebrow">Live · credited</div>
+  <h1>Arabic models, <span class="gold">from the source</span></h1>
+  <p>OALL is the official Arabic LLM scoreboard. Hugging Face is where the weights live. This page is a live window onto both. We do not invent OALL averages. We fetch public model cards and send you to the original board.</p>
+  <div class="hero-btns">
+    <a class="btn btn-gold" href="https://huggingface.co/spaces/OALL/Open-Arabic-LLM-Leaderboard" target="_blank" rel="noopener noreferrer">Open OALL (source)</a>
+    <a class="btn btn-outline" href="/huggingface.html#tab=panel-local">Run a GGUF locally</a>
+  </div>
+</section>
+
+<section class="hf-section">
+  <div class="note-blue">
+    <strong>Source of truth.</strong> Rankings belong to
+    <a href="https://huggingface.co/spaces/OALL/Open-Arabic-LLM-Leaderboard" target="_blank" rel="noopener noreferrer">OALL (Open Arabic LLM Leaderboard)</a>,
+    run by 2A2I + TII + Hugging Face. Weights belong to their authors on Hugging Face. ABUZ8 is not affiliated with either.
+  </div>
+
+  <div class="source-doors">
+    <a class="card hub-card" href="https://huggingface.co/spaces/OALL/Open-Arabic-LLM-Leaderboard" target="_blank" rel="noopener noreferrer">
+      <h3>OALL v2</h3>
+      <p>Native Arabic tasks: ArabicMMLU, MadinahQA, AraTrust, ALRAGE, AlGhafa. Submit a model there if you want a score.</p>
+      <span class="card-link">huggingface.co/spaces/OALL →</span>
+    </a>
+    <a class="card hub-card" href="/huggingface.html">
+      <h3>Hugging Face hub</h3>
+      <p>Live trending models, datasets, Spaces, and GGUF files from the public API.</p>
+      <span class="card-link">Stay on abuz8ai.com →</span>
+    </a>
+    <a class="card hub-card" href="/huggingface.html#tab=panel-local">
+      <h3>Local GGUF</h3>
+      <p>Files you can run with Ollama, llama.cpp, or LM Studio. No API key.</p>
+      <span class="card-link">Open the local tab →</span>
+    </a>
+  </div>
+
+  <p class="tab-intro">Live Arabic-related checkpoints from Hugging Face search (ALLaM, Jais, Fanar, SILMA, AceGPT, Hala, Falcon-H1). Sorted by downloads. Each card opens the author's page.</p>
+  <div id="ar-status" class="feed-loading">Contacting Hugging Face through /api/hf-live…</div>
+  <noscript><div class="warn">JavaScript is off. Browse Arabic models on <a href="https://huggingface.co/models?search=arabic" target="_blank" rel="noopener noreferrer">huggingface.co/models</a>.</div></noscript>
+  <div id="ar-grid" class="grid-auto"></div>
+  <p class="credit-line">Data: Hugging Face public API, proxied at <code class="inline">/api/hf-live?kind=arabic</code>. Download and like counts belong to each author. Official Arabic ranking: OALL, not this page.</p>
+</section>
+
+<footer class="abuz8-footer">
+<div class="foot-grid">
+  <div class="foot-brand">
+    <div class="logo">ABUZ8</div>
+    <p>Sovereign AI for everyone. Real tools, local models, no fake claims. Built on real hardware by ABUZ8 LLC, Ohio.</p>
+  </div>
+  <div class="foot-col"><h4>Platform</h4>
+    <a href="/tools.html">Free Tools</a><a href="/models.html">Models</a><a href="/benchmarks.html">Benchmarks</a><a href="/huggingface.html">Hugging Face</a><a href="/news.html">News</a>
+  </div>
+  <div class="foot-col"><h4>Hubs</h4>
+    <a href="/github.html">GitHub Hub</a><a href="/huggingface.html#tab=panel-local">Run locally</a><a href="/community.html">Community</a>
+  </div>
+  <div class="foot-col"><h4>Trust</h4>
+    <a href="/disclaimer.html">Disclaimer</a><a href="/privacy.html">Privacy</a><a href="/contact.html">Contact</a>
+  </div>
+</div>
+<div class="foot-base">
+  <div>© <span data-year>2026</span> ABUZ8 LLC. All rights reserved.</div>
+  <div>Built local-first on real hardware · No fake claims</div>
+</div>
+</footer>
+<script src="/assets/js/abuz8-ui.js" defer></script>
+<script src="/assets/js/abuz8-source.js" defer></script>
+<script>
+(function () {
+  'use strict';
+  function fmt(n) {
+    if (typeof n !== 'number' || !isFinite(n)) return null;
+    try { return new Intl.NumberFormat('en', { notation: 'compact', maximumFractionDigits: 1 }).format(n); }
+    catch (e) { return String(n); }
+  }
+  function el(tag, cls, text) {
+    var e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (text != null) e.textContent = text;
+    return e;
+  }
+  function card(item) {
+    var id = item.id;
+    if (!id) return null;
+    var a = el('a', 'card hf-card');
+    a.href = item.url || ('https://huggingface.co/' + id);
+    a.target = '_blank';
+    a.rel = 'noopener noreferrer';
+    var top = el('div', 'hf-top');
+    top.appendChild(el('span', 'pill hf-pill', item.pipeline_tag || 'model'));
+    a.appendChild(top);
+    a.appendChild(el('div', 'hf-id', id));
+    var meta = el('div', 'hf-meta');
+    var d = fmt(item.downloads), l = fmt(item.likes);
+    if (d !== null) meta.appendChild(el('span', null, '⬇ ' + d + ' downloads'));
+    if (l !== null) meta.appendChild(el('span', null, '♥ ' + l + ' likes'));
+    a.appendChild(meta);
+    a.appendChild(el('span', 'card-link', 'View on Hugging Face →'));
+    return a;
+  }
+  var g = document.getElementById('ar-grid');
+  var s = document.getElementById('ar-status');
+  fetch('/api/hf-live?kind=arabic', { cache: 'no-store' })
+    .then(function (r) { return r.json(); })
+    .then(function (j) {
+      if (!j || !j.ok || !Array.isArray(j.items) || !j.items.length) throw new Error('empty');
+      g.innerHTML = '';
+      j.items.forEach(function (it) {
+        var c = card(it);
+        if (c) g.appendChild(c);
+      });
+      s.className = 'feed-status';
+      s.textContent = 'Live from huggingface.co via /api/hf-live · ' + g.children.length + ' cards · ' + new Date(j.ts).toLocaleTimeString() + '. Scores: use OALL, not this grid.';
+    })
+    .catch(function () {
+      g.innerHTML = '';
+      s.className = 'warn';
+      s.innerHTML = '<strong>Live feed offline. </strong>We will not show a fake board. Open the source: <a href="https://huggingface.co/spaces/OALL/Open-Arabic-LLM-Leaderboard" target="_blank" rel="noopener noreferrer">OALL</a> or <a href="https://huggingface.co/models?search=arabic" target="_blank" rel="noopener noreferrer">Hugging Face search</a>.';
+    });
+})();
+</script>
+<script src="/assets/js/abuz8-intent.js" defer></script>
+<script src="/assets/js/abuz8-measure.js" defer></script>
+</body>
+</html>
