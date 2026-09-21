@@ -141,7 +141,7 @@ export async function onRequestPost({ request, env }) {
   try {
     const r = await fetch("https://api.resend.com/emails", {
       method: "POST",
-      headers: { Authorization: *** `Bearer ${env.RESEND_API_KEY}`, "Content-Type": "application/json" },
+      headers: { Authorization: `Bearer ${env.RESEND_API_KEY}`, "Content-Type": "application/json" },
       body: JSON.stringify({ from: `ABUZ8 <${from}>`, to: [email], subject: "Your ABUZ8 desk login", html }),
     });
     if (!r.ok) throw new Error("resend " + r.status);
