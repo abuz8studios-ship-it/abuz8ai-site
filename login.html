@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en" id="html-root">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login — ABUZ8 Life Hub</title>
+<meta name="description" content="Passwordless login to your ABUZ8 desk. Magic link. No calls. No passwords.">
+<link rel="canonical" href="https://abuz8ai.com/login">
+<meta name="theme-color" content="#0a1628">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/abuz8-theme.css">
+<style>
+  #olive-grove { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+  body.page-olive .glow-orb { display: none; }
+  .login-wrap { max-width: 460px; margin: 72px auto 88px; position: relative; z-index: 1; padding: 0 24px; }
+  .login-wrap h1 { font-family: var(--font-display); font-size: clamp(2rem,5vw,2.6rem); margin: 12px 0 12px; }
+  .login-wrap p { color: var(--dim); line-height: 1.7; margin-bottom: 28px; }
+  form { background: var(--glass); border: 1px solid var(--border-gold); border-radius: var(--r-lg); padding: 28px; display: flex; flex-direction: column; gap: 14px; }
+  label { font-size: 12px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--gold); font-weight: 600; }
+  input[type=email] { background: rgba(10,22,40,.6); border: 1px solid var(--border-gold); color: var(--cream); font-family: var(--font-body); font-size: 15px; padding: 12px 14px; border-radius: 8px; }
+  input[type=email]:focus { outline: none; border-color: var(--green-bright); }
+  .msg { min-height: 20px; font-size: 13px; color: var(--dim); }
+  .msg.ok { color: var(--green-bright); }
+  .msg.err { color: var(--gold-light); }
+</style>
+</head>
+<body class="page-olive">
+<div class="geo-bg"></div>
+<div id="olive-grove" aria-hidden="true"></div>
+<nav class="abuz8-nav">
+<div class="nav-inner">
+  <a href="/" style="text-decoration:none;">
+    <div class="logo">ABUZ8</div>
+    <div class="logo-sub">Life Hub</div>
+  </a>
+  <div class="nav-links">
+    <a href="/">Boards</a>
+    <a href="/desk.html" class="nav-cta">Desk</a>
+  </div>
+</div>
+</nav>
+<main class="login-wrap">
+  <div class="eyebrow">Passwordless · no calls</div>
+  <h1>Open your <span class="gold">desk.</span></h1>
+  <p>Email a link. Fifteen minutes. Then your apps, agents, and connections live here — hosted by us.</p>
+  <form id="login-form">
+    <label for="email">Email</label>
+    <input id="email" name="email" type="email" required autocomplete="email" placeholder="you@company.com">
+    <button class="btn btn-gold" type="submit" id="go">Send login link</button>
+    <div id="msg" class="msg"></div>
+  </form>
+</main>
+<script>
+const form = document.getElementById("login-form");
+const msg = document.getElementById("msg");
+const btn = document.getElementById("go");
+form.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  msg.className = "msg";
+  msg.textContent = "Sending…";
+  btn.disabled = true;
+  try {
+    const r = await fetch("/api/auth", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "same-origin",
+      body: JSON.stringify({ email: document.getElementById("email").value })
+    });
+    const data = await r.json();
+    if (r.ok && data.ok) {
+      msg.className = "msg ok";
+      msg.textContent = "Check your email. Link dies in 15 minutes.";
+    } else {
+      msg.className = "msg err";
+      msg.textContent = data.error || "Could not send. Email support@abuz8ai.com.";
+    }
+  } catch (_) {
+    msg.className = "msg err";
+    msg.textContent = "Network error. Email support@abuz8ai.com.";
+  }
+  btn.disabled = false;
+});
+</script>
+<script src="/assets/js/abuz8-ui.js" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" defer></script>
+<script src="/assets/js/abuz8-olive-grove.js" defer></script>
+</body>
+</html>

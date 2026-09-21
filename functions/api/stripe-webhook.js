@@ -173,7 +173,29 @@ export async function onRequestPost(context) {
     return new Response(JSON.stringify({ error: 'Invalid JSON' }), { status: 400 });
   }
 
-  // Only handle completed checkouts
+  // Life Hub subscription lifecycle — writes entitlements on WAITLIST_DB.
+  if (event.type === 'customer.subscription.deleted' ||
+      (event.type === 'customer.subscription.updated' && event.data?.object?.status === 'canceled')) {
+    const sub = event.data.object;
+    const db = env.WAITLIST_DB || env.DB;
+    if (db) {
+      try {
+        const email = (sub.metadata && sub.metadata.email) || null;
+        if (email) {
+          await db.prepare(
+            "UPDATE entitlements SET status = 'canceled', updated_at = ? WHERE email = ?"
+          ).bind(Date.now(), String(email).toLowerCase()).run();
+        } else if (sub.id) {
+          await db.prepare(
+            "UPDATE entitlements SET status = 'canceled', updated_at = ? WHERE stripe_sub = ?"
+          ).bind(Date.now(), sub.id).run();
+        }
+      } catch (_) { /* non-fatal */ }
+    }
+    return new Response(JSON.stringify({ received: true, hub: 'canceled' }), { status: 200 });
+  }
+
+  // Only handle completed checkouts below
   if (event.type !== 'checkout.session.completed') {
     return new Response(JSON.stringify({ received: true }), { status: 200 });
   }
@@ -201,10 +223,28 @@ export async function onRequestPost(context) {
     await sendDeliveryEmail(env, { to: customerEmail, productName, downloadUrl });
   }
 
-  // Log to D1 if available (abuz8_waitlist DB)
-  if (env.DB && customerEmail) {
+  // Life Hub entitlement — checkout.session.completed with mode=subscription
+  const isHub = session.mode === 'subscription' || (session.metadata && session.metadata.kind === 'hub');
+  const db = env.WAITLIST_DB || env.DB;
+  if (isHub && customerEmail && db) {
     try {
-      await env.DB.prepare(
+      await db.prepare(
+        'INSERT OR REPLACE INTO entitlements (email, plan, status, stripe_customer, stripe_sub, updated_at) VALUES (?, ?, ?, ?, ?, ?)'
+      ).bind(
+        String(customerEmail).toLowerCase(),
+        'hub',
+        'active',
+        session.customer || null,
+        session.subscription || null,
+        Date.now()
+      ).run();
+    } catch (_) { /* non-fatal */ }
+  }
+
+  // Log to D1 if available (abuz8_waitlist DB)
+  if (db && customerEmail) {
+    try {
+      await db.prepare(
         'INSERT OR IGNORE INTO purchases (email, price_id, session_id, created_at) VALUES (?, ?, ?, ?)'
       ).bind(customerEmail, priceId, session.id, new Date().toISOString()).run();
     } catch (_) { /* non-fatal */ }

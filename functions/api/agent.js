@@ -23,6 +23,8 @@
 // FALLBACK: if BRAIN_URL is unreachable, we return a clear 503 telling the user
 // the brain is temporarily routing offline (operational truth — see /privacy + Truth-Status rule).
 
+import { readSession } from "./auth.js";
+
 const CORS = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
@@ -132,9 +134,24 @@ export async function onRequestPost({ request, env }) {
     return j({ error: "body.messages must be a non-empty array of {role, content}" }, 400);
   }
 
-  // 2) quota
+  // 2) quota — hub subscribers skip the free IP cap
   const ip = clientId(request);
-  const q = await checkQuota(env, ip);
+  let q;
+  try {
+    const email = await readSession(request, env);
+    let hub = false;
+    if (email && env.WAITLIST_DB) {
+      const ent = await env.WAITLIST_DB.prepare(
+        "SELECT status FROM entitlements WHERE email = ?"
+      ).bind(email).first();
+      hub = !!(ent && ent.status === "active");
+    }
+    q = hub
+      ? { used: 0, quota: 999, remaining: 999, ok: true, mode: "hub" }
+      : await checkQuota(env, ip);
+  } catch (_) {
+    q = await checkQuota(env, ip);
+  }
   if (!q.ok) {
     return j(
       { error: "free-tier quota exhausted", quota: q.quota, remaining: 0,
