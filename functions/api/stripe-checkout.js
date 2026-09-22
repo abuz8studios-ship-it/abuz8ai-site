@@ -70,10 +70,10 @@ export async function onRequestPost({ request, env }) {
       return json({ error: "stripe_not_configured" }, 500);
     }
 
-    // Life Hub SaaS — recurring. Amount from env.HUB_AMOUNT_CENTS (default 9900).
+    // Life Hub SaaS — recurring. Amount from env.HUB_AMOUNT_CENTS (default 900 = $9).
     // Optional STRIPE_HUB_PRICE_ID if a Price was created in the Stripe dashboard.
     if (tool === "life-hub") {
-      const cents = parseInt(env.HUB_AMOUNT_CENTS || "9900", 10);
+      const cents = parseInt(env.HUB_AMOUNT_CENTS || "900", 10);
       const paramsHub = new URLSearchParams({
         mode: "subscription",
         "line_items[0][quantity]": "1",
@@ -87,7 +87,7 @@ export async function onRequestPost({ request, env }) {
         paramsHub.set("line_items[0][price]", env.STRIPE_HUB_PRICE_ID);
       } else {
         paramsHub.set("line_items[0][price_data][currency]", "usd");
-        paramsHub.set("line_items[0][price_data][unit_amount]", String(Number.isFinite(cents) ? cents : 9900));
+        paramsHub.set("line_items[0][price_data][unit_amount]", String(Number.isFinite(cents) ? cents : 900));
         paramsHub.set("line_items[0][price_data][recurring][interval]", "month");
         paramsHub.set("line_items[0][price_data][product_data][name]", "ABUZ8 Life Hub");
         paramsHub.set("line_items[0][price_data][product_data][description]", "Hosted life system: connections, agents, cached boards. Async. No calls.");
