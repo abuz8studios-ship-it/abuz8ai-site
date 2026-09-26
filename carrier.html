@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en" id="html-root">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Carrier — ABUZ8 Master Home Base</title>
+<meta name="description" content="One aircraft carrier for all your agents: chat every model, work every deal jacket, watch every seat. Gmail login.">
+<meta name="robots" content="noindex">
+<link rel="canonical" href="https://abuz8ai.com/carrier.html">
+<meta name="theme-color" content="#0a1628">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/abuz8-theme.css">
+<style>
+  #olive-grove { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+  body.page-olive .glow-orb { display: none; }
+  .carrier { position: relative; z-index: 1; max-width: 1480px; margin: 0 auto; padding: 18px 20px 88px; }
+  .carrier-head { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; margin: 14px 0 4px; }
+  .carrier-head h1 { font-family: var(--font-display); font-size: clamp(1.7rem,3.6vw,2.3rem); margin: 0; }
+  .who { color: var(--dim); font-size: 13px; }
+  .lede { color: var(--dim); font-size: 13px; max-width: 900px; margin: 6px 0 16px; }
+  /* TypingMind-style 3 columns: agents rail | chat | inspector */
+  .deck { display: grid; grid-template-columns: 260px 1fr 330px; gap: 14px; min-height: 560px; }
+  @media (max-width: 1120px) { .deck { grid-template-columns: 220px 1fr; } #inspector { grid-column: 1 / -1; } }
+  @media (max-width: 760px) { .deck { grid-template-columns: 1fr; } }
+  .panel { background: var(--glass); border: 1px solid var(--border-gold); border-radius: var(--r-lg); padding: 16px; min-width: 0; }
+  .panel h2 { font-size: 12px; letter-spacing: 1.6px; text-transform: uppercase; color: var(--gold); margin: 0 0 10px; }
+  .agent-row { display: flex; align-items: center; gap: 9px; padding: 9px 10px; border-radius: 8px; cursor: pointer; border: 1px solid transparent; font-size: 13.5px; }
+  .agent-row:hover { background: rgba(201,168,76,.07); }
+  .agent-row.active { border-color: var(--border-gold); background: rgba(201,168,76,.1); }
+  .agent-row .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--green-bright); flex: none; }
+  .agent-row .dot.busy { background: var(--gold-light); }
+  .agent-row .dot.off { background: var(--dim); }
+  .agent-row small { display: block; color: var(--dim); font-size: 11px; }
+  .agent-row .nm { color: var(--cream); font-weight: 600; }
+  #chat-log { min-height: 380px; max-height: 52vh; overflow: auto; font-size: 14px; line-height: 1.65; margin-bottom: 10px; }
+  #chat-log p { margin: 0 0 10px; }
+  #chat-log .you { color: var(--gold-light); }
+  #chat-log .sys { color: var(--dim); font-size: 12.5px; }
+  form.chat { display: flex; gap: 8px; }
+  form.chat input { flex: 1; background: rgba(10,22,40,.6); border: 1px solid var(--border-gold); color: var(--cream); padding: 11px 13px; border-radius: 8px; font-size: 14px; }
+  .msg { font-size: 12.5px; color: var(--dim); min-height: 18px; margin-top: 6px; }
+  .modelbar { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; }
+  .modelbar button { background: none; border: 1px solid var(--border); color: var(--dim); border-radius: 20px; padding: 3px 11px; font-size: 11.5px; cursor: pointer; }
+  .modelbar button.on { border-color: var(--gold); color: var(--gold); }
+  .insp-block { margin-bottom: 16px; }
+  .seat { display: flex; justify-content: space-between; font-size: 12.5px; padding: 6px 0; border-bottom: 1px solid var(--border); }
+  .seat a { color: var(--cream); text-decoration: none; } .seat a:hover { color: var(--gold); }
+  .lane { margin-bottom: 10px; }
+  .lane h3 { font-size: 11px; letter-spacing: 1px; text-transform: uppercase; color: var(--gold); margin: 0 0 4px; }
+  .lane .unit { font-size: 12px; color: var(--cream); padding: 5px 8px; border: 1px solid var(--border); border-radius: 6px; margin-bottom: 4px; cursor: pointer; }
+  .lane .unit:hover { border-color: var(--gold); }
+  .lane .unit small { display: block; color: var(--dim); font-size: 10.5px; }
+  .feed-item { font-size: 12.5px; padding: 7px 0; border-bottom: 1px solid var(--border); }
+  .feed-item small { display: block; color: var(--dim); font-size: 11px; }
+  .gate-row { display: flex; gap: 8px; font-size: 12px; padding: 4px 0; }
+  .ledger { font-family: var(--font-mono); font-size: 12.5px; }
+  dialog#jacket { background: #0c1526; color: var(--cream); border: 1px solid var(--gold); border-radius: 12px; max-width: 560px; width: 92vw; padding: 24px; }
+  dialog#jacket::backdrop { background: rgba(0,0,0,.6); }
+  dialog#jacket h3 { font-family: var(--font-display); margin: 0 0 8px; }
+  dialog#jacket .facts { font-size: 13px; color: var(--dim); line-height: 1.7; }
+  dialog#jacket button { margin-top: 14px; }
+</style>
+</head>
+<body class="page-olive">
+<div class="geo-bg"></div>
+<div id="olive-grove" aria-hidden="true"></div>
+<nav class="abuz8-nav">
+<div class="nav-inner">
+  <a href="/" style="text-decoration:none;">
+    <div class="logo">ABUZ8</div>
+    <div class="logo-sub">Carrier</div>
+  </a>
+  <div class="nav-links">
+    <a href="/">Boards</a>
+    <a href="/desk.html">Desk</a>
+    <button class="nav-cta" id="out" type="button">Log out</button>
+  </div>
+</div>
+</nav>
+<main class="carrier">
+  <div class="eyebrow" id="plan-chip">Carrier · loading…</div>
+  <div class="carrier-head">
+    <h1>Master <span class="gold">aircraft carrier.</span></h1>
+    <span class="who" id="who">Checking login…</span>
+  </div>
+  <p class="lede">One home base. Chat every brain (TypingMind layer) · work every deal jacket (DealerTrack layer) · catch every opportunity (Okara layer) · watch every seat (OpenRig layer). You talk to Amanecer. Done means a URL or a file.</p>
+  <div class="deck">
+    <!-- LEFT: agents rail -->
+    <section class="panel" id="rail">
+      <h2>Brains · models</h2>
+      <div class="modelbar" id="modelbar"></div>
+      <h2 style="margin-top:14px">Agents · fleet</h2>
+      <div id="agents"></div>
+      <h2 style="margin-top:14px">Seats · subs</h2>
+      <div id="seats"></div>
+    </section>
+    <!-- CENTER: chat -->
+    <section class="panel" id="chatpanel">
+      <h2 id="chat-with">Amanecer · GM</h2>
+      <div id="chat-log"><p class="sys">Deck ready. Pick a brain or an agent on the left, then talk. Your words go to Amanecer first — specialists only move on your order.</p></div>
+      <form class="chat" id="chat">
+        <input name="q" maxlength="4000" placeholder="Order the deck…" autocomplete="off">
+        <button class="btn btn-gold" type="submit">Send</button>
+      </form>
+      <div class="msg" id="amsg"></div>
+    </section>
+    <!-- RIGHT: inspector -->
+    <section class="panel" id="inspector">
+      <div class="insp-block">
+        <h2>Lot · recon lanes</h2>
+        <div id="lanes"><p style="color:var(--dim);font-size:12.5px">Loading lot…</p></div>
+      </div>
+      <div class="insp-block">
+        <h2>Feed · needs you</h2>
+        <div id="feed"><p style="color:var(--dim);font-size:12.5px">Loading feed…</p></div>
+      </div>
+      <div class="insp-block">
+        <h2>Gate · fail-closed</h2>
+        <div id="gate"><p style="color:var(--dim);font-size:12.5px">Loading gate…</p></div>
+      </div>
+      <div class="insp-block">
+        <h2>Ledger · money</h2>
+        <div class="ledger" id="ledger">Loading…</div>
+      </div>
+    </section>
+  </div>
+</main>
+<dialog id="jacket">
+  <h3 id="j-title">Deal jacket</h3>
+  <div class="facts" id="j-facts"></div>
+  <button class="btn btn-gold" id="j-close" type="button">Close</button>
+</dialog>
+<script>
+const who = document.getElementById("who");
+const chip = document.getElementById("plan-chip");
+const log = document.getElementById("chat-log");
+const amsg = document.getElementById("amsg");
+const chatWith = document.getElementById("chat-with");
+let me = null, agent = "amanecer", model = "auto";
+
+function line(html) { log.insertAdjacentHTML("beforeend", html); log.scrollTop = log.scrollHeight; }
+function esc(s) { return String(s || "").replace(/[&<>"]/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c])); }
+
+const MODELS = ["auto", "claude", "gpt", "grok", "gemini", "kimi"];
+const AGENTS = [
+  { id: "amanecer", nm: "Amanecer", sub: "GM · you talk here", on: true },
+  { id: "fleetx", nm: "fleetx", sub: "X only · on-demand", on: false },
+  { id: "fleetreddit", nm: "fleetreddit", sub: "Reddit · on-demand", on: false },
+  { id: "fleetsocial", nm: "fleetsocial", sub: "IG/FB/LI/TikTok · on-demand", on: false },
+  { id: "fleetyoutube", nm: "fleetyoutube", sub: "YouTube · on-demand", on: false },
+  { id: "fleetmkt", nm: "fleetmkt", sub: "Marketing · on-demand", on: false },
+  { id: "fleetsales", nm: "fleetsales", sub: "Sales/Unstick · on-demand", on: false },
+  { id: "fleetvid", nm: "fleetvid", sub: "Video · on-demand", on: false }
+];
+const SEATS = [
+  ["ChatGPT", "https://chatgpt.com"], ["Claude", "https://claude.ai"],
+  ["Gemini", "https://gemini.google.com"], ["Grok", "https://grok.com"],
+  ["Kimi", "https://www.kimi.com"], ["Muse", "https://dev.meta.ai"],
+  ["aihubapp", "https://aihubapp.io/chat"], ["Robinhood", "https://robinhood.com"]
+];
+
+function paintRail() {
+  document.getElementById("modelbar").innerHTML = MODELS.map(m =>
+    `<button type="button" data-m="${m}" class="${m === model ? "on" : ""}">${m}</button>`).join("");
+  document.getElementById("agents").innerHTML = AGENTS.map(a =>
+    `<div class="agent-row ${a.id === agent ? "active" : ""}" data-a="${a.id}"><span class="dot ${a.on ? "" : "off"}"></span><span><span class="nm">${a.nm}</span><small>${a.sub}</small></span></div>`).join("");
+  document.getElementById("seats").innerHTML = SEATS.map(([n, h]) =>
+    `<div class="seat"><a href="${h}" target="_blank" rel="noopener">${n}</a><span class="chip">tab</span></div>`).join("");
+}
+document.getElementById("rail").addEventListener("click", (e) => {
+  const m = e.target.closest("[data-m]"); const a = e.target.closest("[data-a]");
+  if (m) { model = m.dataset.m; paintRail(); }
+  if (a) { agent = a.dataset.a; chatWith.textContent = (AGENTS.find(x => x.id === agent) || {}).nm + (agent === "amanecer" ? " · GM" : " · via Amanecer"); paintRail(); line(`<p class="sys">Now talking via ${esc(agent)}${agent === "amanecer" ? " (GM)" : " — Amanecer routes your order"}. Model: ${esc(model)}.</p>`); }
+});
+
+async function boot() {
+  paintRail();
+  const r = await fetch("/api/carrier", { credentials: "same-origin" });
+  if (r.status === 401) { location.href = "/login.html?next=/carrier.html"; return; }
+  const d = await r.json();
+  if (!d.ok) { who.textContent = d.error || "Carrier unreachable."; return; }
+  me = d.email; who.textContent = me;
+  chip.textContent = "Carrier · " + (d.plan || "free");
+  paintLot(d.lot); paintFeed(d.feed); paintGate(d.gate); paintLedger(d.lot);
+}
+
+function paintLot(lot) {
+  const el = document.getElementById("lanes");
+  if (!lot || !lot.lanes) { el.innerHTML = "<p style='color:var(--dim);font-size:12.5px'>Lot unreachable.</p>"; return; }
+  el.innerHTML = Object.entries(lot.lanes).map(([lane, units]) =>
+    `<div class="lane"><h3>${esc(lane)} · ${units.length}</h3>` +
+    (units.slice(0, 4).map(u => `<div class="unit" data-j='${esc(JSON.stringify(u))}'>${esc(u.title || u.id)}<small>${esc(u.id)}${u.unblock_cost ? " · needs: " + esc(u.unblock_cost).slice(0, 60) : ""}</small></div>`).join("") || "<div style='font-size:11.5px;color:var(--dim)'>—</div>") +
+    `</div>`).join("");
+}
+function paintFeed(feed) {
+  const el = document.getElementById("feed");
+  if (!feed || !feed.items || !feed.items.length) { el.innerHTML = "<p style='color:var(--dim);font-size:12.5px'>Lot is clear — nothing needs you.</p>"; return; }
+  el.innerHTML = feed.items.slice(0, 6).map(f =>
+    `<div class="feed-item">${esc(f.title)}<small>[${esc(f.board)}] ${esc(f.id)}${f.err ? " · " + esc(f.err).slice(0, 90) : ""}</small></div>`).join("");
+}
+function paintGate(gate) {
+  const el = document.getElementById("gate");
+  if (!gate) { el.innerHTML = "<p style='color:var(--dim);font-size:12.5px'>Gate unreachable.</p>"; return; }
+  el.innerHTML = (gate.checks || []).map(c => `<div class="gate-row"><span>☑</span><span><strong>${esc(c.id)}</strong> · ${esc(c.label)}</span></div>`).join("") +
+    `<div style="font-size:11.5px;color:var(--dim);margin-top:6px">engine: ${gate.engine_running ? "RUNNING" : "STOPPED"} · fail-closed</div>`;
+}
+function paintLedger(lot) {
+  document.getElementById("ledger").textContent =
+    lot ? `in $${lot.money_in ?? 0} · out $${lot.money_out ?? 0} · net $${lot.net ?? 0}` : "unreachable";
+}
+document.getElementById("lanes").addEventListener("click", (e) => {
+  const u = e.target.closest("[data-j]"); if (!u) return;
+  let j; try { j = JSON.parse(u.dataset.j); } catch { return; }
+  document.getElementById("j-title").textContent = j.title || j.id;
+  document.getElementById("j-facts").innerHTML =
+    `ID: ${esc(j.id)}<br>Board: ${esc(j.board || "—")}<br>Lane: ${esc(j.recon || "—")}<br>` +
+    (j.unblock_cost ? `Unblock cost: ${esc(j.unblock_cost)}<br>` : "") +
+    `Acceptance: live URL or file path — never a claim.`;
+  document.getElementById("jacket").showModal();
+});
+document.getElementById("j-close").addEventListener("click", () => document.getElementById("jacket").close());
+
+document.getElementById("chat").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const q = e.target.q.value.trim(); if (!q) return;
+  e.target.q.value = "";
+  line(`<p class="you">You — ${esc(q)}</p>`);
+  amsg.textContent = "";
+  try {
+    const r = await fetch("/api/agent", {
+      method: "POST", credentials: "same-origin",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ messages: [{ role: "user", content: `[carrier via ${agent} · model ${model}] ${q}` }] })
+    });
+    const d = await r.json();
+    line(`<p>Deck — ${esc(d.choices?.[0]?.message?.content || d.error || d.reply || "No reply.")}</p>`);
+    if (r.status === 429) amsg.textContent = "Free quota done. Hub $9/mo keeps the deck crewed.";
+  } catch { amsg.textContent = "Agent offline."; }
+});
+document.getElementById("out").addEventListener("click", async () => {
+  await fetch("/api/auth", { method: "POST", credentials: "same-origin", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ logout: 1 }) });
+  location.href = "/";
+});
+boot();
+</script>
+<script src="/assets/js/abuz8-ui.js" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" defer></script>
+<script src="/assets/js/abuz8-olive-grove.js" defer></script>
+<script src="/assets/js/abuz8-atmosphere.js" defer></script>
+</body>
+</html>

@@ -55,6 +55,8 @@ export async function readSession(request, env) {
   return good === parts[2] ? email : null;
 }
 
+export { signSession, validEmail };
+
 export async function onRequestOptions() {
   return new Response(null, { status: 204, headers: CORS });
 }

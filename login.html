@@ -48,12 +48,45 @@
     <input id="email" name="email" type="email" required autocomplete="email" placeholder="you@company.com">
     <button class="btn btn-gold" type="submit" id="go">Send login link</button>
     <div id="msg" class="msg"></div>
+    <div style="display:flex;align-items:center;gap:10px;color:var(--dim);font-size:12px"><span style="flex:1;border-top:1px solid var(--border)"></span>or<span style="flex:1;border-top:1px solid var(--border)"></span></div>
+    <div id="gmail-btn" style="display:flex;justify-content:center;min-height:20px"></div>
   </form>
 </main>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
 <script>
 const form = document.getElementById("login-form");
 const msg = document.getElementById("msg");
 const btn = document.getElementById("go");
+const next = new URLSearchParams(location.search).get("next") || "/desk.html";
+function say(t, cls) { msg.className = "msg " + (cls || ""); msg.textContent = t; }
+// Google button renders here once GOOGLE_CLIENT_ID is configured (see /api/site-config).
+window.onGoogleReady = null;
+async function bootGoogle() {
+  try {
+    const r = await fetch("/api/site-config", { credentials: "same-origin" });
+    const d = await r.json();
+    if (!d.googleClientId || !window.google) return;
+    google.accounts.id.initialize({
+      client_id: d.googleClientId,
+      callback: async ({ credential }) => {
+        say("Verifying Gmail…");
+        try {
+          const rr = await fetch("/api/google-auth", {
+            method: "POST", headers: { "Content-Type": "application/json" },
+            credentials: "same-origin", body: JSON.stringify({ credential })
+          });
+          const dd = await rr.json();
+          if (rr.ok && dd.ok) { say("In. Opening…", "ok"); location.href = next; }
+          else say(dd.error || "Gmail login failed.", "err");
+        } catch { say("Network error. Email support@abuz8ai.com.", "err"); }
+      }
+    });
+    google.accounts.id.renderButton(document.getElementById("gmail-btn"), {
+      theme: "filled_black", size: "large", width: 320, text: "continue_with"
+    });
+  } catch { /* magic link still works */ }
+}
+window.addEventListener("load", bootGoogle);
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
   msg.className = "msg";
