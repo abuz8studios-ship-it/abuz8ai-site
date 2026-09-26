@@ -8,18 +8,33 @@
 <meta name="robots" content="noindex">
 <link rel="canonical" href="https://abuz8ai.com/carrier.html">
 <meta name="theme-color" content="#0a1628">
+<link rel="preload" as="image" href="/assets/images/hero-sharp.webp" fetchpriority="high">
+<link rel="preload" as="image" href="/assets/images/og-home.jpg">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/assets/css/abuz8-theme.css">
 <style>
+  :root { --steel: #8a9aaa; }
   #olive-grove { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
   body.page-olive .glow-orb { display: none; }
-  .carrier { position: relative; z-index: 1; max-width: 1480px; margin: 0 auto; padding: 18px 20px 88px; }
+  /* Sharpened hero plate behind the deck: crisp photographic base, legible over it */
+  .hero-plate { position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    background: url('/assets/images/hero-sharp.webp') center 32% / cover no-repeat, url('/assets/images/og-home.jpg') center 32% / cover no-repeat;
+    opacity: .34; }
+  .hero-plate::after { content: ""; position: absolute; inset: 0;
+    background: linear-gradient(180deg, rgba(6,12,24,.72) 0%, rgba(6,12,24,.42) 40%, rgba(6,12,24,.78) 100%); }
+  .carrier { position: relative; z-index: 1; max-width: 1560px; margin: 0 auto; padding: 18px 20px 88px; }
   .carrier-head { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; margin: 14px 0 4px; }
   .carrier-head h1 { font-family: var(--font-display); font-size: clamp(1.7rem,3.6vw,2.3rem); margin: 0; }
   .who { color: var(--dim); font-size: 13px; }
-  .lede { color: var(--dim); font-size: 13px; max-width: 900px; margin: 6px 0 16px; }
-  /* TypingMind-style 3 columns: agents rail | chat | inspector */
-  .deck { display: grid; grid-template-columns: 260px 1fr 330px; gap: 14px; min-height: 560px; }
+  .lede { color: var(--dim); font-size: 13px; max-width: 940px; margin: 6px 0 14px; }
+  /* Full-system tabs */
+  .decktabs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; }
+  .decktabs button { background: var(--glass); border: 1px solid var(--border); color: var(--dim);
+    border-radius: 10px; padding: 8px 14px; font-size: 13px; cursor: pointer; font-family: var(--font-body); font-weight: 600; }
+  .decktabs button.on { border-color: var(--gold); color: var(--gold); }
+  .decktab { display: none; } .decktab.on { display: block; }
+  /* TypingMind-style 3 columns: rail | chat | inspector */
+  .deck { display: grid; grid-template-columns: 270px 1fr 340px; gap: 14px; min-height: 560px; }
   @media (max-width: 1120px) { .deck { grid-template-columns: 220px 1fr; } #inspector { grid-column: 1 / -1; } }
   @media (max-width: 760px) { .deck { grid-template-columns: 1fr; } }
   .panel { background: var(--glass); border: 1px solid var(--border-gold); border-radius: var(--r-lg); padding: 16px; min-width: 0; }
@@ -28,14 +43,18 @@
   .agent-row:hover { background: rgba(201,168,76,.07); }
   .agent-row.active { border-color: var(--border-gold); background: rgba(201,168,76,.1); }
   .agent-row .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--green-bright); flex: none; }
-  .agent-row .dot.busy { background: var(--gold-light); }
   .agent-row .dot.off { background: var(--dim); }
   .agent-row small { display: block; color: var(--dim); font-size: 11px; }
   .agent-row .nm { color: var(--cream); font-weight: 600; }
+  .statgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
+  .stat { background: rgba(10,22,40,.55); border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px; }
+  .stat b { display: block; font-family: var(--font-mono); font-size: 16px; color: var(--cream); }
+  .stat span { font-size: 10.5px; color: var(--dim); letter-spacing: .6px; text-transform: uppercase; }
   #chat-log { min-height: 380px; max-height: 52vh; overflow: auto; font-size: 14px; line-height: 1.65; margin-bottom: 10px; }
   #chat-log p { margin: 0 0 10px; }
   #chat-log .you { color: var(--gold-light); }
   #chat-log .sys { color: var(--dim); font-size: 12.5px; }
+  #chat-log pre { white-space: pre-wrap; font-family: var(--font-mono); font-size: 12.5px; background: rgba(0,0,0,.3); padding: 10px; border-radius: 8px; }
   form.chat { display: flex; gap: 8px; }
   form.chat input { flex: 1; background: rgba(10,22,40,.6); border: 1px solid var(--border-gold); color: var(--cream); padding: 11px 13px; border-radius: 8px; font-size: 14px; }
   .msg { font-size: 12.5px; color: var(--dim); min-height: 18px; margin-top: 6px; }
@@ -43,8 +62,10 @@
   .modelbar button { background: none; border: 1px solid var(--border); color: var(--dim); border-radius: 20px; padding: 3px 11px; font-size: 11.5px; cursor: pointer; }
   .modelbar button.on { border-color: var(--gold); color: var(--gold); }
   .insp-block { margin-bottom: 16px; }
-  .seat { display: flex; justify-content: space-between; font-size: 12.5px; padding: 6px 0; border-bottom: 1px solid var(--border); }
+  .seat { display: flex; justify-content: space-between; align-items: center; font-size: 12.5px; padding: 6px 0; border-bottom: 1px solid var(--border); }
   .seat a { color: var(--cream); text-decoration: none; } .seat a:hover { color: var(--gold); }
+  .seat .st { font-size: 10.5px; padding: 2px 9px; border-radius: 12px; border: 1px solid var(--border); color: var(--dim); }
+  .seat .st.live { color: var(--green-bright); border-color: var(--green-bright); }
   .lane { margin-bottom: 10px; }
   .lane h3 { font-size: 11px; letter-spacing: 1px; text-transform: uppercase; color: var(--gold); margin: 0 0 4px; }
   .lane .unit { font-size: 12px; color: var(--cream); padding: 5px 8px; border: 1px solid var(--border); border-radius: 6px; margin-bottom: 4px; cursor: pointer; }
@@ -53,16 +74,28 @@
   .feed-item { font-size: 12.5px; padding: 7px 0; border-bottom: 1px solid var(--border); }
   .feed-item small { display: block; color: var(--dim); font-size: 11px; }
   .gate-row { display: flex; gap: 8px; font-size: 12px; padding: 4px 0; }
+  .gate-row .bad { color: #e0685c; } .gate-row .good { color: var(--green-bright); }
   .ledger { font-family: var(--font-mono); font-size: 12.5px; }
-  dialog#jacket { background: #0c1526; color: var(--cream); border: 1px solid var(--gold); border-radius: 12px; max-width: 560px; width: 92vw; padding: 24px; }
+  .syscard { background: rgba(10,22,40,.5); border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; margin-bottom: 8px; font-size: 13px; }
+  .syscard b { color: var(--cream); } .syscard small { color: var(--dim); display: block; font-size: 11.5px; margin-top: 2px; }
+  .syscard .row { display: flex; gap: 8px; margin-top: 8px; }
+  .syscard input { flex: 1; background: rgba(0,0,0,.3); border: 1px solid var(--border); color: var(--cream); border-radius: 6px; padding: 7px 10px; font-size: 12.5px; }
+  .btn-sm { background: none; border: 1px solid var(--gold); color: var(--gold); border-radius: 6px; padding: 6px 12px; font-size: 12px; cursor: pointer; font-weight: 600; }
+  .btn-sm:disabled { opacity: .5; cursor: wait; }
+  .slice { border-left: 3px solid var(--border); padding: 6px 10px; margin: 6px 0; font-size: 12.5px; }
+  .slice.done { border-color: var(--green-bright); } .slice h4 { margin: 0 0 2px; font-size: 13px; color: var(--cream); }
+  .slice small { color: var(--dim); font-size: 11px; }
+  dialog#jacket { background: #0c1526; color: var(--cream); border: 1px solid var(--gold); border-radius: 12px; max-width: 600px; width: 92vw; padding: 24px; }
   dialog#jacket::backdrop { background: rgba(0,0,0,.6); }
   dialog#jacket h3 { font-family: var(--font-display); margin: 0 0 8px; }
   dialog#jacket .facts { font-size: 13px; color: var(--dim); line-height: 1.7; }
-  dialog#jacket button { margin-top: 14px; }
+  dialog#jacket textarea { width: 100%; min-height: 64px; margin-top: 10px; background: rgba(0,0,0,.3); border: 1px solid var(--border); color: var(--cream); border-radius: 6px; padding: 8px; font-size: 12.5px; }
+  dialog#jacket button { margin-top: 14px; margin-right: 8px; }
 </style>
 </head>
 <body class="page-olive">
 <div class="geo-bg"></div>
+<div class="hero-plate" aria-hidden="true"></div>
 <div id="olive-grove" aria-hidden="true"></div>
 <nav class="abuz8-nav">
 <div class="nav-inner">
@@ -84,19 +117,29 @@
     <span class="who" id="who">Checking login…</span>
   </div>
   <p class="lede">One home base. Chat every brain (TypingMind layer) · work every deal jacket (DealerTrack layer) · catch every opportunity (Okara layer) · watch every seat (OpenRig layer). You talk to Amanecer. Done means a URL or a file.</p>
+  <div class="decktabs" role="tablist" aria-label="Carrier decks">
+    <button type="button" data-tab="command" class="on">◈ Command deck</button>
+    <button type="button" data-tab="systems">◈ Your systems</button>
+    <button type="button" data-tab="work">◈ Rig work</button>
+  </div>
+
+  <!-- TAB 1: command deck -->
+  <div class="decktab on" id="tab-command">
   <div class="deck">
-    <!-- LEFT: agents rail -->
     <section class="panel" id="rail">
       <h2>Brains · models</h2>
       <div class="modelbar" id="modelbar"></div>
       <h2 style="margin-top:14px">Agents · fleet</h2>
       <div id="agents"></div>
-      <h2 style="margin-top:14px">Seats · subs</h2>
+      <h2 style="margin-top:14px">Seats · live check</h2>
       <div id="seats"></div>
     </section>
-    <!-- CENTER: chat -->
     <section class="panel" id="chatpanel">
       <h2 id="chat-with">Amanecer · GM</h2>
+      <div class="statgrid" id="qstat">
+        <div class="stat"><b id="q-used">–</b><span>free msgs used today</span></div>
+        <div class="stat"><b id="q-left">–</b><span>free msgs left</span></div>
+      </div>
       <div id="chat-log"><p class="sys">Deck ready. Pick a brain or an agent on the left, then talk. Your words go to Amanecer first — specialists only move on your order.</p></div>
       <form class="chat" id="chat">
         <input name="q" maxlength="4000" placeholder="Order the deck…" autocomplete="off">
@@ -104,7 +147,6 @@
       </form>
       <div class="msg" id="amsg"></div>
     </section>
-    <!-- RIGHT: inspector -->
     <section class="panel" id="inspector">
       <div class="insp-block">
         <h2>Lot · recon lanes</h2>
@@ -124,11 +166,59 @@
       </div>
     </section>
   </div>
+  </div>
+
+  <!-- TAB 2: your systems (bring-your-agent lot) -->
+  <div class="decktab" id="tab-systems">
+    <div class="deck" style="grid-template-columns:1fr 1fr;">
+      <section class="panel">
+        <h2>Park a system</h2>
+        <p style="font-size:12.5px;color:var(--dim)">Your frameworks, your crews — one master lot. Register the system, then park agents under it.</p>
+        <form id="sys-form" style="display:flex;flex-direction:column;gap:8px">
+          <input name="name" required maxlength="80" placeholder="System name — e.g. My X Crew" style="background:rgba(0,0,0,.3);border:1px solid var(--border);color:var(--cream);border-radius:6px;padding:9px 12px;font-size:13px">
+          <input name="framework" maxlength="80" placeholder="Framework — e.g. crewai, autogpt, n8n (optional)" style="background:rgba(0,0,0,.3);border:1px solid var(--border);color:var(--cream);border-radius:6px;padding:9px 12px;font-size:13px">
+          <input name="agents_count" type="number" min="0" max="10000" placeholder="# agents under it (optional)" style="background:rgba(0,0,0,.3);border:1px solid var(--border);color:var(--cream);border-radius:6px;padding:9px 12px;font-size:13px">
+          <button class="btn btn-gold" type="submit">Park system</button>
+        </form>
+        <div class="msg" id="sys-msg"></div>
+      </section>
+      <section class="panel">
+        <h2>Your lot · systems + agents</h2>
+        <div id="systems"><p style="color:var(--dim);font-size:12.5px">Loading systems…</p></div>
+      </section>
+    </div>
+  </div>
+
+  <!-- TAB 3: rig work (project → mission → slice + proof) -->
+  <div class="decktab" id="tab-work">
+    <div class="deck" style="grid-template-columns:1fr 1fr;">
+      <section class="panel">
+        <h2>New project</h2>
+        <form id="proj-form" style="display:flex;gap:8px">
+          <input name="name" required maxlength="120" placeholder="Project — e.g. Launch the course" style="flex:1;background:rgba(0,0,0,.3);border:1px solid var(--border);color:var(--cream);border-radius:6px;padding:9px 12px;font-size:13px">
+          <button class="btn btn-gold" type="submit">Start</button>
+        </form>
+        <div class="msg" id="proj-msg"></div>
+        <h2 style="margin-top:16px">Queue slice</h2>
+        <form id="slice-form" style="display:flex;flex-direction:column;gap:8px">
+          <select id="slice-mission" style="background:rgba(0,0,0,.3);border:1px solid var(--border);color:var(--cream);border-radius:6px;padding:9px 12px;font-size:13px"><option value="">Pick a mission first…</option></select>
+          <input name="name" required maxlength="160" placeholder="Slice — one shippable piece + its proof" style="background:rgba(0,0,0,.3);border:1px solid var(--border);color:var(--cream);border-radius:6px;padding:9px 12px;font-size:13px">
+          <button class="btn btn-gold" type="submit">Queue slice</button>
+        </form>
+        <div class="msg" id="slice-msg"></div>
+      </section>
+      <section class="panel">
+        <h2>Work · projects → missions → slices</h2>
+        <div id="work"><p style="color:var(--dim);font-size:12.5px">Loading work…</p></div>
+      </section>
+    </div>
+  </div>
 </main>
 <dialog id="jacket">
   <h3 id="j-title">Deal jacket</h3>
   <div class="facts" id="j-facts"></div>
-  <button class="btn btn-gold" id="j-close" type="button">Close</button>
+  <textarea id="j-proof" placeholder="Proof URL or file path…"></textarea>
+  <div><button class="btn btn-gold" id="j-close" type="button">Close</button></div>
 </dialog>
 <script>
 const who = document.getElementById("who");
@@ -159,13 +249,30 @@ const SEATS = [
   ["aihubapp", "https://aihubapp.io/chat"], ["Robinhood", "https://robinhood.com"]
 ];
 
+/* deck tabs */
+document.querySelectorAll(".decktabs button").forEach(b => b.addEventListener("click", () => {
+  document.querySelectorAll(".decktabs button").forEach(x => x.classList.remove("on"));
+  document.querySelectorAll(".decktab").forEach(x => x.classList.remove("on"));
+  b.classList.add("on");
+  document.getElementById("tab-" + b.dataset.tab).classList.add("on");
+}));
+
 function paintRail() {
   document.getElementById("modelbar").innerHTML = MODELS.map(m =>
     `<button type="button" data-m="${m}" class="${m === model ? "on" : ""}">${m}</button>`).join("");
   document.getElementById("agents").innerHTML = AGENTS.map(a =>
     `<div class="agent-row ${a.id === agent ? "active" : ""}" data-a="${a.id}"><span class="dot ${a.on ? "" : "off"}"></span><span><span class="nm">${a.nm}</span><small>${a.sub}</small></span></div>`).join("");
-  document.getElementById("seats").innerHTML = SEATS.map(([n, h]) =>
-    `<div class="seat"><a href="${h}" target="_blank" rel="noopener">${n}</a><span class="chip">tab</span></div>`).join("");
+  /* seat reachability: honest live check, no fake green */
+  const box = document.getElementById("seats");
+  box.innerHTML = SEATS.map(([n, h]) =>
+    `<div class="seat"><a href="${h}" target="_blank" rel="noopener">${n}</a><span class="st" data-seat="${h}">…</span></div>`).join("");
+  box.querySelectorAll("[data-seat]").forEach(async (el) => {
+    try {
+      const ctl = new AbortController(); const t = setTimeout(() => ctl.abort(), 8000);
+      await fetch(el.dataset.seat, { mode: "no-cors", signal: ctl.signal });
+      clearTimeout(t); el.textContent = "opens"; el.classList.add("live");
+    } catch { el.textContent = "tap →"; }
+  });
 }
 document.getElementById("rail").addEventListener("click", (e) => {
   const m = e.target.closest("[data-m]"); const a = e.target.closest("[data-a]");
@@ -177,11 +284,13 @@ async function boot() {
   paintRail();
   const r = await fetch("/api/carrier", { credentials: "same-origin" });
   if (r.status === 401) { location.href = "/login.html?next=/carrier.html"; return; }
-  const d = await r.json();
+  let d = null;
+  try { d = await r.json(); } catch { who.textContent = "Carrier unreachable — try again."; return; }
   if (!d.ok) { who.textContent = d.error || "Carrier unreachable."; return; }
   me = d.email; who.textContent = me;
   chip.textContent = "Carrier · " + (d.plan || "free");
   paintLot(d.lot); paintFeed(d.feed); paintGate(d.gate); paintLedger(d.lot);
+  loadSystems(); loadWork();
 }
 
 function paintLot(lot) {
@@ -189,19 +298,20 @@ function paintLot(lot) {
   if (!lot || !lot.lanes) { el.innerHTML = "<p style='color:var(--dim);font-size:12.5px'>Lot unreachable.</p>"; return; }
   el.innerHTML = Object.entries(lot.lanes).map(([lane, units]) =>
     `<div class="lane"><h3>${esc(lane)} · ${units.length}</h3>` +
-    (units.slice(0, 4).map(u => `<div class="unit" data-j='${esc(JSON.stringify(u))}'>${esc(u.title || u.id)}<small>${esc(u.id)}${u.unblock_cost ? " · needs: " + esc(u.unblock_cost).slice(0, 60) : ""}</small></div>`).join("") || "<div style='font-size:11.5px;color:var(--dim)'>—</div>") +
+    (units.slice(0, 6).map(u => `<div class="unit" data-j='${esc(JSON.stringify(u))}'>${esc(u.title || u.id)}<small>${esc(u.id)}${u.unblock_cost ? " · needs: " + esc(u.unblock_cost).slice(0, 60) : ""}</small></div>`).join("") || "<div style='font-size:11.5px;color:var(--dim)'>—</div>") +
     `</div>`).join("");
 }
 function paintFeed(feed) {
   const el = document.getElementById("feed");
   if (!feed || !feed.items || !feed.items.length) { el.innerHTML = "<p style='color:var(--dim);font-size:12.5px'>Lot is clear — nothing needs you.</p>"; return; }
-  el.innerHTML = feed.items.slice(0, 6).map(f =>
+  el.innerHTML = feed.items.slice(0, 8).map(f =>
     `<div class="feed-item">${esc(f.title)}<small>[${esc(f.board)}] ${esc(f.id)}${f.err ? " · " + esc(f.err).slice(0, 90) : ""}</small></div>`).join("");
 }
 function paintGate(gate) {
   const el = document.getElementById("gate");
   if (!gate) { el.innerHTML = "<p style='color:var(--dim);font-size:12.5px'>Gate unreachable.</p>"; return; }
-  el.innerHTML = (gate.checks || []).map(c => `<div class="gate-row"><span>☑</span><span><strong>${esc(c.id)}</strong> · ${esc(c.label)}</span></div>`).join("") +
+  el.innerHTML = (gate.checks || []).map(c =>
+    `<div class="gate-row"><span class="${c.pass === false ? "bad" : "good"}">${c.pass === false ? "✕" : "☑"}</span><span><strong>${esc(c.id)}</strong> · ${esc(c.label)}</span></div>`).join("") +
     `<div style="font-size:11.5px;color:var(--dim);margin-top:6px">engine: ${gate.engine_running ? "RUNNING" : "STOPPED"} · fail-closed</div>`;
 }
 function paintLedger(lot) {
@@ -216,15 +326,18 @@ document.getElementById("lanes").addEventListener("click", (e) => {
     `ID: ${esc(j.id)}<br>Board: ${esc(j.board || "—")}<br>Lane: ${esc(j.recon || "—")}<br>` +
     (j.unblock_cost ? `Unblock cost: ${esc(j.unblock_cost)}<br>` : "") +
     `Acceptance: live URL or file path — never a claim.`;
+  document.getElementById("j-proof").value = "";
   document.getElementById("jacket").showModal();
 });
 document.getElementById("j-close").addEventListener("click", () => document.getElementById("jacket").close());
 
+/* chat with quota meter */
 document.getElementById("chat").addEventListener("submit", async (e) => {
   e.preventDefault();
   const q = e.target.q.value.trim(); if (!q) return;
   e.target.q.value = "";
   line(`<p class="you">You — ${esc(q)}</p>`);
+  line(`<p class="sys" id="typing">Deck is thinking…</p>`);
   amsg.textContent = "";
   try {
     const r = await fetch("/api/agent", {
@@ -232,11 +345,133 @@ document.getElementById("chat").addEventListener("submit", async (e) => {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ messages: [{ role: "user", content: `[carrier via ${agent} · model ${model}] ${q}` }] })
     });
-    const d = await r.json();
-    line(`<p>Deck — ${esc(d.choices?.[0]?.message?.content || d.error || d.reply || "No reply.")}</p>`);
+    let d = {};
+    try { d = await r.json(); } catch { d = { error: "Brain unreachable (HTTP " + r.status + ")" }; }
+    document.getElementById("typing")?.remove();
+    if (d.remaining != null) {
+      document.getElementById("q-used").textContent = String((d.quota ?? 5) - d.remaining) + " / " + (d.quota ?? 5);
+      document.getElementById("q-left").textContent = String(d.remaining);
+    }
+    if (r.status === 503 || /503|offline|unreachable|non-2xx|404/i.test(d.error || d.detail || "")) {
+      line(`<p class="sys">Brain offline — Q3 tunnel is down. Your words are kept; the deck answers when the tunnel is back. (support@abuz8ai.com)</p>`);
+    } else {
+      line(`<pre>${esc(d.choices?.[0]?.message?.content || d.error || d.reply || "No reply.")}</pre>`);
+    }
     if (r.status === 429) amsg.textContent = "Free quota done. Hub $9/mo keeps the deck crewed.";
-  } catch { amsg.textContent = "Agent offline."; }
+  } catch { document.getElementById("typing")?.remove(); amsg.textContent = "Agent offline."; }
 });
+
+/* your systems tab */
+async function loadSystems() {
+  const box = document.getElementById("systems");
+  try {
+    const r = await fetch("/api/agent-systems", { credentials: "same-origin" });
+    const d = await r.json();
+    if (!r.ok || !d.ok) { box.innerHTML = `<p style="color:var(--dim);font-size:12.5px">${esc(d.error || "Systems unreachable.")}</p>`; return; }
+    if (!d.systems.length) { box.innerHTML = "<p style='color:var(--dim);font-size:12.5px'>No systems parked yet — register your first on the left.</p>"; return; }
+    box.innerHTML = d.systems.map(s =>
+      `<div class="syscard"><b>${esc(s.name)}</b> <span style="color:var(--dim)">· ${esc(s.framework || "custom")} · ${s.agents} agent(s) · ${esc(s.state)}</span>` +
+      `<small>${esc(s.endpoint || "no endpoint")}</small>` +
+      `<div class="row"><input placeholder="Park an agent — name" data-park="${s.id}"><button class="btn-sm" data-parkbtn="${s.id}">Park</button></div></div>`).join("");
+  } catch { box.innerHTML = "<p style='color:var(--dim);font-size:12.5px'>Systems unreachable.</p>"; }
+}
+document.getElementById("sys-form").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const m = document.getElementById("sys-msg"); m.textContent = "Parking…";
+  const fd = new FormData(e.target);
+  try {
+    const r = await fetch("/api/agent-systems", { method: "POST", credentials: "same-origin",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name: fd.get("name"), framework: fd.get("framework"), agents_count: fd.get("agents_count") ? +fd.get("agents_count") : undefined }) });
+    const d = await r.json();
+    m.textContent = d.ok ? "Parked." : (d.error || "Failed.");
+    if (d.ok) { e.target.reset(); loadSystems(); }
+  } catch { m.textContent = "Systems unreachable."; }
+});
+document.getElementById("systems").addEventListener("click", async (e) => {
+  const b = e.target.closest("[data-parkbtn]"); if (!b) return;
+  const id = +b.dataset.parkbtn;
+  const inp = document.querySelector(`[data-park="${id}"]`);
+  const nm = (inp.value || "").trim(); if (!nm) return;
+  b.disabled = true;
+  try {
+    const r = await fetch("/api/agent-systems", { method: "POST", credentials: "same-origin",
+      headers: { "Content-Type": "application/json" }, body: JSON.stringify({ system_id: id, agent_name: nm }) });
+    if ((await r.json()).ok) { inp.value = ""; loadSystems(); }
+  } catch { /* keep */ }
+  b.disabled = false;
+});
+
+/* rig work tab */
+async function loadWork() {
+  const box = document.getElementById("work");
+  try {
+    const r = await fetch("/api/rig-work", { credentials: "same-origin" });
+    const d = await r.json();
+    if (!r.ok || !d.ok) { box.innerHTML = `<p style="color:var(--dim);font-size:12.5px">${esc(d.error || "Work unreachable.")}</p>`; return; }
+    if (!d.projects.length) { box.innerHTML = "<p style='color:var(--dim);font-size:12.5px'>No projects yet — start one on the left.</p>"; return; }
+    const sel = document.getElementById("slice-mission");
+    const opts = [];
+    box.innerHTML = d.projects.map(p =>
+      `<div class="syscard"><b>${esc(p.name)}</b> <span style="color:var(--dim)">· ${esc(p.state)}</span>` +
+      (p.missions || []).map(mn => {
+        opts.push(`<option value="${mn.id}">${esc(p.name)} → ${esc(mn.name)}</option>`);
+        return `<div style="margin:6px 0 0 8px"><span style="font-size:12px;color:var(--gold)">◆ ${esc(mn.name)}</span>` +
+          ((mn.slices || []).map(s =>
+            `<div class="slice ${s.state === "done" ? "done" : ""}"><h4>${s.state === "done" ? "✓ " : "○ "}${esc(s.name)}</h4>` +
+            `<small>${esc(s.mode || "build")} · seat ${esc(s.seat || "—")}${s.proof ? " · proof: " + esc(s.proof) : " · NO PROOF YET"}</small>` +
+            (s.state !== "done" ? `<div class="row"><input placeholder="Proof URL or file path" data-proof="${s.id}"><button class="btn-sm" data-proofbtn="${s.id}">Proof</button></div>` : "") +
+            `</div>`).join("") + `</div>`;
+      }).join("") + `</div>`).join("");
+    sel.innerHTML = `<option value="">Pick a mission…</option>` + opts.join("");
+    box._missions = d.projects.flatMap(p => p.missions || []);
+  } catch { box.innerHTML = "<p style='color:var(--dim);font-size:12.5px'>Work unreachable.</p>"; }
+}
+document.getElementById("proj-form").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const m = document.getElementById("proj-msg"); m.textContent = "Starting…";
+  try {
+    const r = await fetch("/api/rig-work", { method: "POST", credentials: "same-origin",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name: new FormData(e.target).get("name"), kind: "project" }) });
+    const d = await r.json();
+    if (d.ok && d.project) {
+      await fetch("/api/rig-work", { method: "POST", credentials: "same-origin",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ kind: "mission", project_id: d.project.id, name: "First mission" }) });
+      m.textContent = "Project + first mission live."; e.target.reset(); loadWork();
+    } else m.textContent = d.error || "Failed.";
+  } catch { m.textContent = "Work unreachable."; }
+});
+document.getElementById("slice-form").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const m = document.getElementById("slice-msg");
+  const mid = +document.getElementById("slice-mission").value;
+  if (!mid) { m.textContent = "Pick a mission first."; return; }
+  m.textContent = "Queueing…";
+  try {
+    const r = await fetch("/api/rig-work", { method: "POST", credentials: "same-origin",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ kind: "slice", mission_id: mid, name: new FormData(e.target).get("name") }) });
+    const d = await r.json();
+    m.textContent = d.ok ? "Slice queued." : (d.error || "Failed.");
+    if (d.ok) { e.target.reset(); loadWork(); }
+  } catch { m.textContent = "Work unreachable."; }
+});
+document.getElementById("work").addEventListener("click", async (e) => {
+  const b = e.target.closest("[data-proofbtn]"); if (!b) return;
+  const id = +b.dataset.proofbtn;
+  const inp = document.querySelector(`[data-proof="${id}"]`);
+  const pf = (inp.value || "").trim(); if (!pf) return;
+  b.disabled = true;
+  try {
+    const r = await fetch("/api/rig-work", { method: "POST", credentials: "same-origin",
+      headers: { "Content-Type": "application/json" }, body: JSON.stringify({ kind: "proof", slice_id: id, proof: pf }) });
+    if ((await r.json()).ok) loadWork();
+  } catch { /* keep */ }
+  b.disabled = false;
+});
+
 document.getElementById("out").addEventListener("click", async () => {
   await fetch("/api/auth", { method: "POST", credentials: "same-origin", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ logout: 1 }) });
   location.href = "/";
